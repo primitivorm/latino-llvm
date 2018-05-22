@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../liblatinoBasic.a  CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o CMakeFiles/latinoBasic.dir/SourceManager.cpp.o
+/usr/bin/ranlib ../liblatinoBasic.a
