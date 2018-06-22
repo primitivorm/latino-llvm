@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.3)
 
 project(latino)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CONFIG_OUTPUT)
 find_program(LLVM_CONFIG "llvm-config")
@@ -53,6 +53,9 @@ if(LLVM_CONFIG)
 
   find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
+  
+  find_program(CLANG_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
+    NO_DEFAULT_PATH)
 
   set(LLVMCONFIG_FILE "${LLVM_CMAKE_PATH}/LLVMConfig.cmake")
   if(EXISTS ${LLVMCONFIG_FILE})
@@ -78,8 +81,18 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Releas
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build [Release Debug]" FORCE)
 endif()
 
+#include(CMakeParseArguments)
 include(AddLLVM)
+include(TableGen)
+include(AddClang)
 include(AddLatino)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${CLANG_LIBS}")
 
@@ -108,7 +121,8 @@ add_definitions(${LLVM_DEFINITIONS})
 # that we wish to use
 llvm_map_components_to_libnames(all)
 
-include_directories(include)
+#include_directories(include)
+add_subdirectory(include)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
@@ -123,5 +137,5 @@ if(LATINO_INCLUDE_TESTS)
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
   message(STATUS "Found gtest: ${GTEST_INCLUDE_DIRS}, gtest/libs: ${GTEST_BOTH_LIBRARIES}")
-  #add_subdirectory(unittests)
+  add_subdirectory(unittests)
 endif()
