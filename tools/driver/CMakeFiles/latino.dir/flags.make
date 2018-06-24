@@ -6,5 +6,5 @@ CXX_FLAGS =  -std=c++11   -g   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_F
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include -I/home/primi/src/latino-llvm/include 
+CXX_INCLUDES = -I/home/primi/src/latino-llvm/tools/driver -I/home/primi/src/latino-llvm/include -I/usr/local/include 
 

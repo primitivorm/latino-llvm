@@ -10,8 +10,9 @@ set(CMAKE_CXX_COMPILER_ID "Clang")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/local/include"
+  "tools/driver"
   "include"
+  "/usr/local/include"
   )
 
 # Targets to which this target links.

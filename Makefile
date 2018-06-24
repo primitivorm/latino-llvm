@@ -23,6 +23,9 @@ SUFFIXES =
 .SUFFIXES: .hpux_make_needs_suffix_list
 
 
+# Produce verbose output by default.
+VERBOSE = 1
+
 # Suppress display of executed commands.
 $(VERBOSE).SILENT:
 
@@ -181,6 +184,45 @@ intrinsics_gen/fast:
 .PHONY : intrinsics_gen/fast
 
 #=============================================================================
+# Target rules for targets named ClangDiagnosticCommon
+
+# Build rule for target.
+ClangDiagnosticCommon: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangDiagnosticCommon
+.PHONY : ClangDiagnosticCommon
+
+# fast build rule for target.
+ClangDiagnosticCommon/fast:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build
+.PHONY : ClangDiagnosticCommon/fast
+
+#=============================================================================
+# Target rules for targets named ClangDiagnosticGroups
+
+# Build rule for target.
+ClangDiagnosticGroups: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangDiagnosticGroups
+.PHONY : ClangDiagnosticGroups
+
+# fast build rule for target.
+ClangDiagnosticGroups/fast:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build
+.PHONY : ClangDiagnosticGroups/fast
+
+#=============================================================================
+# Target rules for targets named ClangDiagnosticIndexName
+
+# Build rule for target.
+ClangDiagnosticIndexName: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangDiagnosticIndexName
+.PHONY : ClangDiagnosticIndexName
+
+# fast build rule for target.
+ClangDiagnosticIndexName/fast:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build
+.PHONY : ClangDiagnosticIndexName/fast
+
+#=============================================================================
 # Target rules for targets named latinoBasic
 
 # Build rule for target.
@@ -206,6 +248,45 @@ latino/fast:
 	$(MAKE) -f tools/driver/CMakeFiles/latino.dir/build.make tools/driver/CMakeFiles/latino.dir/build
 .PHONY : latino/fast
 
+#=============================================================================
+# Target rules for targets named LatinoUnitTests
+
+# Build rule for target.
+LatinoUnitTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LatinoUnitTests
+.PHONY : LatinoUnitTests
+
+# fast build rule for target.
+LatinoUnitTests/fast:
+	$(MAKE) -f unittests/CMakeFiles/LatinoUnitTests.dir/build.make unittests/CMakeFiles/LatinoUnitTests.dir/build
+.PHONY : LatinoUnitTests/fast
+
+#=============================================================================
+# Target rules for targets named BasicTests
+
+# Build rule for target.
+BasicTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 BasicTests
+.PHONY : BasicTests
+
+# fast build rule for target.
+BasicTests/fast:
+	$(MAKE) -f unittests/Basic/CMakeFiles/BasicTests.dir/build.make unittests/Basic/CMakeFiles/BasicTests.dir/build
+.PHONY : BasicTests/fast
+
+#=============================================================================
+# Target rules for targets named LexTests
+
+# Build rule for target.
+LexTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LexTests
+.PHONY : LexTests
+
+# fast build rule for target.
+LexTests/fast:
+	$(MAKE) -f unittests/Lex/CMakeFiles/LexTests.dir/build.make unittests/Lex/CMakeFiles/LexTests.dir/build
+.PHONY : LexTests/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -220,8 +301,14 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
+	@echo "... ClangDiagnosticCommon"
+	@echo "... ClangDiagnosticGroups"
+	@echo "... ClangDiagnosticIndexName"
 	@echo "... latinoBasic"
 	@echo "... latino"
+	@echo "... LatinoUnitTests"
+	@echo "... BasicTests"
+	@echo "... LexTests"
 .PHONY : help
 
 

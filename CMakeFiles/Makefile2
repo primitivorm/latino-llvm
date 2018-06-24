@@ -29,6 +29,9 @@ SUFFIXES =
 .SUFFIXES: .hpux_make_needs_suffix_list
 
 
+# Produce verbose output by default.
+VERBOSE = 1
+
 # Suppress display of executed commands.
 $(VERBOSE).SILENT:
 
@@ -92,6 +95,158 @@ clean: CMakeFiles/intrinsics_gen.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Directory level rules for directory include
+
+# Convenience name for "all" pass in the directory.
+include/all: include/latino/all
+
+.PHONY : include/all
+
+# Convenience name for "clean" pass in the directory.
+include/clean: include/latino/clean
+
+.PHONY : include/clean
+
+# Convenience name for "preinstall" pass in the directory.
+include/preinstall: include/latino/preinstall
+
+.PHONY : include/preinstall
+
+#=============================================================================
+# Directory level rules for directory include/latino
+
+# Convenience name for "all" pass in the directory.
+include/latino/all: include/latino/Basic/all
+
+.PHONY : include/latino/all
+
+# Convenience name for "clean" pass in the directory.
+include/latino/clean: include/latino/Basic/clean
+
+.PHONY : include/latino/clean
+
+# Convenience name for "preinstall" pass in the directory.
+include/latino/preinstall: include/latino/Basic/preinstall
+
+.PHONY : include/latino/preinstall
+
+#=============================================================================
+# Directory level rules for directory include/latino/Basic
+
+# Convenience name for "all" pass in the directory.
+include/latino/Basic/all:
+
+.PHONY : include/latino/Basic/all
+
+# Convenience name for "clean" pass in the directory.
+include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean
+include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean
+include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean
+
+.PHONY : include/latino/Basic/clean
+
+# Convenience name for "preinstall" pass in the directory.
+include/latino/Basic/preinstall:
+
+.PHONY : include/latino/Basic/preinstall
+
+#=============================================================================
+# Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir
+
+# All Build rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/all:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/depend
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=3 "Built target ClangDiagnosticCommon"
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/rule
+
+# Convenience name for target.
+ClangDiagnosticCommon: include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/rule
+
+.PHONY : ClangDiagnosticCommon
+
+# clean rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean
+
+# clean rule for target.
+clean: include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir
+
+# All Build rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/all:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/depend
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=4 "Built target ClangDiagnosticGroups"
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/rule
+
+# Convenience name for target.
+ClangDiagnosticGroups: include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/rule
+
+.PHONY : ClangDiagnosticGroups
+
+# clean rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean
+
+# clean rule for target.
+clean: include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir
+
+# All Build rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/all:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/depend
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=5 "Built target ClangDiagnosticIndexName"
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/rule
+
+# Convenience name for target.
+ClangDiagnosticIndexName: include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/rule
+
+.PHONY : ClangDiagnosticIndexName
+
+# clean rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean
+
+# clean rule for target.
+clean: include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Directory level rules for directory lib
 
 # Convenience name for "all" pass in the directory.
@@ -134,7 +289,7 @@ lib/Basic/preinstall:
 lib/Basic/CMakeFiles/latinoBasic.dir/all:
 	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/depend
 	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=3,4,5 "Built target latinoBasic"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=10,11,12,13,14,15 "Built target latinoBasic"
 .PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/all
 
 # Include target in all.
@@ -144,7 +299,7 @@ all: lib/Basic/CMakeFiles/latinoBasic.dir/all
 
 # Build rule for subdir invocation for target.
 lib/Basic/CMakeFiles/latinoBasic.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 6
 	$(MAKE) -f CMakeFiles/Makefile2 lib/Basic/CMakeFiles/latinoBasic.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
 .PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/rule
@@ -207,7 +362,7 @@ tools/driver/preinstall:
 tools/driver/CMakeFiles/latino.dir/all:
 	$(MAKE) -f tools/driver/CMakeFiles/latino.dir/build.make tools/driver/CMakeFiles/latino.dir/depend
 	$(MAKE) -f tools/driver/CMakeFiles/latino.dir/build.make tools/driver/CMakeFiles/latino.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=1,2 "Built target latino"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=8,9 "Built target latino"
 .PHONY : tools/driver/CMakeFiles/latino.dir/all
 
 # Include target in all.
@@ -234,6 +389,171 @@ tools/driver/CMakeFiles/latino.dir/clean:
 
 # clean rule for target.
 clean: tools/driver/CMakeFiles/latino.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory unittests
+
+# Convenience name for "all" pass in the directory.
+unittests/all: unittests/Basic/all
+unittests/all: unittests/Lex/all
+
+.PHONY : unittests/all
+
+# Convenience name for "clean" pass in the directory.
+unittests/clean: unittests/CMakeFiles/LatinoUnitTests.dir/clean
+unittests/clean: unittests/Basic/clean
+unittests/clean: unittests/Lex/clean
+
+.PHONY : unittests/clean
+
+# Convenience name for "preinstall" pass in the directory.
+unittests/preinstall: unittests/Basic/preinstall
+unittests/preinstall: unittests/Lex/preinstall
+
+.PHONY : unittests/preinstall
+
+#=============================================================================
+# Target rules for target unittests/CMakeFiles/LatinoUnitTests.dir
+
+# All Build rule for target.
+unittests/CMakeFiles/LatinoUnitTests.dir/all: unittests/Basic/CMakeFiles/BasicTests.dir/all
+unittests/CMakeFiles/LatinoUnitTests.dir/all: unittests/Lex/CMakeFiles/LexTests.dir/all
+	$(MAKE) -f unittests/CMakeFiles/LatinoUnitTests.dir/build.make unittests/CMakeFiles/LatinoUnitTests.dir/depend
+	$(MAKE) -f unittests/CMakeFiles/LatinoUnitTests.dir/build.make unittests/CMakeFiles/LatinoUnitTests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num= "Built target LatinoUnitTests"
+.PHONY : unittests/CMakeFiles/LatinoUnitTests.dir/all
+
+# Build rule for subdir invocation for target.
+unittests/CMakeFiles/LatinoUnitTests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 10
+	$(MAKE) -f CMakeFiles/Makefile2 unittests/CMakeFiles/LatinoUnitTests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : unittests/CMakeFiles/LatinoUnitTests.dir/rule
+
+# Convenience name for target.
+LatinoUnitTests: unittests/CMakeFiles/LatinoUnitTests.dir/rule
+
+.PHONY : LatinoUnitTests
+
+# clean rule for target.
+unittests/CMakeFiles/LatinoUnitTests.dir/clean:
+	$(MAKE) -f unittests/CMakeFiles/LatinoUnitTests.dir/build.make unittests/CMakeFiles/LatinoUnitTests.dir/clean
+.PHONY : unittests/CMakeFiles/LatinoUnitTests.dir/clean
+
+# clean rule for target.
+clean: unittests/CMakeFiles/LatinoUnitTests.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory unittests/Basic
+
+# Convenience name for "all" pass in the directory.
+unittests/Basic/all: unittests/Basic/CMakeFiles/BasicTests.dir/all
+
+.PHONY : unittests/Basic/all
+
+# Convenience name for "clean" pass in the directory.
+unittests/Basic/clean: unittests/Basic/CMakeFiles/BasicTests.dir/clean
+
+.PHONY : unittests/Basic/clean
+
+# Convenience name for "preinstall" pass in the directory.
+unittests/Basic/preinstall:
+
+.PHONY : unittests/Basic/preinstall
+
+#=============================================================================
+# Target rules for target unittests/Basic/CMakeFiles/BasicTests.dir
+
+# All Build rule for target.
+unittests/Basic/CMakeFiles/BasicTests.dir/all: lib/Basic/CMakeFiles/latinoBasic.dir/all
+	$(MAKE) -f unittests/Basic/CMakeFiles/BasicTests.dir/build.make unittests/Basic/CMakeFiles/BasicTests.dir/depend
+	$(MAKE) -f unittests/Basic/CMakeFiles/BasicTests.dir/build.make unittests/Basic/CMakeFiles/BasicTests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=1,2 "Built target BasicTests"
+.PHONY : unittests/Basic/CMakeFiles/BasicTests.dir/all
+
+# Include target in all.
+all: unittests/Basic/CMakeFiles/BasicTests.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+unittests/Basic/CMakeFiles/BasicTests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 8
+	$(MAKE) -f CMakeFiles/Makefile2 unittests/Basic/CMakeFiles/BasicTests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : unittests/Basic/CMakeFiles/BasicTests.dir/rule
+
+# Convenience name for target.
+BasicTests: unittests/Basic/CMakeFiles/BasicTests.dir/rule
+
+.PHONY : BasicTests
+
+# clean rule for target.
+unittests/Basic/CMakeFiles/BasicTests.dir/clean:
+	$(MAKE) -f unittests/Basic/CMakeFiles/BasicTests.dir/build.make unittests/Basic/CMakeFiles/BasicTests.dir/clean
+.PHONY : unittests/Basic/CMakeFiles/BasicTests.dir/clean
+
+# clean rule for target.
+clean: unittests/Basic/CMakeFiles/BasicTests.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory unittests/Lex
+
+# Convenience name for "all" pass in the directory.
+unittests/Lex/all: unittests/Lex/CMakeFiles/LexTests.dir/all
+
+.PHONY : unittests/Lex/all
+
+# Convenience name for "clean" pass in the directory.
+unittests/Lex/clean: unittests/Lex/CMakeFiles/LexTests.dir/clean
+
+.PHONY : unittests/Lex/clean
+
+# Convenience name for "preinstall" pass in the directory.
+unittests/Lex/preinstall:
+
+.PHONY : unittests/Lex/preinstall
+
+#=============================================================================
+# Target rules for target unittests/Lex/CMakeFiles/LexTests.dir
+
+# All Build rule for target.
+unittests/Lex/CMakeFiles/LexTests.dir/all: lib/Basic/CMakeFiles/latinoBasic.dir/all
+	$(MAKE) -f unittests/Lex/CMakeFiles/LexTests.dir/build.make unittests/Lex/CMakeFiles/LexTests.dir/depend
+	$(MAKE) -f unittests/Lex/CMakeFiles/LexTests.dir/build.make unittests/Lex/CMakeFiles/LexTests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=6,7 "Built target LexTests"
+.PHONY : unittests/Lex/CMakeFiles/LexTests.dir/all
+
+# Include target in all.
+all: unittests/Lex/CMakeFiles/LexTests.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+unittests/Lex/CMakeFiles/LexTests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 8
+	$(MAKE) -f CMakeFiles/Makefile2 unittests/Lex/CMakeFiles/LexTests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : unittests/Lex/CMakeFiles/LexTests.dir/rule
+
+# Convenience name for target.
+LexTests: unittests/Lex/CMakeFiles/LexTests.dir/rule
+
+.PHONY : LexTests
+
+# clean rule for target.
+unittests/Lex/CMakeFiles/LexTests.dir/clean:
+	$(MAKE) -f unittests/Lex/CMakeFiles/LexTests.dir/build.make unittests/Lex/CMakeFiles/LexTests.dir/clean
+.PHONY : unittests/Lex/CMakeFiles/LexTests.dir/clean
+
+# clean rule for target.
+clean: unittests/Lex/CMakeFiles/LexTests.dir/clean
 
 .PHONY : clean
 

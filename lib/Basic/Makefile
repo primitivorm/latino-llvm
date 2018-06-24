@@ -23,6 +23,9 @@ SUFFIXES =
 .SUFFIXES: .hpux_make_needs_suffix_list
 
 
+# Produce verbose output by default.
+VERBOSE = 1
+
 # Suppress display of executed commands.
 $(VERBOSE).SILENT:
 
@@ -182,6 +185,87 @@ latinoBasic/fast:
 	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/build
 .PHONY : latinoBasic/fast
 
+Diagnostic.o: Diagnostic.cpp.o
+
+.PHONY : Diagnostic.o
+
+# target to build an object file
+Diagnostic.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o
+.PHONY : Diagnostic.cpp.o
+
+Diagnostic.i: Diagnostic.cpp.i
+
+.PHONY : Diagnostic.i
+
+# target to preprocess a source file
+Diagnostic.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.i
+.PHONY : Diagnostic.cpp.i
+
+Diagnostic.s: Diagnostic.cpp.s
+
+.PHONY : Diagnostic.s
+
+# target to generate assembly for a file
+Diagnostic.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.s
+.PHONY : Diagnostic.cpp.s
+
+DiagnosticIDs.o: DiagnosticIDs.cpp.o
+
+.PHONY : DiagnosticIDs.o
+
+# target to build an object file
+DiagnosticIDs.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o
+.PHONY : DiagnosticIDs.cpp.o
+
+DiagnosticIDs.i: DiagnosticIDs.cpp.i
+
+.PHONY : DiagnosticIDs.i
+
+# target to preprocess a source file
+DiagnosticIDs.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.i
+.PHONY : DiagnosticIDs.cpp.i
+
+DiagnosticIDs.s: DiagnosticIDs.cpp.s
+
+.PHONY : DiagnosticIDs.s
+
+# target to generate assembly for a file
+DiagnosticIDs.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.s
+.PHONY : DiagnosticIDs.cpp.s
+
+DiagnosticOptions.o: DiagnosticOptions.cpp.o
+
+.PHONY : DiagnosticOptions.o
+
+# target to build an object file
+DiagnosticOptions.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o
+.PHONY : DiagnosticOptions.cpp.o
+
+DiagnosticOptions.i: DiagnosticOptions.cpp.i
+
+.PHONY : DiagnosticOptions.i
+
+# target to preprocess a source file
+DiagnosticOptions.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.i
+.PHONY : DiagnosticOptions.cpp.i
+
+DiagnosticOptions.s: DiagnosticOptions.cpp.s
+
+.PHONY : DiagnosticOptions.s
+
+# target to generate assembly for a file
+DiagnosticOptions.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.s
+.PHONY : DiagnosticOptions.cpp.s
+
 SourceLocation.o: SourceLocation.cpp.o
 
 .PHONY : SourceLocation.o
@@ -250,6 +334,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
+	@echo "... Diagnostic.o"
+	@echo "... Diagnostic.i"
+	@echo "... Diagnostic.s"
+	@echo "... DiagnosticIDs.o"
+	@echo "... DiagnosticIDs.i"
+	@echo "... DiagnosticIDs.s"
+	@echo "... DiagnosticOptions.o"
+	@echo "... DiagnosticOptions.i"
+	@echo "... DiagnosticOptions.s"
 	@echo "... SourceLocation.o"
 	@echo "... SourceLocation.i"
 	@echo "... SourceLocation.s"

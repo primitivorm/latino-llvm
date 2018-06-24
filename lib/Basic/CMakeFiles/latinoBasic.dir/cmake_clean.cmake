@@ -1,4 +1,7 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o"
+  "CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o"
+  "CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o"
   "CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o"
   "CMakeFiles/latinoBasic.dir/SourceManager.cpp.o"
   "../liblatinoBasic.pdb"

@@ -53,7 +53,7 @@ if(LLVM_CONFIG)
 
   find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
-  
+
   find_program(CLANG_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
 
@@ -81,7 +81,6 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Releas
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build [Release Debug]" FORCE)
 endif()
 
-#include(CMakeParseArguments)
 include(AddLLVM)
 include(TableGen)
 include(AddClang)
