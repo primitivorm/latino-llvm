@@ -38,6 +38,8 @@ function(tablegen project ofn)
     set(additional_cmdline
       -o ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp
       )
+      
+      message(STATUS "local_tds: ${local_tds} - global_tds: ${global_tds}")
   endif()
 
   if (IS_ABSOLUTE ${LLVM_TARGET_DEFINITIONS})
@@ -46,6 +48,9 @@ function(tablegen project ofn)
     set(LLVM_TARGET_DEFINITIONS_ABSOLUTE
       ${CMAKE_CURRENT_SOURCE_DIR}/${LLVM_TARGET_DEFINITIONS})
   endif()
+  
+  message(STATUS "LLVM_TARGET_DEFINITIONS_ABSOLUTE: ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}")
+  
   if (LLVM_ENABLE_DAGISEL_COV)
     list(FIND ARGN "-gen-dag-isel" idx)
     if( NOT idx EQUAL -1 )
@@ -59,6 +64,9 @@ function(tablegen project ofn)
       list(APPEND LLVM_TABLEGEN_FLAGS "-gisel-coverage-file=${LLVM_GISEL_COV_PREFIX}all")
     endif()
   endif()
+  
+  message(STATUS "LLVM_ENABLE_DAGISEL_COV: ${LLVM_ENABLE_DAGISEL_COV}")
+  message(STATUS "LLVM_ENABLE_GISEL_COV: ${LLVM_ENABLE_GISEL_COV}")
 
   # We need both _TABLEGEN_TARGET and _TABLEGEN_EXE in the  DEPENDS list
   # (both the target and the file) to have .inc files rebuilt on
@@ -101,6 +109,8 @@ function(tablegen project ofn)
   set(TABLEGEN_OUTPUT ${TABLEGEN_OUTPUT} ${CMAKE_CURRENT_BINARY_DIR}/${ofn} PARENT_SCOPE)
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${ofn} PROPERTIES
     GENERATED 1)
+    
+  message(STATUS "TABLEGEN_OUTPUT: ${TABLEGEN_OUTPUT} ${CMAKE_CURRENT_BINARY_DIR}/${ofn} PARENT_SCOPE")
 endfunction()
 
 # Creates a target for publicly exporting tablegen dependencies.

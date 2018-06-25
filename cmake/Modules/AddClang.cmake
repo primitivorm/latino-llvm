@@ -16,9 +16,10 @@ function(clang_tablegen)
     message(FATAL_ERROR "SOURCE source-file required by clang_tablegen")
   endif()
 
-  set( LLVM_TARGET_DEFINITIONS ${CTG_SOURCE} )
+  set(LLVM_TARGET_DEFINITIONS ${CTG_SOURCE})
   tablegen(CLANG ${CTG_UNPARSED_ARGUMENTS})
-  #tablegen(LLVM ${CTG_UNPARSED_ARGUMENTS})
+  
+  message(STATUS "Tablegenning... source: ${CTG_SOURCE} - target: ${CTG_TARGET} - args: ${CTG_UNPARSED_ARGUMENTS})")
 
   if(CTG_TARGET)
     add_public_tablegen_target(${CTG_TARGET})
