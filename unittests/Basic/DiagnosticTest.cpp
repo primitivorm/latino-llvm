@@ -8,7 +8,7 @@ using namespace latino;
 
 namespace {
 TEST(DiagnosticTest, suppressAndTrap) {
-  DiagnosticEngine Diags(new DiagnosticIDs(), new DiagnosticOptions,
+  DiagnosticsEngine Diags(new DiagnosticIDs(), new DiagnosticOptions,
                          new IgnoringDiagConsumer());
   Diags.setSuppressAllDiagnostics(true);
   {
@@ -28,7 +28,7 @@ TEST(DiagnosticTest, suppressAndTrap) {
 
 TEST(DiagnosticTest, suppressAfterFatalError) {
 	for (unsigned Suppress = 0; Suppress != 2; ++Suppress) {
-    DiagnosticEngine Diags(new DiagnosticIDs(), new DiagnosticOptions,
+    DiagnosticsEngine Diags(new DiagnosticIDs(), new DiagnosticOptions,
                            new IgnoringDiagConsumer());
 
     Diags.setSuppressAfterFatalError(Suppress);
@@ -45,7 +45,7 @@ TEST(DiagnosticTest, suppressAfterFatalError) {
 }
 
 TEST(DiagnosticTest, diagnosticError) {
-  DiagnosticEngine Diags(new DiagnosticIDs(), new DiagnosticOptions,
+  DiagnosticsEngine Diags(new DiagnosticIDs(), new DiagnosticOptions,
                          new IgnoringDiagConsumer());
   PartialDiagnostic::StorageAllocator Alloc;
   llvm::Expected<std::pair<int, int>> Value = DiagnosticError::create(

@@ -54,12 +54,12 @@ if(LLVM_CONFIG)
   find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
     
-  message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
+  #message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
 
   find_program(CLANG_TABLEGEN_EXE "clang-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
     
-  message(STATUS "CLANG_TABLEGEN_EXE: ${CLANG_TABLEGEN_EXE}")
+  #message(STATUS "CLANG_TABLEGEN_EXE: ${CLANG_TABLEGEN_EXE}")
 
   set(LLVMCONFIG_FILE "${LLVM_CMAKE_PATH}/LLVMConfig.cmake")
   if(EXISTS ${LLVMCONFIG_FILE})
@@ -139,6 +139,6 @@ if(LATINO_INCLUDE_TESTS)
   enable_testing()
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
-  message(STATUS "Found gtest: ${GTEST_INCLUDE_DIRS}, gtest/libs: ${GTEST_BOTH_LIBRARIES}")
+  #message(STATUS "Found gtest: ${GTEST_INCLUDE_DIRS}, gtest/libs: ${GTEST_BOTH_LIBRARIES}")
   add_subdirectory(unittests)
 endif()

@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace latino {
-class DiagnosticEngine;
+class DiagnosticsEngine;
 class SourceLocation;
     
 // Import the diagnostic enums themselves.
@@ -60,13 +60,21 @@ enum {
 } // namespace diag
 
 class DiagnosticIDs : public RefCountedBase<DiagnosticIDs> {
+public:
+	enum Level { Ignored, Note, Remark, Warning, Error, Fatal };
+
 private:
   diag::CustomDiagInfo *CustomDiagInfo;
 
 public:
-  enum Level { Ignored, Note, Remark, Warning, Error, Fatal };
+  
   DiagnosticIDs();
   ~DiagnosticIDs();
+
+private:
+	DiagnosticIDs::Level
+		getDiagnosticLevel(unsigned DiagID, SourceLocation Loc, 
+			const DiagnosticsEngine &Diag) const LLVM_READONLY;
 };
 } // namespace latino
 

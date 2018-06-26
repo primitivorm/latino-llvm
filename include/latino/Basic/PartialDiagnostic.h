@@ -18,7 +18,7 @@ private:
   mutable unsigned DiagID = 0;   
 
 public:
-  enum { MaxArguments = DiagnosticEngine::MaxArguments };
+  enum { MaxArguments = DiagnosticsEngine::MaxArguments };
 
   struct Storage {
     enum { MaxArguments = PartialDiagnostic::MaxArguments };
