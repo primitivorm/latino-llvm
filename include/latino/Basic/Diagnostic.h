@@ -13,6 +13,7 @@
 
 namespace latino {
 class DiagnosticOptions;
+class DiagnosticBuilder;
 
 class FixItHint {
 
