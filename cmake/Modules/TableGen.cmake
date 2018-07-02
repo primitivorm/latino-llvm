@@ -9,6 +9,7 @@ if(LLVM_MAIN_INCLUDE_DIR)
 endif()
 
 function(tablegen project ofn)
+  message(STATUS "function (tablegen ${project} ${ofn})")
   # Validate calling context.
   if(NOT ${project}_TABLEGEN_EXE)
     message(FATAL_ERROR "${project}_TABLEGEN_EXE not set")
@@ -35,11 +36,8 @@ function(tablegen project ofn)
   else()
     file(GLOB local_tds "*.td")
     file(GLOB_RECURSE global_tds "${LLVM_MAIN_INCLUDE_DIR}/llvm/*.td")
-    set(additional_cmdline
-      -o ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp
-      )
-      
-      #message(STATUS "local_tds: ${local_tds} - global_tds: ${global_tds}")
+    set(additional_cmdline -o ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp)
+    #message(STATUS "local_tds: ${local_tds} - global_tds: ${global_tds}")
   endif()
 
   if (IS_ABSOLUTE ${LLVM_TARGET_DEFINITIONS})
@@ -48,9 +46,8 @@ function(tablegen project ofn)
     set(LLVM_TARGET_DEFINITIONS_ABSOLUTE
       ${CMAKE_CURRENT_SOURCE_DIR}/${LLVM_TARGET_DEFINITIONS})
   endif()
-  
-  #message(STATUS "LLVM_TARGET_DEFINITIONS_ABSOLUTE: ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}")
-  
+
+  message(STATUS "LLVM_TARGET_DEFINITIONS_ABSOLUTE: ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}")
   if (LLVM_ENABLE_DAGISEL_COV)
     list(FIND ARGN "-gen-dag-isel" idx)
     if( NOT idx EQUAL -1 )
@@ -64,9 +61,9 @@ function(tablegen project ofn)
       list(APPEND LLVM_TABLEGEN_FLAGS "-gisel-coverage-file=${LLVM_GISEL_COV_PREFIX}all")
     endif()
   endif()
-  
-  #message(STATUS "LLVM_ENABLE_DAGISEL_COV: ${LLVM_ENABLE_DAGISEL_COV}")
-  #message(STATUS "LLVM_ENABLE_GISEL_COV: ${LLVM_ENABLE_GISEL_COV}")
+
+  message(STATUS "LLVM_ENABLE_DAGISEL_COV: ${LLVM_ENABLE_DAGISEL_COV}")
+  message(STATUS "LLVM_ENABLE_GISEL_COV: ${LLVM_ENABLE_GISEL_COV}")
 
   # We need both _TABLEGEN_TARGET and _TABLEGEN_EXE in the  DEPENDS list
   # (both the target and the file) to have .inc files rebuilt on
@@ -91,6 +88,17 @@ function(tablegen project ofn)
     ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}
     COMMENT "Building ${ofn}..."
     )
+
+  message(STATUS "add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp")
+  message(STATUS "COMMAND ${${project}_TABLEGEN_EXE} ${ARGN} -I ${CMAKE_CURRENT_SOURCE_DIR}")
+  message(STATUS "LLVM_TABLEGEN_FLAGS: ${LLVM_TABLEGEN_FLAGS}")
+  message(STATUS "LLVM_TARGET_DEFINITIONS_ABSOLUTE: ${LLVM_TARGET_DEFINITIONS_ABSOLUTE}")
+  message(STATUS "additional_cmdline: ${additional_cmdline}")
+  message(STATUS "DEPENDS ${${project}_TABLEGEN_TARGET} ${${project}_TABLEGEN_EXE}")
+  message(STATUS "${local_tds} ${global_tds}")
+  message(STATUS "${LLVM_TARGET_DEFINITIONS_ABSOLUTE}")
+  message(STATUS "COMMENT Building ${ofn}...")
+
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}
     # Only update the real output file if there are any differences.
     # This prevents recompilation of all the files depending on it if there
@@ -102,6 +110,13 @@ function(tablegen project ofn)
     COMMENT "Updating ${ofn}..."
     )
 
+  message(STATUS "add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ofn}")
+  message(STATUS "COMMAND ${CMAKE_COMMAND} -E copy_if_different")
+  message(STATUS "${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp")
+  message(STATUS "${CMAKE_CURRENT_BINARY_DIR}/${ofn}")
+  message(STATUS "DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp")
+  message(STATUS "COMMENT Updating ${ofn}...")
+
   # `make clean' must remove all those generated files:
   set_property(DIRECTORY APPEND
     PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${ofn}.tmp ${ofn})
@@ -109,8 +124,8 @@ function(tablegen project ofn)
   set(TABLEGEN_OUTPUT ${TABLEGEN_OUTPUT} ${CMAKE_CURRENT_BINARY_DIR}/${ofn} PARENT_SCOPE)
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${ofn} PROPERTIES
     GENERATED 1)
-    
-  #message(STATUS "TABLEGEN_OUTPUT: ${TABLEGEN_OUTPUT} ${CMAKE_CURRENT_BINARY_DIR}/${ofn} PARENT_SCOPE")
+
+  message(STATUS "TABLEGEN_OUTPUT: ${TABLEGEN_OUTPUT} ${CMAKE_CURRENT_BINARY_DIR}/${ofn}")
 endfunction()
 
 # Creates a target for publicly exporting tablegen dependencies.
