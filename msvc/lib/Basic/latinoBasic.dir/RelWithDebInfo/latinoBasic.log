@@ -1,0 +1,126 @@
+﻿  Building Custom Rule C:/src/latino-llvm/lib/Basic/CMakeLists.txt
+  CMake does not need to re-run because C:\src\latino-llvm\msvc\lib\Basic\CMakeFiles\generate.stamp is up-to-date.
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24215.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /I"C:\src\latino-llvm\msvc\lib\Basic" /I"C:\src\latino-llvm\lib\Basic" /I"C:\src\latino-llvm\include" /I"C:\src\latino-llvm\msvc\include" /IC:\bin\LLVM7\include /Zi /W3 /WX- /O2 /Ob1 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D _LARGEFILE_SOURCE /D _FILE_OFFSET_BITS=64 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_NONSTDC_NO_WARNINGS /D _SCL_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /D UNICODE /D _UNICODE /D __STDC_CONSTANT_MACROS /D __STDC_FORMAT_MACROS /D __STDC_LIMIT_MACROS /D _HAS_EXCEPTIONS=0 /D GTEST_HAS_RTTI=0 /D "CMAKE_INTDIR=\"RelWithDebInfo\"" /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR- /Fo"latinoBasic.dir\RelWithDebInfo\\" /Fd"latinoBasic.dir\RelWithDebInfo\latinoBasic.pdb" /Gd /TP /analyze- /errorReport:prompt  /EHs-c- "C:\src\latino-llvm\lib\Basic\Diagnostic.cpp" "C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp" "C:\src\latino-llvm\lib\Basic\DiagnosticOptions.cpp" "C:\src\latino-llvm\lib\Basic\SourceLocation.cpp" "C:\src\latino-llvm\lib\Basic\SourceManager.cpp"
+cl : Command line warning D9025: overriding '/EHs' with '/EHs-'
+cl : Command line warning D9025: overriding '/EHc' with '/EHc-'
+  
+  Diagnostic.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(275): error C2086: 'bool latino::DiagnosticsEngine::SuppressAllDiagnostics': redefinition
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(190): note: see declaration of 'latino::DiagnosticsEngine::SuppressAllDiagnostics'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(309): error C2248: 'latino::DiagnosticIDs::getDiagnosticLevel': cannot access private member declared in class 'latino::DiagnosticIDs'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(135): note: see declaration of 'latino::DiagnosticIDs::getDiagnosticLevel'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(121): note: see declaration of 'latino::DiagnosticIDs'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(312): error C2027: use of undefined type 'latino::DiagnosticBuilder'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(318): error C2027: use of undefined type 'latino::DiagnosticBuilder'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(321): error C2027: use of undefined type 'latino::DiagnosticBuilder'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(322): error C2027: use of undefined type 'latino::DiagnosticBuilder'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(396): error C2027: use of undefined type 'latino::DiagnosticBuilder'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(396): error C2228: left of '.addFlagValue' must have class/struct/union
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(34): error C2059: syntax error: ';'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(34): error C2059: syntax error: ')'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(13): error C3861: 'setClient': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(14): error C2065: 'ArgToStringFn': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(14): error C2065: 'DummyArgToStringFn': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(15): error C3861: 'Reset': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(19): error C3861: 'setClient': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(23): warning C4150: deletion of pointer to incomplete type 'latino::diag::CustomDiagInfo'; no destructor called
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(47): note: see declaration of 'latino::diag::CustomDiagInfo'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(32): error C2039: 'getID': is not a member of 'latino::Diagnostic'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(326): note: see declaration of 'latino::Diagnostic'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(32): error C2039: 'getLocation': is not a member of 'latino::Diagnostic'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(326): note: see declaration of 'latino::Diagnostic'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(32): error C2660: 'latino::DiagnosticIDs::getDiagnosticLevel': function does not take 2 arguments
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(36): error C2039: 'EmitDiag': is not a member of 'latino::DiagnosticIDs'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(121): note: see declaration of 'latino::DiagnosticIDs'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(40): error C3861: 'ProcessDialog': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(42): error C3861: 'Clear': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(43): error C2065: 'DelayedDiagID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(43): error C3861: 'ReportDelayed': identifier not found
+  DiagnosticIDs.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(18): error C2270: 'getDiagnosticLevel': modifiers not allowed on nonmember functions
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(21): error C2065: 'CustomDiagInfo': undeclared identifier
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(21): error C2227: left of '->getLevel' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(21): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(23): error C3861: 'getBuiltinDiagClass': identifier not found
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(24): error C2065: 'CLASS_NOTE': undeclared identifier
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(25): error C3861: 'getDiagnosticSeverity': identifier not found
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(25): error C3861: 'toLevel': identifier not found
+  DiagnosticOptions.cpp
+  SourceLocation.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+  SourceManager.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+  Generating Code...

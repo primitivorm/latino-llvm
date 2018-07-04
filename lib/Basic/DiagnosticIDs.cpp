@@ -5,10 +5,13 @@
 */
 
 namespace latino {
-namespace diag {
-class CustomDiagInfo {};
-} // namespace diag
+	class DiagnosticsEngine;
+	class SourceLocation;
 
+namespace diag {
+	
+
+} // namespace diag
 
 DiagnosticIDs::Level
 getDiagnosticLevel(unsigned DiagID, SourceLocation Loc,

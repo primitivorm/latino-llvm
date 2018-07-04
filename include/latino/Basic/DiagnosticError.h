@@ -4,7 +4,7 @@
 #include "latino/Basic/PartialDiagnostic.h"
 #include "llvm/Support/Error.h"
 
-namespace latino{
+namespace latino {
 
     /// Carries a Clang diagnostic in an llvm::Error.
     ///

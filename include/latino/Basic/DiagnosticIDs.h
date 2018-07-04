@@ -46,6 +46,9 @@ namespace diag {
     
 class CustomDiagInfo;
 
+/// All of the diagnostics that can be emitted by the frontend
+typedef unsigned kind;
+
 // Get typedefs for common diagnostics.
 enum {
 #define DIAG(ENUM, FLAGS, DEFAULT_MAPPING, DESC, GROUP, SFINAE, CATEGORY,      \
@@ -57,7 +60,63 @@ enum {
 #undef DIAG
 };
 
+/// Enum values that allow the client to map NOTEs, WARNINGs, and EXTENSIONs
+/// to either Ignore (nothing), Remark (emit a remark), Warning
+/// (emit a warning) or Error (emit as an error).  It allows clients to
+/// map ERRORs to Error or Fatal (stop emitting diagnostics after this one)
+enum class Severity {
+	//NOTE: 0 means "uncomputed"
+	Ignored = 1, ///< Do not present this diagnostic, ignore it
+	Remark = 2,  ///< Present this diagnostic as a remark
+	Warning = 3, ///< Present this diagnostic as a warning
+	Error = 4,   ///< Present this diagnostic as an error
+	Fatal = 5    ///< Present this diagnostic as a fatal error
+};
+
+/// Flavors of diagnostics we can emit. Used to filter for a particular
+/// kind of diagnostic (for instance, for -W/-R flags)
+enum class Flavor {
+	WarningOrError,	///< A diagnostic that indicates a problem or potential
+					///< problem. Can be made fatal by -Werror
+					Remark			///< A diagnostic that indicates normal progress through
+									///< compilation
+};
+
 } // namespace diag
+
+
+class DiagnosticMapping {
+	unsigned Severity : 3;
+	unsigned IsUser : 1;
+	unsigned IsPragma : 1;
+	unsigned HasNoWarningAsError : 1;
+	unsigned HasNoErrorAsFatal : 1;
+	unsigned WasUpgradedFromWarning : 1;
+
+public:
+	static DiagnosticMapping Make(diag::Severity Severity, bool IsUser, bool IsPragma) {
+		DiagnosticMapping Result;
+		Result.Severity = (unsigned)Severity;
+		Result.IsUser = (unsigned)IsUser;
+		Result.IsPragma = (unsigned)IsPragma;
+		Result.HasNoWarningAsError = 0;
+		Result.HasNoErrorAsFatal = 0;
+		Result.WasUpgradedFromWarning = 0;
+		return Result;
+	}
+
+	diag::Severity getSeverity() const { return (diag::Severity) Severity; }
+	void setSeverity(diag::Severity Value) { Severity = (unsigned)Value; }
+
+	bool isUser() const { return IsUser; }
+	bool isPragma() const { return IsPragma; }
+
+	bool isErrorOrFatal() const {
+		return getSeverity() == diag::Severity::Error ||
+			getSeverity() == diag::Severity::Fatal;
+	}
+
+}; /* DiagnosticMapping */
 
 class DiagnosticIDs : public RefCountedBase<DiagnosticIDs> {
 public:

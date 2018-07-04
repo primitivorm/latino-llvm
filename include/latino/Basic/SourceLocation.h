@@ -55,6 +55,21 @@ private:
 	int getOpaqueValue() const { return ID; }
 };
 
+/// Encodes a location in the source. The SourceManager can decode this
+/// to get at the full include stack, line and column information.
+///
+/// Technically, a source location is simply an offset into the manager's view
+/// of the input source, which is all input buffers (including macro
+/// expansions) concatenated in an effectively arbitrary order. The manager
+/// actually maintains two blocks of input buffers. One, starting at offset
+/// 0 and growing upwards, contains all buffers from this module. The other,
+/// starting at the highest possible offset and growing downwards, contains
+/// buffers of loaded modules.
+///
+/// In addition, one bit of SourceLocation is used for quick access to the
+/// information whether the location is in a file or a macro expansion.
+///
+/// It is important that this type remains small. It is currently 32 bits wide.
 class SourceLocation {  
   //friend class ASTReader;
   //friend class ASTWriter;
@@ -63,9 +78,6 @@ class SourceLocation {
   unsigned ID = 0;
 
   enum : unsigned { MacroIDBit = 1U << 31 };
-
-private:
-  unsigned getOffset() const { return ID; }
 
 public:
   bool isFileID() const { return (ID & MacroIDBit) == 0; }
@@ -86,13 +98,14 @@ private:
 	}
 
 	static SourceLocation getFileLoc(unsigned ID) {
+		assert((ID & MacroIDBit) == 0 && "Ran out of source locations!");
 		SourceLocation L;
 		L.ID = ID;
 		return L;
 	}
 
 	static SourceLocation getMacroLoc(unsigned ID) {
-		assert(ID & MacroIDBit == 0 && "Ran out of source locations!");
+		assert((ID & MacroIDBit == 0) && "Ran out of source locations!");
 		SourceLocation L;
 		L.ID = MacroIDBit | ID;
 		return L;
@@ -104,7 +117,7 @@ public:
   SourceLocation getLocWithOffset(int Offset) const {
     assert(((getOffset() + Offset) & MacroIDBit) == 0 && "offset overflow");
     SourceLocation L;
-    L.ID = ID;
+    L.ID = ID + Offset;
     return L;
   }
 
@@ -137,7 +150,7 @@ public:
 
   /// Turn a pointer encoding of a SourceLocation object back
   /// into a real SourceLocation.
-  static SourceLocation getFromPtrEncoding(const void*Encoding) {
+  static SourceLocation getFromPtrEncoding(const void *Encoding) {
 	  return getFromRawEncoding((unsigned)(uintptr_t)Encoding);
   }
 
@@ -163,6 +176,7 @@ inline bool operator<(const SourceLocation &LHS, const SourceLocation &RHS) {
 	return LHS.getRawEncoding() < RHS.getRawEncoding();
 }
 
+/// A trivial tuple used to represent a source range.
 class SourceRange {
 	SourceLocation B;
 	SourceLocation E;
@@ -241,12 +255,98 @@ public:
 
 }; /* CharSourceRange */
 
-class FullSourceLocation : public SourceLocation {
+/// Represents an unpacked "presumed" location which can be presented
+/// to the user.
+///
+/// A 'presumed' location can be modified by \#line and GNU line marker
+/// directives and is always the expansion point of a normal location.
+///
+/// You can get a PresumedLoc from a SourceLocation with SourceManager.
+class PresumedLoc {
+	const char *Filename = nullptr;
+	unsigned Line, Col;
+	SourceLocation IncludeLoc;
+
+public:
+	PresumedLoc() = default;
+	PresumedLoc(const char *FN, unsigned Ln, unsigned Co, SourceLocation IL)
+		: Filename(FN), Line(Ln), Col(Co), IncludeLoc(IL) {}
+
+	/// Return true if this object is invalid or uninitialized.
+	///
+	/// This occurs when created with invalid source locations or when walking
+	/// off the top of a \#include stack.
+	bool IsInvalid() const { return Filename == nullptr; }
+	bool isValid() const { return Filename != nullptr; }
+
+	/// Return the presumed filename of this location.
+	///
+	/// This can be affected by \#line etc.
+	const char *getFilename() const {
+		assert(isValid());
+		return Filename;
+	}
+
+	/// Return the presumed line number of this location.
+	///
+	/// This can be affected by \#line etc.
+	unsigned getLine() const {
+		assert(isValid());
+		return Line;
+	}
+
+	/// Return the presumed column number of this location.
+	///
+	/// This cannot be affected by \#line, but is packaged here for convenience.
+	unsigned getColumn() const {
+		assert(isValid());
+		return Col;
+	}
+
+	/// Return the presumed include location of this location.
+	///
+	/// This can be affected by GNU linemarker directives.
+	SourceLocation getIncludeLoc() const {
+		assert(isValid());
+		return IncludeLoc;
+	}
+	
+}; /* PresumedLoc */
+
+class FileEntry;
+
+/// A SourceLocation and its associated SourceManager.
+///
+/// This is useful for argument passing to functions that expect both objects.
+class FullSourceLoc : public SourceLocation {
   const SourceManager *SrcMgr = nullptr;
 
 public:
-  const char *getCharacterData(bool *Invalid = nullptr) const;
+	/// Creates a FullSourceLoc where isValid() returns \c false.
+	FullSourceLoc() = default;
+	explicit FullSourceLoc(SourceLocation Loc, const SourceManager &SM)
+		:SourceLocation(Loc), SrcMgr(&SM){}
+
+	bool hasManager() const {
+		bool hasSrcMgr = SrcMgr != nullptr;
+		assert(hasSrcMgr == isValid() && "FullSourceLoc has location but no manager");
+		return hasSrcMgr;
+	}
+
+	/// \pre This FullSourceLoc has an associated SourceManager.
+	const SourceManager &getManager() const {
+		assert(SrcMgr && "SourceManager is NULL.");
+	}
+
+	FileID getFileID() const;
+
+	FullSourceLoc getExpansionLoc() const;
+
+
+	const char *getCharacterData(bool *Invalid = nullptr) const;
 }; /* FullSourceLocation */
+
+
 
 } // namespace latino
 

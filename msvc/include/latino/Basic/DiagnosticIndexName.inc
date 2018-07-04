@@ -1,0 +1,3 @@
+DIAG_NAME_INDEX(err_cannot_open_file)
+DIAG_NAME_INDEX(err_target_unknown_triple)
+DIAG_NAME_INDEX(warn_mt_message)

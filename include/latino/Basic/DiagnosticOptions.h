@@ -7,6 +7,17 @@
 #include <vector>
 
 namespace latino {
+
+/// Specifies which overload candidates to display when overload
+/// resolution fails.
+enum OverloadsShown : unsigned {
+	/// Show all overloads
+	Ovl_All,
+
+	/// Show just the "best" overload candidates
+	Ovl_Best
+};
+
 class DiagnosticOptions : public RefCountedBase<DiagnosticOptions> {
 public:
 	DiagnosticOptions() {
