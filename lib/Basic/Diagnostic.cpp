@@ -22,6 +22,7 @@ DiagnosticsEngine::~DiagnosticsEngine() {
 DiagnosticIDs::DiagnosticIDs() { CustomDiagInfo = nullptr; }
 DiagnosticIDs::~DiagnosticIDs() { delete CustomDiagInfo; }
 
+
 bool DiagnosticsEngine::EmitCurrentDiagnostic(bool Force) {
 	assert(getClient() && "DiagnosticClient not set!");
 
