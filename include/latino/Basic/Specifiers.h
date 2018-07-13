@@ -21,7 +21,7 @@ namespace latino{
         TSS_unsigned
     };
 
-    enum TypeSpecifierType {
+    enum TypeSpecifierPipe {
         TSP_unspecified,
         TSP_pipe
     };
@@ -63,12 +63,13 @@ namespace latino{
         TST_auto_type,        // __auto_type extension
         TST_unknown_anytype,  // __unknown_anytype extension
         TST_atomic,           // C11 _Atomic
-    /*
-    #define GENERIC_IMAGE_TYPE(ImgType, Id) TST_##ImgType##_t, // OpenCL image types
-    #include "latino/Basic/OpenCLImageTypes.def"
-    */
-        TST_error // erroneous type
+		TST_error // erroneous type
     };
+	/*
+	#define GENERIC_IMAGE_TYPE(ImgType, Id) TST_##ImgType##_t, // OpenCL image types
+	#include "latino/Basic/OpenCLImageTypes.def"
+	*/
+
 
     /// Structure that packs information about the type specifiers that
     /// were written in a particular type specifier sequence

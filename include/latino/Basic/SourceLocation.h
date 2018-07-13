@@ -94,7 +94,7 @@ public:
 private:
 	/// Return the offset into the manager's global input view.
 	unsigned getOffset() const {
-		return ID & MacroIDBit;
+		return ID & ~MacroIDBit;
 	}
 
 	static SourceLocation getFileLoc(unsigned ID) {
@@ -155,7 +155,8 @@ public:
   }
 
   static bool isPairOfFileLocations(SourceLocation Start, SourceLocation End) {
-	  return Start.isValid() && Start.isFileID() && End.isValid() && End.isFileID();
+	  return Start.isValid() && Start.isFileID() && End.isValid() && 
+		  End.isFileID();
   }
 
   void print(raw_ostream &OS, const SourceManager &SM) const;
@@ -202,7 +203,6 @@ public:
 	bool operator!=(const SourceRange &X) const {
 		return B != X.B || E != X.E;
 	}
-
 }; /* SourceRange */
 
 /// Represents a character-granular source range.
@@ -324,6 +324,7 @@ class FullSourceLoc : public SourceLocation {
 public:
 	/// Creates a FullSourceLoc where isValid() returns \c false.
 	FullSourceLoc() = default;
+
 	explicit FullSourceLoc(SourceLocation Loc, const SourceManager &SM)
 		:SourceLocation(Loc), SrcMgr(&SM){}
 
@@ -341,13 +342,121 @@ public:
 	FileID getFileID() const;
 
 	FullSourceLoc getExpansionLoc() const;
+	FullSourceLoc getSpellingLoc() const;
+	FullSourceLoc getFileLoc() const;
+	PresumedLoc getPresumendLoc(bool UseLineDirectives = true) const;
+	bool isMacroArgExpansion(FullSourceLoc *StartLoc = nullptr) const;
+	FullSourceLoc getImmediateMacroCallerLoc() const;
+	std::pair<FullSourceLoc, StringRef> getModuleImportLoc() const;
+	unsigned getFileOffset() const;
 
+	unsigned getExpansionLineNumber(bool *Invalid = nullptr) const;
+	unsigned getExpansionColumnNumber(bool *Invalid = nullptr) const;
 
+	unsigned getSpellingLineNumber(bool *Invalid = nullptr) const;
+	unsigned getSpellingColumnNumber(bool *Invalid = nullptr) const;
+	
 	const char *getCharacterData(bool *Invalid = nullptr) const;
+	
+	unsigned getLineNumber(bool *Invalid = nullptr) const;
+	unsigned getColumnNumber(bool *Invalid = nullptr) const;
+
+	const FileEntry *getFileEntry() const;
+
+	/// Return a StringRef to the source buffer data for the
+	/// specified FileID
+	StringRef getBufferData(bool *Invalid = nullptr) const;
+
+	/// Decompose the specified location into a raw FileID + Offset pair.
+	///
+	/// The first element is the FileID, the second is the offset from the
+	/// start of the buffer of the location
+	std::pair<FileID, unsigned> getDecomposedLoc() const;
+
+	bool isInSystemHeader() const;
+
+	/// Determines the order of 2 source locations in the translation unit.
+	///
+	/// \returns true if this source location comes before 'Loc', false otherwise
+	bool isBeforeInTranslationUnitThan(SourceLocation Loc) const;
+
+	/// Determines the order of 2 source locations in the translation unit.
+	///
+	/// \returns true if this source location comes before 'Loc', false otherwise
+	bool isBeforeInTranslationUnitThan(FullSourceLoc Loc) const {
+		assert(Loc.isValid());
+		assert(SrcMgr == Loc.SrcMgr && "Loc comes from another SourceManager!");
+		return isBeforeInTranslationUnitThan((SourceLocation)Loc);
+	}
+
+	/// Comparison function class, useful for sorting FullSourceLocs
+	struct BeforeThanCompare {
+		bool operator()(const FullSourceLoc& lhs, const FullSourceLoc& rhs) const {
+			return lhs.isBeforeInTranslationUnitThan(rhs);
+		}
+	};
+
+	/// Prints information about this FullSourceLoc to stderr.
+	///
+	/// This is useful for debugging
+	void dump() const;
+
+	friend bool 
+		operator==(const FullSourceLoc &LHS, FullSourceLoc &RHS) {
+		return LHS.getRawEncoding() == RHS.getRawEncoding() &&
+			LHS.SrcMgr == RHS.SrcMgr;
+	}
+
+	friend bool 
+		operator!=(const FullSourceLoc &LHS, FullSourceLoc &RHS) {
+		return !(LHS == RHS);
+	}
+
 }; /* FullSourceLocation */
 
-
-
 } // namespace latino
+
+namespace llvm {
+	/// Define DenseMapInfo so that FileID's can be used as keys in DenseMap and
+	/// DenseSets
+	template <>
+	struct DenseMapInfo<latino::FileID> {
+		static latino::FileID getEmptyKey() {
+			return{};
+		}
+
+		static latino::FileID getTombstroneKey() {
+			return latino::FileID::getSentinel();
+		}
+
+		static unsigned getHashValue(latino::FileID S) {
+			return S.getHashValue();
+		}
+
+		static bool isEqual(latino::FileID LHS, latino::FileID RHS) {
+			return LHS == RHS;
+		}
+	};
+
+	template <>
+	struct isPodLike<latino::SourceLocation> { static const bool value = true; };
+	template <>
+	struct isPodLike<latino::FileID> { static const bool value = true; };
+
+	// Teach SmallPtrSet how to handle SourceLocation
+	template <>
+	struct PointerLikeTypeTraits<latino::SourceLocation> {
+		enum { NumLowBitsAvailable = 0 };
+
+		static void *getAsVoidPointer(latino::SourceLocation L) {
+			return L.getPtrEncoding();
+		}
+
+		static latino::SourceLocation getFromVoidPointer(void *P) {
+			return latino::SourceLocation::getFromRawEncoding((unsigned)(uintptr_t)P);
+		}
+	};
+
+} /* namespace llvm */
 
 #endif

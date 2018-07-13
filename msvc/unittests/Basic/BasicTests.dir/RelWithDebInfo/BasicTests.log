@@ -18,123 +18,33 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(275): error C2086: 'bool latino::DiagnosticsEngine::SuppressAllDiagnostics': redefinition
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(190): note: see declaration of 'latino::DiagnosticsEngine::SuppressAllDiagnostics'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(309): error C2248: 'latino::DiagnosticIDs::getDiagnosticLevel': cannot access private member declared in class 'latino::DiagnosticIDs'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(135): note: see declaration of 'latino::DiagnosticIDs::getDiagnosticLevel'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(121): note: see declaration of 'latino::DiagnosticIDs'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(312): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(318): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(321): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(322): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(396): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(396): error C2228: left of '.addFlagValue' must have class/struct/union
-C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(34): error C2059: syntax error: ';'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(34): error C2059: syntax error: ')'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(16): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(16): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'const char [8]' (or there is no acceptable conversion)
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest-message.h(55): note: could be 'void operator <<(const testing::internal::Secret &,int)'
-  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)'
-  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(394): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(16): note: while trying to match the argument list '(latino::DiagnosticBuilder, const char [8])'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(17): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(18): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'const char [5]' (or there is no acceptable conversion)
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest-message.h(55): note: could be 'void operator <<(const testing::internal::Secret &,int)'
-  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)'
-  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(394): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(18): note: while trying to match the argument list '(latino::DiagnosticBuilder, const char [5])'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(19): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(19): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'const char [8]' (or there is no acceptable conversion)
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest-message.h(55): note: could be 'void operator <<(const testing::internal::Secret &,int)'
-  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)'
-  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(394): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(19): note: while trying to match the argument list '(latino::DiagnosticBuilder, const char [8])'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): error C2039: 'hasErrorOccurred': is not a member of 'latino::DiagnosticErrorTrap'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(400): note: see declaration of 'latino::DiagnosticErrorTrap'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(21): error C2039: 'hasUnrecoverableErrorOcurred': is not a member of 'latino::DiagnosticErrorTrap'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(400): note: see declaration of 'latino::DiagnosticErrorTrap'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(21): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(21): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): error C2039: 'hasErrorOccurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(24): error C2039: 'hasFatalErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(24): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(24): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(25): error C2039: 'hasUncompilableErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(25): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(25): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(26): error C2039: 'hasUnrecoverableErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(26): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(26): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(34): error C2039: 'setSuppressAfterFatalError': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(35): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(36): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'const char [5]' (or there is no acceptable conversion)
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest-message.h(55): note: could be 'void operator <<(const testing::internal::Secret &,int)'
-  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)'
-  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(394): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(36): note: while trying to match the argument list '(latino::DiagnosticBuilder, const char [5])'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(37): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(37): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'const char [8]' (or there is no acceptable conversion)
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest-message.h(55): note: could be 'void operator <<(const testing::internal::Secret &,int)'
-  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)'
-  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(394): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(37): note: while trying to match the argument list '(latino::DiagnosticBuilder, const char [8])'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(38): error C2039: 'hasErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(38): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(38): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(39): error C2039: 'hasFatalErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(39): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(39): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(40): error C2039: 'hasUncompilableErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(40): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(40): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(41): error C2039: 'hasUnrecoverableErrorOcurred': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(41): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(41): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(43): error C2039: 'getNumWarnings': is not a member of 'latino::DiagnosticsEngine'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(125): note: see declaration of 'latino::DiagnosticsEngine'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(43): error C2660: 'testing::internal::EqHelper<false>::Compare': function does not take 3 arguments
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(43): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest.h(256): note: see declaration of 'testing::AssertionResult'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(54): error C2678: binary '<<': no operator found which takes a left-hand operand of type 'latino::PartialDiagnostic' (or there is no acceptable conversion)
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest-message.h(55): note: could be 'void operator <<(const testing::internal::Secret &,int)'
-  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)'
-  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(394): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(54): note: while trying to match the argument list '(latino::PartialDiagnostic, const char [5])'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(54): error C2660: 'latino::DiagnosticError::create': function does not take 1 arguments
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(51): error C2512: 'llvm::Expected<std::pair<int,int>>': no appropriate default constructor available
-  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(51): note: see declaration of 'llvm::Expected<std::pair<int,int>>'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(61): error C2039: 'getDiagID': is not a member of 'latino::PartialDiagnostic'
-  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(16): note: see declaration of 'latino::PartialDiagnostic'
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(61): error C2660: 'testing::internal::EqHelper<false>::Compare': function does not take 3 arguments
-C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(61): error C2512: 'testing::AssertionResult': no appropriate default constructor available
-  C:\bin\googletest-release-1.8-0\gtest\include\gtest/gtest.h(256): note: see declaration of 'testing::AssertionResult'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(167): error C2086: 'latino::diag::CustomDiagInfo *latino::DiagnosticIDs::CustomDiagInfo': redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(158): note: see declaration of 'latino::DiagnosticIDs::CustomDiagInfo'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(170): error C2535: 'latino::DiagnosticIDs::DiagnosticIDs(void)': member function already defined or declared
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(162): note: see declaration of 'latino::DiagnosticIDs::DiagnosticIDs'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(171): error C2535: 'latino::DiagnosticIDs::~DiagnosticIDs(void)': member function already defined or declared
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(163): note: see declaration of 'latino::DiagnosticIDs::~DiagnosticIDs'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): error C3490: 'CurDiagID' cannot be modified because it is being accessed through a const object
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): warning C4800: 'const unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(907): error C2039: 'setNoErrorAsFatal': is not a member of 'latino::DiagnosticMapping'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(88): note: see declaration of 'latino::DiagnosticMapping'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(916): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2065: 'DeclContext': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2923: 'std::is_same': 'DeclContext' is not a valid template type argument for parameter '_Ty2'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2143: syntax error: missing ';' before '<<'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2433: 'type': 'inline' not permitted on data declarations
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2061: syntax error: identifier 'T'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C2805: binary 'operator <<' has too few parameters
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1178): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1184): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1191): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1197): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1211): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1220): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1233): error C2989: 'latino::Diagnostic': class template has already been declared as a non-class template
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(842): note: see declaration of 'latino::Diagnostic'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1285): error C2989: 'latino::DiagnosticConsumer': class template has already been declared as a non-class template
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(30): note: see declaration of 'latino::DiagnosticConsumer'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1329): fatal error C1903: unable to recover from previous error(s); stopping compilation

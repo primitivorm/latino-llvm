@@ -311,7 +311,7 @@ private:
 			unsigned Offset;
 
 			DiagStatePoint(DiagState *State, unsigned Offset)
-				:State(State), Offset(Offset);
+				:State(State), Offset(Offset) {}
 		};
 
 		/// Description of the diagnostic states and state transitions for a

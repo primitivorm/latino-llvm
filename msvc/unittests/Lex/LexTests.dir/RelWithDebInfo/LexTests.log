@@ -20,21 +20,33 @@ C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus ope
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(275): error C2086: 'bool latino::DiagnosticsEngine::SuppressAllDiagnostics': redefinition
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(190): note: see declaration of 'latino::DiagnosticsEngine::SuppressAllDiagnostics'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(309): error C2248: 'latino::DiagnosticIDs::getDiagnosticLevel': cannot access private member declared in class 'latino::DiagnosticIDs'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(135): note: see declaration of 'latino::DiagnosticIDs::getDiagnosticLevel'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(121): note: see declaration of 'latino::DiagnosticIDs'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(312): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(318): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(321): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(322): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(29): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(396): error C2027: use of undefined type 'latino::DiagnosticBuilder'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(334): note: see declaration of 'latino::DiagnosticBuilder'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(396): error C2228: left of '.addFlagValue' must have class/struct/union
-C:\src\latino-llvm\unittests\Lex\LexerTest.cpp(8): fatal error C1083: Cannot open include file: 'latino/Basic/MemoryBufferCache.h': No such file or directory
+C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(167): error C2086: 'latino::diag::CustomDiagInfo *latino::DiagnosticIDs::CustomDiagInfo': redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(158): note: see declaration of 'latino::DiagnosticIDs::CustomDiagInfo'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(170): error C2535: 'latino::DiagnosticIDs::DiagnosticIDs(void)': member function already defined or declared
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(162): note: see declaration of 'latino::DiagnosticIDs::DiagnosticIDs'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(171): error C2535: 'latino::DiagnosticIDs::~DiagnosticIDs(void)': member function already defined or declared
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(163): note: see declaration of 'latino::DiagnosticIDs::~DiagnosticIDs'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): error C3490: 'CurDiagID' cannot be modified because it is being accessed through a const object
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): warning C4800: 'const unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(907): error C2039: 'setNoErrorAsFatal': is not a member of 'latino::DiagnosticMapping'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(88): note: see declaration of 'latino::DiagnosticMapping'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(916): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2065: 'DeclContext': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2923: 'std::is_same': 'DeclContext' is not a valid template type argument for parameter '_Ty2'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2143: syntax error: missing ';' before '<<'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2433: 'type': 'inline' not permitted on data declarations
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2061: syntax error: identifier 'T'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C2805: binary 'operator <<' has too few parameters
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1178): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1184): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1191): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1197): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1211): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1220): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1233): error C2989: 'latino::Diagnostic': class template has already been declared as a non-class template
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(842): note: see declaration of 'latino::Diagnostic'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1285): error C2989: 'latino::DiagnosticConsumer': class template has already been declared as a non-class template
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(30): note: see declaration of 'latino::DiagnosticConsumer'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1329): fatal error C1903: unable to recover from previous error(s); stopping compilation
