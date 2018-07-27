@@ -44,13 +44,13 @@ namespace diag {
       DIAG_UPPER_LIMIT         = DIAG_START_REFACTORING   + DIAG_SIZE_REFACTORING
     };
     
-class CustomDiagInfo;
+	class CustomDiagInfo;
 
-/// All of the diagnostics that can be emitted by the frontend
-typedef unsigned kind;
+	/// All of the diagnostics that can be emitted by the frontend
+	typedef unsigned kind;
 
-// Get typedefs for common diagnostics.
-enum {
+	// Get typedefs for common diagnostics.
+	enum {
 #define DIAG(ENUM, FLAGS, DEFAULT_MAPPING, DESC, GROUP, SFINAE, CATEGORY,      \
              NOWERROR, SHOWINSYSHEADER)                                        \
   ENUM,
@@ -58,29 +58,29 @@ enum {
 #include "latino/Basic/DiagnosticCommonKinds.inc"
   NUM_BUILTIN_COMMON_DIAGNOSTICS
 #undef DIAG
-};
+	};
 
-/// Enum values that allow the client to map NOTEs, WARNINGs, and EXTENSIONs
-/// to either Ignore (nothing), Remark (emit a remark), Warning
-/// (emit a warning) or Error (emit as an error).  It allows clients to
-/// map ERRORs to Error or Fatal (stop emitting diagnostics after this one)
-enum class Severity {
-	//NOTE: 0 means "uncomputed"
-	Ignored = 1, ///< Do not present this diagnostic, ignore it
-	Remark = 2,  ///< Present this diagnostic as a remark
-	Warning = 3, ///< Present this diagnostic as a warning
-	Error = 4,   ///< Present this diagnostic as an error
-	Fatal = 5    ///< Present this diagnostic as a fatal error
-};
+	/// Enum values that allow the client to map NOTEs, WARNINGs, and EXTENSIONs
+	/// to either Ignore (nothing), Remark (emit a remark), Warning
+	/// (emit a warning) or Error (emit as an error).  It allows clients to
+	/// map ERRORs to Error or Fatal (stop emitting diagnostics after this one)
+	enum class Severity {
+		//NOTE: 0 means "uncomputed"
+		Ignored = 1, ///< Do not present this diagnostic, ignore it
+		Remark = 2,  ///< Present this diagnostic as a remark
+		Warning = 3, ///< Present this diagnostic as a warning
+		Error = 4,   ///< Present this diagnostic as an error
+		Fatal = 5    ///< Present this diagnostic as a fatal error
+	};
 
-/// Flavors of diagnostics we can emit. Used to filter for a particular
-/// kind of diagnostic (for instance, for -W/-R flags)
-enum class Flavor {
-	WarningOrError,	///< A diagnostic that indicates a problem or potential
-					///< problem. Can be made fatal by -Werror
-	Remark			///< A diagnostic that indicates normal progress through
-					///< compilation
-};
+	/// Flavors of diagnostics we can emit. Used to filter for a particular
+	/// kind of diagnostic (for instance, for -W/-R flags)
+	enum class Flavor {
+		WarningOrError,	///< A diagnostic that indicates a problem or potential
+						///< problem. Can be made fatal by -Werror
+		Remark			///< A diagnostic that indicates normal progress through
+						///< compilation
+	};
 
 } // namespace diag
 
@@ -162,10 +162,6 @@ public:
   DiagnosticIDs();
   ~DiagnosticIDs();
 
-private:
-	/// Information for uniquing and looking up custom diags
-	diag::CustomDiagInfo *CustomDiagInfo;
-
 public:
 	DiagnosticIDs();
 	~DiagnosticIDs();
@@ -180,6 +176,10 @@ public:
 	// createCustomDiagIDFromFormatString() to enforce safe usage. At the time of
 	// writing, nearly all callers of this function were invalid
 	unsigned getCustomDiagID(Level L, StringRef FormatString);
+
+	//===--------------------------------------------------------------------===//
+	// Diagnostic classification and reporting interfaces.
+	//
 
 	/// Given a diagnostic ID, return a description of the issue
 	StringRef getDescription(unsigned DiagID) const;
@@ -268,7 +268,7 @@ public:
 	/// deduction fails but no diagnostic is emitted. Certain classes of
 	/// errors, such as those errors that involve C++ access control,
 	/// are not SFINAE errors
-	//static SFINAEResponse getDiagnosticSFINAEResponse(unsigned DiagID);
+	static SFINAEResponse getDiagnosticSFINAEResponse(unsigned DiagID);
 
 	/// Get the string of all diagnostic flags.
 	///

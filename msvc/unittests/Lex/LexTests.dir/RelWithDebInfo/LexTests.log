@@ -18,8 +18,6 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
 C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(167): error C2086: 'latino::diag::CustomDiagInfo *latino::DiagnosticIDs::CustomDiagInfo': redefinition
   C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(158): note: see declaration of 'latino::DiagnosticIDs::CustomDiagInfo'
 C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(170): error C2535: 'latino::DiagnosticIDs::DiagnosticIDs(void)': member function already defined or declared
