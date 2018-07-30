@@ -63,15 +63,15 @@ include tools/driver/CMakeFiles/latino.dir/flags.make
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: tools/driver/CMakeFiles/latino.dir/flags.make
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: tools/driver/driver.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tools/driver/CMakeFiles/latino.dir/driver.cpp.o"
-	cd /home/primi/src/latino-llvm/tools/driver && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latino.dir/driver.cpp.o -c /home/primi/src/latino-llvm/tools/driver/driver.cpp
+	cd /home/primi/src/latino-llvm/tools/driver && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latino.dir/driver.cpp.o -c /home/primi/src/latino-llvm/tools/driver/driver.cpp
 
 tools/driver/CMakeFiles/latino.dir/driver.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/latino.dir/driver.cpp.i"
-	cd /home/primi/src/latino-llvm/tools/driver && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/primi/src/latino-llvm/tools/driver/driver.cpp > CMakeFiles/latino.dir/driver.cpp.i
+	cd /home/primi/src/latino-llvm/tools/driver && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/primi/src/latino-llvm/tools/driver/driver.cpp > CMakeFiles/latino.dir/driver.cpp.i
 
 tools/driver/CMakeFiles/latino.dir/driver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/latino.dir/driver.cpp.s"
-	cd /home/primi/src/latino-llvm/tools/driver && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/primi/src/latino-llvm/tools/driver/driver.cpp -o CMakeFiles/latino.dir/driver.cpp.s
+	cd /home/primi/src/latino-llvm/tools/driver && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/primi/src/latino-llvm/tools/driver/driver.cpp -o CMakeFiles/latino.dir/driver.cpp.s
 
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o.requires:
 

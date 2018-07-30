@@ -20,7 +20,7 @@ function(clang_tablegen)
   tablegen(CLANG ${CTG_UNPARSED_ARGUMENTS})
   
   #message(STATUS "Tablegenning... source: ${CTG_SOURCE} - target: ${CTG_TARGET} - args: ${CTG_UNPARSED_ARGUMENTS})")
-
+  message(STATUS "CTG_TARGET: ${CTG_TARGET}")
   if(CTG_TARGET)
     add_public_tablegen_target(${CTG_TARGET})
     set_target_properties( ${CTG_TARGET} PROPERTIES FOLDER "Clang tablegenning")

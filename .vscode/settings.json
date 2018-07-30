@@ -1,6 +1,12 @@
 {
     "files.associations": {
         "xlocale": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "iterator": "cpp",
+        "ios": "cpp",
+        "__locale": "cpp",
+        "unordered_map": "cpp",
+        "locale": "cpp",
+        "string": "cpp"
     }
 }

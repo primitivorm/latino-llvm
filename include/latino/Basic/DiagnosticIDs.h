@@ -84,7 +84,6 @@ namespace diag {
 
 } // namespace diag
 
-
 class DiagnosticMapping {
 	unsigned Severity : 3;
 	unsigned IsUser : 1;
@@ -126,7 +125,7 @@ public:
 	/// Whether this mapping attempted to map the diagnostic to a warning, but
 	/// was overruled because the diagnostic was already mapped to an error or
 	/// fatal error
-	bool wasUpgradeFromWarning() const { WasUpgradedFromWarning; }
+	bool wasUpgradeFromWarning() const { return WasUpgradedFromWarning; }
 	void wetUpgradeFromWarning(bool Value) { WasUpgradedFromWarning = Value; }
 
 	/// Serialize this mapping as a raw integer
@@ -152,15 +151,13 @@ public:
 class DiagnosticIDs : public RefCountedBase<DiagnosticIDs> {
 public:
 	/// The level of the diagnostic, after it has been through mapping
-	enum Level { Ignored, Note, Remark, Warning, Error, Fatal };
+	enum Level { 
+        Ignored, Note, Remark, Warning, Error, Fatal 
+    };
 
 private:
+  /// \brief Information for uniquing and looking up custom diags.
   diag::CustomDiagInfo *CustomDiagInfo;
-
-public:
-  
-  DiagnosticIDs();
-  ~DiagnosticIDs();
 
 public:
 	DiagnosticIDs();
@@ -205,7 +202,7 @@ public:
 		return isBuiltinExtensionDiag(DiagID, ignored);
 	}
 
-	/// Determine whether the given built-in diagnostic ID is for an
+	/// \brief Determine whether the given built-in diagnostic ID is for an
 	/// extension of some sort, and whether it is enabled by default.
 	///
 	/// This also returns EnabledByDefault, which is set to indicate whether the
@@ -214,7 +211,7 @@ public:
 	///
 	static bool isBuiltinExtensionDiag(unsigned DiagID, bool &EnableByDefault);
 
-	/// Return the lowest-level warning option that enables the specified
+	/// \brief Return the lowest-level warning option that enables the specified
 	/// diagnostic.
 	///
 	/// If there is no -Wfoo flag that controls the diagnostic, this returns null
@@ -260,7 +257,7 @@ public:
 		SFINAE_AccessControl
 	};
 
-	/// Determines whether the given built-in diagnostic ID is
+	/// \brief Determines whether the given built-in diagnostic ID is
 	/// for an error that is suppressed if it occurs during C++ template
 	/// argument deduction.
 	///
@@ -270,30 +267,30 @@ public:
 	/// are not SFINAE errors
 	static SFINAEResponse getDiagnosticSFINAEResponse(unsigned DiagID);
 
-	/// Get the string of all diagnostic flags.
+	/// \brief Get the string of all diagnostic flags.
 	///
 	/// \returns A list of all diagnostics flags as they would be written in a
 	/// command line invocation including their `no-` variants. For example:
 	/// `{"-Wempty-body", "-Wno-empty-body", ...}`
 	static std::vector<std::string> getDiagnosticFlags();
 
-	/// Get the set of all diagnostic IDs in the group with the given name
+	/// \brief Get the set of all diagnostic IDs in the group with the given name
 	///
 	/// \param[out] Diags - On return, the diagnostics in the group
 	/// \returns \c true if the given group is unknown, \c false otherwise
 	bool getDiagnosticInGroup(diag::Flavor Flavor, StringRef Group,
 		SmallVectorImpl<diag::kind> &Diags) const;
 
-	/// Get the set of all diagnostic IDs
+	/// \brief Get the set of all diagnostic IDs
 	static void getAllDiagnostics(diag::Flavor Flavor,
 		std::vector<diag::kind> &Diags);
 
-	/// Get the diagnostic option with the closest edit distance to the
+	/// \brief Get the diagnostic option with the closest edit distance to the
 	/// given group name
 	static StringRef getNearestOptins(diag::Flavor Flavor, StringRef Group);
 
 private:
-	/// Classify the specified diagnostic ID into a Level, consumable by
+	/// \brief Classify the specified diagnostic ID into a Level, consumable by
 	/// the DiagnosticClient.
 	/// 
 	/// The classification is based on the way the client configured the
@@ -308,13 +305,13 @@ private:
 	diag::Severity getDiagnosticSeverity(unsigned DiagID, SourceLocation Loc,
 		const DiagnosticsEngine &Diag) const LLVM_READONLY;
 
-	/// Used to report a diagnostic that is finally fully formed.
+	/// \brief Used to report a diagnostic that is finally fully formed.
 	///
 	/// \returns \c true if the diagnostic was emitted, \c false if it was
 	/// suppressed
 	bool ProcessDiag(DiagnosticsEngine &Diag, Level DiagLevel) const;
 
-	/// Whether the diagnostic may leave the AST in a state where some
+	/// \brief Whether the diagnostic may leave the AST in a state where some
 	/// invariants can break
 	bool isUnrecoverable(unsigned DiagID) const;
 

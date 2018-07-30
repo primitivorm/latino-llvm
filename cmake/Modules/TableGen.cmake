@@ -1,14 +1,13 @@
 # LLVM_TARGET_DEFINITIONS must contain the name of the .td file to process.
 # Extra parameters for `tblgen' may come after `ofn' parameter.
 # Adds the name of the generated file to TABLEGEN_OUTPUT.
-
 include(LLVMExternalProjectUtils)
 
 if(LLVM_MAIN_INCLUDE_DIR)
   set(LLVM_TABLEGEN_FLAGS -I ${LLVM_MAIN_INCLUDE_DIR})
 endif()
 
-function(tablegen project ofn)
+function(tablegen project ofn)  
   message(STATUS "function (tablegen ${project} ${ofn})")
   # Validate calling context.
   if(NOT ${project}_TABLEGEN_EXE)
@@ -37,7 +36,7 @@ function(tablegen project ofn)
     file(GLOB local_tds "*.td")
     file(GLOB_RECURSE global_tds "${LLVM_MAIN_INCLUDE_DIR}/llvm/*.td")
     set(additional_cmdline -o ${CMAKE_CURRENT_BINARY_DIR}/${ofn}.tmp)
-    #message(STATUS "local_tds: ${local_tds} - global_tds: ${global_tds}")
+    message(STATUS "local_tds: ${local_tds} - global_tds: ${global_tds}")
   endif()
 
   if (IS_ABSOLUTE ${LLVM_TARGET_DEFINITIONS})
