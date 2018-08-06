@@ -97,3 +97,7 @@ LAT_KEYWORD(si)
 LAT_KEYWORD(sino)
 LAT_KEYWORD(variable)
 LAT_KEYWORD(verdadero)
+
+#undef LAT_KEYWORD
+#undef PUNCTUATOR
+#undef TOK

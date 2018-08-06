@@ -1,15 +1,19 @@
 #ifndef LATINO_BASIC_LLVM_H
 #define LATINO_BASIC_LLVM_H
 
-#include "llvm/ADT/None.h"
-#include "llvm/ADT/StringRef.h"
-#include "llvm/ADT/StringSwitch.h"
+// Do not proliferate #includes here, require clients to #include their
+// dependencies.
+// Casting.h has complex templates that cannot be easily forward declared.
 #include "llvm/Support/Casting.h"
-#include "llvm/Support/MemoryBuffer.h"
+// None.h includes an enumerator that is desired & cannot be forward declared
+// without a definition of NoneType.
+#include "llvm/ADT/None.h"
 
 namespace llvm {
+// ADT's.
 class StringRef;
 class Twine;
+class VersionTuple;
 template <typename T> class ArrayRef;
 template <typename T> class MutableArrayRef;
 template <typename T> class OwningArrayRef;
@@ -49,8 +53,8 @@ using llvm::SmallString;
 using llvm::SmallVector;
 using llvm::SmallVectorImpl;
 using llvm::StringRef;
-using llvm::StringSwitch;
 using llvm::Twine;
+using llvm::VersionTuple;
 
 // Error handling.
 using llvm::Expected;
@@ -62,7 +66,6 @@ using llvm::RefCountedBase;
 
 using llvm::raw_ostream;
 using llvm::raw_pwrite_stream;
-
 } // namespace latino
 
 #endif /* LATINO_BASIC_LLVM_H */

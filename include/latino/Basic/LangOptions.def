@@ -1,0 +1,16 @@
+#ifndef LANGOPT
+#error Define the LANGOPT macro to handle language options
+#endif
+
+#ifndef ENUM_LANGOPT
+#define ENUM_LANGOPT(Name, Bits, Default, Description) \
+    COMPATIBLE_LANGOPT(Name, Bits, Default, Description)
+#endif
+
+#ifndef BENINGN_LANGOPT
+#define BENINGN_LANGOPT(Name, Type, Bits, Default, Description) \
+    COMPATIBLE_LANGOPT(Name, Type, Bits, Default, Description)
+#endif
+
+BENINGN_LANGOPT(CompilingModule, CompilingModuleKind, 2, CMK_None,
+    "compiling a module interface")

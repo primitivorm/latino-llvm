@@ -18,33 +18,160 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(167): error C2086: 'latino::diag::CustomDiagInfo *latino::DiagnosticIDs::CustomDiagInfo': redefinition
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(158): note: see declaration of 'latino::DiagnosticIDs::CustomDiagInfo'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(170): error C2535: 'latino::DiagnosticIDs::DiagnosticIDs(void)': member function already defined or declared
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(162): note: see declaration of 'latino::DiagnosticIDs::DiagnosticIDs'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(171): error C2535: 'latino::DiagnosticIDs::~DiagnosticIDs(void)': member function already defined or declared
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(163): note: see declaration of 'latino::DiagnosticIDs::~DiagnosticIDs'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): error C3490: 'CurDiagID' cannot be modified because it is being accessed through a const object
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): warning C4800: 'const unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(907): error C2039: 'setNoErrorAsFatal': is not a member of 'latino::DiagnosticMapping'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(88): note: see declaration of 'latino::DiagnosticMapping'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(916): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2065: 'DeclContext': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2923: 'std::is_same': 'DeclContext' is not a valid template type argument for parameter '_Ty2'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2143: syntax error: missing ';' before '<<'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2433: 'type': 'inline' not permitted on data declarations
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2061: syntax error: identifier 'T'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C2805: binary 'operator <<' has too few parameters
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1178): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1184): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1191): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1197): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1211): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1220): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1233): error C2989: 'latino::Diagnostic': class template has already been declared as a non-class template
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(842): note: see declaration of 'latino::Diagnostic'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1285): error C2989: 'latino::DiagnosticConsumer': class template has already been declared as a non-class template
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(30): note: see declaration of 'latino::DiagnosticConsumer'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1329): fatal error C1903: unable to recover from previous error(s); stopping compilation
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(71): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(102): warning C4005: 'DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(70): note: see previous definition of 'DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(103): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(910): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): error C2664: 'void latino::PartialDiagnostic::AddSourceRange(const latino::CharSourceRange &) const': cannot convert argument 1 from 'latino::SourceRange' to 'const latino::CharSourceRange &'
+  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): note: Reason: cannot convert from 'latino::SourceRange' to 'const latino::CharSourceRange'
+  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2556: 'const latino::PartialDiagnosticAt &latino::DiagnosticError::getDiagnostic(void)': overloaded function differs only by return type from 'latino::PartialDiagnosticAt &latino::DiagnosticError::getDiagnostic(void)'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(18): note: see declaration of 'latino::DiagnosticError::getDiagnostic'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2373: 'latino::DiagnosticError::getDiagnostic': redefinition; different type modifiers
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(18): note: see declaration of 'latino::DiagnosticError::getDiagnostic'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2059: syntax error: 'return'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2238: unexpected token(s) preceding ';'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2259: 'latino::DiagnosticError': cannot instantiate abstract class
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): note: due to following members:
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): note: 'std::error_code llvm::ErrorInfoBase::convertToErrorCode(void) const': is abstract
+  C:\bin\LLVM7\include\llvm/Support/Error.h(66): note: see declaration of 'llvm::ErrorInfoBase::convertToErrorCode'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2888: 'llvm::Error': symbol cannot be defined within namespace 'latino'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2512: 'latino::DiagnosticError': no appropriate default constructor available
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(12): note: see declaration of 'latino::DiagnosticError'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2146: syntax error: missing ';' before identifier 'create'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): error C2672: 'llvm::make_error': no matching overloaded function found
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): error C2893: Failed to specialize function template 'llvm::Error llvm::make_error(ArgTs &&...)'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): note: With the following template arguments:
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): note: 'ErrT=latino::DiagnosticError'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): note: 'ArgTs={std::pair<latino::SourceLocation,latino::PartialDiagnostic>}'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): warning C4508: 'latino::create': function should return a value; 'void' return type assumed
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(26): error C2617: 'latino::create': inconsistent return statement
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): note: see declaration of 'latino::create'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(14): error C2614: 'latino::DiagnosticError': illegal member initialization: 'Diag' is not a base or member
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(31): error C2065: 'Err': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(31): error C2448: 'latino::take': function-style initializer appears to be a function definition
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(41): error C2059: syntax error: 'private'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(43): error C2270: 'convertToErrorCode': modifiers not allowed on nonmember functions
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(43): error C3158: 'latino::convertToErrorCode': 'override' can only be applied to a virtual member function
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(47): error C2512: 'std::pair<latino::SourceLocation,latino::PartialDiagnostic>::pair': no appropriate default constructor available
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(50): error C2059: syntax error: '}'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(50): error C2143: syntax error: missing ';' before '}'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(8): error C2653: 'DiagnosticsEngine': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(9): error C2065: 'IntrusiveRefCntPtr': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(9): error C2065: 'DiagnosticIDs': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(9): error C2065: 'diags': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(10): error C2065: 'IntrusiveRefCntPtr': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(10): error C2065: 'DiagnosticOptions': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(10): error C2065: 'DiagOpts': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(10): error C2065: 'DiagnosticConsumer': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(10): error C2065: 'client': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(11): error C2062: type 'bool' unexpected
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(12): error C2065: 'diags': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(12): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(12): error C2065: 'DiagOpts': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(12): error C2448: 'DiagOpts': function-style initializer appears to be a function definition
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(18): error C2653: 'DiagnosticsEngine': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(18): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(19): error C3861: 'setClient': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(20): warning C4508: 'DiagnosticsEngine': function should return a value; 'void' return type assumed
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(22): error C2653: 'DiagnosticIDs': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(22): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(22): error C2065: 'CustomDiagInfo': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(22): warning C4508: 'DiagnosticIDs': function should return a value; 'void' return type assumed
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(23): error C2653: 'DiagnosticIDs': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(23): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(23): error C2084: function 'int DiagnosticIDs(void)' already has a body
+  C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(22): note: see previous definition of 'DiagnosticIDs'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(23): error C2065: 'CustomDiagInfo': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(23): error C2541: 'delete': cannot delete objects that are not pointers
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(26): error C2653: 'DiagnosticsEngine': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(31): error C2065: 'Diagnostic': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(31): error C2146: syntax error: missing ';' before identifier 'Info'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(31): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(31): error C3861: 'Info': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(32): error C2653: 'DiagnosticIDs': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2065: 'Level': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2146: syntax error: missing ';' before identifier 'DiagLevel'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2065: 'DiagLevel': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2227: left of '->getDiagnosticLevel' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2065: 'Info': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2228: left of '.getID' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2228: left of '.getLocation' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(33): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(35): error C2065: 'DiagLevel': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(35): error C2653: 'DiagnosticIDs': is not a class or namespace name
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(35): error C2065: 'Ignored': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(37): error C2227: left of '->EmitDiag' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(37): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(37): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(37): error C2065: 'DiagLevel': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(41): error C3861: 'ProcessDialog': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(43): error C3861: 'Clear': identifier not found
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(44): error C2065: 'DelayedDiagID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(44): error C3861: 'ReportDelayed': identifier not found
+  DiagnosticIDs.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(71): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(102): warning C4005: 'DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(70): note: see previous definition of 'DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(103): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(910): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+  DiagnosticOptions.cpp
+  SourceLocation.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(71): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(102): warning C4005: 'DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(70): note: see previous definition of 'DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(103): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(910): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+  SourceManager.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(71): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(102): warning C4005: 'DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(70): note: see previous definition of 'DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(103): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(910): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+  Generating Code...

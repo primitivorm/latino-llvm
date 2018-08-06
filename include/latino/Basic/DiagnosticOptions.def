@@ -1,0 +1,8 @@
+#ifndef DIAGOPT
+#error Define the DIAGOPT macro to handle language options
+#endif
+
+#ifndef VALUE_DIAGOPT
+#define VALUE_DIAGOPT(Nanme, Bits, Default) \
+DIAGOPT(Name, Bits, Default)
+#endif

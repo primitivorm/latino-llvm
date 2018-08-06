@@ -18,33 +18,76 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(167): error C2086: 'latino::diag::CustomDiagInfo *latino::DiagnosticIDs::CustomDiagInfo': redefinition
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(158): note: see declaration of 'latino::DiagnosticIDs::CustomDiagInfo'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(170): error C2535: 'latino::DiagnosticIDs::DiagnosticIDs(void)': member function already defined or declared
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(162): note: see declaration of 'latino::DiagnosticIDs::DiagnosticIDs'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(171): error C2535: 'latino::DiagnosticIDs::~DiagnosticIDs(void)': member function already defined or declared
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(163): note: see declaration of 'latino::DiagnosticIDs::~DiagnosticIDs'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): error C3490: 'CurDiagID' cannot be modified because it is being accessed through a const object
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(802): warning C4800: 'const unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(907): error C2039: 'setNoErrorAsFatal': is not a member of 'latino::DiagnosticMapping'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(88): note: see declaration of 'latino::DiagnosticMapping'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(916): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2065: 'DeclContext': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1169): error C2923: 'std::is_same': 'DeclContext' is not a valid template type argument for parameter '_Ty2'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2143: syntax error: missing ';' before '<<'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2433: 'type': 'inline' not permitted on data declarations
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): error C2061: syntax error: identifier 'T'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1175): error C2805: binary 'operator <<' has too few parameters
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1178): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1184): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1191): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1197): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1211): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1220): error C2447: '{': missing function header (old-style formal list?)
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1233): error C2989: 'latino::Diagnostic': class template has already been declared as a non-class template
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(842): note: see declaration of 'latino::Diagnostic'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1285): error C2989: 'latino::DiagnosticConsumer': class template has already been declared as a non-class template
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(30): note: see declaration of 'latino::DiagnosticConsumer'
-C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1329): fatal error C1903: unable to recover from previous error(s); stopping compilation
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(71): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(102): warning C4005: 'DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(70): note: see previous definition of 'DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(103): warning C4005: 'ENUM_DIAGOPT': macro redefinition
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(98): note: see previous definition of 'ENUM_DIAGOPT'
+C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(910): error C2660: 'latino::DiagnosticIDs::ProcessDiag': function does not take 1 arguments
+C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): error C2664: 'void latino::PartialDiagnostic::AddSourceRange(const latino::CharSourceRange &) const': cannot convert argument 1 from 'latino::SourceRange' to 'const latino::CharSourceRange &'
+  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): note: Reason: cannot convert from 'latino::SourceRange' to 'const latino::CharSourceRange'
+  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2556: 'const latino::PartialDiagnosticAt &latino::DiagnosticError::getDiagnostic(void)': overloaded function differs only by return type from 'latino::PartialDiagnosticAt &latino::DiagnosticError::getDiagnostic(void)'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(18): note: see declaration of 'latino::DiagnosticError::getDiagnostic'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2373: 'latino::DiagnosticError::getDiagnostic': redefinition; different type modifiers
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(18): note: see declaration of 'latino::DiagnosticError::getDiagnostic'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2059: syntax error: 'return'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(19): error C2238: unexpected token(s) preceding ';'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2259: 'latino::DiagnosticError': cannot instantiate abstract class
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): note: due to following members:
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): note: 'std::error_code llvm::ErrorInfoBase::convertToErrorCode(void) const': is abstract
+  C:\bin\LLVM7\include\llvm/Support/Error.h(66): note: see declaration of 'llvm::ErrorInfoBase::convertToErrorCode'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2888: 'llvm::Error': symbol cannot be defined within namespace 'latino'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2512: 'latino::DiagnosticError': no appropriate default constructor available
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(12): note: see declaration of 'latino::DiagnosticError'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C2146: syntax error: missing ';' before identifier 'create'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): error C2672: 'llvm::make_error': no matching overloaded function found
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): error C2893: Failed to specialize function template 'llvm::Error llvm::make_error(ArgTs &&...)'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): note: With the following template arguments:
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): note: 'ErrT=latino::DiagnosticError'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): note: 'ArgTs={std::pair<latino::SourceLocation,latino::PartialDiagnostic>}'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(25): warning C4508: 'latino::create': function should return a value; 'void' return type assumed
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(26): error C2617: 'latino::create': inconsistent return statement
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(23): note: see declaration of 'latino::create'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(14): error C2614: 'latino::DiagnosticError': illegal member initialization: 'Diag' is not a base or member
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(31): error C2065: 'Err': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(31): error C2448: 'latino::take': function-style initializer appears to be a function definition
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(41): error C2059: syntax error: 'private'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(43): error C2270: 'convertToErrorCode': modifiers not allowed on nonmember functions
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(43): error C3158: 'latino::convertToErrorCode': 'override' can only be applied to a virtual member function
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(47): error C2512: 'std::pair<latino::SourceLocation,latino::PartialDiagnostic>::pair': no appropriate default constructor available
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(50): error C2059: syntax error: '}'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(50): error C2143: syntax error: missing ';' before '}'
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\iostream(12): error C2143: syntax error: missing ';' before '{'
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\iostream(12): error C2447: '{': missing function header (old-style formal list?)
+C:\bin\googletest-release-1.8-0\gtest\include\gtest/internal/gtest-port.h(1261): error C2039: 'cerr': is not a member of 'std'
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\sstream(12): note: see declaration of 'std'
+C:\bin\googletest-release-1.8-0\gtest\include\gtest/internal/gtest-port.h(1261): error C2065: 'cerr': undeclared identifier
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): error C2039: 'hasErrorOccurred': is not a member of 'latino::DiagnosticErrorTrap'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(939): note: see declaration of 'latino::DiagnosticErrorTrap'
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): error C2512: 'testing::AssertionResult': no appropriate default constructor available
+  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): note: No constructor could take the source type, or constructor overload resolution was ambiguous
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): error C2039: 'hasErrorOccurred': is not a member of 'latino::DiagnosticsEngine'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(131): note: see declaration of 'latino::DiagnosticsEngine'
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): error C2512: 'testing::AssertionResult': no appropriate default constructor available
+  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): note: No constructor could take the source type, or constructor overload resolution was ambiguous
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(34): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\bin\LLVM7\include\llvm/Support/Error.h(440): error C2061: syntax error: identifier 'Error'
+  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(51): note: see reference to class template instantiation 'llvm::Expected<std::pair<int,int>>' being compiled
+C:\bin\LLVM7\include\llvm/Support/Error.h(537): error C3646: 'takeError': unknown override specifier
+C:\bin\LLVM7\include\llvm/Support/Error.h(537): error C2059: syntax error: '('
+C:\bin\LLVM7\include\llvm/Support/Error.h(537): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(51): error C2039: 'create': is not a member of 'latino::DiagnosticError'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(12): note: see declaration of 'latino::DiagnosticError'
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(54): error C2440: 'initializing': cannot convert from 'int' to 'llvm::Expected<std::pair<int,int>>'
+  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(54): note: No constructor could take the source type, or constructor overload resolution was ambiguous
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(56): error C2146: syntax error: missing ';' before identifier 'Err'
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(56): error C2065: 'Err': undeclared identifier
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(56): error C2039: 'takeError': is not a member of 'llvm::Expected<std::pair<int,int>>'
+  C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(51): note: see declaration of 'llvm::Expected<std::pair<int,int>>'
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(57): error C2039: 'take': is not a member of 'latino::DiagnosticError'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(12): note: see declaration of 'latino::DiagnosticError'
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(57): error C2065: 'Err': undeclared identifier
+C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(58): error C2065: 'Err': undeclared identifier

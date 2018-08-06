@@ -273,7 +273,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\src\latino-llvm\lib\Basic\DiagnosticError.h" />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\Diagnostic.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticOptions.cpp"  />
