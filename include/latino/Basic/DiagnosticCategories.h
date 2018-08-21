@@ -6,7 +6,7 @@ namespace diag {
 enum {
 #define GET_CATEGORY_TABLE
 #define CATEGORY(X, ENUM) ENUM,
-#include "latino/Basic/DiagnosticGroup.inc"
+#include "latino/Basic/DiagnosticGroups.inc"
 #undef CATEGORY
 #undef GET_CATEGORY_TABLE
   DiagCat_NUM_CATEGORIES

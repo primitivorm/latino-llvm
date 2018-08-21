@@ -32,7 +32,9 @@ protected:
 /// enabled, which controls the dialect of C or C++ that is accepted.
 class LangOptions : public LangOptionsBase {
 public:
+  /*
   using Visibility = clang::Visibility;
+  */
 
   enum GCMode { NoGc, GCOnly, HybridGC };
   enum StackProtectorMode { SSPOff, SSPOn, SSPStrong, SSPReq };
@@ -121,8 +123,10 @@ public:
   };
 
 public:
+  /*
   /// Set of enabled sanitizers.
   SanitizerSet Sanitize;
+  */
 
   /// Paths to blacklist files specifying which objects
   /// (files, functions, variables) should not be instrumented.
@@ -145,9 +149,12 @@ public:
   /// attribute(s).
   std::vector<std::string> XRayAttrListFiles;
 
+  /*
   latino::ObjCRuntime ObjCRuntime;
-
+  
   std::string ObjCConstantStringClass;
+
+  */
 
   /// The name of the handler function to be called when -ftrapv is
   /// specified.
@@ -238,7 +245,7 @@ public:
 
   /// Return the OpenCL C or C++ version as a VersionTuple.
   VersionTuple getOpenCLVersionTuple() const;
-} /* LangOptions */
+}; /* LangOptions */
 
 /// Floating point control options
 class FPOptions {

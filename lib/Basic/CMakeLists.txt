@@ -3,6 +3,7 @@ add_latino_library(latinoBasic
   Diagnostic.cpp
   DiagnosticIDs.cpp
   DiagnosticOptions.cpp
+  IdentifierTable.cpp
   SourceLocation.cpp
   SourceManager.cpp
 

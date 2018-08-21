@@ -71,6 +71,13 @@ public:
 #define ENUM_DIAGOPT(Name, Type, Bits, Default) unsigned Name : Bits;
 #include "latino/Basic/DiagnosticOptions.def"
 
+protected:
+	// Define diagnostic options of enumeration type. These are private, and will
+	// have accessors (below).
+#define DIAGOPT(Name, Bits, Default)
+#define ENUM_DIAGOPT(Name, Type, Bits, Default) unsigned Name : Bits;
+#include "latino/Basic/DiagnosticOptions.def"
+
 public:
   /// The file to log diagnostic output to.
   std::string DiagnosticLogFile;

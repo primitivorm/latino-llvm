@@ -16,7 +16,7 @@ public:
   void log(raw_ostream &OS) const override { OS << "clang diagnostic"; }
 
   PartialDiagnosticAt &getDiagnostic() { return Diag; }
-  const PartialDiagnosticAt &getDiagnostic() { return Diag; }
+  const PartialDiagnosticAt &getDiagnostic() const { return Diag; }
 
   /// Creates a new \c DiagnosticError that contains the given diagnostic at
   /// the given location.
@@ -30,7 +30,7 @@ public:
   /// a \c DiagnosticError.
   static Optional<PartialDiagnosticAt> take(llvm::Error &Err) {
     Optional<PartialDiagnosticAt> Result;
-    Error = llvm::handleErrors(std::move(Err), [&](DiagnosticError &E) {
+	Err = llvm::handleErrors(std::move(Err), [&](DiagnosticError &E) {
       Result = std::move(E.getDiagnostic());
     });
     return Result;

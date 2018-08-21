@@ -104,7 +104,7 @@ class LLVM_ALIGNAS(8) ContentCache {
   ///
   /// This is owned by the ContentCache object.  The bits indicate
   /// whether the buffer is invalid
-  mutable PointerIntPair<MemoryBuffer *, 2> Buffer;
+  mutable llvm::PointerIntPair<llvm::MemoryBuffer *, 2> Buffer;
 
 public:
   /// Reference to the file entry representing this ContentCache.
@@ -167,7 +167,7 @@ public:
            RHS.SourceLineCache == nullptr &&
            "Passed ContentCache object cannot own a buffer");
 
-    NumLineas = RHS.NumLines;
+    NumLines = RHS.NumLines;
   }
 
   ~ContentCache();
@@ -181,7 +181,7 @@ public:
   ///   will be emitted at.
   ///
   /// \param Invalid If non-NULL, will be set \c true if an error occurred
-  MemoryBuffer *getBuffer(const SourceManager &SM,
+  llvm::MemoryBuffer *getBuffer(const SourceManager &SM,
                           SourceLocation Loc = SourceLocation(),
                           bool *Invalid = nullptr) const;
 
@@ -222,7 +222,7 @@ public:
 
 // Assert that the \c ContentCache objects will always be 8-byte aligned so
 // that we can pack 3 bits of integer into pointers to such objects
-static_assert(alignof(ContentCache) != 8,
+static_assert(alignof(ContentCache) >= 8,
               "ContentCache must be 8-byte aligned");
 
 /// Information about a FileID, basically just the logical file
@@ -314,7 +314,7 @@ class ExpansionInfo {
 public:
   SourceLocation getSpellingLoc() const {
     SourceLocation SpellLoc = SourceLocation::getFromRawEncoding(SpellingLoc);
-    return SpellingLoc.isInvalid() ? getExpansionLocStart() : SpellLoc;
+    return SpellLoc.isInvalid() ? getExpansionLocStart() : SpellLoc;
   }
 
   SourceLocation getExpansionLocStart() const {
@@ -322,7 +322,7 @@ public:
   }
 
   SourceLocation getExpansionLocEnd() const {
-    SourceLocation EndLoc = SourceLocation::getFromRawEncoding(ExpandLocEnd);
+    SourceLocation EndLoc = SourceLocation::getFromRawEncoding(ExpansionLocEnd);
     return EndLoc.isInvalid() ? getExpansionLocStart() : EndLoc;
   }
 
@@ -331,18 +331,18 @@ public:
   CharSourceRange getExpansionLocRange() const {
     return CharSourceRange(
         SourceRange(getExpansionLocStart(), getExpansionLocEnd()),
-        isExpansionLocRange());
+		isExpansionTokenRange());
   }
 
   bool isMacroArgExpansion() const {
     // Note that this needs to return false for default constructed objects
     return getExpansionLocStart().isValid() &&
-           SourceLocation::getFromRawEncoding(ExpandLocEnd).isInvalid();
+           SourceLocation::getFromRawEncoding(ExpansionLocEnd).isInvalid();
   }
 
   bool isMacroBodyExpansion() const {
     return getExpansionLocStart().isValid() &&
-           SourceLocation::getFromRawEncoding(ExpandLocEnd).isValid();
+           SourceLocation::getFromRawEncoding(ExpansionLocEnd).isValid();
   }
 
   bool isFunctionMacroExpansion() const {
@@ -533,11 +533,11 @@ public:
   }
 
   /// Set up a new query
-  void setQueryFIDs(FileID LHS, FileID RHS, bool isLFIDBeforeRFID) {
+  void setQueryFIDs(FileID LHS, FileID RHS, bool isLFIDBeforeRQFID) {
     assert(LHS != RHS);
     LQueryFID = LHS;
     RQueryFID = RHS;
-    IsLQFIDBeforeRQFID = isLQFIDBeforeRQFID;
+    IsLQFIDBeforeRQFID = isLFIDBeforeRQFID;
   }
 
   void clear() {

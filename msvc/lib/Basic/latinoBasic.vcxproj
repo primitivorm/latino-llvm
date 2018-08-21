@@ -276,6 +276,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\Diagnostic.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticOptions.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\IdentifierTable.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceLocation.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceManager.cpp"  />
   </ItemGroup>

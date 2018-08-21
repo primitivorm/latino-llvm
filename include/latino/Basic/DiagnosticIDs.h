@@ -286,7 +286,7 @@ public:
 
   /// \brief Get the diagnostic option with the closest edit distance to the
   /// given group name
-  static StringRef getNearestOptins(diag::Flavor Flavor, StringRef Group);
+  static StringRef getNearestOption(diag::Flavor Flavor, StringRef Group);
 
 private:
   /// \brief Classify the specified diagnostic ID into a Level, consumable by
@@ -309,7 +309,11 @@ private:
   ///
   /// \returns \c true if the diagnostic was emitted, \c false if it was
   /// suppressed
-  bool ProcessDiag(DiagnosticsEngine &Diag, Level DiagLevel) const;
+  bool ProcessDiag(DiagnosticsEngine &Diag) const;
+
+  /// Used to emit a diagnostic that is finally fully formed,
+  /// ignoring suppression.
+  bool EmitDiag(DiagnosticsEngine &Diag, Level DiagLevel) const;
 
   /// \brief Whether the diagnostic may leave the AST in a state where some
   /// invariants can break

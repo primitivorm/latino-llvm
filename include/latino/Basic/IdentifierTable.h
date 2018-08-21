@@ -39,7 +39,7 @@ class IdentifierInfo {
   // Objective-C keyword ('protocol' in '@protocol') or builtin (__builtin_inf).
   // First NUM_OBJC_KEYWORDS values are for Objective-C, the remaining values
   // are for builtins.
-  unsigned ObjCOrBuiltinID : 13;
+  //unsigned ObjCOrBuiltinID : 13;
   bool HasMacro : 1;              // True if there is a #define for this.
   bool HadMacro : 1;              // True if there was a #define for this.
   bool IsExtension : 1;           // True if identifier is a lang extension.
@@ -171,27 +171,32 @@ public:
   /// For example, "define" will return tok::pp_define.
   tok::PPKeywordKind getPPKeywordID() const;
 
+  /*
   /// Return the Objective-C keyword ID for the this identifier.
   ///
   /// For example, 'class' will return tok::objc_class if ObjC is enabled.
-  tok::ObjCKeywordKind getObjKeywordID() const {
+  tok::ObjCKeywordKind getObjCKeywordID() const {
     if (ObjCOrBuiltinID < tok::NUM_OBJC_KEYWORDS)
       return tok::ObjCKeywordKind(ObjCOrBuiltinID);
     else
       return tok::objc_not_keyword;
   }
-  void setObjKeywordID(tok::ObjCKeywordKind ID) { ObjCOrBuiltinID = ID; }
+  void setObjCKeywordID(tok::ObjCKeywordKind ID) { ObjCOrBuiltinID = ID; }
+  
 
   /// True if setNotBuiltin() was called.
   bool hasRevertedBuiltin() const {
     return ObjCOrBuiltinID == tok::NUM_OBJC_KEYWORDS;
   }
-
+  
   /// Revert the identifier to a non-builtin identifier. We do this if
   /// the name of a known builtin library function is used to declare that
   /// function, but an unexpected type is specified.
   void revertBuiltin() { setBuiltinID(0); }
 
+  */
+
+  /*
   /// Return a value indicating whether this is a builtin function.
   ///
   /// 0 is not-built-in. 1+ are specific builtin functions.
@@ -209,6 +214,8 @@ public:
 
   unsigned getObjCOrBuiltinID() const { return ObjCOrBuiltinID; }
   void setObjCOrBuiltinID(unsigned ID) { ObjCOrBuiltinID = ID; }
+  
+  */
 
   /// get/setExtension - Initialize information about whether or not this
   /// language token is an extension.  This controls extension warnings, and is
@@ -227,7 +234,7 @@ public:
   /// controls compatibility warnings, and is only true when not parsing the
   /// corresponding Standard. Once a compatibility problem has been diagnosed
   /// with this keyword, the flag will be cleared.
-  bool IsFutureCompatKeyword() const { return IsFutureCompatKeyword; }
+  bool isFutureCompatKeyword() const { return IsFutureCompatKeyword; }
   void setIsFutureCompatKeyword(bool Val) {
     IsFutureCompatKeyword = Val;
     if (Val)
@@ -246,7 +253,7 @@ public:
       RecomputeNeedsHandleIdentifier();
   }
   /// Return true if this token has been poisoned.
-  bool IsPoisoned() const { return IsPoisoned; }
+  bool isPoisoned() const { return IsPoisoned; }
 
   /// isCPlusPlusOperatorKeyword/setIsCPlusPlusOperatorKeyword controls whether
   /// this identifier is a C++ alternate representation of an operator.
@@ -309,6 +316,9 @@ public:
   }
 
   /// Determine whether this is the contextual keyword \c import.
+  bool isModulesImport() const { return IsModulesImport; }
+
+  /// Determine whether this is the contextual keyword \c import.
   void setModulesImport(bool I) {
     IsModulesImport = I;
     if (I)
@@ -344,8 +354,8 @@ private:
   /// change to it should be reflected here.
   void RecomputeNeedsHandleIdentifier() {
     NeedsHandleIdentifier = isPoisoned() || hasMacroDefinition() ||
-                            isExtensionToken() || IsFutureCompatKeyword() ||
-                            isOutOfDate() || IsModulesImport();
+                            isExtensionToken() || isFutureCompatKeyword() ||
+                            isOutOfDate() || isModulesImport();
   }
 }; /* IdentifierInfo */
 
@@ -514,6 +524,7 @@ public:
   void AddKeywords(const LangOptions &LangOpts);
 };
 
+/*
 /// A family of Objective-C methods.
 ///
 /// These families have no inherent meaning in the language, but are
@@ -582,6 +593,8 @@ enum ObjCInstanceTypeFamily {
 
 enum ObjCStringFormatFamily { SFF_None, SFF_NSString, SFF_CFString };
 
+*/
+
 /// Smart pointer class that efficiently represents Objective-C method
 /// names.
 ///
@@ -629,7 +642,9 @@ class Selector {
 
   unsigned getIdentifierInfoFlag() const { return InfoPtr & ArgFlags; }
 
+  /*
   static ObjCMethodFamily getStringFormatFamilyImpl(Selector sel);
+  */
 
 public:
   friend class SelectorTable;   // only the SelectorTable can create these
@@ -686,6 +701,7 @@ public:
 
   void dump() const;
 
+  /*
   /// Derive the conventional family of this method.
   ObjCMethodFamily getMethodFamily() const {
     return getMethodFamilyImpl(*this);
@@ -700,6 +716,7 @@ public:
   static Selector getTombstoneMarker() { return Selector(uintptr_t(-2)); }
 
   static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
+  */
 }; /* Selector */
 
 /// This table allows us to fully hide how we implement
@@ -760,7 +777,7 @@ public:
     CXXConversionFunction,
 #define OVERLOADED_OPERATOR(Name, Spelling, Token, Unary, Binary, MemberOnly)  \
   CXXOperator##Name,
-#include "clang/Basic/OperatorKinds.def"
+#include "latino/Basic/OperatorKinds.def"
     CXXDeductionGuide,
     CXXLiteralOperator,
     CXXUsingDirective,
