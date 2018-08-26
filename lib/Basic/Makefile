@@ -266,6 +266,33 @@ DiagnosticOptions.cpp.s:
 	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.s
 .PHONY : DiagnosticOptions.cpp.s
 
+IdentifierTable.o: IdentifierTable.cpp.o
+
+.PHONY : IdentifierTable.o
+
+# target to build an object file
+IdentifierTable.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o
+.PHONY : IdentifierTable.cpp.o
+
+IdentifierTable.i: IdentifierTable.cpp.i
+
+.PHONY : IdentifierTable.i
+
+# target to preprocess a source file
+IdentifierTable.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.i
+.PHONY : IdentifierTable.cpp.i
+
+IdentifierTable.s: IdentifierTable.cpp.s
+
+.PHONY : IdentifierTable.s
+
+# target to generate assembly for a file
+IdentifierTable.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.s
+.PHONY : IdentifierTable.cpp.s
+
 SourceLocation.o: SourceLocation.cpp.o
 
 .PHONY : SourceLocation.o
@@ -343,6 +370,9 @@ help:
 	@echo "... DiagnosticOptions.o"
 	@echo "... DiagnosticOptions.i"
 	@echo "... DiagnosticOptions.s"
+	@echo "... IdentifierTable.o"
+	@echo "... IdentifierTable.i"
+	@echo "... IdentifierTable.s"
 	@echo "... SourceLocation.o"
 	@echo "... SourceLocation.i"
 	@echo "... SourceLocation.s"

@@ -151,7 +151,7 @@ public:
   ContentCache(const FileEntry *Ent = nullptr) : ContentCache(Ent, Ent) {}
 
   ContentCache(const FileEntry *Ent, const FileEntry *contentEnt)
-      : Buffer(nullptr, false), OrigEntry(Ent), ContentsEntry(ContentsEntry),
+      : Buffer(nullptr, false), OrigEntry(Ent), ContentsEntry(contentEnt),
         BufferOverridden(false), IsSystemFile(false), IsTransient(false) {}
 
   /// The copy ctor does not allow copies where source object has either
@@ -182,8 +182,8 @@ public:
   ///
   /// \param Invalid If non-NULL, will be set \c true if an error occurred
   llvm::MemoryBuffer *getBuffer(const SourceManager &SM,
-                          SourceLocation Loc = SourceLocation(),
-                          bool *Invalid = nullptr) const;
+                                SourceLocation Loc = SourceLocation(),
+                                bool *Invalid = nullptr) const;
 
   /// Returns the size of the content encapsulated by this
   /// ContentCache.
@@ -331,7 +331,7 @@ public:
   CharSourceRange getExpansionLocRange() const {
     return CharSourceRange(
         SourceRange(getExpansionLocStart(), getExpansionLocEnd()),
-		isExpansionTokenRange());
+        isExpansionTokenRange());
   }
 
   bool isMacroArgExpansion() const {
@@ -576,7 +576,7 @@ class SourceManager : public RefCountedBase<SourceManager> {
   DiagnosticsEngine &Diag;
 
   FileManager &FileMgr;
-  mutable llvm::BumpPointerAllocator ContentCacheAlloc;
+  mutable llvm::BumpPtrAllocator ContentCacheAlloc;
 
   /// Memoized information about all of the files tracked by this
   /// SourceManager.
@@ -599,7 +599,7 @@ class SourceManager : public RefCountedBase<SourceManager> {
   /// file created from this compilation). Defaults to false
   bool FilesAreTransient = false;
 
-  struct OverridenFilesInfoTy {
+  struct OverriddenFilesInfoTy {
     /// Files that have been overridden with the contents from another
     /// file
     llvm::DenseMap<const FileEntry *, const FileEntry *> OverriddenFiles;
@@ -610,11 +610,11 @@ class SourceManager : public RefCountedBase<SourceManager> {
 
   /// Lazily create the object keeping overridden files info, since
   /// it is uncommonly used
-  std::unique_ptr<OverridenFilesInfoTy> OverriddenFilesInfo;
+  std::unique_ptr<OverriddenFilesInfoTy> OverriddenFilesInfo;
 
-  OverridenFilesInfoTy &getOverriddenFilesInfo() {
-    if (!OverridenFilesInfo)
-      OverriddenFilesInfo.reset(new OverridenFilesInfoTy);
+  OverriddenFilesInfoTy &getOverriddenFilesInfo() {
+    if (!OverriddenFilesInfo)
+      OverriddenFilesInfo.reset(new OverriddenFilesInfoTy);
 
     return *OverriddenFilesInfo;
   }
@@ -813,10 +813,10 @@ public:
     return createFileID(IR, IncludePos, FileCharacter, LoadedID, LoadedOffset);
   }
 
-  /// Create a new FileID that represents the specified memory buffer.
+  /// \brief Create a new FileID that represents the specified memory buffer.
   ///
   /// This does no caching of the buffer and takes ownership of the
-  /// MemoryBuffer, so only pass a MemoryBuffer to this once
+  /// MemoryBuffer, so only pass a MemoryBuffer to this once.
   FileID createFileID(std::unique_ptr<llvm::MemoryBuffer> Buffer,
                       SrcMgr::CharacteristicKind FileCharacter = SrcMgr::C_User,
                       int LoadedID = 0, unsigned LoadedOffset = 0,
@@ -824,7 +824,6 @@ public:
     return createFileID(
         createMemBufferContentCache(Buffer.release(), /*DoNotFree*/ false),
         IncludeLoc, FileCharacter, LoadedID, LoadedOffset);
-      )
   }
 
   enum UnownedTag { Unowned };
@@ -945,11 +944,11 @@ public:
                                 bool *Invalid = nullptr) const {
     bool MyInvalid = false;
     const SrcMgr::SLocEntry &Entry = getSLocEntry(FID, &MyInvalid);
-    if (MyInvalid || !Entry.isFileID()) {
+    if (MyInvalid || !Entry.isFile()) {
       if (Invalid)
         *Invalid = true;
 
-      return getFakeContentCacheForRecovery();
+      return getFakeBufferForRecovery();
     }
 
     return Entry.getFile().getContentCache()->getBuffer(Diag, *this, Loc,
@@ -1601,16 +1600,6 @@ public:
     return loadSLocEntry(Index, Invalid);
   }
 
-  const SrcMgr::SLocEntry &getSLocEntry(FileID FID,
-                                        bool *Invalid = nullptr) const {
-    if (FID.ID == 0 || FID.ID == -1) {
-      if (Invalid)
-        *Invalid = true;
-      return LocalSlocEntryTable[0];
-    }
-    return getSLocEntryByID(FID.ID, Invalid);
-  }
-
   unsigned getNextLocalOffset() const { return NextLocalOffset; }
 
   void setExternalSLocEntrySource(ExternalSLocEntrySource *Source) {
@@ -1661,10 +1650,6 @@ public:
   /// \return Location of the top-level macro caller.
   SourceLocation getTopMacroCallerLoc(SourceLocation Loc) const;
 
-  ///-----------------
-
-  bool userFilesAreVolatile() const { return UserFilesAreVolatile; }
-
   bool isLoadedFileID(FileID FID) const {
     assert(FID.ID != -1 && "Using FileID sentinel value");
     return FID.ID < 0;
@@ -1672,10 +1657,6 @@ public:
 
   std::pair<FileID, unsigned>
   getDecomposedExpansionLocSlowCase(const SrcMgr::SLocEntry *E) const;
-
-  std::pair<FileID, unsigned>
-  getDecomposedSpellingLocSlowCase(const SrcMgr::SLocEntry *E,
-                                   unsigned Offset) const;
 
   const SrcMgr::SLocEntry &getSLocEntry(FileID FID,
                                         bool *Invalid = nullptr) const {
@@ -1687,31 +1668,13 @@ public:
     return getSLocEntryByID(FID.ID, Invalid);
   }
 
-  inline bool isOffsetInFileID(FileID FID, unsigned SLocOffset) const {
-    const SrcMgr::SLocEntry &Entry = getSLocEntry(FID);
-    if (SLocOffset < Entry.getOffset())
-      return false;
-    if (FID.ID == -2)
-      return true;
-    if (FID.ID + 1 == static_cast<int>(LocalSlocEntryTable.size()))
-      return SLocOffset < NextLocalOffset;
-    return SLocOffset < getSLocEntryByID(FID.ID + 1).getOffset();
-  }
-
 private:
   // friend class ASTReader;
   // friend class ASTWriter;
+  llvm::MemoryBuffer *getFakeBufferForRecovery() const;
   const SrcMgr::ContentCache *getFakeContentCacheForRecovery() const;
 
   const SrcMgr::SLocEntry &loadSLocEntry(unsigned Index, bool *Invalid) const;
-
-  const SrcMgr::SLocEntry &getSLocEntryByID(int ID,
-                                            bool *Invalid = nullptr) const {
-    assert(ID != -1 && "Using FileID sentinel value");
-    if (ID < 0)
-      return getLoadedSLocEntryByID(ID, Invalid);
-    return getLocalSLocEntry(static_cast<unsigned>(ID), Invalid);
-  }
 
   const SrcMgr::SLocEntry &getSLocEntryByID(int ID,
                                             bool *Invalid = nullptr) const {
@@ -1770,6 +1733,10 @@ private:
                       SourceLocation IncludePos,
                       SrcMgr::CharacteristicKind DirCharacter, int LoadedID,
                       unsigned LoadedOffset);
+
+  const SrcMgr::ContentCache *
+  getOrCreateContentCache(const FileEntry *SourceFile,
+                          bool isSystemFile = false);
 
   const SrcMgr::ContentCache *
   createMemBufferContentCache(llvm::MemoryBuffer *Buf, bool DoNotFree);

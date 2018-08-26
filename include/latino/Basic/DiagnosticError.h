@@ -11,7 +11,7 @@ namespace latino {
 /// Users should emit the stored diagnostic using the DiagnosticsEngine.
 class DiagnosticError : public llvm::ErrorInfo<DiagnosticError> {
 public:
-  DiagnosticError(PartialDiagnostic Diag) : Diag(std::move(Diag)) {}
+  DiagnosticError(PartialDiagnosticAt Diag) : Diag(std::move(Diag)) {}
 
   void log(raw_ostream &OS) const override { OS << "clang diagnostic"; }
 
@@ -30,7 +30,7 @@ public:
   /// a \c DiagnosticError.
   static Optional<PartialDiagnosticAt> take(llvm::Error &Err) {
     Optional<PartialDiagnosticAt> Result;
-	Err = llvm::handleErrors(std::move(Err), [&](DiagnosticError &E) {
+    Err = llvm::handleErrors(std::move(Err), [&](DiagnosticError &E) {
       Result = std::move(E.getDiagnostic());
     });
     return Result;

@@ -6,13 +6,17 @@ lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o
  /usr/local/include/llvm-c/DataTypes.h
  /usr/local/include/llvm-c/Types.h
  /usr/local/include/llvm/ADT/ArrayRef.h
+ /usr/local/include/llvm/ADT/BitVector.h
  /usr/local/include/llvm/ADT/DenseMap.h
  /usr/local/include/llvm/ADT/DenseMapInfo.h
+ /usr/local/include/llvm/ADT/DenseSet.h
  /usr/local/include/llvm/ADT/EpochTracker.h
  /usr/local/include/llvm/ADT/Hashing.h
  /usr/local/include/llvm/ADT/IntrusiveRefCntPtr.h
  /usr/local/include/llvm/ADT/None.h
  /usr/local/include/llvm/ADT/Optional.h
+ /usr/local/include/llvm/ADT/PointerIntPair.h
+ /usr/local/include/llvm/ADT/PointerUnion.h
  /usr/local/include/llvm/ADT/STLExtras.h
  /usr/local/include/llvm/ADT/SmallString.h
  /usr/local/include/llvm/ADT/SmallVector.h
@@ -32,6 +36,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o
  /usr/local/include/llvm/Support/Casting.h
  /usr/local/include/llvm/Support/Chrono.h
  /usr/local/include/llvm/Support/Compiler.h
+ /usr/local/include/llvm/Support/CrashRecoveryContext.h
  /usr/local/include/llvm/Support/DataTypes.h
  /usr/local/include/llvm/Support/Debug.h
  /usr/local/include/llvm/Support/Endian.h
@@ -42,23 +47,37 @@ lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o
  /usr/local/include/llvm/Support/FormatProviders.h
  /usr/local/include/llvm/Support/FormatVariadicDetails.h
  /usr/local/include/llvm/Support/Host.h
+ /usr/local/include/llvm/Support/Locale.h
  /usr/local/include/llvm/Support/MD5.h
  /usr/local/include/llvm/Support/MathExtras.h
  /usr/local/include/llvm/Support/MemoryBuffer.h
  /usr/local/include/llvm/Support/NativeFormatting.h
  /usr/local/include/llvm/Support/PointerLikeTypeTraits.h
  /usr/local/include/llvm/Support/ReverseIteration.h
+ /usr/local/include/llvm/Support/SMLoc.h
+ /usr/local/include/llvm/Support/SourceMgr.h
  /usr/local/include/llvm/Support/SwapByteOrder.h
  /usr/local/include/llvm/Support/raw_ostream.h
  /usr/local/include/llvm/Support/type_traits.h
+ include/latino/Basic/CharInfo.h
  include/latino/Basic/Diagnostic.h
+ include/latino/Basic/DiagnosticCommonKinds.inc
  include/latino/Basic/DiagnosticError.h
  include/latino/Basic/DiagnosticIDs.h
+ include/latino/Basic/DiagnosticOptions.def
  include/latino/Basic/DiagnosticOptions.h
+ include/latino/Basic/FileManager.h
+ include/latino/Basic/FileSystemOptions.h
+ include/latino/Basic/IdentifierTable.h
  include/latino/Basic/LLVM.h
+ include/latino/Basic/OperatorKinds.def
  include/latino/Basic/PartialDiagnostic.h
  include/latino/Basic/SourceLocation.h
+ include/latino/Basic/SourceManager.h
  include/latino/Basic/Specifiers.h
+ include/latino/Basic/TokenKinds.def
+ include/latino/Basic/TokenKinds.h
+ include/latino/Basic/VirtualFileSystem.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o
  /home/primi/src/latino-llvm/lib/Basic/DiagnosticIDs.cpp
  /usr/local/include/llvm-c/DataTypes.h
@@ -74,6 +93,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o
  /usr/local/include/llvm/ADT/None.h
  /usr/local/include/llvm/ADT/Optional.h
  /usr/local/include/llvm/ADT/PointerIntPair.h
+ /usr/local/include/llvm/ADT/PointerUnion.h
  /usr/local/include/llvm/ADT/STLExtras.h
  /usr/local/include/llvm/ADT/SmallString.h
  /usr/local/include/llvm/ADT/SmallVector.h
@@ -109,21 +129,90 @@ lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o
  /usr/local/include/llvm/Support/NativeFormatting.h
  /usr/local/include/llvm/Support/PointerLikeTypeTraits.h
  /usr/local/include/llvm/Support/ReverseIteration.h
+ /usr/local/include/llvm/Support/SMLoc.h
+ /usr/local/include/llvm/Support/SourceMgr.h
  /usr/local/include/llvm/Support/SwapByteOrder.h
  /usr/local/include/llvm/Support/raw_ostream.h
  /usr/local/include/llvm/Support/type_traits.h
  include/latino/Basic/AllDiagnostics.h
  include/latino/Basic/Diagnostic.h
  include/latino/Basic/DiagnosticCategories.h
+ include/latino/Basic/DiagnosticCommonKinds.inc
  include/latino/Basic/DiagnosticIDs.h
+ include/latino/Basic/DiagnosticOptions.def
  include/latino/Basic/DiagnosticOptions.h
  include/latino/Basic/FileManager.h
+ include/latino/Basic/FileSystemOptions.h
  include/latino/Basic/LLVM.h
  include/latino/Basic/SourceLocation.h
  include/latino/Basic/SourceManager.h
  include/latino/Basic/Specifiers.h
+ include/latino/Basic/VirtualFileSystem.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o
  /home/primi/src/latino-llvm/lib/Basic/DiagnosticOptions.cpp
+ /usr/local/include/llvm-c/DataTypes.h
+ /usr/local/include/llvm/ADT/IntrusiveRefCntPtr.h
+ /usr/local/include/llvm/ADT/None.h
+ /usr/local/include/llvm/ADT/Optional.h
+ /usr/local/include/llvm/ADT/STLExtras.h
+ /usr/local/include/llvm/ADT/SmallVector.h
+ /usr/local/include/llvm/ADT/StringRef.h
+ /usr/local/include/llvm/ADT/iterator.h
+ /usr/local/include/llvm/ADT/iterator_range.h
+ /usr/local/include/llvm/Config/llvm-config.h
+ /usr/local/include/llvm/Demangle/Compiler.h
+ /usr/local/include/llvm/Support/AlignOf.h
+ /usr/local/include/llvm/Support/Casting.h
+ /usr/local/include/llvm/Support/Compiler.h
+ /usr/local/include/llvm/Support/DataTypes.h
+ /usr/local/include/llvm/Support/ErrorHandling.h
+ /usr/local/include/llvm/Support/MathExtras.h
+ /usr/local/include/llvm/Support/SwapByteOrder.h
+ /usr/local/include/llvm/Support/raw_ostream.h
+ /usr/local/include/llvm/Support/type_traits.h
+ include/latino/Basic/DiagnosticOptions.def
+ include/latino/Basic/DiagnosticOptions.h
+ include/latino/Basic/LLVM.h
+lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o
+ /home/primi/src/latino-llvm/lib/Basic/IdentifierTable.cpp
+ /usr/local/include/llvm-c/DataTypes.h
+ /usr/local/include/llvm/ADT/ArrayRef.h
+ /usr/local/include/llvm/ADT/DenseMapInfo.h
+ /usr/local/include/llvm/ADT/Hashing.h
+ /usr/local/include/llvm/ADT/None.h
+ /usr/local/include/llvm/ADT/Optional.h
+ /usr/local/include/llvm/ADT/STLExtras.h
+ /usr/local/include/llvm/ADT/SmallString.h
+ /usr/local/include/llvm/ADT/SmallVector.h
+ /usr/local/include/llvm/ADT/StringMap.h
+ /usr/local/include/llvm/ADT/StringRef.h
+ /usr/local/include/llvm/ADT/Triple.h
+ /usr/local/include/llvm/ADT/Twine.h
+ /usr/local/include/llvm/ADT/iterator.h
+ /usr/local/include/llvm/ADT/iterator_range.h
+ /usr/local/include/llvm/Config/llvm-config.h
+ /usr/local/include/llvm/Demangle/Compiler.h
+ /usr/local/include/llvm/Support/AlignOf.h
+ /usr/local/include/llvm/Support/Allocator.h
+ /usr/local/include/llvm/Support/Casting.h
+ /usr/local/include/llvm/Support/Compiler.h
+ /usr/local/include/llvm/Support/DataTypes.h
+ /usr/local/include/llvm/Support/ErrorHandling.h
+ /usr/local/include/llvm/Support/Host.h
+ /usr/local/include/llvm/Support/MathExtras.h
+ /usr/local/include/llvm/Support/PointerLikeTypeTraits.h
+ /usr/local/include/llvm/Support/SwapByteOrder.h
+ /usr/local/include/llvm/Support/type_traits.h
+ include/latino/Basic/CharInfo.h
+ include/latino/Basic/CommentOptions.h
+ include/latino/Basic/IdentifierTable.h
+ include/latino/Basic/LLVM.h
+ include/latino/Basic/LangOptions.def
+ include/latino/Basic/LangOptions.h
+ include/latino/Basic/OperatorKinds.def
+ include/latino/Basic/OperatorKinds.h
+ include/latino/Basic/TokenKinds.def
+ include/latino/Basic/TokenKinds.h
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o
  /home/primi/src/latino-llvm/lib/Basic/SourceLocation.cpp
  /usr/local/include/llvm-c/DataTypes.h
@@ -139,6 +228,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o
  /usr/local/include/llvm/ADT/None.h
  /usr/local/include/llvm/ADT/Optional.h
  /usr/local/include/llvm/ADT/PointerIntPair.h
+ /usr/local/include/llvm/ADT/PointerUnion.h
  /usr/local/include/llvm/ADT/STLExtras.h
  /usr/local/include/llvm/ADT/SmallString.h
  /usr/local/include/llvm/ADT/SmallVector.h
@@ -175,18 +265,24 @@ lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o
  /usr/local/include/llvm/Support/PointerLikeTypeTraits.h
  /usr/local/include/llvm/Support/PrettyStackTrace.h
  /usr/local/include/llvm/Support/ReverseIteration.h
+ /usr/local/include/llvm/Support/SMLoc.h
+ /usr/local/include/llvm/Support/SourceMgr.h
  /usr/local/include/llvm/Support/SwapByteOrder.h
  /usr/local/include/llvm/Support/raw_ostream.h
  /usr/local/include/llvm/Support/type_traits.h
  include/latino/Basic/Diagnostic.h
+ include/latino/Basic/DiagnosticCommonKinds.inc
  include/latino/Basic/DiagnosticIDs.h
+ include/latino/Basic/DiagnosticOptions.def
  include/latino/Basic/DiagnosticOptions.h
  include/latino/Basic/FileManager.h
+ include/latino/Basic/FileSystemOptions.h
  include/latino/Basic/LLVM.h
  include/latino/Basic/PrettyStackTrace.h
  include/latino/Basic/SourceLocation.h
  include/latino/Basic/SourceManager.h
  include/latino/Basic/Specifiers.h
+ include/latino/Basic/VirtualFileSystem.h
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o
  /home/primi/src/latino-llvm/lib/Basic/SourceManager.cpp
  /usr/local/include/llvm-c/DataTypes.h
@@ -202,6 +298,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o
  /usr/local/include/llvm/ADT/None.h
  /usr/local/include/llvm/ADT/Optional.h
  /usr/local/include/llvm/ADT/PointerIntPair.h
+ /usr/local/include/llvm/ADT/PointerUnion.h
  /usr/local/include/llvm/ADT/STLExtras.h
  /usr/local/include/llvm/ADT/SmallString.h
  /usr/local/include/llvm/ADT/SmallVector.h
@@ -237,14 +334,20 @@ lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o
  /usr/local/include/llvm/Support/NativeFormatting.h
  /usr/local/include/llvm/Support/PointerLikeTypeTraits.h
  /usr/local/include/llvm/Support/ReverseIteration.h
+ /usr/local/include/llvm/Support/SMLoc.h
+ /usr/local/include/llvm/Support/SourceMgr.h
  /usr/local/include/llvm/Support/SwapByteOrder.h
  /usr/local/include/llvm/Support/raw_ostream.h
  /usr/local/include/llvm/Support/type_traits.h
  include/latino/Basic/Diagnostic.h
+ include/latino/Basic/DiagnosticCommonKinds.inc
  include/latino/Basic/DiagnosticIDs.h
+ include/latino/Basic/DiagnosticOptions.def
  include/latino/Basic/DiagnosticOptions.h
  include/latino/Basic/FileManager.h
+ include/latino/Basic/FileSystemOptions.h
  include/latino/Basic/LLVM.h
  include/latino/Basic/SourceLocation.h
  include/latino/Basic/SourceManager.h
  include/latino/Basic/Specifiers.h
+ include/latino/Basic/VirtualFileSystem.h

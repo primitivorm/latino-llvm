@@ -333,6 +333,7 @@ public:
   /// \pre This FullSourceLoc has an associated SourceManager.
   const SourceManager &getManager() const {
     assert(SrcMgr && "SourceManager is NULL.");
+    return *SrcMgr;
   }
 
   FileID getFileID() const;

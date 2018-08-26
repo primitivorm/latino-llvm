@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/primi/src/latino-llvm/lib/Basic/Diagnostic.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/DiagnosticIDs.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/DiagnosticOptions.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o"
+  "/home/primi/src/latino-llvm/lib/Basic/IdentifierTable.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/SourceLocation.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/SourceManager.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o"
   )

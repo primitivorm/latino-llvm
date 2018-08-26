@@ -333,15 +333,21 @@ public:
     return PD;
   }
 
-  friend const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
-                                             const char *S) {
+  friend inline const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
+                                                    const char *S) {
     PD.AddTaggedVal(reinterpret_cast<intptr_t>(S),
                     DiagnosticsEngine::ak_c_string);
     return PD;
   }
 
-  friend const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
-                                             IdentifierInfo *II) {
+  friend inline const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
+                                                    StringRef S) {
+    PD.AddString(S);
+    return PD;
+  }
+
+  friend inline const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
+                                                    IdentifierInfo *II) {
     PD.AddTaggedVal(reinterpret_cast<intptr_t>(II),
                     DiagnosticsEngine::ak_identifierinfo);
     return PD;
@@ -361,7 +367,7 @@ public:
 
   friend inline const PartialDiagnostic &operator<<(const PartialDiagnostic &PD,
                                                     SourceRange &R) {
-    PD.AddSourceRange(R);
+    PD.AddSourceRange(CharSourceRange::getTokenRange(R));
     return PD;
   }
 

@@ -67,13 +67,13 @@ public:
   };
 
 // Define simple diagnostic options (with no accessors).
-#define DIAGOPT(Name, Bits, Default)
-#define ENUM_DIAGOPT(Name, Type, Bits, Default) unsigned Name : Bits;
+#define DIAGOPT(Name, Bits, Default) unsigned Name : Bits;
+#define ENUM_DIAGOPT(Name, Type, Bits, Default)
 #include "latino/Basic/DiagnosticOptions.def"
 
 protected:
-	// Define diagnostic options of enumeration type. These are private, and will
-	// have accessors (below).
+  // Define diagnostic options of enumeration type. These are private, and will
+  // have accessors (below).
 #define DIAGOPT(Name, Bits, Default)
 #define ENUM_DIAGOPT(Name, Type, Bits, Default) unsigned Name : Bits;
 #include "latino/Basic/DiagnosticOptions.def"

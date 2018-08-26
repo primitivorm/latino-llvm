@@ -141,6 +141,7 @@ public:
     Result.HasNoWarningAsError = (Bits >> 5) & 1;
     Result.HasNoErrorAsFatal = (Bits >> 4) & 1;
     Result.WasUpgradedFromWarning = (Bits >> 3) & 1;
+    return Result;
   }
 
 }; /* DiagnosticMapping */

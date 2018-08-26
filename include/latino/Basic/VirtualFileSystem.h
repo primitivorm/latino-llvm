@@ -11,7 +11,7 @@
 #include "llvm/Support/Chrono.h"
 #include "llvm/Support/ErrorOr.h"
 #include "llvm/Support/FileSystem.h"
-#include "llvm/Support/SourceManager.h"
+#include "llvm/Support/SourceMgr.h"
 #include <cassert>
 #include <cstdint>
 #include <ctime>
@@ -43,7 +43,7 @@ public:
   // FIXME: remove when files support multiple names
   bool IsVFSMapped = false;
 
-  Status() default;
+  Status() = default;
   Status(const llvm::sys::fs::file_status &Status);
   Status(StringRef Name, llvm::sys::fs::UniqueID UID,
          llvm::sys::TimePoint<> MTime, uint32_t User, uint32_t Group,
@@ -63,7 +63,7 @@ public:
   llvm::sys::fs::file_type getType() const { return Type; }
   llvm::sys::fs::perms getPermissions() const { return Perms; }
   llvm::sys::TimePoint<> getLastModificationTime() const { return MTime; }
-  llvm::sys::fs::UniqueID getUniqueID() const { return ID; }
+  llvm::sys::fs::UniqueID getUniqueID() const { return UID; }
   uint32_t getUser() const { return User; }
   uint32_t getGroup() const { return Group; }
   uint64_t getSize() const { return Size; }
@@ -97,7 +97,7 @@ public:
     if (auto Status = status())
       return Status->getName().str();
     else
-      return Status->getError();
+      return Status.getError();
   }
 
   /// Get the contents of the file as a \p MemoryBuffer.
@@ -150,7 +150,7 @@ public:
   }
 
   const Status &operator*() const { return Impl->CurrentEntry; }
-  const Status *operator->() const { return Impl->CurrentEntry; }
+  const Status *operator->() const { return &Impl->CurrentEntry; }
 
   bool operator==(const directory_iterator &RHS) const {
     if (Impl && RHS.Impl)
@@ -183,8 +183,8 @@ public:
   /// Equivalent to operator++, with an error code.
   recursive_directory_iterator &increment(std::error_code &EC);
 
-  const Status &operator() const { return *State->top(); }
-  const Status &*operator() const { return &*State->top(); }
+  const Status &operator*() const { return *State->top(); }
+  const Status *operator->() const { return &*State->top(); }
 
   bool operator==(const recursive_directory_iterator &Other) const {
     return State == Other.State; // identity
@@ -284,8 +284,7 @@ public:
   llvm::ErrorOr<std::unique_ptr<File>>
   openFileForRead(const Twine &Path) override;
   directory_iterator dir_begin(const Twine &Dir, std::error_code &EC) override;
-  llvm::ErrorOr<std::string>
-  getCurrentWorkingDirectory(const Twine &Path) override;
+  llvm::ErrorOr<std::string> getCurrentWorkingDirectory() const override;
 
   using iterator = FileSystemList::reverse_iterator;
   using const_iterator = FileSystemList::const_reverse_iterator;
@@ -310,10 +309,10 @@ class InMemoryDirectory;
 class InMemoryFileSystem : public FileSystem {
   std::unique_ptr<detail::InMemoryDirectory> Root;
   std::string WorkingDirectory;
-  bool UseNormalizePaths = true;
+  bool UseNormalizedPaths = true;
 
 public:
-  explicit InMemoryFileSystem(bool UseNormalizePaths = true);
+  explicit InMemoryFileSystem(bool UseNormalizedPaths = true);
   ~InMemoryFileSystem() override;
 
   /// Add a file containing a buffer or a directory to the VFS with a
@@ -343,7 +342,7 @@ public:
   std::string toString() const;
 
   /// Return true if this file system normalizes . and .. in paths.
-  bool UseNormalizePaths() const { return UseNormalizePaths; }
+  bool useNormalizePaths() const { return UseNormalizedPaths; }
 
   llvm::ErrorOr<Status> status(const Twine &Path) override;
   llvm::ErrorOr<std::unique_ptr<File>>
@@ -397,7 +396,7 @@ void collectVFSFromYAML(
 
 class YAMLVFSWriter {
   std::vector<YAMLVFSEntry> Mappings;
-  Optional<bool> InCaseSensitive;
+  Optional<bool> IsCaseSensitive;
   Optional<bool> IsOverlayRelative;
   Optional<bool> UseExternalNames;
   Optional<bool> IgnoreNonExistentContents;
