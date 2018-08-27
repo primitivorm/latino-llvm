@@ -125,8 +125,8 @@ public:
   /// Whether this mapping attempted to map the diagnostic to a warning, but
   /// was overruled because the diagnostic was already mapped to an error or
   /// fatal error
-  bool wasUpgradeFromWarning() const { return WasUpgradedFromWarning; }
-  void wetUpgradeFromWarning(bool Value) { WasUpgradedFromWarning = Value; }
+  bool wasUpgradedFromWarning() const { return WasUpgradedFromWarning; }
+  void setUpgradedFromWarning(bool Value) { WasUpgradedFromWarning = Value; }
 
   /// Serialize this mapping as a raw integer
   unsigned serialize() const {

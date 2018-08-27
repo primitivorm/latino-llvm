@@ -29,10 +29,10 @@ latino/Basic/Specifiers.h
 /home/primi/src/latino-llvm/lib/Basic/latino/Basic/Specifiers.h
 latino/Basic/TokenKinds.h
 /home/primi/src/latino-llvm/lib/Basic/latino/Basic/TokenKinds.h
-llvm/ADT/SmallRef.h
-/home/primi/src/latino-llvm/lib/Basic/llvm/ADT/SmallRef.h
 llvm/ADT/SmallString.h
 /home/primi/src/latino-llvm/lib/Basic/llvm/ADT/SmallString.h
+llvm/ADT/SmallVector.h
+/home/primi/src/latino-llvm/lib/Basic/llvm/ADT/SmallVector.h
 llvm/Support/CrashRecoveryContext.h
 /home/primi/src/latino-llvm/lib/Basic/llvm/Support/CrashRecoveryContext.h
 llvm/Support/Locale.h

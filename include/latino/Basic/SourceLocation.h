@@ -53,7 +53,7 @@ private:
   }
 
   int getOpaqueValue() const { return ID; }
-};
+}; /* FileID */
 
 /// Encodes a location in the source. The SourceManager can decode this
 /// to get at the full include stack, line and column information.

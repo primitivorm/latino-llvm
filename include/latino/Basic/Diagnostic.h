@@ -684,6 +684,13 @@ public:
   /// \returns True if the given group is unknown, false otherwise
   bool setDiagnosticGroupWarningAsError(StringRef Group, bool Enabled);
 
+  /// \brief Set the error-as-fatal flag for the given diagnostic group.
+  ///
+  /// This function always only operates on the current diagnostic state.
+  ///
+  /// \returns True if the given group is unknown, false otherwise.
+  bool setDiagnosticGroupErrorAsFatal(StringRef Group, bool Enabled);
+
   /// \brief Add the specified mapping to all diagnostics of the specified
   /// flavor.
   ///
@@ -724,10 +731,10 @@ public:
 
   /// \brief Converts a diagnostic argument (as an intptr_t) into the string
   /// that represents it
-  void ConvertToString(ArgumentKind Kind, intptr_t Val, StringRef Modifier,
-                       StringRef Argument, ArrayRef<ArgumentValue> PrevArgs,
-                       SmallVectorImpl<char> &Output,
-                       ArrayRef<intptr_t> QualTypeVals) const {
+  void ConvertArgToString(ArgumentKind Kind, intptr_t Val, StringRef Modifier,
+                          StringRef Argument, ArrayRef<ArgumentValue> PrevArgs,
+                          SmallVectorImpl<char> &Output,
+                          ArrayRef<intptr_t> QualTypeVals) const {
     ArgToStringFn(Kind, Val, Modifier, Argument, PrevArgs, Output,
                   ArgToStringCookie, QualTypeVals);
   }
@@ -1293,7 +1300,7 @@ public:
 
   /// \brief Return the specified signed integer argument.
   /// \pre getArgKind(Idx) == DiagnosticsEngine::ak_sint
-  int gerArgSInt(unsigned Idx) const {
+  int getArgSInt(unsigned Idx) const {
     assert(getArgKind(Idx) == DiagnosticsEngine::ak_sint &&
            "Invalid argument accessor!");
     return (int)DiagObj->DiagArgumentsVal[Idx];

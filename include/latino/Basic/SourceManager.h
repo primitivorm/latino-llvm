@@ -181,7 +181,8 @@ public:
   ///   will be emitted at.
   ///
   /// \param Invalid If non-NULL, will be set \c true if an error occurred
-  llvm::MemoryBuffer *getBuffer(const SourceManager &SM,
+  llvm::MemoryBuffer *getBuffer(DiagnosticsEngine &Diag,
+                                const SourceManager &SM,
                                 SourceLocation Loc = SourceLocation(),
                                 bool *Invalid = nullptr) const;
 
@@ -629,7 +630,7 @@ class SourceManager : public RefCountedBase<SourceManager> {
   ///
   /// Positive FileIDs are indexes into this table. Entry 0 indicates an invalid
   /// expansion
-  SmallVector<SrcMgr::SLocEntry, 0> LocalSlocEntryTable;
+  SmallVector<SrcMgr::SLocEntry, 0> LocalSLocEntryTable;
 
   /// The table of SLocEntries that are loaded from other modules.
   ///
@@ -833,6 +834,7 @@ public:
   /// This does no caching of the buffer and takes ownership of the
   /// MemoryBuffer, so only pass a MemoryBuffer to this once
   FileID createFileID(UnownedTag, llvm::MemoryBuffer *Buffer, int LoadedID = 0,
+                      SrcMgr::CharacteristicKind FileCharacter = SrcMgr::C_User,
                       unsigned LoadedOffset = 0,
                       SourceLocation IncludeLoc = SourceLocation()) {
     return createFileID(createMemBufferContentCache(Buffer, /*DoNotFree*/ true),
@@ -962,7 +964,7 @@ public:
       if (Invalid)
         *Invalid = true;
 
-      return getFakeContentCacheForRecovery();
+      return getFakeBufferForRecovery();
     }
 
     return Entry.getFile().getContentCache()->getBuffer(
@@ -980,13 +982,13 @@ public:
     if (!Content)
       return nullptr;
 
-    return Content.OrigEntry;
+    return Content->OrigEntry;
   }
 
   /// Returns the FileEntry record for the provided SLocEntry
   const FileEntry *
-  getFileEntryForSLocEntry(const SrcMgr::SLocEntry &sLoc) const {
-    const SrcMgr::ContentCache *Content = sloc.getFileID().getContentCache();
+  getFileEntryForSLocEntry(const SrcMgr::SLocEntry &sloc) const {
+    const SrcMgr::ContentCache *Content = sloc.getFile().getContentCache();
     if (!Content)
       return nullptr;
     return Content->OrigEntry;
@@ -1019,7 +1021,7 @@ public:
       return;
 
     assert(Entry.getFile().NumCreatedFIDs == 0 && "Already set!");
-    const_cast<SrcMgr::FileInfo &>(Entry.getFileID()).NumCreatedFIDs = NumFIDs;
+    const_cast<SrcMgr::FileInfo &>(Entry.getFile()).NumCreatedFIDs = NumFIDs;
   }
 
   //===--------------------------------------------------------------------===//
@@ -1046,8 +1048,7 @@ public:
   StringRef getFilename(SourceLocation SpellingLoc) const {
     if (const FileEntry *F = getFileEntryForID(getFileID(SpellingLoc)))
       return F->getName();
-
-    return StringRef;
+    return StringRef();
   }
 
   /// Return the source location corresponding to the first byte of
@@ -1584,7 +1585,14 @@ public:
   void dump() const;
 
   /// Get the number of local SLocEntries we have.
-  unsigned local_sloc_entry_size() const { return LocalSlocEntryTable.size(); }
+  unsigned local_sloc_entry_size() const { return LocalSLocEntryTable.size(); }
+
+  /// \brief Get a local SLocEntry. This is exposed for indexing.
+  const SrcMgr::SLocEntry &getLocalSLocEntry(unsigned Index,
+                                             bool *Invalid = nullptr) const {
+    assert(Index < LocalSLocEntryTable.size() && "Invalid index");
+    return LocalSLocEntryTable[Index];
+  }
 
   /// Get a local SLocEntry. This is exposed for indexing.
   unsigned loaded_sloc_entry_size() const {
@@ -1663,7 +1671,7 @@ public:
     if (FID.ID == 0 || FID.ID == -1) {
       if (Invalid)
         *Invalid = true;
-      return LocalSlocEntryTable[0];
+      return LocalSLocEntryTable[0];
     }
     return getSLocEntryByID(FID.ID, Invalid);
   }
@@ -1708,7 +1716,7 @@ private:
       return true;
 
     // If it is the last local entry, then it does if the location is local.
-    if (FID.ID + 1 == static_cast<int>(LocalSlocEntryTable.size()))
+    if (FID.ID + 1 == static_cast<int>(LocalSLocEntryTable.size()))
       return SLocOffset < NextLocalOffset;
 
     // Otherwise, the entry after it has to not include it. This works for both
