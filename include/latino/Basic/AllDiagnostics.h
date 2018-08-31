@@ -1,6 +1,9 @@
 #ifndef LATINO_BASIC_ALLDIAGNOSTICS_H
 #define LATINO_BASIC_ALLDIAGNOSTICS_H
 
+#include "latino/Serialization/SerializationDiagnostic.h"
+#include "latino/Tooling/Refactoring/RefactoringDiagnostic.h"
+
 namespace latino {
 template <size_t SizeOfStr, typename FieldType> class StringSizerHelper {
   static_assert(SizeOfStr <= FieldType(~0U), "Field too small!");

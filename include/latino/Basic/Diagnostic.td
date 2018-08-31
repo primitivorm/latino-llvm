@@ -65,13 +65,13 @@ class InGroup<DiagGroup G> { DiagGroup Group = G; }
 //class IsGroup<string Name> { DiagGroup Group = DiagGroup<Name>; }
 
 // This defines documentation for diagnostic groups.
-//include "DiagnosticDocs.td"
+include "DiagnosticDocs.td"
 
 // This defines all of the named diagnostic categories.
-//include "DiagnosticCategories.td"
+include "DiagnosticCategories.td"
 
 // This defines all of the named diagnostic groups.
-//include "DiagnosticGroups.td"
+include "DiagnosticGroups.td"
 
 
 // All diagnostics emitted by the compiler are an indirect subclass of this.
@@ -147,6 +147,6 @@ include "DiagnosticCommonKinds.td"
 //include "DiagnosticFrontendKinds.td"
 //include "DiagnosticLexKinds.td"
 //include "DiagnosticParseKinds.td"
-//include "DiagnosticRefactoringKinds.td"
-//include "DiagnosticSemaKinds.td"
-//include "DiagnosticSerializationKinds.td"
+include "DiagnosticRefactoringKinds.td"
+include "DiagnosticSemaKinds.td"
+include "DiagnosticSerializationKinds.td"

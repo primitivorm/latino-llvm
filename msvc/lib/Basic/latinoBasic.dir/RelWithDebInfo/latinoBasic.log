@@ -11,93 +11,63 @@ cl : Command line warning D9025: overriding '/EHc' with '/EHc-'
 C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): error C2365: 'latino::DiagnosticOptions::Format': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): note: see declaration of 'latino::DiagnosticOptions::Format'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): error C2365: 'latino::DiagnosticOptions::ShowOverloads': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): note: see declaration of 'latino::DiagnosticOptions::ShowOverloads'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): error C2365: 'latino::DiagnosticOptions::VerifyIgnoreUnexpected': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): note: see declaration of 'latino::DiagnosticOptions::VerifyIgnoreUnexpected'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(47): error C2065: 'IgnoreWarnings': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(48): error C2065: 'NoRewriteMacros': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(49): error C2065: 'Pedantic': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(50): error C2065: 'PedanticErrors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(51): error C2065: 'ShowColumn': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(52): error C2065: 'ShowLocation': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(53): error C2065: 'AbsolutePath': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(54): error C2065: 'ShowCarets': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(55): error C2065: 'ShowFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(56): error C2065: 'ShowSourceRanges': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(57): error C2065: 'ShowParseableFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(58): error C2065: 'ShowPresumedLoc': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(59): error C2065: 'ShowOptionNames': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(61): error C2065: 'ShowNoteIncludeStack': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(62): error C2065: 'ShowCategories': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(67): error C2065: 'ShowColors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(70): error C2065: 'VerifyDiagnostics': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(77): error C2065: 'ElideType': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(78): error C2065: 'ShowTemplateTree': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(79): error C2065: 'CLFallbackMode': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(81): error C2065: 'ErrorLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(83): error C2065: 'MacroBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(85): error C2065: 'TemplateBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(87): error C2065: 'ConstexprBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(89): error C2065: 'SpellCheckingLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(91): error C2065: 'SnippetLineLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(93): error C2065: 'TabStop': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(95): error C2065: 'MessageLength': undeclared identifier
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): error C2664: 'void latino::PartialDiagnostic::AddSourceRange(const latino::CharSourceRange &) const': cannot convert argument 1 from 'latino::SourceRange' to 'const latino::CharSourceRange &'
-  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): note: Reason: cannot convert from 'latino::SourceRange' to 'const latino::CharSourceRange'
-  C:\src\latino-llvm\include\latino/Basic/PartialDiagnostic.h(364): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(14): error C2665: 'std::pair<latino::SourceLocation,latino::PartialDiagnostic>::pair': none of the 2 overloads could convert all the argument types
-  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\utility(113): note: could be 'std::pair<latino::SourceLocation,latino::PartialDiagnostic>::pair(std::pair<latino::SourceLocation,latino::PartialDiagnostic> &&)'
-  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\utility(112): note: or       'std::pair<latino::SourceLocation,latino::PartialDiagnostic>::pair(const std::pair<latino::SourceLocation,latino::PartialDiagnostic> &)'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticError.h(14): note: while trying to match the argument list '(latino::PartialDiagnostic)'
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
-C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(301): warning C4102: 'llvm': unreferenced label
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(606): note: see reference to class template instantiation 'llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
   DiagnosticIDs.cpp
 C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): error C2365: 'latino::DiagnosticOptions::Format': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): note: see declaration of 'latino::DiagnosticOptions::Format'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): error C2365: 'latino::DiagnosticOptions::ShowOverloads': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): note: see declaration of 'latino::DiagnosticOptions::ShowOverloads'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): error C2365: 'latino::DiagnosticOptions::VerifyIgnoreUnexpected': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): note: see declaration of 'latino::DiagnosticOptions::VerifyIgnoreUnexpected'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(47): error C2065: 'IgnoreWarnings': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(48): error C2065: 'NoRewriteMacros': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(49): error C2065: 'Pedantic': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(50): error C2065: 'PedanticErrors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(51): error C2065: 'ShowColumn': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(52): error C2065: 'ShowLocation': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(53): error C2065: 'AbsolutePath': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(54): error C2065: 'ShowCarets': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(55): error C2065: 'ShowFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(56): error C2065: 'ShowSourceRanges': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(57): error C2065: 'ShowParseableFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(58): error C2065: 'ShowPresumedLoc': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(59): error C2065: 'ShowOptionNames': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(61): error C2065: 'ShowNoteIncludeStack': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(62): error C2065: 'ShowCategories': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(67): error C2065: 'ShowColors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(70): error C2065: 'VerifyDiagnostics': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(77): error C2065: 'ElideType': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(78): error C2065: 'ShowTemplateTree': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(79): error C2065: 'CLFallbackMode': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(81): error C2065: 'ErrorLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(83): error C2065: 'MacroBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(85): error C2065: 'TemplateBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(87): error C2065: 'ConstexprBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(89): error C2065: 'SpellCheckingLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(91): error C2065: 'SnippetLineLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(93): error C2065: 'TabStop': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(95): error C2065: 'MessageLength': undeclared identifier
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
@@ -105,42 +75,162 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(75): error C2039: 'NUM_BUILTIN_SEMA_DIAGNOSTICS': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(75): error C2065: 'NUM_BUILTIN_SEMA_DIAGNOSTICS': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(6): error C2039: 'err_32_bit_builtin_64_bit_tgt': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(6): error C2065: 'err_32_bit_builtin_64_bit_tgt': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(7): error C2039: 'err_64_bit_builtin_32_bit_tgt': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(7): error C2065: 'err_64_bit_builtin_32_bit_tgt': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(8): error C2039: 'err_abi_tag_on_redeclaration': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(8): error C2065: 'err_abi_tag_on_redeclaration': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(9): error C2039: 'err_abstract_type_in_decl': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(9): error C2065: 'err_abstract_type_in_decl': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(10): error C2039: 'err_access': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(10): error C2065: 'err_access': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(11): error C2039: 'err_access_base_ctor': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(11): error C2065: 'err_access_base_ctor': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(12): error C2039: 'err_access_ctor': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(12): error C2065: 'err_access_ctor': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(13): error C2039: 'err_access_decl': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(13): error C2065: 'err_access_decl': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(14): error C2039: 'err_access_dtor': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(14): error C2065: 'err_access_dtor': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(15): error C2039: 'err_access_dtor_base': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(15): error C2065: 'err_access_dtor_base': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(16): error C2039: 'err_access_dtor_exception': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(16): error C2065: 'err_access_dtor_exception': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(17): error C2039: 'err_access_dtor_field': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(17): error C2065: 'err_access_dtor_field': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(18): error C2039: 'err_access_dtor_ivar': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(18): error C2065: 'err_access_dtor_ivar': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(19): error C2039: 'err_access_dtor_temp': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(19): error C2065: 'err_access_dtor_temp': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(20): error C2039: 'err_access_dtor_var': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(20): error C2065: 'err_access_dtor_var': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(21): error C2039: 'err_access_dtor_vbase': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(21): error C2065: 'err_access_dtor_vbase': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(22): error C2039: 'err_access_field_ctor': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(22): error C2065: 'err_access_field_ctor': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(23): error C2039: 'err_access_friend_function': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(23): error C2065: 'err_access_friend_function': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(24): error C2039: 'err_access_lambda_capture': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(24): error C2065: 'err_access_lambda_capture': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(25): error C2039: 'err_addr_ovl_ambiguous': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(25): error C2065: 'err_addr_ovl_ambiguous': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(26): error C2039: 'err_addr_ovl_no_qualifier': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(26): error C2065: 'err_addr_ovl_no_qualifier': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(27): error C2039: 'err_addr_ovl_no_viable': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(27): error C2065: 'err_addr_ovl_no_viable': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(28): error C2039: 'err_addr_ovl_not_func_ptrref': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(28): error C2065: 'err_addr_ovl_not_func_ptrref': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(29): error C2039: 'err_address_of_function_with_pass_object_size_params': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(29): error C2065: 'err_address_of_function_with_pass_object_size_params': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(30): error C2039: 'err_address_space_qualified_delete': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(30): error C2065: 'err_address_space_qualified_delete': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(31): error C2039: 'err_address_space_qualified_new': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(31): error C2065: 'err_address_space_qualified_new': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(32): error C2039: 'err_addrof_function_disabled_by_enable_if_attr': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(32): error C2065: 'err_addrof_function_disabled_by_enable_if_attr': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(33): error C2039: 'err_alias_after_tentative': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(33): error C2065: 'err_alias_after_tentative': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(34): error C2039: 'err_alias_is_definition': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(34): error C2065: 'err_alias_is_definition': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(35): error C2039: 'err_alias_not_supported_on_darwin': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(35): error C2065: 'err_alias_not_supported_on_darwin': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(36): error C2039: 'err_alias_not_supported_on_nvptx': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(36): error C2065: 'err_alias_not_supported_on_nvptx': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(37): error C2039: 'err_alias_template_expansion_into_fixed_list': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(37): error C2065: 'err_alias_template_expansion_into_fixed_list': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(38): error C2039: 'err_alias_template_extra_headers': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(38): error C2065: 'err_alias_template_extra_headers': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(39): error C2039: 'err_alias_to_undefined': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(39): error C2065: 'err_alias_to_undefined': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(40): error C2039: 'err_align_value_attribute_argument_not_int': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(40): error C2065: 'err_align_value_attribute_argument_not_int': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(41): error C2039: 'err_alignas_attribute_wrong_decl_type': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(41): error C2065: 'err_alignas_attribute_wrong_decl_type': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(42): error C2039: 'err_alignas_mismatch': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(42): error C2065: 'err_alignas_mismatch': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(43): error C2039: 'err_alignas_missing_on_definition': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(43): error C2065: 'err_alignas_missing_on_definition': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(44): error C2039: 'err_alignas_underaligned': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(44): error C2065: 'err_alignas_underaligned': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(45): error C2039: 'err_aligned_attribute_argument_not_int': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(45): error C2065: 'err_aligned_attribute_argument_not_int': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(46): error C2039: 'err_alignment_dependent_typedef_name': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(46): error C2065: 'err_alignment_dependent_typedef_name': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(47): error C2039: 'err_alignment_not_power_of_two': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(47): error C2065: 'err_alignment_not_power_of_two': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(48): error C2039: 'err_alignment_too_big': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(48): error C2065: 'err_alignment_too_big': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(49): error C2039: 'err_alignment_too_small': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(49): error C2065: 'err_alignment_too_small': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(50): error C2039: 'err_alignof_member_of_incomplete_type': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(50): error C2065: 'err_alignof_member_of_incomplete_type': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(51): error C2039: 'err_allocation_of_abstract_type': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(51): error C2065: 'err_allocation_of_abstract_type': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(52): error C2039: 'err_altivec_empty_initializer': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(52): error C2065: 'err_altivec_empty_initializer': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(53): error C2039: 'err_ambiguous_base_to_derived_cast': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(53): error C2065: 'err_ambiguous_base_to_derived_cast': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(54): error C2039: 'err_ambiguous_delete_operand': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(54): error C2065: 'err_ambiguous_delete_operand': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(55): error C2039: 'err_ambiguous_derived_to_base_conv': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(55): fatal error C1003: error count exceeds 100; stopping compilation
   DiagnosticOptions.cpp
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): error C2365: 'latino::DiagnosticOptions::Format': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): note: see declaration of 'latino::DiagnosticOptions::Format'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): error C2365: 'latino::DiagnosticOptions::ShowOverloads': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): note: see declaration of 'latino::DiagnosticOptions::ShowOverloads'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): error C2365: 'latino::DiagnosticOptions::VerifyIgnoreUnexpected': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): note: see declaration of 'latino::DiagnosticOptions::VerifyIgnoreUnexpected'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(47): error C2065: 'IgnoreWarnings': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(48): error C2065: 'NoRewriteMacros': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(49): error C2065: 'Pedantic': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(50): error C2065: 'PedanticErrors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(51): error C2065: 'ShowColumn': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(52): error C2065: 'ShowLocation': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(53): error C2065: 'AbsolutePath': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(54): error C2065: 'ShowCarets': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(55): error C2065: 'ShowFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(56): error C2065: 'ShowSourceRanges': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(57): error C2065: 'ShowParseableFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(58): error C2065: 'ShowPresumedLoc': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(59): error C2065: 'ShowOptionNames': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(61): error C2065: 'ShowNoteIncludeStack': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(62): error C2065: 'ShowCategories': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(67): error C2065: 'ShowColors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(70): error C2065: 'VerifyDiagnostics': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(77): error C2065: 'ElideType': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(78): error C2065: 'ShowTemplateTree': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(79): error C2065: 'CLFallbackMode': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(81): error C2065: 'ErrorLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(83): error C2065: 'MacroBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(85): error C2065: 'TemplateBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(87): error C2065: 'ConstexprBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(89): error C2065: 'SpellCheckingLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(91): error C2065: 'SnippetLineLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(93): error C2065: 'TabStop': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(95): error C2065: 'MessageLength': undeclared identifier
 C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
@@ -151,70 +241,22 @@ C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(257): error C3646: 'getValueVisibilityMode': unknown override specifier
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(256): error C2059: syntax error: '('
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(257): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(257): error C2061: syntax error: identifier 'Visibility'
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(259): error C3646: 'getTypeVisibilityMode': unknown override specifier
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(258): error C2059: syntax error: '('
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(259): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(259): error C2061: syntax error: identifier 'Visibility'
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(257): error C2065: 'Value': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/LangOptions.def(259): error C2065: 'Value': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(293): error C3646: 'getValueVisibilityMode': unknown override specifier
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(292): error C2059: syntax error: '('
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(293): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(293): error C2061: syntax error: identifier 'Visibility'
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(295): error C3646: 'getTypeVisibilityMode': unknown override specifier
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(294): error C2059: syntax error: '('
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(295): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(295): error C2061: syntax error: identifier 'Visibility'
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(293): error C2065: 'Value': undeclared identifier
+C:\src\latino-llvm\include\latino/Basic/LangOptions.def(295): error C2065: 'Value': undeclared identifier
 C:\src\latino-llvm\include\latino/Basic/LangOptions.h(217): error C2106: '=': left operand must be l-value
-C:\src\latino-llvm\include\latino/Basic/LangOptions.h(221): error C2065: 'ObjCRuntime': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/LangOptions.h(221): error C2228: left of '.isSubscriptPointerArithmetic' must have class/struct/union
-  C:\src\latino-llvm\include\latino/Basic/LangOptions.h(221): note: type is 'unknown-type'
-C:\src\latino-llvm\include\latino/Basic/LangOptions.h(259): error C2065: 'LangOpts': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/LangOptions.h(259): error C2228: left of '.getDefaultFPContractMode' must have class/struct/union
-  C:\src\latino-llvm\include\latino/Basic/LangOptions.h(259): note: type is 'unknown-type'
-C:\src\latino-llvm\include\latino/Basic/LangOptions.h(267): warning C4553: '==': operator has no effect; did you intend '='?
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.def(52): error C2143: syntax error: missing '}' before 'string'
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.def(52): error C2143: syntax error: missing ';' before 'string'
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.def(52): error C2059: syntax error: 'string'
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.h(13): error C2143: syntax error: missing ';' before '}'
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.h(17): error C2065: 'OverloadedOperatorKind': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.h(17): error C2146: syntax error: missing ')' before identifier 'Operator'
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.h(19): error C2059: syntax error: '}'
-C:\src\latino-llvm\include\latino/Basic/OperatorKinds.h(19): error C2143: syntax error: missing ';' before '}'
+C:\src\latino-llvm\include\latino/Basic/LangOptions.h(269): warning C4553: '==': operator has no effect; did you intend '='?
   SourceLocation.cpp
 C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): error C2365: 'latino::DiagnosticOptions::Format': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): note: see declaration of 'latino::DiagnosticOptions::Format'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): error C2365: 'latino::DiagnosticOptions::ShowOverloads': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): note: see declaration of 'latino::DiagnosticOptions::ShowOverloads'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): error C2365: 'latino::DiagnosticOptions::VerifyIgnoreUnexpected': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): note: see declaration of 'latino::DiagnosticOptions::VerifyIgnoreUnexpected'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(47): error C2065: 'IgnoreWarnings': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(48): error C2065: 'NoRewriteMacros': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(49): error C2065: 'Pedantic': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(50): error C2065: 'PedanticErrors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(51): error C2065: 'ShowColumn': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(52): error C2065: 'ShowLocation': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(53): error C2065: 'AbsolutePath': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(54): error C2065: 'ShowCarets': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(55): error C2065: 'ShowFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(56): error C2065: 'ShowSourceRanges': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(57): error C2065: 'ShowParseableFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(58): error C2065: 'ShowPresumedLoc': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(59): error C2065: 'ShowOptionNames': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(61): error C2065: 'ShowNoteIncludeStack': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(62): error C2065: 'ShowCategories': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(67): error C2065: 'ShowColors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(70): error C2065: 'VerifyDiagnostics': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(77): error C2065: 'ElideType': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(78): error C2065: 'ShowTemplateTree': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(79): error C2065: 'CLFallbackMode': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(81): error C2065: 'ErrorLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(83): error C2065: 'MacroBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(85): error C2065: 'TemplateBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(87): error C2065: 'ConstexprBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(89): error C2065: 'SpellCheckingLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(91): error C2065: 'SnippetLineLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(93): error C2065: 'TabStop': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(95): error C2065: 'MessageLength': undeclared identifier
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
@@ -222,45 +264,80 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(38): error C2039: 'getPresumendLoc': is not a member of 'latino::SourceManager'
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(575): note: see declaration of 'latino::SourceManager'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(40): error C2039: 'isInvalid': is not a member of 'latino::PresumedLoc'
+  C:\src\latino-llvm\include\latino/Basic/SourceLocation.h(260): note: see declaration of 'latino::PresumedLoc'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(45): error C3867: 'latino::PresumedLoc::getFilename': non-standard syntax; use '&' to create a pointer to member
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(45): error C2679: binary '<<': no operator found which takes a right-hand operand of type 'overloaded-function' (or there is no acceptable conversion)
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(240): note: could be 'llvm::raw_ostream &llvm::raw_ostream::operator <<(const llvm::FormattedBytes &)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(237): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const llvm::formatv_object_base &)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(234): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const llvm::FormattedNumber &)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(231): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const llvm::FormattedString &)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(228): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const llvm::format_object_base &)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(211): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(double)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(207): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(int)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(203): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(unsigned int)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(201): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const void *)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(200): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(__int64)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(199): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(unsigned __int64)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(198): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(long)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(197): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(unsigned long)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(193): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const llvm::SmallVectorImpl<T> &)'
+          with
+          [
+              T=char
+          ]
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(188): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const std::string &)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(181): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(const char *)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(166): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(llvm::StringRef)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(159): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(signed char)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(152): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(unsigned char)'
+  C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(145): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(char)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1231): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::DiagNullabilityKind)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1220): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::ArrayRef<latino::FixItHint>)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1214): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::FixItHint &)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1208): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::CharSourceRange &)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1201): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::ArrayRef<latino::SourceRange>)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1195): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::SourceRange)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1174): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::IdentifierInfo *)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1168): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::tok::TokenKind)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1162): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,unsigned int)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1147): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,int)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1140): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const char *)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1134): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::StringRef)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1128): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(52): note: or       'llvm::raw_ostream &latino::operator <<(llvm::raw_ostream &,latino::DiagnosticLevelMask)'
+  C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)' [found using argument-dependent lookup]
+  C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)' [found using argument-dependent lookup]
+  C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(45): note: while trying to match the argument list '(llvm::raw_ostream, overloaded-function)'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(59): error C2511: 'std::string latino::SourceLocation::printToString(const latino::SourceLocation &) const': overloaded member function not found in 'latino::SourceLocation'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(11): note: see declaration of 'latino::SourceLocation'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(62): error C2664: 'void latino::SourceLocation::print(llvm::raw_ostream &,const latino::SourceManager &) const': cannot convert argument 2 from 'const latino::SourceLocation' to 'const latino::SourceManager &'
+  C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(62): note: Reason: cannot convert from 'const latino::SourceLocation' to 'const latino::SourceManager'
+  C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(62): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(98): error C2039: 'getPresumendLoc': is not a member of 'latino::SourceManager'
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(575): note: see declaration of 'latino::SourceManager'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(108): error C2143: syntax error: missing ';' before 'return'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(115): error C2065: 'ImportLoc': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(115): error C3861: 'pair': identifier not found
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(117): error C2065: 'ImportLoc': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(117): error C2228: left of '.first' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(117): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(117): error C2440: '<function-style-cast>': cannot convert from 'const latino::SourceManager' to 'latino::FullSourceLoc'
+  C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(117): note: No constructor could take the source type, or constructor overload resolution was ambiguous
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(118): error C2065: 'ImportLoc': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(118): error C2228: left of '.second' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(118): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(118): error C2672: 'std::make_pair': no matching overloaded function found
+C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(118): error C2780: 'std::pair<_Unrefwrap<_Ty>::type,_Unrefwrap<_Ty2>::type> std::make_pair(_Ty1 &&,_Ty2 &&)': expects 2 arguments - 1 provided
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\utility(323): note: see declaration of 'std::make_pair'
   SourceManager.cpp
 C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): error C2365: 'latino::DiagnosticOptions::Format': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(65): note: see declaration of 'latino::DiagnosticOptions::Format'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): error C2365: 'latino::DiagnosticOptions::ShowOverloads': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(69): note: see declaration of 'latino::DiagnosticOptions::ShowOverloads'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): error C2365: 'latino::DiagnosticOptions::VerifyIgnoreUnexpected': redefinition; previous definition was 'bitfield'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(74): note: see declaration of 'latino::DiagnosticOptions::VerifyIgnoreUnexpected'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(47): error C2065: 'IgnoreWarnings': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(48): error C2065: 'NoRewriteMacros': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(49): error C2065: 'Pedantic': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(50): error C2065: 'PedanticErrors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(51): error C2065: 'ShowColumn': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(52): error C2065: 'ShowLocation': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(53): error C2065: 'AbsolutePath': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(54): error C2065: 'ShowCarets': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(55): error C2065: 'ShowFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(56): error C2065: 'ShowSourceRanges': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(57): error C2065: 'ShowParseableFixits': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(58): error C2065: 'ShowPresumedLoc': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(59): error C2065: 'ShowOptionNames': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(61): error C2065: 'ShowNoteIncludeStack': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(62): error C2065: 'ShowCategories': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(67): error C2065: 'ShowColors': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(70): error C2065: 'VerifyDiagnostics': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(77): error C2065: 'ElideType': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(78): error C2065: 'ShowTemplateTree': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(79): error C2065: 'CLFallbackMode': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(81): error C2065: 'ErrorLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(83): error C2065: 'MacroBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(85): error C2065: 'TemplateBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(87): error C2065: 'ConstexprBacktraceLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(89): error C2065: 'SpellCheckingLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(91): error C2065: 'SnippetLineLimit': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(93): error C2065: 'TabStop': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.def(95): error C2065: 'MessageLength': undeclared identifier
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
@@ -268,5 +345,140 @@ C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used mo
 C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\src\latino-llvm\include\latino/Basic/VirtualFileSystem.h(14): fatal error C1083: Cannot open include file: 'llvm/Support/SourceManager.h': No such file or directory
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(83): error C2059: syntax error: ')'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(83): error C2440: '?': cannot convert from 'void' to 'bool'
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(83): note: Expressions of type void cannot be converted to other types
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(114): error C2039: 'getNewUnintMemBuffer': is not a member of 'llvm::WritableMemoryBuffer'
+  C:\bin\LLVM7\include\llvm/Support/MemoryBuffer.h(160): note: see declaration of 'llvm::WritableMemoryBuffer'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(114): error C3861: 'getNewUnintMemBuffer': identifier not found
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(116): error C2227: left of '->getBufferStart' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(116): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(119): error C2228: left of '.release' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(119): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(142): error C2039: 'err_file_modified': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(14): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(142): error C2065: 'err_file_modified': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(145): error C2039: 'err_file_modified': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(14): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(145): error C2065: 'err_file_modified': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(150): error C2065: 'Buffe': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(150): error C2228: left of '.getPointer' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(150): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(174): error C2039: 'err_unsupported_bom': is not a member of 'latino::diag'
+  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(14): note: see declaration of 'latino::diag'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(174): error C2065: 'err_unsupported_bom': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(214): error C2146: syntax error: missing ',' before identifier 'Entries'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C2143: syntax error: missing ';' before '&'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C2761: 'latino::LineTableInfo &latino::SourceManager::getLineTable(void)': member function redeclaration not allowed
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C2059: syntax error: '{'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C2143: syntax error: missing ';' before '{'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(307): error C2511: 'latino::SourceManager::SourceManager(latino::DiagnosticsEngine &,latino::FileManager &,bool)': overloaded member function not found in 'latino::SourceManager'
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(575): note: see declaration of 'latino::SourceManager'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(307): error C2550: 'latino::SourceManager::{ctor}': constructor initializer lists are only allowed on constructor definitions
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(308): error C2352: 'latino::SourceManager::clearIDTables': illegal call of non-static member function
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(743): note: see declaration of 'latino::SourceManager::clearIDTables'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(309): error C2671: 'latino::SourceManager::{ctor}': static member functions do not have 'this' pointers
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(357): error C2061: syntax error: identifier 'Cache'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(358): error C3536: 'Clone': cannot be used before it is initialized
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(358): error C2227: left of '->OrigEntry' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(358): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(359): error C2227: left of '->ContentsEntry' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(359): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(360): error C2227: left of '->BufferOverridden' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(360): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(361): error C2227: left of '->IsSystemFile' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(361): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(362): error C2227: left of '->IsTransient' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(362): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(363): error C2227: left of '->replaceBuffer' must point to class/struct/union/generic type
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(363): note: type is 'int'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(364): error C2440: 'return': cannot convert from 'int' to 'latino::SrcMgr::ContentCache *'
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(364): note: Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or function-style cast
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(368): error C2065: 'N': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(368): error C2143: syntax error: missing ')' before '++'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(368): error C2059: syntax error: ';'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(368): error C2059: syntax error: ')'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(369): error C2143: syntax error: missing ';' before 'if'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(369): error C2065: 'I': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(370): error C2065: 'I': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(486): error C2065: 'FIleID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(486): error C2146: syntax error: missing ')' before identifier 'FID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(486): error C2143: syntax error: missing ';' before '{'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(486): error C2447: '{': missing function header (old-style formal list?)
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(528): error C2143: syntax error: missing ';' before 'latino::SourceManager::createFileID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(528): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(531): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(531): error C2556: 'int latino::SourceManager::createFileID(const latino::SrcMgr::ContentCache *,latino::SourceLocation,latino::SrcMgr::CharacteristicKind,int,unsigned int)': overloaded function differs only by return type from 'latino::FileID latino::SourceManager::createFileID(const latino::SrcMgr::ContentCache *,latino::SourceLocation,latino::SrcMgr::CharacteristicKind,int,unsigned int)'
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(1740): note: see declaration of 'latino::SourceManager::createFileID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(528): error C2371: 'latino::SourceManager::createFileID': redefinition; different basic types
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(1740): note: see declaration of 'latino::SourceManager::createFileID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(639): error C2084: function 'void latino::SourceManager::overrideFileContents(const latino::FileEntry *,const latino::FileEntry *)' already has a body
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(627): note: see previous definition of 'overrideFileContents'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(662): error C2084: function 'void latino::SourceManager::disableFileContentsOverride(const latino::FileEntry *)' already has a body
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(649): note: see previous definition of 'disableFileContentsOverride'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(689): error C2664: 'llvm::MemoryBuffer *latino::SrcMgr::ContentCache::getBuffer(latino::DiagnosticsEngine &,const latino::SourceManager &,latino::SourceLocation,bool *) const': cannot convert argument 1 from 'const latino::SourceManager' to 'latino::DiagnosticsEngine &'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(811): error C2143: syntax error: missing ';' before 'latino::SourceManager::getFileIDLoaded'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(811): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(811): error C2086: 'int FIleID': redefinition
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(528): note: see declaration of 'FIleID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(811): error C2556: 'int latino::SourceManager::getFileIDLoaded(unsigned int) const': overloaded function differs only by return type from 'latino::FileID latino::SourceManager::getFileIDLoaded(unsigned int) const'
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(1754): note: see declaration of 'latino::SourceManager::getFileIDLoaded'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(811): error C2371: 'latino::SourceManager::getFileIDLoaded': redefinition; different basic types
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(1754): note: see declaration of 'latino::SourceManager::getFileIDLoaded'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(815): error C2064: term does not evaluate to a function taking 0 arguments
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(834): error C2146: syntax error: missing ';' before identifier 'Res'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(834): error C2065: 'Res': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(834): error C2825: 'FIleID': must be a class or namespace when followed by '::'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(834): error C2510: 'FIleID': left of '::' must be a class/struct/union
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(834): error C3861: 'get': identifier not found
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(837): error C2065: 'Res': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(839): error C2065: 'Res': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(854): error C2064: term does not evaluate to a function taking 0 arguments
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(862): error C2064: term does not evaluate to a function taking 0 arguments
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(868): error C2825: 'FIleID': must be a class or namespace when followed by '::'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(868): error C2510: 'FIleID': left of '::' must be a class/struct/union
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(868): error C3861: 'get': identifier not found
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(869): error C2146: syntax error: missing ';' before identifier 'Res'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(869): error C2065: 'Res': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(869): error C2825: 'FIleID': must be a class or namespace when followed by '::'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(869): error C2510: 'FIleID': left of '::' must be a class/struct/union
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(869): error C3861: 'get': identifier not found
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(871): error C2065: 'Res': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(873): error C2065: 'Res': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(879): error C2064: term does not evaluate to a function taking 0 arguments
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(895): error C2065: 'loc': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(895): error C2228: left of '.isFileID' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(895): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(956): error C2923: 'std::pair': 'FIleID' is not a valid template type argument for parameter '_Ty1'
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(528): note: see declaration of 'FIleID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(956): error C2514: 'std::pair': class has no constructors
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\utility(76): note: see declaration of 'std::pair'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1001): error C2146: syntax error: missing ';' before identifier 'FID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1001): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1001): error C2146: syntax error: missing ';' before identifier 'getFileID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1002): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1002): error C2228: left of '.getExpansion' must have class/struct/union
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1002): error C2530: 'Expansion': references must be initialized
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1015): error C2146: syntax error: missing ';' before identifier 'FID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1015): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1016): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1016): error C2228: left of '.getExpansion' must have class/struct/union
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1016): error C2530: 'Expansion': references must be initialized
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1039): error C2146: syntax error: missing ';' before identifier 'PrevFID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1039): error C2065: 'PrevFID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1040): error C2065: 'PrevFID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1040): error C2228: left of '.isInvalid' must have class/struct/union
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1040): note: type is 'unknown-type'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1041): error C2065: 'PrevFID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1041): error C2530: 'PrevEntry': references must be initialized
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1059): error C2146: syntax error: missing ';' before identifier 'FID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1059): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1061): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1061): error C3861: 'isInFileID': identifier not found
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1066): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1066): fatal error C1003: error count exceeds 100; stopping compilation
   Generating Code...

@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{BCA3962F-7028-3AFA-B035-BC0472D296FE}</ProjectGUID>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>ClangDiagnosticRefactoring</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup>
+      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\include\latino\Basic;C:\src\latino-llvm\include\latino\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\include\latino\Basic;C:\src\latino-llvm\include\latino\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\include\latino\Basic;C:\src\latino-llvm\include\latino\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\include\latino\Basic;C:\src\latino-llvm\include\latino\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -HC:/src/latino-llvm -BC:/src/latino-llvm/msvc --check-stamp-file C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -HC:/src/latino-llvm -BC:/src/latino-llvm/msvc --check-stamp-file C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -HC:/src/latino-llvm -BC:/src/latino-llvm/msvc --check-stamp-file C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -HC:/src/latino-llvm -BC:/src/latino-llvm/msvc --check-stamp-file C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/src/latino-llvm/include/latino/Basic/CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;C:\src\latino-llvm\include\latino\Basic\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\src\latino-llvm\msvc\CMakeFiles\684e41cbcfeb1662a030be732234a1b1\DiagnosticRefactoringKinds.inc.tmp.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+C:\bin\LLVM7\bin\clang-tblgen.exe -gen-clang-diags-defs -clang-component=Refactoring -I C:/src/latino-llvm/include/latino/Basic -I C:/bin/LLVM7/include C:/src/latino-llvm/include/latino/Basic/Diagnostic.td -o C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.tmp.rule;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCategories.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCommonKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticDocs.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticGroups.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticRefactoringKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSemaKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSerializationKinds.td;C:\bin\LLVM7\include\llvm\CodeGen\SDNodeProperties.td;C:\bin\LLVM7\include\llvm\CodeGen\ValueTypes.td;C:\bin\LLVM7\include\llvm\IR\Attributes.td;C:\bin\LLVM7\include\llvm\IR\Intrinsics.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAArch64.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAMDGPU.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsARM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsBPF.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsHexagon.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsMips.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsNVVM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsPowerPC.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsSystemZ.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsWebAssembly.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsX86.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsXCore.td;C:\bin\LLVM7\include\llvm\Option\OptParser.td;C:\bin\LLVM7\include\llvm\TableGen\SearchableTable.td;C:\bin\LLVM7\include\llvm\Target\GenericOpcodes.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\RegisterBank.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\SelectionDAGCompat.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\Target.td;C:\bin\LLVM7\include\llvm\Target\Target.td;C:\bin\LLVM7\include\llvm\Target\TargetCallingConv.td;C:\bin\LLVM7\include\llvm\Target\TargetItinerary.td;C:\bin\LLVM7\include\llvm\Target\TargetSchedule.td;C:\bin\LLVM7\include\llvm\Target\TargetSelectionDAG.td;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+C:\bin\LLVM7\bin\clang-tblgen.exe -gen-clang-diags-defs -clang-component=Refactoring -I C:/src/latino-llvm/include/latino/Basic -I C:/bin/LLVM7/include C:/src/latino-llvm/include/latino/Basic/Diagnostic.td -o C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.tmp.rule;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCategories.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCommonKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticDocs.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticGroups.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticRefactoringKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSemaKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSerializationKinds.td;C:\bin\LLVM7\include\llvm\CodeGen\SDNodeProperties.td;C:\bin\LLVM7\include\llvm\CodeGen\ValueTypes.td;C:\bin\LLVM7\include\llvm\IR\Attributes.td;C:\bin\LLVM7\include\llvm\IR\Intrinsics.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAArch64.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAMDGPU.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsARM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsBPF.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsHexagon.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsMips.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsNVVM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsPowerPC.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsSystemZ.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsWebAssembly.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsX86.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsXCore.td;C:\bin\LLVM7\include\llvm\Option\OptParser.td;C:\bin\LLVM7\include\llvm\TableGen\SearchableTable.td;C:\bin\LLVM7\include\llvm\Target\GenericOpcodes.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\RegisterBank.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\SelectionDAGCompat.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\Target.td;C:\bin\LLVM7\include\llvm\Target\Target.td;C:\bin\LLVM7\include\llvm\Target\TargetCallingConv.td;C:\bin\LLVM7\include\llvm\Target\TargetItinerary.td;C:\bin\LLVM7\include\llvm\Target\TargetSchedule.td;C:\bin\LLVM7\include\llvm\Target\TargetSelectionDAG.td;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+C:\bin\LLVM7\bin\clang-tblgen.exe -gen-clang-diags-defs -clang-component=Refactoring -I C:/src/latino-llvm/include/latino/Basic -I C:/bin/LLVM7/include C:/src/latino-llvm/include/latino/Basic/Diagnostic.td -o C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.tmp.rule;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCategories.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCommonKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticDocs.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticGroups.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticRefactoringKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSemaKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSerializationKinds.td;C:\bin\LLVM7\include\llvm\CodeGen\SDNodeProperties.td;C:\bin\LLVM7\include\llvm\CodeGen\ValueTypes.td;C:\bin\LLVM7\include\llvm\IR\Attributes.td;C:\bin\LLVM7\include\llvm\IR\Intrinsics.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAArch64.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAMDGPU.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsARM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsBPF.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsHexagon.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsMips.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsNVVM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsPowerPC.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsSystemZ.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsWebAssembly.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsX86.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsXCore.td;C:\bin\LLVM7\include\llvm\Option\OptParser.td;C:\bin\LLVM7\include\llvm\TableGen\SearchableTable.td;C:\bin\LLVM7\include\llvm\Target\GenericOpcodes.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\RegisterBank.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\SelectionDAGCompat.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\Target.td;C:\bin\LLVM7\include\llvm\Target\Target.td;C:\bin\LLVM7\include\llvm\Target\TargetCallingConv.td;C:\bin\LLVM7\include\llvm\Target\TargetItinerary.td;C:\bin\LLVM7\include\llvm\Target\TargetSchedule.td;C:\bin\LLVM7\include\llvm\Target\TargetSelectionDAG.td;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+C:\bin\LLVM7\bin\clang-tblgen.exe -gen-clang-diags-defs -clang-component=Refactoring -I C:/src/latino-llvm/include/latino/Basic -I C:/bin/LLVM7/include C:/src/latino-llvm/include/latino/Basic/Diagnostic.td -o C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.tmp.rule;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\bin\LLVM7\bin\clang-tblgen.exe;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCategories.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticCommonKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticDocs.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticGroups.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticRefactoringKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSemaKinds.td;C:\src\latino-llvm\include\latino\Basic\DiagnosticSerializationKinds.td;C:\bin\LLVM7\include\llvm\CodeGen\SDNodeProperties.td;C:\bin\LLVM7\include\llvm\CodeGen\ValueTypes.td;C:\bin\LLVM7\include\llvm\IR\Attributes.td;C:\bin\LLVM7\include\llvm\IR\Intrinsics.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAArch64.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsAMDGPU.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsARM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsBPF.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsHexagon.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsMips.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsNVVM.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsPowerPC.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsSystemZ.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsWebAssembly.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsX86.td;C:\bin\LLVM7\include\llvm\IR\IntrinsicsXCore.td;C:\bin\LLVM7\include\llvm\Option\OptParser.td;C:\bin\LLVM7\include\llvm\TableGen\SearchableTable.td;C:\bin\LLVM7\include\llvm\Target\GenericOpcodes.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\RegisterBank.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\SelectionDAGCompat.td;C:\bin\LLVM7\include\llvm\Target\GlobalISel\Target.td;C:\bin\LLVM7\include\llvm\Target\Target.td;C:\bin\LLVM7\include\llvm\Target\TargetCallingConv.td;C:\bin\LLVM7\include\llvm\Target\TargetItinerary.td;C:\bin\LLVM7\include\llvm\Target\TargetSchedule.td;C:\bin\LLVM7\include\llvm\Target\TargetSelectionDAG.td;C:\src\latino-llvm\include\latino\Basic\Diagnostic.td;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\src\latino-llvm\msvc\CMakeFiles\684e41cbcfeb1662a030be732234a1b1\DiagnosticRefactoringKinds.inc.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Updating DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -E copy_if_different C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Updating DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -E copy_if_different C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Updating DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -E copy_if_different C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Updating DiagnosticRefactoringKinds.inc...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+C:\bin\CMake\bin\cmake.exe -E copy_if_different C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc.tmp C:/src/latino-llvm/msvc/include/latino/Basic/DiagnosticRefactoringKinds.inc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/684e41cbcfeb1662a030be732234a1b1/DiagnosticRefactoringKinds.inc.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc.tmp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\src\latino-llvm\msvc\CMakeFiles\e8989fc0cae9858496b33865c21749d5\ClangDiagnosticRefactoring.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/e8989fc0cae9858496b33865c21749d5/ClangDiagnosticRefactoring.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\ClangDiagnosticRefactoring</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/e8989fc0cae9858496b33865c21749d5/ClangDiagnosticRefactoring.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\ClangDiagnosticRefactoring</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/e8989fc0cae9858496b33865c21749d5/ClangDiagnosticRefactoring.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\ClangDiagnosticRefactoring</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/src/latino-llvm/msvc/CMakeFiles/e8989fc0cae9858496b33865c21749d5/ClangDiagnosticRefactoring.rule;C:\src\latino-llvm\msvc\include\latino\Basic\DiagnosticRefactoringKinds.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\ClangDiagnosticRefactoring</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\src\latino-llvm\msvc\include\latino\Basic\CMakeFiles\ClangDiagnosticRefactoring" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:/src/latino-llvm/msvc/ZERO_CHECK.vcxproj">
+      <Project>144B0A37-8EF0-3CBB-ABD1-2220909F9268</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

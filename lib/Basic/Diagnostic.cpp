@@ -355,7 +355,7 @@ bool DiagnosticsEngine::setSeverityForGroup(diag::Flavor Flavor,
                                             StringRef Group, diag::Severity Map,
                                             SourceLocation Loc) {
   SmallVector<diag::kind, 256> GroupDiags;
-  if (Diags->getDiagnosticInGroup(Flavor, Group, GroupDiags))
+  if (Diags->getDiagnosticsInGroup(Flavor, Group, GroupDiags))
     return true;
 
   // Set the mapping
@@ -377,7 +377,7 @@ bool DiagnosticsEngine::setDiagnosticGroupWarningAsError(StringRef Group,
 
   // Get the diagnostics in this group.
   SmallVector<diag::kind, 8> GroupDiags;
-  if (Diags->getDiagnosticInGroup(diag::Flavor::WarningOrError, Group,
+  if (Diags->getDiagnosticsInGroup(diag::Flavor::WarningOrError, Group,
                                   GroupDiags))
     return true;
 
@@ -407,7 +407,7 @@ bool DiagnosticsEngine::setDiagnosticGroupErrorAsFatal(StringRef Group,
 
   // Get the diagnostics in this group.
   SmallVector<diag::kind, 8> GroupDiags;
-  if (Diags->getDiagnosticInGroup(diag::Flavor::WarningOrError, Group,
+  if (Diags->getDiagnosticsInGroup(diag::Flavor::WarningOrError, Group,
                                   GroupDiags))
     return true;
 

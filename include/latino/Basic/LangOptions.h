@@ -217,10 +217,12 @@ public:
     return getSignedOverflowBehavior() = SOB_Defined;
   }
 
+  /*
   bool isSubscriptPointerArithmetic() const {
     return ObjCRuntime.isSubscriptPointerArithmetic() &&
            !ObjCSubscriptingLegacyRuntime;
   }
+  */
 
   bool isCompatibleWithMSVC(MSVCMajorVersion MajorVersion) const {
     return MSCompatibilityVersion >= MajorVersion * 10000000U;
@@ -256,7 +258,7 @@ public:
   explicit FPOptions(unsigned I)
       : fp_contract(static_cast<LangOptions::FPContractModeKind>(I)) {}
 
-  explicit FPOptions(const LangOptions &langOpts)
+  explicit FPOptions(const LangOptions &LangOpts)
       : fp_contract(LangOpts.getDefaultFPContractMode()) {}
 
   bool allowFPContractWithinStatement() const {

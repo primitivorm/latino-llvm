@@ -155,7 +155,7 @@ bool FullSourceLoc::isInSystemHeader() const {
 
 bool FullSourceLoc::isBeforeInTranslationUnitThan(SourceLocation Loc) const {
     assert(isValid());
-    return SrcMgr->isBeforeInTranslationUnitThan(*this, Loc);
+    return SrcMgr->isBeforeInTranslationUnit(*this, Loc);
 }
 
 LLVM_DUMP_METHOD void FullSourceLoc::dump() const {

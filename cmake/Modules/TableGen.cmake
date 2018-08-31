@@ -7,7 +7,7 @@ if(LLVM_MAIN_INCLUDE_DIR)
   set(LLVM_TABLEGEN_FLAGS -I ${LLVM_MAIN_INCLUDE_DIR})
 endif()
 
-function(tablegen project ofn)  
+function(tablegen project ofn)
   #message(STATUS "function (tablegen ${project} ${ofn})")
   # Validate calling context.
   if(NOT ${project}_TABLEGEN_EXE)

@@ -371,7 +371,7 @@ private:
 
   /// \brief Finds the DiagStatePoint that contains the diagnostic state of
   /// the given source location
-  DiagState *GetDiagStateLoc(SourceLocation Loc) const {
+  DiagState *GetDiagStateForLoc(SourceLocation Loc) const {
     return SourceMgr ? DiagStatesByLoc.lookup(*SourceMgr, Loc)
                      : DiagStatesByLoc.getCurDiagState();
   }

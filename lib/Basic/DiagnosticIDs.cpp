@@ -65,16 +65,16 @@ struct StaticDiagInfoRec {
                             "diagnostics, it may need to be made larger in "   \
                             "DiagnosticIDs.h.");
 VALIDATE_DIAG_SIZE(COMMON)
-VALIDATE_DIAG_SIZE(DRIVER)
-VALIDATE_DIAG_SIZE(FRONTEND)
+//VALIDATE_DIAG_SIZE(DRIVER)
+//VALIDATE_DIAG_SIZE(FRONTEND)
 VALIDATE_DIAG_SIZE(SERIALIZATION)
-VALIDATE_DIAG_SIZE(LEX)
-VALIDATE_DIAG_SIZE(PARSE)
-VALIDATE_DIAG_SIZE(AST)
-VALIDATE_DIAG_SIZE(COMMENT)
+//VALIDATE_DIAG_SIZE(LEX)
+//VALIDATE_DIAG_SIZE(PARSE)
+//VALIDATE_DIAG_SIZE(AST)
+//VALIDATE_DIAG_SIZE(COMMENT)
 VALIDATE_DIAG_SIZE(SEMA)
-VALIDATE_DIAG_SIZE(ANALYSIS)
-VALIDATE_DIAG_SIZE(REFACTORING)
+//VALIDATE_DIAG_SIZE(ANALYSIS)
+//VALIDATE_DIAG_SIZE(REFACTORING)
 #undef VALIDATE_DIAG_SIZE
 #undef STRINGIFY_NAME
 
@@ -102,8 +102,8 @@ static const StaticDiagInfoRec StaticDiagInfo[] = {
 #include "latino/Basic/DiagnosticCrossTUKinds.inc"
 #include "latino/Basic/DiagnosticFrontendKinds.inc"
 #include "latino/Basic/DiagnosticLexKinds.inc"
-#include "latino/Basic/DiagnosticParseKinds.inc"
-#include "latino/Basic/DiagnosticRefactoringKinds.inc"*/
+#include "latino/Basic/DiagnosticParseKinds.inc"*/
+#include "latino/Basic/DiagnosticRefactoringKinds.inc"
 #include "latino/Basic/DiagnosticSemaKinds.inc"
 #include "latino/Basic/DiagnosticSerializationKinds.inc"
 #undef DIAG
@@ -163,7 +163,7 @@ static const StaticDiagInfoRec *GetDiagInfo(unsigned DiagID) {
 }
 
 static DiagnosticMapping GetDefaultDiagMapping(unsigned DiagID) {
-  DiagnosticsMapping Info = DiagnosticMapping::Make(
+  DiagnosticMapping Info = DiagnosticMapping::Make(
       diag::Severity::Fatal, /*IsUser=*/false, /*IsPragma=*/false);
 
   if (const StaticDiagInfoRec *StaticInfo = GetDiagInfo(DiagID)) {
@@ -214,7 +214,7 @@ DiagnosticsEngine::DiagState::getOrAddMapping(diag::kind Diag) {
 static const StaticDiagCategoryRec CategoryNameTable[] = {
 #define GET_CATEGORY_TABLE
 #define CATEGORY(X, ENUM) {X, STR_SIZE(X, uint8_t)},
-#include "latino/Basic/DiagnosticGroup.inc"
+#include "latino/Basic/DiagnosticGroups.inc"
 #undef GET_CATEGORY_TABLE
     {nullptr, 0}};
 
@@ -235,7 +235,7 @@ StringRef DiagnosticIDs::getCategoryNameForID(unsigned CategoryID) {
 DiagnosticIDs::SFINAEResponse
 DiagnosticIDs::getDiagnosticSFINAEResponse(unsigned DiagID) {
   if (const StaticDiagInfoRec *Info = GetDiagInfo(DiagID))
-    return static_cast<DiagnosticIDs::SFINAEResponse>(info->SFINAE);
+    return static_cast<DiagnosticIDs::SFINAEResponse>(Info->SFINAE);
   return SFINAE_Report;
 }
 
@@ -255,7 +255,6 @@ namespace diag {
 class CustomDiagInfo {
   typedef std::pair<DiagnosticIDs::Level, std::string> DiagDesc;
   std::vector<DiagDesc> DiagInfo;
-  std::map<DiagDesc> DiagInfo;
   std::map<DiagDesc, unsigned> DiagIDs;
 
 public:
@@ -278,7 +277,7 @@ public:
                              DiagnosticIDs &Diags) {
     DiagDesc D(L, Message);
     // Check to see if it already exists.
-    sdt::map<DiagDesc, unsigned>::iterator I = DiagIDs.lower_bound(D);
+    std::map<DiagDesc, unsigned>::iterator I = DiagIDs.lower_bound(D);
     if (I != DiagIDs.end() && I->first == D)
       return I->second;
 
@@ -353,7 +352,7 @@ bool DiagnosticIDs::isDefaultMappingAsError(unsigned DiagID) {
 /// issue.
 StringRef DiagnosticIDs::getDescription(unsigned DiagID) const {
   if (const StaticDiagInfoRec *Info = GetDiagInfo(DiagID))
-    return Info->getDescription(DiagID);
+    return Info->getDescription();
   assert(CustomDiagInfo && "Invalid CustomDiagInfo");
   return CustomDiagInfo->getDescription(DiagID);
 }
@@ -361,12 +360,12 @@ StringRef DiagnosticIDs::getDescription(unsigned DiagID) const {
 static DiagnosticIDs::Level toLevel(diag::Severity SV) {
   switch (SV) {
   case diag::Severity::Ignored:
-    return DiagnosticIDs::ignored;
-  case diags::Severity::Remark:
+    return DiagnosticIDs::Ignored;
+  case diag::Severity::Remark:
     return DiagnosticIDs::Remark;
-  case diags::Severity::Warning:
+  case diag::Severity::Warning:
     return DiagnosticIDs::Warning;
-  case diags::Severity::Error:
+  case diag::Severity::Error:
     return DiagnosticIDs::Error;
   case diag::Severity::Fatal:
     return DiagnosticIDs::Fatal;
@@ -408,7 +407,7 @@ DiagnosticIDs::getDiagnosticSeverity(unsigned DiagID, SourceLocation Loc,
   diag::Severity Result = diag::Severity::Fatal;
 
   // Get the mapping information, or compute it lazily.
-  DiagnosticsEngine::DiagState *State = Diag.GetDiagnosticForLoc(Loc);
+  DiagnosticsEngine::DiagState *State = Diag.GetDiagStateForLoc(Loc);
   DiagnosticMapping &Mapping = State->getOrAddMapping((diag::kind)DiagID);
 
   // TODO: Can a null severity really get here?
@@ -416,7 +415,7 @@ DiagnosticIDs::getDiagnosticSeverity(unsigned DiagID, SourceLocation Loc,
     Result = Mapping.getSeverity();
 
   // Upgrade ignored diagnostics if -Weverything is enabled.
-  if (State->EnableAllWarnings && Result == diag.Severity::Ignored &&
+  if (State->EnableAllWarnings && Result == diag::Severity::Ignored &&
       !Mapping.isUser() && getBuiltinDiagClass(DiagID) != CLASS_REMARK)
     Result = diag::Severity::Warning;
 
@@ -458,13 +457,13 @@ DiagnosticIDs::getDiagnosticSeverity(unsigned DiagID, SourceLocation Loc,
   }
 
   // Custom diagnostics always are emitted in system headers.
-  bool WarnShowInSystemHeader =
+  bool ShowInSystemHeader =
       !GetDiagInfo(DiagID) || GetDiagInfo(DiagID)->WarnShowInSystemHeader;
 
   // If we are in a system header, we ignore it. We look at the diagnostic class
   // because we also want to ignore extensions and warnings in -Werror and
   // -pedantic-errors modes, which *map* warnings/extensions to errors.
-  if (State->SuppressSystemWarnings && !ShowInSysteHeader && Loc.isValid() &&
+  if (State->SuppressSystemWarnings && !ShowInSystemHeader && Loc.isValid() &&
       Diag.getSourceManager().isInSystemHeader(
           Diag.getSourceManager().getExpansionLoc(Loc)))
     return diag::Severity::Ignored;
@@ -539,17 +538,18 @@ static bool getDiagnosticsInGroup(diag::Flavor Flavor,
   return NotFound;
 }
 
-bool DiagnosticIDs::getDiagnosticsInGroup(
-    diag::Flavor, StringRef Group, SmallvectorImpl<diag::kind> &Diags) const {
-  auto Found =
-      std::lower_bound(std::begin(OptionTable), std::end(OptionTable), Group,
-                       [](const WarningOption &LHS, StringRef RHS) {
-                         return LHS.getName() < RHS;
-                       });
-  if (Found == std::end(OptionTable) || Found->getName() != Group)
-    return true; // Option not found.
+bool
+DiagnosticIDs::getDiagnosticsInGroup(diag::Flavor Flavor, StringRef Group,
+	SmallVectorImpl<diag::kind> &Diags) const {
+	auto Found = std::lower_bound(std::begin(OptionTable), std::end(OptionTable),
+		Group,
+		[](const WarningOption &LHS, StringRef RHS) {
+		return LHS.getName() < RHS;
+	});
+	if (Found == std::end(OptionTable) || Found->getName() != Group)
+		return true; // Option not found.
 
-  return ::getDiagnosticsInGroup(Flavor, Found, Diags);
+	return ::getDiagnosticsInGroup(Flavor, Found, Diags);
 }
 
 void DiagnosticIDs::getAllDiagnostics(diag::Flavor Flavor,
