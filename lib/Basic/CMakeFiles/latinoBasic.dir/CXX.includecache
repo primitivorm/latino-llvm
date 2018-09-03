@@ -1074,6 +1074,8 @@ include/latino/Basic/latino/Basic/PartialDiagnostic.h
 llvm/Support/Error.h
 include/latino/Basic/llvm/Support/Error.h
 
+include/latino/Basic/DiagnosticGroups.inc
+
 include/latino/Basic/DiagnosticIDs.h
 latino/Basic/LLVM.h
 include/latino/Basic/latino/Basic/LLVM.h
@@ -1107,6 +1109,12 @@ latino/Basic/DiagnosticOptions.def
 include/latino/Basic/latino/Basic/DiagnosticOptions.def
 latino/Basic/DiagnosticOptions.def
 include/latino/Basic/latino/Basic/DiagnosticOptions.def
+
+include/latino/Basic/DiagnosticRefactoringKinds.inc
+
+include/latino/Basic/DiagnosticSemaKinds.inc
+
+include/latino/Basic/DiagnosticSerializationKinds.inc
 
 include/latino/Basic/FileManager.h
 latino/Basic/FileSystemOptions.h

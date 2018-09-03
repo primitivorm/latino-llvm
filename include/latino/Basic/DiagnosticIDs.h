@@ -279,7 +279,7 @@ public:
   /// \param[out] Diags - On return, the diagnostics in the group
   /// \returns \c true if the given group is unknown, \c false otherwise
   bool getDiagnosticsInGroup(diag::Flavor Flavor, StringRef Group,
-                            SmallVectorImpl<diag::kind> &Diags) const;
+                             SmallVectorImpl<diag::kind> &Diags) const;
 
   /// \brief Get the set of all diagnostic IDs
   static void getAllDiagnostics(diag::Flavor Flavor,

@@ -184,6 +184,19 @@ intrinsics_gen/fast:
 .PHONY : intrinsics_gen/fast
 
 #=============================================================================
+# Target rules for targets named ClangDiagnosticRefactoring
+
+# Build rule for target.
+ClangDiagnosticRefactoring: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangDiagnosticRefactoring
+.PHONY : ClangDiagnosticRefactoring
+
+# fast build rule for target.
+ClangDiagnosticRefactoring/fast:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/build
+.PHONY : ClangDiagnosticRefactoring/fast
+
+#=============================================================================
 # Target rules for targets named ClangDiagnosticCommon
 
 # Build rule for target.
@@ -195,6 +208,32 @@ ClangDiagnosticCommon: cmake_check_build_system
 ClangDiagnosticCommon/fast:
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build
 .PHONY : ClangDiagnosticCommon/fast
+
+#=============================================================================
+# Target rules for targets named ClangDiagnosticSema
+
+# Build rule for target.
+ClangDiagnosticSema: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangDiagnosticSema
+.PHONY : ClangDiagnosticSema
+
+# fast build rule for target.
+ClangDiagnosticSema/fast:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/build
+.PHONY : ClangDiagnosticSema/fast
+
+#=============================================================================
+# Target rules for targets named ClangDiagnosticSerialization
+
+# Build rule for target.
+ClangDiagnosticSerialization: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangDiagnosticSerialization
+.PHONY : ClangDiagnosticSerialization
+
+# fast build rule for target.
+ClangDiagnosticSerialization/fast:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/build
+.PHONY : ClangDiagnosticSerialization/fast
 
 #=============================================================================
 # Target rules for targets named ClangDiagnosticGroups
@@ -221,6 +260,97 @@ ClangDiagnosticIndexName: cmake_check_build_system
 ClangDiagnosticIndexName/fast:
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build
 .PHONY : ClangDiagnosticIndexName/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrParsedAttrList
+
+# Build rule for target.
+ClangAttrParsedAttrList: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrParsedAttrList
+.PHONY : ClangAttrParsedAttrList
+
+# fast build rule for target.
+ClangAttrParsedAttrList/fast:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/build
+.PHONY : ClangAttrParsedAttrList/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrParsedAttrImpl
+
+# Build rule for target.
+ClangAttrParsedAttrImpl: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrParsedAttrImpl
+.PHONY : ClangAttrParsedAttrImpl
+
+# fast build rule for target.
+ClangAttrParsedAttrImpl/fast:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/build
+.PHONY : ClangAttrParsedAttrImpl/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrTemplateInstantiate
+
+# Build rule for target.
+ClangAttrTemplateInstantiate: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrTemplateInstantiate
+.PHONY : ClangAttrTemplateInstantiate
+
+# fast build rule for target.
+ClangAttrTemplateInstantiate/fast:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/build
+.PHONY : ClangAttrTemplateInstantiate/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrSpellingListIndex
+
+# Build rule for target.
+ClangAttrSpellingListIndex: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrSpellingListIndex
+.PHONY : ClangAttrSpellingListIndex
+
+# fast build rule for target.
+ClangAttrSpellingListIndex/fast:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/build
+.PHONY : ClangAttrSpellingListIndex/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrParsedAttrKinds
+
+# Build rule for target.
+ClangAttrParsedAttrKinds: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrParsedAttrKinds
+.PHONY : ClangAttrParsedAttrKinds
+
+# fast build rule for target.
+ClangAttrParsedAttrKinds/fast:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/build
+.PHONY : ClangAttrParsedAttrKinds/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrPCHWrite
+
+# Build rule for target.
+ClangAttrPCHWrite: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrPCHWrite
+.PHONY : ClangAttrPCHWrite
+
+# fast build rule for target.
+ClangAttrPCHWrite/fast:
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/build
+.PHONY : ClangAttrPCHWrite/fast
+
+#=============================================================================
+# Target rules for targets named ClangAttrPCHRead
+
+# Build rule for target.
+ClangAttrPCHRead: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ClangAttrPCHRead
+.PHONY : ClangAttrPCHRead
+
+# fast build rule for target.
+ClangAttrPCHRead/fast:
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/build
+.PHONY : ClangAttrPCHRead/fast
 
 #=============================================================================
 # Target rules for targets named latinoBasic
@@ -301,9 +431,19 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
+	@echo "... ClangDiagnosticRefactoring"
 	@echo "... ClangDiagnosticCommon"
+	@echo "... ClangDiagnosticSema"
+	@echo "... ClangDiagnosticSerialization"
 	@echo "... ClangDiagnosticGroups"
 	@echo "... ClangDiagnosticIndexName"
+	@echo "... ClangAttrParsedAttrList"
+	@echo "... ClangAttrParsedAttrImpl"
+	@echo "... ClangAttrTemplateInstantiate"
+	@echo "... ClangAttrSpellingListIndex"
+	@echo "... ClangAttrParsedAttrKinds"
+	@echo "... ClangAttrPCHWrite"
+	@echo "... ClangAttrPCHRead"
 	@echo "... latinoBasic"
 	@echo "... latino"
 	@echo "... LatinoUnitTests"

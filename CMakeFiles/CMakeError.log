@@ -561,3 +561,278 @@ Makefile:126: recipe for target 'cmTC_f385e/fast' failed
 make: *** [cmTC_f385e/fast] Error 2
 
 
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_344f2/fast"
+/usr/bin/make -f CMakeFiles/cmTC_344f2.dir/build.make CMakeFiles/cmTC_344f2.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_344f2.dir/CheckSymbolExists.c.o
+/usr/local/bin/clang    -o CMakeFiles/cmTC_344f2.dir/CheckSymbolExists.c.o   -c /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_344f2
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_344f2.dir/link.txt --verbose=1
+/usr/local/bin/clang      CMakeFiles/cmTC_344f2.dir/CheckSymbolExists.c.o  -o cmTC_344f2 
+CMakeFiles/cmTC_344f2.dir/CheckSymbolExists.c.o: En la función `main':
+CheckSymbolExists.c:(.text+0x19): referencia a `pthread_create' sin definir
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_344f2.dir/build.make:97: recipe for target 'cmTC_344f2' failed
+make[1]: *** [cmTC_344f2] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_344f2/fast' failed
+make: *** [cmTC_344f2/fast] Error 2
+
+File /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_baacc/fast"
+/usr/bin/make -f CMakeFiles/cmTC_baacc.dir/build.make CMakeFiles/cmTC_baacc.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_baacc.dir/CheckFunctionExists.c.o
+/usr/local/bin/clang   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_baacc.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_baacc
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_baacc.dir/link.txt --verbose=1
+/usr/local/bin/clang  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_baacc.dir/CheckFunctionExists.c.o  -o cmTC_baacc -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_baacc.dir/build.make:97: recipe for target 'cmTC_baacc' failed
+make[1]: *** [cmTC_baacc] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_baacc/fast' failed
+make: *** [cmTC_baacc/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_33e5e/fast"
+/usr/bin/make -f CMakeFiles/cmTC_33e5e.dir/build.make CMakeFiles/cmTC_33e5e.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_33e5e.dir/CheckSymbolExists.c.o
+/usr/local/bin/clang    -o CMakeFiles/cmTC_33e5e.dir/CheckSymbolExists.c.o   -c /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_33e5e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_33e5e.dir/link.txt --verbose=1
+/usr/local/bin/clang      CMakeFiles/cmTC_33e5e.dir/CheckSymbolExists.c.o  -o cmTC_33e5e 
+CMakeFiles/cmTC_33e5e.dir/CheckSymbolExists.c.o: En la función `main':
+CheckSymbolExists.c:(.text+0x19): referencia a `pthread_create' sin definir
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_33e5e.dir/build.make:97: recipe for target 'cmTC_33e5e' failed
+make[1]: *** [cmTC_33e5e] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_33e5e/fast' failed
+make: *** [cmTC_33e5e/fast] Error 2
+
+File /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_cf3aa/fast"
+/usr/bin/make -f CMakeFiles/cmTC_cf3aa.dir/build.make CMakeFiles/cmTC_cf3aa.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_cf3aa.dir/CheckFunctionExists.c.o
+/usr/local/bin/clang   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_cf3aa.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_cf3aa
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cf3aa.dir/link.txt --verbose=1
+/usr/local/bin/clang  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_cf3aa.dir/CheckFunctionExists.c.o  -o cmTC_cf3aa -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_cf3aa.dir/build.make:97: recipe for target 'cmTC_cf3aa' failed
+make[1]: *** [cmTC_cf3aa] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_cf3aa/fast' failed
+make: *** [cmTC_cf3aa/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_1c175/fast"
+/usr/bin/make -f CMakeFiles/cmTC_1c175.dir/build.make CMakeFiles/cmTC_1c175.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_1c175.dir/CheckSymbolExists.c.o
+/usr/local/bin/clang    -o CMakeFiles/cmTC_1c175.dir/CheckSymbolExists.c.o   -c /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_1c175
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1c175.dir/link.txt --verbose=1
+/usr/local/bin/clang      CMakeFiles/cmTC_1c175.dir/CheckSymbolExists.c.o  -o cmTC_1c175 
+CMakeFiles/cmTC_1c175.dir/CheckSymbolExists.c.o: En la función `main':
+CheckSymbolExists.c:(.text+0x19): referencia a `pthread_create' sin definir
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_1c175.dir/build.make:97: recipe for target 'cmTC_1c175' failed
+make[1]: *** [cmTC_1c175] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_1c175/fast' failed
+make: *** [cmTC_1c175/fast] Error 2
+
+File /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e90b3/fast"
+/usr/bin/make -f CMakeFiles/cmTC_e90b3.dir/build.make CMakeFiles/cmTC_e90b3.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_e90b3.dir/CheckFunctionExists.c.o
+/usr/local/bin/clang   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_e90b3.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_e90b3
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e90b3.dir/link.txt --verbose=1
+/usr/local/bin/clang  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_e90b3.dir/CheckFunctionExists.c.o  -o cmTC_e90b3 -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_e90b3.dir/build.make:97: recipe for target 'cmTC_e90b3' failed
+make[1]: *** [cmTC_e90b3] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_e90b3/fast' failed
+make: *** [cmTC_e90b3/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_bd514/fast"
+/usr/bin/make -f CMakeFiles/cmTC_bd514.dir/build.make CMakeFiles/cmTC_bd514.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_bd514.dir/CheckSymbolExists.c.o
+/usr/local/bin/clang    -o CMakeFiles/cmTC_bd514.dir/CheckSymbolExists.c.o   -c /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_bd514
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bd514.dir/link.txt --verbose=1
+/usr/local/bin/clang      CMakeFiles/cmTC_bd514.dir/CheckSymbolExists.c.o  -o cmTC_bd514 
+CMakeFiles/cmTC_bd514.dir/CheckSymbolExists.c.o: En la función `main':
+CheckSymbolExists.c:(.text+0x19): referencia a `pthread_create' sin definir
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_bd514.dir/build.make:97: recipe for target 'cmTC_bd514' failed
+make[1]: *** [cmTC_bd514] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_bd514/fast' failed
+make: *** [cmTC_bd514/fast] Error 2
+
+File /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_08504/fast"
+/usr/bin/make -f CMakeFiles/cmTC_08504.dir/build.make CMakeFiles/cmTC_08504.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_08504.dir/CheckFunctionExists.c.o
+/usr/local/bin/clang   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_08504.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_08504
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_08504.dir/link.txt --verbose=1
+/usr/local/bin/clang  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_08504.dir/CheckFunctionExists.c.o  -o cmTC_08504 -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_08504.dir/build.make:97: recipe for target 'cmTC_08504' failed
+make[1]: *** [cmTC_08504] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_08504/fast' failed
+make: *** [cmTC_08504/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_a7843/fast"
+/usr/bin/make -f CMakeFiles/cmTC_a7843.dir/build.make CMakeFiles/cmTC_a7843.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_a7843.dir/CheckSymbolExists.c.o
+/usr/local/bin/clang    -o CMakeFiles/cmTC_a7843.dir/CheckSymbolExists.c.o   -c /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_a7843
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a7843.dir/link.txt --verbose=1
+/usr/local/bin/clang      CMakeFiles/cmTC_a7843.dir/CheckSymbolExists.c.o  -o cmTC_a7843 
+CMakeFiles/cmTC_a7843.dir/CheckSymbolExists.c.o: En la función `main':
+CheckSymbolExists.c:(.text+0x19): referencia a `pthread_create' sin definir
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_a7843.dir/build.make:97: recipe for target 'cmTC_a7843' failed
+make[1]: *** [cmTC_a7843] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_a7843/fast' failed
+make: *** [cmTC_a7843/fast] Error 2
+
+File /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/primi/src/latino-llvm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_fd10d/fast"
+/usr/bin/make -f CMakeFiles/cmTC_fd10d.dir/build.make CMakeFiles/cmTC_fd10d.dir/build
+make[1]: se entra en el directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_fd10d.dir/CheckFunctionExists.c.o
+/usr/local/bin/clang   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_fd10d.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_fd10d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fd10d.dir/link.txt --verbose=1
+/usr/local/bin/clang  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_fd10d.dir/CheckFunctionExists.c.o  -o cmTC_fd10d -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+CMakeFiles/cmTC_fd10d.dir/build.make:97: recipe for target 'cmTC_fd10d' failed
+make[1]: *** [cmTC_fd10d] Error 1
+make[1]: se sale del directorio '/home/primi/src/latino-llvm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_fd10d/fast' failed
+make: *** [cmTC_fd10d/fast] Error 2
+
+

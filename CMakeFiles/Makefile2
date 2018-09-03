@@ -117,16 +117,22 @@ include/preinstall: include/latino/preinstall
 
 # Convenience name for "all" pass in the directory.
 include/latino/all: include/latino/Basic/all
+include/latino/all: include/latino/Sema/all
+include/latino/all: include/latino/Serialization/all
 
 .PHONY : include/latino/all
 
 # Convenience name for "clean" pass in the directory.
 include/latino/clean: include/latino/Basic/clean
+include/latino/clean: include/latino/Sema/clean
+include/latino/clean: include/latino/Serialization/clean
 
 .PHONY : include/latino/clean
 
 # Convenience name for "preinstall" pass in the directory.
 include/latino/preinstall: include/latino/Basic/preinstall
+include/latino/preinstall: include/latino/Sema/preinstall
+include/latino/preinstall: include/latino/Serialization/preinstall
 
 .PHONY : include/latino/preinstall
 
@@ -139,7 +145,10 @@ include/latino/Basic/all:
 .PHONY : include/latino/Basic/all
 
 # Convenience name for "clean" pass in the directory.
+include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/clean
 include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean
+include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/clean
+include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/clean
 include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean
 include/latino/Basic/clean: include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean
 
@@ -151,13 +160,45 @@ include/latino/Basic/preinstall:
 .PHONY : include/latino/Basic/preinstall
 
 #=============================================================================
+# Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir
+
+# All Build rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/all:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/depend
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=23,24 "Built target ClangDiagnosticRefactoring"
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/rule
+
+# Convenience name for target.
+ClangDiagnosticRefactoring: include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/rule
+
+.PHONY : ClangDiagnosticRefactoring
+
+# clean rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/clean:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/clean
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/clean
+
+# clean rule for target.
+clean: include/latino/Basic/CMakeFiles/ClangDiagnosticRefactoring.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir
 
 # All Build rule for target.
 include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/all:
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/depend
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=3,4 "Built target ClangDiagnosticCommon"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=17,18 "Built target ClangDiagnosticCommon"
 .PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/all
 
 # Build rule for subdir invocation for target.
@@ -183,13 +224,77 @@ clean: include/latino/Basic/CMakeFiles/ClangDiagnosticCommon.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir
+
+# All Build rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/all:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/depend
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=25,26 "Built target ClangDiagnosticSema"
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/rule
+
+# Convenience name for target.
+ClangDiagnosticSema: include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/rule
+
+.PHONY : ClangDiagnosticSema
+
+# clean rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/clean:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/clean
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/clean
+
+# clean rule for target.
+clean: include/latino/Basic/CMakeFiles/ClangDiagnosticSema.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir
+
+# All Build rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/all:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/depend
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=27,28 "Built target ClangDiagnosticSerialization"
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/rule
+
+# Convenience name for target.
+ClangDiagnosticSerialization: include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/rule
+
+.PHONY : ClangDiagnosticSerialization
+
+# clean rule for target.
+include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/clean:
+	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/clean
+.PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/clean
+
+# clean rule for target.
+clean: include/latino/Basic/CMakeFiles/ClangDiagnosticSerialization.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir
 
 # All Build rule for target.
 include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/all:
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/depend
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=5,6 "Built target ClangDiagnosticGroups"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=19,20 "Built target ClangDiagnosticGroups"
 .PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/all
 
 # Build rule for subdir invocation for target.
@@ -221,7 +326,7 @@ clean: include/latino/Basic/CMakeFiles/ClangDiagnosticGroups.dir/clean
 include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/all:
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/depend
 	$(MAKE) -f include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build.make include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=7,8 "Built target ClangDiagnosticIndexName"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=21,22 "Built target ClangDiagnosticIndexName"
 .PHONY : include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/all
 
 # Build rule for subdir invocation for target.
@@ -243,6 +348,271 @@ include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean:
 
 # clean rule for target.
 clean: include/latino/Basic/CMakeFiles/ClangDiagnosticIndexName.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory include/latino/Sema
+
+# Convenience name for "all" pass in the directory.
+include/latino/Sema/all:
+
+.PHONY : include/latino/Sema/all
+
+# Convenience name for "clean" pass in the directory.
+include/latino/Sema/clean: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/clean
+include/latino/Sema/clean: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/clean
+include/latino/Sema/clean: include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/clean
+include/latino/Sema/clean: include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/clean
+include/latino/Sema/clean: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/clean
+
+.PHONY : include/latino/Sema/clean
+
+# Convenience name for "preinstall" pass in the directory.
+include/latino/Sema/preinstall:
+
+.PHONY : include/latino/Sema/preinstall
+
+#=============================================================================
+# Target rules for target include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir
+
+# All Build rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/all:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/depend
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=11,12 "Built target ClangAttrParsedAttrList"
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/rule
+
+# Convenience name for target.
+ClangAttrParsedAttrList: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/rule
+
+.PHONY : ClangAttrParsedAttrList
+
+# clean rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/clean:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/clean
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/clean
+
+# clean rule for target.
+clean: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrList.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir
+
+# All Build rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/all:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/depend
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=7,8 "Built target ClangAttrParsedAttrImpl"
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/rule
+
+# Convenience name for target.
+ClangAttrParsedAttrImpl: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/rule
+
+.PHONY : ClangAttrParsedAttrImpl
+
+# clean rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/clean:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/clean
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/clean
+
+# clean rule for target.
+clean: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrImpl.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir
+
+# All Build rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/all:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/depend
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=15,16 "Built target ClangAttrTemplateInstantiate"
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/rule
+
+# Convenience name for target.
+ClangAttrTemplateInstantiate: include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/rule
+
+.PHONY : ClangAttrTemplateInstantiate
+
+# clean rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/clean:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/clean
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/clean
+
+# clean rule for target.
+clean: include/latino/Sema/CMakeFiles/ClangAttrTemplateInstantiate.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir
+
+# All Build rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/all:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/depend
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=13,14 "Built target ClangAttrSpellingListIndex"
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/rule
+
+# Convenience name for target.
+ClangAttrSpellingListIndex: include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/rule
+
+.PHONY : ClangAttrSpellingListIndex
+
+# clean rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/clean:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/clean
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/clean
+
+# clean rule for target.
+clean: include/latino/Sema/CMakeFiles/ClangAttrSpellingListIndex.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir
+
+# All Build rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/all:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/depend
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=9,10 "Built target ClangAttrParsedAttrKinds"
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/rule
+
+# Convenience name for target.
+ClangAttrParsedAttrKinds: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/rule
+
+.PHONY : ClangAttrParsedAttrKinds
+
+# clean rule for target.
+include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/clean:
+	$(MAKE) -f include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/build.make include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/clean
+.PHONY : include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/clean
+
+# clean rule for target.
+clean: include/latino/Sema/CMakeFiles/ClangAttrParsedAttrKinds.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory include/latino/Serialization
+
+# Convenience name for "all" pass in the directory.
+include/latino/Serialization/all:
+
+.PHONY : include/latino/Serialization/all
+
+# Convenience name for "clean" pass in the directory.
+include/latino/Serialization/clean: include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/clean
+include/latino/Serialization/clean: include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/clean
+
+.PHONY : include/latino/Serialization/clean
+
+# Convenience name for "preinstall" pass in the directory.
+include/latino/Serialization/preinstall:
+
+.PHONY : include/latino/Serialization/preinstall
+
+#=============================================================================
+# Target rules for target include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir
+
+# All Build rule for target.
+include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/all:
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/depend
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=5,6 "Built target ClangAttrPCHWrite"
+.PHONY : include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/rule
+
+# Convenience name for target.
+ClangAttrPCHWrite: include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/rule
+
+.PHONY : ClangAttrPCHWrite
+
+# clean rule for target.
+include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/clean:
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/clean
+.PHONY : include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/clean
+
+# clean rule for target.
+clean: include/latino/Serialization/CMakeFiles/ClangAttrPCHWrite.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir
+
+# All Build rule for target.
+include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/all:
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/depend
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=3,4 "Built target ClangAttrPCHRead"
+.PHONY : include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/all
+
+# Build rule for subdir invocation for target.
+include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/primi/src/latino-llvm/CMakeFiles 0
+.PHONY : include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/rule
+
+# Convenience name for target.
+ClangAttrPCHRead: include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/rule
+
+.PHONY : ClangAttrPCHRead
+
+# clean rule for target.
+include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/clean:
+	$(MAKE) -f include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/build.make include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/clean
+.PHONY : include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/clean
+
+# clean rule for target.
+clean: include/latino/Serialization/CMakeFiles/ClangAttrPCHRead.dir/clean
 
 .PHONY : clean
 
@@ -289,7 +659,7 @@ lib/Basic/preinstall:
 lib/Basic/CMakeFiles/latinoBasic.dir/all:
 	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/depend
 	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=13,14,15,16,17,18,19 "Built target latinoBasic"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=33,34,35,36,37,38,39 "Built target latinoBasic"
 .PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/all
 
 # Include target in all.
@@ -362,7 +732,7 @@ tools/driver/preinstall:
 tools/driver/CMakeFiles/latino.dir/all:
 	$(MAKE) -f tools/driver/CMakeFiles/latino.dir/build.make tools/driver/CMakeFiles/latino.dir/depend
 	$(MAKE) -f tools/driver/CMakeFiles/latino.dir/build.make tools/driver/CMakeFiles/latino.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=11,12 "Built target latino"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=31,32 "Built target latino"
 .PHONY : tools/driver/CMakeFiles/latino.dir/all
 
 # Include target in all.
@@ -527,7 +897,7 @@ unittests/Lex/preinstall:
 unittests/Lex/CMakeFiles/LexTests.dir/all: lib/Basic/CMakeFiles/latinoBasic.dir/all
 	$(MAKE) -f unittests/Lex/CMakeFiles/LexTests.dir/build.make unittests/Lex/CMakeFiles/LexTests.dir/depend
 	$(MAKE) -f unittests/Lex/CMakeFiles/LexTests.dir/build.make unittests/Lex/CMakeFiles/LexTests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=9,10 "Built target LexTests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=29,30 "Built target LexTests"
 .PHONY : unittests/Lex/CMakeFiles/LexTests.dir/all
 
 # Include target in all.

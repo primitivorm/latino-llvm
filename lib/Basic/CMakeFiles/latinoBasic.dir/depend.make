@@ -137,9 +137,13 @@ lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/A
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/Diagnostic.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticCategories.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticCommonKinds.inc
+lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticGroups.inc
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticIDs.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticOptions.def
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticOptions.h
+lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticRefactoringKinds.inc
+lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticSemaKinds.inc
+lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/DiagnosticSerializationKinds.inc
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/FileManager.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/FileSystemOptions.h
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: include/latino/Basic/LLVM.h

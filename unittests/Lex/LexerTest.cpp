@@ -8,10 +8,10 @@
 #include "latino/Basic/MemoryBufferCache.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/SourceManager.h"
+#include "latino/Basic/TargetInfo.h"
 #include "latino/Basic/TargetOptions.h"
 #include "latino/Frontend/ASTUnit.h"
 #include "latino/Lex/ModuleLoader.h"
-#include "clang/Basic/TargetInfo.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "gtest/gtest.h"
 
