@@ -1,4 +1,5 @@
-﻿  Building Custom Rule C:/src/latino-llvm/tools/driver/CMakeLists.txt
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppClean.targets(76,5): warning : The process cannot access the file 'c:\src\latino-llvm\msvc\bin\relwithdebinfo\latino.pdb' because it is being used by another process.
+  Building Custom Rule C:/src/latino-llvm/tools/driver/CMakeLists.txt
   CMake does not need to re-run because C:\src\latino-llvm\msvc\tools\driver\CMakeFiles\generate.stamp is up-to-date.
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24215.1 for x86
   Copyright (C) Microsoft Corporation.  All rights reserved.
@@ -158,4 +159,4 @@ C:\bin\LLVM7\include\llvm/ADT/PointerIntPair.h(58): warning C4800: 'intptr_t': f
               PtrTraits=llvm::PointerUnionUIntTraits<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>
           ]
   C:\bin\LLVM7\include\llvm/IR/Metadata.h(769): note: see reference to class template instantiation 'llvm::PointerUnion<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>' being compiled
-  latino.vcxproj -> C:\src\latino-llvm\msvc\bin\RelWithDebInfo\latino.exe
+LINK : fatal error LNK1201: error writing to program database 'C:\src\latino-llvm\msvc\bin\RelWithDebInfo\latino.pdb'; check for insufficient disk space, invalid path, or insufficient privilege

@@ -10,8 +10,8 @@
 #include "latino/Basic/SourceManager.h"
 #include "latino/Basic/TargetInfo.h"
 #include "latino/Basic/TargetOptions.h"
-#include "latino/Frontend/ASTUnit.h"
-#include "latino/Lex/ModuleLoader.h"
+//#include "latino/Frontend/ASTUnit.h"
+//#include "latino/Lex/ModuleLoader.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "gtest/gtest.h"
 
@@ -98,7 +98,7 @@ TEST_F(LexerTest, GetBeginingOfTokenWithEscapedNewLine) {
     std::pair<FileID, unsigned> OriginalLocation =
         SourceMgr.getDecomposedLoc(Tok.getLocation());
     for (unsigned Offset = 0; Offset < IdentifierLength; ++Offset) {
-      SourceLocation LookupLocation = Tok.getLocation().getFileLoc(Offset);
+      SourceLocation LookupLocation = Tok.getLocation().getLocWithOffset(Offset);
       std::pair<FileID, unsigned> FoundLocation =
           SourceMgr.getDecomposedExpansionLoc(
               Lexer::GetBeginingOfToken(LookupLocation, SourceMgr));

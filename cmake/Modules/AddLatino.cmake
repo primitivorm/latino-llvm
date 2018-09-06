@@ -15,6 +15,8 @@ macro(add_latino_library name)
   ""
   "ADDITIONAL_HEADERS"
   ${ARGN})
+
+  message(STATUS "add_latino_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}" )
   set(srcs)
   if(MSVC_IDE OR XCODE)
     file(RELATIVE_PATH lib_path

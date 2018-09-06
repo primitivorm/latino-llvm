@@ -3,6 +3,7 @@
 
 #include "latino/Basic/CommentOptions.h"
 #include "latino/Basic/LLVM.h"
+#include "latino/Basic/Visibility.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Triple.h"
 #include <string>
@@ -31,12 +32,10 @@ protected:
 /// Keeps track of the various options that can be
 /// enabled, which controls the dialect of C or C++ that is accepted.
 class LangOptions : public LangOptionsBase {
-public:
-  /*
-  using Visibility = clang::Visibility;
-  */
-
-  enum GCMode { NoGc, GCOnly, HybridGC };
+public:  
+  using Visibility = latino::Visibility;
+  
+  enum GCMode { NonGC, GCOnly, HybridGC };
   enum StackProtectorMode { SSPOff, SSPOn, SSPStrong, SSPReq };
 
   enum SignedOverflowBehaviorTy {
@@ -151,7 +150,7 @@ public:
 
   /*
   latino::ObjCRuntime ObjCRuntime;
-  
+
   std::string ObjCConstantStringClass;
 
   */
@@ -214,7 +213,7 @@ public:
   }
 
   bool isSignedOverflowDefined() const {
-    return getSignedOverflowBehavior() = SOB_Defined;
+    return getSignedOverflowBehavior() == SOB_Defined;
   }
 
   /*
@@ -246,7 +245,7 @@ public:
   }
 
   /// Return the OpenCL C or C++ version as a VersionTuple.
-  VersionTuple getOpenCLVersionTuple() const;
+  // VersionTuple getOpenCLVersionTuple() const;
 }; /* LangOptions */
 
 /// Floating point control options
@@ -266,7 +265,7 @@ public:
   }
 
   void setAllowFPContractWithinStatement() {
-    fp_contract == LangOptions::FPC_Fast;
+    fp_contract = LangOptions::FPC_Fast;
   }
 
   void setDisallowFPContract() { fp_contract = LangOptions::FPC_Off; }

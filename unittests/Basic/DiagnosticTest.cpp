@@ -35,7 +35,7 @@ TEST(DiagnosticTest, suppressAfterFatalError) {
     Diags.Report(diag::err_cannot_open_file) << "file"
                                              << "error";
     Diags.Report(diag::warn_mt_message) << "warning";
-    EXPECT_TRUE(Diags.hasErrorOcurred());
+    EXPECT_TRUE(Diags.hasErrorOccurred());
     EXPECT_TRUE(Diags.hasFatalErrorOcurred());
     EXPECT_TRUE(Diags.hasUncompilableErrorOcurred());
     EXPECT_TRUE(Diags.hasUnrecoverableErrorOcurred());

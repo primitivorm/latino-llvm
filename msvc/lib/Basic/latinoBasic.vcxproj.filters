@@ -19,6 +19,12 @@
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\LangOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\MemoryBufferCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\src\latino-llvm\lib\Basic\CMakeLists.txt" />

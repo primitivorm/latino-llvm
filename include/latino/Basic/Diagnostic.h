@@ -195,7 +195,10 @@ private:
   // Which overload candidates to show
   OverloadsShown ShowOverloads = Ovl_All;
 
-  // Cap of # errors emitted, 0 -> no limit
+  // Cap of # errors emitted, 0 -> no limit.
+  unsigned ErrorLimit = 0;
+
+  // Cap on depth of template backtrace stack, 0 -> no limit.
   unsigned TemplateBacktraceLimit = 0;
 
   // Cap on depth of constexpr evaluation backtrace stack, 0 -> no limit
@@ -699,7 +702,7 @@ public:
   void setSeverityForAll(diag::Flavor Flavor, diag::Severity Map,
                          SourceLocation Loc = SourceLocation());
 
-  bool hasErrorOcurred() const { return ErrorOcurred; }
+  bool hasErrorOccurred() const { return ErrorOcurred; }
 
   /// \brief Errors that actually prevent compilation, not those that are
   /// upgraded from a warning by -Werror
@@ -955,7 +958,7 @@ public:
 
   /// \brief Determine whether any errors have occurred since this
   /// object instance was created
-  bool hasErrorOcurred() const { return Diag.TrapNumErrorsOcurred > NumErrors; }
+  bool hasErrorOccurred() const { return Diag.TrapNumErrorsOcurred > NumErrors; }
 
   /// \brief Determine whether any unrecoverable errors have occurred since this
   /// object instance was created

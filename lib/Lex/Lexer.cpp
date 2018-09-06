@@ -77,10 +77,10 @@ bool Lexer::Lex(Token &Result) {
 bool Lexer::LexIdentifier(Token &Result, const char *CurPtr) {
   unsigned Size;
   unsigned char C = *CurPtr++;
-  while (clang::isIdentifierBody(C))
+  while (latino::isIdentifierBody(C))
     C = *CurPtr++;
   --CurPtr;
-  if (!clang::isASCII(C)) {
+  if (!latino::isASCII(C)) {
   FinishIdentifier:
     const char *IdStart = BufferPtr;
     FormTokenWithChars(Result, CurPtr, tok::raw_identifier);
@@ -142,7 +142,7 @@ bool Lexer::LexNumericConstant(Token &Result, const char *CurPtr) {
   unsigned Size;
   char C = getCharAndSize(CurPtr, Size);
   char PrevCh = 0;
-  while (clang::isPreprocessingNumberBody(C)) {
+  while (latino::isPreprocessingNumberBody(C)) {
     CurPtr = ConsumeChar(CurPtr, Size, Result);
     PrevCh = C;
     C = getCharAndSize(CurPtr, Size);
@@ -193,7 +193,7 @@ bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr,
 
 unsigned Lexer::getEscapedNewLineSize(const char *Ptr) {
   unsigned Size = 0;
-  while (clang::isWhitespace(Ptr[Size])) {
+  while (latino::isWhitespace(Ptr[Size])) {
     ++Size;
     if (Ptr[Size - 1] != '\n' && Ptr[Size] != '\r')
       continue;
@@ -208,7 +208,7 @@ char Lexer::getCharAndSizeSlow(const char *Ptr, unsigned &Size, Token *Tok) {
   if (Ptr[0] == '\\') {
     ++Size;
     ++Ptr;
-    if (!clang::isWhitespace(Ptr[0]))
+    if (!latino::isWhitespace(Ptr[0]))
       return '\\';
     if (unsigned EscapedNewLineSize = getEscapedNewLineSize(Ptr)) {
       if (Tok)
@@ -292,7 +292,7 @@ bool Lexer::LexUnicode(Token &Result, uint32_t C, const char *CurPtr) {
 }
 
 bool Lexer::isNewLineEscaped(const char *BufferStart, const char *Str) {
-  assert(clang::isVerticalWhitespace(Str[0]));
+  assert(latino::isVerticalWhitespace(Str[0]));
   if (Str - 1 < BufferStart)
     return false;
   if ((Str[0] == '\n' && Str[-1] == '\r') ||
@@ -302,7 +302,7 @@ bool Lexer::isNewLineEscaped(const char *BufferStart, const char *Str) {
     --Str;
   }
   --Str;
-  while (Str > BufferStart && clang::isHorizontalWhitespace(*Str))
+  while (Str > BufferStart && latino::isHorizontalWhitespace(*Str))
     --Str;
   return *Str == '\\';
 }
@@ -313,7 +313,7 @@ static const char *findBeginningOfLine(StringRef Buffer, unsigned Offset) {
     return nullptr;
   const char *LexStart = BufStart + Offset;
   for (; LexStart != BufStart; --LexStart) {
-    if (clang::isVerticalWhitespace(LexStart[0]) &&
+    if (latino::isVerticalWhitespace(LexStart[0]) &&
         !Lexer::isNewLineEscaped(BufStart, LexStart)) {
       ++LexStart;
       break;
@@ -364,7 +364,7 @@ SourceLocation Lexer::GetBeginingOfToken(SourceLocation Loc,
   if (Invalid)
     return true;
   const char *StrData = Buffer.data() + LocInfo.second;
-  if (!IgnoreWhitespace && clang::isWhitespace(StrData[0]))
+  if (!IgnoreWhitespace && latino::isWhitespace(StrData[0]))
     return true;
   Lexer TheLexer(SM.getLocForStartOfFile(LocInfo.first), Buffer.begin(),
                  StrData, Buffer.end());
@@ -424,7 +424,7 @@ SourceLocation Lexer::GetBeginingOfToken(SourceLocation Loc,
   if (Begin.isFileID() && End.isFileID())
     return makeRangeFromFileLocs(Range, SM);
   bool Invalid = false;
-  const clang::SrcMgr::SLocEntry &BeginEntry =
+  const latino::SrcMgr::SLocEntry &BeginEntry =
       SM.getSLocEntry(SM.getFileID(Begin), &Invalid);
   if (Invalid)
     return CharSourceRange();
@@ -496,7 +496,7 @@ LexNextToken:
       if (SkipBlockComment(Result, CurPtr + 2, TokAtPhysicalStartOfLine))
         return true;
       goto SkipIgnoreUnits;
-    } else if (clang::isHorizontalWhitespace(*CurPtr)) {
+    } else if (latino::isHorizontalWhitespace(*CurPtr)) {
       goto SkipHorizontalWhitespace;
     }
     goto LexNextToken;
@@ -731,7 +731,7 @@ LexNextToken:
     Kind = tok::comma;
     break;
   default:
-    if (clang::isASCII(Char)) {
+    if (latino::isASCII(Char)) {
       Kind = tok::unknown;
       break;
     }

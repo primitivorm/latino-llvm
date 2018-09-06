@@ -225,7 +225,7 @@ public:
   static unsigned getNumberOfCategories();
 
   /// Given a category ID, return the name of the category
-  static StringRef getCategoryNameForID(unsigned CategoryID);
+  static StringRef getCategoryNameFromID(unsigned CategoryID);
 
   /// Return true if a given diagnostic falls into an ARC diagnostic
   /// category
@@ -314,7 +314,7 @@ private:
 
   /// Used to emit a diagnostic that is finally fully formed,
   /// ignoring suppression.
-  bool EmitDiag(DiagnosticsEngine &Diag, Level DiagLevel) const;
+  void EmitDiag(DiagnosticsEngine &Diag, Level DiagLevel) const;
 
   /// \brief Whether the diagnostic may leave the AST in a state where some
   /// invariants can break

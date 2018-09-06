@@ -30,6 +30,8 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("C:/src/latino-llvm/msvc/include/latino/Basic/cmake_install.cmake")
+  include("C:/src/latino-llvm/msvc/include/latino/Sema/cmake_install.cmake")
+  include("C:/src/latino-llvm/msvc/include/latino/Serialization/cmake_install.cmake")
 
 endif()
 

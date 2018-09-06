@@ -735,7 +735,8 @@ class SourceManager : public RefCountedBase<SourceManager> {
   SmallVector<std::pair<std::string, FullSourceLoc>, 2> StoredModuleBuildStack;
 
 public:
-  SourceManager(FileManager &FileMgr, bool UserFilesAreVolatile = false);
+  SourceManager(DiagnosticsEngine &Diag, FileManager &FileMgr, 
+	  bool UserFilesAreVolatile = false);
   explicit SourceManager(const SourceManager &) = delete;
   SourceManager &operator=(const SourceManager &) = delete;
   ~SourceManager();
@@ -1443,7 +1444,7 @@ public:
   /// Given a specific FileID, returns true if \p Loc is inside that
   /// FileID chunk and sets relative offset (offset of \p Loc from beginning
   /// of FileID) to \p relativeOffset.
-  bool isFileID(SourceLocation Loc, FileID FID,
+  bool isInFileID(SourceLocation Loc, FileID FID,
                 unsigned *RelativeOffset = nullptr) const {
     unsigned Offs = Loc.getOffset();
     if (isOffsetInFileID(FID, Offs)) {
@@ -1578,6 +1579,17 @@ public:
            (isBeforeInTranslationUnit(Start, Location) &&
             isBeforeInTranslationUnit(Location, End));
   }
+
+  // Iterators over FileInfos.
+  using fileinfo_iterator =
+	  llvm::DenseMap<const FileEntry*, SrcMgr::ContentCache*>::const_iterator;
+
+  fileinfo_iterator fileinfo_begin() const { return FileInfos.begin(); }
+  fileinfo_iterator fileinfo_end() const { return FileInfos.end(); }
+  bool hasFileInfo(const FileEntry *File) const {
+	  return FileInfos.find(File) != FileInfos.end();
+  }
+
 
   /// Print statistics to stderr.
   void PrintStats() const;

@@ -13,7 +13,7 @@ class DiagnosticError : public llvm::ErrorInfo<DiagnosticError> {
 public:
   DiagnosticError(PartialDiagnosticAt Diag) : Diag(std::move(Diag)) {}
 
-  void log(raw_ostream &OS) const override { OS << "clang diagnostic"; }
+  void log(raw_ostream &OS) const override { OS << "latino diagnostic"; }
 
   PartialDiagnosticAt &getDiagnostic() { return Diag; }
   const PartialDiagnosticAt &getDiagnostic() const { return Diag; }

@@ -35,14 +35,14 @@ void SourceLocation::print(raw_ostream &OS, const SourceManager &SM) const {
     }
 
     if(isFileID()){
-        PresumedLoc PLoc = SM.getPresumendLoc(*this);
+        PresumedLoc PLoc = SM.getPresumedLoc(*this);
 
         if(PLoc.isInvalid()){
             OS << "<invalid>";
             return;
         }
         // The macro expansion and spelling pos is identical for file locs
-        OS << PLoc.getFilename << ':' << PLoc.getLine()
+        OS << PLoc.getFilename() << ':' << PLoc.getLine()
             << ':' << PLoc.getColumn();
         return;
     }
@@ -56,7 +56,7 @@ void SourceLocation::print(raw_ostream &OS, const SourceManager &SM) const {
 
 
 LLVM_DUMP_METHOD std::string
-SourceLocation::printToString(const SourceLocation &SM) const {
+SourceLocation::printToString(const SourceManager &SM) const {
     std::string S;
     llvm::raw_string_ostream OS(S);
     print(OS, SM);
@@ -91,11 +91,11 @@ FullSourceLoc FullSourceLoc::getFileLoc() const {
     return FullSourceLoc(SrcMgr->getFileLoc(*this), *SrcMgr);
 }
 
-PresumedLoc FullSourceLoc::getPresumendLoc(bool UseLineDirectives) const {
+PresumedLoc FullSourceLoc::getPresumedLoc(bool UseLineDirectives) const {
     if(!isValid())
         return PresumedLoc();
 
-    return SrcMgr->getPresumendLoc(*this, UseLineDirectives);
+    return SrcMgr->getPresumedLoc(*this, UseLineDirectives);
 }
 
 bool FullSourceLoc::isMacroArgExpansion(FullSourceLoc *StartLoc) const {
@@ -104,7 +104,7 @@ bool FullSourceLoc::isMacroArgExpansion(FullSourceLoc *StartLoc) const {
 }
 
 FullSourceLoc FullSourceLoc::getImmediateMacroCallerLoc() const {
-    assert(isValid())
+	assert(isValid());
     return FullSourceLoc(SrcMgr->getImmediateMacroCallerLoc(*this), *SrcMgr);
 }
 
@@ -112,8 +112,8 @@ std::pair<FullSourceLoc, StringRef> FullSourceLoc::getModuleImportLoc() const {
     if(!isValid())
         return std::make_pair(FullSourceLoc(), StringRef());
     
-    std:pair(FullSourceLoc(ImportLoc =
-        SrcMgr->getModuleImportLoc(*this)));
+    std::pair<SourceLocation, StringRef> ImportLoc =
+		SrcMgr->getModuleImportLoc(*this);
     return std::make_pair(FullSourceLoc(ImportLoc.first, *SrcMgr),
         ImportLoc.second);
 }

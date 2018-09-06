@@ -1,6 +1,7 @@
 #ifndef LATINO_BASIC_ALLDIAGNOSTICS_H
 #define LATINO_BASIC_ALLDIAGNOSTICS_H
 
+#include "latino/Sema/SemaDiagnostic.h"
 #include "latino/Serialization/SerializationDiagnostic.h"
 #include "latino/Tooling/Refactoring/RefactoringDiagnostic.h"
 

@@ -135,16 +135,16 @@ static const StaticDiagInfoRec *GetDiagInfo(unsigned DiagID) {
     ID -= DIAG_START_##NAME - DIAG_START_##PREV;                               \
   }
   CATEGORY(DRIVER, COMMON)
-  CATEGORY(FRONTEND, DRIVER)
-  CATEGORY(SERIALIZATION, FRONTEND)
+	//CATEGORY(FRONTEND, DRIVER)
+	//CATEGORY(SERIALIZATION, FRONTEND)
   CATEGORY(LEX, SERIALIZATION)
-  CATEGORY(PARSE, LEX)
-  CATEGORY(AST, PARSE)
-  CATEGORY(COMMENT, AST)
-  CATEGORY(CROSSTU, COMMENT)
-  CATEGORY(SEMA, CROSSTU)
+	//CATEGORY(PARSE, LEX)
+	//CATEGORY(AST, PARSE)
+	//CATEGORY(COMMENT, AST)
+	//CATEGORY(CROSSTU, COMMENT)
+	//CATEGORY(SEMA, CROSSTU)
   CATEGORY(ANALYSIS, SEMA)
-  CATEGORY(REFACTORING, ANALYSIS)
+	//CATEGORY(REFACTORING, ANALYSIS)
 #undef CATEGORY
 
   // Avoid out of bounds reads
@@ -226,7 +226,7 @@ unsigned DiagnosticIDs::getNumberOfCategories() {
 /// getCategoryNameFromID - Given a category ID, return the name of the
 /// category, an empty string if CategoryID is zero, or null if CategoryID is
 /// invalid.
-StringRef DiagnosticIDs::getCategoryNameForID(unsigned CategoryID) {
+StringRef DiagnosticIDs::getCategoryNameFromID(unsigned CategoryID) {
   if (CategoryID >= getNumberOfCategories())
     return StringRef();
   return CategoryNameTable[CategoryID].getName();
@@ -556,7 +556,7 @@ void DiagnosticIDs::getAllDiagnostics(diag::Flavor Flavor,
                                       std::vector<diag::kind> &Diags) {
   for (unsigned i = 0; i != StaticDiagInfoSize; ++i)
     if (StaticDiagInfo[i].getFlavor() == Flavor)
-      Diag.push_back(StaticDiagInfo[i].DiagID);
+      Diags.push_back(StaticDiagInfo[i].DiagID);
 }
 
 StringRef DiagnosticIDs::getNearestOption(diag::Flavor Flavor,
@@ -651,7 +651,7 @@ bool DiagnosticIDs::ProcessDiag(DiagnosticsEngine &Diag) const {
 
     Diag.ErrorOcurred = true;
     if (Diag.Client->IncludeInDiagnosticCounts()) {
-      ++Diag.NumErros;
+		++Diag.NumErrors;
     }
 
     // If we've emitted a lot of errors, emit a fatal error instead of it to
@@ -707,6 +707,6 @@ bool DiagnosticIDs::isUnrecoverable(unsigned DiagID) const {
 }
 
 bool DiagnosticIDs::isARCDiagnostic(unsigned DiagID) {
-  unsigned cat = getCategoryNameForID(DiagID);
+  unsigned cat = getCategoryNumberForDiag(DiagID);
   return DiagnosticIDs::getCategoryNameFromID(cat).startswith("ARC ");
 }

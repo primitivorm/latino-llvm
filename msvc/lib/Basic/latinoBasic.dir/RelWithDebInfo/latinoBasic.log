@@ -77,159 +77,49 @@ C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus ope
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
 C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(75): error C2039: 'NUM_BUILTIN_SEMA_DIAGNOSTICS': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp(75): error C2065: 'NUM_BUILTIN_SEMA_DIAGNOSTICS': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(6): error C2039: 'err_32_bit_builtin_64_bit_tgt': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(6): error C2065: 'err_32_bit_builtin_64_bit_tgt': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(7): error C2039: 'err_64_bit_builtin_32_bit_tgt': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(7): error C2065: 'err_64_bit_builtin_32_bit_tgt': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(8): error C2039: 'err_abi_tag_on_redeclaration': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(8): error C2065: 'err_abi_tag_on_redeclaration': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(9): error C2039: 'err_abstract_type_in_decl': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(9): error C2065: 'err_abstract_type_in_decl': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(10): error C2039: 'err_access': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(10): error C2065: 'err_access': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(11): error C2039: 'err_access_base_ctor': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(11): error C2065: 'err_access_base_ctor': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(12): error C2039: 'err_access_ctor': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(12): error C2065: 'err_access_ctor': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(13): error C2039: 'err_access_decl': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(13): error C2065: 'err_access_decl': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(14): error C2039: 'err_access_dtor': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(14): error C2065: 'err_access_dtor': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(15): error C2039: 'err_access_dtor_base': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(15): error C2065: 'err_access_dtor_base': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(16): error C2039: 'err_access_dtor_exception': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(16): error C2065: 'err_access_dtor_exception': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(17): error C2039: 'err_access_dtor_field': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(17): error C2065: 'err_access_dtor_field': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(18): error C2039: 'err_access_dtor_ivar': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(18): error C2065: 'err_access_dtor_ivar': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(19): error C2039: 'err_access_dtor_temp': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(19): error C2065: 'err_access_dtor_temp': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(20): error C2039: 'err_access_dtor_var': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(20): error C2065: 'err_access_dtor_var': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(21): error C2039: 'err_access_dtor_vbase': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(21): error C2065: 'err_access_dtor_vbase': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(22): error C2039: 'err_access_field_ctor': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(22): error C2065: 'err_access_field_ctor': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(23): error C2039: 'err_access_friend_function': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(23): error C2065: 'err_access_friend_function': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(24): error C2039: 'err_access_lambda_capture': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(24): error C2065: 'err_access_lambda_capture': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(25): error C2039: 'err_addr_ovl_ambiguous': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(25): error C2065: 'err_addr_ovl_ambiguous': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(26): error C2039: 'err_addr_ovl_no_qualifier': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(26): error C2065: 'err_addr_ovl_no_qualifier': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(27): error C2039: 'err_addr_ovl_no_viable': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(27): error C2065: 'err_addr_ovl_no_viable': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(28): error C2039: 'err_addr_ovl_not_func_ptrref': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(28): error C2065: 'err_addr_ovl_not_func_ptrref': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(29): error C2039: 'err_address_of_function_with_pass_object_size_params': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(29): error C2065: 'err_address_of_function_with_pass_object_size_params': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(30): error C2039: 'err_address_space_qualified_delete': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(30): error C2065: 'err_address_space_qualified_delete': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(31): error C2039: 'err_address_space_qualified_new': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(31): error C2065: 'err_address_space_qualified_new': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(32): error C2039: 'err_addrof_function_disabled_by_enable_if_attr': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(32): error C2065: 'err_addrof_function_disabled_by_enable_if_attr': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(33): error C2039: 'err_alias_after_tentative': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(33): error C2065: 'err_alias_after_tentative': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(34): error C2039: 'err_alias_is_definition': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(34): error C2065: 'err_alias_is_definition': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(35): error C2039: 'err_alias_not_supported_on_darwin': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(35): error C2065: 'err_alias_not_supported_on_darwin': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(36): error C2039: 'err_alias_not_supported_on_nvptx': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(36): error C2065: 'err_alias_not_supported_on_nvptx': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(37): error C2039: 'err_alias_template_expansion_into_fixed_list': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(37): error C2065: 'err_alias_template_expansion_into_fixed_list': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(38): error C2039: 'err_alias_template_extra_headers': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(38): error C2065: 'err_alias_template_extra_headers': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(39): error C2039: 'err_alias_to_undefined': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(39): error C2065: 'err_alias_to_undefined': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(40): error C2039: 'err_align_value_attribute_argument_not_int': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(40): error C2065: 'err_align_value_attribute_argument_not_int': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(41): error C2039: 'err_alignas_attribute_wrong_decl_type': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(41): error C2065: 'err_alignas_attribute_wrong_decl_type': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(42): error C2039: 'err_alignas_mismatch': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(42): error C2065: 'err_alignas_mismatch': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(43): error C2039: 'err_alignas_missing_on_definition': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(43): error C2065: 'err_alignas_missing_on_definition': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(44): error C2039: 'err_alignas_underaligned': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(44): error C2065: 'err_alignas_underaligned': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(45): error C2039: 'err_aligned_attribute_argument_not_int': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(45): error C2065: 'err_aligned_attribute_argument_not_int': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(46): error C2039: 'err_alignment_dependent_typedef_name': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(46): error C2065: 'err_alignment_dependent_typedef_name': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(47): error C2039: 'err_alignment_not_power_of_two': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(47): error C2065: 'err_alignment_not_power_of_two': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(48): error C2039: 'err_alignment_too_big': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(48): error C2065: 'err_alignment_too_big': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(49): error C2039: 'err_alignment_too_small': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(49): error C2065: 'err_alignment_too_small': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(50): error C2039: 'err_alignof_member_of_incomplete_type': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(50): error C2065: 'err_alignof_member_of_incomplete_type': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(51): error C2039: 'err_allocation_of_abstract_type': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(51): error C2065: 'err_allocation_of_abstract_type': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(52): error C2039: 'err_altivec_empty_initializer': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(52): error C2065: 'err_altivec_empty_initializer': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(53): error C2039: 'err_ambiguous_base_to_derived_cast': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(53): error C2065: 'err_ambiguous_base_to_derived_cast': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(54): error C2039: 'err_ambiguous_delete_operand': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(54): error C2065: 'err_ambiguous_delete_operand': undeclared identifier
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(55): error C2039: 'err_ambiguous_derived_to_base_conv': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticCategories.h(5): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\include\latino/Basic/DiagnosticSemaKinds.inc(55): fatal error C1003: error count exceeds 100; stopping compilation
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(606): note: see reference to class template instantiation 'llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
   DiagnosticOptions.cpp
 C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
@@ -296,19 +186,19 @@ C:\src\latino-llvm\lib\Basic\SourceLocation.cpp(45): error C2679: binary '<<': n
   C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(159): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(signed char)'
   C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(152): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(unsigned char)'
   C:\bin\LLVM7\include\llvm/Support/raw_ostream.h(145): note: or       'llvm::raw_ostream &llvm::raw_ostream::operator <<(char)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1231): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::DiagNullabilityKind)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1220): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::ArrayRef<latino::FixItHint>)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1214): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::FixItHint &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1208): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::CharSourceRange &)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1201): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::ArrayRef<latino::SourceRange>)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1195): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::SourceRange)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1174): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::IdentifierInfo *)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1168): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::tok::TokenKind)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1162): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,unsigned int)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1147): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,int)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1140): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const char *)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1134): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::StringRef)'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1128): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1234): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::DiagNullabilityKind)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1223): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::ArrayRef<latino::FixItHint>)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1217): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::FixItHint &)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1211): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::CharSourceRange &)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1204): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::ArrayRef<latino::SourceRange>)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1198): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::SourceRange)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1177): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::IdentifierInfo *)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1171): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,latino::tok::TokenKind)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1165): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,unsigned int)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1150): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,int)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1143): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const char *)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1137): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,llvm::StringRef)'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(1131): note: or       'const latino::DiagnosticBuilder &latino::operator <<(const latino::DiagnosticBuilder &,const latino::AddFlagValue)'
   C:\src\latino-llvm\include\latino/Basic/DiagnosticOptions.h(52): note: or       'llvm::raw_ostream &latino::operator <<(llvm::raw_ostream &,latino::DiagnosticLevelMask)'
   C:\bin\LLVM7\include\llvm/ADT/Twine.h(533): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,const llvm::Twine &)' [found using argument-dependent lookup]
   C:\bin\LLVM7\include\llvm/Support/Chrono.h(52): note: or       'llvm::raw_ostream &llvm::operator <<(llvm::raw_ostream &,std::chrono::time_point<std::chrono::system_clock,std::chrono::nanoseconds>)' [found using argument-dependent lookup]
@@ -357,18 +247,9 @@ C:\src\latino-llvm\lib\Basic\SourceManager.cpp(116): error C2227: left of '->get
   C:\src\latino-llvm\lib\Basic\SourceManager.cpp(116): note: type is 'unknown-type'
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(119): error C2228: left of '.release' must have class/struct/union
   C:\src\latino-llvm\lib\Basic\SourceManager.cpp(119): note: type is 'unknown-type'
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(142): error C2039: 'err_file_modified': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(14): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(142): error C2065: 'err_file_modified': undeclared identifier
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(145): error C2039: 'err_file_modified': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(14): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(145): error C2065: 'err_file_modified': undeclared identifier
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(150): error C2065: 'Buffe': undeclared identifier
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(150): error C2228: left of '.getPointer' must have class/struct/union
   C:\src\latino-llvm\lib\Basic\SourceManager.cpp(150): note: type is 'unknown-type'
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(174): error C2039: 'err_unsupported_bom': is not a member of 'latino::diag'
-  C:\src\latino-llvm\include\latino/Basic/DiagnosticIDs.h(14): note: see declaration of 'latino::diag'
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(174): error C2065: 'err_unsupported_bom': undeclared identifier
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(214): error C2146: syntax error: missing ',' before identifier 'Entries'
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C2143: syntax error: missing ';' before '&'
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(295): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
@@ -480,5 +361,11 @@ C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1059): error C2065: 'FID': undecl
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1061): error C2065: 'FID': undeclared identifier
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1061): error C3861: 'isInFileID': identifier not found
 C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1066): error C2065: 'FID': undeclared identifier
-C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1066): fatal error C1003: error count exceeds 100; stopping compilation
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1066): error C2228: left of '.getExpansion' must have class/struct/union
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1065): error C2530: 'ExpInfo': references must be initialized
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1074): error C2065: 'FID': undeclared identifier
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1112): error C2664: 'llvm::MemoryBuffer *latino::SrcMgr::ContentCache::getBuffer(latino::DiagnosticsEngine &,const latino::SourceManager &,latino::SourceLocation,bool *) const': cannot convert argument 1 from 'const latino::SourceManager' to 'latino::DiagnosticsEngine &'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1120): error C2146: syntax error: missing ')' before identifier 'FID'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1121): error C2143: syntax error: missing ';' before '{'
+C:\src\latino-llvm\lib\Basic\SourceManager.cpp(1121): fatal error C1003: error count exceeds 100; stopping compilation
   Generating Code...

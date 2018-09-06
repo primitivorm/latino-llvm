@@ -6,6 +6,10 @@ add_latino_library(latinoBasic
   IdentifierTable.cpp
   SourceLocation.cpp
   SourceManager.cpp
+  LangOptions.cpp
+  MemoryBufferCache.cpp
 
   LINK_LIBS
-  clangBasic)
+  ${LIBS}
+  #clangBasic
+)

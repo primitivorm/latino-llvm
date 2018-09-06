@@ -368,6 +368,9 @@ function(llvm_add_library name)
     "ADDITIONAL_HEADERS;DEPENDS;LINK_COMPONENTS;LINK_LIBS;OBJLIBS"
     ${ARGN})
   list(APPEND LLVM_COMMON_DEPENDS ${ARG_DEPENDS})
+
+  message(STATUS "llvm_add_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}")
+
   if(ARG_ADDITIONAL_HEADERS)
     # Pass through ADDITIONAL_HEADERS.
     set(ARG_ADDITIONAL_HEADERS ADDITIONAL_HEADERS ${ARG_ADDITIONAL_HEADERS})
@@ -1066,7 +1069,7 @@ function(add_unittest test_suite test_name)
   # Our current version of gtest does not properly recognize C++11 support
   # with MSVC, so it falls back to tr1 / experimental classes.  Since LLVM
   # itself requires C++11, we can safely force it on unconditionally so that
-  # we don't have to fight with the buggy gtest check.  
+  # we don't have to fight with the buggy gtest check.
   add_definitions(-DGTEST_LANG_CXX11=1)
   add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
 

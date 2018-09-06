@@ -279,6 +279,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\IdentifierTable.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceLocation.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceManager.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\LangOptions.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\MemoryBufferCache.cpp"  />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:/src/latino-llvm/msvc/ZERO_CHECK.vcxproj">

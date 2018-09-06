@@ -1,0 +1,297 @@
+﻿  Building Custom Rule C:/src/latino-llvm/lib/Basic/CMakeLists.txt
+  CMake does not need to re-run because C:\src\latino-llvm\msvc\lib\Basic\CMakeFiles\generate.stamp is up-to-date.
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24215.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /I"C:\src\latino-llvm\msvc\lib\Basic" /I"C:\src\latino-llvm\lib\Basic" /I"C:\src\latino-llvm\include" /I"C:\src\latino-llvm\msvc\include" /IC:\bin\LLVM7\include /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D _LARGEFILE_SOURCE /D _FILE_OFFSET_BITS=64 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_NONSTDC_NO_WARNINGS /D _SCL_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /D UNICODE /D _UNICODE /D __STDC_CONSTANT_MACROS /D __STDC_FORMAT_MACROS /D __STDC_LIMIT_MACROS /D _HAS_EXCEPTIONS=0 /D GTEST_HAS_RTTI=0 /D "CMAKE_INTDIR=\"Release\"" /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR- /Fo"latinoBasic.dir\Release\\" /Fd"latinoBasic.dir\Release\latinoBasic.pdb" /Gd /TP /analyze- /errorReport:prompt  /EHs-c- "C:\src\latino-llvm\lib\Basic\Diagnostic.cpp" "C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp" "C:\src\latino-llvm\lib\Basic\DiagnosticOptions.cpp" "C:\src\latino-llvm\lib\Basic\IdentifierTable.cpp" "C:\src\latino-llvm\lib\Basic\SourceLocation.cpp" "C:\src\latino-llvm\lib\Basic\SourceManager.cpp" "C:\src\latino-llvm\lib\Basic\LangOptions.cpp" "C:\src\latino-llvm\lib\Basic\MemoryBufferCache.cpp"
+cl : Command line warning D9025: overriding '/EHs' with '/EHs-'
+cl : Command line warning D9025: overriding '/EHc' with '/EHc-'
+  
+  Diagnostic.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\latino-llvm\lib\Basic\Diagnostic.cpp(301): warning C4102: 'llvm': unreferenced label
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(606): note: see reference to class template instantiation 'llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+  DiagnosticIDs.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(606): note: see reference to class template instantiation 'llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+  DiagnosticOptions.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+  IdentifierTable.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+  SourceLocation.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *,
+              KeyInfoT=llvm::DenseMapInfo<const latino::FileEntry *>,
+              BucketT=llvm::detail::DenseMapPair<const latino::FileEntry *,const latino::FileEntry *>
+          ]
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(606): note: see reference to class template instantiation 'llvm::DenseMap<const latino::FileEntry *,const latino::FileEntry *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              KeyT=const latino::FileEntry *,
+              ValueT=const latino::FileEntry *
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+  SourceManager.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<_Ty>>,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+          with
+          [
+              _Ty=latino::SourceManager::MacroArgsMap,
+              KeyT=latino::FileID,
+              ValueT=std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>,
+              KeyInfoT=llvm::DenseMapInfo<latino::FileID>,
+              BucketT=llvm::detail::DenseMapPair<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<_Ty>>,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+          with
+          [
+              _Ty=latino::SourceManager::MacroArgsMap,
+              KeyT=latino::FileID,
+              ValueT=std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>,
+              KeyInfoT=llvm::DenseMapInfo<latino::FileID>,
+              BucketT=llvm::detail::DenseMapPair<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>>
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<_Ty>>,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+          with
+          [
+              _Ty=latino::SourceManager::MacroArgsMap,
+              KeyT=latino::FileID,
+              ValueT=std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>,
+              KeyInfoT=llvm::DenseMapInfo<latino::FileID>,
+              BucketT=llvm::detail::DenseMapPair<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>>
+          ]
+  C:\src\latino-llvm\include\latino/Basic/SourceManager.h(726): note: see reference to class template instantiation 'llvm::DenseMap<latino::FileID,std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<_Ty>>,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              _Ty=latino::SourceManager::MacroArgsMap,
+              KeyT=latino::FileID,
+              ValueT=std::unique_ptr<latino::SourceManager::MacroArgsMap,std::default_delete<latino::SourceManager::MacroArgsMap>>
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(962): warning C4244: 'argument': conversion from 'uint64_t' to 'const std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(960): note: while compiling class template member function 'void llvm::SmallDenseMap<latino::FileID,unsigned int,16,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>::grow(unsigned int)'
+          with
+          [
+              KeyT=latino::FileID,
+              ValueT=unsigned int
+          ]
+  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(502): note: see reference to function template instantiation 'void llvm::SmallDenseMap<latino::FileID,unsigned int,16,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>::grow(unsigned int)' being compiled
+          with
+          [
+              KeyT=latino::FileID,
+              ValueT=unsigned int
+          ]
+  C:\src\latino-llvm\lib\Basic\SourceManager.cpp(2095): note: see reference to class template instantiation 'llvm::SmallDenseMap<latino::FileID,unsigned int,16,llvm::DenseMapInfo<latino::FileID>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+          with
+          [
+              KeyT=latino::FileID,
+              ValueT=unsigned int
+          ]
+  LangOptions.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+  MemoryBufferCache.cpp
+C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+          with
+          [
+              T=std::size_t
+          ]
+  Generating Code...
+  latinoBasic.vcxproj -> C:\src\latino-llvm\msvc\Release\lib\latinoBasic.lib

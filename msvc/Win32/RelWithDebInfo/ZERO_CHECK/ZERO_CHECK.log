@@ -3,6 +3,8 @@
   CMake does not need to re-run because C:/src/latino-llvm/msvc/include/CMakeFiles/generate.stamp is up-to-date.
   CMake does not need to re-run because C:/src/latino-llvm/msvc/include/latino/CMakeFiles/generate.stamp is up-to-date.
   CMake does not need to re-run because C:/src/latino-llvm/msvc/include/latino/Basic/CMakeFiles/generate.stamp is up-to-date.
+  CMake does not need to re-run because C:/src/latino-llvm/msvc/include/latino/Sema/CMakeFiles/generate.stamp is up-to-date.
+  CMake does not need to re-run because C:/src/latino-llvm/msvc/include/latino/Serialization/CMakeFiles/generate.stamp is up-to-date.
   CMake does not need to re-run because C:/src/latino-llvm/msvc/lib/CMakeFiles/generate.stamp is up-to-date.
   CMake does not need to re-run because C:/src/latino-llvm/msvc/lib/Basic/CMakeFiles/generate.stamp is up-to-date.
   CMake does not need to re-run because C:/src/latino-llvm/msvc/tools/CMakeFiles/generate.stamp is up-to-date.

@@ -271,7 +271,7 @@ public:
   ///
   /// This occurs when created with invalid source locations or when walking
   /// off the top of a \#include stack.
-  bool IsInvalid() const { return Filename == nullptr; }
+  bool isInvalid() const { return Filename == nullptr; }
   bool isValid() const { return Filename != nullptr; }
 
   /// Return the presumed filename of this location.
@@ -341,7 +341,7 @@ public:
   FullSourceLoc getExpansionLoc() const;
   FullSourceLoc getSpellingLoc() const;
   FullSourceLoc getFileLoc() const;
-  PresumedLoc getPresumendLoc(bool UseLineDirectives = true) const;
+  PresumedLoc getPresumedLoc(bool UseLineDirectives = true) const;
   bool isMacroArgExpansion(FullSourceLoc *StartLoc = nullptr) const;
   FullSourceLoc getImmediateMacroCallerLoc() const;
   std::pair<FullSourceLoc, StringRef> getModuleImportLoc() const;
@@ -417,7 +417,7 @@ namespace llvm {
 template <> struct DenseMapInfo<latino::FileID> {
   static latino::FileID getEmptyKey() { return {}; }
 
-  static latino::FileID getTombstroneKey() {
+  static latino::FileID getTombstoneKey() {
     return latino::FileID::getSentinel();
   }
 

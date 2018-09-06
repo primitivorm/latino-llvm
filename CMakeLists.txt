@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.4.3)
 
-project(latino)
+project(latino C CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
+
+set(ARG_ADDITIONAL_HEADERS)
 
 set(CONFIG_OUTPUT)
 find_program(LLVM_CONFIG "llvm-config")
@@ -137,6 +139,6 @@ if(LATINO_INCLUDE_TESTS)
   enable_testing()
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
-  #message(STATUS "Found gtest: ${GTEST_INCLUDE_DIRS}, gtest/libs: ${GTEST_BOTH_LIBRARIES}")
+  message(STATUS "Found gtest: ${GTEST_INCLUDE_DIRS}, gtest/libs: ${GTEST_BOTH_LIBRARIES}")
   add_subdirectory(unittests)
 endif()

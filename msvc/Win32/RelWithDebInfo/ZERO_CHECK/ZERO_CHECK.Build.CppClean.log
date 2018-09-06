@@ -2,6 +2,8 @@ c:\src\latino-llvm\msvc\cmakefiles\generate.stamp
 c:\src\latino-llvm\msvc\include\cmakefiles\generate.stamp
 c:\src\latino-llvm\msvc\include\latino\cmakefiles\generate.stamp
 c:\src\latino-llvm\msvc\include\latino\basic\cmakefiles\generate.stamp
+c:\src\latino-llvm\msvc\include\latino\sema\cmakefiles\generate.stamp
+c:\src\latino-llvm\msvc\include\latino\serialization\cmakefiles\generate.stamp
 c:\src\latino-llvm\msvc\lib\cmakefiles\generate.stamp
 c:\src\latino-llvm\msvc\lib\basic\cmakefiles\generate.stamp
 c:\src\latino-llvm\msvc\tools\cmakefiles\generate.stamp

@@ -17,7 +17,7 @@ C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': convers
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): error C2039: 'hasErrorOccurred': is not a member of 'latino::DiagnosticErrorTrap'
-  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(946): note: see declaration of 'latino::DiagnosticErrorTrap'
+  C:\src\latino-llvm\include\latino/Basic/Diagnostic.h(949): note: see declaration of 'latino::DiagnosticErrorTrap'
 C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): error C2512: 'testing::AssertionResult': no appropriate default constructor available
   C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(20): note: No constructor could take the source type, or constructor overload resolution was ambiguous
 C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(23): error C2039: 'hasErrorOccurred': is not a member of 'latino::DiagnosticsEngine'

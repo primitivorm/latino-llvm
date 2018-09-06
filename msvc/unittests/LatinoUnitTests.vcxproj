@@ -168,9 +168,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="C:/src/latino-llvm/msvc/unittests/Basic/BasicTests.vcxproj">
       <Project>AA8AE998-D4A8-3943-BD2E-08BC33631FA8</Project>
     </ProjectReference>
-    <ProjectReference Include="C:/src/latino-llvm/msvc/unittests/Lex/LexTests.vcxproj">
-      <Project>4F70F946-C4E0-33CB-BD81-98C8F22CB1D3</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
