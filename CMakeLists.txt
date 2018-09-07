@@ -4,8 +4,6 @@ project(latino C CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(ARG_ADDITIONAL_HEADERS)
-
 set(CONFIG_OUTPUT)
 find_program(LLVM_CONFIG "llvm-config")
 if(LLVM_CONFIG)
@@ -124,8 +122,8 @@ add_definitions(${LLVM_DEFINITIONS})
 # that we wish to use
 llvm_map_components_to_libnames(all)
 
-#include_directories(include)
-add_subdirectory(include)
+include_directories(include)
+#add_subdirectory(include)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
@@ -134,6 +132,9 @@ add_subdirectory(tools)
 
 set(LATINO_MAIN_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(LATINO_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to latino/lib")
+
+set(ARG_ADDITIONAL_HEADERS ${ADDITIONAL_HEADERS})
+
 if(LATINO_INCLUDE_TESTS)
   set(LLVM_BUILD_TESTS ON)
   enable_testing()

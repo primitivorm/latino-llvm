@@ -37,11 +37,13 @@ macro(add_latino_library name)
       endif()
     endif()
   endif(MSVC_IDE OR XCODE)
+  message(STATUS "srcs: ${srcs}")
   if(srcs OR ARG_ADDITIONAL_HEADERS)
     set(srcs
     ARG_ADDITIONAL_HEADERS
     ${srcs}
-    ${ARG_ADDITIONAL_HEADERS})
+    ${ARG_ADDITIONAL_HEADERS}
+    )
   endif()
   if(ARG_SHARED)
     set(ARG_ENABLE_SHARED)

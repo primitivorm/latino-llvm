@@ -29,7 +29,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/src/latino-llvm/msvc/include/cmake_install.cmake")
   include("C:/src/latino-llvm/msvc/lib/cmake_install.cmake")
   include("C:/src/latino-llvm/msvc/tools/cmake_install.cmake")
   include("C:/src/latino-llvm/msvc/unittests/cmake_install.cmake")

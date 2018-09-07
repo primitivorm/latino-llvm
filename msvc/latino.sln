@@ -14,71 +14,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicTests", "unittests\Bas
 		{DCB5B474-0332-3717-AA24-0E69E11C29CF} = {DCB5B474-0332-3717-AA24-0E69E11C29CF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrPCHRead", "include\latino\Serialization\ClangAttrPCHRead.vcxproj", "{3F4B0871-DF6C-369C-AD14-78B9C643E81D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrPCHWrite", "include\latino\Serialization\ClangAttrPCHWrite.vcxproj", "{A391649D-5B54-3B0E-8B2F-E8D8748DB0AC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrParsedAttrImpl", "include\latino\Sema\ClangAttrParsedAttrImpl.vcxproj", "{672FA309-6BCA-3C4F-A0DD-946E25B5C209}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrParsedAttrKinds", "include\latino\Sema\ClangAttrParsedAttrKinds.vcxproj", "{4D4AAA8F-0CF1-3E53-9B6C-EED3A9E771E0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrParsedAttrList", "include\latino\Sema\ClangAttrParsedAttrList.vcxproj", "{58FE6696-04C8-39A4-8D4D-41B4E8A92586}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrSpellingListIndex", "include\latino\Sema\ClangAttrSpellingListIndex.vcxproj", "{7ADA6683-AC89-39B4-B54A-7FC71A1BC063}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangAttrTemplateInstantiate", "include\latino\Sema\ClangAttrTemplateInstantiate.vcxproj", "{6012FD65-2A11-3E7B-8317-6A671937E8FD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangDiagnosticCommon", "include\latino\Basic\ClangDiagnosticCommon.vcxproj", "{40FB0B52-C3C9-3AF7-8523-7B6E57C38EE9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangDiagnosticGroups", "include\latino\Basic\ClangDiagnosticGroups.vcxproj", "{2B75F20C-7CAD-3A18-B523-E8F50316F701}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangDiagnosticIndexName", "include\latino\Basic\ClangDiagnosticIndexName.vcxproj", "{0FAABAFB-1FF5-3FFB-8474-C5E7E68AEDB9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangDiagnosticRefactoring", "include\latino\Basic\ClangDiagnosticRefactoring.vcxproj", "{BCA3962F-7028-3AFA-B035-BC0472D296FE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangDiagnosticSema", "include\latino\Basic\ClangDiagnosticSema.vcxproj", "{E21AE3C6-D7C1-3EBF-B993-EA797E9575AA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClangDiagnosticSerialization", "include\latino\Basic\ClangDiagnosticSerialization.vcxproj", "{325F283A-D351-3C67-95DD-95B5E66A603A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{144B0A37-8EF0-3CBB-ABD1-2220909F9268} = {144B0A37-8EF0-3CBB-ABD1-2220909F9268}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "INSTALL", "INSTALL.vcxproj", "{98415B2A-6F28-30C8-8775-4AD63A37E264}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E1254148-6E38-3AB1-B0E4-5B8E190D4053} = {E1254148-6E38-3AB1-B0E4-5B8E190D4053}
@@ -139,58 +74,6 @@ Global
 		{AA8AE998-D4A8-3943-BD2E-08BC33631FA8}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
 		{AA8AE998-D4A8-3943-BD2E-08BC33631FA8}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
 		{AA8AE998-D4A8-3943-BD2E-08BC33631FA8}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
-		{3F4B0871-DF6C-369C-AD14-78B9C643E81D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3F4B0871-DF6C-369C-AD14-78B9C643E81D}.Release|Win32.ActiveCfg = Release|Win32
-		{3F4B0871-DF6C-369C-AD14-78B9C643E81D}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{3F4B0871-DF6C-369C-AD14-78B9C643E81D}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{A391649D-5B54-3B0E-8B2F-E8D8748DB0AC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A391649D-5B54-3B0E-8B2F-E8D8748DB0AC}.Release|Win32.ActiveCfg = Release|Win32
-		{A391649D-5B54-3B0E-8B2F-E8D8748DB0AC}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{A391649D-5B54-3B0E-8B2F-E8D8748DB0AC}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{672FA309-6BCA-3C4F-A0DD-946E25B5C209}.Debug|Win32.ActiveCfg = Debug|Win32
-		{672FA309-6BCA-3C4F-A0DD-946E25B5C209}.Release|Win32.ActiveCfg = Release|Win32
-		{672FA309-6BCA-3C4F-A0DD-946E25B5C209}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{672FA309-6BCA-3C4F-A0DD-946E25B5C209}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{4D4AAA8F-0CF1-3E53-9B6C-EED3A9E771E0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4D4AAA8F-0CF1-3E53-9B6C-EED3A9E771E0}.Release|Win32.ActiveCfg = Release|Win32
-		{4D4AAA8F-0CF1-3E53-9B6C-EED3A9E771E0}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{4D4AAA8F-0CF1-3E53-9B6C-EED3A9E771E0}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{58FE6696-04C8-39A4-8D4D-41B4E8A92586}.Debug|Win32.ActiveCfg = Debug|Win32
-		{58FE6696-04C8-39A4-8D4D-41B4E8A92586}.Release|Win32.ActiveCfg = Release|Win32
-		{58FE6696-04C8-39A4-8D4D-41B4E8A92586}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{58FE6696-04C8-39A4-8D4D-41B4E8A92586}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{7ADA6683-AC89-39B4-B54A-7FC71A1BC063}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7ADA6683-AC89-39B4-B54A-7FC71A1BC063}.Release|Win32.ActiveCfg = Release|Win32
-		{7ADA6683-AC89-39B4-B54A-7FC71A1BC063}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{7ADA6683-AC89-39B4-B54A-7FC71A1BC063}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{6012FD65-2A11-3E7B-8317-6A671937E8FD}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6012FD65-2A11-3E7B-8317-6A671937E8FD}.Release|Win32.ActiveCfg = Release|Win32
-		{6012FD65-2A11-3E7B-8317-6A671937E8FD}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{6012FD65-2A11-3E7B-8317-6A671937E8FD}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{40FB0B52-C3C9-3AF7-8523-7B6E57C38EE9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{40FB0B52-C3C9-3AF7-8523-7B6E57C38EE9}.Release|Win32.ActiveCfg = Release|Win32
-		{40FB0B52-C3C9-3AF7-8523-7B6E57C38EE9}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{40FB0B52-C3C9-3AF7-8523-7B6E57C38EE9}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{2B75F20C-7CAD-3A18-B523-E8F50316F701}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2B75F20C-7CAD-3A18-B523-E8F50316F701}.Release|Win32.ActiveCfg = Release|Win32
-		{2B75F20C-7CAD-3A18-B523-E8F50316F701}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{2B75F20C-7CAD-3A18-B523-E8F50316F701}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{0FAABAFB-1FF5-3FFB-8474-C5E7E68AEDB9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0FAABAFB-1FF5-3FFB-8474-C5E7E68AEDB9}.Release|Win32.ActiveCfg = Release|Win32
-		{0FAABAFB-1FF5-3FFB-8474-C5E7E68AEDB9}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{0FAABAFB-1FF5-3FFB-8474-C5E7E68AEDB9}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{BCA3962F-7028-3AFA-B035-BC0472D296FE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BCA3962F-7028-3AFA-B035-BC0472D296FE}.Release|Win32.ActiveCfg = Release|Win32
-		{BCA3962F-7028-3AFA-B035-BC0472D296FE}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{BCA3962F-7028-3AFA-B035-BC0472D296FE}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{E21AE3C6-D7C1-3EBF-B993-EA797E9575AA}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E21AE3C6-D7C1-3EBF-B993-EA797E9575AA}.Release|Win32.ActiveCfg = Release|Win32
-		{E21AE3C6-D7C1-3EBF-B993-EA797E9575AA}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{E21AE3C6-D7C1-3EBF-B993-EA797E9575AA}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
-		{325F283A-D351-3C67-95DD-95B5E66A603A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{325F283A-D351-3C67-95DD-95B5E66A603A}.Release|Win32.ActiveCfg = Release|Win32
-		{325F283A-D351-3C67-95DD-95B5E66A603A}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
-		{325F283A-D351-3C67-95DD-95B5E66A603A}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
 		{98415B2A-6F28-30C8-8775-4AD63A37E264}.Debug|Win32.ActiveCfg = Debug|Win32
 		{98415B2A-6F28-30C8-8775-4AD63A37E264}.Release|Win32.ActiveCfg = Release|Win32
 		{98415B2A-6F28-30C8-8775-4AD63A37E264}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
