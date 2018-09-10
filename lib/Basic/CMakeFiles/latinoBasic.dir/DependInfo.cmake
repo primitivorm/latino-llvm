@@ -4,12 +4,16 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/primi/src/latino-llvm/lib/Basic/CharInfo.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/Diagnostic.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/DiagnosticIDs.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/DiagnosticOptions.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/IdentifierTable.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o"
+  "/home/primi/src/latino-llvm/lib/Basic/LangOptions.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o"
+  "/home/primi/src/latino-llvm/lib/Basic/MemoryBufferCache.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/SourceLocation.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o"
   "/home/primi/src/latino-llvm/lib/Basic/SourceManager.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o"
+  "/home/primi/src/latino-llvm/lib/Basic/TokenKinds.cpp" "/home/primi/src/latino-llvm/lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

@@ -185,6 +185,33 @@ latinoBasic/fast:
 	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/build
 .PHONY : latinoBasic/fast
 
+CharInfo.o: CharInfo.cpp.o
+
+.PHONY : CharInfo.o
+
+# target to build an object file
+CharInfo.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o
+.PHONY : CharInfo.cpp.o
+
+CharInfo.i: CharInfo.cpp.i
+
+.PHONY : CharInfo.i
+
+# target to preprocess a source file
+CharInfo.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.i
+.PHONY : CharInfo.cpp.i
+
+CharInfo.s: CharInfo.cpp.s
+
+.PHONY : CharInfo.s
+
+# target to generate assembly for a file
+CharInfo.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.s
+.PHONY : CharInfo.cpp.s
+
 Diagnostic.o: Diagnostic.cpp.o
 
 .PHONY : Diagnostic.o
@@ -293,6 +320,60 @@ IdentifierTable.cpp.s:
 	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.s
 .PHONY : IdentifierTable.cpp.s
 
+LangOptions.o: LangOptions.cpp.o
+
+.PHONY : LangOptions.o
+
+# target to build an object file
+LangOptions.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o
+.PHONY : LangOptions.cpp.o
+
+LangOptions.i: LangOptions.cpp.i
+
+.PHONY : LangOptions.i
+
+# target to preprocess a source file
+LangOptions.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.i
+.PHONY : LangOptions.cpp.i
+
+LangOptions.s: LangOptions.cpp.s
+
+.PHONY : LangOptions.s
+
+# target to generate assembly for a file
+LangOptions.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.s
+.PHONY : LangOptions.cpp.s
+
+MemoryBufferCache.o: MemoryBufferCache.cpp.o
+
+.PHONY : MemoryBufferCache.o
+
+# target to build an object file
+MemoryBufferCache.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o
+.PHONY : MemoryBufferCache.cpp.o
+
+MemoryBufferCache.i: MemoryBufferCache.cpp.i
+
+.PHONY : MemoryBufferCache.i
+
+# target to preprocess a source file
+MemoryBufferCache.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.i
+.PHONY : MemoryBufferCache.cpp.i
+
+MemoryBufferCache.s: MemoryBufferCache.cpp.s
+
+.PHONY : MemoryBufferCache.s
+
+# target to generate assembly for a file
+MemoryBufferCache.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.s
+.PHONY : MemoryBufferCache.cpp.s
+
 SourceLocation.o: SourceLocation.cpp.o
 
 .PHONY : SourceLocation.o
@@ -347,6 +428,33 @@ SourceManager.cpp.s:
 	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.s
 .PHONY : SourceManager.cpp.s
 
+TokenKinds.o: TokenKinds.cpp.o
+
+.PHONY : TokenKinds.o
+
+# target to build an object file
+TokenKinds.cpp.o:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o
+.PHONY : TokenKinds.cpp.o
+
+TokenKinds.i: TokenKinds.cpp.i
+
+.PHONY : TokenKinds.i
+
+# target to preprocess a source file
+TokenKinds.cpp.i:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.i
+.PHONY : TokenKinds.cpp.i
+
+TokenKinds.s: TokenKinds.cpp.s
+
+.PHONY : TokenKinds.s
+
+# target to generate assembly for a file
+TokenKinds.cpp.s:
+	cd /home/primi/src/latino-llvm && $(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.s
+.PHONY : TokenKinds.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -361,6 +469,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
+	@echo "... CharInfo.o"
+	@echo "... CharInfo.i"
+	@echo "... CharInfo.s"
 	@echo "... Diagnostic.o"
 	@echo "... Diagnostic.i"
 	@echo "... Diagnostic.s"
@@ -373,12 +484,21 @@ help:
 	@echo "... IdentifierTable.o"
 	@echo "... IdentifierTable.i"
 	@echo "... IdentifierTable.s"
+	@echo "... LangOptions.o"
+	@echo "... LangOptions.i"
+	@echo "... LangOptions.s"
+	@echo "... MemoryBufferCache.o"
+	@echo "... MemoryBufferCache.i"
+	@echo "... MemoryBufferCache.s"
 	@echo "... SourceLocation.o"
 	@echo "... SourceLocation.i"
 	@echo "... SourceLocation.s"
 	@echo "... SourceManager.o"
 	@echo "... SourceManager.i"
 	@echo "... SourceManager.s"
+	@echo "... TokenKinds.o"
+	@echo "... TokenKinds.i"
+	@echo "... TokenKinds.s"
 .PHONY : help
 
 

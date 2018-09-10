@@ -127,7 +127,9 @@ tools/driver/CMakeFiles/latino.dir/driver.cpp.o
  /usr/local/include/llvm/Support/Process.h
  /usr/local/include/llvm/Support/RWMutex.h
  /usr/local/include/llvm/Support/ReverseIteration.h
+ /usr/local/include/llvm/Support/SMLoc.h
  /usr/local/include/llvm/Support/Signals.h
+ /usr/local/include/llvm/Support/SourceMgr.h
  /usr/local/include/llvm/Support/StringSaver.h
  /usr/local/include/llvm/Support/SwapByteOrder.h
  /usr/local/include/llvm/Support/TargetRegistry.h
@@ -137,12 +139,21 @@ tools/driver/CMakeFiles/latino.dir/driver.cpp.o
  /usr/local/include/llvm/Support/type_traits.h
  /usr/local/include/llvm/Target/TargetMachine.h
  /usr/local/include/llvm/Target/TargetOptions.h
+ include/latino/Basic/Diagnostic.h
+ include/latino/Basic/DiagnosticCommonKinds.inc
+ include/latino/Basic/DiagnosticIDs.h
+ include/latino/Basic/DiagnosticOptions.def
+ include/latino/Basic/DiagnosticOptions.h
  include/latino/Basic/FileManager.h
+ include/latino/Basic/FileSystemOptions.h
  include/latino/Basic/IdentifierTable.h
  include/latino/Basic/LLVM.h
+ include/latino/Basic/OperatorKinds.def
  include/latino/Basic/SourceLocation.h
  include/latino/Basic/SourceManager.h
+ include/latino/Basic/Specifiers.h
  include/latino/Basic/TokenKinds.def
  include/latino/Basic/TokenKinds.h
+ include/latino/Basic/VirtualFileSystem.h
  include/latino/Lex/Lexer.h
  include/latino/Lex/Token.h

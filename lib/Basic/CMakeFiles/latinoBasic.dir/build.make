@@ -60,9 +60,33 @@ include lib/Basic/CMakeFiles/latinoBasic.dir/progress.make
 # Include the compile flags for this target's objects.
 include lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o: lib/Basic/CharInfo.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/CharInfo.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/CharInfo.cpp
+
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/latinoBasic.dir/CharInfo.cpp.i"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/primi/src/latino-llvm/lib/Basic/CharInfo.cpp > CMakeFiles/latinoBasic.dir/CharInfo.cpp.i
+
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/latinoBasic.dir/CharInfo.cpp.s"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/primi/src/latino-llvm/lib/Basic/CharInfo.cpp -o CMakeFiles/latinoBasic.dir/CharInfo.cpp.s
+
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.requires:
+
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.requires
+
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.provides: lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.requires
+	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.provides.build
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.provides
+
+lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.provides.build: lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o
+
+
 lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o: lib/Basic/Diagnostic.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o"
 	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/Diagnostic.cpp
 
 lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.i: cmake_force
@@ -86,7 +110,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o.provides.build: lib/Basic/
 
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o: lib/Basic/DiagnosticIDs.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o"
 	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/DiagnosticIDs.cpp
 
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.i: cmake_force
@@ -110,7 +134,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o.provides.build: lib/Bas
 
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o: lib/Basic/DiagnosticOptions.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o"
 	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/DiagnosticOptions.cpp
 
 lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.i: cmake_force
@@ -134,7 +158,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o.provides.build: lib
 
 lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o: lib/Basic/IdentifierTable.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o"
 	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/IdentifierTable.cpp
 
 lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.i: cmake_force
@@ -158,7 +182,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o.provides.build: lib/B
 
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o: lib/Basic/SourceLocation.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o"
 	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/SourceLocation.cpp
 
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.i: cmake_force
@@ -182,7 +206,7 @@ lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o.provides.build: lib/Ba
 
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o: lib/Basic/SourceManager.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o"
 	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/SourceManager.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/SourceManager.cpp
 
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.i: cmake_force
@@ -204,27 +228,107 @@ lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o.provides: lib/Basic/CMa
 lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o.provides.build: lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o
 
 
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o: lib/Basic/LangOptions.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/LangOptions.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/LangOptions.cpp
+
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/latinoBasic.dir/LangOptions.cpp.i"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/primi/src/latino-llvm/lib/Basic/LangOptions.cpp > CMakeFiles/latinoBasic.dir/LangOptions.cpp.i
+
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/latinoBasic.dir/LangOptions.cpp.s"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/primi/src/latino-llvm/lib/Basic/LangOptions.cpp -o CMakeFiles/latinoBasic.dir/LangOptions.cpp.s
+
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.requires:
+
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.requires
+
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.provides: lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.requires
+	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.provides.build
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.provides
+
+lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.provides.build: lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o
+
+
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o: lib/Basic/MemoryBufferCache.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/MemoryBufferCache.cpp
+
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.i"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/primi/src/latino-llvm/lib/Basic/MemoryBufferCache.cpp > CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.i
+
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.s"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/primi/src/latino-llvm/lib/Basic/MemoryBufferCache.cpp -o CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.s
+
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.requires:
+
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.requires
+
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.provides: lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.requires
+	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.provides.build
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.provides
+
+lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.provides.build: lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o
+
+
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o: lib/Basic/CMakeFiles/latinoBasic.dir/flags.make
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o: lib/Basic/TokenKinds.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o -c /home/primi/src/latino-llvm/lib/Basic/TokenKinds.cpp
+
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/latinoBasic.dir/TokenKinds.cpp.i"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/primi/src/latino-llvm/lib/Basic/TokenKinds.cpp > CMakeFiles/latinoBasic.dir/TokenKinds.cpp.i
+
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/latinoBasic.dir/TokenKinds.cpp.s"
+	cd /home/primi/src/latino-llvm/lib/Basic && /usr/local/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/primi/src/latino-llvm/lib/Basic/TokenKinds.cpp -o CMakeFiles/latinoBasic.dir/TokenKinds.cpp.s
+
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.requires:
+
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.requires
+
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.provides: lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.requires
+	$(MAKE) -f lib/Basic/CMakeFiles/latinoBasic.dir/build.make lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.provides.build
+.PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.provides
+
+lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.provides.build: lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o
+
+
 # Object files for target latinoBasic
 latinoBasic_OBJECTS = \
+"CMakeFiles/latinoBasic.dir/CharInfo.cpp.o" \
 "CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o" \
 "CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o" \
 "CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o" \
 "CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o" \
 "CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o" \
-"CMakeFiles/latinoBasic.dir/SourceManager.cpp.o"
+"CMakeFiles/latinoBasic.dir/SourceManager.cpp.o" \
+"CMakeFiles/latinoBasic.dir/LangOptions.cpp.o" \
+"CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o" \
+"CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o"
 
 # External object files for target latinoBasic
 latinoBasic_EXTERNAL_OBJECTS =
 
+lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o
+lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o
+lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o
+lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/build.make
 lib/liblatinoBasic.a: lib/Basic/CMakeFiles/latinoBasic.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library ../liblatinoBasic.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/primi/src/latino-llvm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library ../liblatinoBasic.a"
 	cd /home/primi/src/latino-llvm/lib/Basic && $(CMAKE_COMMAND) -P CMakeFiles/latinoBasic.dir/cmake_clean_target.cmake
 	cd /home/primi/src/latino-llvm/lib/Basic && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/latinoBasic.dir/link.txt --verbose=$(VERBOSE)
 
@@ -233,12 +337,16 @@ lib/Basic/CMakeFiles/latinoBasic.dir/build: lib/liblatinoBasic.a
 
 .PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/build
 
+lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/CharInfo.cpp.o.requires
 lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/Diagnostic.cpp.o.requires
 lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticIDs.cpp.o.requires
 lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/DiagnosticOptions.cpp.o.requires
 lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/IdentifierTable.cpp.o.requires
 lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/SourceLocation.cpp.o.requires
 lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/SourceManager.cpp.o.requires
+lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/LangOptions.cpp.o.requires
+lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/MemoryBufferCache.cpp.o.requires
+lib/Basic/CMakeFiles/latinoBasic.dir/requires: lib/Basic/CMakeFiles/latinoBasic.dir/TokenKinds.cpp.o.requires
 
 .PHONY : lib/Basic/CMakeFiles/latinoBasic.dir/requires
 

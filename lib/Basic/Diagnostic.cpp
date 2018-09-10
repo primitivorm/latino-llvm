@@ -165,6 +165,18 @@ void DiagnosticsEngine::DiagStateMap::append(SourceManager &SrcMgr,
 }
 
 DiagnosticsEngine::DiagState *
+DiagnosticsEngine::DiagStateMap::lookup(SourceManager &SrcMgr,
+                                        SourceLocation Loc) const {
+  // Common case: we have not seen any diagnostic pragmas.
+  if (Files.empty())
+    return FirstDiagState;
+
+  std::pair<FileID, unsigned> Decomp = SrcMgr.getDecomposedLoc(Loc);
+  const File *F = getFile(SrcMgr, Decomp.first);
+  return F->lookup(Decomp.second);
+}
+
+DiagnosticsEngine::DiagState *
 DiagnosticsEngine::DiagStateMap::File::lookup(unsigned Offset) const {
   auto OnePastIt =
       std::upper_bound(StateTransitions.begin(), StateTransitions.end(), Offset,
@@ -378,7 +390,7 @@ bool DiagnosticsEngine::setDiagnosticGroupWarningAsError(StringRef Group,
   // Get the diagnostics in this group.
   SmallVector<diag::kind, 8> GroupDiags;
   if (Diags->getDiagnosticsInGroup(diag::Flavor::WarningOrError, Group,
-                                  GroupDiags))
+                                   GroupDiags))
     return true;
 
   // Perform the mapping change.
@@ -408,7 +420,7 @@ bool DiagnosticsEngine::setDiagnosticGroupErrorAsFatal(StringRef Group,
   // Get the diagnostics in this group.
   SmallVector<diag::kind, 8> GroupDiags;
   if (Diags->getDiagnosticsInGroup(diag::Flavor::WarningOrError, Group,
-                                  GroupDiags))
+                                   GroupDiags))
     return true;
 
   // Perform the mapping change.

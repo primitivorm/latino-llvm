@@ -126,7 +126,9 @@ tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/Process.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/RWMutex.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/ReverseIteration.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/SMLoc.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/Signals.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/SourceMgr.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/StringSaver.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/SwapByteOrder.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/TargetRegistry.h
@@ -136,13 +138,22 @@ tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Support/type_traits.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Target/TargetMachine.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: /usr/local/include/llvm/Target/TargetOptions.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/Diagnostic.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/DiagnosticCommonKinds.inc
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/DiagnosticIDs.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/DiagnosticOptions.def
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/DiagnosticOptions.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/FileManager.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/FileSystemOptions.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/IdentifierTable.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/LLVM.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/OperatorKinds.def
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/SourceLocation.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/SourceManager.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/Specifiers.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/TokenKinds.def
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/TokenKinds.h
+tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Basic/VirtualFileSystem.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Lex/Lexer.h
 tools/driver/CMakeFiles/latino.dir/driver.cpp.o: include/latino/Lex/Token.h
 
