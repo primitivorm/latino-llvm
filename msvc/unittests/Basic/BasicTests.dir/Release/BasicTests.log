@@ -3,22 +3,22 @@
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24215.1 for x86
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /I"C:\src\latino-llvm\msvc\unittests\Basic" /I"C:\src\latino-llvm\unittests\Basic" /I"C:\src\latino-llvm\include" /I"C:\src\latino-llvm\msvc\include" /IC:\bin\LLVM7\include /I"C:\bin\googletest-release-1.8-0\gtest\include" /I"C:\src\llvm-mirror\llvm\utils\unittest\googletest\include" /I"C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include" /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D _LARGEFILE_SOURCE /D _FILE_OFFSET_BITS=64 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_NONSTDC_NO_WARNINGS /D _SCL_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /D UNICODE /D _UNICODE /D __STDC_CONSTANT_MACROS /D __STDC_FORMAT_MACROS /D __STDC_LIMIT_MACROS /D _HAS_EXCEPTIONS=0 /D GTEST_HAS_RTTI=0 /D GTEST_LANG_CXX11=1 /D GTEST_HAS_TR1_TUPLE=0 /D "CMAKE_INTDIR=\"Release\"" /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR- /Fo"BasicTests.dir\Release\\" /Fd"BasicTests.dir\Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt  /EHs-c- "C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp"
+  cl /c /I"C:\src\latino-llvm\msvc\unittests\Basic" /I"C:\src\latino-llvm\unittests\Basic" /I"C:\src\latino-llvm\include" /I"C:\src\latino-llvm\msvc\include" /I"C:\src\llvm-mirror\llvm\tools\clang\include" /I"C:\src\llvm-mirror\llvm\msvc\tools\clang\include" /I"C:\src\llvm-mirror\llvm\include" /I"C:\src\llvm-mirror\llvm\msvc\include" /I"C:\bin\googletest-release-1.8-0\gtest\include" /I"C:\src\llvm-mirror\llvm\utils\unittest\googletest\include" /I"C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include" /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D _LARGEFILE_SOURCE /D _FILE_OFFSET_BITS=64 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_NONSTDC_NO_WARNINGS /D _SCL_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /D UNICODE /D _UNICODE /D __STDC_CONSTANT_MACROS /D __STDC_FORMAT_MACROS /D __STDC_LIMIT_MACROS /D _HAS_EXCEPTIONS=0 /D GTEST_HAS_RTTI=0 /D GTEST_LANG_CXX11=1 /D GTEST_HAS_TR1_TUPLE=0 /D "CMAKE_INTDIR=\"Release\"" /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR- /Fo"BasicTests.dir\Release\\" /Fd"BasicTests.dir\Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt  /EHs-c- "C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp"
 cl : Command line warning D9025: overriding '/EHs' with '/EHs-'
 cl : Command line warning D9025: overriding '/EHc' with '/EHc-'
   
   DiagnosticTest.cpp
-C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\llvm-mirror\llvm\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringRef.h(898): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringRef.h(903): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringExtras.h(73): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringExtras.h(80): warning C4146: unary minus operator applied to unsigned type, result still unsigned
 C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp(34): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<unsigned int,latino::DiagnosticMapping,llvm::DenseMapInfo<unsigned int>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<unsigned int,latino::DiagnosticMapping,llvm::DenseMapInfo<unsigned int>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
           with
           [
               KeyT=unsigned int,
@@ -26,7 +26,7 @@ C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversi
               KeyInfoT=llvm::DenseMapInfo<unsigned int>,
               BucketT=llvm::detail::DenseMapPair<unsigned int,latino::DiagnosticMapping>
           ]
-  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<unsigned int,latino::DiagnosticMapping,llvm::DenseMapInfo<unsigned int>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<unsigned int,latino::DiagnosticMapping,llvm::DenseMapInfo<unsigned int>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
           with
           [
               KeyT=unsigned int,
@@ -34,7 +34,7 @@ C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversi
               KeyInfoT=llvm::DenseMapInfo<unsigned int>,
               BucketT=llvm::detail::DenseMapPair<unsigned int,latino::DiagnosticMapping>
           ]
-  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<unsigned int,latino::DiagnosticMapping,llvm::DenseMapInfo<unsigned int>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<unsigned int,latino::DiagnosticMapping,llvm::DenseMapInfo<unsigned int>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
           with
           [
               KeyT=unsigned int,
@@ -48,4 +48,4 @@ C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversi
               KeyT=unsigned int,
               ValueT=latino::DiagnosticMapping
           ]
-..\..\..\include\latino\Basic\AllDiagnostics.h : fatal error LNK1107: invalid or corrupt file: cannot read at 0x29D
+  BasicTests.vcxproj -> C:\src\latino-llvm\msvc\unittests\Basic\Release\BasicTests.exe

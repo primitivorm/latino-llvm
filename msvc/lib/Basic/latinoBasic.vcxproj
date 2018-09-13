@@ -78,7 +78,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -97,10 +97,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -114,7 +114,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -132,10 +132,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -149,7 +149,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -167,10 +167,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -184,7 +184,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -202,10 +202,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\lib\Basic;C:\src\latino-llvm\lib\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -273,14 +273,19 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\CharInfo.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\Diagnostic.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticOptions.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\FileManager.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\FileSystemStatCache.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\IdentifierTable.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceLocation.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\SourceManager.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\LangOptions.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\MemoryBufferCache.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\TokenKinds.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\VirtualFileSystem.cpp"  />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:/src/latino-llvm/msvc/ZERO_CHECK.vcxproj">

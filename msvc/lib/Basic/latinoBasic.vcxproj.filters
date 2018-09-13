@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\CharInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\Diagnostic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -8,6 +11,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\FileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\FileSystemStatCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\IdentifierTable.cpp">
@@ -23,6 +32,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\MemoryBufferCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\TokenKinds.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\src\latino-llvm\lib\Basic\VirtualFileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -65,7 +65,7 @@
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -87,7 +87,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -109,7 +109,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -131,7 +131,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\tools;C:\src\latino-llvm\tools;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>

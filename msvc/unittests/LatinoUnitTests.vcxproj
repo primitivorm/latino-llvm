@@ -65,7 +65,7 @@
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -75,7 +75,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -85,7 +85,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -95,7 +95,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests;C:\src\latino-llvm\unittests;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>

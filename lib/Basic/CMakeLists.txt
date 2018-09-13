@@ -5,12 +5,14 @@ add_latino_library(latinoBasic
   DiagnosticIDs.cpp
   DiagnosticOptions.cpp
   FileManager.cpp
+  FileSystemStatCache.cpp
   IdentifierTable.cpp
   SourceLocation.cpp
   SourceManager.cpp
   LangOptions.cpp
   MemoryBufferCache.cpp
   TokenKinds.cpp
+  VirtualFileSystem.cpp
 
   LINK_LIBS
   ${LIBS}

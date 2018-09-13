@@ -153,7 +153,7 @@ class FileManager : public RefCountedBase<FileManager> {
 
   /// Add all ancestors of the given path (pointing to either a file
   /// or a directory) as virtual directories.
-  void addAncestorasVirtualDirs(StringRef Path);
+  void addAncestorAsVirtualDirs(StringRef Path);
 
 public:
   FileManager(const FileSystemOptions &FileSystemOpts,
@@ -232,7 +232,7 @@ public:
   /// FileManager's FileSystemOptions.
   ///
   /// \returns false on success, true on error.
-  bool getNocachedStatValue(StringRef Path, vfs::Status &Result);
+  bool getNoncachedStatValue(StringRef Path, vfs::Status &Result);
 
   /// Remove the real file \p Entry from the cache.
   void invalidateCache(const FileEntry *Entry);

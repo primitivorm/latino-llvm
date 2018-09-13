@@ -3,94 +3,94 @@
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24215.1 for x86
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /I"C:\src\latino-llvm\msvc\tools\driver" /I"C:\src\latino-llvm\tools\driver" /I"C:\src\latino-llvm\include" /I"C:\src\latino-llvm\msvc\include" /IC:\bin\LLVM7\include /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D _LARGEFILE_SOURCE /D _FILE_OFFSET_BITS=64 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_NONSTDC_NO_WARNINGS /D _SCL_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /D UNICODE /D _UNICODE /D __STDC_CONSTANT_MACROS /D __STDC_FORMAT_MACROS /D __STDC_LIMIT_MACROS /D "CMAKE_INTDIR=\"Release\"" /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"latino.dir\Release\\" /Fd"latino.dir\Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt "C:\src\latino-llvm\tools\driver\driver.cpp"
+  cl /c /I"C:\src\latino-llvm\msvc\tools\driver" /I"C:\src\latino-llvm\tools\driver" /I"C:\src\latino-llvm\include" /I"C:\src\latino-llvm\msvc\include" /I"C:\src\llvm-mirror\llvm\tools\clang\include" /I"C:\src\llvm-mirror\llvm\msvc\tools\clang\include" /I"C:\src\llvm-mirror\llvm\include" /I"C:\src\llvm-mirror\llvm\msvc\include" /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D _LARGEFILE_SOURCE /D _FILE_OFFSET_BITS=64 /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_NONSTDC_NO_WARNINGS /D _SCL_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS /D UNICODE /D _UNICODE /D __STDC_CONSTANT_MACROS /D __STDC_FORMAT_MACROS /D __STDC_LIMIT_MACROS /D "CMAKE_INTDIR=\"Release\"" /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"latino.dir\Release\\" /Fd"latino.dir\Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt "C:\src\latino-llvm\tools\driver\driver.cpp"
   
   driver.cpp
-C:\bin\LLVM7\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\bin\LLVM7\include\llvm/ADT/StringRef.h(886): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/ADT/StringRef.h(891): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
-C:\bin\LLVM7\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(63): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\bin\LLVM7\include\llvm/ADT/StringExtras.h(70): warning C4146: unary minus operator applied to unsigned type, result still unsigned
-C:\bin\LLVM7\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/ilist_node_base.h(46): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/User.h(49): warning C4141: 'inline': used more than once
-C:\bin\LLVM7\include\llvm/Support/CommandLine.h(294): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Metadata.h(790): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/DebugLoc.h(67): warning C4800: 'llvm::MDNode *': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/ADT/APInt.h(1703): warning C4244: 'argument': conversion from 'uint64_t' to 'uint32_t', possible loss of data
-C:\bin\LLVM7\include\llvm/ADT/APInt.h(1750): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(410): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(418): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(428): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(434): warning C4244: 'initializing': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(443): warning C4244: 'initializing': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(453): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/DerivedTypes.h(463): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/InstrTypes.h(1130): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-C:\bin\LLVM7\include\llvm/IR/GlobalObject.h(83): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/GlobalObject.h(173): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Function.h(331): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Function.h(684): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Function.h(693): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Function.h(702): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(122): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(133): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(556): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(1961): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
-  C:\bin\LLVM7\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(1972): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
-  C:\bin\LLVM7\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(3803): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
-  C:\bin\LLVM7\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
-C:\bin\LLVM7\include\llvm/IR/Instructions.h(3824): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
-  C:\bin\LLVM7\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
-C:\bin\LLVM7\include\llvm/IR/Operator.h(116): warning C4624: 'llvm::OverflowingBinaryOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(157): warning C4624: 'llvm::PossiblyExactOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(370): warning C4624: 'llvm::FPMathOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,11>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(389): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,11>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(390): warning C4624: 'llvm::AddOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,13>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(392): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,13>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(393): warning C4624: 'llvm::SubOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,15>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(395): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,15>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(396): warning C4624: 'llvm::MulOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,23>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(398): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,23>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(399): warning C4624: 'llvm::ShlOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,18>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(402): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,18>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(403): warning C4624: 'llvm::SDivOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,17>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(405): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,17>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(406): warning C4624: 'llvm::UDivOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,25>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(408): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,25>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(409): warning C4624: 'llvm::AShrOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,24>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(411): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,24>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(412): warning C4624: 'llvm::LShrOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,37>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(414): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,37>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(414): warning C4624: 'llvm::ZExtOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,32>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(417): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,32>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(519): warning C4624: 'llvm::GEPOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,45>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(522): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,45>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(547): warning C4624: 'llvm::PtrToIntOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/IR/Operator.h(386): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,47>': destructor was implicitly defined as deleted
-  C:\bin\LLVM7\include\llvm/IR/Operator.h(550): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,47>' being compiled
-C:\bin\LLVM7\include\llvm/IR/Operator.h(562): warning C4624: 'llvm::BitCastOperator': destructor was implicitly defined as deleted
-C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
-  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
+C:\src\llvm-mirror\llvm\include\llvm/Support/MathExtras.h(372): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringRef.h(898): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringRef.h(903): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/ADT/Hashing.h(572): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/Hashing.h(584): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/Hashing.h(623): warning C4244: 'argument': conversion from 'uint64_t' to 'std::size_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/Support/Chrono.h(37): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/Support/Chrono.h(44): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringExtras.h(73): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringExtras.h(80): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+C:\src\llvm-mirror\llvm\include\llvm/ADT/BitVector.h(427): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/BitVector.h(466): warning C4244: '=': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/ilist_node_base.h(46): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/User.h(49): warning C4141: 'inline': used more than once
+C:\src\llvm-mirror\llvm\include\llvm/Support/CommandLine.h(295): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Metadata.h(790): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/DebugLoc.h(67): warning C4800: 'llvm::MDNode *': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/ADT/APInt.h(1708): warning C4244: 'argument': conversion from 'uint64_t' to 'uint32_t', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/ADT/APInt.h(1755): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(410): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(418): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(428): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(434): warning C4244: 'initializing': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(443): warning C4244: 'initializing': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(453): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/DerivedTypes.h(463): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/InstrTypes.h(1130): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+C:\src\llvm-mirror\llvm\include\llvm/IR/GlobalObject.h(83): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/GlobalObject.h(183): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Function.h(336): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Function.h(689): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Function.h(698): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Function.h(707): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(122): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(133): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(556): warning C4800: 'unsigned int': forcing value to bool 'true' or 'false' (performance warning)
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(1961): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
+  C:\src\llvm-mirror\llvm\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(1972): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
+  C:\src\llvm-mirror\llvm\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(3803): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
+  C:\src\llvm-mirror\llvm\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
+C:\src\llvm-mirror\llvm\include\llvm/IR/Instructions.h(3824): warning C4291: 'void *llvm::User::operator new(std::size_t,unsigned int,unsigned int)': no matching operator delete found; memory will not be freed if initialization throws an exception
+  C:\src\llvm-mirror\llvm\include\llvm/IR/User.h(72): note: see declaration of 'llvm::User::operator new'
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(116): warning C4624: 'llvm::OverflowingBinaryOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(157): warning C4624: 'llvm::PossiblyExactOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(381): warning C4624: 'llvm::FPMathOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,11>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(400): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,11>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(401): warning C4624: 'llvm::AddOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,13>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(403): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,13>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(404): warning C4624: 'llvm::SubOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,15>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(406): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,15>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(407): warning C4624: 'llvm::MulOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,23>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(409): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::OverflowingBinaryOperator,23>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(410): warning C4624: 'llvm::ShlOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,18>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(413): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,18>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(414): warning C4624: 'llvm::SDivOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,17>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(416): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,17>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(417): warning C4624: 'llvm::UDivOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,25>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(419): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,25>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(420): warning C4624: 'llvm::AShrOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,24>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(422): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::PossiblyExactOperator,24>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(423): warning C4624: 'llvm::LShrOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,37>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(425): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,37>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(425): warning C4624: 'llvm::ZExtOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,32>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(428): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,32>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(530): warning C4624: 'llvm::GEPOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,45>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(533): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,45>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(558): warning C4624: 'llvm::PtrToIntOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(397): warning C4624: 'llvm::ConcreteOperator<llvm::Operator,47>': destructor was implicitly defined as deleted
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(561): note: see reference to class template instantiation 'llvm::ConcreteOperator<llvm::Operator,47>' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/IR/Operator.h(573): warning C4624: 'llvm::BitCastOperator': destructor was implicitly defined as deleted
+C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(352): note: while compiling class template member function 'unsigned int llvm::DenseMapBase<llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)'
           with
           [
               KeyT=void *,
@@ -98,7 +98,7 @@ C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversi
               KeyInfoT=llvm::DenseMapInfo<void *>,
               BucketT=llvm::detail::DenseMapPair<void *,llvm::cl::Option *>
           ]
-  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(719): note: see reference to function template instantiation 'unsigned int llvm::DenseMapBase<llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>::getMinBucketToReserveForEntries(unsigned int)' being compiled
           with
           [
               KeyT=void *,
@@ -106,7 +106,7 @@ C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversi
               KeyInfoT=llvm::DenseMapInfo<void *>,
               BucketT=llvm::detail::DenseMapPair<void *,llvm::cl::Option *>
           ]
-  C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/DenseMap.h(646): note: see reference to class template instantiation 'llvm::DenseMapBase<llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>,KeyT,ValueT,KeyInfoT,BucketT>' being compiled
           with
           [
               KeyT=void *,
@@ -114,26 +114,26 @@ C:\bin\LLVM7\include\llvm/ADT/DenseMap.h(358): warning C4244: 'return': conversi
               KeyInfoT=llvm::DenseMapInfo<void *>,
               BucketT=llvm::detail::DenseMapPair<void *,llvm::cl::Option *>
           ]
-  C:\bin\LLVM7\include\llvm/Support/Options.h(67): note: see reference to class template instantiation 'llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/Support/Options.h(67): note: see reference to class template instantiation 'llvm::DenseMap<void *,llvm::cl::Option *,llvm::DenseMapInfo<KeyT>,llvm::detail::DenseMapPair<KeyT,ValueT>>' being compiled
           with
           [
               KeyT=void *,
               ValueT=llvm::cl::Option *
           ]
-C:\bin\LLVM7\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
-  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringRef.h(516): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\src\llvm-mirror\llvm\include\llvm/Support/FormatProviders.h(68): note: see reference to function template instantiation 'bool llvm::StringRef::getAsInteger<std::size_t>(unsigned int,T &) const' being compiled
           with
           [
               T=std::size_t
           ]
-C:\bin\LLVM7\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
-  C:\bin\LLVM7\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
+C:\src\llvm-mirror\llvm\include\llvm/ADT/StringRef.h(547): warning C4244: '=': conversion from 'unsigned __int64' to 'std::size_t', possible loss of data
+  C:\src\llvm-mirror\llvm\include\llvm/Support/FormatProviders.h(95): note: see reference to function template instantiation 'bool llvm::StringRef::consumeInteger<std::size_t>(unsigned int,T &)' being compiled
           with
           [
               T=std::size_t
           ]
-C:\bin\LLVM7\include\llvm/ADT/PointerIntPair.h(58): warning C4800: 'intptr_t': forcing value to bool 'true' or 'false' (performance warning)
-  C:\bin\LLVM7\include\llvm/ADT/PointerIntPair.h(58): note: while compiling class template member function 'bool llvm::PointerIntPair<void *,1,bool,llvm::PointerUnionUIntTraits<PT1,PT2>,llvm::PointerIntPairInfo<PointerTy,1,PtrTraits>>::getInt(void) const'
+C:\src\llvm-mirror\llvm\include\llvm/ADT/PointerIntPair.h(58): warning C4800: 'intptr_t': forcing value to bool 'true' or 'false' (performance warning)
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/PointerIntPair.h(58): note: while compiling class template member function 'bool llvm::PointerIntPair<void *,1,bool,llvm::PointerUnionUIntTraits<PT1,PT2>,llvm::PointerIntPairInfo<PointerTy,1,PtrTraits>>::getInt(void) const'
           with
           [
               PT1=llvm::LLVMContext *,
@@ -141,7 +141,7 @@ C:\bin\LLVM7\include\llvm/ADT/PointerIntPair.h(58): warning C4800: 'intptr_t': f
               PointerTy=void *,
               PtrTraits=llvm::PointerUnionUIntTraits<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>
           ]
-  C:\bin\LLVM7\include\llvm/ADT/PointerUnion.h(129): note: see reference to function template instantiation 'bool llvm::PointerIntPair<void *,1,bool,llvm::PointerUnionUIntTraits<PT1,PT2>,llvm::PointerIntPairInfo<PointerTy,1,PtrTraits>>::getInt(void) const' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/PointerUnion.h(129): note: see reference to function template instantiation 'bool llvm::PointerIntPair<void *,1,bool,llvm::PointerUnionUIntTraits<PT1,PT2>,llvm::PointerIntPairInfo<PointerTy,1,PtrTraits>>::getInt(void) const' being compiled
           with
           [
               PT1=llvm::LLVMContext *,
@@ -149,7 +149,7 @@ C:\bin\LLVM7\include\llvm/ADT/PointerIntPair.h(58): warning C4800: 'intptr_t': f
               PointerTy=void *,
               PtrTraits=llvm::PointerUnionUIntTraits<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>
           ]
-  C:\bin\LLVM7\include\llvm/ADT/PointerUnion.h(93): note: see reference to class template instantiation 'llvm::PointerIntPair<void *,1,bool,llvm::PointerUnionUIntTraits<PT1,PT2>,llvm::PointerIntPairInfo<PointerTy,1,PtrTraits>>' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/ADT/PointerUnion.h(93): note: see reference to class template instantiation 'llvm::PointerIntPair<void *,1,bool,llvm::PointerUnionUIntTraits<PT1,PT2>,llvm::PointerIntPairInfo<PointerTy,1,PtrTraits>>' being compiled
           with
           [
               PT1=llvm::LLVMContext *,
@@ -157,5 +157,5 @@ C:\bin\LLVM7\include\llvm/ADT/PointerIntPair.h(58): warning C4800: 'intptr_t': f
               PointerTy=void *,
               PtrTraits=llvm::PointerUnionUIntTraits<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>
           ]
-  C:\bin\LLVM7\include\llvm/IR/Metadata.h(769): note: see reference to class template instantiation 'llvm::PointerUnion<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>' being compiled
+  C:\src\llvm-mirror\llvm\include\llvm/IR/Metadata.h(769): note: see reference to class template instantiation 'llvm::PointerUnion<llvm::LLVMContext *,llvm::ReplaceableMetadataImpl *>' being compiled
   latino.vcxproj -> C:\src\latino-llvm\msvc\bin\Release\latino.exe

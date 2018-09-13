@@ -6,7 +6,7 @@ DiagnosticTest.cpp)
 
 target_link_libraries(BasicTests
   PRIVATE
-  latinoBasic
-  gtest
-  ${GTEST_BOTH_LIBRARIES}
+  latinoBasic 
 )
+#gtest
+#${GTEST_BOTH_LIBRARIES}

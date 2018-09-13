@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -56,37 +56,37 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-    <PropertyGroup>
-      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\Debug\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BasicTests.dir\Debug\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BasicTests</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
-      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\Release\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BasicTests.dir\Release\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BasicTests</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
-      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\MinSizeRel\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">BasicTests.dir\MinSizeRel\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">BasicTests</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
-      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
-      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\RelWithDebInfo\</OutDir>
-      <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">BasicTests.dir\RelWithDebInfo\</IntDir>
-      <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">BasicTests</TargetName>
-      <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
-      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
-      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
-    </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BasicTests.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BasicTests</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BasicTests.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BasicTests</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">BasicTests.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">BasicTests</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\src\latino-llvm\msvc\unittests\Basic\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">BasicTests.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">BasicTests</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -98,17 +98,18 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <SuppressStartupBanner></SuppressStartupBanner>
+      <SuppressStartupBanner>
+      </SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -117,14 +118,15 @@
     </Midl>
     <Link>
       <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;gtest_main.lib;gtest.lib;..\..\Debug\lib\latinoBasic.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMDemangle.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/bin/LLVM7/lib;C:/bin/LLVM7/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\Debug\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\Debug\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\Debug\lib\gtest_main.lib;C:\src\llvm-mirror\llvm\msvc\Debug\lib\gtest.lib;..\..\Debug\lib\latinoBasic.lib;C:\src\llvm-mirror\llvm\msvc\Debug\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\Debug\lib\LLVMDemangle.lib;ARG_ADDITIONAL_HEADERS.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\FileSystemStatCache.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib;C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>C:/src/latino-llvm/msvc/unittests/Basic/Debug/BasicTests.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/src/latino-llvm/msvc/unittests/Basic/Debug/BasicTests.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -133,7 +135,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -143,18 +145,20 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <SuppressStartupBanner></SuppressStartupBanner>
+      <SuppressStartupBanner>
+      </SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -163,14 +167,15 @@
     </Midl>
     <Link>
       <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;gtest_main.lib;gtest.lib;..\..\Release\lib\latinoBasic.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMDemangle.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/bin/LLVM7/lib;C:/bin/LLVM7/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\Release\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\Release\lib\gtest_main.lib;C:\src\llvm-mirror\llvm\msvc\Release\lib\gtest.lib;..\..\Release\lib\latinoBasic.lib;psapi.lib;C:\src\llvm-mirror\llvm\msvc\Release\lib\LLVMDemangle.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib;C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>No</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>C:/src/latino-llvm/msvc/unittests/Basic/Release/BasicTests.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/src/latino-llvm/msvc/unittests/Basic/Release/BasicTests.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -179,7 +184,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -189,18 +194,20 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <SuppressStartupBanner></SuppressStartupBanner>
+      <SuppressStartupBanner>
+      </SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -209,14 +216,15 @@
     </Midl>
     <Link>
       <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;gtest_main.lib;gtest.lib;..\..\MinSizeRel\lib\latinoBasic.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMDemangle.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/bin/LLVM7/lib;C:/bin/LLVM7/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\MinSizeRel\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\MinSizeRel\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\MinSizeRel\lib\gtest_main.lib;C:\src\llvm-mirror\llvm\msvc\MinSizeRel\lib\gtest.lib;..\..\MinSizeRel\lib\latinoBasic.lib;C:\src\llvm-mirror\llvm\msvc\MinSizeRel\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\MinSizeRel\lib\LLVMDemangle.lib;ARG_ADDITIONAL_HEADERS.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\FileSystemStatCache.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib;C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>No</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>C:/src/latino-llvm/msvc/unittests/Basic/MinSizeRel/BasicTests.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/src/latino-llvm/msvc/unittests/Basic/MinSizeRel/BasicTests.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -225,7 +233,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <ClCompile>
       <AdditionalOptions> /EHs-c- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -236,17 +244,18 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <SuppressStartupBanner></SuppressStartupBanner>
+      <SuppressStartupBanner>
+      </SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR="RelWithDebInfo";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_LARGEFILE_SOURCE;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_SCL_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;UNICODE;_UNICODE;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;__STDC_LIMIT_MACROS;_HAS_EXCEPTIONS=0;GTEST_HAS_RTTI=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\bin\LLVM7\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\src\latino-llvm\msvc\unittests\Basic;C:\src\latino-llvm\unittests\Basic;C:\src\latino-llvm\include;C:\src\latino-llvm\msvc\include;C:\src\llvm-mirror\llvm\tools\clang\include;C:\src\llvm-mirror\llvm\msvc\tools\clang\include;C:\src\llvm-mirror\llvm\include;C:\src\llvm-mirror\llvm\msvc\include;C:\bin\googletest-release-1.8-0\gtest\include;C:\src\llvm-mirror\llvm\utils\unittest\googletest\include;C:\src\llvm-mirror\llvm\utils\unittest\googlemock\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -255,14 +264,15 @@
     </Midl>
     <Link>
       <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;gtest_main.lib;gtest.lib;..\..\RelWithDebInfo\lib\latinoBasic.lib;C:\bin\LLVM7\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\bin\LLVM7\lib\LLVMDemangle.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/bin/LLVM7/lib;C:/bin/LLVM7/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\RelWithDebInfo\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\RelWithDebInfo\lib\LLVMSupport.lib;C:\src\llvm-mirror\llvm\msvc\RelWithDebInfo\lib\gtest_main.lib;C:\src\llvm-mirror\llvm\msvc\RelWithDebInfo\lib\gtest.lib;..\..\RelWithDebInfo\lib\latinoBasic.lib;C:\src\llvm-mirror\llvm\msvc\RelWithDebInfo\lib\LLVMSupport.lib;psapi.lib;shell32.lib;ole32.lib;uuid.lib;advapi32.lib;C:\src\llvm-mirror\llvm\msvc\RelWithDebInfo\lib\LLVMDemangle.lib;ARG_ADDITIONAL_HEADERS.lib;..\..\..\include\latino\Basic\AllDiagnostics.h;..\..\..\include\latino\Basic\CharInfo.h;..\..\..\include\latino\Basic\CommentOptions.h;..\..\..\include\latino\Basic\Diagnostic.h;..\..\..\include\latino\Basic\DiagnosticCategories.h;..\..\..\include\latino\Basic\DiagnosticError.h;..\..\..\include\latino\Basic\DiagnosticIDs.h;..\..\..\include\latino\Basic\DiagnosticOptions.h;..\..\..\include\latino\Basic\FileManager.h;..\..\..\include\latino\Basic\FileSystemOptions.h;..\..\..\include\latino\Basic\FileSystemStatCache.h;..\..\..\include\latino\Basic\IdentifierTable.h;..\..\..\include\latino\Basic\LLVM.h;..\..\..\include\latino\Basic\LangOptions.h;..\..\..\include\latino\Basic\MemoryBufferCache.h;..\..\..\include\latino\Basic\OperatorKinds.h;..\..\..\include\latino\Basic\PartialDiagnostic.h;..\..\..\include\latino\Basic\PrettyStackTrace.h;..\..\..\include\latino\Basic\SourceLocation.h;..\..\..\include\latino\Basic\SourceManager.h;..\..\..\include\latino\Basic\SourceManagerInternals.h;..\..\..\include\latino\Basic\Specifiers.h;..\..\..\include\latino\Basic\TargetInfo.h;..\..\..\include\latino\Basic\TargetOptions.h;..\..\..\include\latino\Basic\TokenKinds.h;..\..\..\include\latino\Basic\VirtualFileSystem.h;..\..\..\include\latino\Basic\Visibility.h;..\..\..\include\latino\Basic\DiagnosticOptions.def;..\..\..\include\latino\Basic\LangOptions.def;..\..\..\include\latino\Basic\OperatorKinds.def;..\..\..\include\latino\Basic\TokenKinds.def;..\..\..\include\latino\Basic\Attr.td;..\..\..\include\latino\Basic\Diagnostic.td;..\..\..\include\latino\Basic\DiagnosticCategories.td;..\..\..\include\latino\Basic\DiagnosticCommonKinds.td;..\..\..\include\latino\Basic\DiagnosticDocs.td;..\..\..\include\latino\Basic\DiagnosticGroups.td;..\..\..\include\latino\Basic\DiagnosticRefactoringKinds.td;..\..\..\include\latino\Basic\DiagnosticSemaKinds.td;..\..\..\include\latino\Basic\DiagnosticSerializationKinds.td</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib;C:/src/llvm-mirror/llvm/msvc/$(Configuration)/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>C:/src/latino-llvm/msvc/unittests/Basic/RelWithDebInfo/BasicTests.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/src/latino-llvm/msvc/unittests/Basic/RelWithDebInfo/BasicTests.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <Version></Version>
+      <Version>
+      </Version>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -325,7 +335,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp"  />
+    <ClCompile Include="C:\src\latino-llvm\unittests\Basic\DiagnosticTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:/src/latino-llvm/msvc/ZERO_CHECK.vcxproj">

@@ -1,3 +1,10 @@
+//===----------------------------------------------------------------------===//
+//
+/// \file
+/// Defines the virtual file system interface vfs::FileSystem.
+//
+//===----------------------------------------------------------------------===//
+
 #ifndef LATINO_BASIC_VIRTUALFILESYSTEM_H
 #define LATINO_BASIC_VIRTUALFILESYSTEM_H
 
@@ -285,6 +292,9 @@ public:
   openFileForRead(const Twine &Path) override;
   directory_iterator dir_begin(const Twine &Dir, std::error_code &EC) override;
   llvm::ErrorOr<std::string> getCurrentWorkingDirectory() const override;
+  std::error_code setCurrentWorkingDirectory(const Twine &Path) override;
+  std::error_code getRealPath(const Twine &Path,
+	  SmallVectorImpl<char> &Output) const override;
 
   using iterator = FileSystemList::reverse_iterator;
   using const_iterator = FileSystemList::const_reverse_iterator;
@@ -342,7 +352,7 @@ public:
   std::string toString() const;
 
   /// Return true if this file system normalizes . and .. in paths.
-  bool useNormalizePaths() const { return UseNormalizedPaths; }
+  bool useNormalizedPaths() const { return UseNormalizedPaths; }
 
   llvm::ErrorOr<Status> status(const Twine &Path) override;
   llvm::ErrorOr<std::unique_ptr<File>>
@@ -360,7 +370,7 @@ public:
   /// This doesn't resolve symlinks as they are not supported in in-memory file
   /// system.
   std::error_code getRealPath(const Twine &Path,
-                              SmallVectorImpl<char> &Output) const override;
+	  SmallVectorImpl<char> &Output) const override;
 
   std::error_code setCurrentWorkingDirectory(const Twine &Path) override;
 }; /* InMemoryFileSystem */

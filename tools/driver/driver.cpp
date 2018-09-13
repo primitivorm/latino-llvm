@@ -27,6 +27,9 @@ int main(int argc_, const char **argv_) {
   llvm::llvm_shutdown_obj Y;
   if (llvm::sys::Process::FixupStandardFileDescriptors())
     return 1;
+
+  // llvm::InitializeAllTargets();
+
   SmallVector<const char *, 256> argv;
   llvm::SpecificBumpPtrAllocator<char> ArgAllocator;
   /*
@@ -37,7 +40,7 @@ int main(int argc_, const char **argv_) {
     llvm::errs() << "error: couldn't get arguments: " << EC.message() << '\n';
   }
   */
-  llvm::InitializeAllTargets();
+  //
 
   cout << "Hello world!" << endl;
   return 0;
