@@ -15,8 +15,6 @@ macro(add_latino_library name)
   ""
   "ADDITIONAL_HEADERS"
   ${ARGN})
-
-  message(STATUS "add_latino_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}" )
   set(srcs)
   if(MSVC_IDE OR XCODE)
     file(RELATIVE_PATH lib_path
@@ -37,14 +35,16 @@ macro(add_latino_library name)
       endif()
     endif()
   endif(MSVC_IDE OR XCODE)
+  message(STATUS "add_latino_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}" )
   message(STATUS "srcs: ${srcs}")
   if(srcs OR ARG_ADDITIONAL_HEADERS)
     set(srcs
-    ARG_ADDITIONAL_HEADERS
+    ADDITIONAL_HEADERS
     ${srcs}
     ${ARG_ADDITIONAL_HEADERS}
     )
   endif()
+  message(STATUS "srcs: ${srcs}")
   if(ARG_SHARED)
     set(ARG_ENABLE_SHARED)
   endif()

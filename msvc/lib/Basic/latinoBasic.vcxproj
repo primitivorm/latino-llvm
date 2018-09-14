@@ -273,6 +273,46 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\AllDiagnostics.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\CharInfo.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\CommentOptions.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\Diagnostic.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticCategories.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticError.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticIDs.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticOptions.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\FileManager.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\FileSystemOptions.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\FileSystemStatCache.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\IdentifierTable.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\LLVM.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\LangOptions.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\MemoryBufferCache.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\OperatorKinds.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\PartialDiagnostic.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\PrettyStackTrace.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\SourceLocation.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\SourceManager.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\SourceManagerInternals.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\Specifiers.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\TargetInfo.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\TargetOptions.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\TokenKinds.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\VirtualFileSystem.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\Visibility.h" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticOptions.def" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\LangOptions.def" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\OperatorKinds.def" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\TokenKinds.def" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\Attr.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\Diagnostic.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticCategories.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticCommonKinds.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticDocs.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticGroups.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticRefactoringKinds.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticSemaKinds.td" />
+    <ClInclude Include="C:\src\latino-llvm\include\latino\Basic\DiagnosticSerializationKinds.td" />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\CharInfo.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\Diagnostic.cpp"  />
     <ClCompile Include="C:\src\latino-llvm\lib\Basic\DiagnosticIDs.cpp"  />

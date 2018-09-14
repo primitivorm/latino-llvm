@@ -187,6 +187,8 @@ LLVM_MAIN_SRC_DIR:PATH=C:/src/llvm-mirror/llvm
 //Path to a program.
 LLVM_TABLEGEN_EXE:FILEPATH=C:/bin/LLVM7/bin/llvm-tblgen.exe
 
+LLVM_TARGETS_TO_BUILD:STRING=X86
+
 //Path to llvm/bin
 LLVM_TOOLS_BINARY_DIR:PATH=C:/bin/LLVM7/bin
 

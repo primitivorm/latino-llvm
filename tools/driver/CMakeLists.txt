@@ -1,3 +1,22 @@
+set( LLVM_LINK_COMPONENTS
+  ${LLVM_TARGETS_TO_BUILD}
+  Analysis
+  CodeGen
+  Core
+  IPO
+  AggressiveInstCombine
+  InstCombine
+  Instrumentation
+  MC
+  MCParser
+  ObjCARCOpts
+  Option
+  ScalarOpts
+  Support
+  TransformUtils
+  Vectorize
+  )
+
 add_executable(latino driver.cpp)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
@@ -11,61 +30,31 @@ else()
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-  LLVMLTO
-  LLVMPasses
-  LLVMObjCARCOpts
-  LLVMSymbolize
-  LLVMDebugInfoPDB
-  LLVMDebugInfoDWARF
-  LLVMFuzzMutate
-  LLVMTableGen
-  LLVMDlltoolDriver
-  LLVMLineEditor
-  LLVMOrcJIT
-  LLVMCoverage
-  LLVMMIRParser
-  LLVMObjectYAML
-  LLVMLibDriver
-  LLVMOption
-  LLVMWindowsManifest
-  LLVMX86Disassembler
-  LLVMX86AsmParser
-  LLVMX86CodeGen
-  LLVMGlobalISel
-  LLVMSelectionDAG
-  LLVMAsmPrinter
-  LLVMDebugInfoCodeView
-  LLVMDebugInfoMSF
-  LLVMX86Desc
-  LLVMMCDisassembler
-  LLVMX86Info
-  LLVMX86AsmPrinter
-  LLVMX86Utils
-  LLVMMCJIT
-  LLVMInterpreter
-  LLVMExecutionEngine
-  LLVMRuntimeDyld
-  LLVMCodeGen
-  LLVMTarget
-  LLVMCoroutines
-  LLVMipo
-  LLVMInstrumentation
-  LLVMVectorize
-  LLVMScalarOpts
-  LLVMLinker
-  LLVMIRReader
-  LLVMAsmParser
-  LLVMInstCombine
-  LLVMTransformUtils
-  LLVMBitWriter
-  LLVMAnalysis
-  LLVMProfileData
-  LLVMObject
-  LLVMMCParser
-  LLVMMC
-  LLVMBitReader
-  LLVMCore
-  LLVMBinaryFormat
+  PRIVATE
+  latinoBasic
   LLVMSupport
-  LLVMDemangle
-)
+
+  LLVMTarget
+  LLVMXCoreCodeGen
+  LLVMX86CodeGen
+  LLVMSystemZCodeGen
+  LLVMSparcCodeGen
+  LLVMPowerPCCodeGen
+  LLVMNVPTXCodeGen
+  LLVMMSP430CodeGen
+  LLVMMipsCodeGen
+  LLVMLanaiCodeGen
+  LLVMHexagonCodeGen
+  LLVMBPFCodeGen
+  LLVMARMCodeGen
+  LLVMAMDGPUCodeGen
+  LLVMAArch64CodeGen
+  )
+
+  #XCoreAsmPrinter
+  #XCoreDesc
+  #XCoreDisassembler
+  #XCoreInfo
+  #X86AsmParser
+  #X86AsmPrinter
+  #X86Info
