@@ -1,12 +1,14 @@
-set(LLVM_LINK_COMPONENTS
-  Support)
+#set(LLVM_LINK_COMPONENTS Support)
 
 add_latino_unittest(BasicTests
-DiagnosticTest.cpp)
+  DiagnosticTest.cpp
+  CharInfoTest.cpp
+  FileManagerTest.cpp
+)
 
 target_link_libraries(BasicTests
   PRIVATE
-  latinoBasic 
+  latinoBasic
 )
 #gtest
 #${GTEST_BOTH_LIBRARIES}

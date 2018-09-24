@@ -50,7 +50,7 @@ macro(add_clang_library name)
     "ADDITIONAL_HEADERS"
     ${ARGN})
 
-  message(STATUS "add_clang_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}" )
+  #message(STATUS "add_clang_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}" )
   set(srcs)
   if(MSVC_IDE OR XCODE)
     # Add public headers

@@ -137,10 +137,10 @@ static bool isTraversalComponent(StringRef Component) {
 }
 
 static bool pathHasTraversal(StringRef Path) {
-  using namespace llvm : sys;
+  using namespace llvm::sys;
 
   for (StringRef Comp : llvm::make_range(path::begin(Path), path::end(Path)))
-    if (isTraversalComponent(Component))
+    if (isTraversalComponent(Comp))
       return true;
   return false;
 }

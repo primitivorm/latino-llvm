@@ -51,7 +51,7 @@ find_path(CLANG_INCLUDE_DIRS clang/Basic/Version.h HINTS ${LLVM_INCLUDE_DIRS})
 
 if (CLANG_LIBS AND CLANG_INCLUDE_DIRS)
   set(CLANG_LIBS "-lclang ${CLANG_LIBS}")
-  MESSAGE(STATUS "Clang libs: " ${CLANG_LIBS})
+  message(STATUS "Clang libs: " ${CLANG_LIBS})
   set(CLANG_FOUND TRUE)
 endif (CLANG_LIBS AND CLANG_INCLUDE_DIRS)
 
@@ -62,7 +62,7 @@ if (CLANG_FOUND)
   if (MINGW)
     set(CLANG_LDFLAGS "${CLANG_LDFLAGS} ${LLVM_SYSTEM_LIBS}")
   endif()
-  
+
 else (CLANG_FOUND)
   if (CLANG_FIND_REQUIRED)
     message(FATAL_ERROR "Could NOT find Clang")

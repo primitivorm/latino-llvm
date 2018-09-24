@@ -33,18 +33,14 @@ using namespace llvm;
 
 int main(int argc_, const char **argv_) {
   llvm::InitLLVM X(argc_, argv_);
-  /*llvm::sys::PrintStackTraceOnErrorSignal(argv_[0]);
-  llvm::PrettyStackTraceProgram X(argc_, argv_);
-  llvm::llvm_shutdown_obj Y;
-  if (llvm::sys::Process::FixupStandardFileDescriptors())
-    return 1;*/
   SmallVector<const char *, 256> argv(argv_, argv_ + argc_);
 
   if (llvm::sys::Process::FixupStandardFileDescriptors())
     return 1;
+
   llvm::InitializeAllTargets();
 
-  //SmallVector<const char *, 256> argv;
+  // SmallVector<const char *, 256> argv;
   llvm::SpecificBumpPtrAllocator<char> ArgAllocator;
   /*
   std::error_code EC;

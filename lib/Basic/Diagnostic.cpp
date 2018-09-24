@@ -49,7 +49,7 @@ DummyArgToStringFn(DiagnosticsEngine::ArgumentKind AK, intptr_t QT,
                    ArrayRef<DiagnosticsEngine::ArgumentValue> PrevArgs,
                    SmallVectorImpl<char> &Output, void *Cookie,
                    ArrayRef<intptr_t> QualTypeVals) {
-  StringRef Str = "<can´t format argument>";
+  StringRef Str = "<can't format argument>";
   Output.append(Str.begin(), Str.end());
 }
 
@@ -93,9 +93,9 @@ bool DiagnosticsEngine::popMappings(SourceLocation Loc) {
 
 void DiagnosticsEngine::Reset() {
   ErrorOcurred = false;
-  UncompilableErroOcurred = false;
-  FatalErrorOcurred = false;
-  UnrecoverableErrorOcurred = false;
+  UncompilableErrorOccurred = false;
+  FatalErrorOccurred = false;
+  UnrecoverableErrorOccurred = false;
 
   NumWarnings = 0;
   NumErrors = 0;
@@ -320,7 +320,7 @@ void DiagnosticsEngine::DiagStateMap::dump(SourceManager &SrcMgr,
 
 void DiagnosticsEngine::PushDiagStatePoint(DiagState *State,
                                            SourceLocation Loc) {
-  assert(Loc.IsValid() && "Adding invalid loc point");
+  assert(Loc.isValid() && "Adding invalid loc point");
   DiagStatesByLoc.append(*SourceMgr, Loc, State);
 }
 
@@ -400,6 +400,7 @@ bool DiagnosticsEngine::setDiagnosticGroupWarningAsError(StringRef Group,
     if (Info.getSeverity() == diag::Severity::Error ||
         Info.getSeverity() == diag::Severity::Fatal)
       Info.setSeverity(diag::Severity::Warning);
+
     Info.setNoWarningAsError(true);
   }
 
@@ -449,29 +450,32 @@ void DiagnosticsEngine::setSeverityForAll(diag::Flavor Flavor,
       setSeverity(Diag, Map, Loc);
 }
 
+#include <iostream>
 void DiagnosticsEngine::Report(const StoredDiagnostic &storedDiag) {
-  assert(CurDiagID == std::numeric_limits<unsigned>::max() &&
-         "Multiple diagnostic in flight at once!");
+	std::cout << "DiagnosticsEngine::Report\n";
+	assert(CurDiagID == std::numeric_limits<unsigned>::max() &&
+		"Multiple diagnostics in flight at once!");
 
-  CurDiagLoc = storedDiag.getLocation();
-  CurDiagID = storedDiag.getID();
-  NumDiagArgs = 0;
+	CurDiagLoc = storedDiag.getLocation();
+	CurDiagID = storedDiag.getID();
+	NumDiagArgs = 0;
 
-  DiagRanges.clear();
-  DiagRanges.append(storedDiag.range_begin(), storedDiag.range_end());
+	DiagRanges.clear();
+	DiagRanges.append(storedDiag.range_begin(), storedDiag.range_end());
 
-  DiagFixItHints.clear();
-  DiagFixItHints.append(storedDiag.fixit_begin(), storedDiag.fixit_end());
+	DiagFixItHints.clear();
+	DiagFixItHints.append(storedDiag.fixit_begin(), storedDiag.fixit_end());
 
-  assert(Client && "DiagnosticConsumer not set!");
-  Level DiagLevel = storedDiag.getLevel();
-  Diagnostic Info(this, storedDiag.getMessage());
-  Client->HandleDiagnostic(DiagLevel, Info);
-  if (Client->IncludeInDiagnosticCounts()) {
-    if (DiagLevel == DiagnosticsEngine::Warning)
-      ++NumWarnings;
-  }
-  CurDiagID = std::numeric_limits<unsigned>::max();
+	assert(Client && "DiagnosticConsumer not set!");
+	Level DiagLevel = storedDiag.getLevel();
+	Diagnostic Info(this, storedDiag.getMessage());
+	Client->HandleDiagnostic(DiagLevel, Info);
+	if (Client->IncludeInDiagnosticCounts()) {
+		if (DiagLevel == DiagnosticsEngine::Warning)
+			++NumWarnings;
+	}
+
+	CurDiagID = std::numeric_limits<unsigned>::max();
 }
 
 bool DiagnosticsEngine::EmitCurrentDiagnostic(bool Force) {
@@ -509,14 +513,14 @@ bool DiagnosticsEngine::EmitCurrentDiagnostic(bool Force) {
 DiagnosticConsumer::~DiagnosticConsumer() = default;
 
 void DiagnosticConsumer::HandleDiagnostic(DiagnosticsEngine::Level DiagLevel,
-                                          const Diagnostic &Info) {
-  if (!IncludeInDiagnosticCounts())
-    return;
+	const Diagnostic &Info) {
+	if (!IncludeInDiagnosticCounts())
+		return;
 
-  if (DiagLevel == DiagnosticsEngine::Warning)
-    ++NumWarnings;
-  else if (DiagLevel >= DiagnosticsEngine::Error)
-    ++NumErrors;
+	if (DiagLevel == DiagnosticsEngine::Warning)
+		++NumWarnings;
+	else if (DiagLevel >= DiagnosticsEngine::Error)
+		++NumErrors;
 }
 
 /// ModifierIs - Return true if the specified modifier matches specified string.

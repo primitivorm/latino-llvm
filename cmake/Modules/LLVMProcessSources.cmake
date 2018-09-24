@@ -49,9 +49,9 @@ endfunction(find_all_header_files)
 
 
 function(llvm_process_sources OUT_VAR)
-  message(STATUS "llvm_process_sources")
-  message(STATUS "MSVC_IDE : ${MSVC_IDE}")
-  message(STATUS "XCODE: ${XCODE}")
+  #message(STATUS "llvm_process_sources")
+  #message(STATUS "MSVC_IDE : ${MSVC_IDE}")
+  #message(STATUS "XCODE: ${XCODE}")
   cmake_parse_arguments(ARG "" "" "ADDITIONAL_HEADERS;ADDITIONAL_HEADER_DIRS" ${ARGN})
   set(sources ${ARG_UNPARSED_ARGUMENTS})
   llvm_check_source_file_list( ${sources} )

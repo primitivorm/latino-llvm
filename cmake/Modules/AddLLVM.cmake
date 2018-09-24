@@ -369,7 +369,7 @@ function(llvm_add_library name)
     ${ARGN})
   list(APPEND LLVM_COMMON_DEPENDS ${ARG_DEPENDS})
 
-  message(STATUS "llvm_add_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}")
+  #message(STATUS "llvm_add_library. ARG_ADDITIONAL_HEADERS: ${ARG_ADDITIONAL_HEADERS}")
 
   if(ARG_ADDITIONAL_HEADERS)
     # Pass through ADDITIONAL_HEADERS.

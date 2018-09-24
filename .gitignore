@@ -32,7 +32,8 @@
 *.app
 
 #Directories
-#msvc/
+msvc/
+bin/
 
 #CMake
 CMakeFiles/

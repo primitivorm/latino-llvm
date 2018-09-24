@@ -619,18 +619,19 @@ bool DiagnosticIDs::ProcessDiag(DiagnosticsEngine &Diag) const {
     // fatal error, but suppresses any diagnostics that follow those
     // notes.
     if (Diag.LastDiagLevel == DiagnosticIDs::Fatal)
-      Diag.FatalErrorOcurred = true;
+      Diag.FatalErrorOccurred = true;
 
     Diag.LastDiagLevel = DiagLevel;
   }
 
   // If a fatal error has already been emitted, silence all subsequent
   // diagnostics.
-  if (Diag.FatalErrorOcurred && Diag.SuppressAfterFatalError) {
+  if (Diag.FatalErrorOccurred && Diag.SuppressAfterFatalError) {
     if (DiagLevel >= DiagnosticIDs::Error &&
         Diag.Client->IncludeInDiagnosticCounts()) {
       ++Diag.NumErrors;
     }
+
     return false;
   }
 
@@ -643,11 +644,11 @@ bool DiagnosticIDs::ProcessDiag(DiagnosticsEngine &Diag) const {
 
   if (DiagLevel >= DiagnosticIDs::Error) {
     if (isUnrecoverable(DiagID))
-      Diag.UnrecoverableErrorOcurred = true;
+      Diag.UnrecoverableErrorOccurred = true;
 
     // Warnings which have been upgraded to errors do not prevent compilation.
     if (isDefaultMappingAsError(DiagID))
-      Diag.UnrecoverableErrorOcurred = true;
+      Diag.UncompilableErrorOccurred = true;
 
     Diag.ErrorOcurred = true;
     if (Diag.Client->IncludeInDiagnosticCounts()) {
@@ -666,23 +667,23 @@ bool DiagnosticIDs::ProcessDiag(DiagnosticsEngine &Diag) const {
   // Make sure we set FatalErrorOccurred to ensure that the notes from the
   // diagnostic that caused `fatal_too_many_errors` won't be emitted.
   if (Diag.CurDiagID == diag::fatal_too_many_errors)
-    Diag.FatalErrorOcurred = true;
+    Diag.FatalErrorOccurred = true;
   // Finally, report it.
   EmitDiag(Diag, DiagLevel);
   return true;
 }
 
 void DiagnosticIDs::EmitDiag(DiagnosticsEngine &Diag, Level DiagLevel) const {
-  Diagnostic Info(&Diag);
-  assert(DiagLevel != DiagnosticIDs::Ignored &&
-         "Cannot emit ignored diagnositc!");
+	Diagnostic Info(&Diag);
+	assert(DiagLevel != DiagnosticIDs::Ignored && "Cannot emit ignored diagnostics!");
 
-  Diag.Client->HandleDiagnostic((DiagnosticsEngine::Level)DiagLevel, Info);
-  if (Diag.Client->IncludeInDiagnosticCounts()) {
-    if (DiagLevel == DiagnosticIDs::Warning)
-      ++Diag.NumWarnings;
-  }
-  Diag.CurDiagID = ~0U;
+	Diag.Client->HandleDiagnostic((DiagnosticsEngine::Level)DiagLevel, Info);
+	if (Diag.Client->IncludeInDiagnosticCounts()) {
+		if (DiagLevel == DiagnosticIDs::Warning)
+			++Diag.NumWarnings;
+	}
+
+	Diag.CurDiagID = ~0U;
 }
 
 bool DiagnosticIDs::isUnrecoverable(unsigned DiagID) const {

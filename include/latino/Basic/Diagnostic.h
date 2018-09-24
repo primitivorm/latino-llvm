@@ -384,13 +384,13 @@ private:
 
   /// \brief Sticky flag set to \c true when an "uncompilable error" occurs
   /// I.e. an error that was not upgraded from a warning by -Werror
-  bool UncompilableErroOcurred;
+  bool UncompilableErrorOccurred;
 
   /// \brief Sticky flag set to \c true when a fatal error is emitted
-  bool FatalErrorOcurred;
+  bool FatalErrorOccurred;
 
   /// \brief Indicates that an unrecoverable error has occurred
-  bool UnrecoverableErrorOcurred;
+  bool UnrecoverableErrorOccurred;
 
   /// \brief Counts for DiagnosticErrorTrap to check whether an error occurred
   /// during a parsing section, e.g. during parsing a function
@@ -625,7 +625,7 @@ public:
   /// This can be used by clients who suppress diagnostics themselves
   void setLastDiagnosticIgnored(bool Ignored = true) {
     if (LastDiagLevel == DiagnosticIDs::Fatal)
-      FatalErrorOcurred = true;
+      FatalErrorOccurred = true;
     LastDiagLevel = Ignored ? DiagnosticIDs::Ignored : DiagnosticIDs::Warning;
   }
 
@@ -706,12 +706,12 @@ public:
 
   /// \brief Errors that actually prevent compilation, not those that are
   /// upgraded from a warning by -Werror
-  bool hasUncompilableErrorOcurred() const { return UncompilableErroOcurred; }
-  bool hasFatalErrorOcurred() const { return FatalErrorOcurred; }
+  bool hasUncompilableErrorOccurred() const { return UncompilableErrorOccurred; }
+  bool hasFatalErrorOccurred() const { return FatalErrorOccurred; }
 
   /// \brief Determine whether any kind of unrecoverable error has occurred
-  bool hasUnrecoverableErrorOcurred() const {
-    return FatalErrorOcurred || UnrecoverableErrorOcurred;
+  bool hasUnrecoverableErrorOccurred() const {
+    return FatalErrorOccurred || UnrecoverableErrorOccurred;
   }
 
   unsigned getNumWarnings() const { return NumWarnings; }
@@ -962,7 +962,7 @@ public:
 
   /// \brief Determine whether any unrecoverable errors have occurred since this
   /// object instance was created
-  bool hasUnrecoverableErrorOcurred() const {
+  bool hasUnrecoverableErrorOccurred() const {
     return Diag.TrapNumUnrecoverableErrorOcurred > NumUnrecoverableErrors;
   }
 

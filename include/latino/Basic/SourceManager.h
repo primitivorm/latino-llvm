@@ -1283,7 +1283,7 @@ public:
   bool isInSLocAddrSpace(SourceLocation Loc, SourceLocation Start,
                          unsigned Length,
                          unsigned *RelativeOffset = nullptr) const {
-    assert(((Star.getOffset() < NextLocalOffset &&
+    assert(((Start.getOffset() < NextLocalOffset &&
              Start.getOffset() + Length <= NextLocalOffset) ||
             (Start.getOffset() >= CurrentLoadedOffset &&
              Start.getOffset() + Length < MaxLoadedOffset)) &&

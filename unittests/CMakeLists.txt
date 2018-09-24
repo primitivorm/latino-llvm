@@ -10,6 +10,6 @@ add_subdirectory(Basic)
 
 # FIXME: libclang unit tests are disabled on Windows due
 # to failures, mostly in libclang.VirtualFileOverlay_*.
-if(NOT WIN32 AND CLANG_TOOL_LIBCLANG_BUILD)
-  add_subdirectory(libclang)
-endif()
+#if(NOT WIN32 AND CLANG_TOOL_LIBCLANG_BUILD)
+#  add_subdirectory(libclang)
+#endif()

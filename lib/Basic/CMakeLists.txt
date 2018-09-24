@@ -1,4 +1,4 @@
-set(LLVM_LINK_COMPONENTS Support)
+#set(LLVM_LINK_COMPONENTS Support)
 add_latino_library(latinoBasic
   CharInfo.cpp
   Diagnostic.cpp
