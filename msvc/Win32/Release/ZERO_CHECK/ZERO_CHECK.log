@@ -1,8 +1,0 @@
-﻿  Checking Build System
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/CMakeFiles/generate.stamp is up-to-date.
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/lib/CMakeFiles/generate.stamp is up-to-date.
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/lib/Basic/CMakeFiles/generate.stamp is up-to-date.
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/tools/CMakeFiles/generate.stamp is up-to-date.
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/tools/driver/CMakeFiles/generate.stamp is up-to-date.
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/unittests/CMakeFiles/generate.stamp is up-to-date.
-  CMake does not need to re-run because C:/src/latino-llvm/msvc/unittests/Basic/CMakeFiles/generate.stamp is up-to-date.
