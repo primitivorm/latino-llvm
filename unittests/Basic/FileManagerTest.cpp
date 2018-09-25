@@ -151,6 +151,9 @@ TEST_F(FileManagerTest, getFileReturnsValidFileEntryForExistingRealFile) {
 
 #ifdef _WIN32
   file = manager.getFile(FileName);
+  ASSERT_TRUE(file != NULL);
+
+  dir = file->getDir();
   ASSERT_TRUE(dir != NULL);
   EXPECT_EQ(DirName, dir->getName());
 #endif
@@ -209,7 +212,7 @@ TEST_F(FileManagerTest, getFileReturnsNULLForNonExistentFile) {
 }
 
 // The following tests apply to Unix-like system only.
-#ifdef _WIN32
+#ifndef _WIN32
 // getFile() returns the same FileEntry for real files that are aliases.
 TEST_F(FileManagerTest, getFileReturnsSameFileEntryForAliasedRealFiles) {
   // Inject two real files with the same inode.

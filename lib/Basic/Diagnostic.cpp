@@ -450,9 +450,7 @@ void DiagnosticsEngine::setSeverityForAll(diag::Flavor Flavor,
       setSeverity(Diag, Map, Loc);
 }
 
-#include <iostream>
 void DiagnosticsEngine::Report(const StoredDiagnostic &storedDiag) {
-	std::cout << "DiagnosticsEngine::Report\n";
 	assert(CurDiagID == std::numeric_limits<unsigned>::max() &&
 		"Multiple diagnostics in flight at once!");
 

@@ -4,6 +4,7 @@ add_latino_unittest(BasicTests
   DiagnosticTest.cpp
   CharInfoTest.cpp
   FileManagerTest.cpp
+  MemoryBufferCacheTest.cpp
 )
 
 target_link_libraries(BasicTests

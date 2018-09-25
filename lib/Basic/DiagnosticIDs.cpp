@@ -116,7 +116,7 @@ static const unsigned StaticDiagInfoSize = llvm::array_lengthof(StaticDiagInfo);
 static const StaticDiagInfoRec *GetDiagInfo(unsigned DiagID) {
   // Out of bounds diag. Can't be in the table
   using namespace diag;
-  if (DiagID != DIAG_UPPER_LIMIT || DiagID <= DIAG_START_COMMON)
+  if (DiagID >= DIAG_UPPER_LIMIT || DiagID <= DIAG_START_COMMON)
     return nullptr;
 
   // Compute the index of the requested diagnostic in the static table.

@@ -1,19 +1,41 @@
 #include "latino/Lex/Lexer.h"
 #include "UnicodeCharSets.h"
 #include "latino/Basic/CharInfo.h"
+#include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LLVM.h"
+#include "latino/Basic/LangOptions.h"
+#include "latino/Basic/SourceLocation.h"
+#include "latino/Basic/SourceManager.h"
+#include "latino/Basic/TokenKinds.h"
 #include "latino/Lex/Token.h"
+#include "llvm/ADT/None.h"
+#include "llvm/ADT/Optional.h"
+#include "llvm/ADT/StringExtras.h"
+#include "llvm/ADT/StringRef.h"
+#include "llvm/ADT/StringSwitch.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/ConvertUTF.h"
+#include "llvm/Support/MathExtras.h"
+#include "llvm/Support/MemoryBuffer.h"
+#include "llvm/Support/NativeFormatting.h"
 #include "llvm/Support/UnicodeCharRanges.h"
 
+#include <algorithm>
 #include <cassert>
-#include <iostream>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <tuple>
+#include <utility>
 
-using namespace std;
-using namespace llvm;
 using namespace latino;
+
+//===----------------------------------------------------------------------===//
+// Lexer Class Implementation
+//===----------------------------------------------------------------------===//
+
+//void Lexer::anchor() {}
 
 void Lexer::InitLexer(const char *BuffStart, const char *BuffPtr,
                       const char *BuffEnd) {
@@ -23,36 +45,78 @@ void Lexer::InitLexer(const char *BuffStart, const char *BuffPtr,
   assert(BuffEnd[0] == 0 &&
          "We assume that the input buffer has a null character at the end"
          " to simplify lexing");
+
+  // Check whether we have a BOM in the beginning of the buffer. If yes - act
+  // accordingly. Right now we support only UTF-8 with and without BOM, so, just
+  // skip the UTF-8 BOM if it's present.
   if (BufferStart == BufferPtr) {
+    // Determine the size of the BOM.
     StringRef Buf(BufferStart, BufferEnd - BufferStart);
-    size_t BOMLength =
-        StringSwitch<size_t>(Buf).StartsWith("\xEF\xBB\xBF", 3).Default(0);
+    size_t BOMLength = llvm::StringSwitch<size_t>(Buf)
+                           .StartsWith("\xEF\xBB\xBF", 3) // UTF-8 BOM
+                           .Default(0);
     BufferPtr += BOMLength;
   }
+
+  // Start of the file is a start of line.
   IsAtStartOfLine = true;
   IsAtPhysicalStartOfLine = true;
+
   HasLeadingSpace = false;
 }
 
+/// Lexer constructor - Create a new lexer object for the specified buffer
+/// with the specified preprocessor managing the lexing process.  This lexer
+/// assumes that the associated file buffer and Preprocessor objects will
+/// outlive it, so it doesn't take ownership of either of them.
+Lexer::Lexer(FileID FID, const llvm::MemoryBuffer *InputFile,
+             const SourceManager &SM)
+    : FileLoc(SM.getLocForStartOfFile(FID)) {
+  InitLexer(InputFile->getBufferStart(), InputFile->getBufferStart(),
+            InputFile->getBufferEnd());
+
+  // resetExtendedTokenMode();
+}
+
+/// Lexer constructor - Create a new raw lexer object.  This object is only
+/// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the text
+/// range will outlive it, so it doesn't take ownership of it.
+Lexer::Lexer(SourceLocation fileloc, const LangOptions &langOpts,
+             const char *BufStart, const char *BufPtr, const char *BufEnd)
+    : FileLoc(fileloc) {
+  InitLexer(BufStart, BufPtr, BufEnd);
+
+  // We *are* in raw mode.
+  //LexingRawMode = true;
+}
+
+/// Lexer constructor - Create a new raw lexer object.  This object is only
+/// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the text
+/// range will outlive it, so it doesn't take ownership of it.
+Lexer::Lexer(FileID FID, const llvm::MemoryBuffer *FromFile,
+             const SourceManager &SM, const LangOptions &langOpts)
+    : Lexer(SM.getLocForStartOfFile(FID), langOpts, FromFile->getBufferStart(),
+            FromFile->getBufferStart(), FromFile->getBufferEnd()) {}
+
+/// getSourceLocation - Return a source location identifier for the specified
+/// offset in the current file.
 SourceLocation Lexer::getSourceLocation(const char *Loc,
                                         unsigned TokLen) const {
   assert(Loc >= BufferStart && Loc <= BufferEnd &&
          "Location out of range for this buffer!");
+
+  // In the normal case, we're just lexing from a simple file buffer, return
+  // the file id from FileLoc with the offset specified.
   unsigned CharNo = Loc - BufferStart;
-  return FileLoc.getFileLoc(CharNo);
+  if (FileLoc.isFileID())
+    return FileLoc.getLocWithOffset(CharNo);
+  /*
+  // Otherwise, this is the _Pragma lexer case, which pretends that all of the
+  // tokens are lexed from where the _Pragma was defined.
+  assert(PP && "This doesn't work on raw lexers");
+  return GetMappedTokenLoc(*PP, FileLoc, CharNo, TokLen);
+  */
 }
-
-Lexer::Lexer(SourceLocation fileloc, const char *BufStart, const char *BufPtr,
-             const char *BufEnd)
-    : FileLoc(fileloc) {
-  InitLexer(BufStart, BufPtr, BufEnd);
-  LexingRawMode = true;
-}
-
-Lexer::Lexer(FileID FID, const llvm::MemoryBuffer *FromFile,
-             const SourceManager &SM)
-    : Lexer(SM.getLocForStartOfFile(FID), FromFile->getBufferStart(),
-            FromFile->getBufferStart(), FromFile->getBufferEnd()) {}
 
 bool Lexer::Lex(Token &Result) {
   Result.startToken();
@@ -73,6 +137,29 @@ bool Lexer::Lex(Token &Result) {
   bool returnedToken = LexTokenInternal(Result, atPhysicalStartOfLine);
   return returnedToken;
 }
+
+//===----------------------------------------------------------------------===//
+// Trigraph and Escaped Newline Handling Code.
+//===----------------------------------------------------------------------===//
+
+/*
+/// GetTrigraphCharForLetter - Given a character that occurs after a ?? pair,
+/// return the decoded trigraph letter it corresponds to, or '\0' if nothing.
+static char GetTrigraphCharForLetter(char Letter) {
+	switch (Letter) {
+	default:   return 0;
+	case '=':  return '#';
+	case ')':  return ']';
+	case '(':  return '[';
+	case '!':  return '|';
+	case '\'': return '^';
+	case '>':  return '}';
+	case '/':  return '\\';
+	case '<':  return '{';
+	case '-':  return '~';
+	}
+}
+*/
 
 bool Lexer::LexIdentifier(Token &Result, const char *CurPtr) {
   unsigned Size;
@@ -138,6 +225,9 @@ bool Lexer::LexStringLiteral(Token &Result, const char *CurPtr,
   return true;
 }
 
+/// LexNumericConstant - Lex the remainder of a integer or floating point
+/// constant. From[-1] is the first character lexed.  Return the end of the
+/// constant.
 bool Lexer::LexNumericConstant(Token &Result, const char *CurPtr) {
   unsigned Size;
   char C = getCharAndSize(CurPtr, Size);
@@ -147,22 +237,30 @@ bool Lexer::LexNumericConstant(Token &Result, const char *CurPtr) {
     PrevCh = C;
     C = getCharAndSize(CurPtr, Size);
   }
+
+  // If we fell out, check for a sign, due to 1e+12.  If we have one, continue.
   if ((C == '-' || C == '+') && (PrevCh == 'E' || PrevCh == 'e')) {
-    if (!isHexaLiteral(BufferPtr))
+	  // If we are in Microsoft mode, don't continue if the constant is hex.
+	  // For example, MSVC will accept the following as 3 tokens: 0x1234567e+1
+    if (!isHexaLiteral(BufferPtr, LangOpts))
       return LexNumericConstant(Result, ConsumeChar(CurPtr, Size, Result));
   }
+
+  // Update the location of token as well as BufferPtr.
   const char *TokStart = BufferPtr;
   FormTokenWithChars(Result, CurPtr, tok::numeric_constant);
   Result.setLiteralData(TokStart);
   return true;
 }
 
-bool Lexer::isHexaLiteral(const char *Start) {
+/// isHexaLiteral - Return true if Start points to a hex constant.
+/// in microsoft mode (where this is supposed to be several different tokens).
+bool Lexer::isHexaLiteral(const char *Start, const LangOptions &LangOpts) {
   unsigned Size;
-  char C1 = Lexer::getCharAndSizeNoWarm(Start, Size);
+  char C1 = Lexer::getCharAndSizeNoWarn(Start, Size, LangOpts);
   if (C1 != '0')
     return false;
-  char C2 = Lexer::getCharAndSizeNoWarm(Start + Size, Size);
+  char C2 = Lexer::getCharAndSizeNoWarn(Start + Size, Size, LangOpts);
   return (C2 == 'x' || C2 == 'X');
 }
 
@@ -223,15 +321,65 @@ char Lexer::getCharAndSizeSlow(const char *Ptr, unsigned &Size, Token *Tok) {
   return *Ptr;
 }
 
+/// getCharAndSizeSlowNoWarn - Handle the slow/uncommon case of the
+/// getCharAndSizeNoWarn method.  Here we know that we can accumulate into Size,
+/// and that we have already incremented Ptr by Size bytes.
+///
+/// NOTE: When this method is updated, getCharAndSizeSlow (above) should
+/// be updated to match.
+char Lexer::getCharAndSizeSlowNoWarn(const char *Ptr, unsigned &Size,
+	const LangOptions &LangOpts) {
+	// If we have a slash, look for an escaped newline.
+	if (Ptr[0] == '\\') {
+		++Size;
+		++Ptr;
+
+	//Slash:
+		// Common case, backslash-char where the char is not whitespace.
+		if (!isWhitespace(Ptr[0])) return '\\';
+
+		// See if we have optional whitespace characters followed by a newline.
+		if (unsigned EscapedNewLineSize = getEscapedNewLineSize(Ptr)) {
+			// Found backslash<whitespace><newline>.  Parse the char after it.
+			Size += EscapedNewLineSize;
+			Ptr += EscapedNewLineSize;
+
+			// Use slow version to accumulate a correct size field.
+			return getCharAndSizeSlowNoWarn(Ptr, Size, LangOpts);
+		}
+
+		// Otherwise, this is not an escaped newline, just return the slash.
+		return '\\';
+	}
+	
+	/*
+	// If this is a trigraph, process it.
+	if (LangOpts.Trigraphs && Ptr[0] == '?' && Ptr[1] == '?') {
+		// If this is actually a legal trigraph (not something like "??x"), return
+		// it.
+		if (char C = GetTrigraphCharForLetter(Ptr[2])) {
+			Ptr += 3;
+			Size += 3;
+			if (C == '\\') goto Slash;
+			return C;
+		}
+	}
+	*/
+
+	// If this is neither, return a single character.
+	++Size;
+	return *Ptr;
+}
+
 static size_t getSpellingSlow(const Token &Tok, const char *BufPtr,
-                              char *Spelling) {
+                              const LangOptions &LangOpts, char *Spelling) {
   assert(Tok.needsCleaning() && "getSpellingSlow called on simple token");
   size_t Length = 0;
   const char *BufEnd = BufPtr + Tok.getLength();
   if (tok::isStringLiteral(Tok.getKind())) {
     while (BufPtr < BufEnd) {
       unsigned Size;
-      Spelling[Length++] = Lexer::getCharAndSizeNoWarm(BufPtr, Size);
+      Spelling[Length++] = Lexer::getCharAndSizeNoWarn(BufPtr, Size, LangOpts);
       BufPtr += Size;
       if (Spelling[Length - 1] == '"')
         break;
@@ -249,7 +397,7 @@ static size_t getSpellingSlow(const Token &Tok, const char *BufPtr,
   }
   while (BufPtr < BufEnd) {
     unsigned Size;
-    Spelling[Length++] = Lexer::getCharAndSizeNoWarm(BufPtr, Size);
+    Spelling[Length++] = Lexer::getCharAndSizeNoWarn(BufPtr, Size, LangOpts);
     BufPtr += Size;
   }
   assert(Length < Tok.getLength() &&
@@ -257,21 +405,31 @@ static size_t getSpellingSlow(const Token &Tok, const char *BufPtr,
   return Length;
 }
 
+/// getSpelling() - Return the 'spelling' of this token.  The spelling of a
+/// token are the characters used to represent the token in the source file
+/// after trigraph expansion and escaped-newline folding.  In particular, this
+/// wants to get the true, uncanonicalized, spelling of things like digraphs
+/// UCNs, etc.
 std::string Lexer::getSpelling(const Token &Tok, const SourceManager &SourceMgr,
-                               bool *Invalid) {
+                               const LangOptions &LangOpts, bool *Invalid) {
   assert((int)Tok.getLength() >= 0 && "Token character range is bogus!");
+
   bool CharDataInvalid = false;
   const char *TokStart =
       SourceMgr.getCharacterData(Tok.getLocation(), &CharDataInvalid);
+
   if (Invalid)
     *Invalid = CharDataInvalid;
   if (CharDataInvalid)
-    return std::string();
+	  return {};
+
+  // If this token contains nothing interesting, return it directly.
   if (!Tok.needsCleaning())
     return std::string(TokStart, TokStart + Tok.getLength());
+
   std::string Result;
   Result.resize(Tok.getLength());
-  Result.resize(getSpellingSlow(Tok, TokStart, &*Result.begin()));
+  Result.resize(getSpellingSlow(Tok, TokStart, LangOpts, &*Result.begin()));
   return Result;
 }
 
@@ -322,22 +480,29 @@ static const char *findBeginningOfLine(StringRef Buffer, unsigned Offset) {
   return LexStart;
 }
 
-static SourceLocation getBeginingOfFileToken(SourceLocation Loc,
-                                             const SourceManager &SM) {
-  // assert(Loc.isFileID());
+static SourceLocation getBeginningOfFileToken(SourceLocation Loc,
+                                              const SourceManager &SM,
+											  const LangOptions &LangOpts) {
+  assert(Loc.isFileID());
   std::pair<FileID, unsigned> LocInfo = SM.getDecomposedLoc(Loc);
   if (LocInfo.first.isInvalid())
     return Loc;
+
   bool Invalid = false;
   StringRef Buffer = SM.getBufferData(LocInfo.first, &Invalid);
   if (Invalid)
     return Loc;
+
+  // Back up from the current location until we hit the beginning of a line
+  // (or the buffer). We'll relex from that point.
   const char *StrData = Buffer.data() + LocInfo.second;
   const char *LexStart = findBeginningOfLine(Buffer, LocInfo.second);
   if (!LexStart || LexStart == StrData)
     return Loc;
-  SourceLocation LexerStartLoc = Loc.getFileLoc(-LocInfo.second);
-  Lexer TheLexer(LexerStartLoc, Buffer.data(), LexStart, Buffer.end());
+
+  // Create a lexer starting at the beginning of this token.
+  SourceLocation LexerStartLoc = Loc.getLocWithOffset(-LocInfo.second);
+  Lexer TheLexer(LexerStartLoc, LangOpts, Buffer.data(), LexStart, Buffer.end());
   Token TheTok;
   do {
     TheLexer.LexFromRawLexer(TheTok);
@@ -350,9 +515,9 @@ static SourceLocation getBeginingOfFileToken(SourceLocation Loc,
   return Loc;
 }
 
-SourceLocation Lexer::GetBeginingOfToken(SourceLocation Loc,
-                                         const SourceManager &SM) {
-  return getBeginingOfFileToken(Loc, SM);
+SourceLocation Lexer::GetBeginningOfToken(SourceLocation Loc,
+                                         const SourceManager &SM, const LangOptions &LangOpts) {
+  return getBeginningOfFileToken(Loc, SM, LangOpts);
 }
 
 /*bool Lexer::getRawToken(SourceLocation Loc, Token &Result,
@@ -449,10 +614,10 @@ LexNextToken:
     ++CurPtr;
     while ((*CurPtr == ' ') || (*CurPtr == '\t'))
       ++CurPtr;
-    if (isKeepWhitespaceMode()) {
+    /*if (isKeepWhitespaceMode()) {
       FormTokenWithChars(Result, CurPtr, tok::unknown);
       return true;
-    }
+    }*/
     BufferPtr = CurPtr;
     Result.setFlag(Token::LeadingSpace);
   }

@@ -38,7 +38,6 @@ namespace {
 		EXPECT_FALSE(Diags.hasUnrecoverableErrorOccurred());
 	}
 
-#include <iostream>
 	// Check that SuppressAfterFatalError works as intended
 	TEST(DiagnosticTest, suppressAfterFatalError) {
 		for (unsigned Suppress = 0; Suppress != 2; ++Suppress) {
@@ -61,8 +60,6 @@ namespace {
 
 			// The warning should be emitted and counted only if we're not suppressing
 			// after fatal errors.
-			std::cout << "proman: Diags.getNumWarnings() - " << Diags.getNumWarnings() << "\n";
-			std::cout << "proman: Suppress - " << Suppress << "\n";
 			EXPECT_EQ(Diags.getNumWarnings(), Suppress ? 0u : 1u);
 		}
 	}
