@@ -46,7 +46,7 @@ enum ConflictMarkerKind {
 /// or buffering/seeking of tokens, only forward lexing is supported.  It relies
 /// on the specified Preprocessor object to handle preprocessor directives, etc.
 class Lexer {
-  //void anchor() override;
+  // void anchor() override;
 
   //===--------------------------------------------------------------------===//
   // Constant configuration values for this lexer.
@@ -150,14 +150,14 @@ private:
 private:
   /// IndirectLex - An indirect call to 'Lex' that can be invoked via
   ///  the PreprocessorLexer interface.
-  //void IndirectLex(Token &Result) override { Lex(Result); }
+  // void IndirectLex(Token &Result) override { Lex(Result); }
 
 public:
   /// LexFromRawLexer - Lex a token from a designated raw lexer (one with no
   /// associated preprocessor object.  Return true if the 'next character to
   /// read' pointer points at the end of the lexer buffer, false otherwise.
   bool LexFromRawLexer(Token &Result) {
-    //assert(LexingRawMode && "Not already in raw mode!");
+    // assert(LexingRawMode && "Not already in raw mode!");
     Lex(Result);
 
     // Note that lexing to the end of the buffer doesn't implicitly delete the
@@ -197,7 +197,7 @@ public:
   }
 
   */
-  
+
   /// Sets the extended token mode back to its initial value, according to the
   /// language options and preprocessor. This controls whether the lexer
   /// produces comment and whitespace tokens.
@@ -295,8 +295,8 @@ public:
   /// that corresponds to the beginning of the token in which the original
   /// source location lands.
   static SourceLocation GetBeginningOfToken(SourceLocation Loc,
-                                           const SourceManager &SM,
-                                           const LangOptions &LangOpts);
+                                            const SourceManager &SM,
+                                            const LangOptions &LangOpts);
   /*
   /// Get the physical length (including trigraphs and escaped newlines) of the
   /// first \p Characters characters of the token starting at TokStart.
@@ -543,7 +543,7 @@ private:
     Result.setLength(TokLen);
     Result.setLocation(getSourceLocation(BufferPtr, TokLen));
     Result.setKind(Kind);
-    BufferPtr = BufferEnd;
+    BufferPtr = TokEnd;
   }
 
   /// isNextPPTokenLParen - Return 1 if the next unexpanded token will return a
@@ -645,8 +645,7 @@ private:
   /// getCharAndSizeSlowNoWarn - Same as getCharAndSizeSlow, but never emits a
   /// diagnostic.
   static char getCharAndSizeSlowNoWarn(const char *Ptr, unsigned &Size,
-	  const LangOptions &LangOpts);
-
+                                       const LangOptions &LangOpts);
 
   //===--------------------------------------------------------------------===//
   // Other lexer functions.

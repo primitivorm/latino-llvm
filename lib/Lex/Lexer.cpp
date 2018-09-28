@@ -35,7 +35,7 @@ using namespace latino;
 // Lexer Class Implementation
 //===----------------------------------------------------------------------===//
 
-//void Lexer::anchor() {}
+// void Lexer::anchor() {}
 
 void Lexer::InitLexer(const char *BuffStart, const char *BuffPtr,
                       const char *BuffEnd) {
@@ -87,7 +87,7 @@ Lexer::Lexer(SourceLocation fileloc, const LangOptions &langOpts,
   InitLexer(BufStart, BufPtr, BufEnd);
 
   // We *are* in raw mode.
-  //LexingRawMode = true;
+  // LexingRawMode = true;
 }
 
 /// Lexer constructor - Create a new raw lexer object.  This object is only
@@ -146,32 +146,37 @@ bool Lexer::Lex(Token &Result) {
 /// GetTrigraphCharForLetter - Given a character that occurs after a ?? pair,
 /// return the decoded trigraph letter it corresponds to, or '\0' if nothing.
 static char GetTrigraphCharForLetter(char Letter) {
-	switch (Letter) {
-	default:   return 0;
-	case '=':  return '#';
-	case ')':  return ']';
-	case '(':  return '[';
-	case '!':  return '|';
-	case '\'': return '^';
-	case '>':  return '}';
-	case '/':  return '\\';
-	case '<':  return '{';
-	case '-':  return '~';
-	}
+        switch (Letter) {
+        default:   return 0;
+        case '=':  return '#';
+        case ')':  return ']';
+        case '(':  return '[';
+        case '!':  return '|';
+        case '\'': return '^';
+        case '>':  return '}';
+        case '/':  return '\\';
+        case '<':  return '{';
+        case '-':  return '~';
+        }
 }
 */
 
 bool Lexer::LexIdentifier(Token &Result, const char *CurPtr) {
+  // Match [_A-Za-z0-9]*, we have already matched [_A-Za-z$]
   unsigned Size;
   unsigned char C = *CurPtr++;
   while (latino::isIdentifierBody(C))
     C = *CurPtr++;
-  --CurPtr;
-  if (!latino::isASCII(C)) {
+
+  --CurPtr; // Back up over the skipped character.
+
+  if (latino::isASCII(C)) {
   FinishIdentifier:
     const char *IdStart = BufferPtr;
     FormTokenWithChars(Result, CurPtr, tok::raw_identifier);
     Result.setRawIdentifierData(IdStart);
+
+    // TODO: Here
     return true;
   }
   return false;
@@ -201,6 +206,45 @@ bool Lexer::LexCharConstant(Token &Result, const char *CurPtr,
   FormTokenWithChars(Result, CurPtr, Kind);
   Result.setLiteralData(TokStart);
   return true;
+}
+
+/// SkipWhitespace - Efficiently skip over a series of whitespace characters.
+/// Update BufferPtr to point to the next non-whitespace character and return.
+///
+/// This method forms a token and returns true if KeepWhitespaceMode is enabled.
+bool Lexer::SkipWhitespace(Token &Result, const char *CurPtr,
+                           bool &TokAtPhysicalStartOfLine) {
+  // Whitespace - Skip it, then return the token after the whitespace.
+  bool SawNewline = isVerticalWhitespace(CurPtr[-1]);
+
+  unsigned char Char = *CurPtr;
+
+  // Skip consecutive spaces efficiently.
+  while (true) {
+    // Skip horizontal whitespace very aggressively.
+    while (isHorizontalWhitespace(Char))
+      Char = *++CurPtr;
+
+    // Otherwise if we have something other than whitespace, we're done.
+    if (!isVerticalWhitespace(Char))
+      break;
+
+    SawNewline = true;
+    Char = *++CurPtr;
+  }
+
+  // If this isn't immediately after a newline, there is leading space.
+  char PrevChar = CurPtr[-1];
+  bool HasLeadingSpace = !isVerticalWhitespace(PrevChar);
+
+  // Result.setFlagValue(Token::LeadingSpace, HasLeadingSpace);
+  if (SawNewline) {
+    Result.setFlag(Token::StartOfLine);
+    TokAtPhysicalStartOfLine = true;
+  }
+
+  BufferPtr = CurPtr;
+  return false;
 }
 
 bool Lexer::LexStringLiteral(Token &Result, const char *CurPtr,
@@ -240,8 +284,8 @@ bool Lexer::LexNumericConstant(Token &Result, const char *CurPtr) {
 
   // If we fell out, check for a sign, due to 1e+12.  If we have one, continue.
   if ((C == '-' || C == '+') && (PrevCh == 'E' || PrevCh == 'e')) {
-	  // If we are in Microsoft mode, don't continue if the constant is hex.
-	  // For example, MSVC will accept the following as 3 tokens: 0x1234567e+1
+    // If we are in Microsoft mode, don't continue if the constant is hex.
+    // For example, MSVC will accept the following as 3 tokens: 0x1234567e+1
     if (!isHexaLiteral(BufferPtr, LangOpts))
       return LexNumericConstant(Result, ConsumeChar(CurPtr, Size, Result));
   }
@@ -264,18 +308,152 @@ bool Lexer::isHexaLiteral(const char *Start, const LangOptions &LangOpts) {
   return (C2 == 'x' || C2 == 'X');
 }
 
+/// We have just read the // characters from input.  Skip until we find the
+/// newline character that terminates the comment.  Then update BufferPtr and
+/// return.
+///
+/// If we're in KeepCommentMode or any CommentHandler has inserted
+/// some tokens, this will store the first token and return true.
 bool Lexer::SkipLineComment(Token &Result, const char *CurPtr,
                             bool &TokAtPhysicalStartOfLine) {
+
+  // Scan over the body of the comment.  The common case, when scanning, is that
+  // the comment contains normal ascii characters with nothing interesting in
+  // them.  As such, optimize for this case with the inner loop.
+  //
+  // This loop terminates with CurPtr pointing at the newline (or end of buffer)
+  // character that ends the line comment.
   char C;
   while (true) {
     C = *CurPtr;
-    while (C != 0 && C != '\n' && C != '\r')
+    // Skip over characters in the fast loop.
+    while (C != 0 &&               // Potentially EOF.
+           C != '\n' && C != '\r') // Newline or DOS-style newline.
       C = *++CurPtr;
+
+    const char *NextLine = CurPtr;
+    if (C != 0) {
+      // We found a newline, see if it's escaped.
+      const char *EscapePtr = CurPtr - 1;
+      bool HasSpace = false;
+      while (isHorizontalWhitespace(*EscapePtr)) { // Skip whitespace.
+        --EscapePtr;
+        HasSpace = true;
+      }
+
+      if (*EscapePtr == '\\')
+        CurPtr = EscapePtr; // Escaped newline.
+      else
+        break; // This is a newline, we're done.
+    }
+
+    // Otherwise, this is a hard case.  Fall back on getAndAdvanceChar to
+    // properly decode the character.  Read it in raw mode to avoid emitting
+    // diagnostics about things like trigraphs.  If we see an escaped newline,
+    // we'll handle it below.
+    const char *OldPtr = CurPtr;
+    C = getAndAdvancedChar(CurPtr, Result);
+    // If we only read only one character, then no special handling is needed.
+    // We're done and can skip forward to the newline.
+    if (C != 0 && CurPtr == OldPtr + 1) {
+      CurPtr = NextLine;
+      break;
+    }
+
+    // If we read multiple characters, and one of those characters was a \r or
+    // \n, then we had an escaped newline within the comment.  Emit diagnostic
+    // unless the next line is also a // comment.
+    if (CurPtr != OldPtr + 1 && C != '/' &&
+        (CurPtr == BufferEnd + 1 || CurPtr[0] != '/')) {
+      for (; OldPtr != CurPtr; ++OldPtr)
+        if (OldPtr[0] == '\n' || OldPtr[0] == '\r') {
+          // Okay, we found a // comment that ends in a newline, if the next
+          // line is also a // comment, but has spaces, don't emit a diagnostic.
+          if (isWhitespace(C)) {
+            const char *ForwardPtr = CurPtr;
+            while (isWhitespace(*ForwardPtr))
+              ++ForwardPtr; // Skip Whitespace
+            if (ForwardPtr[0] == '#' ||
+                (ForwardPtr[0] == '/' && ForwardPtr[1] == '/'))
+              break;
+          }
+        }
+    }
+    if (C == '\r' || C == '\n' || CurPtr == BufferEnd + 1) {
+      --CurPtr;
+      break;
+    }
   }
+  // Otherwise, eat the \n character.  We don't care if this is a \n\r or
+  // \r\n sequence.  This is an efficiency hack (because we know the \n can't
+  // contribute to another token), it isn't needed for correctness.  Note that
+  // this is ok even in KeepWhitespaceMode, because we would have returned the
+  /// comment above in that mode.
+  ++CurPtr;
+
+  // The next returned token is at the start of the line.
+  Result.setFlag(Token::StartOfLine);
+  TokAtPhysicalStartOfLine = true;
+  // No leading whitespace seen so far.
+  Result.clearFlag(Token::LeadingSpace);
+  BufferPtr = CurPtr;
+  return false;
 }
 
+/// isBlockCommentEndOfEscapedNewLine - Return true if the specified newline
+/// character (either \\n or \\r) is part of an escaped newline sequence.  Issue
+/// a diagnostic if so.  We know that the newline is inside of a block comment.
+static bool isEndOfBlockCommentWithEscapedNewLine(const char *CurPtr,
+                                                  Lexer *L) {
+  assert(CurPtr[0] == '\n' || CurPtr[0] == '\r');
+
+  // Back up off the newline.
+  --CurPtr;
+
+  // If this is a two-character newline sequence, skip the other character.
+  if (CurPtr[0] == '\n' || CurPtr[0] == '\r') {
+    // \n\n or \r\r -> not escaped newline.
+    if (CurPtr[0] == CurPtr[1])
+      return false;
+    // \n\r or \r\n -> skip the newline.
+    --CurPtr;
+  }
+
+  // If we have horizontal whitespace, skip over it.  We allow whitespace
+  // between the slash and newline.
+  bool HasSpace = false;
+  while (isHorizontalWhitespace(*CurPtr) || *CurPtr == 0) {
+    --CurPtr;
+    HasSpace = true;
+  }
+  // If we have a slash, we know this is an escaped newline.
+  if (*CurPtr == '\\') {
+    if (CurPtr[-1] != '*')
+      return false;
+  }
+
+  return true;
+}
+
+/// We have just read from input the / and * characters that started a comment.
+/// Read until we find the * and / characters that terminate the comment.
+/// Note that we don't bother decoding trigraphs or escaped newlines in block
+/// comments, because they cannot cause the comment to end.  The only thing
+/// that can happen is the comment could end with an escaped newline between
+/// the terminating * and /.
+///
+/// If we're in KeepCommentMode or any CommentHandler has inserted
+/// some tokens, this will store the first token and return true.
 bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr,
                              bool &TokAtPhysicalStartOfLine) {
+  // Scan one character past where we should, looking for a '/' character.  Once
+  // we find it, check to see if it was preceded by a *.  This common
+  // optimization helps people who like to put a lot of * characters in their
+  // comments.
+
+  // The first character we get with newlines and trigraphs skipped to handle
+  // the degenerate /*/ case below correctly if the * has an escaped newline
+  // after it.
   unsigned CharSize;
   unsigned char C = getCharAndSize(CurPtr, CharSize);
   CurPtr += CharSize;
@@ -284,9 +462,63 @@ bool Lexer::SkipBlockComment(Token &Result, const char *CurPtr,
     BufferPtr = CurPtr;
     return false;
   }
+  // Check to see if the first character after the '/*' is another /.  If so,
+  // then this slash does not end the block comment, it is part of it.
   if (C == '/')
     C = *CurPtr++;
+  while (true) {
+    // Loop to scan the remainder.
+    while (C != '/' && C != '\0')
+      C = *CurPtr++;
+
+    if (C == '/') {
+    FoundSlash:
+      if (CurPtr[-2] == '*') // We found the final */ We're done!
+        break;
+
+      if ((CurPtr[-2] == '\n' || CurPtr[-2] == '\r')) {
+        if (isEndOfBlockCommentWithEscapedNewLine(CurPtr - 2, this)) {
+          // We found the final */, though it had an escaped newline between the
+          // * and /.  We're done!
+          break;
+        }
+      }
+    } else if (C == 0 && CurPtr == BufferEnd + 1) {
+      // Note: the user probably forgot a */.  We could continue immediately
+      // after the /*, but this would involve lexing a lot of what really is the
+      // comment, which surely would confuse the parser.
+      --CurPtr;
+      BufferPtr = CurPtr;
+      return false;
+    }
+
+    C = *CurPtr++;
+  }
+
+  // It is common for the tokens immediately after a /**/ comment to be
+  // whitespace.  Instead of going through the big switch, handle it
+  // efficiently now.  This is safe even in KeepWhitespaceMode because we would
+  // have already returned above with the comment as a token.
+  if (isHorizontalWhitespace(*CurPtr)) {
+    SkipWhitespace(Result, CurPtr + 1, TokAtPhysicalStartOfLine);
+    return false;
+  }
+
+  // Otherwise, just return so that the next character will be lexed as a token.
+  BufferPtr = CurPtr;
+  Result.setFlag(Token::LeadingSpace);
   return false;
+}
+
+/// LexEndOfFile - CurPtr points to the end of this file.  Handle this
+/// condition, reporting diagnostics and handling other edge cases as required.
+/// This returns true if Result contains a token, false if PP.Lex should be
+/// called again.
+bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
+  Result.startToken();
+  BufferPtr = BufferEnd;
+  FormTokenWithChars(Result, BufferEnd, tok::eof);
+  return true;
 }
 
 unsigned Lexer::getEscapedNewLineSize(const char *Ptr) {
@@ -328,47 +560,49 @@ char Lexer::getCharAndSizeSlow(const char *Ptr, unsigned &Size, Token *Tok) {
 /// NOTE: When this method is updated, getCharAndSizeSlow (above) should
 /// be updated to match.
 char Lexer::getCharAndSizeSlowNoWarn(const char *Ptr, unsigned &Size,
-	const LangOptions &LangOpts) {
-	// If we have a slash, look for an escaped newline.
-	if (Ptr[0] == '\\') {
-		++Size;
-		++Ptr;
+                                     const LangOptions &LangOpts) {
+  // If we have a slash, look for an escaped newline.
+  if (Ptr[0] == '\\') {
+    ++Size;
+    ++Ptr;
 
-	//Slash:
-		// Common case, backslash-char where the char is not whitespace.
-		if (!isWhitespace(Ptr[0])) return '\\';
+    // Slash:
+    // Common case, backslash-char where the char is not whitespace.
+    if (!isWhitespace(Ptr[0]))
+      return '\\';
 
-		// See if we have optional whitespace characters followed by a newline.
-		if (unsigned EscapedNewLineSize = getEscapedNewLineSize(Ptr)) {
-			// Found backslash<whitespace><newline>.  Parse the char after it.
-			Size += EscapedNewLineSize;
-			Ptr += EscapedNewLineSize;
+    // See if we have optional whitespace characters followed by a newline.
+    if (unsigned EscapedNewLineSize = getEscapedNewLineSize(Ptr)) {
+      // Found backslash<whitespace><newline>.  Parse the char after it.
+      Size += EscapedNewLineSize;
+      Ptr += EscapedNewLineSize;
 
-			// Use slow version to accumulate a correct size field.
-			return getCharAndSizeSlowNoWarn(Ptr, Size, LangOpts);
-		}
+      // Use slow version to accumulate a correct size field.
+      return getCharAndSizeSlowNoWarn(Ptr, Size, LangOpts);
+    }
 
-		// Otherwise, this is not an escaped newline, just return the slash.
-		return '\\';
-	}
-	
-	/*
-	// If this is a trigraph, process it.
-	if (LangOpts.Trigraphs && Ptr[0] == '?' && Ptr[1] == '?') {
-		// If this is actually a legal trigraph (not something like "??x"), return
-		// it.
-		if (char C = GetTrigraphCharForLetter(Ptr[2])) {
-			Ptr += 3;
-			Size += 3;
-			if (C == '\\') goto Slash;
-			return C;
-		}
-	}
-	*/
+    // Otherwise, this is not an escaped newline, just return the slash.
+    return '\\';
+  }
 
-	// If this is neither, return a single character.
-	++Size;
-	return *Ptr;
+  /*
+  // If this is a trigraph, process it.
+  if (LangOpts.Trigraphs && Ptr[0] == '?' && Ptr[1] == '?') {
+          // If this is actually a legal trigraph (not something like "??x"),
+  return
+          // it.
+          if (char C = GetTrigraphCharForLetter(Ptr[2])) {
+                  Ptr += 3;
+                  Size += 3;
+                  if (C == '\\') goto Slash;
+                  return C;
+          }
+  }
+  */
+
+  // If this is neither, return a single character.
+  ++Size;
+  return *Ptr;
 }
 
 static size_t getSpellingSlow(const Token &Tok, const char *BufPtr,
@@ -421,7 +655,7 @@ std::string Lexer::getSpelling(const Token &Tok, const SourceManager &SourceMgr,
   if (Invalid)
     *Invalid = CharDataInvalid;
   if (CharDataInvalid)
-	  return {};
+    return {};
 
   // If this token contains nothing interesting, return it directly.
   if (!Tok.needsCleaning())
@@ -482,7 +716,7 @@ static const char *findBeginningOfLine(StringRef Buffer, unsigned Offset) {
 
 static SourceLocation getBeginningOfFileToken(SourceLocation Loc,
                                               const SourceManager &SM,
-											  const LangOptions &LangOpts) {
+                                              const LangOptions &LangOpts) {
   assert(Loc.isFileID());
   std::pair<FileID, unsigned> LocInfo = SM.getDecomposedLoc(Loc);
   if (LocInfo.first.isInvalid())
@@ -502,7 +736,8 @@ static SourceLocation getBeginningOfFileToken(SourceLocation Loc,
 
   // Create a lexer starting at the beginning of this token.
   SourceLocation LexerStartLoc = Loc.getLocWithOffset(-LocInfo.second);
-  Lexer TheLexer(LexerStartLoc, LangOpts, Buffer.data(), LexStart, Buffer.end());
+  Lexer TheLexer(LexerStartLoc, LangOpts, Buffer.data(), LexStart,
+                 Buffer.end());
   Token TheTok;
   do {
     TheLexer.LexFromRawLexer(TheTok);
@@ -516,7 +751,8 @@ static SourceLocation getBeginningOfFileToken(SourceLocation Loc,
 }
 
 SourceLocation Lexer::GetBeginningOfToken(SourceLocation Loc,
-                                         const SourceManager &SM, const LangOptions &LangOpts) {
+                                          const SourceManager &SM,
+                                          const LangOptions &LangOpts) {
   return getBeginningOfFileToken(Loc, SM, LangOpts);
 }
 
@@ -730,6 +966,10 @@ LexNextToken:
   case 'z':
   case '_':
     return LexIdentifier(Result, CurPtr);
+  case '#':
+    if (SkipLineComment(Result, CurPtr, TokAtPhysicalStartOfLine))
+      return true;
+    goto LexNextToken;
   case '\'':
     return LexCharConstant(Result, CurPtr, tok::char_constant);
   case '\"':

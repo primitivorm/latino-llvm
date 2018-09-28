@@ -5,11 +5,13 @@ add_latino_unittest(BasicTests
   CharInfoTest.cpp
   FileManagerTest.cpp
   MemoryBufferCacheTest.cpp
+  SourceManagerTest.cpp
 )
 
 target_link_libraries(BasicTests
   PRIVATE
   latinoBasic
+  latinoLex
 )
 #gtest
 #${GTEST_BOTH_LIBRARIES}

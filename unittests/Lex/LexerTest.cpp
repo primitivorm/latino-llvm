@@ -33,7 +33,7 @@ protected:
         Diags(DiagID, new DiagnosticOptions, new IgnoringDiagConsumer()),
         SourceMgr(Diags, FileMgr), TargetOpts(new TargetOptions) {
     TargetOpts->Triple = "x86_64-unknown-linux-gnu";
-    Target = TargetInfo::CreateTargetInfo(Diags, TargetOpts);
+    // Target = TargetInfo::CreateTargetInfo(Diags, TargetOpts);
   }
 
   std::unique_ptr<Preprocessor> CreatePP(StringRef Source,
@@ -98,7 +98,8 @@ TEST_F(LexerTest, GetBeginingOfTokenWithEscapedNewLine) {
     std::pair<FileID, unsigned> OriginalLocation =
         SourceMgr.getDecomposedLoc(Tok.getLocation());
     for (unsigned Offset = 0; Offset < IdentifierLength; ++Offset) {
-      SourceLocation LookupLocation = Tok.getLocation().getLocWithOffset(Offset);
+      SourceLocation LookupLocation =
+          Tok.getLocation().getLocWithOffset(Offset);
       std::pair<FileID, unsigned> FoundLocation =
           SourceMgr.getDecomposedExpansionLoc(
               Lexer::GetBeginingOfToken(LookupLocation, SourceMgr));

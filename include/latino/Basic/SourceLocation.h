@@ -103,7 +103,7 @@ private:
   }
 
   static SourceLocation getMacroLoc(unsigned ID) {
-    assert((ID & MacroIDBit == 0) && "Ran out of source locations!");
+    assert((ID & MacroIDBit) == 0 && "Ran out of source locations!");
     SourceLocation L;
     L.ID = MacroIDBit | ID;
     return L;
