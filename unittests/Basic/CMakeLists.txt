@@ -6,12 +6,13 @@ add_latino_unittest(BasicTests
   FileManagerTest.cpp
   MemoryBufferCacheTest.cpp
   SourceManagerTest.cpp
+  VirtualFileSystemTest.cpp
 )
 
 target_link_libraries(BasicTests
   PRIVATE
   latinoBasic
   latinoLex
+  gtest
+  ${GTEST_BOTH_LIBRARIES}
 )
-#gtest
-#${GTEST_BOTH_LIBRARIES}

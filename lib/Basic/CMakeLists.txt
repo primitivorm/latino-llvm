@@ -11,6 +11,7 @@ add_latino_library(latinoBasic
   SourceManager.cpp
   LangOptions.cpp
   MemoryBufferCache.cpp
+  Targets.cpp
   TokenKinds.cpp
   VirtualFileSystem.cpp
 

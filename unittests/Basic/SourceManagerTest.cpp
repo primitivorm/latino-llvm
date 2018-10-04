@@ -36,10 +36,10 @@ protected:
 }; /* class SourceManagerTest */
 
 TEST_F(SourceManagerTest, isBeforeInTranslationUnit) {
-  const char *source = "#este es un comentario \n"
-                       "//este es un comentario estilo C \n"
-                       "/*este es un comentario\n"
-                       "multilinea estilo c*/\n"
+  const char *source = "#Este es un comentario \n"
+                       "//Este es un comentario estilo C \n"
+                       "/* Este es un comentario\n"
+                       "multilinea estilo C */\n"
                        "imprimir(\"hola mundo\")";
   std::unique_ptr<llvm::MemoryBuffer> Buf =
       llvm::MemoryBuffer::getMemBuffer(source);
@@ -75,5 +75,88 @@ TEST_F(SourceManagerTest, isBeforeInTranslationUnit) {
   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(idLoc, lparLoc));
   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(lparLoc, sLitLoc));
   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(sLitLoc, rparLoc));
+}
+
+TEST_F(SourceManagerTest, getColumnNumber) {
+  const char *Source = "entero x\n"
+                       "entero y";
+
+  std::unique_ptr<llvm::MemoryBuffer> Buf =
+      llvm::MemoryBuffer::getMemBuffer(Source);
+  FileID MainFileID = SourceMgr.createFileID(std::move(Buf));
+  SourceMgr.setMainFileID(MainFileID);
+
+  bool Invalid;
+
+  Invalid = false;
+  EXPECT_EQ(1U, SourceMgr.getColumnNumber(MainFileID, 0, &Invalid));
+  EXPECT_TRUE(!Invalid);
+
+  Invalid = false;
+  EXPECT_EQ(5U, SourceMgr.getColumnNumber(MainFileID, 4, &Invalid));
+  EXPECT_TRUE(!Invalid);
+
+  Invalid = false;
+  EXPECT_EQ(1U, SourceMgr.getColumnNumber(MainFileID, 9, &Invalid));
+  EXPECT_TRUE(!Invalid);
+
+  Invalid = false;
+  EXPECT_EQ(5U, SourceMgr.getColumnNumber(MainFileID, 13, &Invalid));
+  EXPECT_TRUE(!Invalid);
+
+  Invalid = false;
+  EXPECT_EQ(9U,
+            SourceMgr.getColumnNumber(MainFileID, strlen(Source), &Invalid));
+  EXPECT_TRUE(!Invalid);
+
+  Invalid = false;
+  SourceMgr.getColumnNumber(MainFileID, strlen(Source) + 1, &Invalid);
+  EXPECT_TRUE(Invalid);
+
+  // Test invalid files
+  Invalid = false;
+  SourceMgr.getColumnNumber(FileID(), 0, &Invalid);
+  EXPECT_TRUE(Invalid);
+
+  Invalid = false;
+  SourceMgr.getColumnNumber(FileID(), 1, &Invalid);
+  EXPECT_TRUE(Invalid);
+
+  // Test with no invalid flag.
+  EXPECT_EQ(1U, SourceMgr.getColumnNumber(MainFileID, 0, nullptr));
+}
+
+TEST_F(SourceManagerTest, locationPrintTest) {
+  const char *Source = "entero x\n"
+                       "funcion test(x, y) {\n"
+                       "retornar x + y\n"
+                       "}";
+
+  std::unique_ptr<llvm::MemoryBuffer> Buf =
+      llvm::MemoryBuffer::getMemBuffer(Source);
+
+  const FileEntry *SourceFile =
+      FileMgr.getVirtualFile("/principal.lat", Buf->getBufferSize(), 0);
+  SourceMgr.overrideFileContents(SourceFile, std::move(Buf));
+
+  FileID MainFileID = SourceMgr.getOrCreateFileID(SourceFile, SrcMgr::C_User);
+  SourceMgr.setMainFileID(MainFileID);
+
+  auto BeginLoc = SourceMgr.getLocForStartOfFile(MainFileID);
+  auto EndLoc = SourceMgr.getLocForEndOfFile(MainFileID);
+
+  auto BeginEOLoc = SourceMgr.translateLineCol(MainFileID, 1, 7);
+
+  EXPECT_EQ(BeginLoc.printToString(SourceMgr), "/principal.lat:1:1");
+  EXPECT_EQ(EndLoc.printToString(SourceMgr), "/principal.lat:4:2");
+
+  EXPECT_EQ(BeginEOLoc.printToString(SourceMgr), "/principal.lat:1:7");
+
+  EXPECT_EQ(SourceRange(BeginLoc, BeginLoc).printToString(SourceMgr),
+            "</principal.lat:1:1>");
+  EXPECT_EQ(SourceRange(BeginLoc, BeginEOLoc).printToString(SourceMgr),
+            "</principal.lat:1:1, col:7>");
+  EXPECT_EQ(SourceRange(BeginLoc, EndLoc).printToString(SourceMgr),
+            "</principal.lat:1:1, line:4:2>");
 }
 } // namespace
