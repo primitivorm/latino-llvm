@@ -900,10 +900,12 @@ std::pair<FileID, unsigned> SourceManager::getDecomposedExpansionLocSlowCase(
   unsigned Offset;
   do {
     Loc = E->getExpansion().getExpansionLocStart();
+
     FID = getFileID(Loc);
     E = &getSLocEntry(FID);
     Offset = Loc.getOffset() - E->getOffset();
   } while (!Loc.isFileID());
+
   return std::make_pair(FID, Offset);
 }
 

@@ -581,7 +581,7 @@ private:
   /// advance over it, and return it.  This is tricky in several cases.  Here we
   /// just handle the trivial case and fall-back to the non-inlined
   /// getCharAndSizeSlow method to handle the hard case.
-  inline char getAndAdvancedChar(const char *&Ptr, Token &Tok) {
+  inline char getAndAdvanceChar(const char *&Ptr, Token &Tok) {
     // If this is not a trigraph and not a UCN or escaped newline, return
     // quickly.
     if (isObviouslySimpleCharacter(Ptr[0]))

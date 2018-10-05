@@ -6,7 +6,7 @@ function(add_latino_unittest test_dirname)
 endfunction()
 
 add_subdirectory(Basic)
-#add_subdirectory(Lex)
+add_subdirectory(Lex)
 
 # FIXME: libclang unit tests are disabled on Windows due
 # to failures, mostly in libclang.VirtualFileOverlay_*.

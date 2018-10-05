@@ -1182,12 +1182,12 @@ public:
   /// The first element is the FileID, the second is the offset from the
   /// start of the buffer of the location
   std::pair<FileID, unsigned> getDecomposedLoc(SourceLocation Loc) const {
-    FileID FID = getFileID(Loc);
-    bool Invalid = false;
-    const SrcMgr::SLocEntry &E = getSLocEntry(FID, &Invalid);
-    if (Invalid)
-      return std::make_pair(FileID(), 0);
-    return std::make_pair(FID, Loc.getOffset() - E.getOffset());
+	  FileID FID = getFileID(Loc);
+	  bool Invalid = false;
+	  const SrcMgr::SLocEntry &E = getSLocEntry(FID, &Invalid);
+	  if (Invalid)
+		  return std::make_pair(FileID(), 0);
+	  return std::make_pair(FID, Loc.getOffset() - E.getOffset());
   }
 
   /// Decompose the specified location into a raw FileID + Offset pair.
@@ -1195,18 +1195,18 @@ public:
   /// If the location is an expansion record, walk through it until we find
   /// the final location expanded
   std::pair<FileID, unsigned>
-  getDecomposedExpansionLoc(SourceLocation Loc) const {
-    FileID FID = getFileID(Loc);
-    bool Invalid = false;
-    const SrcMgr::SLocEntry *E = &getSLocEntry(FID, &Invalid);
-    if (Invalid)
-      return std::make_pair(FileID(), 0);
+	  getDecomposedExpansionLoc(SourceLocation Loc) const {
+	  FileID FID = getFileID(Loc);
+	  bool Invalid = false;
+	  const SrcMgr::SLocEntry *E = &getSLocEntry(FID, &Invalid);
+	  if (Invalid)
+		  return std::make_pair(FileID(), 0);
 
-    unsigned Offset = Loc.getOffset() - E->getOffset();
-    if (Loc.isFileID())
-      return std::make_pair(FID, Offset);
+	  unsigned Offset = Loc.getOffset() - E->getOffset();
+	  if (Loc.isFileID())
+		  return std::make_pair(FID, Offset);
 
-    return getDecomposedExpansionLocSlowCase(E);
+	  return getDecomposedExpansionLocSlowCase(E);
   }
 
   /// Decompose the specified location into a raw FileID + Offset pair.
