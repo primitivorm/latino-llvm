@@ -34,6 +34,7 @@
 #Directories
 visualstudio/
 bin/
+llvm-mirror/
 
 #CMake
 CMakeFiles/

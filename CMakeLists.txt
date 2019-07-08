@@ -1,17 +1,18 @@
-cmake_minimum_required(VERSION 3.4.3)
+cmake_minimum_required(VERSION 3.14.0)
 
 project(latino C CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-
+if(WIN32)
+  set(LLVM_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/visualstudio/Debug/bin")
+endif()
 set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/llvm")
-add_subdirectory(${LLVM_MAIN_SRC_DIR})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/";"${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/llvm/cmake/modules/")
-  message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/llvm/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/llvm/tools/clang/cmake/modules/")
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
 set(CONFIG_OUTPUT)
-find_program(LLVM_CONFIG "llvm-config")
+find_program(LLVM_CONFIG "llvm-config" PATHS "${LLVM_BINARY_DIR}")
 if(LLVM_CONFIG)
   message(STATUS "Found LLVM_CONFIG as ${LLVM_CONFIG}")
   set(CONFIG_COMMAND ${LLVM_CONFIG}
@@ -64,12 +65,11 @@ if(LLVM_CONFIG)
     NO_DEFAULT_PATH)
   #message(STATUS "CLANG_TABLEGEN_EXE: ${CLANG_TABLEGEN_EXE}")
   set(CLANG_TABLEGEN_TARGET ${CLANG_TABLEGEN_EXE})
-  #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/")
 
-  #set(LLVMCONFIG_FILE "${LLVM_CMAKE_PATH}/LLVMConfig.cmake")
-  set(LLVMCONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/LLVMConfig.cmake")
+  if(WIN32)
+    set(LLVMCONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/visualstudio/cmake/modules/CMakeFiles/LLVMConfig.cmake")
+  endif()
   if(EXISTS ${LLVMCONFIG_FILE})
-    #list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_PATH}")
     include(${LLVMCONFIG_FILE})
   else()
     message(FATAL_ERROR "Not found: ${LLVMCONFIG_FILE}")
@@ -88,6 +88,10 @@ option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." 
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Release build
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build [Release Debug]" FORCE)
 endif()
+
+#set(LLVM_TARGETS_TO_BUILD "all")
+set(LLVM_TARGETS_TO_BUILD X86 CACHE STRING "")
+set(LLVM_LIBRARY_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/visualstudio/Debug/lib/)
 
 include(AddLLVM)
 include(TableGen)
@@ -125,7 +129,12 @@ endif()
 #message(STATUS "LLVM_LIBRARY_DIRS: ${LLVM_LIBRARY_DIRS}")
 link_directories(${LLVM_LIBRARY_DIRS})
 
-include_directories(${LLVM_INCLUDE_DIRS})
+set(LLVM_MAIN_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/llvm/include")
+include_directories(${LLVM_MAIN_INCLUDE_DIR})
+if(WIN32)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/visualstudio/include/")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/llvm/include")
+endif()
 add_definitions(${LLVM_DEFINITIONS})
 
 # Find the libraries that correspond to the LLVM components
@@ -133,7 +142,6 @@ add_definitions(${LLVM_DEFINITIONS})
 llvm_map_components_to_libnames(all)
 
 include_directories(include)
-#add_subdirectory(include)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
@@ -145,9 +153,11 @@ set(LATINO_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to latino/lib")
 
 set(ARG_ADDITIONAL_HEADERS)
 
-
-set(LLVM_TARGETS_TO_BUILD X86 CACHE STRING "")
-
+if(WIN32)
+  set(GTEST_INCLUDE_DIR ${LLVM_MAIN_SRC_DIR}/utils/unittest/googletest/include)
+  set(GTEST_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/visualstudio/Debug/lib/gtest.lib)
+  set(GTEST_MAIN_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-mirror/visualstudio/Debug/lib/gtest_main.lib)
+endif()
 if(LATINO_INCLUDE_TESTS)
   set(LLVM_BUILD_TESTS ON)
   enable_testing()
@@ -157,8 +167,8 @@ if(LATINO_INCLUDE_TESTS)
   add_subdirectory(unittests)
 endif()
 
-#message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
-#message(STATUS "LLVM_LIBRARY_DIRS: ${LLVM_LIBRARY_DIRS}")
-#message(STATUS "LLVM_LIBDIR_SUFFIX: ${LLVM_LIBDIR_SUFFIX}")
-#message(STATUS "LLVM_LINK_COMPONENTS: ${LLVM_LINK_COMPONENTS}")
+message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
+message(STATUS "LLVM_LIBRARY_DIRS: ${LLVM_LIBRARY_DIRS}")
+message(STATUS "LLVM_LIBDIR_SUFFIX: ${LLVM_LIBDIR_SUFFIX}")
+message(STATUS "LLVM_LINK_COMPONENTS: ${LLVM_LINK_COMPONENTS}")
 message(STATUS "COMPILE_FLAGS: ${COMPILE_FLAGS}")
