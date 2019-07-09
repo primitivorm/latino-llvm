@@ -1,11 +1,12 @@
 #!/bin/bash
 dir=`pwd`
 
-#install dependencies
-sudo apt-get install libgtest-dev
-cd /usr/src/gtest
-sudo cmake CMakeLists.txt
-sudo make
+##install dependencies
+sudo apt-get install gcc gcc++
+#sudo apt-get install libgtest-dev
+#cd /usr/src/gtest
+#sudo cmake CMakeLists.txt
+#sudo make
 
 cd $dir
 if [ ! -d $dir/llvm-mirror ]; then
@@ -65,18 +66,21 @@ cd $dir/llvm-mirror/
 if [ ! -d $dir/llvm-mirror/build ]; then
     mkdir build
     cd $dir/llvm-mirror/build
-else
-    cd $dir/llvm-mirror/build
-    rm CMakeCache.txt
+#else
+#   cd $dir/llvm-mirror/build
+#    rm CMakeCache.txt
 fi
-CC='gcc' CXX='gcc++' cmake -G "Unix Makefiles" \
--DLLVM_TARGETS_TO_BUILD=host \
--DLLVM_BUILD_EXAMPLES=ON \
--DCLANG_BUILD_EXAMPLES=ON \
+
+export CC=gcc
+export CXX=g++
+CC='gcc' CXX='g++' cmake -G "Unix Makefiles" \
+-DLLVM_TARGETS_TO_BUILD=X86 \
+-DLLVM_BUILD_EXAMPLES=OFF \
+-DCLANG_BUILD_EXAMPLES=OFF \
 -DLLVM_ENABLE_OCAMLDOC=OFF \
 -DLLVM_BUILD_DOCS=OFF \
--DLLVM_BUILD_TESTS=ON \
+-DLLVM_BUILD_TESTS=OFF \
 -DCMAKE_BUILD_TYPE=Release ../llvm/
 
 make -j$(nproc)
-sudo make install
+#sudo make install
