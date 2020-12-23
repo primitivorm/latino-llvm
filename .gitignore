@@ -32,9 +32,10 @@
 *.app
 
 #Directories
-visualstudio/
+build/
 bin/
-llvm-mirror/
+llvm-project/
+.vscode/
 
 #CMake
 CMakeFiles/
