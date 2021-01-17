@@ -60,10 +60,10 @@ if(LLVM_CONFIG)
 
   find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
-  #message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
+  message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
   find_program(CLANG_TABLEGEN_EXE "clang-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
-  #message(STATUS "CLANG_TABLEGEN_EXE: ${CLANG_TABLEGEN_EXE}")
+  message(STATUS "CLANG_TABLEGEN_EXE: ${CLANG_TABLEGEN_EXE}")
   set(CLANG_TABLEGEN_TARGET ${CLANG_TABLEGEN_EXE})
 
   if(WIN32)
@@ -96,7 +96,7 @@ set(LLVM_LIBRARY_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/Debug/
 include(AddLLVM)
 include(TableGen)
 include(AddClang)
-include(AddLatino)
+# include(AddLatino)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -105,7 +105,7 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${CLANG_LIBS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ${CLANG_LIBS}")
 
 set(LATINO_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(LATINO_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -117,7 +117,9 @@ set(LATINO_VERSION_MAJOR 2)
 set(LATINO_VERSION_MINOR 0)
 set(LATINO_VERSION_PATCHLEVEL 0)
 set(LATINO_VERSION "${LATINO_VERSION_MAJOR}.${LATINO_VERSION_MINOR}.${LATINO_VERSION_PATCHLEVEL}")
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/latino/Basic/Version.inc.in
+
 ${CMAKE_CURRENT_BINARY_DIR}/include/latino/Basic/Version.in)
 
 if(LLVM_BUILD_MAIN_SRC_DIR)
@@ -125,15 +127,15 @@ if(LLVM_BUILD_MAIN_SRC_DIR)
   include_directories(${LLVM_BUILD_BINARY_DIR}/tools/clang/include)
 endif()
 
-#message(STATUS "LLVM_INSTALL_PREFIX: ${LLVM_INSTALL_PREFIX}")
-#message(STATUS "LLVM_LIBRARY_DIRS: ${LLVM_LIBRARY_DIRS}")
+message(STATUS "LLVM_INSTALL_PREFIX: ${LLVM_INSTALL_PREFIX}")
+message(STATUS "LLVM_LIBRARY_DIRS: ${LLVM_LIBRARY_DIRS}")
 link_directories(${LLVM_LIBRARY_DIRS})
 
 set(LLVM_MAIN_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
 include_directories(${LLVM_MAIN_INCLUDE_DIR})
 if(WIN32)
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/include/")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/include/")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
 endif()
 add_definitions(${LLVM_DEFINITIONS})
 
@@ -146,7 +148,7 @@ include_directories(include)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 add_subdirectory(lib)
-add_subdirectory(tools)
+# add_subdirectory(tools)
 
 set(LATINO_MAIN_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(LATINO_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to latino/lib")
@@ -164,7 +166,7 @@ if(LATINO_INCLUDE_TESTS)
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
   message(STATUS "Found gtest: ${GTEST_INCLUDE_DIRS}, gtest/libs: ${GTEST_BOTH_LIBRARIES}")
-  add_subdirectory(unittests)
+  # add_subdirectory(unittests)
 endif()
 
 message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")

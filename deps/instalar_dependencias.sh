@@ -10,65 +10,13 @@ sudo apt-get install gcc gcc++
 
 cd $dir
 if [ ! -d $dir/llvm-mirror ]; then
-    mkdir $dir/llvm-mirror
-fi
-cd $dir/llvm-mirror
-if [ -d $dir/llvm-mirror/llvm ]; then
-    cd $dir/llvm-mirror/llvm
-    git pull
-else
-    git clone --recursive https://github.com/llvm-mirror/llvm
-fi
-if [ -d $dir/llvm-mirror/llvm/tools/clang ]; then
-    cd $dir/llvm-mirror/llvm/tools/clang
-    git pull
-else
-    cd $dir/llvm-mirror/llvm/tools
-    git clone --recursive https://github.com/llvm-mirror/clang
-fi
-if [ -d $dir/llvm-mirror/llvm/tools/lld ]; then
-    cd $dir/llvm-mirror/llvm/tools/lld
-    git pull
-else
-    cd $dir/llvm-mirror/llvm/tools
-    git clone --recursive https://github.com/llvm-mirror/lld
-fi
-if [ -d $dir/llvm-mirror/llvm/projects/compiler-rt ]; then
-    cd $dir/llvm-mirror/llvm/projects/compiler-rt
-    git pull
-else
-    cd $dir/llvm-mirror/llvm/projects/
-    git clone --recursive https://github.com/llvm-mirror/compiler-rt
-fi
-if [ -d $dir/llvm-mirror/llvm/projects/libcxx ]; then
-    cd $dir/llvm-mirror/llvm/projects/libcxx
-    git pull
-else
-    cd $dir/llvm-mirror/llvm/projects/
-    git clone --recursive https://github.com/llvm-mirror/libcxx
-fi
-if [ -d $dir/llvm-mirror/llvm/projects/libcxxabi ]; then
-    cd $dir/llvm-mirror/llvm/projects/libcxxabi
-    git pull
-else
-    cd $dir/llvm-mirror/llvm/projects/
-    git clone --recursive https://github.com/llvm-mirror/libcxxabi
-fi
-if [ -d $dir/llvm-mirror/llvm/tools/clang/tools/extra ]; then
-    cd $dir/llvm-mirror/llvm/tools/clang/tools/extra
-    git pull
-else
-    cd $dir/llvm-mirror/llvm/tools/clang/tools
-    git clone --recursive https://github.com/llvm-mirror/clang-tools-extra extra
+    git clone https://github.com/llvm/llvm-project.git --branch release/11.x llvm-project
 fi
 
 cd $dir/llvm-mirror/
 if [ ! -d $dir/llvm-mirror/build ]; then
     mkdir build
     cd $dir/llvm-mirror/build
-#else
-#   cd $dir/llvm-mirror/build
-#    rm CMakeCache.txt
 fi
 
 export CC=gcc

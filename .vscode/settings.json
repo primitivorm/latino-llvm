@@ -19,6 +19,7 @@
         "streambuf": "cpp",
         "xmemory0": "cpp",
         "iosfwd": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "cstdint": "cpp"
     }
 }
