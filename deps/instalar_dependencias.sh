@@ -22,7 +22,7 @@ fi
 export CC=gcc
 export CXX=g++
 CC='gcc' CXX='g++' cmake -G "Unix Makefiles" \
--DLLVM_TARGETS_TO_BUILD=X86 \
+-DLLVM_TARGETS_TO_BUILD=host \
 -DLLVM_BUILD_EXAMPLES=OFF \
 -DCLANG_BUILD_EXAMPLES=OFF \
 -DLLVM_ENABLE_OCAMLDOC=OFF \
