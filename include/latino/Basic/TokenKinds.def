@@ -1,0 +1,135 @@
+#ifndef TOK
+#define TOK(X)
+#endif
+#ifndef PUNCTUATOR
+#define PUNCTUATOR(X, Y) TOK(X)
+#endif
+#ifndef KEYWORD
+#define KEYWORD(X) TOK(kw_##X)
+#endif
+
+TOK(unknown) // Not a token.
+TOK(eof)     // End of file.
+
+TOK(identifier) // abcde123
+TOK(raw_identifier)
+
+TOK(numeric_constant) // 0x123
+
+TOK(char_constant) // 'a'
+
+TOK(string_literal) // "foo"
+
+PUNCTUATOR(plus, "+")
+PUNCTUATOR(minus, "-")
+PUNCTUATOR(star, "*")
+PUNCTUATOR(slash, "/")
+PUNCTUATOR(percent, "%")
+PUNCTUATOR(l_paren, "(")
+PUNCTUATOR(r_paren, ")")
+PUNCTUATOR(comma, ",")
+PUNCTUATOR(semi, ";")
+PUNCTUATOR(l_square, "[")
+PUNCTUATOR(r_square, "]")
+PUNCTUATOR(l_brace, "{")
+PUNCTUATOR(r_brace, "}")
+PUNCTUATOR(question, "?")
+PUNCTUATOR(colon, ":")
+PUNCTUATOR(exclaim, "!")
+PUNCTUATOR(caret, "^")
+PUNCTUATOR(equal, "=")
+PUNCTUATOR(ellipsis, "...")
+PUNCTUATOR(greaterequal, ">=")
+PUNCTUATOR(lessequal, "<=")
+PUNCTUATOR(exclaimequal, "!=")
+PUNCTUATOR(equalequal, "==")
+PUNCTUATOR(ampamp, "&&")
+PUNCTUATOR(pipepipe, "||")
+PUNCTUATOR(plusequal, "+=")
+PUNCTUATOR(minusequal, "-=")
+PUNCTUATOR(starequal, "*=")
+PUNCTUATOR(slashequal, "/=")
+PUNCTUATOR(percentequal, "%=")
+PUNCTUATOR(greater, ">")
+PUNCTUATOR(less, "<")
+PUNCTUATOR(plusplus, "++")
+PUNCTUATOR(minusminus, "--")
+PUNCTUATOR(period, ".")
+PUNCTUATOR(caretequal, "^=")
+
+// Palabras reservadas en latino
+KEYWORD(si)        // if
+KEYWORD(osi)       // elif
+KEYWORD(fin)       // end
+KEYWORD(sino)      // else
+KEYWORD(romper)    // break
+KEYWORD(continuar) // continue
+KEYWORD(mientras)  // while
+KEYWORD(repetir)   // repeat / do
+KEYWORD(hasta)     // while
+KEYWORD(fun)       // function
+KEYWORD(funcion)   // function
+KEYWORD(desde)     // for
+KEYWORD(cierto)    // true
+KEYWORD(verdadero) // true
+KEYWORD(falso)     // false
+KEYWORD(nulo)      // null
+KEYWORD(retornar)  // return
+KEYWORD(ret)       // return
+KEYWORD(elegir)    // switch
+KEYWORD(caso)      // case
+KEYWORD(otro)      // default
+KEYWORD(global)    // global
+KEYWORD(para)      // ej. for in range
+KEYWORD(en)        // in
+KEYWORD(ir)        // ir
+
+// new keywords
+KEYWORD(constante) // const
+KEYWORD(const)     // const
+KEYWORD(variable)  // let
+KEYWORD(var)       // let
+
+KEYWORD(intentar)   // try
+KEYWORD(lanzar)     // throw
+KEYWORD(atrapar)    // catch
+KEYWORD(finalmente) // finally
+
+KEYWORD(clase)       // class
+KEYWORD(interfaz)    // interface
+KEYWORD(enumerador)  // enum
+KEYWORD(constructor) // constructor
+KEYWORD(publica)     // public
+KEYWORD(pub)         // public
+KEYWORD(privada)     // private
+KEYWORD(pri)         // private
+KEYWORD(protegida)   // protected
+KEYWORD(prot)        // protected
+KEYWORD(estructura)  // struct
+KEYWORD(estatico)    // static
+KEYWORD(virtual)     // virtual
+KEYWORD(anular)      // override
+KEYWORD(anula)       // overrides
+KEYWORD(borrar)      // delete
+
+KEYWORD(abstracta) // abstract
+KEYWORD(importar)  // import
+KEYWORD(nueva)     // new
+KEYWORD(esto)      // this
+
+KEYWORD(extiende)   // extends
+KEYWORD(implementa) // implements
+KEYWORD(vacia)      // void
+KEYWORD(volatil)    // volatil
+
+KEYWORD(paquete) // package
+KEYWORD(modulo)  // module
+
+KEYWORD(entero)  // int / long
+KEYWORD(decimal) // float / double
+KEYWORD(letra)   // char
+KEYWORD(cadena)  // char*
+
+#undef KEYWORD
+#undef PUNCTUATOR
+#undef TOK

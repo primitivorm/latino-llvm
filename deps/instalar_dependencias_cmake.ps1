@@ -23,10 +23,10 @@ cmake -G "Visual Studio 16 2019" -DLLVM_TARGETS_TO_BUILD=host -DLLVM_BUILD_EXAMP
     -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_TESTS=ON -DLLVM_ENABLE_PROJECTS='clang' ..\llvm\
 
 # ejecuta msbuild en modo Release
-Start-Process -FilePath "$vs_path\MSBuild\Current\Bin\MSBuild.exe" -ArgumentList "LLVM.sln /t:Build /p:Configuration=Release" -NoNewWindow
+# Start-Process -FilePath "$vs_path\MSBuild\Current\Bin\MSBuild.exe" -ArgumentList "LLVM.sln /t:Build /p:Configuration=Release" -NoNewWindow
 
 # ejecuta msbuild en modo Debug
-# [System.Diagnostics.Process]::Start("$vs_path\MSBuild\Current\Bin\MSBuild.exe", "$directorio_actual\llvm-project\build\LLVM.sln")
+[System.Diagnostics.Process]::Start("$vs_path\MSBuild\Current\Bin\MSBuild.exe", "$directorio_actual\llvm-project\build\LLVM.sln")
 
 # regresar al directorio actual
 Set-Location $directorio_actual

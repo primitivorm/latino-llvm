@@ -1,6 +1,5 @@
 set(LLVM_LINK_COMPONENTS
   Support
-  Target
   )
 
 add_clang_unittest(LexTests
@@ -9,6 +8,7 @@ add_clang_unittest(LexTests
 
 clang_target_link_libraries(LexTests
   PRIVATE
+  latinoBasic
   latinoLex
   clangBasic
   clangLex
