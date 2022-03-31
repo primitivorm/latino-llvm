@@ -1,9 +1,10 @@
-#ifndef LATINO_LLVM_LEX_LEXER_H
-#define LATINO_LLVM_LEX_LEXER_H
+#ifndef LLVM_LATINO_LEX_LEXER_H
+#define LLVM_LATINO_LEX_LEXER_H
 
-#include "clang/Basic/LangOptions.h"
 #include "clang/Basic/SourceLocation.h"
 
+#include "latino/Basic/LangOptions.h"
+#include "latino/Lex/PreprocessorLexer.h"
 #include "latino/Lex/Token.h"
 
 #include "llvm/ADT/Optional.h"
@@ -24,7 +25,10 @@ class LangOptions;
 
 namespace latino {
 
-class Lexer {
+class Lexer : public PreprocessorLexer {
+  friend class Preprocessor;
+
+  // void anchor() override;
 
   //===--------------------------------------------------------------------===//
   // Constant configuration values for this lexer.
@@ -39,7 +43,7 @@ class Lexer {
   clang::SourceLocation FileLoc;
 
   // LangOpts enabled by this language (cache).
-  clang::LangOptions LangOpts;
+  latino::LangOptions LangOpts;
 
   //===--------------------------------------------------------------------===//
   // Context that changes as the file is lexed.
@@ -80,19 +84,20 @@ public:
   /// with the specified preprocessor managing the lexing process.  This lexer
   /// assumes that the associated file buffer and Preprocessor objects will
   /// outlive it, so it doesn't take ownership of either of them.
-  Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile);
+  Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile,
+        Preprocessor &PP);
 
   /// Lexer constructor - Create a new raw lexer object.  This object is only
   /// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the
   /// text range will outlive it, so it doesn't take ownership of it.
-  Lexer(clang::SourceLocation FileLoc, const clang::LangOptions &LangOpts,
+  Lexer(clang::SourceLocation FileLoc, const LangOptions &LangOpts,
         const char *BufStart, const char *BufPtr, const char *BufEnd);
 
   /// Lexer constructor - Create a new raw lexer object.  This object is only
   /// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the
   /// text range will outlive it, so it doesn't take ownership of it.
   Lexer(clang::FileID FID, const llvm::MemoryBuffer *FromFile,
-        const clang::SourceManager &SM, const clang::LangOptions &LangOpts);
+        const clang::SourceManager &SM, const LangOptions &LangOpts);
 
   Lexer(const Lexer &) = delete;
   Lexer &operator=(const Lexer &) = delete;
@@ -108,7 +113,7 @@ public:
   /// getCharAndSizeNoWarn - Like the getCharAndSize method, but does not ever
   /// emit a warning.
   static inline char getCharAndSizeNoWarn(const char *Ptr, unsigned &Size,
-                                          const clang::LangOptions &LangOpts) {
+                                          const LangOptions &LangOpts) {
     // If this is not a trigraph and not a UCN or escaped newline, return
     // quickly.
     if (isObviouslySimpleCharacter(Ptr[0])) {
@@ -124,12 +129,14 @@ public:
   /// source location lands.
   static clang::SourceLocation
   GetBeginningOfToken(clang::SourceLocation Loc, const clang::SourceManager &SM,
-                      const clang::LangOptions &LangOpts);
+                      const LangOptions &LangOpts);
 
+private:
   /// Lex - Return the next token in the file.  If this is the end of file, it
   /// return the tok::eof token.  This implicitly involves the preprocessor.
   bool Lex(Token &Result);
 
+public:
   /// Checks whether new line pointed by Str is preceded by escape
   /// sequence.
   static bool isNewLineEscaped(const char *BufferStart, const char *Str);
@@ -174,20 +181,20 @@ public:
   static clang::CharSourceRange
   makeFileCharRange(clang::CharSourceRange Range,
                     const clang::SourceManager &SM,
-                    const clang::LangOptions &LangOpts);
+                    const LangOptions &LangOpts);
 
   /// Returns a string for the source that the range encompasses.
   static llvm::StringRef getSourceText(clang::CharSourceRange Range,
                                        const clang::SourceManager &SM,
-                                       const clang::LangOptions &LangOpts,
+                                       const LangOptions &LangOpts,
                                        bool *Invalid = nullptr);
 
   /// Finds the token that comes right after the given location.
   ///
   /// Returns the next token, or none if the location is inside a macro.
-  static llvm::Optional<Token>
-  findNextToken(SourceLocation Loc, const clang::SourceManager &SM,
-                const clang::LangOptions &LangOpts);
+  static llvm::Optional<Token> findNextToken(SourceLocation Loc,
+                                             const clang::SourceManager &SM,
+                                             const LangOptions &LangOpts);
 
   /// MeasureTokenLength - Relex the token at the specified location and return
   /// its length in bytes in the input file.  If the token needs cleaning (e.g.
@@ -195,13 +202,13 @@ public:
   /// that are part of that.
   static unsigned MeasureTokenLength(clang::SourceLocation Loc,
                                      const clang::SourceManager &SM,
-                                     const clang::LangOptions &LangOpts);
+                                     const LangOptions &LangOpts);
 
   /// Relex the token at the specified location.
   /// \returns true if there was a failure, false on success.
   static bool getRawToken(clang::SourceLocation Loc, Token &Result,
                           const clang::SourceManager &SM,
-                          const clang::LangOptions &LangOpts,
+                          const LangOptions &LangOpts,
                           bool IgnoreWhiteSpace = false);
 
   /// Computes the source location just past the end of the
@@ -222,7 +229,7 @@ public:
   static clang::SourceLocation
   getLocForEndOfToken(clang::SourceLocation Loc, unsigned Offset,
                       const clang::SourceManager &SM,
-                      const clang::LangOptions &LangOpts);
+                      const LangOptions &LangOpts);
 
 private:
   //===--------------------------------------------------------------------===//
@@ -247,6 +254,10 @@ private:
     BufferPtr = TokEnd;
   }
 
+  //===--------------------------------------------------------------------===//
+  // Other lexer functions.
+  void SetByteOffset(unsigned Offset, bool StartOfLine);
+
   // Helper functions to lex the remainder of a token of the specific type.
   bool LexIdentifier(Token &Result, const char *CurPtr);
   bool LexNumericConstant(Token &Result, const char *CurPtr);
@@ -258,7 +269,7 @@ private:
                        bool &TokAtPhysicalStartOfLine);
   bool SkipBlockComment(Token &Result, const char *CurPtr,
                         bool &TokAtPhysicalStartOfLine);
-  bool isHexaLiteral(const char *Start, const clang::LangOptions &LangOpts);
+  bool isHexaLiteral(const char *Start, const LangOptions &LangOpts);
 
   /// isObviouslySimpleCharacter - Return true if the specified character is
   /// obviously the same in translation phase 1 and translation phase 3.  This
@@ -329,8 +340,8 @@ private:
   /// getCharAndSizeSlowNoWarn - Same as getCharAndSizeSlow, but never emits a
   /// diagnostic.
   static char getCharAndSizeSlowNoWarn(const char *Ptr, unsigned &Size,
-                                       const clang::LangOptions &LangOpts);
+                                       const LangOptions &LangOpts);
 };
 } // namespace latino
 
-#endif // LATINO_LLVM_LEX_LEXER_H
+#endif // LLVM_LATINO_LEX_LEXER_H

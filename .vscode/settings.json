@@ -68,6 +68,24 @@
         "xloctime": "cpp",
         "xmemory": "cpp",
         "xstddef": "cpp",
-        "xtr1common": "cpp"
-    }
+        "xtr1common": "cpp",
+        "*.inc": "cpp",
+        "format": "cpp",
+        "future": "cpp",
+        "xlocmes": "cpp",
+        "charconv": "cpp",
+        "cinttypes": "cpp",
+        "condition_variable": "cpp",
+        "forward_list": "cpp",
+        "mutex": "cpp",
+        "optional": "cpp",
+        "queue": "cpp",
+        "shared_mutex": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "unordered_set": "cpp",
+        "xlocbuf": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled",
+    "esbonio.server.enabled": true
 }

@@ -1,0 +1,75 @@
+//===--- LangOptions.def - Language option database -------------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+// This file defines the language options. Users of this file must
+// define the LANGOPT macro to make use of this information.
+//
+// Optionally, the user may also define:
+//
+// BENIGN_LANGOPT: for options that don't affect the construction of the AST in
+//     any way (that is, the value can be different between an implicit module
+//     and the user of that module).
+//
+// COMPATIBLE_LANGOPT: for options that affect the construction of the AST in
+//     a way that doesn't prevent interoperability (that is, the value can be
+//     different between an explicit module and the user of that module).
+//
+// ENUM_LANGOPT: for options that have enumeration, rather than unsigned, type.
+//
+// VALUE_LANGOPT: for options that describe a value rather than a flag.
+//
+// BENIGN_ENUM_LANGOPT, COMPATIBLE_ENUM_LANGOPT,
+// BENIGN_VALUE_LANGOPT, COMPATIBLE_VALUE_LANGOPT: combinations of the above.
+//
+// FIXME: Clients should be able to more easily select whether they want
+// different levels of compatibility versus how to handle different kinds
+// of option.
+//
+// The Description field should be a noun phrase, for instance "frobbing all
+// widgets" or "C's implicit blintz feature".
+//===----------------------------------------------------------------------===//
+
+#ifndef LANGOPT
+#error Define the LANGOPT macro to handle language options
+#endif
+
+#ifndef COMPATIBLE_LANGOPT
+#define COMPATIBLE_LANGOPT(Name, Bits, Default, Description)                   \
+  LANGOPT(Name, Bits, Default, Description)
+#endif
+
+#ifndef BENIGN_LANGOPT
+#define BENIGN_LANGOPT(Name, Bits, Default, Description)                       \
+  COMPATIBLE_LANGOPT(Name, Bits, Default, Description)
+#endif
+
+#ifndef ENUM_LANGOPT
+#define ENUM_LANGOPT(Name, Bits, Default, Description)                         \
+  LANGOPT(Name, Bits, Default, Description)
+#endif
+
+#ifndef VALUE_LANGOPT
+#define VALUE_LANGOPT(Name, Bits, Default, Description)                        \
+  LANGOPT(Name, Bits, Default, Description)
+#endif
+
+#ifndef COMPATIBLE_VALUE_LANGOPT
+#define COMPATIBLE_VALUE_LANGOPT(Name, Bits, Default, Description)             \
+  VALUE_LANGOPT(Name, Bits, Default, Description)
+#endif
+
+BENIGN_LANGOPT(BracketDepth, 32, 256, "maximum bracket nesting depth")
+
+COMPATIBLE_VALUE_LANGOPT(MaxTokens, 32, 0, "Max number of tokens per TU or 0")
+
+#undef LANGOPT
+#undef COMPATIBLE_LANGOPT
+#undef BENIGN_LANGOPT
+#undef ENUM_LANGOPT
+#undef VALUE_LANGOPT
+#undef COMPATIBLE_VALUE_LANGOPT

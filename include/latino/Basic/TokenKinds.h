@@ -63,6 +63,9 @@ inline bool isLiteral(TokenKind K) {
          isStringLiteral(K);
 }
 
+/// Return true if this is any of tok::annot_* kinds.
+bool isAnnotation(TokenKind K);
+
 } // end namespace tok
 } // namespace latino
 

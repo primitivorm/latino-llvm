@@ -49,13 +49,13 @@ add_clang_library(latinoBasic
 #   FileManager.cpp
 #   FileSystemStatCache.cpp
 #   FixedPoint.cpp
-#   IdentifierTable.cpp
-#   LangOptions.cpp
+    IdentifierTable.cpp
+    LangOptions.cpp
 #   LangStandards.cpp
 #   Module.cpp
 #   ObjCRuntime.cpp
 #   OpenMPKinds.cpp
-#   OperatorPrecedence.cpp
+    OperatorPrecedence.cpp
 #   SanitizerBlacklist.cpp
 #   SanitizerSpecialCaseList.cpp
 #   Sanitizers.cpp

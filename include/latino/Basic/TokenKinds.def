@@ -8,6 +8,10 @@
 #define KEYWORD(X) TOK(kw_##X)
 #endif
 
+#ifndef ANNOTATION
+#define ANNOTATION(X) TOK(annot_##X)
+#endif
+
 TOK(unknown) // Not a token.
 TOK(eof)     // End of file.
 
@@ -57,6 +61,8 @@ PUNCTUATOR(minusminus, "--")
 PUNCTUATOR(period, ".")
 PUNCTUATOR(caretequal, "^=")
 
+PUNCTUATOR(at, "@")
+
 // Palabras reservadas en latino
 KEYWORD(si)        // if
 KEYWORD(osi)       // elif
@@ -68,13 +74,10 @@ KEYWORD(mientras)  // while
 KEYWORD(repetir)   // repeat / do
 KEYWORD(hasta)     // while
 KEYWORD(fun)       // function
-KEYWORD(funcion)   // function
 KEYWORD(desde)     // for
-KEYWORD(cierto)    // true
 KEYWORD(verdadero) // true
 KEYWORD(falso)     // false
 KEYWORD(nulo)      // null
-KEYWORD(retornar)  // return
 KEYWORD(ret)       // return
 KEYWORD(elegir)    // switch
 KEYWORD(caso)      // case
@@ -82,54 +85,47 @@ KEYWORD(otro)      // default
 KEYWORD(global)    // global
 KEYWORD(para)      // ej. for in range
 KEYWORD(en)        // in
-KEYWORD(ir)        // ir
+KEYWORD(ir)        // goto
 
 // new keywords
-KEYWORD(constante) // const
-KEYWORD(const)     // const
-KEYWORD(variable)  // let
-KEYWORD(var)       // let
+KEYWORD(const) // const
+KEYWORD(var)   // let
 
 KEYWORD(intentar)   // try
 KEYWORD(lanzar)     // throw
 KEYWORD(atrapar)    // catch
 KEYWORD(finalmente) // finally
 
-KEYWORD(clase)       // class
-KEYWORD(interfaz)    // interface
-KEYWORD(enumerador)  // enum
-KEYWORD(constructor) // constructor
-KEYWORD(publica)     // public
-KEYWORD(pub)         // public
-KEYWORD(privada)     // private
-KEYWORD(pri)         // private
-KEYWORD(protegida)   // protected
-KEYWORD(prot)        // protected
-KEYWORD(estructura)  // struct
-KEYWORD(estatico)    // static
-KEYWORD(virtual)     // virtual
-KEYWORD(anular)      // override
-KEYWORD(anula)       // overrides
-KEYWORD(borrar)      // delete
+KEYWORD(clase)      // class
+KEYWORD(interfaz)   // interface
+KEYWORD(enum)       // enum
+KEYWORD(ctor)       // constructor
+KEYWORD(pub)        // public
+KEYWORD(priv)       // private
+KEYWORD(prot)       // protected
+KEYWORD(estructura) // struct
+KEYWORD(estatico)   // static
+KEYWORD(virtual)    // virtual
 
-KEYWORD(abstracta) // abstract
-KEYWORD(importar)  // import
-KEYWORD(nueva)     // new
-KEYWORD(esto)      // this
+KEYWORD(importar) // import
+KEYWORD(exportar) // export
+KEYWORD(mi)       // this
 
-KEYWORD(extiende)   // extends
-KEYWORD(implementa) // implements
-KEYWORD(vacia)      // void
-KEYWORD(volatil)    // volatil
+KEYWORD(volatil) // volatil
 
-KEYWORD(paquete) // package
-KEYWORD(modulo)  // module
+KEYWORD(modulo) // module
 
 KEYWORD(entero)  // int / long
 KEYWORD(decimal) // float / double
 KEYWORD(letra)   // char
 KEYWORD(cadena)  // char*
 
+// Annotations for module import translated from #include etc.
+ANNOTATION(module_include)
+ANNOTATION(module_begin)
+ANNOTATION(module_end)
+
+#undef ANNOTATION
 #undef KEYWORD
 #undef PUNCTUATOR
 #undef TOK

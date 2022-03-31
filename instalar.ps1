@@ -6,6 +6,7 @@ $directorio_actual = Get-Location
 # Cambiar la siguiente linea para compilar para x64
 # Start-Process "$vs_path\VC\Auxiliary\Build\vcvars64.bat"
 Start-Process "$vs_path\VC\Auxiliary\Build\vcvars32.bat"
+
 if (!(Test-Path -Path $directorio_actual\build)) {
     New-Item -ItemType directory -Path $directorio_actual\build
 }

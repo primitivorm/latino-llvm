@@ -19,3 +19,4 @@ function(add_clang_unittest test_dirname)
 endfunction()
 
 add_subdirectory(Lex)
+add_subdirectory(ASTMatchers)

@@ -15,8 +15,9 @@
 
 #include "clang/Basic/SourceLocation.h"
 
-// #include "clang/Basic/TokenKinds.h"
 #include "latino/Basic/TokenKinds.h"
+#include "latino/Basic/IdentifierTable.h"
+
 #include "llvm/ADT/StringRef.h"
 #include <cassert>
 
@@ -96,6 +97,9 @@ public:
   /// constant, string, etc.
   bool isLiteral() const { return tok::isLiteral(getKind()); }
 
+  /// Return true if this is any of tok::annot_* kind tokens.
+  bool isAnnotation() const { return tok::isAnnotation(getKind()); }
+
   /// Return a source location identifier for the specified
   /// offset in the current file.
   SourceLocation getLocation() const {
@@ -106,6 +110,16 @@ public:
 
   unsigned getLength() const { return UintData; }
   void setLength(unsigned Len) { UintData = Len; }
+
+  clang::SourceLocation getAnnotationEndLoc() const {
+    assert(!isAnnotation() && "Used AnnotEndLocID on non-annotation token");
+    return clang::SourceLocation::getFromRawEncoding(UintData ? UintData : Loc);
+  }
+
+  void setAnnotationEndLoc(clang::SourceLocation L) {
+    assert(!isAnnotation() && "Used AnnotEndLocID on non-annotation token");
+    UintData = L.getRawEncoding();
+  }
 
   void setLiteralData(const char *Ptr) {
     assert(isLiteral() && "Cannot set literal data of non-literal");
@@ -143,6 +157,19 @@ public:
     Loc = SourceLocation().getRawEncoding();
   }
 
+  IdentifierInfo *getIdentifierInfo() const {
+    assert(isNot(tok::raw_identifier) &&
+           "getIdentifierInfo() on a tok::raw_identifier token!");
+    assert(!isAnnotation() && "getIdentifierInfo() on a annotation token!");
+    if (isLiteral())
+      return nullptr;
+    if (is(tok::eof))
+      return nullptr;
+    return (IdentifierInfo *)PtrData;
+  }
+
+  void setIdentifierInfo(IdentifierInfo *II) { PtrData = (void *)II; }
+
   /// getRawIdentifier - For a raw identifier token (i.e., an identifier
   /// lexed in raw mode), returns a reference to the text substring in the
   /// buffer if known.
@@ -154,6 +181,16 @@ public:
   void setRawIdentifierData(const char *Ptr) {
     assert(is(tok::raw_identifier));
     PtrData = const_cast<char *>(Ptr);
+  }
+
+  void *getAnnotationValue() const {
+    assert(isAnnotation() && "Used AnnotVal on non-annotation token");
+    return PtrData;
+  }
+
+  void setAnnotationValue(void *val) {
+    assert(isAnnotation() && "Used AnnotVal on non-annotation token");
+    PtrData = val;
   }
 };
 

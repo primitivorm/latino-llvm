@@ -16,3 +16,15 @@ const char *tok::getTokenName(TokenKind Kind) {
   llvm_unreachable("unknown TokenKind");
   return nullptr;
 }
+
+bool tok::isAnnotation(TokenKind Kind) {
+  switch (Kind) {
+#define ANNOTATION(X)                                                          \
+  case annot_##X:                                                              \
+    return true;
+#include "latino/Basic/TokenKinds.def"
+  default:
+    break;
+  }
+  return false;
+}

@@ -1,4 +1,4 @@
-//===- TokenLexer.h - Lex from a token buffer -------------------*- C++ -*-===//
+//===- unittests/AST/DeclTest.cpp --- Declaration tests -------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -6,17 +6,12 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file defines the TokenLexer interface.
+// Unit tests for Decl nodes in the AST.
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_LATINO_LEX_TOKENLEXER_H
-#define LLVM_LATINO_LEX_TOKENLEXER_H
+#include "gtest/gtest.h"
 
-#include "clang/Basic/SourceLocation.h"
+using namespace latino;
 
-#include "llvm/ADT/ArrayRef.h"
-
-namespace latino {} // namespace latino
-
-#endif // LLVM_LATINO_LEX_TOKENLEXER_H
+TEST(Decl, CleansUpAPValues) {}

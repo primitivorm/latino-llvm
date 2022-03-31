@@ -2,21 +2,22 @@
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Basic/FileManager.h"
-#include "clang/Basic/LangOptions.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Basic/TargetInfo.h"
 #include "clang/Basic/TargetOptions.h"
 // #include "clang/Basic/TokenKinds.h"
-// #include "clang/Lex/HeaderSearch.h"
-// #include "clang/Lex/HeaderSearchOptions.h"
 // #include "clang/Lex/MacroArgs.h"
 // #include "clang/Lex/MacroInfo.h"
 #include "clang/Lex/ModuleLoader.h"
 // #include "clang/Lex/Preprocessor.h"
-// #include "clang/Lex/PreprocessorOptions.h"
+#include "clang/Lex/PreprocessorOptions.h"
 
+#include "latino/Basic/LangOptions.h"
+#include "latino/Lex/HeaderSearch.h"
+#include "latino/Lex/HeaderSearchOptions.h"
 #include "latino/Lex/Lexer.h"
+#include "latino/Lex/Preprocessor.h"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -38,25 +39,34 @@ protected:
     Target = clang::TargetInfo::CreateTargetInfo(Diags, TargetOpts);
   }
 
-  Lexer *CreateLexer(llvm::StringRef Source,
-                     clang::TrivialModuleLoader &ModLoader) {
+  std::unique_ptr<Preprocessor>
+  CreatePP(llvm::StringRef Source, clang::TrivialModuleLoader &ModLoader) {
     std::unique_ptr<llvm::MemoryBuffer> Buf =
         llvm::MemoryBuffer::getMemBuffer(Source);
-    llvm::MemoryBuffer *MBuf = Buf.get();
-    clang::FileID FID = SourceMgr.createFileID(std::move(Buf));
-    SourceMgr.setMainFileID(FID);
-    Lexer *theLexer = new Lexer(FID, MBuf, SourceMgr, LangOpts);
-    return theLexer;
+    SourceMgr.setMainFileID(SourceMgr.createFileID(std::move(Buf)));
+
+    HeaderSearch HeaderInfo(std::make_shared<HeaderSearchOptions>(), SourceMgr,
+                            /*Diags,*/ LangOpts, Target.get());
+
+    std::unique_ptr<Preprocessor> PP = std::make_unique<Preprocessor>(
+        std::make_shared<clang::PreprocessorOptions>(), Diags, LangOpts,
+        SourceMgr, HeaderInfo, ModLoader, /*IILookup*/ nullptr,
+        /*OwnsHeaderSearch*/ false);
+
+    PP->Initialize(*Target);
+    PP->EnterMainSourceFile();
+
+    return PP;
   }
 
   std::vector<Token> Lex(llvm::StringRef Source) {
     clang::TrivialModuleLoader ModLoader;
-    auto theLexer = CreateLexer(Source, ModLoader);
+    auto PP = CreatePP(Source, ModLoader);
 
     std::vector<Token> toks;
     while (1) {
       Token tok;
-      theLexer->Lex(tok);
+      PP->Lex(tok);
       if (tok.is(tok::eof))
         break;
       toks.push_back(tok);
@@ -92,7 +102,7 @@ protected:
   clang::IntrusiveRefCntPtr<clang::DiagnosticIDs> DiagID;
   clang::DiagnosticsEngine Diags;
   clang::SourceManager SourceMgr;
-  clang::LangOptions LangOpts;
+  LangOptions LangOpts;
   std::shared_ptr<clang::TargetOptions> TargetOpts;
   llvm::IntrusiveRefCntPtr<clang::TargetInfo> Target;
 };
