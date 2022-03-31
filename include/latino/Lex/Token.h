@@ -1,38 +1,33 @@
+//===--- Token.h - Token interface ------------------------------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
 //===----------------------------------------------------------------------===//
 //
 //  This file defines the Token interface.
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LATINO_LEX_TOKEN_H
-#define LATINO_LEX_TOKEN_H
+#ifndef LLVM_LATINO_LEX_TOKEN_H
+#define LLVM_LATINO_LEX_TOKEN_H
 
-#include "latino/Basic/IdentifierTable.h"
-#include "latino/Basic/LLVM.h"
-#include "latino/Basic/SourceLocation.h"
+#include "clang/Basic/SourceLocation.h"
+
 #include "latino/Basic/TokenKinds.h"
+#include "latino/Basic/IdentifierTable.h"
+
+#include "llvm/ADT/StringRef.h"
+#include <cassert>
 
 namespace latino {
 
-/// Token - This structure provides full information about a lexed token.
-/// It is not intended to be space efficient, it is intended to return as much
-/// information as possible about each returned token.  This is expected to be
-/// compressed into a smaller form if memory footprint is important.
-///
-/// The parser can create a special "annotation token" representing a stream of
-/// tokens that were parsed and semantically resolved, e.g.: "foo::MyClass<int>"
-/// can be represented by a single typename annotation token that carries
-/// information about the SourceRange of the tokens and the type object.
+using clang::SourceLocation;
+
 class Token {
   /// The location of the token. This is actually a SourceLocation.
   unsigned Loc;
-
-  /// The location of the token. This is actually a SourceLocation.
-
-  // Conceptually these next two fields could be in a union.  However, this
-  // causes gcc 4.2 to pessimize LexTokenInternal, a very performance critical
-  // routine. Keeping as separate members with casts until a more beautiful fix
-  // presents itself.
 
   /// UintData - This holds either the length of the token text, when
   /// a normal token, or the end of the SourceRange when an annotation
@@ -78,6 +73,9 @@ public:
                                 // macro stringizing or charizing operator.
     CommaAfterElided = 0x200, // The comma following this token was elided (MS).
     IsEditorPlaceholder = 0x400, // This identifier is a placeholder.
+    IsReinjected = 0x800,        // A phase 4 token that was produced before and
+                          // re-added, e.g. via EnterTokenStream. Annotation
+                          // tokens are *not* reinjected.
   };
 
   tok::TokenKind getKind() const { return Kind; }
@@ -92,26 +90,65 @@ public:
   }
   template <typename... Ts>
   bool isOneOf(tok::TokenKind K1, tok::TokenKind K2, Ts... Ks) const {
-    return is(K1) || isOneOf(K2, Ks...);
-  }
-
-  SourceLocation getLocation() const {
-    return SourceLocation::getFromRawEncoding(Loc);
+    return is(K1) || isOneOf(K1, Ks...);
   }
 
   /// Return true if this is a "literal", like a numeric
   /// constant, string, etc.
   bool isLiteral() const { return tok::isLiteral(getKind()); }
-  void setFlag(TokenFlags Flag) { Flags |= Flags; }
-  bool getFlag(TokenFlags Flag) const { return (Flags & Flag) != 0; }
-  void setIdentifierInfo(IdentifierInfo *II) { PtrData = (void *)II; }
-  void clearFlag(TokenFlags Flag) { Flags &= ~Flags; }
+
+  /// Return true if this is any of tok::annot_* kind tokens.
+  bool isAnnotation() const { return tok::isAnnotation(getKind()); }
+
+  /// Return a source location identifier for the specified
+  /// offset in the current file.
+  SourceLocation getLocation() const {
+    return SourceLocation::getFromRawEncoding(Loc);
+  }
+
+  void setLocation(SourceLocation L) { Loc = L.getRawEncoding(); }
 
   unsigned getLength() const { return UintData; }
-  void setLocation(SourceLocation L) { Loc = L.getRawEncoding(); }
   void setLength(unsigned Len) { UintData = Len; }
 
-  /// Reset all flags to cleared.
+  clang::SourceLocation getAnnotationEndLoc() const {
+    assert(!isAnnotation() && "Used AnnotEndLocID on non-annotation token");
+    return clang::SourceLocation::getFromRawEncoding(UintData ? UintData : Loc);
+  }
+
+  void setAnnotationEndLoc(clang::SourceLocation L) {
+    assert(!isAnnotation() && "Used AnnotEndLocID on non-annotation token");
+    UintData = L.getRawEncoding();
+  }
+
+  void setLiteralData(const char *Ptr) {
+    assert(isLiteral() && "Cannot set literal data of non-literal");
+    PtrData = const_cast<char *>(Ptr);
+  }
+
+  /// Set the specified flag.
+  void setFlag(TokenFlags Flag) { Flags |= Flag; }
+
+  /// Get the specified flag.
+  bool getFlag(TokenFlags Flag) const { return (Flags & Flag) != 0; }
+
+  /// Unset the specified flag.
+  void clearFlag(TokenFlags Flag) { Flags &= ~Flag; }
+
+  /// Return the internal represtation of the flags.
+  ///
+  /// This is only intended for low-level operations such as writing tokens to
+  /// disk.
+  unsigned getFlags() const { return Flags; }
+
+  /// Set a flag to either true or false.
+  void setFlagValue(TokenFlags Flag, bool Val) {
+    if (Val)
+      setFlag(Flag);
+    else
+      clearFlag(Flag);
+  }
+
   void startToken() {
     Kind = tok::unknown;
     Flags = 0;
@@ -120,31 +157,43 @@ public:
     Loc = SourceLocation().getRawEncoding();
   }
 
-  /// Return true if this token has trigraphs or escaped newlines in it.
-  bool needsCleaning() const { return getFlag(NeedsCleaning); }
   IdentifierInfo *getIdentifierInfo() const {
     assert(isNot(tok::raw_identifier) &&
            "getIdentifierInfo() on a tok::raw_identifier token!");
+    assert(!isAnnotation() && "getIdentifierInfo() on a annotation token!");
     if (isLiteral())
       return nullptr;
     if (is(tok::eof))
       return nullptr;
     return (IdentifierInfo *)PtrData;
   }
-  void setLiteralData(const char *Ptr) {
-    assert(isLiteral() && "Cannot set literal data of non-literal");
-    PtrData = const_cast<char *>(Ptr);
+
+  void setIdentifierInfo(IdentifierInfo *II) { PtrData = (void *)II; }
+
+  /// getRawIdentifier - For a raw identifier token (i.e., an identifier
+  /// lexed in raw mode), returns a reference to the text substring in the
+  /// buffer if known.
+  llvm::StringRef getRawIdentifier() const {
+    assert(is(tok::raw_identifier));
+    return llvm::StringRef(reinterpret_cast<const char *>(PtrData),
+                           getLength());
   }
   void setRawIdentifierData(const char *Ptr) {
     assert(is(tok::raw_identifier));
     PtrData = const_cast<char *>(Ptr);
   }
-  StringRef getRawIdentifier() const {
-    assert(is(tok::raw_identifier));
-    return StringRef(reinterpret_cast<const char *>(PtrData), getLength());
+
+  void *getAnnotationValue() const {
+    assert(isAnnotation() && "Used AnnotVal on non-annotation token");
+    return PtrData;
+  }
+
+  void setAnnotationValue(void *val) {
+    assert(isAnnotation() && "Used AnnotVal on non-annotation token");
+    PtrData = val;
   }
 };
 
 } // namespace latino
 
-#endif /* LATINO_LEX_TOKEN_H */
+#endif // LLVM_LATINO_LEX_TOKEN_H

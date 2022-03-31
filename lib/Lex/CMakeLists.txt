@@ -1,9 +1,15 @@
-set(LLVM_LINK_COMPONENTS
-  Support)
+# TODO: Add -maltivec when ARCH is PowerPC.
 
-add_latino_library(latinoLex
+set(LLVM_LINK_COMPONENTS Support)
+
+add_clang_library(latinoLex
+  HeaderSearch.cpp
   Lexer.cpp
+  PPCaching.cpp
+  Preprocessor.cpp
+  PPLexerChange.cpp
+  PreprocessorLexer.cpp
 
   LINK_LIBS
-  ${LIBS}
-)
+  clangBasic
+  )

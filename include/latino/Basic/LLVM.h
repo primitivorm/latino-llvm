@@ -1,5 +1,19 @@
-#ifndef LATINO_BASIC_LLVM_H
-#define LATINO_BASIC_LLVM_H
+//===--- LLVM.h - Import various common LLVM datatypes ----------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+/// \file
+/// Forward-declares and imports various common LLVM datatypes that
+/// clang wants to use unqualified.
+///
+//===----------------------------------------------------------------------===//
+
+#ifndef LLVM_LATINO_BASIC_LLVM_H
+#define LLVM_LATINO_BASIC_LLVM_H
 
 // Do not proliferate #includes here, require clients to #include their
 // dependencies.
@@ -32,6 +46,7 @@ template <class Derived> class RefCountedBase;
 
 class raw_ostream;
 class raw_pwrite_stream;
+// TODO: DenseMap, ...
 } // namespace llvm
 
 namespace latino {
@@ -68,4 +83,4 @@ using llvm::raw_ostream;
 using llvm::raw_pwrite_stream;
 } // namespace latino
 
-#endif /* LATINO_BASIC_LLVM_H */
+#endif

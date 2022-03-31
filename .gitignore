@@ -1,42 +1,43 @@
-# Prerequisites
-*.d
+#==============================================================================#
+# This file specifies intentionally untracked files that git should ignore.
+# See: http://www.kernel.org/pub/software/scm/git/docs/gitignore.html
+#==============================================================================#
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+#==============================================================================#
+# File extensions to be ignored anywhere in the tree.
+#==============================================================================#
+# Temp files created by most text editors.
+*~
+# Merge files created by git.
+*.orig
+# Byte compiled python modules.
+*.pyc
+# vim swap files
+.*.sw?
+.sw?
 
-# Precompiled Headers
-*.gch
-*.pch
+#==============================================================================#
+# Explicit files to ignore (only matches one).
+#==============================================================================#
+cscope.files
+cscope.out
+/tags
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+#==============================================================================#
+# Directories to ignore (do not add trailing '/'s, they skip symlinks).
+#==============================================================================#
+# Clang extra user tools, which is tracked independently (clang-tools-extra).
+tools/extra
+# Sphinx build products
+docs/_build
+docs/analyzer/_build
+# debug info testsuite
+test/debuginfo-tests
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-#Directories
-build/
-bin/
-llvm-project/
+# VS2017 and VSCode config files.
 .vscode/
+.vs/
 
-#CMake
-CMakeFiles/
-Makefile
+# build directories
+build/
+out/

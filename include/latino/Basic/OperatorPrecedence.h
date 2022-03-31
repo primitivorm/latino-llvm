@@ -1,15 +1,10 @@
-//===----------------------------------------------------------------------===//
-///
-/// \file
-/// Defines and computes precedence levels for binary/ternary operators.
-///
-//===----------------------------------------------------------------------===//
-#ifndef LATINO_BASIC_OPERATORPRECEDENCE_H
-#define LATINO_BASIC_OPERATORPRECEDENCE_H
+#ifndef LLVM_LATINO_BASIC_OPERATORPRECEDENCE_H
+#define LLVM_LATINO_BASIC_OPERATORPRECEDENCE_H
 
 #include "latino/Basic/TokenKinds.h"
 
 namespace latino {
+
 /// PrecedenceLevels - These are precedences for the binary/ternary
 /// operators in the C99 grammar.  These have been named to relate
 /// with the C99 grammar productions.  Low precedences numbers bind
@@ -33,12 +28,12 @@ enum Level {
   Multiplicative = 14, // *, /, %
   PointerToMember = 15 // .*, ->*
 };
-} /* namespace prec */
+}
 
 /// Return the precedence of the specified binary operator token.
 prec::Level getBinOpPrecedence(tok::TokenKind Kind, bool GreaterThanIsOperator,
                                bool CPlusPlus11);
 
-} /* namespace latino */
+} // namespace latino
 
-#endif /* LATINO_BASIC_OPERATORPRECEDENCE_H */
+#endif

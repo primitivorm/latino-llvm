@@ -1,18 +1,7 @@
-//===--- TokenKinds.cpp - Token Kinds Support -----------------------------===//
-//
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===//
-//
-//  This file implements the TokenKind enum and support functions.
-//
-//===----------------------------------------------------------------------===//
-
 #include "latino/Basic/TokenKinds.h"
+
 #include "llvm/Support/ErrorHandling.h"
+
 using namespace latino;
 
 static const char *const TokNames[] = {
@@ -28,26 +17,14 @@ const char *tok::getTokenName(TokenKind Kind) {
   return nullptr;
 }
 
-const char *tok::getPunctuatorSpelling(TokenKind Kind) {
+bool tok::isAnnotation(TokenKind Kind) {
   switch (Kind) {
-#define PUNCTUATOR(X, Y)                                                       \
-  case X:                                                                      \
-    return Y;
+#define ANNOTATION(X)                                                          \
+  case annot_##X:                                                              \
+    return true;
 #include "latino/Basic/TokenKinds.def"
   default:
     break;
   }
-  return nullptr;
-}
-
-const char *tok::getKeywordSpelling(TokenKind Kind) {
-  switch (Kind) {
-#define KEYWORD(X, Y)                                                          \
-  case kw_##X:                                                                 \
-    return #X;
-#include "latino/Basic/TokenKinds.def"
-  default:
-    break;
-  }
-  return nullptr;
+  return false;
 }

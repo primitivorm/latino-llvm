@@ -1,103 +1,131 @@
 #ifndef TOK
-#define TOK(K)
+#define TOK(X)
 #endif
 #ifndef PUNCTUATOR
 #define PUNCTUATOR(X, Y) TOK(X)
 #endif
-#ifndef LAT_KEYWORD
-#define LAT_KEYWORD(X) TOK(kw_ ## X)
+#ifndef KEYWORD
+#define KEYWORD(X) TOK(kw_##X)
 #endif
 
-//===----------------------------------------------------------------------===//
-// Language keywords.
-//===----------------------------------------------------------------------===//
+#ifndef ANNOTATION
+#define ANNOTATION(X) TOK(annot_##X)
+#endif
 
-// These define members of the tok::* namespace.
+TOK(unknown) // Not a token.
+TOK(eof)     // End of file.
 
-TOK(unknown)             // Not a token.
-TOK(eof)                 // End of file.
-TOK(eod)                 // End of preprocessing directive (end of line inside a
-                         // directive).
-TOK(code_completion)     // Code completion marker
+TOK(identifier) // abcde123
+TOK(raw_identifier)
 
-// Comments.
-TOK(comment)             // Comment
+TOK(numeric_constant) // 0x123
 
-// Identifiers.
-TOK(identifier)          // abcde123
-TOK(raw_identifier)      // Used only in raw lexing mode.
+TOK(char_constant) // 'a'
 
-// Integer Constants
-// Floating Constants
-TOK(numeric_constant)    // 0x123
+TOK(string_literal) // "foo"
 
-// Character Constants
-TOK(char_constant)       // 'a'
+PUNCTUATOR(plus, "+")
+PUNCTUATOR(minus, "-")
+PUNCTUATOR(star, "*")
+PUNCTUATOR(slash, "/")
+PUNCTUATOR(percent, "%")
+PUNCTUATOR(l_paren, "(")
+PUNCTUATOR(r_paren, ")")
+PUNCTUATOR(comma, ",")
+PUNCTUATOR(semi, ";")
+PUNCTUATOR(l_square, "[")
+PUNCTUATOR(r_square, "]")
+PUNCTUATOR(l_brace, "{")
+PUNCTUATOR(r_brace, "}")
+PUNCTUATOR(question, "?")
+PUNCTUATOR(colon, ":")
+PUNCTUATOR(exclaim, "!")
+PUNCTUATOR(caret, "^")
+PUNCTUATOR(equal, "=")
+PUNCTUATOR(ellipsis, "...")
+PUNCTUATOR(greaterequal, ">=")
+PUNCTUATOR(lessequal, "<=")
+PUNCTUATOR(exclaimequal, "!=")
+PUNCTUATOR(equalequal, "==")
+PUNCTUATOR(ampamp, "&&")
+PUNCTUATOR(pipepipe, "||")
+PUNCTUATOR(plusequal, "+=")
+PUNCTUATOR(minusequal, "-=")
+PUNCTUATOR(starequal, "*=")
+PUNCTUATOR(slashequal, "/=")
+PUNCTUATOR(percentequal, "%=")
+PUNCTUATOR(greater, ">")
+PUNCTUATOR(less, "<")
+PUNCTUATOR(plusplus, "++")
+PUNCTUATOR(minusminus, "--")
+PUNCTUATOR(period, ".")
+PUNCTUATOR(caretequal, "^=")
 
-// String Literals.
-TOK(string_literal)      // "foo"
+PUNCTUATOR(at, "@")
 
-// Punctuators.
-PUNCTUATOR(ampamp,              "&&")
-//PUNCTUATOR(arrow,               "->")
-//PUNCTUATOR(at,                  "@")
-PUNCTUATOR(colon,               ":")
-//PUNCTUATOR(coloncolon,          "::")
-PUNCTUATOR(comma,               ",")
-PUNCTUATOR(ellipsis,            "...")
-PUNCTUATOR(equal,               "=")
-PUNCTUATOR(equalequal,          "==")
-PUNCTUATOR(exclaim,             "!")
-PUNCTUATOR(exclaimequal,        "!=")
-PUNCTUATOR(greater,             ">")
-PUNCTUATOR(greaterequal,        ">=")
-PUNCTUATOR(l_brace,             "{")
-PUNCTUATOR(l_paren,             "(")
-PUNCTUATOR(l_square,            "[")
-PUNCTUATOR(less,                "<")
-PUNCTUATOR(lessequal,           "<=")
-PUNCTUATOR(minus,               "-")
-PUNCTUATOR(minusequal,          "-=")
-PUNCTUATOR(minusminus,          "--")
-PUNCTUATOR(percent,             "%")
-PUNCTUATOR(percentequal,        "%=")
-PUNCTUATOR(period,              ".")
-PUNCTUATOR(periodperiod,        "..")
-PUNCTUATOR(pipepipe,            "||")
-PUNCTUATOR(plus,                "+")
-PUNCTUATOR(plusequal,           "+=")
-PUNCTUATOR(plusplus,            "++")
-PUNCTUATOR(question,            "?")
-PUNCTUATOR(r_brace,             "}")
-PUNCTUATOR(r_paren,             ")")
-PUNCTUATOR(r_square,            "]")
-PUNCTUATOR(semi,                ";")
-PUNCTUATOR(slash,               "/")
-PUNCTUATOR(slashequal,          "/=")
-PUNCTUATOR(star,                "*")
-PUNCTUATOR(starequal,           "*=")
-PUNCTUATOR(tildeequal,          "~=")
+// Palabras reservadas en latino
+KEYWORD(si)        // if
+KEYWORD(osi)       // elif
+KEYWORD(fin)       // end
+KEYWORD(sino)      // else
+KEYWORD(romper)    // break
+KEYWORD(continuar) // continue
+KEYWORD(mientras)  // while
+KEYWORD(repetir)   // repeat / do
+KEYWORD(hasta)     // while
+KEYWORD(fun)       // function
+KEYWORD(desde)     // for
+KEYWORD(verdadero) // true
+KEYWORD(falso)     // false
+KEYWORD(nulo)      // null
+KEYWORD(ret)       // return
+KEYWORD(elegir)    // switch
+KEYWORD(caso)      // case
+KEYWORD(otro)      // default
+KEYWORD(global)    // global
+KEYWORD(para)      // ej. for in range
+KEYWORD(en)        // in
+KEYWORD(ir)        // goto
 
-// Keywords.  These turn into kw_* tokens.
-LAT_KEYWORD(caso)
-LAT_KEYWORD(constante)
-LAT_KEYWORD(continuar)
-LAT_KEYWORD(defecto)
-LAT_KEYWORD(elegir)
-LAT_KEYWORD(falso)
-LAT_KEYWORD(global)
-LAT_KEYWORD(hacer)
-LAT_KEYWORD(mientras)
-LAT_KEYWORD(nulo)
-LAT_KEYWORD(osi)
-LAT_KEYWORD(por)
-LAT_KEYWORD(retornar)
-LAT_KEYWORD(romper)
-LAT_KEYWORD(si)
-LAT_KEYWORD(sino)
-LAT_KEYWORD(variable)
-LAT_KEYWORD(verdadero)
+// new keywords
+KEYWORD(const) // const
+KEYWORD(var)   // let
 
-#undef LAT_KEYWORD
+KEYWORD(intentar)   // try
+KEYWORD(lanzar)     // throw
+KEYWORD(atrapar)    // catch
+KEYWORD(finalmente) // finally
+
+KEYWORD(clase)      // class
+KEYWORD(interfaz)   // interface
+KEYWORD(enum)       // enum
+KEYWORD(ctor)       // constructor
+KEYWORD(pub)        // public
+KEYWORD(priv)       // private
+KEYWORD(prot)       // protected
+KEYWORD(estructura) // struct
+KEYWORD(estatico)   // static
+KEYWORD(virtual)    // virtual
+
+KEYWORD(importar) // import
+KEYWORD(exportar) // export
+KEYWORD(mi)       // this
+
+KEYWORD(volatil) // volatil
+
+KEYWORD(modulo) // module
+
+KEYWORD(entero)  // int / long
+KEYWORD(decimal) // float / double
+KEYWORD(letra)   // char
+KEYWORD(cadena)  // char*
+
+// Annotations for module import translated from #include etc.
+ANNOTATION(module_include)
+ANNOTATION(module_begin)
+ANNOTATION(module_end)
+
+#undef ANNOTATION
+#undef KEYWORD
 #undef PUNCTUATOR
 #undef TOK

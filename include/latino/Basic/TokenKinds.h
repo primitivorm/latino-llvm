@@ -1,39 +1,38 @@
-#ifndef LATINO_BASIC_TOKENKINDS_H
-#define LATINO_BASIC_TOKENKINDS_H
+//===--- TokenKinds.h - Enum values for C Token Kinds -----------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+///
+/// \file
+/// Defines the latino::TokenKind enum and support functions.
+///
+//===----------------------------------------------------------------------===//
+
+#ifndef LLVM_LATINO_BASIC_TOKENKINDS_H
+#define LLVM_LATINO_BASIC_TOKENKINDS_H
+
+#include "llvm/ADT/DenseMapInfo.h"
 #include "llvm/Support/Compiler.h"
+
 namespace latino {
+
 namespace tok {
+
+/// Provides a simple uniform namespace for tokens from all C languages.
 enum TokenKind : unsigned short {
 #define TOK(X) X,
 #include "latino/Basic/TokenKinds.def"
   NUM_TOKENS
 };
 
-/// Provides a namespace for preprocessor keywords which start with a
-/// '#' at the beginning of the line.
-enum PPKeywordKind {
-#define PPKEYWORD(X) pp_##X,
-#include "latino/Basic/TokenKinds.def"
-  NUM_PP_KEYWORDS
-};
-
-/// Provides a namespace for Objective-C keywords which start with
-/// an '@'.
-enum ObjCKeywordKind {
-#define OBJC1_AT_KEYWORD(X) objc_##X,
-#define OBJC2_AT_KEYWORD(X) objc_##X,
-#include "latino/Basic/TokenKinds.def"
-  NUM_OBJC_KEYWORDS
-};
-
-/// Defines the possible values of an on-off-switch (C99 6.10.6p2).
-enum OnOffSwitch { OOS_ON, OOS_OFF, OOS_DEFAULT };
-
 /// Determines the name of a token as used within the front end.
 ///
 /// The name of a token will be an internal name (such as "l_square")
 /// and should not be used as part of diagnostic messages.
-const char *getTokenName(TokenKind Kind) LLVM_READONLY;
+const char *getTokenName(TokenKind Kind) LLVM_READNONE;
 
 /// Determines the spelling of simple punctuation tokens like
 /// '!' or '%', and returns NULL for literal and annotation tokens.
@@ -61,21 +60,13 @@ inline bool isStringLiteral(TokenKind K) { return K == tok::string_literal; }
 /// constant, string, etc.
 inline bool isLiteral(TokenKind K) {
   return K == tok::numeric_constant || K == tok::char_constant ||
-		 isStringLiteral(K) /*||
-         K == tok::wide_char_constant || K == tok::utf8_char_constant ||
-         K == tok::utf16_char_constant || K == tok::utf32_char_constant ||
-	     K == tok::angle_string_literal*/;
+         isStringLiteral(K);
 }
 
 /// Return true if this is any of tok::annot_* kinds.
-inline bool isAnnotation(TokenKind K) {
-#define ANNOTATION(NAME)                                                       \
-  if (K == tok::annot_##NAME)                                                  \
-    return true;
-#include "latino/Basic/TokenKinds.def"
-  return false;
-}
+bool isAnnotation(TokenKind K);
 
-} // namespace tok
+} // end namespace tok
 } // namespace latino
-#endif /* LATINO_BASIC_TOKENKINDS_H */
+
+#endif
