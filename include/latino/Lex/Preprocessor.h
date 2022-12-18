@@ -1,15 +1,18 @@
 #ifndef LLVM_LATINO_LEX_PREPROCESSOR_H
 #define LLVM_LATINO_LEX_PREPROCESSOR_H
 
-#include "clang/Basic/Diagnostic.h"
-#include "clang/Basic/SourceManager.h"
-#include "clang/Lex/ModuleLoader.h"
+#include "clang/Lex/PreprocessorOptions.h"
 #include "clang/Lex/TokenLexer.h"
 
+#include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LangOptions.h"
+#include "latino/Basic/Module.h"
+#include "latino/Basic/SourceManager.h"
+#include "latino/Lex/DirectoryLookup.h"
 #include "latino/Lex/HeaderSearch.h"
 #include "latino/Lex/Lexer.h"
+#include "latino/Lex/ModuleLoader.h"
 #include "latino/Lex/Token.h"
 
 #include "llvm/ADT/ArrayRef.h"
@@ -39,38 +42,44 @@
 #include <vector>
 
 namespace clang {
-class PreprocessorOptions;
+class clang::PreprocessorOptions;
 // class HeaderSearch;
-class TargetInfo;
-class DirectoryLookup;
 
-namespace Builtin {
-class Context;
-}
+class clang::TokenLexer;
 
 } // namespace clang
 
 namespace latino {
+
+    namespace Builtin {
+class Context;
+}
+
+class TargetInfo;
+class DirectoryLookup;
 class PreprocessorLexer;
-class clang::TokenLexer;
 
 class Preprocessor {
 
   llvm::unique_function<void(const Token &)> OnToken;
 
   std::shared_ptr<clang::PreprocessorOptions> PPOpts;
-  clang::DiagnosticsEngine *Diags;
+  DiagnosticsEngine *Diags;
   LangOptions &LangOpts;
-  const clang::TargetInfo *Target = nullptr;
-  const clang::TargetInfo *AuxTarget = nullptr;
-  clang::FileManager &FileMgr;
-  clang::SourceManager &SourceMgr;
+  const TargetInfo *Target = nullptr;
+  const TargetInfo *AuxTarget = nullptr;
+  FileManager &FileMgr;
+  SourceManager &SourceMgr;
   // clang::HeaderSearch &HeaderInfo;
-  clang::ModuleLoader &TheModuleLoader;
+  ModuleLoader &TheModuleLoader;
 
   /// Mapping/lookup information for all identifiers in
   /// the program, including program keywords.
   mutable IdentifierTable Identifiers;
+
+  /// True if we want to ignore EOF token and continue later on (thus
+  /// avoid tearing the Lexer and etc. down).
+  bool IncrementalProcessing = false;
 
   /// The kind of translation unit we are processing.
   TranslationUnitKind TUKind;
@@ -89,13 +98,13 @@ class Preprocessor {
   /// The maximum number of (LexLevel 0) tokens before issuing a -Wmax-tokens
   /// warning, or zero for unlimited.
   unsigned MaxTokens = 0;
-  clang::SourceLocation MaxTokensOverrideLoc;
+  SourceLocation MaxTokensOverrideLoc;
 
   /// Whether the last token we lexed was an '@'.
   bool LastTokenWasAt = false;
 
   /// Information about builtins.
-  std::unique_ptr<clang::Builtin::Context> BuiltinInfo;
+  std::unique_ptr<Builtin::Context> BuiltinInfo;
 
   // Various statistics we track for performance analysis.
   unsigned NumEnteredSourceFiles = 0;
@@ -112,7 +121,7 @@ private:
   ///
   /// This allows us to implement \#include_next and find directory-specific
   /// properties.
-  const clang::DirectoryLookup *CurDirLookup = nullptr;
+  const DirectoryLookup *CurDirLookup = nullptr;
 
   /// The current macro we are expanding, if we are expanding a macro.
   ///
@@ -149,7 +158,7 @@ private:
 
   /// If the current lexer is for a submodule that is being built, this
   /// is that submodule.
-  clang::Module *CurLexerSubmodule = nullptr;
+  Module *CurLexerSubmodule = nullptr;
 
   /// \{
   /// Cache of macro expanders to reduce malloc traffic.
@@ -162,9 +171,8 @@ private:
 
 public:
   Preprocessor(std::shared_ptr<clang::PreprocessorOptions> PPOpts,
-               clang::DiagnosticsEngine &diags, LangOptions &opts,
-               clang::SourceManager &SM, HeaderSearch &Headers,
-               clang::ModuleLoader &TheModuleLoader,
+               DiagnosticsEngine &diags, LangOptions &opts, SourceManager &SM,
+               HeaderSearch &Headers, ModuleLoader &TheModuleLoader,
                IdentifierInfoLookup *IILookup = nullptr,
                bool OwnsHeaderSearch = false,
                TranslationUnitKind TUKind = TranslationUnitKind::TU_Complete);
@@ -177,8 +185,8 @@ public:
   /// lifetime of the preprocessor.
   /// \param AuxTarget is owned by the caller and must remain valid for
   /// the lifetime of the preprocessor.
-  void Initialize(const clang::TargetInfo &Target,
-                  const clang::TargetInfo *AuxTarget = nullptr);
+  void Initialize(const TargetInfo &Target,
+                  const TargetInfo *AuxTarget = nullptr);
 
   /// Enter the specified FileID as the main source file,
   /// which implicitly adds the builtin defines etc.
@@ -191,13 +199,17 @@ public:
   /// start lexing tokens from it instead of the current buffer.
   ///
   /// Emits a diagnostic, doesn't enter the file, and returns true on error.
-  bool EnterSourceFile(clang::FileID FID, const clang::DirectoryLookup *Dir,
-                       clang::SourceLocation Loc);
+  bool EnterSourceFile(FileID FID, const DirectoryLookup *Dir,
+                       SourceLocation Loc);
 
-  clang::DiagnosticsEngine &getDiagnostics() const { return *Diags; }
-  void setDiagnostics(clang::DiagnosticsEngine &D) { Diags = &D; }
+  DiagnosticsEngine &getDiagnostics() const { return *Diags; }
+  void setDiagnostics(DiagnosticsEngine &D) { Diags = &D; }
 
   const LangOptions &getLangOpts() const { return LangOpts; }
+  const TargetInfo &getTargetInfo() const { return *Target; }
+  const TargetInfo *getAuxTargetInfo() const { return AuxTarget; }
+  FileManager &getFileManager() const { return FileMgr; }
+  SourceManager &getSourceManager() const { return SourceMgr; }
 
   /// Pop the current lexer/macro exp off the top of the lexer stack.
   ///
@@ -214,21 +226,18 @@ public:
   /// Get the max number of tokens before issuing a -Wmax-tokens warning.
   unsigned getMaxTokens() const { return MaxTokens; }
 
-  clang::SourceLocation getMaxTokensOverrideLoc() const {
+  SourceLocation getMaxTokensOverrideLoc() const {
     return MaxTokensOverrideLoc;
   }
-
-  clang::SourceManager &getSourceManager() const { return SourceMgr; }
 
   /// Forwarding function for diagnostics.  This emits a diagnostic at
   /// the specified Token's location, translating the token's start
   /// position in the current buffer into a SourcePosition object for rendering.
-  clang::DiagnosticBuilder Diag(clang::SourceLocation Loc,
-                                unsigned DiagID) const {
+  DiagnosticBuilder Diag(SourceLocation Loc, unsigned DiagID) const {
     return Diags->Report(Loc, DiagID);
   }
 
-  clang::DiagnosticBuilder Diag(const Token &Tok, unsigned DiagID) const {
+  DiagnosticBuilder Diag(const Token &Tok, unsigned DiagID) const {
     return Diags->Report(Tok.getLocation(), DiagID);
   }
 
@@ -318,11 +327,17 @@ public:
     }
   }
 
+  /// Returns true if incremental processing is enabled
+  bool isIncrementalProcessingEnabled() const { return IncrementalProcessing; }
+
+  void enableIncrementalProcessing(bool value = true) {
+    IncrementalProcessing = value;
+  }
+
 private:
   /// Add a lexer to the top of the include stack and
   /// start lexing tokens from it instead of the current buffer.
-  void EnterSourceFileWithLexer(Lexer *TheLexer,
-                                const clang::DirectoryLookup *Dir);
+  void EnterSourceFileWithLexer(Lexer *TheLexer, const DirectoryLookup *Dir);
 };
 } // namespace latino
 

@@ -13,7 +13,7 @@
 #ifndef LLVM_LATINO_SEMA_SCOPE_H
 #define LLVM_LATINO_SEMA_SCOPE_H
 
-#include "clang/Basic/Diagnostic.h"
+#include "latino/Basic/Diagnostic.h"
 
 namespace latino {
 class Scope {
@@ -48,12 +48,6 @@ public:
     /// also prevent things like break and continue.  BlockScopes always have
     /// the FnScope and DeclScope flags set as well.
     BlockScope = 0x40,
-
-    /// This is a scope that corresponds to the
-    /// template parameters of a C++ template. Template parameter
-    /// scope starts at the 'template' keyword and ends when the
-    /// template declaration ends.
-    TemplateParamScope = 0x80,
 
     /// This is a scope that corresponds to the
     /// parameters within a function prototype.
@@ -117,7 +111,7 @@ public:
 
   };
 
-private: 
+private:
   /// The parent scope for this scope.  This is null for the translation-unit
   /// scope.
   Scope *AnyParent;
@@ -127,11 +121,11 @@ private:
   unsigned Flags;
 
   /// Used to determine if errors occurred in this scope.
-  clang::DiagnosticErrorTrap ErrorTrap;
+  DiagnosticErrorTrap ErrorTrap;
 
 public:
-  Scope(Scope *Parent, unsigned ScopeFlags, clang::DiagnosticsEngine &Diag)
-    : ErrorTrap(Diag) {
+  Scope(Scope *Parent, unsigned ScopeFlags, DiagnosticsEngine &Diag)
+      : ErrorTrap(Diag) {
     Init(Parent, ScopeFlags);
   }
 
@@ -140,7 +134,7 @@ public:
 
   /// getParent - Return the scope that this is nested in.
   const Scope *getParent() const { return AnyParent; }
- 
+
   /// isSwitchScope - Return true if this scope is a switch scope.
   bool isSwitchScope() const {
     for (const Scope *S = this; S; S->getParent()) {
@@ -148,9 +142,8 @@ public:
         return true;
       else if (S->getFlags() &
                (Scope::FnScope | Scope::ClassScope | Scope::BlockScope |
-                Scope::TemplateParamScope | Scope::FunctionPrototypeScope |
-                Scope::AtCatchScope))
-        return false;    
+                Scope::FunctionPrototypeScope | Scope::AtCatchScope))
+        return false;
     }
     return false;
   }

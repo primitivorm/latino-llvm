@@ -14,14 +14,13 @@
 #include "latino/Parse/Parser.h"
 #include "latino/Sema/Sema.h"
 
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/ASTContext.h"
-#include "clang/AST/ExternalASTSource.h"
-#include "clang/AST/Stmt.h"
-#include "clang/Sema/CodeCompleteConsumer.h"
+#include "latino/AST/ASTConsumer.h"
+#include "latino/AST/ASTContext.h"
+#include "latino/AST/ExternalASTSource.h"
+#include "latino/AST/Stmt.h"
+#include "latino/Sema/CodeCompleteConsumer.h"
 
-#include "clang/Sema/SemaConsumer.h"
-#include "clang/Sema/TemplateInstCallback.h"
+#include "latino/Sema/SemaConsumer.h"
 
 #include "llvm/Support/CrashRecoveryContext.h"
 #include "llvm/Support/TimeProfiler.h"
@@ -48,6 +47,48 @@ public:
   void recoverResources() override { llvm::RestorePrettyStackState(resource); }
 };
 
+/// If a crash happens while the parser is active, an entry is printed for it.
+class PrettyStackTraceParserEntry : public llvm::PrettyStackTraceEntry {
+  const Parser &P;
+
+public:
+  PrettyStackTraceParserEntry(const Parser &p) : P(p) {}
+  void print(raw_ostream &OS) const override;
+};
+
+/// If a crash happens while the parser is active, print out a line indicating
+/// what the current token is.
+void PrettyStackTraceParserEntry::print(raw_ostream &OS) const {
+  const Token &Tok = P.getCurToken();
+  if (Tok.is(tok::eof)) {
+    OS << "<eof> parser at end of file\n";
+    return;
+  }
+
+  if (Tok.getLocation().isInvalid()) {
+    OS << "<unknown> parser at unknown location\n";
+    return;
+  }
+
+  const Preprocessor &PP = P.getPreprocessor();
+  Tok.getLocation().print(OS, PP.getSourceManager());
+  if (Tok.isAnnotation()) {
+    OS << ": at annotation token\n";
+  } else {
+    // Do the equivalent of PP.getSpelling(Tok) except for the parts that would
+    // allocate memory.
+    bool Invalid = false;
+    const SourceManager &SM = P.getPreprocessor().getSourceManager();
+    unsigned Length = Tok.getLength();
+    const char *Spelling = SM.getCharacterData(Tok.getLocation(), &Invalid);
+    if (Invalid) {
+      OS << ": unknown current parser token\n";
+      return;
+    }
+    OS << ": current parser token '" << StringRef(Spelling, Length) << "'\n";
+  }
+}
+
 } // namespace
 
 //===----------------------------------------------------------------------===//
@@ -73,18 +114,14 @@ void latino::ParseAST(Preprocessor &PP, ASTConsumer *Consumer, ASTContext &Ctx,
 
 void latino::ParseAST(Sema &S, bool PrintStats, bool SkipFunctionBodies) {
   // Collect global stats on Decls/Stmts (until we have a module streamer).
-  // if (PrintStats) {
-  //   Decl::EnableStatistics();
-  //   Stmt::EnableStatistics();
-  // }
+  if (PrintStats) {
+    Decl::EnableStatistics();
+    Stmt::EnableStatistics();
+  }
 
   // Also turn on collection of stats inside of the Sema object.
   bool OldCollectStats = PrintStats;
   std::swap(OldCollectStats, S.CollectStats);
-
-  // Initialize the template instantiation observer chain.
-  // FIXME: See note on "finalize" below.
-  //   initialize(S.TemplateInstCallbacks, S);
 
   ASTConsumer *Consumer = &S.getASTConsumer();
 
@@ -94,6 +131,7 @@ void latino::ParseAST(Sema &S, bool PrintStats, bool SkipFunctionBodies) {
 
   llvm::CrashRecoveryContextCleanupRegistrar<const void, ResetStackCleanup>
       CleanupParser(ParserOP.get());
+  PrettyStackTraceParserEntry CrashInfo(P);
 
   S.getPreprocessor().EnterMainSourceFile();
   // ExternalASTSource *External = S.getASTContext().getExternalSource();
@@ -134,12 +172,4 @@ void latino::ParseAST(Sema &S, bool PrintStats, bool SkipFunctionBodies) {
   // finalize(S.TemplateInstCallbacks, S);
 
   std::swap(OldCollectStats, S.CollectStats);
-  // if (PrintStats) {
-  //   llvm::errs() << "\nSTATISTICS:\n";
-  //   if (HaveLexer)
-  //     P.getActions().PrintStats();
-  //   S.getASTContext().PrintStats();
-  //   Decl::PrintStats();
-  //   Stmt::PrintStats();
-  // }
 }

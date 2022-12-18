@@ -1,5 +1,5 @@
-#include "clang/Parse/RAIIObjectsForParser.h"
-#include "clang/Sema/DeclSpec.h"
+#include "latino/Parse/RAIIObjectsForParser.h"
+#include "latino/Sema/DeclSpec.h"
 
 #include "latino/Parse/Parser.h"
 #include "latino/Sema/Scope.h"
@@ -8,9 +8,9 @@ using namespace latino;
 
 /// Parse a standalone statement (for instance, as the body of an 'if',
 /// 'while', or 'for').
-clang::StmtResult Parser::ParseStatement(clang::SourceLocation *TrailingElseLoc,
-                                         ParsedStmtContext StmtCtx) {
-  clang::StmtResult Res;
+StmtResult Parser::ParseStatement(SourceLocation *TrailingElseLoc,
+                                  ParsedStmtContext StmtCtx) {
+  StmtResult Res;
   // We may get back a null statement if we found a #pragma. Keep going until
   // we get an actual statement.
   do {
@@ -71,48 +71,48 @@ clang::StmtResult Parser::ParseStatement(clang::SourceLocation *TrailingElseLoc,
 /// [OBC]   '@' 'throw' ';'
 ///
 
-clang::StmtResult
+StmtResult
 Parser::ParseStatementOrDeclaration(StmtVector &Stmts,
                                     ParsedStmtContext StmtCtx,
-                                    clang::SourceLocation *TrailingElseLoc) {
-  // clang::ParenBraceBracketBalancer BalancerRAIIObj(*this);
+                                    SourceLocation *TrailingElseLoc) {
+  ParenBraceBracketBalancer BalancerRAIIObj(*this);
 
-  ParsedAttributesWithRange Attrs(AttrFactory);
+  // ParsedAttributesWithRange Attrs(AttrFactory);
   // MaybeParseCXX11Attributes(Attrs, nullptr, /*MightBeObjCMessageSend*/ true);
   // if (!MaybeParseOpenCLUnrollHintAttribute(Attrs))
   //   return StmtError();
 
-  clang::StmtResult Res = ParseStatementOrDeclarationAfterAttributes(
-      Stmts, StmtCtx, TrailingElseLoc, Attrs);
+  StmtResult Res = ParseStatementOrDeclarationAfterAttributes(
+      Stmts, StmtCtx, TrailingElseLoc /*, Attrs*/);
 
   // MaybeDestroyTemplateIds();
   assert((Attrs.empty() || Res.isInvalid() || Res.isUsable()) &&
          "attributes on empty statement");
 
-  if (Attrs.empty() || Res.isInvalid())
+  if (/* Attrs.empty() || */Res.isInvalid())
     return Res;
 
-  return Actions.ProcessStmtAttributes(Res.get(), Attrs, Attrs.Range);
+  //return Actions.ProcessStmtAttributes(Res.get(), Attrs, Attrs.Range);
 }
 
-clang::StmtResult Parser::ParseStatementOrDeclarationAfterAttributes(
+StmtResult Parser::ParseStatementOrDeclarationAfterAttributes(
     StmtVector &Stmts, ParsedStmtContext StmtCtx,
-    clang::SourceLocation *TrailingElseLoc, ParsedAttributesWithRange &Attrs) {
+    SourceLocation *TrailingElseLoc /*, ParsedAttributesWithRange &Attrs*/) {
   const char *SemiError = nullptr;
-  clang::StmtResult Res;
+  StmtResult Res;
 
   // Cases in this switch statement should fall through if the parser expects
   // the token to end in a semicolon (in which case SemiError should be set),
   // or they directly 'return;' if not.
   // Retry:
   tok::TokenKind Kind = Tok.getKind();
-  clang::SourceLocation AtLoc;
+  SourceLocation AtLoc;
   switch (Kind) {
   case tok::identifier: {
     Token Next = NextToken();
     if (Next.is(tok::colon)) { // C99 6.8.1: labeled-statement
       // identifier ':' statement
-      return ParseLabeledStatement(Attrs, StmtCtx);
+      return ParseLabeledStatement(/*Attrs,*/ StmtCtx);
     }
 
     // // Look up the identifier, and typo-correct it to a keyword if it's not
@@ -163,7 +163,7 @@ clang::StmtResult Parser::ParseStatementOrDeclarationAfterAttributes(
 
     if (Tok.is(tok::r_brace)) {
       // Diag(Tok, diag::err_expected_statement);
-      return clang::StmtError();
+      return StmtError();
     }
 
     return ParseExprStatement(StmtCtx);
@@ -229,14 +229,14 @@ clang::StmtResult Parser::ParseStatementOrDeclarationAfterAttributes(
 }
 
 /// Parse an expression statement.
-clang::StmtResult Parser::ParseExprStatement(ParsedStmtContext StmtCtx) {
+StmtResult Parser::ParseExprStatement(ParsedStmtContext StmtCtx) {
   // If a case keyword is missing, this is where it should be inserted.
   Token OldToken = Tok;
 
   ExprStatementTokLoc = Tok.getLocation();
 
   // expression[opt] ';'
-  clang::ExprResult Expr(ParseExpression());
+  ExprResult Expr(ParseExpression());
   if (Expr.isInvalid()) {
     // If the expression is invalid, skip ahead to the next semicolon or '}'.
     // Not doing this opens us up to the possibility of infinite loops if
@@ -269,9 +269,8 @@ clang::StmtResult Parser::ParseExprStatement(ParsedStmtContext StmtCtx) {
 ///         identifier ':' statement
 /// [GNU]   identifier ':' attributes[opt] statement
 ///
-clang::StmtResult
-Parser::ParseLabeledStatement(ParsedAttributesWithRange &attrs,
-                              ParsedStmtContext StmtCtx) {
+StmtResult Parser::ParseLabeledStatement(/*ParsedAttributesWithRange &attrs,*/
+                                         ParsedStmtContext StmtCtx) {
   assert(Tok.is(tok::identifier) && Tok.getIdentifierInfo() &&
          "Not an identifier!");
 
@@ -285,10 +284,10 @@ Parser::ParseLabeledStatement(ParsedAttributesWithRange &attrs,
   assert(Tok.is(tok::colon) && "Not a label!");
 
   // identifier ':' statement
-  clang::SourceLocation ColonLoc = ConsumeToken();
+  SourceLocation ColonLoc = ConsumeToken();
 
   // Read label attributes, if present.
-  clang::StmtResult SubStmt;
+  StmtResult SubStmt;
 
   // // Read label attributes, if present.
   // if (Tok.is(tok::kw___attribute)) {
@@ -332,8 +331,8 @@ Parser::ParseLabeledStatement(ParsedAttributesWithRange &attrs,
   if (SubStmt.isInvalid())
     SubStmt = Actions.ActOnNullStmt(ColonLoc);
 
-  clang::LabelDecl *LD = Actions.LookupOrCreateLabel(
-      IdentTok.getIdentifierInfo(), IdentTok.getLocation());
+  LabelDecl *LD = Actions.LookupOrCreateLabel(IdentTok.getIdentifierInfo(),
+                                              IdentTok.getLocation());
 
   // Actions.ProcessDeclAttributeList(Actions.CurScope, LD, attrs);
   // attrs.clear();
@@ -342,8 +341,7 @@ Parser::ParseLabeledStatement(ParsedAttributesWithRange &attrs,
                                 SubStmt.get());
 }
 
-clang::StmtResult Parser::handleExprStmt(clang::ExprResult E,
-                                         ParsedStmtContext StmtCtx) {
+StmtResult Parser::handleExprStmt(ExprResult E, ParsedStmtContext StmtCtx) {
   bool IsStmtExprResult = false;
   if ((StmtCtx & ParsedStmtContext::InStmtExpr) != ParsedStmtContext()) {
     // For GCC compatibility we skip past NullStmts.

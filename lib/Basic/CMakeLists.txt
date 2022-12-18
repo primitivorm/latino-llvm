@@ -36,7 +36,7 @@ set_source_files_properties("${version_inc}"
 set_property(SOURCE Version.cpp APPEND PROPERTY
              COMPILE_DEFINITIONS "HAVE_VCS_VERSION_INC")
 
-add_clang_library(latinoBasic
+add_latino_library(latinoBasic
 #   Attributes.cpp
 #   Builtins.cpp
 #   CharInfo.cpp
@@ -48,11 +48,11 @@ add_clang_library(latinoBasic
 #   ExpressionTraits.cpp
 #   FileManager.cpp
 #   FileSystemStatCache.cpp
-#   FixedPoint.cpp
+    FixedPoint.cpp
     IdentifierTable.cpp
     LangOptions.cpp
 #   LangStandards.cpp
-#   Module.cpp
+    Module.cpp
 #   ObjCRuntime.cpp
 #   OpenMPKinds.cpp
     OperatorPrecedence.cpp

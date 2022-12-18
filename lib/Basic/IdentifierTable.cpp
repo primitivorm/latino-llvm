@@ -11,13 +11,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "clang/Basic/CharInfo.h"
-#include "clang/Basic/OperatorKinds.h"
-#include "clang/Basic/Specifiers.h"
 #include "clang/Basic/TargetBuiltins.h"
 
+#include "latino/Basic/CharInfo.h"
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LangOptions.h"
+#include "latino/Basic/OperatorKinds.h"
+#include "latino/Basic/Specifiers.h"
 #include "latino/Basic/TokenKinds.h"
 
 #include "llvm/ADT/DenseMapInfo.h"

@@ -2,7 +2,7 @@
 
 set(LLVM_LINK_COMPONENTS Support)
 
-add_clang_library(latinoLex
+add_latino_library(latinoLex
   HeaderSearch.cpp
   Lexer.cpp
   PPCaching.cpp

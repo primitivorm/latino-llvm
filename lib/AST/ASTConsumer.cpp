@@ -22,8 +22,8 @@ void ASTConsumer::HandleInterestingDecl(DeclGroupRef D) {
   HandleTopLevelDecl(D);
 }
 
-void ASTConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef D) {}
+// void ASTConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef D) {}
 
-void ASTConsumer::HandleImplicitImportDecl(ImportDecl *D) {
-  HandleTopLevelDecl(DeclGroupRef(D));
-}
+// void ASTConsumer::HandleImplicitImportDecl(ImportDecl *D) {
+//   HandleTopLevelDecl(DeclGroupRef(D));
+// }

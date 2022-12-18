@@ -1,6 +1,6 @@
 #include "latino/Parse/Parser.h"
 
-#include "clang/Basic/CharInfo.h"
+#include "latino/Basic/CharInfo.h"
 
 #include "llvm/ADT/Optional.h"
 #include "llvm/ADT/SmallSet.h"

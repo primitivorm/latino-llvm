@@ -1,8 +1,6 @@
-#include "clang/Sema/DeclSpec.h"
-#include "clang/Sema/ParsedTemplate.h"
+#include "latino/Sema/DeclSpec.h"
 
-#include "clang/Sema/Sema.h"
-#include "clang/Sema/TypoCorrection.h"
+#include "latino/Sema/Sema.h"
 
 #include "latino/Parse/Parser.h"
 #include "latino/Sema/Scope.h"
@@ -100,8 +98,8 @@ using namespace latino;
 ///         expression ',' assignment-expression ...[opt]
 /// \endverbatim
 
-clang::ExprResult Parser::ParseExpression(TypeCastState isTypeCast) {
-  clang::ExprResult LHS(ParseAssigmentExpression(isTypeCast));
+ExprResult Parser::ParseExpression(TypeCastState isTypeCast) {
+  ExprResult LHS(ParseAssignmentExpression(isTypeCast));
   return ParseRHSOfBinaryExpression(LHS, prec::Comma);
 }
 
@@ -116,7 +114,7 @@ bool Parser::isNotExpressionStart() {
 }
 
 /// Parse an expr that doesn't include (top-level) commas.
-clang::ExprResult Parser::ParseAssigmentExpression(TypeCastState isTypeCast) {
+ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
   //     if (Tok.is(tok::code_completion)) {
   //     Actions.CodeCompleteExpression(getCurScope(),
   //                                    PreferredType.get(Tok.getLocation()));
@@ -129,7 +127,7 @@ clang::ExprResult Parser::ParseAssigmentExpression(TypeCastState isTypeCast) {
   //   if (Tok.is(tok::kw_co_yield))
   //     return ParseCoyieldExpression();
 
-  clang::ExprResult LHS = ParseCastExpression(
+  ExprResult LHS = ParseCastExpression(
       AnyCastExpr, /*isAddressOfOperand=*/false, isTypeCast);
 
   return ParseRHSOfBinaryExpression(LHS, prec::Assignment);
@@ -147,13 +145,13 @@ bool Parser::isFoldOperator(tok::TokenKind Kind) const {
 
 /// Parse a binary expression that starts with \p LHS and has a
 /// precedence of at least \p MinPrec.
-clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
-                                                     prec::Level MinPrec) {
+ExprResult Parser::ParseRHSOfBinaryExpression(ExprResult LHS,
+                                              prec::Level MinPrec) {
   prec::Level NextTokPrec =
       getBinOpPrecedence(Tok.getKind(), GreaterThanIsOperator,
                          /*CPlusPlus11*/ true);
 
-  clang::SourceLocation ColonLoc;
+  SourceLocation ColonLoc;
 
   // auto SavedType = PreferredType;
   while (1) {
@@ -216,7 +214,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
     }
 
     // Special case handling for the ternary operator.
-    clang::ExprResult TernaryMiddle(true);
+    ExprResult TernaryMiddle(true);
     if (NextTokPrec == prec::Conditional) {
       if (/*getLangOpts().CPlusPlus11 &&*/ Tok.is(tok::l_brace)) {
         // Parse a braced-init-list here for error recovery purposes.
@@ -226,7 +224,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
           // Diag(BraceLoc, diag::err_init_list_bin_op)
           //     << /*RHS*/ 1 << PP.getSpelling(OpToken)
           //     << Actions.getExprRange(TernaryMiddle.get());
-          TernaryMiddle = clang::ExprError();
+          TernaryMiddle = ExprError();
         }
       } else if (Tok.isNot(tok::colon)) {
         // Don't parse FOO:BAR as if it were a typo for FOO::BAR.
@@ -237,16 +235,16 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
         // In particular, the RHS of the '?' is 'expression', not
         // 'logical-OR-expression' as we might expect.
         TernaryMiddle = ParseExpression();
-      } else {
+      } /* else {
         // Special case handling of "X ? Y : Z" where Y is empty:
         //   logical-OR-expression '?' ':' conditional-expression   [GNU]
         TernaryMiddle = nullptr;
         // Diag(Tok, diag::ext_gnu_conditional_expr);
-      }
+      }*/
 
       // if (TernaryMiddle.isInvalid()) {
       //   Actions.CorrectDelayedTyposInExpr(LHS);
-      //   LHS = clang::ExprError();
+      //   LHS = ExprError();
       //   TernaryMiddle = nullptr;
       // }
 
@@ -257,7 +255,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
         // suggest inserting the colon in between them, otherwise insert ": ".
         SourceLocation FILoc = Tok.getLocation();
         const char *FIText = ": ";
-        const clang::SourceManager &SM = PP.getSourceManager();
+        const SourceManager &SM = PP.getSourceManager();
         if (FILoc.isFileID() /*|| PP.isAtStartOfMacroExpansion(FILoc, &FILoc)*/) {
           assert(FILoc.isFileID());
           bool IsInvalid = false;
@@ -293,14 +291,14 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
     // braced-init-list on the RHS of an assignment. For better diagnostics,
     // parse as if we were allowed braced-init-lists everywhere, and check that
     // they only appear on the RHS of assignments later.
-    clang::ExprResult RHS;
+    ExprResult RHS;
     bool RHSIsInitList = false;
     if (/*getLangOpts().CPlusPlus11 &&*/ Tok.is(tok::l_brace)) {
       RHS = ParseBraceInitializer();
       RHSIsInitList = true;
     } else if (/*getLangOpts().CPlusPlus &&*/
                NextTokPrec <= prec::Conditional)
-      RHS = ParseAssigmentExpression();
+      RHS = ParseAssignmentExpression();
     else
       RHS = ParseCastExpression(AnyCastExpr);
 
@@ -310,7 +308,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
     //   Actions.CorrectDelayedTyposInExpr(LHS);
     //   if (TernaryMiddle.isUsable())
     //     TernaryMiddle = Actions.CorrectDelayedTyposInExpr(TernaryMiddle);
-    //   LHS = clang::ExprError();
+    //   LHS = ExprError();
     // }
 
     // Remember the precedence of this operator and get the precedence of the
@@ -331,7 +329,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
         //     << /*LHS*/ 0 << PP.getSpelling(Tok)
         //     << Actions.getExprRange(RHS.get());
 
-        RHS = clang::ExprError();
+        RHS = ExprError();
       }
 
       //   // If this is left-associative, only parse things on the RHS that
@@ -352,7 +350,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
       //   Actions.CorrectDelayedTyposInExpr(LHS);
       //   if (TernaryMiddle.isUsable())
       //     TernaryMiddle = Actions.CorrectDelayedTyposInExpr(TernaryMiddle);
-      //   LHS = clang::ExprError();
+      //   LHS = ExprError();
       // }
 
       NextTokPrec = getBinOpPrecedence(Tok.getKind(), GreaterThanIsOperator,
@@ -366,16 +364,16 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
       } else if (ColonLoc.isValid()) {
         // Diag(ColonLoc, diag::err_init_list_bin_op)
         //     << /*RHS*/ 1 << ":" << Actions.getExprRange(RHS.get());
-        LHS = clang::ExprError();
+        LHS = ExprError();
       } else {
         // Diag(OpToken, diag::err_init_list_bin_op)
         //     << /*RHS*/ 1 << PP.getSpelling(OpToken)
         //     << Actions.getExprRange(RHS.get());
-        LHS = clang::ExprError();
+        LHS = ExprError();
       }
     }
 
-    clang::ExprResult OrigLHS = LHS;
+    ExprResult OrigLHS = LHS;
     if (!LHS.isInvalid()) {
       // Combine the LHS and RHS into the LHS (e.g. build AST).
       if (TernaryMiddle.isInvalid()) {
@@ -389,7 +387,7 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
         // Actions.getExprRange(RHS.get()).getEnd()));
 
         tok::TokenKind clangKind;
-        clang::ExprResult BinOp =
+        ExprResult BinOp =
             Actions.ActOnBinOp(getCurScope(), OpToken.getLocation(), clangKind,
                                LHS.get(), RHS.get());
 
@@ -400,12 +398,12 @@ clang::ExprResult Parser::ParseRHSOfBinaryExpression(clang::ExprResult LHS,
 
         LHS = BinOp;
       } else {
-        clang::ExprResult CondOp = Actions.ActOnConditionalOp(
+        ExprResult CondOp = Actions.ActOnConditionalOp(
             OpToken.getLocation(), ColonLoc, LHS.get(), TernaryMiddle.get(),
             RHS.get());
 
         if (CondOp.isInvalid()) {
-          std::vector<clang::Expr *> Args;
+          std::vector<Expr *> Args;
           // TernaryMiddle can be null for the GNU conditional expr
           if (TernaryMiddle.get())
             Args = {LHS.get(), TernaryMiddle.get(), RHS.get()};

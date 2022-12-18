@@ -25,6 +25,7 @@
 #include "llvm/Support/Allocator.h"
 #include "llvm/Support/PointerLikeTypeTraits.h"
 #include "llvm/Support/type_traits.h"
+
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -33,8 +34,15 @@
 #include <utility>
 
 namespace latino {
+
+class DeclarationName;
+class DeclarationNameTable;
 class IdentifierInfo;
 class LangOptions;
+class SourceLocation;
+
+/// A simple pair of identifier info and location.
+using IdentifierLocPair = std::pair<IdentifierInfo *, SourceLocation>;
 
 /// IdentifierInfo and other related classes are aligned to
 /// 8 bytes so that DeclarationName can use the lower 3 bits
@@ -55,6 +63,9 @@ class alignas(IdentifierInfoAlignment) IdentifierInfo {
 
   // True if the identifier is poisoned.
   unsigned IsPoisoned : 1;
+
+  // True if the identifier is a C++ operator keyword.
+  unsigned IsCPPOperatorKeyword : 1;
 
   // Internal bit set by the member function RecomputeNeedsHandleIdentifier.
   // See comment about RecomputeNeedsHandleIdentifier for more info.
@@ -100,8 +111,54 @@ public:
   IdentifierInfo(IdentifierInfo &&) = delete;
   IdentifierInfo &operator=(IdentifierInfo &&) = delete;
 
-  /// Return true if this token has been poisoned.
-  bool isPoisoned() const { return IsPoisoned; }
+  /// Return true if this is the identifier for the specified string.
+  ///
+  /// This is intended to be used for string literals only: II->isStr("foo").
+  template <std::size_t StrLen> bool isStr(const char (&Str)[StrLen]) const {
+    return getLength() == StrLen - 1 &&
+           memcmp(getNameStart(), Str, StrLen - 1) == 0;
+  }
+
+  /// Return true if this is the identifier for the specified StringRef.
+  bool isStr(llvm::StringRef Str) const {
+    llvm::StringRef ThisStr(getNameStart(), getLength());
+    return ThisStr == Str;
+  }
+
+  /// Return the beginning of the actual null-terminated string for this
+  /// identifier.
+  const char *getNameStart() const { return Entry->getKeyData(); }
+
+  /// Efficiently return the length of this identifier info.
+  unsigned getLength() const { return Entry->getKeyLength(); }
+
+  /// Return the actual identifier string.
+  StringRef getName() const { return StringRef(getNameStart(), getLength()); }
+
+  /// If this is a source-language token (e.g. 'for'), this API
+  /// can be used to cause the lexer to map identifiers to source-language
+  /// tokens.
+  tok::TokenKind getTokenID() const { return (tok::TokenKind)TokenID; }
+
+  /// True if revertTokenIDToIdentifier() was called.
+  bool hasRevertedTokenIDToIdentifier() const { return RevertedTokenID; }
+
+  /// Revert TokenID to tok::identifier; used for GNU libstdc++ 4.2
+  /// compatibility.
+  ///
+  /// TokenID is normally read-only but there are 2 instances where we revert it
+  /// to tok::identifier for libstdc++ 4.2. Keep track of when this happens
+  /// using this method so we can inform serialization about it.
+  void revertTokenIDToIdentifier() {
+    assert(TokenID != tok::identifier && "Already at tok::identifier");
+    TokenID = tok::identifier;
+    RevertedTokenID = true;
+  }
+  void revertIdentifierToTokenID(tok::TokenKind TK) {
+    assert(TokenID == tok::identifier && "Should be at tok::identifier");
+    TokenID = TK;
+    RevertedTokenID = false;
+  }
 
   /// setIsPoisoned - Mark this identifier as poisoned.  After poisoning, the
   /// Preprocessor will emit an error every time this token is used.
@@ -111,6 +168,54 @@ public:
       NeedsHandleIdentifier = true;
     else
       RecomputeNeedsHandleIdentifier();
+  }
+
+  /// Return true if this token has been poisoned.
+  bool isPoisoned() const { return IsPoisoned; }
+
+  /// isCPlusPlusOperatorKeyword/setIsCPlusPlusOperatorKeyword controls whether
+  /// this identifier is a C++ alternate representation of an operator.
+  void setIsCPlusPlusOperatorKeyword(bool Val = true) {
+    IsCPPOperatorKeyword = Val;
+  }
+  bool isCPlusPlusOperatorKeyword() const { return IsCPPOperatorKeyword; }
+
+  /// Return true if this token is a keyword in the specified language.
+  bool isKeyword(const LangOptions &LangOpts) const;
+
+  /// Return true if this token is a C++ keyword in the specified
+  /// language.
+  bool isCPlusPlusKeyword(const LangOptions &LangOpts) const;
+
+  /// Get and set FETokenInfo. The language front-end is allowed to associate
+  /// arbitrary metadata with this token.
+  void *getFETokenInfo() const { return FETokenInfo; }
+  void setFETokenInfo(void *T) { FETokenInfo = T; }
+
+  /// Return true if the identifier in its current state was loaded
+  /// from an AST file.
+  bool isFromAST() const { return IsFromAST; }
+
+  void setIsFromAST() { IsFromAST = true; }
+
+  /// Determine whether this identifier has changed since it was loaded
+  /// from an AST file.
+  bool hasChangedSinceDeserialization() const { return ChangedAfterLoad; }
+
+  /// Note that this identifier has changed since it was loaded from
+  /// an AST file.
+  void setChangedSinceDeserialization() { ChangedAfterLoad = true; }
+
+  /// Determine whether the frontend token information for this
+  /// identifier has changed since it was loaded from an AST file.
+  bool hasFETokenInfoChangedSinceDeserialization() const {
+    return FEChangedAfterLoad;
+  }
+
+  /// Note that the frontend token information for this identifier has
+  /// changed since it was loaded from an AST file.
+  void setFETokenInfoChangedSinceDeserialization() {
+    FEChangedAfterLoad = true;
   }
 
   /// Determine whether the information for this identifier is out of
@@ -137,6 +242,11 @@ public:
       NeedsHandleIdentifier = true;
     else
       RecomputeNeedsHandleIdentifier();
+  }
+
+  /// Provide less than operator for lexicographical sorting.
+  bool operator<(const IdentifierInfo &RHS) const {
+    return getName() < RHS.getName();
   }
 
 private:
@@ -226,6 +336,16 @@ public:
   explicit IdentifierTable(const LangOptions &LangOpts,
                            IdentifierInfoLookup *ExternalLookup = nullptr);
 
+  /// Set the external identifier lookup mechanism.
+  void setExternalIdentifierLookup(IdentifierInfoLookup *IILookup) {
+    ExternalLookup = IILookup;
+  }
+
+  /// Retrieve the external identifier lookup object, if any.
+  IdentifierInfoLookup *getExternalIdentifierLookup() const {
+    return ExternalLookup;
+  }
+
   llvm::BumpPtrAllocator &getAllocator() { return HashTable.getAllocator(); }
 
   /// Return the identifier token info for the specified named
@@ -261,11 +381,143 @@ public:
     return II;
   }
 
+  /// Gets an IdentifierInfo for the given name without consulting
+  ///        external sources.
+  ///
+  /// This is a version of get() meant for external sources that want to
+  /// introduce or modify an identifier. If they called get(), they would
+  /// likely end up in a recursion.
+  IdentifierInfo &getOwn(StringRef Name) {
+    auto &Entry = *HashTable.insert(std::make_pair(Name, nullptr)).first;
+
+    IdentifierInfo *&II = Entry.second;
+    if (II)
+      return *II;
+
+    // Lookups failed, make a new IdentifierInfo.
+    void *Mem = getAllocator().Allocate<IdentifierInfo>();
+    II = new (Mem) IdentifierInfo();
+
+    // Make sure getName() knows how to find the IdentifierInfo
+    // contents.
+    II->Entry = &Entry;
+
+    // If this is the 'import' contextual keyword, mark it as such.
+    if (Name.equals("import"))
+      II->setModulesImport(true);
+
+    return *II;
+  }
+
+  using iterator = HashTableTy::const_iterator;
+  using const_iterator = HashTableTy::const_iterator;
+
+  iterator begin() const { return HashTable.begin(); }
+  iterator end() const { return HashTable.end(); }
+  unsigned size() const { return HashTable.size(); }
+
+  iterator find(StringRef Name) const { return HashTable.find(Name); }
+
+  /// Print some statistics to stderr that indicate how well the
+  /// hashing is doing.
+  void PrintStats() const;
+
   /// Populate the identifier table with info about the language keywords
   /// for the language specified by \p LangOpts.
   void AddKeywords(const LangOptions &LangOpts);
 };
 
+namespace detail {
+
+/// DeclarationNameExtra is used as a base of various uncommon special names.
+/// This class is needed since DeclarationName has not enough space to store
+/// the kind of every possible names. Therefore the kind of common names is
+/// stored directly in DeclarationName, and the kind of uncommon names is
+/// stored in DeclarationNameExtra. It is aligned to 8 bytes because
+/// DeclarationName needs the lower 3 bits to store the kind of common names.
+/// DeclarationNameExtra is tightly coupled to DeclarationName and any change
+/// here is very likely to require changes in DeclarationName(Table).
+class alignas(IdentifierInfoAlignment) DeclarationNameExtra {
+  friend class latino::DeclarationName;
+  friend class latino::DeclarationNameTable;
+
+protected:
+  /// The kind of "extra" information stored in the DeclarationName. See
+  /// @c ExtraKindOrNumArgs for an explanation of how these enumerator values
+  /// are used. Note that DeclarationName depends on the numerical values
+  /// of the enumerators in this enum. See DeclarationName::StoredNameKind
+  /// for more info.
+  enum ExtraKind {
+    CXXDeductionGuideName,
+    CXXLiteralOperatorName,
+    CXXUsingDirective //,
+    // ObjCMultiArgSelector
+  };
+
+  /// ExtraKindOrNumArgs has one of the following meaning:
+  ///  * The kind of an uncommon C++ special name. This DeclarationNameExtra
+  ///    is in this case in fact either a CXXDeductionGuideNameExtra or
+  ///    a CXXLiteralOperatorIdName.
+  ///
+  ///  * It may be also name common to C++ using-directives (CXXUsingDirective),
+  ///
+  ///  * Otherwise it is ObjCMultiArgSelector+NumArgs, where NumArgs is
+  ///    the number of arguments in the Objective-C selector, in which
+  ///    case the DeclarationNameExtra is also a MultiKeywordSelector.
+  unsigned ExtraKindOrNumArgs;
+
+  DeclarationNameExtra(ExtraKind Kind) : ExtraKindOrNumArgs(Kind) {}
+  // DeclarationNameExtra(unsigned NumArgs)
+  //     : ExtraKindOrNumArgs(ObjCMultiArgSelector + NumArgs) {}
+
+  /// Return the corresponding ExtraKind.
+  ExtraKind getKind() const {
+    return static_cast<ExtraKind>(/*ExtraKindOrNumArgs >
+                                          (unsigned)ObjCMultiArgSelector
+                                      ? (unsigned)ObjCMultiArgSelector
+                                      : */
+                                  ExtraKindOrNumArgs);
+  }
+
+  /// Return the number of arguments in an ObjC selector. Only valid when this
+  /// is indeed an ObjCMultiArgSelector.
+  // unsigned getNumArgs() const {
+  //   assert(ExtraKindOrNumArgs >= (unsigned)ObjCMultiArgSelector &&
+  //          "getNumArgs called but this is not an ObjC selector!");
+  //   return ExtraKindOrNumArgs - (unsigned)ObjCMultiArgSelector;
+  // }
+};
+
+} // namespace detail
+
 } // namespace latino
+
+namespace llvm {
+
+// Provide PointerLikeTypeTraits for IdentifierInfo pointers, which
+// are not guaranteed to be 8-byte aligned.
+template <> struct PointerLikeTypeTraits<latino::IdentifierInfo *> {
+  static void *getAsVoidPointer(latino::IdentifierInfo *P) { return P; }
+
+  static latino::IdentifierInfo *getFromVoidPointer(void *P) {
+    return static_cast<latino::IdentifierInfo *>(P);
+  }
+
+  static constexpr int NumLowBitsAvailable = 1;
+};
+
+template <> struct PointerLikeTypeTraits<const latino::IdentifierInfo *> {
+  static const void *getAsVoidPointer(const latino::IdentifierInfo *P) {
+    return P;
+  }
+
+  static const latino::IdentifierInfo *getFromVoidPointer(const void *P) {
+    return static_cast<const latino::IdentifierInfo *>(P);
+  }
+
+  static constexpr int NumLowBitsAvailable = 1;
+};
+
+} // namespace llvm
 
 #endif

@@ -6,8 +6,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_CLANG_LEX_HEADERSEARCHOPTIONS_H
-#define LLVM_CLANG_LEX_HEADERSEARCHOPTIONS_H
+#ifndef LLVM_LATINO_LEX_HEADERSEARCHOPTIONS_H
+#define LLVM_LATINO_LEX_HEADERSEARCHOPTIONS_H
 
 #include "latino/Basic/LLVM.h"
 

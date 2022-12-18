@@ -111,7 +111,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
     // tok::kw_import is handled by ParseExternalDeclaration. (Under the Modules
     // TS, an import can occur within an export block.)
     // import_decl : {
-    //   clang::Decl *ImportDecl = ParseModuleImport(clang::SourceLocation());
+    //   clang::Decl *ImportDecl = ParseModuleImport(SourceLocation());
     //   Result = Actions.ConvertDeclToDeclGroup(ImportDecl);
     //   return false;
     // }
@@ -143,7 +143,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
     //   PP.Diag(Tok.getLocation(), clang::diag::warn_max_tokens_total)
     //       << PP.getTokenCount() << PP.getMaxTokens();
 
-    //   clang::SourceLocation OverrideLoc = PP.getMaxTokensOverrideLoc();
+    //   SourceLocation OverrideLoc = PP.getMaxTokensOverrideLoc();
     //   if (OverrideLoc.isValid()) {
     //     PP.Diag(OverrideLoc, clang::diag::note_max_tokens_total_override);
     //   }
@@ -173,7 +173,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
     break;
   }
 
-  ParsedAttributesWithRange attrs(AttrFactory);
+  // ParsedAttributesWithRange attrs(AttrFactory);
   // MaybeParseCXX11Attributes(attrs);
 
   // Result = ParseExternalDeclaration(attrs);
@@ -194,7 +194,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
 ///   private-module-fragment: [C++2a]
 ///     'module' ':' 'private' ';' top-level-declaration-seq[opt]
 Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
-  clang::SourceLocation StartLoc = Tok.getLocation();
+  SourceLocation StartLoc = Tok.getLocation();
 
   Sema::ModuleDeclKind MDK = TryConsumeToken(tok::kw_exportar)
                                  ? Sema::ModuleDeclKind::Interface
@@ -204,7 +204,7 @@ Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
       (Tok.is(tok::kw_modulo) ||
        (Tok.is(tok::identifier) && Tok.getIdentifierInfo() == Ident_module)) &&
       "not a module declaration");
-  clang::SourceLocation ModuleLoc = ConsumeToken();
+  SourceLocation ModuleLoc = ConsumeToken();
 
   // Attributes appear after the module name, not before.
   // FIXME: Suggest moving the attributes later with a fixit.
@@ -239,7 +239,7 @@ Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
   //   return Actions.ActOnPrivateModuleFragmentDecl(ModuleLoc, PrivateLoc);
   // }
 
-  llvm::SmallVector<std::pair<IdentifierInfo *, clang::SourceLocation>, 2> Path;
+  llvm::SmallVector<std::pair<IdentifierInfo *, SourceLocation>, 2> Path;
 
   // if (ParseModuleName(ModuleLoc, Path, /*IsImport*/ false))
   //   return nullptr;

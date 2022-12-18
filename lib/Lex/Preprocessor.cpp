@@ -1,10 +1,9 @@
-#include "clang/Basic/Builtins.h"
-#include "clang/Basic/TargetInfo.h"
-#include "clang/Lex/ModuleLoader.h"
-
-#include "latino/Basic/LLVM.h"
-#include "latino/Lex/HeaderSearch.h"
 #include "latino/Lex/Preprocessor.h"
+#include "latino/Basic/Builtins.h"
+#include "latino/Basic/LLVM.h"
+#include "latino/Basic/TargetInfo.h"
+#include "latino/Lex/HeaderSearch.h"
+#include "latino/Lex/ModuleLoader.h"
 
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -29,9 +28,9 @@
 using namespace latino;
 
 Preprocessor::Preprocessor(std::shared_ptr<clang::PreprocessorOptions> PPOpts,
-                           clang::DiagnosticsEngine &diags, LangOptions &opts,
-                           clang::SourceManager &SM, HeaderSearch &Headers,
-                           clang::ModuleLoader &TheModuleLoader,
+                           DiagnosticsEngine &diags, LangOptions &opts,
+                           SourceManager &SM, HeaderSearch &Headers,
+                           ModuleLoader &TheModuleLoader,
                            IdentifierInfoLookup *IILookup, bool OwnsHeaders,
                            TranslationUnitKind TUKind)
     : PPOpts(std::move(PPOpts)), Diags(&diags), LangOpts(opts),
@@ -39,15 +38,15 @@ Preprocessor::Preprocessor(std::shared_ptr<clang::PreprocessorOptions> PPOpts,
       TheModuleLoader(TheModuleLoader), Identifiers(IILookup), TUKind(TUKind) {
   MaxTokens = LangOpts.MaxTokens;
 
-  BuiltinInfo = std::make_unique<clang::Builtin::Context>();
+  BuiltinInfo = std::make_unique<latino::Builtin::Context>();
 }
 
 Preprocessor::~Preprocessor() {
   // TODO: Pending implementation
 }
 
-void Preprocessor::Initialize(const clang::TargetInfo &Target,
-                              const clang::TargetInfo *AuxTarget) {
+void Preprocessor::Initialize(const TargetInfo &Target,
+                              const TargetInfo *AuxTarget) {
   assert((!this->Target || this->Target == &Target) &&
          "Invalid override target information.");
   this->Target = &Target;
@@ -76,13 +75,13 @@ void Preprocessor::EnterMainSourceFile() {
   // cause FileID's to accumulate information from both runs (e.g. #line
   // information) and predefined macros aren't guaranteed to be set properly.
   assert(NumEnteredSourceFiles == 0 && "Cannot reenter the main file!");
-  clang::FileID MainFileID = SourceMgr.getMainFileID();
+  FileID MainFileID = SourceMgr.getMainFileID();
 
   // If MainFileID is loaded it means we loaded an AST file, no need to enter
   // a main file.
   if (!SourceMgr.isLoadedFileID(MainFileID)) {
     // Enter the main file source buffer.
-    EnterSourceFile(MainFileID, nullptr, clang::SourceLocation());
+    EnterSourceFile(MainFileID, nullptr, SourceLocation());
 
     // If we've been asked to skip bytes in the main file (e.g., as part of a
     // precompiled preamble), do so now.
@@ -140,8 +139,8 @@ void Preprocessor::Lex(Token &Result) {
     }
   } while (!ReturnedToken);
 
-  if (Result.is(tok::unknown) && TheModuleLoader.HadFatalFailure)
-    return;
+  // if (Result.is(tok::unknown) && TheModuleLoader.HadFatalFailure)
+  //   return;
 
   // if (Result.is(tok::code_completion) && Result.getIdentifierInfo()) {
   //   // Remember the identifier before code completion token.
@@ -206,3 +205,5 @@ void Preprocessor::Lex(Token &Result) {
       OnToken(Result);
   }
 }
+
+ModuleLoader::~ModuleLoader() = default;

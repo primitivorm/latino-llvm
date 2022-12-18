@@ -1,8 +1,7 @@
 #ifndef LLVM_LATINO_LEX_PREPROCESSORLEXER_H
 #define LLVM_LATINO_LEX_PREPROCESSORLEXER_H
 
-#include "clang/Basic/SourceLocation.h"
-
+#include "latino/Basic/SourceLocation.h"
 #include "latino/Lex/Token.h"
 
 #include "llvm/ADT/ArrayRef.h"
@@ -22,11 +21,11 @@ protected:
   Preprocessor *PP = nullptr;
 
   /// The SourceManager FileID corresponding to the file being lexed.
-  const clang::FileID FID;
+  const FileID FID;
 
   PreprocessorLexer() : FID() {}
 
-  PreprocessorLexer(Preprocessor *pp, clang::FileID fid);
+  PreprocessorLexer(Preprocessor *pp, FileID fid);
 };
 } // namespace latino
 

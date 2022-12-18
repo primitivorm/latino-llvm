@@ -2,11 +2,11 @@ set(LLVM_LINK_COMPONENTS
   Support
   )
 
-add_clang_unittest(LexTests
+add_latino_unittest(LexTests
   LexerTest.cpp
   )
 
-clang_target_link_libraries(LexTests
+latino_target_link_libraries(LexTests
   PRIVATE
   latinoBasic
   latinoLex

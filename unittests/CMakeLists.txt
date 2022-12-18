@@ -10,13 +10,16 @@ if(CLANG_BUILT_STANDALONE)
   endif()
 endif()
 
-# add_clang_unittest(test_dirname file1.cpp file2.cpp)
+# add_latino_unittest(test_dirname file1.cpp file2.cpp)
 #
 # Will compile the list of files together and link against the clang
 # Produces a binary named 'basename(test_dirname)'.
-function(add_clang_unittest test_dirname)
+function(add_latino_unittest test_dirname)
   add_unittest(LatinoUnitTests ${test_dirname} ${ARGN})
 endfunction()
 
 add_subdirectory(Lex)
 add_subdirectory(ASTMatchers)
+if(CLANG_ENABLE_STATIC_ANALYZER)
+  add_subdirectory(Frontend)
+endif()

@@ -1,22 +1,19 @@
-// #include "clang/Lex/Lexer.h"
-#include "clang/Basic/Diagnostic.h"
-#include "clang/Basic/DiagnosticOptions.h"
-#include "clang/Basic/FileManager.h"
-#include "clang/Basic/SourceLocation.h"
-#include "clang/Basic/SourceManager.h"
-#include "clang/Basic/TargetInfo.h"
-#include "clang/Basic/TargetOptions.h"
-// #include "clang/Basic/TokenKinds.h"
-// #include "clang/Lex/MacroArgs.h"
-// #include "clang/Lex/MacroInfo.h"
-#include "clang/Lex/ModuleLoader.h"
-// #include "clang/Lex/Preprocessor.h"
+
 #include "clang/Lex/PreprocessorOptions.h"
 
+#include "latino/Basic/Diagnostic.h"
+#include "latino/Basic/DiagnosticOptions.h"
+#include "latino/Basic/FileManager.h"
 #include "latino/Basic/LangOptions.h"
+#include "latino/Basic/SourceLocation.h"
+#include "latino/Basic/SourceManager.h"
+#include "latino/Basic/TargetInfo.h"
+#include "latino/Basic/TargetOptions.h"
+
 #include "latino/Lex/HeaderSearch.h"
 #include "latino/Lex/HeaderSearchOptions.h"
 #include "latino/Lex/Lexer.h"
+#include "latino/Lex/ModuleLoader.h"
 #include "latino/Lex/Preprocessor.h"
 
 #include "gmock/gmock.h"
@@ -31,16 +28,16 @@ using testing::ElementsAre;
 class LexerTest : public ::testing::Test {
 protected:
   LexerTest()
-      : FileMgr(FileMgrOpts), DiagID(new clang::DiagnosticIDs()),
-        Diags(DiagID, new clang::DiagnosticOptions,
-              new clang::IgnoringDiagConsumer()),
-        SourceMgr(Diags, FileMgr), TargetOpts(new clang::TargetOptions) {
+      : FileMgr(FileMgrOpts), DiagID(new latino::DiagnosticIDs()),
+        Diags(DiagID, new latino::DiagnosticOptions,
+              new latino::IgnoringDiagConsumer()),
+        SourceMgr(Diags, FileMgr), TargetOpts(new TargetOptions) {
     TargetOpts->Triple = "x86_64-apple-darwin11.1.0";
-    Target = clang::TargetInfo::CreateTargetInfo(Diags, TargetOpts);
+    Target = TargetInfo::CreateTargetInfo(Diags, TargetOpts);
   }
 
-  std::unique_ptr<Preprocessor>
-  CreatePP(llvm::StringRef Source, clang::TrivialModuleLoader &ModLoader) {
+  std::unique_ptr<Preprocessor> CreatePP(llvm::StringRef Source,
+                                         TrivialModuleLoader &ModLoader) {
     std::unique_ptr<llvm::MemoryBuffer> Buf =
         llvm::MemoryBuffer::getMemBuffer(Source);
     SourceMgr.setMainFileID(SourceMgr.createFileID(std::move(Buf)));
@@ -60,7 +57,7 @@ protected:
   }
 
   std::vector<Token> Lex(llvm::StringRef Source) {
-    clang::TrivialModuleLoader ModLoader;
+    TrivialModuleLoader ModLoader;
     auto PP = CreatePP(Source, ModLoader);
 
     std::vector<Token> toks;
@@ -88,23 +85,23 @@ protected:
 
   std::string getSourceText(Token Begin, Token End) {
     bool Invalid = false;
-    llvm::StringRef Str = Lexer::getSourceText(
-        clang::CharSourceRange::getTokenRange(
-            clang::SourceRange(Begin.getLocation(), End.getLocation())),
-        SourceMgr, LangOpts, &Invalid);
+    llvm::StringRef Str =
+        Lexer::getSourceText(CharSourceRange::getTokenRange(SourceRange(
+                                 Begin.getLocation(), End.getLocation())),
+                             SourceMgr, LangOpts, &Invalid);
     if (Invalid)
       return "<INVALID>";
     return std::string(Str);
   }
 
-  clang::FileSystemOptions FileMgrOpts;
-  clang::FileManager FileMgr;
-  clang::IntrusiveRefCntPtr<clang::DiagnosticIDs> DiagID;
-  clang::DiagnosticsEngine Diags;
-  clang::SourceManager SourceMgr;
+  FileSystemOptions FileMgrOpts;
+  FileManager FileMgr;
+  latino::IntrusiveRefCntPtr<latino::DiagnosticIDs> DiagID;
+  DiagnosticsEngine Diags;
+  SourceManager SourceMgr;
   LangOptions LangOpts;
-  std::shared_ptr<clang::TargetOptions> TargetOpts;
-  llvm::IntrusiveRefCntPtr<clang::TargetInfo> Target;
+  std::shared_ptr<TargetOptions> TargetOpts;
+  llvm::IntrusiveRefCntPtr<TargetInfo> Target;
 };
 
 TEST_F(LexerTest, LexEndOfFile) {

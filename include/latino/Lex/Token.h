@@ -13,17 +13,14 @@
 #ifndef LLVM_LATINO_LEX_TOKEN_H
 #define LLVM_LATINO_LEX_TOKEN_H
 
-#include "clang/Basic/SourceLocation.h"
-
+#include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/TokenKinds.h"
-#include "latino/Basic/IdentifierTable.h"
 
 #include "llvm/ADT/StringRef.h"
 #include <cassert>
 
 namespace latino {
-
-using clang::SourceLocation;
+class IdentifierInfo;
 
 class Token {
   /// The location of the token. This is actually a SourceLocation.
@@ -111,12 +108,12 @@ public:
   unsigned getLength() const { return UintData; }
   void setLength(unsigned Len) { UintData = Len; }
 
-  clang::SourceLocation getAnnotationEndLoc() const {
+  SourceLocation getAnnotationEndLoc() const {
     assert(!isAnnotation() && "Used AnnotEndLocID on non-annotation token");
-    return clang::SourceLocation::getFromRawEncoding(UintData ? UintData : Loc);
+    return SourceLocation::getFromRawEncoding(UintData ? UintData : Loc);
   }
 
-  void setAnnotationEndLoc(clang::SourceLocation L) {
+  void setAnnotationEndLoc(SourceLocation L) {
     assert(!isAnnotation() && "Used AnnotEndLocID on non-annotation token");
     UintData = L.getRawEncoding();
   }

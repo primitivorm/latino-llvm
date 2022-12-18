@@ -1,7 +1,7 @@
 #ifndef LLVM_LATINO_LEX_LEXER_H
 #define LLVM_LATINO_LEX_LEXER_H
 
-#include "clang/Basic/SourceLocation.h"
+#include "latino/Basic/SourceLocation.h"
 
 #include "latino/Basic/LangOptions.h"
 #include "latino/Lex/PreprocessorLexer.h"
@@ -18,12 +18,10 @@ namespace llvm {
 class MemoryBuffer;
 }
 
-namespace clang {
+namespace latino {
+
 class SourceLocation;
 class LangOptions;
-} // namespace clang
-
-namespace latino {
 
 class Lexer : public PreprocessorLexer {
   friend class Preprocessor;
@@ -40,7 +38,7 @@ class Lexer : public PreprocessorLexer {
   const char *BufferEnd;
 
   // Location for start of file.
-  clang::SourceLocation FileLoc;
+  SourceLocation FileLoc;
 
   // LangOpts enabled by this language (cache).
   latino::LangOptions LangOpts;
@@ -84,28 +82,26 @@ public:
   /// with the specified preprocessor managing the lexing process.  This lexer
   /// assumes that the associated file buffer and Preprocessor objects will
   /// outlive it, so it doesn't take ownership of either of them.
-  Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile,
-        Preprocessor &PP);
+  Lexer(FileID FID, const llvm::MemoryBuffer *InputFile, Preprocessor &PP);
 
   /// Lexer constructor - Create a new raw lexer object.  This object is only
   /// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the
   /// text range will outlive it, so it doesn't take ownership of it.
-  Lexer(clang::SourceLocation FileLoc, const LangOptions &LangOpts,
+  Lexer(SourceLocation FileLoc, const LangOptions &LangOpts,
         const char *BufStart, const char *BufPtr, const char *BufEnd);
 
   /// Lexer constructor - Create a new raw lexer object.  This object is only
   /// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the
   /// text range will outlive it, so it doesn't take ownership of it.
-  Lexer(clang::FileID FID, const llvm::MemoryBuffer *FromFile,
-        const clang::SourceManager &SM, const LangOptions &LangOpts);
+  Lexer(FileID FID, const llvm::MemoryBuffer *FromFile, const SourceManager &SM,
+        const LangOptions &LangOpts);
 
   Lexer(const Lexer &) = delete;
   Lexer &operator=(const Lexer &) = delete;
 
   /// Diag - Forwarding function for diagnostics.  This translate a source
   /// position in the current buffer into a SourceLocation object for rendering.
-  clang::SourceLocation getSourceLocation(const char *Loc,
-                                          unsigned TokLen = 1) const;
+  SourceLocation getSourceLocation(const char *Loc, unsigned TokLen = 1) const;
 
   /// Return the current location in the buffer.
   const char *getBufferLocation() const { return BufferPtr; }
@@ -127,9 +123,9 @@ public:
   /// Given a location any where in a source buffer, find the location
   /// that corresponds to the beginning of the token in which the original
   /// source location lands.
-  static clang::SourceLocation
-  GetBeginningOfToken(clang::SourceLocation Loc, const clang::SourceManager &SM,
-                      const LangOptions &LangOpts);
+  static SourceLocation GetBeginningOfToken(SourceLocation Loc,
+                                            const SourceManager &SM,
+                                            const LangOptions &LangOpts);
 
 private:
   /// Lex - Return the next token in the file.  If this is the end of file, it
@@ -178,14 +174,13 @@ public:
   /// inside the macro arguments.
   /// if you have range [a, 2], the function will return the file range
   /// "FM(a b M)" since the range includes all of the macro expansion.
-  static clang::CharSourceRange
-  makeFileCharRange(clang::CharSourceRange Range,
-                    const clang::SourceManager &SM,
-                    const LangOptions &LangOpts);
+  static CharSourceRange makeFileCharRange(CharSourceRange Range,
+                                           const SourceManager &SM,
+                                           const LangOptions &LangOpts);
 
   /// Returns a string for the source that the range encompasses.
-  static llvm::StringRef getSourceText(clang::CharSourceRange Range,
-                                       const clang::SourceManager &SM,
+  static llvm::StringRef getSourceText(CharSourceRange Range,
+                                       const SourceManager &SM,
                                        const LangOptions &LangOpts,
                                        bool *Invalid = nullptr);
 
@@ -193,22 +188,21 @@ public:
   ///
   /// Returns the next token, or none if the location is inside a macro.
   static llvm::Optional<Token> findNextToken(SourceLocation Loc,
-                                             const clang::SourceManager &SM,
+                                             const SourceManager &SM,
                                              const LangOptions &LangOpts);
 
   /// MeasureTokenLength - Relex the token at the specified location and return
   /// its length in bytes in the input file.  If the token needs cleaning (e.g.
   /// includes a trigraph or an escaped newline) then this count includes bytes
   /// that are part of that.
-  static unsigned MeasureTokenLength(clang::SourceLocation Loc,
-                                     const clang::SourceManager &SM,
+  static unsigned MeasureTokenLength(SourceLocation Loc,
+                                     const SourceManager &SM,
                                      const LangOptions &LangOpts);
 
   /// Relex the token at the specified location.
   /// \returns true if there was a failure, false on success.
-  static bool getRawToken(clang::SourceLocation Loc, Token &Result,
-                          const clang::SourceManager &SM,
-                          const LangOptions &LangOpts,
+  static bool getRawToken(SourceLocation Loc, Token &Result,
+                          const SourceManager &SM, const LangOptions &LangOpts,
                           bool IgnoreWhiteSpace = false);
 
   /// Computes the source location just past the end of the
@@ -226,10 +220,9 @@ public:
   /// location should refer to. The default offset (0) produces a source
   /// location pointing just past the end of the token; an offset of 1 produces
   /// a source location pointing to the last character in the token, etc.
-  static clang::SourceLocation
-  getLocForEndOfToken(clang::SourceLocation Loc, unsigned Offset,
-                      const clang::SourceManager &SM,
-                      const LangOptions &LangOpts);
+  static SourceLocation getLocForEndOfToken(SourceLocation Loc, unsigned Offset,
+                                            const SourceManager &SM,
+                                            const LangOptions &LangOpts);
 
 private:
   //===--------------------------------------------------------------------===//

@@ -2,7 +2,7 @@ set(LLVM_LINK_COMPONENTS
     Support
 )
 
-# add_clang_unittest(ASTMatchersTests
+# add_latino_unittest(ASTMatchersTests
 #     ASTMatchersNodeTest.cpp
 # )
 

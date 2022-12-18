@@ -1,10 +1,11 @@
+
+#include "latino/Sema/Designator.h"
+#include "latino/Sema/Scope.h"
+
 #include "latino/Basic/TokenKinds.h"
 #include "latino/Parse/Parser.h"
 #include "latino/Parse/RAIIObjectsForParser.h"
-
-#include "clang/Sema/Designator.h"
-#include "clang/Sema/Ownership.h"
-#include "clang/Sema/Scope.h"
+#include "latino/Sema/Ownership.h"
 
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SmallString.h"
@@ -23,12 +24,12 @@ using namespace latino;
 ///         designation[opt] initializer ...[opt]
 ///         initializer-list ',' designation[opt] initializer ...[opt]
 ///
-clang::ExprResult Parser::ParseBraceInitializer() {
+ExprResult Parser::ParseBraceInitializer() {
   // InMessageExpressionRAIIObject InMessage(*this, false);
 
   BalancedDelimiterTracker T(*this, tok::l_brace);
   T.consumeOpen();
-  clang::SourceLocation LBraceLoc = T.getOpenLocation();
+  SourceLocation LBraceLoc = T.getOpenLocation();
 
   /// InitExprs - This is the actual list of expressions contained in the
   /// initializer.
@@ -68,7 +69,7 @@ clang::ExprResult Parser::ParseBraceInitializer() {
 
     // If we know that this cannot be a designation, just parse the nested
     // initializer directly.
-    clang::ExprResult SubElt;
+    ExprResult SubElt;
     if (MayBeDesignationStart())
       // SubElt =
       // ParseInitializerWithPotentialDesignator(CodeCompleteDesignator);
@@ -119,5 +120,5 @@ clang::ExprResult Parser::ParseBraceInitializer() {
   // if (InitExprsOk && closed)
   //   return Actions.ActOnInitList(LBraceLoc, InitExprs, T.getCloseLocation());
 
-  return clang::ExprError(); // an error occurred.
+  return ExprError(); // an error occurred.
 }

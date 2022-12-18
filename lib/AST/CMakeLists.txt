@@ -4,8 +4,12 @@ set(LINK_COMPONENTS
     Support
 )
 
-add_clang_library(latinoAST
+add_latino_library(latinoAST
+    APValue.cpp
     ASTConsumer.cpp
     DeclBase.cpp
+    DeclGroup.cpp
+    Decl.cpp
     Stmt.cpp
+    StmtPrinter.cpp
 )

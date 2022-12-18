@@ -8,9 +8,8 @@ using namespace latino;
 
 /// EnterSourceFile - Add a source file to the top of the include stack and
 /// start lexing tokens from it instead of the current buffer.
-bool Preprocessor::EnterSourceFile(clang::FileID FID,
-                                   const clang::DirectoryLookup *CurDir,
-                                   clang::SourceLocation Loc) {
+bool Preprocessor::EnterSourceFile(FileID FID, const DirectoryLookup *CurDir,
+                                   SourceLocation Loc) {
   assert(!CurTokenLexer && "Cannot #include a file inside a macros!");
   ++NumEnteredSourceFiles;
 
@@ -23,7 +22,7 @@ bool Preprocessor::EnterSourceFile(clang::FileID FID,
       getSourceManager().getBuffer(FID, Loc, &Invalid);
 
   if (Invalid) {
-    clang::SourceLocation FileStart = SourceMgr.getLocForStartOfFile(FID);
+    SourceLocation FileStart = SourceMgr.getLocForStartOfFile(FID);
     // Diag(Loc, diag::err_pp_error_opening_file)
     //     << std::string(SourceMgr.getBufferName(FileStart)) << "";
     return true;
@@ -42,8 +41,8 @@ bool Preprocessor::EnterSourceFile(clang::FileID FID,
 
 /// EnterSourceFileWithLexer - Add a source file to the top of the include stack
 ///  and start lexing tokens from it instead of the current buffer.
-void Preprocessor::EnterSourceFileWithLexer(
-    Lexer *TheLexer, const clang::DirectoryLookup *CurDir) {
+void Preprocessor::EnterSourceFileWithLexer(Lexer *TheLexer,
+                                            const DirectoryLookup *CurDir) {
   // Add the current lexer to the include stack.
   // if (CurPPLexer || CurTokenLexer)
   //   PushIncludeMacroStack();

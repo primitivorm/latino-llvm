@@ -5,7 +5,7 @@ set(LLVM_LINK_COMPONENTS
     Support
 )
 
-add_clang_library(latinoParse
+add_latino_library(latinoParse
     ParseInit.cpp
     ParseDecl.cpp
     ParseStmt.cpp
