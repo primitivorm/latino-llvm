@@ -17,6 +17,7 @@
 // #include "latino/AST/ASTConcept.h"
 #include "latino/AST/ASTFwd.h"
 #include "latino/AST/ComparisonCategories.h"
+#include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExternalASTSource.h"
@@ -91,6 +92,7 @@ class CXXScopeSpec;
 class CXXTemporary;
 class CXXTryStmt;
 class CallExpr;
+class ClassTemplateSpecializationDecl;
 class CodeCompleteConsumer;
 class CodeCompletionAllocator;
 class CodeCompletionTUInfo;
@@ -3698,7 +3700,7 @@ public:
   /// that sets a calling convention. Valid
   /// types should not have multiple
   /// attributes with different CCs.
-  // const AttributedType *getCallingConvAttributedType(QualType T) const;
+  const AttributedType *getCallingConvAttributedType(QualType T) const;
 
   /// Stmt attributes - this routine is the
   /// top level dispatcher.

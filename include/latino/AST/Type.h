@@ -19,7 +19,9 @@
 
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/NestedNameSpecifier.h"
+#include "latino/AST/TemplateName.h"
 #include "latino/Basic/AddressSpaces.h"
+#include "latino/Basic/AttrKinds.h"
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/ExceptionSpecificationType.h"
 #include "latino/Basic/LLVM.h"
@@ -28,7 +30,6 @@
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/Specifiers.h"
 #include "latino/Basic/Visibility.h"
-
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/APSInt.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -46,7 +47,6 @@
 #include "llvm/Support/PointerLikeTypeTraits.h"
 #include "llvm/Support/TrailingObjects.h"
 #include "llvm/Support/type_traits.h"
-
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -116,6 +116,10 @@ struct PrintingPolicy;
 class RecordDecl;
 class Stmt;
 class TagDecl;
+class TemplateArgument;
+class TemplateArgumentListInfo;
+class TemplateArgumentLoc;
+class TemplateTypeParmDecl;
 class TypedefNameDecl;
 class UnresolvedUsingTypenameDecl;
 
@@ -1223,7 +1227,7 @@ public:
   // QualType substObjCMemberType(QualType objectType, const DeclContext *dc,
   //                              ObjCSubstitutionContext context) const;
 
-  // /// Strip Objective-C "__kindof" types from the given type.
+  /// Strip Objective-C "__kindof" types from the given type.
   // QualType stripObjCKindOfType(const ASTContext &ctx) const;
 
   /// Remove all qualifiers including _Atomic.
@@ -1641,14 +1645,14 @@ protected:
     static constexpr uint32_t MaxElementsPerDimension = (1 << 20) - 1;
   };
 
-  // class AttributedTypeBitfields {
-  //   friend class AttributedType;
+  class AttributedTypeBitfields {
+    friend class AttributedType;
 
-  //   unsigned : NumTypeBits;
+    unsigned : NumTypeBits;
 
-  //   /// An AttributedType::Kind
-  //   unsigned AttrKind : 32 - NumTypeBits;
-  // };
+    /// An AttributedType::Kind
+    unsigned AttrKind : 32 - NumTypeBits;
+  };
 
   class AutoTypeBitfields {
     friend class AutoType;
@@ -1669,11 +1673,79 @@ protected:
     unsigned NumArgs;
   };
 
+  class SubstTemplateTypeParmPackTypeBitfields {
+    friend class SubstTemplateTypeParmPackType;
+
+    unsigned : NumTypeBits;
+
+    /// The number of template arguments in \c Arguments, which is
+    /// expected to be able to hold at least 1024 according to [implimits].
+    /// However as this limit is somewhat easy to hit with template
+    /// metaprogramming we'd prefer to keep it as large as possible.
+    /// At the moment it has been left as a non-bitfield since this type
+    /// safely fits in 64 bits as an unsigned, so there is no reason to
+    /// introduce the performance impact of a bitfield.
+    unsigned NumArgs;
+  };
+
+  class TemplateSpecializationTypeBitfields {
+    friend class TemplateSpecializationType;
+
+    unsigned : NumTypeBits;
+
+    /// Whether this template specialization type is a substituted type alias.
+    unsigned TypeAlias : 1;
+
+    /// The number of template arguments named in this class template
+    /// specialization, which is expected to be able to hold at least 1024
+    /// according to [implimits]. However, as this limit is somewhat easy to
+    /// hit with template metaprogramming we'd prefer to keep it as large
+    /// as possible. At the moment it has been left as a non-bitfield since
+    /// this type safely fits in 64 bits as an unsigned, so there is no reason
+    /// to introduce the performance impact of a bitfield.
+    unsigned NumArgs;
+  };
+
+  class DependentTemplateSpecializationTypeBitfields {
+    friend class DependentTemplateSpecializationType;
+
+    unsigned : NumTypeBits;
+    unsigned : NumTypeWithKeywordBits;
+
+    /// The number of template arguments named in this class template
+    /// specialization, which is expected to be able to hold at least 1024
+    /// according to [implimits]. However, as this limit is somewhat easy to
+    /// hit with template metaprogramming we'd prefer to keep it as large
+    /// as possible. At the moment it has been left as a non-bitfield since
+    /// this type safely fits in 64 bits as an unsigned, so there is no reason
+    /// to introduce the performance impact of a bitfield.
+    unsigned NumArgs;
+  };
+
+  class PackExpansionTypeBitfields {
+    friend class PackExpansionType;
+
+    unsigned : NumTypeBits;
+
+    /// The number of expansions that this pack expansion will
+    /// generate when substituted (+1), which is expected to be able to
+    /// hold at least 1024 according to [implimits]. However, as this limit
+    /// is somewhat easy to hit with template metaprogramming we'd prefer to
+    /// keep it as large as possible. At the moment it has been left as a
+    /// non-bitfield since this type safely fits in 64 bits as an unsigned, so
+    /// there is no reason to introduce the performance impact of a bitfield.
+    ///
+    /// This field will only have a non-zero value when some of the parameter
+    /// packs that occur within the pattern have been substituted but others
+    /// have not.
+    unsigned NumExpansions;
+  };
+
   union {
     TypeBitfields TypeBits;
     ArrayTypeBitfields ArrayTypeBits;
     ConstantArrayTypeBitfields ConstantArrayTypeBits;
-    // AttributedTypeBitfields AttributedTypeBits;
+    AttributedTypeBitfields AttributedTypeBits;
     AutoTypeBitfields AutoTypeBits;
     BuiltinTypeBitfields BuiltinTypeBits;
     FunctionTypeBitfields FunctionTypeBits;
@@ -1683,13 +1755,18 @@ protected:
     ElaboratedTypeBitfields ElaboratedTypeBits;
     VectorTypeBitfields VectorTypeBits;
     ConstantMatrixTypeBitfields ConstantMatrixTypeBits;
+    SubstTemplateTypeParmPackTypeBitfields SubstTemplateTypeParmPackTypeBits;
+    TemplateSpecializationTypeBitfields TemplateSpecializationTypeBits;
+    DependentTemplateSpecializationTypeBitfields
+        DependentTemplateSpecializationTypeBits;
+    PackExpansionTypeBitfields PackExpansionTypeBits;
 
     static_assert(sizeof(TypeBitfields) <= 8,
                   "TypeBitfields is larger than 8 bytes!");
     static_assert(sizeof(ArrayTypeBitfields) <= 8,
                   "ArrayTypeBitfields is larger than 8 bytes!");
-    // static_assert(sizeof(AttributedTypeBitfields) <= 8,
-    //               "AttributedTypeBitfields is larger than 8 bytes!");
+    static_assert(sizeof(AttributedTypeBitfields) <= 8,
+                  "AttributedTypeBitfields is larger than 8 bytes!");
     static_assert(sizeof(AutoTypeBitfields) <= 8,
                   "AutoTypeBitfields is larger than 8 bytes!");
     static_assert(sizeof(BuiltinTypeBitfields) <= 8,
@@ -1706,6 +1783,17 @@ protected:
                   "ElaboratedTypeBitfields is larger than 8 bytes!");
     static_assert(sizeof(VectorTypeBitfields) <= 8,
                   "VectorTypeBitfields is larger than 8 bytes!");
+    static_assert(sizeof(SubstTemplateTypeParmPackTypeBitfields) <= 8,
+                  "SubstTemplateTypeParmPackTypeBitfields is larger"
+                  " than 8 bytes!");
+    static_assert(sizeof(TemplateSpecializationTypeBitfields) <= 8,
+                  "TemplateSpecializationTypeBitfields is larger"
+                  " than 8 bytes!");
+    static_assert(sizeof(DependentTemplateSpecializationTypeBitfields) <= 8,
+                  "DependentTemplateSpecializationTypeBitfields is larger"
+                  " than 8 bytes!");
+    static_assert(sizeof(PackExpansionTypeBitfields) <= 8,
+                  "PackExpansionTypeBitfields is larger than 8 bytes");
   };
 
 private:
@@ -1901,7 +1989,7 @@ public:
   bool isReferenceType() const;
   bool isLValueReferenceType() const;
   bool isRValueReferenceType() const;
-  bool isObjectPointerType() const;
+  // bool isObjectPointerType() const;
   bool isFunctionPointerType() const;
   bool isFunctionReferenceType() const;
   bool isMemberPointerType() const;
@@ -1934,9 +2022,8 @@ public:
   // bool
   // isObjCIndependentClassType() const; //
   // __attribute__((objc_independent_class))
-  // // FIXME: change this to 'raw' interface type, so we can used 'interface'
-  // type
-  // // for the common case.
+  // FIXME: change this to 'raw' interface type, so we can used 'interface' type
+  // for the common case.
   // bool isObjCObjectType() const;             // NSString or typeof(*(id)0)
   // bool isObjCQualifiedInterfaceType() const; // NSString<foo>
   // bool isObjCQualifiedIdType() const;        // id<foo>
@@ -1950,9 +2037,9 @@ public:
   /// This approximates the answer to the following question: if this
   /// translation unit were compiled in ARC, would this type be qualified
   /// with __unsafe_unretained?
-  // bool isObjCInertUnsafeUnretainedType() const {
-  //   return hasAttr(attr::ObjCInertUnsafeUnretained);
-  // }
+  /*bool isObjCInertUnsafeUnretainedType() const {
+    return hasAttr(attr::ObjCInertUnsafeUnretained);
+  }*/
 
   /// Whether the type is Objective-C 'id' or a __kindof type of an
   /// object type, e.g., __kindof NSView * or __kindof id
@@ -1978,17 +2065,18 @@ public:
   // bool isObjCSelType() const;     // Class
   // bool isObjCBuiltinType() const; // 'id' or 'Class'
   // bool isObjCARCBridgableType() const;
-  bool isCARCBridgableType() const;
-  bool isNullPtrType() const;       // C++11 std::nullptr_t
-  bool isNothrowT() const;          // C++   std::nothrow_t
-  bool isAlignValT() const;         // C++17 std::align_val_t
-  bool isStdByteType() const;       // C++17 std::byte
-  bool isAtomicType() const;        // C11 _Atomic()
-  bool isUndeducedAutoType() const; // C++11 auto or
-                                    // C++14 decltype(auto)
+  // bool isCARCBridgableType() const;
+  bool isTemplateTypeParmType() const; // C++ template type parameter
+  bool isNullPtrType() const;          // C++11 std::nullptr_t
+  bool isNothrowT() const;             // C++   std::nothrow_t
+  bool isAlignValT() const;            // C++17 std::align_val_t
+  bool isStdByteType() const;          // C++17 std::byte
+  bool isAtomicType() const;           // C11 _Atomic()
+  bool isUndeducedAutoType() const;    // C++11 auto or
+                                       // C++14 decltype(auto)
 
-  // #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
-//   bool is##Id##Type() const;
+  //#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
+//  bool is##Id##Type() const;
   // #include "latino/Basic/OpenCLImageTypes.def"
 
   bool isImageType() const; // Any OpenCL image type
@@ -2001,7 +2089,8 @@ public:
 
   // #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) bool is##Id##Type() const;
   // #include "latino/Basic/OpenCLExtensionTypes.def"
-  // Type defined in cl_intel_device_side_avc_motion_estimation OpenCL extension
+  //  Type defined in cl_intel_device_side_avc_motion_estimation OpenCL
+  //  extension
   bool isOCLIntelSubgroupAVCType() const;
   bool isOCLExtOpaqueType() const; // Any OpenCL extension type
 
@@ -2019,13 +2108,13 @@ public:
   /// Check if the type is the CUDA device builtin texture type.
   // bool isCUDADeviceBuiltinTextureType() const;
 
-  /// Return the implicit lifetime for this type, which must not be dependent.
-  // Qualifiers::ObjCLifetime getObjCARCImplicitLifetime() const;
+  /*/// Return the implicit lifetime for this type, which must not be dependent.
+  Qualifiers::ObjCLifetime getObjCARCImplicitLifetime() const;*/
 
   enum ScalarTypeKind {
     STK_CPointer,
     STK_BlockPointer,
-    // STK_ObjCObjectPointer,
+    STK_ObjCObjectPointer,
     STK_MemberPointer,
     STK_Bool,
     STK_Integral,
@@ -2121,10 +2210,10 @@ public:
 
   // The following is a convenience method that returns an ObjCObjectPointerType
   // for object declared using an interface.
-  // const ObjCObjectPointerType *getAsObjCInterfacePointerType() const;
-  // const ObjCObjectPointerType *getAsObjCQualifiedIdType() const;
-  // const ObjCObjectPointerType *getAsObjCQualifiedClassType() const;
-  // const ObjCObjectType *getAsObjCQualifiedInterfaceType() const;
+  /*const ObjCObjectPointerType *getAsObjCInterfacePointerType() const;
+  const ObjCObjectPointerType *getAsObjCQualifiedIdType() const;
+  const ObjCObjectPointerType *getAsObjCQualifiedClassType() const;
+  const ObjCObjectType *getAsObjCQualifiedInterfaceType() const;*/
 
   /// Retrieves the CXXRecordDecl that this type refers to, either
   /// because the type is a RecordType or because it is the injected-class-name
@@ -2196,7 +2285,7 @@ public:
 
   /// Determine whether this type had the specified attribute applied to it
   /// (looking through top-level type sugar).
-  // bool hasAttr(attr::Kind AK) const;
+  bool hasAttr(attr::Kind AK) const;
 
   /// Get the base element type of this type, potentially discarding type
   /// qualifiers.  This should never be used when type qualifiers
@@ -2343,9 +2432,14 @@ public:
 /// until it reaches a TypedefType or a non-sugared type.
 template <> const TypedefType *Type::getAs() const;
 
+/// This will check for a TemplateSpecializationType by removing any
+/// existing sugar until it reaches a TemplateSpecializationType or a
+/// non-sugared type.
+template <> const TemplateSpecializationType *Type::getAs() const;
+
 /// This will check for an AttributedType by removing any existing sugar
 /// until it reaches an AttributedType or a non-sugared type.
-// template <> const AttributedType *Type::getAs() const;
+template <> const AttributedType *Type::getAs() const;
 
 // We can do canonical leaf types faster, because we don't have to
 // worry about preserving child type decoration.
@@ -3005,7 +3099,7 @@ class DependentAddressSpaceType : public Type, public llvm::FoldingSetNode {
 public:
   Expr *getAddrSpaceExpr() const { return AddrSpaceExpr; }
   QualType getPointeeType() const { return PointeeType; }
-  // SourceLocation getAttributeLoc() const { return loc; }
+  SourceLocation getAttributeLoc() const { return loc; }
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -3049,7 +3143,7 @@ class DependentSizedExtVectorType : public Type, public llvm::FoldingSetNode {
 public:
   Expr *getSizeExpr() const { return SizeExpr; }
   QualType getElementType() const { return ElementType; }
-  // SourceLocation getAttributeLoc() const { return loc; }
+  SourceLocation getAttributeLoc() const { return loc; }
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -3159,7 +3253,7 @@ class DependentVectorType : public Type, public llvm::FoldingSetNode {
 public:
   Expr *getSizeExpr() const { return SizeExpr; }
   QualType getElementType() const { return ElementType; }
-  // SourceLocation getAttributeLoc() const { return Loc; }
+  SourceLocation getAttributeLoc() const { return Loc; }
   VectorType::VectorKind getVectorKind() const {
     return VectorType::VectorKind(VectorTypeBits.VecKind);
   }
@@ -3389,7 +3483,7 @@ public:
   QualType getElementType() const { return ElementType; }
   Expr *getRowExpr() const { return RowExpr; }
   Expr *getColumnExpr() const { return ColumnExpr; }
-  // SourceLocation getAttributeLoc() const { return loc; }
+  SourceLocation getAttributeLoc() const { return loc; }
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -3673,9 +3767,9 @@ public:
   /// Determine whether this function type includes the GNU noreturn
   /// attribute. The C++11 [[noreturn]] attribute does not affect the function
   /// type.
-  // bool getNoReturnAttr() const { return getExtInfo().getNoReturn(); }
+  bool getNoReturnAttr() const { return getExtInfo().getNoReturn(); }
 
-  // bool getCmseNSCallAttr() const { return getExtInfo().getCmseNSCall(); }
+  bool getCmseNSCallAttr() const { return getExtInfo().getCmseNSCall(); }
   CallingConv getCallConv() const { return getExtInfo().getCC(); }
   ExtInfo getExtInfo() const { return ExtInfo(FunctionTypeBits.ExtInfo); }
 
@@ -3811,6 +3905,10 @@ public:
     /// The function whose exception specification this is, for
     /// EST_Unevaluated and EST_Uninstantiated.
     FunctionDecl *SourceDecl = nullptr;
+
+    /// The function template whose exception specification this is instantiated
+    /// from, for EST_Uninstantiated.
+    FunctionDecl *SourceTemplate = nullptr;
 
     ExceptionSpecInfo() = default;
 
@@ -4005,6 +4103,7 @@ public:
       Result.NoexceptExpr = getNoexceptExpr();
     } else if (Result.Type == EST_Uninstantiated) {
       Result.SourceDecl = getExceptionSpecDecl();
+      Result.SourceTemplate = getExceptionSpecTemplate();
     } else if (Result.Type == EST_Unevaluated) {
       Result.SourceDecl = getExceptionSpecDecl();
     }
@@ -4044,6 +4143,16 @@ public:
     return getTrailingObjects<FunctionDecl *>()[0];
   }
 
+  /// If this function type has an uninstantiated exception
+  /// specification, this is the function whose exception specification
+  /// should be instantiated to find the exception specification for
+  /// this type.
+  FunctionDecl *getExceptionSpecTemplate() const {
+    if (getExceptionSpecType() != EST_Uninstantiated)
+      return nullptr;
+    return getTrailingObjects<FunctionDecl *>()[1];
+  }
+
   /// Determine whether this function type has a non-throwing exception
   /// specification.
   CanThrowResult canThrow() const;
@@ -4062,6 +4171,14 @@ public:
     return isVariadic() ? *getTrailingObjects<SourceLocation>()
                         : SourceLocation();
   }
+
+  /// Determines whether this function prototype contains a
+  /// parameter pack at the end.
+  ///
+  /// A function template whose last parameter is a parameter pack can be
+  /// called with an arbitrary number of arguments, much like a variadic
+  /// function.
+  bool isTemplateVariadic() const;
 
   /// Whether this function prototype has a trailing return type.
   bool hasTrailingReturn() const { return FunctionTypeBits.HasTrailingReturn; }
@@ -4233,8 +4350,8 @@ class MacroQualifiedType : public Type {
                      const IdentifierInfo *MacroII)
       : Type(MacroQualified, CanonTy, UnderlyingTy->getDependence()),
         UnderlyingTy(UnderlyingTy), MacroII(MacroII) {
-    // assert(isa<AttributedType>(UnderlyingTy) &&
-    //        "Expected a macro qualified type to only wrap attributed types.");
+    assert(isa<AttributedType>(UnderlyingTy) &&
+           "Expected a macro qualified type to only wrap attributed types.");
   }
 
 public:
@@ -4486,6 +4603,277 @@ public:
   static bool classof(const Type *T) { return T->getTypeClass() == Enum; }
 };
 
+/// An attributed type is a type to which a type attribute has been applied.
+///
+/// The "modified type" is the fully-sugared type to which the attributed
+/// type was applied; generally it is not canonically equivalent to the
+/// attributed type. The "equivalent type" is the minimally-desugared type
+/// which the type is canonically equivalent to.
+///
+/// For example, in the following attributed type:
+///     int32_t __attribute__((vector_size(16)))
+///   - the modified type is the TypedefType for int32_t
+///   - the equivalent type is VectorType(16, int32_t)
+///   - the canonical type is VectorType(16, int)
+class AttributedType : public Type, public llvm::FoldingSetNode {
+public:
+  using Kind = attr::Kind;
+
+private:
+  friend class ASTContext; // ASTContext creates these
+
+  QualType ModifiedType;
+  QualType EquivalentType;
+
+  AttributedType(QualType canon, attr::Kind attrKind, QualType modified,
+                 QualType equivalent)
+      : Type(Attributed, canon, equivalent->getDependence()),
+        ModifiedType(modified), EquivalentType(equivalent) {
+    AttributedTypeBits.AttrKind = attrKind;
+  }
+
+public:
+  Kind getAttrKind() const {
+    return static_cast<Kind>(AttributedTypeBits.AttrKind);
+  }
+
+  QualType getModifiedType() const { return ModifiedType; }
+  QualType getEquivalentType() const { return EquivalentType; }
+
+  bool isSugared() const { return true; }
+  QualType desugar() const { return getEquivalentType(); }
+
+  /// Does this attribute behave like a type qualifier?
+  ///
+  /// A type qualifier adjusts a type to provide specialized rules for
+  /// a specific object, like the standard const and volatile qualifiers.
+  /// This includes attributes controlling things like nullability,
+  /// address spaces, and ARC ownership.  The value of the object is still
+  /// largely described by the modified type.
+  ///
+  /// In contrast, many type attributes "rewrite" their modified type to
+  /// produce a fundamentally different type, not necessarily related in any
+  /// formalizable way to the original type.  For example, calling convention
+  /// and vector attributes are not simple type qualifiers.
+  ///
+  /// Type qualifiers are often, but not always, reflected in the canonical
+  /// type.
+  bool isQualifier() const;
+
+  bool isMSTypeSpec() const;
+
+  bool isCallingConv() const;
+
+  llvm::Optional<NullabilityKind> getImmediateNullability() const;
+
+  /// Retrieve the attribute kind corresponding to the given
+  /// nullability kind.
+  static Kind getNullabilityAttrKind(NullabilityKind kind) {
+    switch (kind) {
+    case NullabilityKind::NonNull:
+      return attr::TypeNonNull;
+
+    case NullabilityKind::Nullable:
+      return attr::TypeNullable;
+
+    case NullabilityKind::Unspecified:
+      return attr::TypeNullUnspecified;
+    }
+    llvm_unreachable("Unknown nullability kind.");
+  }
+
+  /// Strip off the top-level nullability annotation on the given
+  /// type, if it's there.
+  ///
+  /// \param T The type to strip. If the type is exactly an
+  /// AttributedType specifying nullability (without looking through
+  /// type sugar), the nullability is returned and this type changed
+  /// to the underlying modified type.
+  ///
+  /// \returns the top-level nullability, if present.
+  static Optional<NullabilityKind> stripOuterNullability(QualType &T);
+
+  void Profile(llvm::FoldingSetNodeID &ID) {
+    Profile(ID, getAttrKind(), ModifiedType, EquivalentType);
+  }
+
+  static void Profile(llvm::FoldingSetNodeID &ID, Kind attrKind,
+                      QualType modified, QualType equivalent) {
+    ID.AddInteger(attrKind);
+    ID.AddPointer(modified.getAsOpaquePtr());
+    ID.AddPointer(equivalent.getAsOpaquePtr());
+  }
+
+  static bool classof(const Type *T) { return T->getTypeClass() == Attributed; }
+};
+
+class TemplateTypeParmType : public Type, public llvm::FoldingSetNode {
+  friend class ASTContext; // ASTContext creates these
+
+  // Helper data collector for canonical types.
+  struct CanonicalTTPTInfo {
+    unsigned Depth : 15;
+    unsigned ParameterPack : 1;
+    unsigned Index : 16;
+  };
+
+  union {
+    // Info for the canonical type.
+    CanonicalTTPTInfo CanTTPTInfo;
+
+    // Info for the non-canonical type.
+    TemplateTypeParmDecl *TTPDecl;
+  };
+
+  /// Build a non-canonical type.
+  TemplateTypeParmType(TemplateTypeParmDecl *TTPDecl, QualType Canon)
+      : Type(TemplateTypeParm, Canon,
+             TypeDependence::DependentInstantiation |
+                 (Canon->getDependence() & TypeDependence::UnexpandedPack)),
+        TTPDecl(TTPDecl) {}
+
+  /// Build the canonical type.
+  TemplateTypeParmType(unsigned D, unsigned I, bool PP)
+      : Type(TemplateTypeParm, QualType(this, 0),
+             TypeDependence::DependentInstantiation |
+                 (PP ? TypeDependence::UnexpandedPack : TypeDependence::None)) {
+    CanTTPTInfo.Depth = D;
+    CanTTPTInfo.Index = I;
+    CanTTPTInfo.ParameterPack = PP;
+  }
+
+  const CanonicalTTPTInfo &getCanTTPTInfo() const {
+    QualType Can = getCanonicalTypeInternal();
+    return Can->castAs<TemplateTypeParmType>()->CanTTPTInfo;
+  }
+
+public:
+  unsigned getDepth() const { return getCanTTPTInfo().Depth; }
+  unsigned getIndex() const { return getCanTTPTInfo().Index; }
+  bool isParameterPack() const { return getCanTTPTInfo().ParameterPack; }
+
+  TemplateTypeParmDecl *getDecl() const {
+    return isCanonicalUnqualified() ? nullptr : TTPDecl;
+  }
+
+  IdentifierInfo *getIdentifier() const;
+
+  bool isSugared() const { return false; }
+  QualType desugar() const { return QualType(this, 0); }
+
+  void Profile(llvm::FoldingSetNodeID &ID) {
+    Profile(ID, getDepth(), getIndex(), isParameterPack(), getDecl());
+  }
+
+  static void Profile(llvm::FoldingSetNodeID &ID, unsigned Depth,
+                      unsigned Index, bool ParameterPack,
+                      TemplateTypeParmDecl *TTPDecl) {
+    ID.AddInteger(Depth);
+    ID.AddInteger(Index);
+    ID.AddBoolean(ParameterPack);
+    ID.AddPointer(TTPDecl);
+  }
+
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == TemplateTypeParm;
+  }
+};
+
+/// Represents the result of substituting a type for a template
+/// type parameter.
+///
+/// Within an instantiated template, all template type parameters have
+/// been replaced with these.  They are used solely to record that a
+/// type was originally written as a template type parameter;
+/// therefore they are never canonical.
+class SubstTemplateTypeParmType : public Type, public llvm::FoldingSetNode {
+  friend class ASTContext;
+
+  // The original type parameter.
+  const TemplateTypeParmType *Replaced;
+
+  SubstTemplateTypeParmType(const TemplateTypeParmType *Param, QualType Canon)
+      : Type(SubstTemplateTypeParm, Canon, Canon->getDependence()),
+        Replaced(Param) {}
+
+public:
+  /// Gets the template parameter that was substituted for.
+  const TemplateTypeParmType *getReplacedParameter() const { return Replaced; }
+
+  /// Gets the type that was substituted for the template
+  /// parameter.
+  QualType getReplacementType() const { return getCanonicalTypeInternal(); }
+
+  bool isSugared() const { return true; }
+  QualType desugar() const { return getReplacementType(); }
+
+  void Profile(llvm::FoldingSetNodeID &ID) {
+    Profile(ID, getReplacedParameter(), getReplacementType());
+  }
+
+  static void Profile(llvm::FoldingSetNodeID &ID,
+                      const TemplateTypeParmType *Replaced,
+                      QualType Replacement) {
+    ID.AddPointer(Replaced);
+    ID.AddPointer(Replacement.getAsOpaquePtr());
+  }
+
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == SubstTemplateTypeParm;
+  }
+};
+
+/// Represents the result of substituting a set of types for a template
+/// type parameter pack.
+///
+/// When a pack expansion in the source code contains multiple parameter packs
+/// and those parameter packs correspond to different levels of template
+/// parameter lists, this type node is used to represent a template type
+/// parameter pack from an outer level, which has already had its argument pack
+/// substituted but that still lives within a pack expansion that itself
+/// could not be instantiated. When actually performing a substitution into
+/// that pack expansion (e.g., when all template parameters have corresponding
+/// arguments), this type will be replaced with the \c SubstTemplateTypeParmType
+/// at the current pack substitution index.
+class SubstTemplateTypeParmPackType : public Type, public llvm::FoldingSetNode {
+  friend class ASTContext;
+
+  /// The original type parameter.
+  const TemplateTypeParmType *Replaced;
+
+  /// A pointer to the set of template arguments that this
+  /// parameter pack is instantiated with.
+  const TemplateArgument *Arguments;
+
+  SubstTemplateTypeParmPackType(const TemplateTypeParmType *Param,
+                                QualType Canon,
+                                const TemplateArgument &ArgPack);
+
+public:
+  IdentifierInfo *getIdentifier() const { return Replaced->getIdentifier(); }
+
+  /// Gets the template parameter that was substituted for.
+  const TemplateTypeParmType *getReplacedParameter() const { return Replaced; }
+
+  unsigned getNumArgs() const {
+    return SubstTemplateTypeParmPackTypeBits.NumArgs;
+  }
+
+  bool isSugared() const { return false; }
+  QualType desugar() const { return QualType(this, 0); }
+
+  TemplateArgument getArgumentPack() const;
+
+  void Profile(llvm::FoldingSetNodeID &ID);
+  static void Profile(llvm::FoldingSetNodeID &ID,
+                      const TemplateTypeParmType *Replaced,
+                      const TemplateArgument &ArgPack);
+
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == SubstTemplateTypeParmPack;
+  }
+};
+
 /// Common base class for placeholders for types that get replaced by
 /// placeholder type deduction: C++11 auto, C++14 decltype(auto), C++17 deduced
 /// class template types, and constrained type names.
@@ -4520,7 +4908,10 @@ public:
     return !isCanonicalUnqualified() || isDependentType();
   }
 
-  static bool classof(const Type *T) { return T->getTypeClass() == Auto; }
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == Auto ||
+           T->getTypeClass() == DeducedTemplateSpecialization;
+  }
 };
 
 /// Represents a C++11 auto or C++14 decltype(auto) type, possibly constrained
@@ -4531,29 +4922,29 @@ class alignas(8) AutoType : public DeducedType, public llvm::FoldingSetNode {
   ConceptDecl *TypeConstraintConcept;
 
   AutoType(QualType DeducedAsType, AutoTypeKeyword Keyword,
-           TypeDependence ExtraDependence, ConceptDecl *CD/*,
-           ArrayRef<TemplateArgument> TypeConstraintArgs*/);
+           TypeDependence ExtraDependence, ConceptDecl *CD,
+           ArrayRef<TemplateArgument> TypeConstraintArgs);
 
-  // const TemplateArgument *getArgBuffer() const {
-  //   return reinterpret_cast<const TemplateArgument *>(this + 1);
-  // }
+  const TemplateArgument *getArgBuffer() const {
+    return reinterpret_cast<const TemplateArgument *>(this + 1);
+  }
 
-  // TemplateArgument *getArgBuffer() {
-  //   return reinterpret_cast<TemplateArgument *>(this + 1);
-  // }
+  TemplateArgument *getArgBuffer() {
+    return reinterpret_cast<TemplateArgument *>(this + 1);
+  }
 
 public:
   /// Retrieve the template arguments.
-  // const TemplateArgument *getArgs() const { return getArgBuffer(); }
+  const TemplateArgument *getArgs() const { return getArgBuffer(); }
 
   /// Retrieve the number of template arguments.
   unsigned getNumArgs() const { return AutoTypeBits.NumArgs; }
 
-  // const TemplateArgument &getArg(unsigned Idx) const; // in TemplateBase.h
+  const TemplateArgument &getArg(unsigned Idx) const; // in TemplateBase.h
 
-  // ArrayRef<TemplateArgument> getTypeConstraintArguments() const {
-  //   return {getArgs(), getNumArgs()};
-  // }
+  ArrayRef<TemplateArgument> getTypeConstraintArguments() const {
+    return {getArgs(), getNumArgs()};
+  }
 
   ConceptDecl *getTypeConstraintConcept() const {
     return TypeConstraintConcept;
@@ -4571,16 +4962,188 @@ public:
 
   void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) {
     Profile(ID, Context, getDeducedType(), getKeyword(), isDependentType(),
-            getTypeConstraintConcept() /*, getTypeConstraintArguments()*/);
+            getTypeConstraintConcept(), getTypeConstraintArguments());
   }
 
   static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType Deduced, AutoTypeKeyword Keyword,
-                      bool IsDependent, ConceptDecl *CD/*,
-                      ArrayRef<TemplateArgument> Arguments*/);
+                      bool IsDependent, ConceptDecl *CD,
+                      ArrayRef<TemplateArgument> Arguments);
 
   static bool classof(const Type *T) { return T->getTypeClass() == Auto; }
 };
+
+/// Represents a C++17 deduced template specialization type.
+class DeducedTemplateSpecializationType : public DeducedType,
+                                          public llvm::FoldingSetNode {
+  friend class ASTContext; // ASTContext creates these
+
+  /// The name of the template whose arguments will be deduced.
+  TemplateName Template;
+
+  DeducedTemplateSpecializationType(TemplateName Template,
+                                    QualType DeducedAsType,
+                                    bool IsDeducedAsDependent)
+      : DeducedType(DeducedTemplateSpecialization, DeducedAsType,
+                    toTypeDependence(Template.getDependence()) |
+                        (IsDeducedAsDependent
+                             ? TypeDependence::DependentInstantiation
+                             : TypeDependence::None)),
+        Template(Template) {}
+
+public:
+  /// Retrieve the name of the template that we are deducing.
+  TemplateName getTemplateName() const { return Template; }
+
+  void Profile(llvm::FoldingSetNodeID &ID) {
+    Profile(ID, getTemplateName(), getDeducedType(), isDependentType());
+  }
+
+  static void Profile(llvm::FoldingSetNodeID &ID, TemplateName Template,
+                      QualType Deduced, bool IsDependent) {
+    Template.Profile(ID);
+    ID.AddPointer(Deduced.getAsOpaquePtr());
+    ID.AddBoolean(IsDependent);
+  }
+
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == DeducedTemplateSpecialization;
+  }
+};
+
+/// Represents a type template specialization; the template
+/// must be a class template, a type alias template, or a template
+/// template parameter.  A template which cannot be resolved to one of
+/// these, e.g. because it is written with a dependent scope
+/// specifier, is instead represented as a
+/// @c DependentTemplateSpecializationType.
+///
+/// A non-dependent template specialization type is always "sugar",
+/// typically for a \c RecordType.  For example, a class template
+/// specialization type of \c vector<int> will refer to a tag type for
+/// the instantiation \c std::vector<int, std::allocator<int>>
+///
+/// Template specializations are dependent if either the template or
+/// any of the template arguments are dependent, in which case the
+/// type may also be canonical.
+///
+/// Instances of this type are allocated with a trailing array of
+/// TemplateArguments, followed by a QualType representing the
+/// non-canonical aliased type when the template is a type alias
+/// template.
+class alignas(8) TemplateSpecializationType : public Type,
+                                              public llvm::FoldingSetNode {
+  friend class ASTContext; // ASTContext creates these
+
+  /// The name of the template being specialized.  This is
+  /// either a TemplateName::Template (in which case it is a
+  /// ClassTemplateDecl*, a TemplateTemplateParmDecl*, or a
+  /// TypeAliasTemplateDecl*), a
+  /// TemplateName::SubstTemplateTemplateParmPack, or a
+  /// TemplateName::SubstTemplateTemplateParm (in which case the
+  /// replacement must, recursively, be one of these).
+  TemplateName Template;
+
+  TemplateSpecializationType(TemplateName T, ArrayRef<TemplateArgument> Args,
+                             QualType Canon, QualType Aliased);
+
+public:
+  /// Determine whether any of the given template arguments are dependent.
+  static bool anyDependentTemplateArguments(ArrayRef<TemplateArgumentLoc> Args,
+                                            bool &InstantiationDependent);
+
+  static bool anyDependentTemplateArguments(const TemplateArgumentListInfo &,
+                                            bool &InstantiationDependent);
+
+  /// True if this template specialization type matches a current
+  /// instantiation in the context in which it is found.
+  bool isCurrentInstantiation() const {
+    return isa<InjectedClassNameType>(getCanonicalTypeInternal());
+  }
+
+  /// Determine if this template specialization type is for a type alias
+  /// template that has been substituted.
+  ///
+  /// Nearly every template specialization type whose template is an alias
+  /// template will be substituted. However, this is not the case when
+  /// the specialization contains a pack expansion but the template alias
+  /// does not have a corresponding parameter pack, e.g.,
+  ///
+  /// \code
+  /// template<typename T, typename U, typename V> struct S;
+  /// template<typename T, typename U> using A = S<T, int, U>;
+  /// template<typename... Ts> struct X {
+  ///   typedef A<Ts...> type; // not a type alias
+  /// };
+  /// \endcode
+  bool isTypeAlias() const { return TemplateSpecializationTypeBits.TypeAlias; }
+
+  /// Get the aliased type, if this is a specialization of a type alias
+  /// template.
+  QualType getAliasedType() const {
+    assert(isTypeAlias() && "not a type alias template specialization");
+    return *reinterpret_cast<const QualType *>(end());
+  }
+
+  using iterator = const TemplateArgument *;
+
+  iterator begin() const { return getArgs(); }
+  iterator end() const; // defined inline in TemplateBase.h
+
+  /// Retrieve the name of the template that we are specializing.
+  TemplateName getTemplateName() const { return Template; }
+
+  /// Retrieve the template arguments.
+  const TemplateArgument *getArgs() const {
+    return reinterpret_cast<const TemplateArgument *>(this + 1);
+  }
+
+  /// Retrieve the number of template arguments.
+  unsigned getNumArgs() const { return TemplateSpecializationTypeBits.NumArgs; }
+
+  /// Retrieve a specific template argument as a type.
+  /// \pre \c isArgType(Arg)
+  const TemplateArgument &getArg(unsigned Idx) const; // in TemplateBase.h
+
+  ArrayRef<TemplateArgument> template_arguments() const {
+    return {getArgs(), getNumArgs()};
+  }
+
+  bool isSugared() const {
+    return !isDependentType() || isCurrentInstantiation() || isTypeAlias();
+  }
+
+  QualType desugar() const {
+    return isTypeAlias() ? getAliasedType() : getCanonicalTypeInternal();
+  }
+
+  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx) {
+    Profile(ID, Template, template_arguments(), Ctx);
+    if (isTypeAlias())
+      getAliasedType().Profile(ID);
+  }
+
+  static void Profile(llvm::FoldingSetNodeID &ID, TemplateName T,
+                      ArrayRef<TemplateArgument> Args,
+                      const ASTContext &Context);
+
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == TemplateSpecialization;
+  }
+};
+
+/// Print a template argument list, including the '<' and '>'
+/// enclosing the template arguments.
+void printTemplateArgumentList(raw_ostream &OS, ArrayRef<TemplateArgument> Args,
+                               const PrintingPolicy &Policy);
+
+void printTemplateArgumentList(raw_ostream &OS,
+                               ArrayRef<TemplateArgumentLoc> Args,
+                               const PrintingPolicy &Policy);
+
+void printTemplateArgumentList(raw_ostream &OS,
+                               const TemplateArgumentListInfo &Args,
+                               const PrintingPolicy &Policy);
 
 /// The injected class name of a C++ class template or class
 /// template partial specialization.  Used to record that a type was
@@ -4632,13 +5195,13 @@ class InjectedClassNameType : public Type {
 public:
   QualType getInjectedSpecializationType() const { return InjectedType; }
 
-  /*const TemplateSpecializationType *getInjectedTST() const {
+  const TemplateSpecializationType *getInjectedTST() const {
     return cast<TemplateSpecializationType>(InjectedType.getTypePtr());
   }
 
   TemplateName getTemplateName() const {
     return getInjectedTST()->getTemplateName();
-  }*/
+  }
 
   CXXRecordDecl *getDecl() const;
 
@@ -4871,6 +5434,689 @@ public:
     return T->getTypeClass() == DependentName;
   }
 };
+
+/// Represents a template specialization type whose template cannot be
+/// resolved, e.g.
+///   A<T>::template B<T>
+// class alignas(8) DependentTemplateSpecializationType
+//     : public TypeWithKeyword,
+//       public llvm::FoldingSetNode {
+//   friend class ASTContext; // ASTContext creates these
+//
+//   /// The nested name specifier containing the qualifier.
+//   NestedNameSpecifier *NNS;
+//
+//   /// The identifier of the template.
+//   const IdentifierInfo *Name;
+//
+//   DependentTemplateSpecializationType(ElaboratedTypeKeyword Keyword,
+//                                       NestedNameSpecifier *NNS,
+//                                       const IdentifierInfo *Name,
+//                                       ArrayRef<TemplateArgument> Args,
+//                                       QualType Canon);
+//
+//   const TemplateArgument *getArgBuffer() const {
+//     return reinterpret_cast<const TemplateArgument *>(this + 1);
+//   }
+//
+//   TemplateArgument *getArgBuffer() {
+//     return reinterpret_cast<TemplateArgument *>(this + 1);
+//   }
+//
+// public:
+//   NestedNameSpecifier *getQualifier() const { return NNS; }
+//   const IdentifierInfo *getIdentifier() const { return Name; }
+//
+//   /// Retrieve the template arguments.
+//   const TemplateArgument *getArgs() const { return getArgBuffer(); }
+//
+//   /// Retrieve the number of template arguments.
+//   unsigned getNumArgs() const {
+//     return DependentTemplateSpecializationTypeBits.NumArgs;
+//   }
+//
+//   const TemplateArgument &getArg(unsigned Idx) const; // in TemplateBase.h
+//
+//   ArrayRef<TemplateArgument> template_arguments() const {
+//     return {getArgs(), getNumArgs()};
+//   }
+//
+//   using iterator = const TemplateArgument *;
+//
+//   iterator begin() const { return getArgs(); }
+//   iterator end() const; // inline in TemplateBase.h
+//
+//   bool isSugared() const { return false; }
+//   QualType desugar() const { return QualType(this, 0); }
+//
+//   void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) {
+//     Profile(ID, Context, getKeyword(), NNS, Name, {getArgs(), getNumArgs()});
+//   }
+//
+//   static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+//                       ElaboratedTypeKeyword Keyword,
+//                       NestedNameSpecifier *Qualifier,
+//                       const IdentifierInfo *Name,
+//                       ArrayRef<TemplateArgument> Args);
+//
+//   static bool classof(const Type *T) {
+//     return T->getTypeClass() == DependentTemplateSpecialization;
+//   }
+// };
+
+/// Represents a pack expansion of types.
+///
+/// Pack expansions are part of C++11 variadic templates. A pack
+/// expansion contains a pattern, which itself contains one or more
+/// "unexpanded" parameter packs. When instantiated, a pack expansion
+/// produces a series of types, each instantiated from the pattern of
+/// the expansion, where the Ith instantiation of the pattern uses the
+/// Ith arguments bound to each of the unexpanded parameter packs. The
+/// pack expansion is considered to "expand" these unexpanded
+/// parameter packs.
+///
+/// \code
+/// template<typename ...Types> struct tuple;
+///
+/// template<typename ...Types>
+/// struct tuple_of_references {
+///   typedef tuple<Types&...> type;
+/// };
+/// \endcode
+///
+/// Here, the pack expansion \c Types&... is represented via a
+/// PackExpansionType whose pattern is Types&.
+class PackExpansionType : public Type, public llvm::FoldingSetNode {
+  friend class ASTContext; // ASTContext creates these
+
+  /// The pattern of the pack expansion.
+  QualType Pattern;
+
+  PackExpansionType(QualType Pattern, QualType Canon,
+                    Optional<unsigned> NumExpansions)
+      : Type(PackExpansion, Canon,
+             (Pattern->getDependence() | TypeDependence::Instantiation) &
+                 ~TypeDependence::UnexpandedPack),
+        Pattern(Pattern) {
+    PackExpansionTypeBits.NumExpansions =
+        NumExpansions ? *NumExpansions + 1 : 0;
+  }
+
+public:
+  /// Retrieve the pattern of this pack expansion, which is the
+  /// type that will be repeatedly instantiated when instantiating the
+  /// pack expansion itself.
+  QualType getPattern() const { return Pattern; }
+
+  /// Retrieve the number of expansions that this pack expansion will
+  /// generate, if known.
+  Optional<unsigned> getNumExpansions() const {
+    if (PackExpansionTypeBits.NumExpansions)
+      return PackExpansionTypeBits.NumExpansions - 1;
+    return None;
+  }
+
+  bool isSugared() const { return !Pattern->isDependentType(); }
+  QualType desugar() const { return isSugared() ? Pattern : QualType(this, 0); }
+
+  void Profile(llvm::FoldingSetNodeID &ID) {
+    Profile(ID, getPattern(), getNumExpansions());
+  }
+
+  static void Profile(llvm::FoldingSetNodeID &ID, QualType Pattern,
+                      Optional<unsigned> NumExpansions) {
+    ID.AddPointer(Pattern.getAsOpaquePtr());
+    ID.AddBoolean(NumExpansions.hasValue());
+    if (NumExpansions)
+      ID.AddInteger(*NumExpansions);
+  }
+
+  static bool classof(const Type *T) {
+    return T->getTypeClass() == PackExpansion;
+  }
+};
+
+/// This class wraps the list of protocol qualifiers. For types that can
+/// take ObjC protocol qualifers, they can subclass this class.
+// template <class T> class ObjCProtocolQualifiers {
+// protected:
+//   ObjCProtocolQualifiers() = default;
+//
+//   ObjCProtocolDecl *const *getProtocolStorage() const {
+//     return const_cast<ObjCProtocolQualifiers *>(this)->getProtocolStorage();
+//   }
+//
+//   ObjCProtocolDecl **getProtocolStorage() {
+//     return static_cast<T *>(this)->getProtocolStorageImpl();
+//   }
+//
+//   void setNumProtocols(unsigned N) {
+//     static_cast<T *>(this)->setNumProtocolsImpl(N);
+//   }
+//
+//   void initialize(ArrayRef<ObjCProtocolDecl *> protocols) {
+//     setNumProtocols(protocols.size());
+//     assert(getNumProtocols() == protocols.size() &&
+//            "bitfield overflow in protocol count");
+//     if (!protocols.empty())
+//       memcpy(getProtocolStorage(), protocols.data(),
+//              protocols.size() * sizeof(ObjCProtocolDecl *));
+//   }
+//
+// public:
+//   using qual_iterator = ObjCProtocolDecl *const *;
+//   using qual_range = llvm::iterator_range<qual_iterator>;
+//
+//   qual_range quals() const { return qual_range(qual_begin(), qual_end()); }
+//   qual_iterator qual_begin() const { return getProtocolStorage(); }
+//   qual_iterator qual_end() const { return qual_begin() + getNumProtocols(); }
+//
+//   bool qual_empty() const { return getNumProtocols() == 0; }
+//
+//   /// Return the number of qualifying protocols in this type, or 0 if
+//   /// there are none.
+//   unsigned getNumProtocols() const {
+//     return static_cast<const T *>(this)->getNumProtocolsImpl();
+//   }
+//
+//   /// Fetch a protocol by index.
+//   ObjCProtocolDecl *getProtocol(unsigned I) const {
+//     assert(I < getNumProtocols() && "Out-of-range protocol access");
+//     return qual_begin()[I];
+//   }
+//
+//   /// Retrieve all of the protocol qualifiers.
+//   ArrayRef<ObjCProtocolDecl *> getProtocols() const {
+//     return ArrayRef<ObjCProtocolDecl *>(qual_begin(), getNumProtocols());
+//   }
+// };
+
+/// Represents a type parameter type in Objective C. It can take
+/// a list of protocols.
+// class ObjCTypeParamType : public Type,
+//                           public ObjCProtocolQualifiers<ObjCTypeParamType>,
+//                           public llvm::FoldingSetNode {
+//   friend class ASTContext;
+//   friend class ObjCProtocolQualifiers<ObjCTypeParamType>;
+//
+//   /// The number of protocols stored on this type.
+//   unsigned NumProtocols : 6;
+//
+//   ObjCTypeParamDecl *OTPDecl;
+//
+//   /// The protocols are stored after the ObjCTypeParamType node. In the
+//   /// canonical type, the list of protocols are sorted alphabetically
+//   /// and uniqued.
+//   ObjCProtocolDecl **getProtocolStorageImpl();
+//
+//   /// Return the number of qualifying protocols in this interface type,
+//   /// or 0 if there are none.
+//   unsigned getNumProtocolsImpl() const { return NumProtocols; }
+//
+//   void setNumProtocolsImpl(unsigned N) { NumProtocols = N; }
+//
+//   ObjCTypeParamType(const ObjCTypeParamDecl *D, QualType can,
+//                     ArrayRef<ObjCProtocolDecl *> protocols);
+//
+// public:
+//   bool isSugared() const { return true; }
+//   QualType desugar() const { return getCanonicalTypeInternal(); }
+//
+//   static bool classof(const Type *T) {
+//     return T->getTypeClass() == ObjCTypeParam;
+//   }
+//
+//   void Profile(llvm::FoldingSetNodeID &ID);
+//   static void Profile(llvm::FoldingSetNodeID &ID,
+//                       const ObjCTypeParamDecl *OTPDecl, QualType
+//                       CanonicalType, ArrayRef<ObjCProtocolDecl *> protocols);
+//
+//   ObjCTypeParamDecl *getDecl() const { return OTPDecl; }
+// };
+
+/// Represents a class type in Objective C.
+///
+/// Every Objective C type is a combination of a base type, a set of
+/// type arguments (optional, for parameterized classes) and a list of
+/// protocols.
+///
+/// Given the following declarations:
+/// \code
+///   \@class C<T>;
+///   \@protocol P;
+/// \endcode
+///
+/// 'C' is an ObjCInterfaceType C.  It is sugar for an ObjCObjectType
+/// with base C and no protocols.
+///
+/// 'C<P>' is an unspecialized ObjCObjectType with base C and protocol list [P].
+/// 'C<C*>' is a specialized ObjCObjectType with type arguments 'C*' and no
+/// protocol list.
+/// 'C<C*><P>' is a specialized ObjCObjectType with base C, type arguments 'C*',
+/// and protocol list [P].
+///
+/// 'id' is a TypedefType which is sugar for an ObjCObjectPointerType whose
+/// pointee is an ObjCObjectType with base BuiltinType::ObjCIdType
+/// and no protocols.
+///
+/// 'id<P>' is an ObjCObjectPointerType whose pointee is an ObjCObjectType
+/// with base BuiltinType::ObjCIdType and protocol list [P].  Eventually
+/// this should get its own sugar class to better represent the source.
+// class ObjCObjectType : public Type,
+//                        public ObjCProtocolQualifiers<ObjCObjectType> {
+//   friend class ObjCProtocolQualifiers<ObjCObjectType>;
+//
+//   // ObjCObjectType.NumTypeArgs - the number of type arguments stored
+//   // after the ObjCObjectPointerType node.
+//   // ObjCObjectType.NumProtocols - the number of protocols stored
+//   // after the type arguments of ObjCObjectPointerType node.
+//   //
+//   // These protocols are those written directly on the type.  If
+//   // protocol qualifiers ever become additive, the iterators will need
+//   // to get kindof complicated.
+//   //
+//   // In the canonical object type, these are sorted alphabetically
+//   // and uniqued.
+//
+//   /// Either a BuiltinType or an InterfaceType or sugar for either.
+//   QualType BaseType;
+//
+//   /// Cached superclass type.
+//   mutable llvm::PointerIntPair<const ObjCObjectType *, 1, bool>
+//       CachedSuperClassType;
+//
+//   QualType *getTypeArgStorage();
+//   const QualType *getTypeArgStorage() const {
+//     return const_cast<ObjCObjectType *>(this)->getTypeArgStorage();
+//   }
+//
+//   ObjCProtocolDecl **getProtocolStorageImpl();
+//   /// Return the number of qualifying protocols in this interface type,
+//   /// or 0 if there are none.
+//   unsigned getNumProtocolsImpl() const {
+//     return ObjCObjectTypeBits.NumProtocols;
+//   }
+//   void setNumProtocolsImpl(unsigned N) { ObjCObjectTypeBits.NumProtocols = N;
+//   }
+//
+// protected:
+//   enum Nonce_ObjCInterface { Nonce_ObjCInterface };
+//
+//   ObjCObjectType(QualType Canonical, QualType Base, ArrayRef<QualType>
+//   typeArgs,
+//                  ArrayRef<ObjCProtocolDecl *> protocols, bool isKindOf);
+//
+//   ObjCObjectType(enum Nonce_ObjCInterface)
+//       : Type(ObjCInterface, QualType(), TypeDependence::None),
+//         BaseType(QualType(this_(), 0)) {
+//     ObjCObjectTypeBits.NumProtocols = 0;
+//     ObjCObjectTypeBits.NumTypeArgs = 0;
+//     ObjCObjectTypeBits.IsKindOf = 0;
+//   }
+//
+//   void computeSuperClassTypeSlow() const;
+//
+// public:
+//   /// Gets the base type of this object type.  This is always (possibly
+//   /// sugar for) one of:
+//   ///  - the 'id' builtin type (as opposed to the 'id' type visible to the
+//   ///    user, which is a typedef for an ObjCObjectPointerType)
+//   ///  - the 'Class' builtin type (same caveat)
+//   ///  - an ObjCObjectType (currently always an ObjCInterfaceType)
+//   QualType getBaseType() const { return BaseType; }
+//
+//   bool isObjCId() const {
+//     return getBaseType()->isSpecificBuiltinType(BuiltinType::ObjCId);
+//   }
+//
+//   bool isObjCClass() const {
+//     return getBaseType()->isSpecificBuiltinType(BuiltinType::ObjCClass);
+//   }
+//
+//   bool isObjCUnqualifiedId() const { return qual_empty() && isObjCId(); }
+//   bool isObjCUnqualifiedClass() const { return qual_empty() && isObjCClass();
+//   } bool isObjCUnqualifiedIdOrClass() const {
+//     if (!qual_empty())
+//       return false;
+//     if (const BuiltinType *T = getBaseType()->getAs<BuiltinType>())
+//       return T->getKind() == BuiltinType::ObjCId ||
+//              T->getKind() == BuiltinType::ObjCClass;
+//     return false;
+//   }
+//   bool isObjCQualifiedId() const { return !qual_empty() && isObjCId(); }
+//   bool isObjCQualifiedClass() const { return !qual_empty() && isObjCClass();
+//   }
+//
+//   /// Gets the interface declaration for this object type, if the base type
+//   /// really is an interface.
+//   ObjCInterfaceDecl *getInterface() const;
+//
+//   /// Determine whether this object type is "specialized", meaning
+//   /// that it has type arguments.
+//   bool isSpecialized() const;
+//
+//   /// Determine whether this object type was written with type arguments.
+//   bool isSpecializedAsWritten() const {
+//     return ObjCObjectTypeBits.NumTypeArgs > 0;
+//   }
+//
+//   /// Determine whether this object type is "unspecialized", meaning
+//   /// that it has no type arguments.
+//   bool isUnspecialized() const { return !isSpecialized(); }
+//
+//   /// Determine whether this object type is "unspecialized" as
+//   /// written, meaning that it has no type arguments.
+//   bool isUnspecializedAsWritten() const { return !isSpecializedAsWritten(); }
+//
+//   /// Retrieve the type arguments of this object type (semantically).
+//   ArrayRef<QualType> getTypeArgs() const;
+//
+//   /// Retrieve the type arguments of this object type as they were
+//   /// written.
+//   ArrayRef<QualType> getTypeArgsAsWritten() const {
+//     return llvm::makeArrayRef(getTypeArgStorage(),
+//                               ObjCObjectTypeBits.NumTypeArgs);
+//   }
+//
+//   /// Whether this is a "__kindof" type as written.
+//   bool isKindOfTypeAsWritten() const { return ObjCObjectTypeBits.IsKindOf; }
+//
+//   /// Whether this ia a "__kindof" type (semantically).
+//   bool isKindOfType() const;
+//
+//   /// Retrieve the type of the superclass of this object type.
+//   ///
+//   /// This operation substitutes any type arguments into the
+//   /// superclass of the current class type, potentially producing a
+//   /// specialization of the superclass type. Produces a null type if
+//   /// there is no superclass.
+//   QualType getSuperClassType() const {
+//     if (!CachedSuperClassType.getInt())
+//       computeSuperClassTypeSlow();
+//
+//     assert(CachedSuperClassType.getInt() && "Superclass not set?");
+//     return QualType(CachedSuperClassType.getPointer(), 0);
+//   }
+//
+//   /// Strip off the Objective-C "kindof" type and (with it) any
+//   /// protocol qualifiers.
+//   QualType stripObjCKindOfTypeAndQuals(const ASTContext &ctx) const;
+//
+//   bool isSugared() const { return false; }
+//   QualType desugar() const { return QualType(this, 0); }
+//
+//   static bool classof(const Type *T) {
+//     return T->getTypeClass() == ObjCObject ||
+//            T->getTypeClass() == ObjCInterface;
+//   }
+// };
+
+/// A class providing a concrete implementation
+/// of ObjCObjectType, so as to not increase the footprint of
+/// ObjCInterfaceType.  Code outside of ASTContext and the core type
+/// system should not reference this type.
+// class ObjCObjectTypeImpl : public ObjCObjectType, public llvm::FoldingSetNode
+// {
+//   friend class ASTContext;
+//
+//   // If anyone adds fields here, ObjCObjectType::getProtocolStorage()
+//   // will need to be modified.
+//
+//   ObjCObjectTypeImpl(QualType Canonical, QualType Base,
+//                      ArrayRef<QualType> typeArgs,
+//                      ArrayRef<ObjCProtocolDecl *> protocols, bool isKindOf)
+//       : ObjCObjectType(Canonical, Base, typeArgs, protocols, isKindOf) {}
+//
+// public:
+//   void Profile(llvm::FoldingSetNodeID &ID);
+//   static void Profile(llvm::FoldingSetNodeID &ID, QualType Base,
+//                       ArrayRef<QualType> typeArgs,
+//                       ArrayRef<ObjCProtocolDecl *> protocols, bool isKindOf);
+// };
+
+// inline QualType *ObjCObjectType::getTypeArgStorage() {
+//   return reinterpret_cast<QualType *>(static_cast<ObjCObjectTypeImpl *>(this)
+//   +
+//                                       1);
+// }
+//
+// inline ObjCProtocolDecl **ObjCObjectType::getProtocolStorageImpl() {
+//   return reinterpret_cast<ObjCProtocolDecl **>(getTypeArgStorage() +
+//                                                ObjCObjectTypeBits.NumTypeArgs);
+// }
+//
+// inline ObjCProtocolDecl **ObjCTypeParamType::getProtocolStorageImpl() {
+//   return reinterpret_cast<ObjCProtocolDecl **>(
+//       static_cast<ObjCTypeParamType *>(this) + 1);
+// }
+
+/// Interfaces are the core concept in Objective-C for object oriented design.
+/// They basically correspond to C++ classes.  There are two kinds of interface
+/// types: normal interfaces like `NSString`, and qualified interfaces, which
+/// are qualified with a protocol list like `NSString<NSCopyable, NSAmazing>`.
+///
+/// ObjCInterfaceType guarantees the following properties when considered
+/// as a subtype of its superclass, ObjCObjectType:
+///   - There are no protocol qualifiers.  To reinforce this, code which
+///     tries to invoke the protocol methods via an ObjCInterfaceType will
+///     fail to compile.
+///   - It is its own base type.  That is, if T is an ObjCInterfaceType*,
+///     T->getBaseType() == QualType(T, 0).
+// class ObjCInterfaceType : public ObjCObjectType {
+//   friend class ASTContext; // ASTContext creates these.
+//   friend class ASTReader;
+//   friend class ObjCInterfaceDecl;
+//   template <class T> friend class serialization::AbstractTypeReader;
+//
+//   mutable ObjCInterfaceDecl *Decl;
+//
+//   ObjCInterfaceType(const ObjCInterfaceDecl *D)
+//       : ObjCObjectType(Nonce_ObjCInterface),
+//         Decl(const_cast<ObjCInterfaceDecl *>(D)) {}
+//
+// public:
+//   /// Get the declaration of this interface.
+//   ObjCInterfaceDecl *getDecl() const { return Decl; }
+//
+//   bool isSugared() const { return false; }
+//   QualType desugar() const { return QualType(this, 0); }
+//
+//   static bool classof(const Type *T) {
+//     return T->getTypeClass() == ObjCInterface;
+//   }
+//
+//   // Nonsense to "hide" certain members of ObjCObjectType within this
+//   // class.  People asking for protocols on an ObjCInterfaceType are
+//   // not going to get what they want: ObjCInterfaceTypes are
+//   // guaranteed to have no protocols.
+//   enum { qual_iterator, qual_begin, qual_end, getNumProtocols, getProtocol };
+// };
+
+// inline ObjCInterfaceDecl *ObjCObjectType::getInterface() const {
+//   QualType baseType = getBaseType();
+//   while (const auto *ObjT = baseType->getAs<ObjCObjectType>()) {
+//     if (const auto *T = dyn_cast<ObjCInterfaceType>(ObjT))
+//       return T->getDecl();
+//
+//     baseType = ObjT->getBaseType();
+//   }
+//
+//   return nullptr;
+// }
+
+/// Represents a pointer to an Objective C object.
+///
+/// These are constructed from pointer declarators when the pointee type is
+/// an ObjCObjectType (or sugar for one).  In addition, the 'id' and 'Class'
+/// types are typedefs for these, and the protocol-qualified types 'id<P>'
+/// and 'Class<P>' are translated into these.
+///
+/// Pointers to pointers to Objective C objects are still PointerTypes;
+/// only the first level of pointer gets it own type implementation.
+// class ObjCObjectPointerType : public Type, public llvm::FoldingSetNode {
+//   friend class ASTContext; // ASTContext creates these.
+//
+//   QualType PointeeType;
+//
+//   ObjCObjectPointerType(QualType Canonical, QualType Pointee)
+//       : Type(ObjCObjectPointer, Canonical, Pointee->getDependence()),
+//         PointeeType(Pointee) {}
+//
+// public:
+//   /// Gets the type pointed to by this ObjC pointer.
+//   /// The result will always be an ObjCObjectType or sugar thereof.
+//   QualType getPointeeType() const { return PointeeType; }
+//
+//   /// Gets the type pointed to by this ObjC pointer.  Always returns
+//   non-null.
+//   ///
+//   /// This method is equivalent to getPointeeType() except that
+//   /// it discards any typedefs (or other sugar) between this
+//   /// type and the "outermost" object type.  So for:
+//   /// \code
+//   ///   \@class A; \@protocol P; \@protocol Q;
+//   ///   typedef A<P> AP;
+//   ///   typedef A A1;
+//   ///   typedef A1<P> A1P;
+//   ///   typedef A1P<Q> A1PQ;
+//   /// \endcode
+//   /// For 'A*', getObjectType() will return 'A'.
+//   /// For 'A<P>*', getObjectType() will return 'A<P>'.
+//   /// For 'AP*', getObjectType() will return 'A<P>'.
+//   /// For 'A1*', getObjectType() will return 'A'.
+//   /// For 'A1<P>*', getObjectType() will return 'A1<P>'.
+//   /// For 'A1P*', getObjectType() will return 'A1<P>'.
+//   /// For 'A1PQ*', getObjectType() will return 'A1<Q>', because
+//   ///   adding protocols to a protocol-qualified base discards the
+//   ///   old qualifiers (for now).  But if it didn't, getObjectType()
+//   ///   would return 'A1P<Q>' (and we'd have to make iterating over
+//   ///   qualifiers more complicated).
+//   const ObjCObjectType *getObjectType() const {
+//     return PointeeType->castAs<ObjCObjectType>();
+//   }
+//
+//   /// If this pointer points to an Objective C
+//   /// \@interface type, gets the type for that interface.  Any protocol
+//   /// qualifiers on the interface are ignored.
+//   ///
+//   /// \return null if the base type for this pointer is 'id' or 'Class'
+//   const ObjCInterfaceType *getInterfaceType() const;
+//
+//   /// If this pointer points to an Objective \@interface
+//   /// type, gets the declaration for that interface.
+//   ///
+//   /// \return null if the base type for this pointer is 'id' or 'Class'
+//   ObjCInterfaceDecl *getInterfaceDecl() const {
+//     return getObjectType()->getInterface();
+//   }
+//
+//   /// True if this is equivalent to the 'id' type, i.e. if
+//   /// its object type is the primitive 'id' type with no protocols.
+//   bool isObjCIdType() const { return getObjectType()->isObjCUnqualifiedId();
+//   }
+//
+//   /// True if this is equivalent to the 'Class' type,
+//   /// i.e. if its object tive is the primitive 'Class' type with no
+//   protocols. bool isObjCClassType() const {
+//     return getObjectType()->isObjCUnqualifiedClass();
+//   }
+//
+//   /// True if this is equivalent to the 'id' or 'Class' type,
+//   bool isObjCIdOrClassType() const {
+//     return getObjectType()->isObjCUnqualifiedIdOrClass();
+//   }
+//
+//   /// True if this is equivalent to 'id<P>' for some non-empty set of
+//   /// protocols.
+//   bool isObjCQualifiedIdType() const {
+//     return getObjectType()->isObjCQualifiedId();
+//   }
+//
+//   /// True if this is equivalent to 'Class<P>' for some non-empty set of
+//   /// protocols.
+//   bool isObjCQualifiedClassType() const {
+//     return getObjectType()->isObjCQualifiedClass();
+//   }
+//
+//   /// Whether this is a "__kindof" type.
+//   bool isKindOfType() const { return getObjectType()->isKindOfType(); }
+//
+//   /// Whether this type is specialized, meaning that it has type arguments.
+//   bool isSpecialized() const { return getObjectType()->isSpecialized(); }
+//
+//   /// Whether this type is specialized, meaning that it has type arguments.
+//   bool isSpecializedAsWritten() const {
+//     return getObjectType()->isSpecializedAsWritten();
+//   }
+//
+//   /// Whether this type is unspecialized, meaning that is has no type
+//   arguments. bool isUnspecialized() const { return
+//   getObjectType()->isUnspecialized(); }
+//
+//   /// Determine whether this object type is "unspecialized" as
+//   /// written, meaning that it has no type arguments.
+//   bool isUnspecializedAsWritten() const { return !isSpecializedAsWritten(); }
+//
+//   /// Retrieve the type arguments for this type.
+//   ArrayRef<QualType> getTypeArgs() const {
+//     return getObjectType()->getTypeArgs();
+//   }
+//
+//   /// Retrieve the type arguments for this type.
+//   ArrayRef<QualType> getTypeArgsAsWritten() const {
+//     return getObjectType()->getTypeArgsAsWritten();
+//   }
+//
+//   /// An iterator over the qualifiers on the object type.  Provided
+//   /// for convenience.  This will always iterate over the full set of
+//   /// protocols on a type, not just those provided directly.
+//   using qual_iterator = ObjCObjectType::qual_iterator;
+//   using qual_range = llvm::iterator_range<qual_iterator>;
+//
+//   qual_range quals() const { return qual_range(qual_begin(), qual_end()); }
+//
+//   qual_iterator qual_begin() const { return getObjectType()->qual_begin(); }
+//
+//   qual_iterator qual_end() const { return getObjectType()->qual_end(); }
+//
+//   bool qual_empty() const { return getObjectType()->qual_empty(); }
+//
+//   /// Return the number of qualifying protocols on the object type.
+//   unsigned getNumProtocols() const {
+//     return getObjectType()->getNumProtocols();
+//   }
+//
+//   /// Retrieve a qualifying protocol by index on the object type.
+//   ObjCProtocolDecl *getProtocol(unsigned I) const {
+//     return getObjectType()->getProtocol(I);
+//   }
+//
+//   bool isSugared() const { return false; }
+//   QualType desugar() const { return QualType(this, 0); }
+//
+//   /// Retrieve the type of the superclass of this object pointer type.
+//   ///
+//   /// This operation substitutes any type arguments into the
+//   /// superclass of the current class type, potentially producing a
+//   /// pointer to a specialization of the superclass type. Produces a
+//   /// null type if there is no superclass.
+//   QualType getSuperClassType() const;
+//
+//   /// Strip off the Objective-C "kindof" type and (with it) any
+//   /// protocol qualifiers.
+//   const ObjCObjectPointerType *
+//   stripObjCKindOfTypeAndQuals(const ASTContext &ctx) const;
+//
+//   void Profile(llvm::FoldingSetNodeID &ID) { Profile(ID, getPointeeType()); }
+//
+//   static void Profile(llvm::FoldingSetNodeID &ID, QualType T) {
+//     ID.AddPointer(T.getAsOpaquePtr());
+//   }
+//
+//   static bool classof(const Type *T) {
+//     return T->getTypeClass() == ObjCObjectPointer;
+//   }
+// };
 
 class AtomicType : public Type, public llvm::FoldingSetNode {
   friend class ASTContext; // ASTContext creates these.
@@ -5304,7 +6550,7 @@ inline bool Type::isPointerType() const {
 }
 
 inline bool Type::isAnyPointerType() const {
-  return isPointerType() /*|| isObjCObjectPointerType()*/;
+  return isPointerType() /* || isObjCObjectPointerType()*/;
 }
 
 inline bool Type::isBlockPointerType() const {
@@ -5323,15 +6569,15 @@ inline bool Type::isRValueReferenceType() const {
   return isa<RValueReferenceType>(CanonicalType);
 }
 
-inline bool Type::isObjectPointerType() const {
-  // Note: an "object pointer type" is not the same thing as a pointer to an
-  // object type; rather, it is a pointer to an object type or a pointer to cv
-  // void.
-  if (const auto *T = getAs<PointerType>())
-    return !T->getPointeeType()->isFunctionType();
-  else
-    return false;
-}
+//inline bool Type::isObjectPointerType() const {
+//  // Note: an "object pointer type" is not the same thing as a pointer to an
+//  // object type; rather, it is a pointer to an object type or a pointer to cv
+//  // void.
+//  if (const auto *T = getAs<PointerType>())
+//    return !T->getPointeeType()->isFunctionType();
+//  else
+//    return false;
+//}
 
 inline bool Type::isFunctionPointerType() const {
   if (const auto *T = getAs<PointerType>())
@@ -5422,11 +6668,11 @@ inline bool Type::isDependentAddressSpaceType() const {
 // inline bool Type::isObjCObjectPointerType() const {
 //   return isa<ObjCObjectPointerType>(CanonicalType);
 // }
-
+//
 // inline bool Type::isObjCObjectType() const {
 //   return isa<ObjCObjectType>(CanonicalType);
 // }
-
+//
 // inline bool Type::isObjCObjectOrInterfaceType() const {
 //   return isa<ObjCInterfaceType>(CanonicalType) ||
 //          isa<ObjCObjectType>(CanonicalType);
@@ -5445,64 +6691,64 @@ inline bool Type::isUndeducedAutoType() const {
 //     return OPT->isObjCQualifiedIdType();
 //   return false;
 // }
-
+//
 // inline bool Type::isObjCQualifiedClassType() const {
 //   if (const auto *OPT = getAs<ObjCObjectPointerType>())
 //     return OPT->isObjCQualifiedClassType();
 //   return false;
 // }
-
+//
 // inline bool Type::isObjCIdType() const {
 //   if (const auto *OPT = getAs<ObjCObjectPointerType>())
 //     return OPT->isObjCIdType();
 //   return false;
 // }
-
+//
 // inline bool Type::isObjCClassType() const {
 //   if (const auto *OPT = getAs<ObjCObjectPointerType>())
 //     return OPT->isObjCClassType();
 //   return false;
 // }
-
+//
 // inline bool Type::isObjCSelType() const {
 //   if (const auto *OPT = getAs<PointerType>())
 //     return
 //     OPT->getPointeeType()->isSpecificBuiltinType(BuiltinType::ObjCSel);
 //   return false;
 // }
-
+//
 // inline bool Type::isObjCBuiltinType() const {
 //   return isObjCIdType() || isObjCClassType() || isObjCSelType();
 // }
 
 inline bool Type::isDecltypeType() const { return isa<DecltypeType>(this); }
 
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
-//   inline bool Type::is##Id##Type() const {                                     \
-//     return isSpecificBuiltinType(BuiltinType::Id);                             \
-//   }
+//#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
+//  inline bool Type::is##Id##Type() const {                                     \
+//    return isSpecificBuiltinType(BuiltinType::Id);                             \
+//  }
 // #include "latino/Basic/OpenCLImageTypes.def"
 
 // inline bool Type::isSamplerT() const {
 //   return isSpecificBuiltinType(BuiltinType::OCLSampler);
 // }
-
+//
 // inline bool Type::isEventT() const {
 //   return isSpecificBuiltinType(BuiltinType::OCLEvent);
 // }
-
+//
 // inline bool Type::isClkEventT() const {
 //   return isSpecificBuiltinType(BuiltinType::OCLClkEvent);
 // }
-
+//
 // inline bool Type::isQueueT() const {
 //   return isSpecificBuiltinType(BuiltinType::OCLQueue);
 // }
-
+//
 // inline bool Type::isReserveIDT() const {
 //   return isSpecificBuiltinType(BuiltinType::OCLReserveID);
 // }
-
+//
 // inline bool Type::isImageType() const {
 // #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) is##Id##Type()
 // ||
@@ -5515,6 +6761,37 @@ inline bool Type::isPipeType() const { return isa<PipeType>(CanonicalType); }
 
 inline bool Type::isExtIntType() const {
   return isa<ExtIntType>(CanonicalType);
+}
+
+//#define EXT_OPAQUE_TYPE(ExtType, Id, Ext)                                      \
+//  inline bool Type::is##Id##Type() const {                                     \
+//    return isSpecificBuiltinType(BuiltinType::Id);                             \
+//  }
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+//
+// inline bool Type::isOCLIntelSubgroupAVCType() const {
+// #d efine INTEL_SUBGROUP_AVC_TYPE(ExtType, Id) \
+//  isOCLIntelSubgroupAVC##Id##Type() ||
+//   return
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+//       false; // end of boolean or operation
+// }
+//
+// inline bool Type::isOCLExtOpaqueType() const {
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) is##Id##Type() ||
+//   return
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+//       false; // end of boolean or operation
+// }
+//
+// inline bool Type::isOpenCLSpecificType() const {
+//   return isSamplerT() || isEventT() || isImageType() || isClkEventT() ||
+//          isQueueT() || isReserveIDT() || isPipeType() ||
+//          isOCLExtOpaqueType();
+// }
+
+inline bool Type::isTemplateTypeParmType() const {
+  return isa<TemplateTypeParmType>(CanonicalType);
 }
 
 inline bool Type::isSpecificBuiltinType(unsigned K) const {
@@ -5665,10 +6942,10 @@ inline bool Type::isBooleanType() const {
   return false;
 }
 
-inline bool Type::isUndeducedType() const {
-  auto *DT = getContainedDeducedType();
-  return DT && !DT->isDeduced();
-}
+// inline bool Type::isUndeducedType() const {
+//   auto *DT = getContainedDeducedType();
+//   return DT && !DT->isDeduced();
+// }
 
 /// Determines whether this is a type for which one can define
 /// an overloaded operator.
@@ -5681,14 +6958,14 @@ inline bool Type::canDecayToPointerType() const {
   return isFunctionType() || isArrayType();
 }
 
-inline bool Type::hasPointerRepresentation() const {
-  return (isPointerType() || isReferenceType() || isBlockPointerType() ||
-          /*isObjCObjectPointerType() ||*/ isNullPtrType());
-}
-
-// inline bool Type::hasObjCPointerRepresentation() const {
-//   return isObjCObjectPointerType();
-// }
+//inline bool Type::hasPointerRepresentation() const {
+//  return (isPointerType() || isReferenceType() || isBlockPointerType() ||
+//          isObjCObjectPointerType() || isNullPtrType());
+//}
+//
+//inline bool Type::hasObjCPointerRepresentation() const {
+//  return isObjCObjectPointerType();
+//}
 
 inline const Type *Type::getBaseElementTypeUnsafe() const {
   const Type *type = this;
@@ -5800,17 +7077,18 @@ template <typename T> const T *Type::getAsAdjusted() const {
   // type.
   const Type *Ty = this;
   while (Ty) {
-    // if (const auto *A = dyn_cast<AttributedType>(Ty))
-    //   Ty = A->getModifiedType().getTypePtr();
-    else if (const auto *E = dyn_cast<ElaboratedType>(Ty)) Ty =
-        E->desugar().getTypePtr();
-    else if (const auto *P = dyn_cast<ParenType>(Ty)) Ty =
-        P->desugar().getTypePtr();
-    else if (const auto *A = dyn_cast<AdjustedType>(Ty)) Ty =
-        A->desugar().getTypePtr();
-    else if (const auto *M = dyn_cast<MacroQualifiedType>(Ty)) Ty =
-        M->desugar().getTypePtr();
-    else break;
+    if (const auto *A = dyn_cast<AttributedType>(Ty))
+      Ty = A->getModifiedType().getTypePtr();
+    else if (const auto *E = dyn_cast<ElaboratedType>(Ty))
+      Ty = E->desugar().getTypePtr();
+    else if (const auto *P = dyn_cast<ParenType>(Ty))
+      Ty = P->desugar().getTypePtr();
+    else if (const auto *A = dyn_cast<AdjustedType>(Ty))
+      Ty = A->desugar().getTypePtr();
+    else if (const auto *M = dyn_cast<MacroQualifiedType>(Ty))
+      Ty = M->desugar().getTypePtr();
+    else
+      break;
   }
 
   // Just because the canonical type is correct does not mean we can use cast<>,
@@ -5854,14 +7132,14 @@ DecayedType::DecayedType(QualType OriginalType, QualType DecayedPtr,
     : AdjustedType(Decayed, OriginalType, DecayedPtr, CanonicalPtr) {
 #ifndef NDEBUG
   QualType Adjusted = getAdjustedType();
-  // (void)AttributedType::stripOuterNullability(Adjusted);
+  (void)AttributedType::stripOuterNullability(Adjusted);
   assert(isa<PointerType>(Adjusted));
 #endif
 }
 
 QualType DecayedType::getPointeeType() const {
   QualType Decayed = getDecayedType();
-  // (void)AttributedType::stripOuterNullability(Decayed);
+  (void)AttributedType::stripOuterNullability(Decayed);
   return cast<PointerType>(Decayed)->getPointeeType();
 }
 
@@ -5874,4 +7152,4 @@ void FixedPointValueToString(SmallVectorImpl<char> &Str, llvm::APSInt Val,
 
 } // namespace latino
 
-#endif
+#endif // LLVM_LATINO_AST_TYPE_H

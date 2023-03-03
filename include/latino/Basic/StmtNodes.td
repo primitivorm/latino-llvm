@@ -29,7 +29,7 @@ def CapturedStmt : StmtNode<Stmt>;
 // statement in a GNU statement-expression).
 def ValueStmt : StmtNode<Stmt, 1>;
 def LabelStmt : StmtNode<ValueStmt>;
-// def AttributedStmt : StmtNode<ValueStmt>;
+def AttributedStmt : StmtNode<ValueStmt>;
 
 // Asm statements
 def AsmStmt : StmtNode<Stmt, 1>;

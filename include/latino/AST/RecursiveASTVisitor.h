@@ -14,6 +14,7 @@
 #define LLVM_LATINO_AST_RECURSIVEASTVISITOR_H
 
 #include "latino/AST/Decl.h"
+#include "latino/AST/DeclTemplate.h"
 
 #include "llvm/ADT/PointerIntPair.h"
 #include "llvm/ADT/SmallVector.h"
@@ -807,8 +808,8 @@ DEF_TRAVERSE_TYPE(EnumType, {})
 
 DEF_TRAVERSE_TYPE(InjectedClassNameType, {})
 
-// DEF_TRAVERSE_TYPE(AttributedType,
-//                   { TRY_TO(TraverseType(T->getModifiedType())); })
+DEF_TRAVERSE_TYPE(AttributedType,
+                  { TRY_TO(TraverseType(T->getModifiedType())); })
 
 DEF_TRAVERSE_TYPE(ParenType, { TRY_TO(TraverseType(T->getInnerType())); })
 
@@ -1066,8 +1067,8 @@ DEF_TRAVERSE_TYPELOC(ParenType, { TRY_TO(TraverseTypeLoc(TL.getInnerLoc())); })
 DEF_TRAVERSE_TYPELOC(MacroQualifiedType,
                      { TRY_TO(TraverseTypeLoc(TL.getInnerLoc())); })
 
-// DEF_TRAVERSE_TYPELOC(AttributedType,
-//                      { TRY_TO(TraverseTypeLoc(TL.getModifiedLoc())); })
+DEF_TRAVERSE_TYPELOC(AttributedType,
+                     { TRY_TO(TraverseTypeLoc(TL.getModifiedLoc())); })
 
 DEF_TRAVERSE_TYPELOC(ElaboratedType, {
   if (TL.getQualifierLoc()) {
@@ -1322,41 +1323,41 @@ DEF_TRAVERSE_DECL(UsingShadowDecl, {})
 
 DEF_TRAVERSE_DECL(ConstructorUsingShadowDecl, {})
 
-DEF_TRAVERSE_DECL(OMPThreadPrivateDecl, {
-  for (auto *I : D->varlists()) {
-    TRY_TO(TraverseStmt(I));
-  }
-})
+// DEF_TRAVERSE_DECL(OMPThreadPrivateDecl, {
+//   for (auto *I : D->varlists()) {
+//     TRY_TO(TraverseStmt(I));
+//   }
+// })
 
-DEF_TRAVERSE_DECL(OMPRequiresDecl, {
-  for (auto *C : D->clauselists()) {
-    TRY_TO(TraverseOMPClause(C));
-  }
-})
+// DEF_TRAVERSE_DECL(OMPRequiresDecl, {
+//   for (auto *C : D->clauselists()) {
+//     TRY_TO(TraverseOMPClause(C));
+//   }
+// })
 
-DEF_TRAVERSE_DECL(OMPDeclareReductionDecl, {
-  TRY_TO(TraverseStmt(D->getCombiner()));
-  if (auto *Initializer = D->getInitializer())
-    TRY_TO(TraverseStmt(Initializer));
-  TRY_TO(TraverseType(D->getType()));
-  return true;
-})
+// DEF_TRAVERSE_DECL(OMPDeclareReductionDecl, {
+//   TRY_TO(TraverseStmt(D->getCombiner()));
+//   if (auto *Initializer = D->getInitializer())
+//     TRY_TO(TraverseStmt(Initializer));
+//   TRY_TO(TraverseType(D->getType()));
+//   return true;
+// })
 
-DEF_TRAVERSE_DECL(OMPDeclareMapperDecl, {
-  for (auto *C : D->clauselists())
-    TRY_TO(TraverseOMPClause(C));
-  TRY_TO(TraverseType(D->getType()));
-  return true;
-})
+// DEF_TRAVERSE_DECL(OMPDeclareMapperDecl, {
+//   for (auto *C : D->clauselists())
+//     TRY_TO(TraverseOMPClause(C));
+//   TRY_TO(TraverseType(D->getType()));
+//   return true;
+// })
 
-DEF_TRAVERSE_DECL(OMPCapturedExprDecl, { TRY_TO(TraverseVarHelper(D)); })
-
-DEF_TRAVERSE_DECL(OMPAllocateDecl, {
-  for (auto *I : D->varlists())
-    TRY_TO(TraverseStmt(I));
-  for (auto *C : D->clauselists())
-    TRY_TO(TraverseOMPClause(C));
-})
+// DEF_TRAVERSE_DECL(OMPCapturedExprDecl, { TRY_TO(TraverseVarHelper(D)); })
+//
+// DEF_TRAVERSE_DECL(OMPAllocateDecl, {
+//   for (auto *I : D->varlists())
+//     TRY_TO(TraverseStmt(I));
+//   for (auto *C : D->clauselists())
+//     TRY_TO(TraverseOMPClause(C));
+// })
 
 DEF_TRAVERSE_TMPL_DECL(Class)
 DEF_TRAVERSE_TMPL_DECL(Var)
@@ -1690,7 +1691,7 @@ DEF_TRAVERSE_STMT(GotoStmt, {})
 DEF_TRAVERSE_STMT(IfStmt, {})
 DEF_TRAVERSE_STMT(IndirectGotoStmt, {})
 DEF_TRAVERSE_STMT(LabelStmt, {})
-// DEF_TRAVERSE_STMT(AttributedStmt, {})
+DEF_TRAVERSE_STMT(AttributedStmt, {})
 DEF_TRAVERSE_STMT(NullStmt, {})
 // DEF_TRAVERSE_STMT(ObjCAtCatchStmt, {})
 // DEF_TRAVERSE_STMT(ObjCAtFinallyStmt, {})

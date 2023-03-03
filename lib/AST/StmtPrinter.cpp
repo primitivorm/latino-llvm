@@ -213,13 +213,13 @@ void StmtPrinter::VisitLabelStmt(LabelStmt *Node) {
   PrintStmt(Node->getSubStmt(), 0);
 }
 
-// void StmtPrinter::VisitAttributedStmt(AttributedStmt *Node) {
-//   for (const auto *Attr : Node->getAttrs()) {
-//     Attr->printPretty(OS, Policy);
-//   }
+void StmtPrinter::VisitAttributedStmt(AttributedStmt *Node) {
+  for (const auto *Attr : Node->getAttrs()) {
+    Attr->printPretty(OS, Policy);
+  }
 
-//   PrintStmt(Node->getSubStmt(), 0);
-// }
+  PrintStmt(Node->getSubStmt(), 0);
+}
 
 void StmtPrinter::PrintRawIfStmt(IfStmt *If) {
   OS << "if (";
@@ -1390,34 +1390,34 @@ void StmtPrinter::VisitMatrixSubscriptExpr(MatrixSubscriptExpr *Node) {
   OS << "]";
 }
 
-void StmtPrinter::VisitOMPArraySectionExpr(OMPArraySectionExpr *Node) {
-  PrintExpr(Node->getBase());
-  OS << "[";
-  if (Node->getLowerBound())
-    PrintExpr(Node->getLowerBound());
-  if (Node->getColonLocFirst().isValid()) {
-    OS << ":";
-    if (Node->getLength())
-      PrintExpr(Node->getLength());
-  }
-  if (Node->getColonLocSecond().isValid()) {
-    OS << ":";
-    if (Node->getStride())
-      PrintExpr(Node->getStride());
-  }
-  OS << "]";
-}
+// void StmtPrinter::VisitOMPArraySectionExpr(OMPArraySectionExpr *Node) {
+//   PrintExpr(Node->getBase());
+//   OS << "[";
+//   if (Node->getLowerBound())
+//     PrintExpr(Node->getLowerBound());
+//   if (Node->getColonLocFirst().isValid()) {
+//     OS << ":";
+//     if (Node->getLength())
+//       PrintExpr(Node->getLength());
+//   }
+//   if (Node->getColonLocSecond().isValid()) {
+//     OS << ":";
+//     if (Node->getStride())
+//       PrintExpr(Node->getStride());
+//   }
+//   OS << "]";
+// }
 
-void StmtPrinter::VisitOMPArrayShapingExpr(OMPArrayShapingExpr *Node) {
-  OS << "(";
-  for (Expr *E : Node->getDimensions()) {
-    OS << "[";
-    PrintExpr(E);
-    OS << "]";
-  }
-  OS << ")";
-  PrintExpr(Node->getBase());
-}
+// void StmtPrinter::VisitOMPArrayShapingExpr(OMPArrayShapingExpr *Node) {
+//   OS << "(";
+//   for (Expr *E : Node->getDimensions()) {
+//     OS << "[";
+//     PrintExpr(E);
+//     OS << "]";
+//   }
+//   OS << ")";
+//   PrintExpr(Node->getBase());
+// }
 
 // void StmtPrinter::VisitOMPIteratorExpr(OMPIteratorExpr *Node) {
 //   OS << "iterator(";
@@ -1713,27 +1713,28 @@ void StmtPrinter::VisitAtomicExpr(AtomicExpr *Node) {
   OS << Name;
 
   // AtomicExpr stores its subexpressions in a permuted order.
-  PrintExpr(Node->getPtr());
-  if (Node->getOp() != AtomicExpr::AO__c11_atomic_load &&
-      Node->getOp() != AtomicExpr::AO__atomic_load_n &&
-      Node->getOp() != AtomicExpr::AO__opencl_atomic_load) {
-    OS << ", ";
-    PrintExpr(Node->getVal1());
-  }
-  if (Node->getOp() == AtomicExpr::AO__atomic_exchange || Node->isCmpXChg()) {
-    OS << ", ";
-    PrintExpr(Node->getVal2());
-  }
-  if (Node->getOp() == AtomicExpr::AO__atomic_compare_exchange ||
-      Node->getOp() == AtomicExpr::AO__atomic_compare_exchange_n) {
-    OS << ", ";
-    PrintExpr(Node->getWeak());
-  }
-  if (Node->getOp() != AtomicExpr::AO__c11_atomic_init &&
-      Node->getOp() != AtomicExpr::AO__opencl_atomic_init) {
-    OS << ", ";
-    PrintExpr(Node->getOrder());
-  }
+  // PrintExpr(Node->getPtr());
+  // if (Node->getOp() != AtomicExpr::AO__c11_atomic_load &&
+  //     Node->getOp() != AtomicExpr::AO__atomic_load_n &&
+  //     Node->getOp() != AtomicExpr::AO__opencl_atomic_load) {
+  //   OS << ", ";
+  //   PrintExpr(Node->getVal1());
+  // }
+  // if (Node->getOp() == AtomicExpr::AO__atomic_exchange || Node->isCmpXChg())
+  // {
+  //   OS << ", ";
+  //   PrintExpr(Node->getVal2());
+  // }
+  // if (Node->getOp() == AtomicExpr::AO__atomic_compare_exchange ||
+  //     Node->getOp() == AtomicExpr::AO__atomic_compare_exchange_n) {
+  //   OS << ", ";
+  //   PrintExpr(Node->getWeak());
+  // }
+  // if (Node->getOp() != AtomicExpr::AO__c11_atomic_init &&
+  //     Node->getOp() != AtomicExpr::AO__opencl_atomic_init) {
+  //   OS << ", ";
+  //   PrintExpr(Node->getOrder());
+  // }
   if (Node->isCmpXChg()) {
     OS << ", ";
     PrintExpr(Node->getOrderFail());
@@ -1791,14 +1792,14 @@ void StmtPrinter::VisitCXXMemberCallExpr(CXXMemberCallExpr *Node) {
   VisitCallExpr(cast<CallExpr>(Node));
 }
 
-void StmtPrinter::VisitCUDAKernelCallExpr(CUDAKernelCallExpr *Node) {
-  PrintExpr(Node->getCallee());
-  OS << "<<<";
-  PrintCallArgs(Node->getConfig());
-  OS << ">>>(";
-  PrintCallArgs(Node);
-  OS << ")";
-}
+// void StmtPrinter::VisitCUDAKernelCallExpr(CUDAKernelCallExpr *Node) {
+//   PrintExpr(Node->getCallee());
+//   OS << "<<<";
+//   PrintCallArgs(Node->getConfig());
+//   OS << ">>>(";
+//   PrintCallArgs(Node);
+//   OS << ")";
+// }
 
 void StmtPrinter::VisitCXXRewrittenBinaryOperator(
     CXXRewrittenBinaryOperator *Node) {

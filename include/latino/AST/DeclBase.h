@@ -66,6 +66,8 @@ class RecordDecl;
 class SourceManager;
 class Stmt;
 class StoredDeclsMap;
+class TemplateDecl;
+class TemplateParameterList;
 class TranslationUnitDecl;
 class UsingDirectiveDecl;
 
@@ -997,6 +999,39 @@ public:
   static void add(Kind k);
   static void EnableStatistics();
   static void PrintStats();
+
+  /// isTemplateParameter - Determines whether this declaration is a
+  /// template parameter.
+  bool isTemplateParameter() const;
+
+  /// isTemplateParameter - Determines whether this declaration is a
+  /// template parameter pack.
+  bool isTemplateParameterPack() const;
+
+  /// Whether this declaration is a parameter pack.
+  bool isParameterPack() const;
+
+  /// returns true if this declaration is a template
+  bool isTemplateDecl() const;
+
+  /// Whether this declaration is a function or function template.
+  bool isFunctionOrFunctionTemplate() const {
+    return (DeclKind >= Decl::firstFunction &&
+            DeclKind <= Decl::lastFunction) ||
+           DeclKind == FunctionTemplate;
+  }
+
+  /// If this is a declaration that describes some template, this
+  /// method returns that template declaration.
+  ///
+  /// Note that this returns nullptr for partial specializations, because they
+  /// are not modeled as TemplateDecls. Use getDescribedTemplateParams to handle
+  /// those cases.
+  TemplateDecl *getDescribedTemplate() const;
+
+  /// If this is a declaration that describes some template or partial
+  /// specialization, this returns the corresponding template parameter list.
+  const TemplateParameterList *getDescribedTemplateParams() const;
 
   /// Returns the function itself, or the templated function if this is a
   /// function template.

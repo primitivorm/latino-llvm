@@ -30,6 +30,12 @@
 
 using namespace latino;
 
+static struct StmtClassNameTable {
+  const char *Name;
+  unsigned Counter;
+  unsigned Size;
+} StmtClassInfo[Stmt::lastStmtConstant + 1];
+
 static StmtClassNameTable &getStmtInfoTableEntry(Stmt::StmtClass E) {
   static bool Initialized = false;
   if (Initialized)

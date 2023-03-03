@@ -19,12 +19,10 @@
 #include "latino/Basic/OperatorKinds.h"
 #include "latino/Basic/PartialDiagnostic.h"
 #include "latino/Basic/SourceLocation.h"
-
 #include "llvm/ADT/DenseMapInfo.h"
 #include "llvm/ADT/FoldingSet.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/type_traits.h"
-
 #include <cassert>
 #include <cstdint>
 #include <cstring>

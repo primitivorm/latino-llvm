@@ -21,13 +21,12 @@
 
 using namespace latino;
 
-// StmtResult
-// latino::Sema::ActOnAttributedStmt(SourceLocation AttrLoc,
-//                                   ArrayRef<const clang::Attr *> Attrs,
-//                                   Stmt *SubStmt) {
-//   // Fill in the declaration and return it.
-//   clang::AttributedStmt *LS /*=
-//       clang::AttributedStmt::Create(Context, AttrLoc, Attrs, SubStmt)*/
-//       ;
-//   return LS;
-// }
+StmtResult
+latino::Sema::ActOnAttributedStmt(SourceLocation AttrLoc,
+                                  ArrayRef<const clang::Attr *> Attrs,
+                                  Stmt *SubStmt) {
+  // Fill in the declaration and return it.
+  clang::AttributedStmt *LS =
+      clang::AttributedStmt::Create(Context, AttrLoc, Attrs, SubStmt);
+  return LS;
+}

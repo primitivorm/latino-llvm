@@ -158,6 +158,54 @@ enum NonOdrUseReason {
   NOUR_Discarded,
 };
 
+/// Describes the kind of template specialization that a
+/// particular template specialization declaration represents.
+enum TemplateSpecializationKind {
+  /// This template specialization was formed from a template-id but
+  /// has not yet been declared, defined, or instantiated.
+  TSK_Undeclared = 0,
+  /// This template specialization was implicitly instantiated from a
+  /// template. (C++ [temp.inst]).
+  TSK_ImplicitInstantiation,
+  /// This template specialization was declared or defined by an
+  /// explicit specialization (C++ [temp.expl.spec]) or partial
+  /// specialization (C++ [temp.class.spec]).
+  TSK_ExplicitSpecialization,
+  /// This template specialization was instantiated from a template
+  /// due to an explicit instantiation declaration request
+  /// (C++11 [temp.explicit]).
+  TSK_ExplicitInstantiationDeclaration,
+  /// This template specialization was instantiated from a template
+  /// due to an explicit instantiation definition request
+  /// (C++ [temp.explicit]).
+  TSK_ExplicitInstantiationDefinition
+};
+
+/// Determine whether this template specialization kind refers
+/// to an instantiation of an entity (as opposed to a non-template or
+/// an explicit specialization).
+inline bool isTemplateInstantiation(TemplateSpecializationKind Kind) {
+  return Kind != TSK_Undeclared && Kind != TSK_ExplicitSpecialization;
+}
+
+/// True if this template specialization kind is an explicit
+/// specialization, explicit instantiation declaration, or explicit
+/// instantiation definition.
+inline bool isTemplateExplicitInstantiationOrSpecialization(
+    TemplateSpecializationKind Kind) {
+  switch (Kind) {
+  case TSK_ExplicitSpecialization:
+  case TSK_ExplicitInstantiationDeclaration:
+  case TSK_ExplicitInstantiationDefinition:
+    return true;
+
+  case TSK_Undeclared:
+  case TSK_ImplicitInstantiation:
+    return false;
+  }
+  llvm_unreachable("bad template specialization kind");
+}
+
 /// Thread storage-class-specifier.
 enum ThreadStorageClassSpecifier {
   TSCS_unspecified,

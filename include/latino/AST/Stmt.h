@@ -139,6 +139,19 @@ protected:
     SourceLocation IdentLoc;
   };
 
+  class AttributedStmtBitfields {
+    friend class ASTStmtReader;
+    friend class AttributedStmt;
+
+    unsigned : NumStmtBits;
+
+    /// Number of attributes.
+    unsigned NumAttrs : 32 - NumStmtBits;
+
+    /// The location of the attribute.
+    SourceLocation AttrLoc;
+  };
+
   class IfStmtBitfields {
     friend class ASTStmtReader;
     friend class IfStmt;
@@ -926,7 +939,7 @@ protected:
     NullStmtBitfields NullStmtBits;
     CompoundStmtBitfields CompoundStmtBits;
     LabelStmtBitfields LabelStmtBits;
-    // AttributedStmtBitfields AttributedStmtBits;
+    AttributedStmtBitfields AttributedStmtBits;
     IfStmtBitfields IfStmtBits;
     SwitchStmtBitfields SwitchStmtBits;
     WhileStmtBitfields WhileStmtBits;

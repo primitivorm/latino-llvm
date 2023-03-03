@@ -9,7 +9,6 @@
 #define LLVM_LATINO_AST_DEPENDENCEFLAGS_H
 
 #include "latino/Basic/BitmaskEnum.h"
-
 #include "llvm/ADT/BitmaskEnum.h"
 #include <cstdint>
 
@@ -31,7 +30,7 @@ struct ExprDependenceScope {
     // The value of this expr depends on a template parameter, or an error.
     Value = 8,
 
-    // clang extension: this expr contains or references an error, and is
+    // latino extension: this expr contains or references an error, and is
     // considered dependent on how that error is resolved.
     Error = 16,
 
@@ -97,6 +96,8 @@ using TypeDependence = TypeDependenceScope::TypeDependence;
   using NAME = NAME##Scope::NAME;
 
 LLVM_COMMON_DEPENDENCE(NestedNameSpecifierDependence)
+LLVM_COMMON_DEPENDENCE(TemplateNameDependence)
+LLVM_COMMON_DEPENDENCE(TemplateArgumentDependence)
 #undef LLVM_COMMON_DEPENDENCE
 
 // A combined space of all dependence concepts for all node types.
@@ -151,6 +152,18 @@ public:
           translate(D, NNSDependence::Dependent, Dependent) |
           translate(D, NNSDependence::Error, Error)) {}
 
+  Dependence(TemplateArgumentDependence D)
+      : V(translate(D, TADependence::UnexpandedPack, UnexpandedPack) |
+          translate(D, TADependence::Instantiation, Instantiation) |
+          translate(D, TADependence::Dependent, Dependent) |
+          translate(D, TADependence::Error, Error)) {}
+
+  Dependence(TemplateNameDependence D)
+      : V(translate(D, TNDependence::UnexpandedPack, UnexpandedPack) |
+          translate(D, TNDependence::Instantiation, Instantiation) |
+          translate(D, TNDependence::Dependent, Dependent) |
+          translate(D, TNDependence::Error, Error)) {}
+
   TypeDependence type() const {
     return translate(V, UnexpandedPack, TypeDependence::UnexpandedPack) |
            translate(V, Instantiation, TypeDependence::Instantiation) |
@@ -174,6 +187,20 @@ public:
            translate(V, Error, NNSDependence::Error);
   }
 
+  TemplateArgumentDependence templateArgument() const {
+    return translate(V, UnexpandedPack, TADependence::UnexpandedPack) |
+           translate(V, Instantiation, TADependence::Instantiation) |
+           translate(V, Dependent, TADependence::Dependent) |
+           translate(V, Error, TADependence::Error);
+  }
+
+  TemplateNameDependence templateName() const {
+    return translate(V, UnexpandedPack, TNDependence::UnexpandedPack) |
+           translate(V, Instantiation, TNDependence::Instantiation) |
+           translate(V, Dependent, TNDependence::Dependent) |
+           translate(V, Error, TNDependence::Error);
+  }
+
 private:
   Bits V;
 
@@ -184,8 +211,15 @@ private:
 
   // Abbreviations to make conversions more readable.
   using NNSDependence = NestedNameSpecifierDependence;
+  using TADependence = TemplateArgumentDependence;
+  using TNDependence = TemplateNameDependence;
 };
 
+/// Computes dependencies of a reference with the name having template arguments
+/// with \p TA dependencies.
+inline ExprDependence toExprDependence(TemplateArgumentDependence TA) {
+  return Dependence(TA).expr();
+}
 inline ExprDependence toExprDependence(TypeDependence D) {
   return Dependence(D).expr();
 }
@@ -214,10 +248,34 @@ inline TypeDependence toTypeDependence(ExprDependence D) {
 inline TypeDependence toTypeDependence(NestedNameSpecifierDependence D) {
   return Dependence(D).type();
 }
+inline TypeDependence toTypeDependence(TemplateNameDependence D) {
+  return Dependence(D).type();
+}
+inline TypeDependence toTypeDependence(TemplateArgumentDependence D) {
+  return Dependence(D).type();
+}
 
 inline NestedNameSpecifierDependence
 toNestedNameSpecifierDependendence(TypeDependence D) {
   return Dependence(D).nestedNameSpecifier();
+}
+
+inline TemplateArgumentDependence
+toTemplateArgumentDependence(TypeDependence D) {
+  return Dependence(D).templateArgument();
+}
+inline TemplateArgumentDependence
+toTemplateArgumentDependence(TemplateNameDependence D) {
+  return Dependence(D).templateArgument();
+}
+inline TemplateArgumentDependence
+toTemplateArgumentDependence(ExprDependence D) {
+  return Dependence(D).templateArgument();
+}
+
+inline TemplateNameDependence
+toTemplateNameDependence(NestedNameSpecifierDependence D) {
+  return Dependence(D).templateName();
 }
 
 LLVM_ENABLE_BITMASK_ENUMS_IN_NAMESPACE();

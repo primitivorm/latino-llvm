@@ -65,17 +65,17 @@ EXTERNCCONTEXT(ExternCContext, Decl)
 FILESCOPEASM(FileScopeAsm, Decl)
 #undef FILESCOPEASM
 
-// #ifndef FRIEND
-// #define FRIEND(Type, Base) DECL(Type, Base)
-// #endif
-// FRIEND(Friend, Decl)
-// #undef FRIEND
+#ifndef FRIEND
+#define FRIEND(Type, Base) DECL(Type, Base)
+#endif
+FRIEND(Friend, Decl)
+#undef FRIEND
 
-// #ifndef FRIENDTEMPLATE
-// #define FRIENDTEMPLATE(Type, Base) DECL(Type, Base)
-// #endif
-// FRIENDTEMPLATE(FriendTemplate, Decl)
-// #undef FRIENDTEMPLATE
+#ifndef FRIENDTEMPLATE
+#define FRIENDTEMPLATE(Type, Base) DECL(Type, Base)
+#endif
+FRIENDTEMPLATE(FriendTemplate, Decl)
+#undef FRIENDTEMPLATE
 
 #ifndef IMPORT
 #define IMPORT(Type, Base) DECL(Type, Base)
@@ -181,63 +181,63 @@ NAMESPACEALIAS(NamespaceAlias, NamedDecl)
 // OBJCPROPERTY(ObjCProperty, NamedDecl)
 // #undef OBJCPROPERTY
 
-// #ifndef TEMPLATE
-// #define TEMPLATE(Type, Base) NAMED(Type, Base)
-// #endif
-// ABSTRACT_DECL(TEMPLATE(Template, NamedDecl))
-// #ifndef BUILTINTEMPLATE
-// #define BUILTINTEMPLATE(Type, Base) TEMPLATE(Type, Base)
-// #endif
-// BUILTINTEMPLATE(BuiltinTemplate, TemplateDecl)
-// #undef BUILTINTEMPLATE
+#ifndef TEMPLATE
+#define TEMPLATE(Type, Base) NAMED(Type, Base)
+#endif
+ABSTRACT_DECL(TEMPLATE(Template, NamedDecl))
+#ifndef BUILTINTEMPLATE
+#define BUILTINTEMPLATE(Type, Base) TEMPLATE(Type, Base)
+#endif
+BUILTINTEMPLATE(BuiltinTemplate, TemplateDecl)
+#undef BUILTINTEMPLATE
 
-// #ifndef CONCEPT
-// #define CONCEPT(Type, Base) TEMPLATE(Type, Base)
-// #endif
-// CONCEPT(Concept, TemplateDecl)
-// #undef CONCEPT
+#ifndef CONCEPT
+#define CONCEPT(Type, Base) TEMPLATE(Type, Base)
+#endif
+CONCEPT(Concept, TemplateDecl)
+#undef CONCEPT
 
-// #ifndef REDECLARABLETEMPLATE
-// #define REDECLARABLETEMPLATE(Type, Base) TEMPLATE(Type, Base)
-// #endif
-// ABSTRACT_DECL(REDECLARABLETEMPLATE(RedeclarableTemplate, TemplateDecl))
-// #ifndef CLASSTEMPLATE
-// #define CLASSTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
-// #endif
-// CLASSTEMPLATE(ClassTemplate, RedeclarableTemplateDecl)
-// #undef CLASSTEMPLATE
+#ifndef REDECLARABLETEMPLATE
+#define REDECLARABLETEMPLATE(Type, Base) TEMPLATE(Type, Base)
+#endif
+ABSTRACT_DECL(REDECLARABLETEMPLATE(RedeclarableTemplate, TemplateDecl))
+#ifndef CLASSTEMPLATE
+#define CLASSTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
+#endif
+CLASSTEMPLATE(ClassTemplate, RedeclarableTemplateDecl)
+#undef CLASSTEMPLATE
 
-// #ifndef FUNCTIONTEMPLATE
-// #define FUNCTIONTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
-// #endif
-// FUNCTIONTEMPLATE(FunctionTemplate, RedeclarableTemplateDecl)
-// #undef FUNCTIONTEMPLATE
+#ifndef FUNCTIONTEMPLATE
+#define FUNCTIONTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
+#endif
+FUNCTIONTEMPLATE(FunctionTemplate, RedeclarableTemplateDecl)
+#undef FUNCTIONTEMPLATE
 
-// #ifndef TYPEALIASTEMPLATE
-// #define TYPEALIASTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
-// #endif
-// TYPEALIASTEMPLATE(TypeAliasTemplate, RedeclarableTemplateDecl)
-// #undef TYPEALIASTEMPLATE
+#ifndef TYPEALIASTEMPLATE
+#define TYPEALIASTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
+#endif
+TYPEALIASTEMPLATE(TypeAliasTemplate, RedeclarableTemplateDecl)
+#undef TYPEALIASTEMPLATE
 
-// #ifndef VARTEMPLATE
-// #define VARTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
-// #endif
-// VARTEMPLATE(VarTemplate, RedeclarableTemplateDecl)
-// #undef VARTEMPLATE
+#ifndef VARTEMPLATE
+#define VARTEMPLATE(Type, Base) REDECLARABLETEMPLATE(Type, Base)
+#endif
+VARTEMPLATE(VarTemplate, RedeclarableTemplateDecl)
+#undef VARTEMPLATE
 
-// DECL_RANGE(RedeclarableTemplate, ClassTemplate, VarTemplate)
+DECL_RANGE(RedeclarableTemplate, ClassTemplate, VarTemplate)
 
-// #undef REDECLARABLETEMPLATE
+#undef REDECLARABLETEMPLATE
 
-// #ifndef TEMPLATETEMPLATEPARM
-// #define TEMPLATETEMPLATEPARM(Type, Base) TEMPLATE(Type, Base)
-// #endif
-// TEMPLATETEMPLATEPARM(TemplateTemplateParm, TemplateDecl)
-// #undef TEMPLATETEMPLATEPARM
+#ifndef TEMPLATETEMPLATEPARM
+#define TEMPLATETEMPLATEPARM(Type, Base) TEMPLATE(Type, Base)
+#endif
+TEMPLATETEMPLATEPARM(TemplateTemplateParm, TemplateDecl)
+#undef TEMPLATETEMPLATEPARM
 
-// DECL_RANGE(Template, BuiltinTemplate, TemplateTemplateParm)
+DECL_RANGE(Template, BuiltinTemplate, TemplateTemplateParm)
 
-// #undef TEMPLATE
+#undef TEMPLATE
 
 #ifndef TYPE
 #define TYPE(Type, Base) NAMED(Type, Base)
@@ -444,11 +444,11 @@ DECL_RANGE(Function, Function, CXXDestructor)
 // MSPROPERTY(MSProperty, DeclaratorDecl)
 // #undef MSPROPERTY
 
-// #ifndef NONTYPETEMPLATEPARM
-// #define NONTYPETEMPLATEPARM(Type, Base) DECLARATOR(Type, Base)
-// #endif
-// NONTYPETEMPLATEPARM(NonTypeTemplateParm, DeclaratorDecl)
-// #undef NONTYPETEMPLATEPARM
+#ifndef NONTYPETEMPLATEPARM
+#define NONTYPETEMPLATEPARM(Type, Base) DECLARATOR(Type, Base)
+#endif
+NONTYPETEMPLATEPARM(NonTypeTemplateParm, DeclaratorDecl)
+#undef NONTYPETEMPLATEPARM
 
 #ifndef VAR
 #define VAR(Type, Base) DECLARATOR(Type, Base)
@@ -478,30 +478,30 @@ IMPLICITPARAM(ImplicitParam, VarDecl)
 PARMVAR(ParmVar, VarDecl)
 #undef PARMVAR
 
-// #ifndef VARTEMPLATESPECIALIZATION
-// #define VARTEMPLATESPECIALIZATION(Type, Base) VAR(Type, Base)
-// #endif
-// VARTEMPLATESPECIALIZATION(VarTemplateSpecialization, VarDecl)
-// #ifndef VARTEMPLATEPARTIALSPECIALIZATION
-// #define VARTEMPLATEPARTIALSPECIALIZATION(Type, Base) \
-//   VARTEMPLATESPECIALIZATION(Type, Base)
-// #endif
-// VARTEMPLATEPARTIALSPECIALIZATION(VarTemplatePartialSpecialization,
-//                                  VarTemplateSpecializationDecl)
-// #undef VARTEMPLATEPARTIALSPECIALIZATION
+#ifndef VARTEMPLATESPECIALIZATION
+#define VARTEMPLATESPECIALIZATION(Type, Base) VAR(Type, Base)
+#endif
+VARTEMPLATESPECIALIZATION(VarTemplateSpecialization, VarDecl)
+#ifndef VARTEMPLATEPARTIALSPECIALIZATION
+#define VARTEMPLATEPARTIALSPECIALIZATION(Type, Base)                           \
+  VARTEMPLATESPECIALIZATION(Type, Base)
+#endif
+VARTEMPLATEPARTIALSPECIALIZATION(VarTemplatePartialSpecialization,
+                                 VarTemplateSpecializationDecl)
+#undef VARTEMPLATEPARTIALSPECIALIZATION
 
-// DECL_RANGE(VarTemplateSpecialization, VarTemplateSpecialization,
-//            VarTemplatePartialSpecialization)
+DECL_RANGE(VarTemplateSpecialization, VarTemplateSpecialization,
+           VarTemplatePartialSpecialization)
 
-// #undef VARTEMPLATESPECIALIZATION
+#undef VARTEMPLATESPECIALIZATION
 
-// DECL_RANGE(Var, Var, VarTemplatePartialSpecialization)
+DECL_RANGE(Var, Var, VarTemplatePartialSpecialization)
 
-// #undef VAR
+#undef VAR
 
-// DECL_RANGE(Declarator, Field, VarTemplatePartialSpecialization)
+DECL_RANGE(Declarator, Field, VarTemplatePartialSpecialization)
 
-// #undef DECLARATOR
+#undef DECLARATOR
 
 #ifndef ENUMCONSTANT
 #define ENUMCONSTANT(Type, Base) VALUE(Type, Base)

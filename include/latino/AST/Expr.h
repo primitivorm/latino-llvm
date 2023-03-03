@@ -20,6 +20,7 @@
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/Stmt.h"
+#include "latino/AST/TemplateBase.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/CharInfo.h"
 #include "latino/Basic/FixedPoint.h"

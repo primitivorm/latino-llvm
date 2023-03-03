@@ -68,6 +68,7 @@ class StringLiteral;
 class TagDecl;
 class TypeLoc;
 class UnresolvedSetImpl;
+class VarTemplateDecl;
 
 /// The top declaration context.
 class TranslationUnitDecl : public Decl, public DeclContext {
@@ -1397,6 +1398,10 @@ public:
 
   void setEscapingByref() { NonParmVarDeclBits.EscapingByref = true; }
 
+  /// Retrieve the variable declaration from which this variable could
+  /// be instantiated, if it is an instantiation (rather than a non-template).
+  VarDecl *getTemplateInstantiationPattern() const;
+
   /// If this variable is an instantiated static data member of a
   /// class template specialization, returns the templated static data member
   /// from which it was instantiated.
@@ -1411,6 +1416,32 @@ public:
   /// class template specialization, retrieves the member specialization
   /// information.
   MemberSpecializationInfo *getMemberSpecializationInfo() const;
+
+  /// For a static data member that was instantiated from a static
+  /// data member of a class template, set the template specialiation kind.
+  void setTemplateSpecializationKind(
+      TemplateSpecializationKind TSK,
+      SourceLocation PointOfInstantiation = SourceLocation());
+
+  /// Specify that this variable is an instantiation of the
+  /// static data member VD.
+  void setInstantiationOfStaticDataMember(VarDecl *VD,
+                                          TemplateSpecializationKind TSK);
+
+  /// Retrieves the variable template that is described by this
+  /// variable declaration.
+  ///
+  /// Every variable template is represented as a VarTemplateDecl and a
+  /// VarDecl. The former contains template properties (such as
+  /// the template parameter lists) while the latter contains the
+  /// actual description of the template's
+  /// contents. VarTemplateDecl::getTemplatedDecl() retrieves the
+  /// VarDecl that from a VarTemplateDecl, while
+  /// getDescribedVarTemplate() retrieves the VarTemplateDecl from
+  /// a VarDecl.
+  VarTemplateDecl *getDescribedVarTemplate() const;
+
+  void setDescribedVarTemplate(VarTemplateDecl *Template);
 
   // Is this variable known to have a definition somewhere in the complete
   // program? This may be true even if the declaration has internal linkage and
