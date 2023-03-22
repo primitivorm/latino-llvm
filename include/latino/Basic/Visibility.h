@@ -50,26 +50,23 @@ inline Visibility minVisibility(Visibility L, Visibility R) {
 }
 
 class LinkageInfo {
-  uint8_t linkage_ : 3;
+  uint8_t linkage_    : 3;
   uint8_t visibility_ : 2;
-  uint8_t explicit_ : 1;
+  uint8_t explicit_   : 1;
 
-  void setVisibility(Visibility V, bool E) {
-    visibility_ = V;
-    explicit_ = E;
-  }
-
+  void setVisibility(Visibility V, bool E) { visibility_ = V; explicit_ = E; }
 public:
-  LinkageInfo()
-      : linkage_(ExternalLinkage), visibility_(DefaultVisibility),
-        explicit_(false) {}
+  LinkageInfo() : linkage_(ExternalLinkage), visibility_(DefaultVisibility),
+                  explicit_(false) {}
   LinkageInfo(Linkage L, Visibility V, bool E)
-      : linkage_(L), visibility_(V), explicit_(E) {
+    : linkage_(L), visibility_(V), explicit_(E) {
     assert(getLinkage() == L && getVisibility() == V &&
            isVisibilityExplicit() == E && "Enum truncated!");
   }
 
-  static LinkageInfo external() { return LinkageInfo(); }
+  static LinkageInfo external() {
+    return LinkageInfo();
+  }
   static LinkageInfo internal() {
     return LinkageInfo(InternalLinkage, DefaultVisibility, false);
   }
@@ -89,8 +86,12 @@ public:
 
   void setLinkage(Linkage L) { linkage_ = L; }
 
-  void mergeLinkage(Linkage L) { setLinkage(minLinkage(getLinkage(), L)); }
-  void mergeLinkage(LinkageInfo other) { mergeLinkage(other.getLinkage()); }
+  void mergeLinkage(Linkage L) {
+    setLinkage(minLinkage(getLinkage(), L));
+  }
+  void mergeLinkage(LinkageInfo other) {
+    mergeLinkage(other.getLinkage());
+  }
 
   void mergeExternalVisibility(Linkage L) {
     Linkage ThisL = getLinkage();
@@ -136,10 +137,9 @@ public:
   /// Merge linkage and conditionally merge visibility.
   void mergeMaybeWithVisibility(LinkageInfo other, bool withVis) {
     mergeLinkage(other);
-    if (withVis)
-      mergeVisibility(other);
+    if (withVis) mergeVisibility(other);
   }
 };
-} // namespace latino
+}
 
 #endif // LLVM_LATINO_BASIC_VISIBILITY_H

@@ -45,14 +45,20 @@ protected:
   StmtIteratorBase(Decl **dgi, Decl **dge);
   StmtIteratorBase() : stmt(nullptr) {}
 
-  bool inDeclGroup() const { return (RawVAPtr & Flags) == DeclGroupMode; }
+  bool inDeclGroup() const {
+    return (RawVAPtr & Flags) == DeclGroupMode;
+  }
 
-  bool inSizeOfTypeVA() const { return (RawVAPtr & Flags) == SizeOfTypeVAMode; }
+  bool inSizeOfTypeVA() const {
+    return (RawVAPtr & Flags) == SizeOfTypeVAMode;
+  }
 
-  bool inStmt() const { return (RawVAPtr & Flags) == StmtMode; }
+  bool inStmt() const {
+    return (RawVAPtr & Flags) == StmtMode;
+  }
 
   const VariableArrayType *getVAPtr() const {
-    return reinterpret_cast<const VariableArrayType *>(RawVAPtr & ~Flags);
+    return reinterpret_cast<const VariableArrayType*>(RawVAPtr & ~Flags);
   }
 
   void setVAPtr(const VariableArrayType *P) {
@@ -61,19 +67,19 @@ protected:
   }
 
   void NextDecl(bool ImmediateAdvance = true);
-  bool HandleDecl(Decl *D);
+  bool HandleDecl(Decl* D);
   void NextVA();
 
-  Stmt *&GetDeclExpr() const;
+  Stmt*& GetDeclExpr() const;
 };
 
 template <typename DERIVED, typename REFERENCE>
-class StmtIteratorImpl
-    : public StmtIteratorBase,
-      public std::iterator<std::forward_iterator_tag, REFERENCE, ptrdiff_t,
-                           REFERENCE, REFERENCE> {
+class StmtIteratorImpl : public StmtIteratorBase,
+                         public std::iterator<std::forward_iterator_tag,
+                                              REFERENCE, ptrdiff_t,
+                                              REFERENCE, REFERENCE> {
 protected:
-  StmtIteratorImpl(const StmtIteratorBase &RHS) : StmtIteratorBase(RHS) {}
+  StmtIteratorImpl(const StmtIteratorBase& RHS) : StmtIteratorBase(RHS) {}
 
 public:
   StmtIteratorImpl() = default;
@@ -81,7 +87,7 @@ public:
   StmtIteratorImpl(Decl **dgi, Decl **dge) : StmtIteratorBase(dgi, dge) {}
   StmtIteratorImpl(const VariableArrayType *t) : StmtIteratorBase(t) {}
 
-  DERIVED &operator++() {
+  DERIVED& operator++() {
     if (inStmt())
       ++stmt;
     else if (getVAPtr())
@@ -89,52 +95,55 @@ public:
     else
       NextDecl();
 
-    return static_cast<DERIVED &>(*this);
+    return static_cast<DERIVED&>(*this);
   }
 
   DERIVED operator++(int) {
-    DERIVED tmp = static_cast<DERIVED &>(*this);
+    DERIVED tmp = static_cast<DERIVED&>(*this);
     operator++();
     return tmp;
   }
 
-  bool operator==(const DERIVED &RHS) const {
+  bool operator==(const DERIVED& RHS) const {
     return stmt == RHS.stmt && DGI == RHS.DGI && RawVAPtr == RHS.RawVAPtr;
   }
 
-  bool operator!=(const DERIVED &RHS) const {
+  bool operator!=(const DERIVED& RHS) const {
     return stmt != RHS.stmt || DGI != RHS.DGI || RawVAPtr != RHS.RawVAPtr;
   }
 
-  REFERENCE operator*() const { return inStmt() ? *stmt : GetDeclExpr(); }
+  REFERENCE operator*() const {
+    return inStmt() ? *stmt : GetDeclExpr();
+  }
 
   REFERENCE operator->() const { return operator*(); }
 };
 
 struct ConstStmtIterator;
 
-struct StmtIterator : public StmtIteratorImpl<StmtIterator, Stmt *&> {
+struct StmtIterator : public StmtIteratorImpl<StmtIterator, Stmt*&> {
   explicit StmtIterator() = default;
-  StmtIterator(Stmt **S) : StmtIteratorImpl<StmtIterator, Stmt *&>(S) {}
-  StmtIterator(Decl **dgi, Decl **dge)
-      : StmtIteratorImpl<StmtIterator, Stmt *&>(dgi, dge) {}
+  StmtIterator(Stmt** S) : StmtIteratorImpl<StmtIterator, Stmt*&>(S) {}
+  StmtIterator(Decl** dgi, Decl** dge)
+      : StmtIteratorImpl<StmtIterator, Stmt*&>(dgi, dge) {}
   StmtIterator(const VariableArrayType *t)
-      : StmtIteratorImpl<StmtIterator, Stmt *&>(t) {}
+      : StmtIteratorImpl<StmtIterator, Stmt*&>(t) {}
 
 private:
   StmtIterator(const StmtIteratorBase &RHS)
       : StmtIteratorImpl<StmtIterator, Stmt *&>(RHS) {}
 
-  inline friend StmtIterator cast_away_const(const ConstStmtIterator &RHS);
+  inline friend StmtIterator
+  cast_away_const(const ConstStmtIterator &RHS);
 };
 
-struct ConstStmtIterator
-    : public StmtIteratorImpl<ConstStmtIterator, const Stmt *> {
+struct ConstStmtIterator : public StmtIteratorImpl<ConstStmtIterator,
+                                                   const Stmt*> {
   explicit ConstStmtIterator() = default;
-  ConstStmtIterator(const StmtIterator &RHS)
-      : StmtIteratorImpl<ConstStmtIterator, const Stmt *>(RHS) {}
+  ConstStmtIterator(const StmtIterator& RHS)
+      : StmtIteratorImpl<ConstStmtIterator, const Stmt*>(RHS) {}
 
-  ConstStmtIterator(Stmt *const *S)
+  ConstStmtIterator(Stmt * const *S)
       : StmtIteratorImpl<ConstStmtIterator, const Stmt *>(
             const_cast<Stmt **>(S)) {}
 };

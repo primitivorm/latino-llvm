@@ -1,4 +1,4 @@
-//===--- CleanupInfo.h - Cleanup Control in Sema ------------------------===//
+//===--- CleanupInfo.cpp - Cleanup Control in Sema ------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.

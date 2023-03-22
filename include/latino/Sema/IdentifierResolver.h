@@ -91,7 +91,9 @@ public:
 
     /// A IdDeclInfo::DeclsTy::iterator that walks or not the parent declaration
     /// contexts depending on 'LookInParentCtx'.
-    iterator(BaseIter I) { Ptr = reinterpret_cast<uintptr_t>(I) | 0x1; }
+    iterator(BaseIter I) {
+      Ptr = reinterpret_cast<uintptr_t>(I) | 0x1;
+    }
 
     bool isIterator() const { return (Ptr & 0x1); }
 
@@ -109,14 +111,18 @@ public:
       if (isIterator())
         return *getIterator();
       else
-        return reinterpret_cast<NamedDecl *>(Ptr);
+        return reinterpret_cast<NamedDecl*>(Ptr);
     }
 
-    bool operator==(const iterator &RHS) const { return Ptr == RHS.Ptr; }
-    bool operator!=(const iterator &RHS) const { return Ptr != RHS.Ptr; }
+    bool operator==(const iterator &RHS) const {
+      return Ptr == RHS.Ptr;
+    }
+    bool operator!=(const iterator &RHS) const {
+      return Ptr != RHS.Ptr;
+    }
 
     // Preincrement.
-    iterator &operator++() {
+    iterator& operator++() {
       if (!isIterator()) // common case.
         Ptr = 0;
       else
@@ -132,7 +138,9 @@ public:
   iterator begin(DeclarationName Name);
 
   /// end - Returns an iterator that has 'finished'.
-  iterator end() { return iterator(); }
+  iterator end() {
+    return iterator();
+  }
 
   /// isDeclInScope - If 'Ctx' is a function/method, isDeclInScope returns true
   /// if 'D' is in Scope 'S', otherwise 'S' is ignored and isDeclInScope returns
@@ -185,10 +193,10 @@ private:
 
   /// FETokenInfo contains a IdDeclInfo pointer if lower bit == 1.
   static inline IdDeclInfo *toIdDeclInfo(void *Ptr) {
-    assert((reinterpret_cast<uintptr_t>(Ptr) & 0x1) == 1 &&
-           "Ptr not a IdDeclInfo* !");
-    return reinterpret_cast<IdDeclInfo *>(reinterpret_cast<uintptr_t>(Ptr) &
-                                          ~0x1);
+    assert((reinterpret_cast<uintptr_t>(Ptr) & 0x1) == 1
+          && "Ptr not a IdDeclInfo* !");
+    return reinterpret_cast<IdDeclInfo*>(
+                    reinterpret_cast<uintptr_t>(Ptr) & ~0x1);
   }
 };
 

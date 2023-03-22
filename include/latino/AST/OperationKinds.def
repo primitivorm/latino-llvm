@@ -25,15 +25,15 @@
 /// Spelling: A string that provides a canonical spelling for the operation.
 
 #ifndef CAST_OPERATION
-#define CAST_OPERATION(Name)
+#  define CAST_OPERATION(Name)
 #endif
 
 #ifndef BINARY_OPERATION
-#define BINARY_OPERATION(Name, Spelling)
+#  define BINARY_OPERATION(Name, Spelling)
 #endif
 
 #ifndef UNARY_OPERATION
-#define UNARY_OPERATION(Name, Spelling)
+#  define UNARY_OPERATION(Name, Spelling)
 #endif
 
 //===- Cast Operations  ---------------------------------------------------===//
@@ -237,11 +237,11 @@ CAST_OPERATION(FloatingCast)
 
 /// CK_CPointerToObjCPointerCast - Casting a C pointer kind to an
 /// Objective-C pointer.
-// CAST_OPERATION(CPointerToObjCPointerCast)
+CAST_OPERATION(CPointerToObjCPointerCast)
 
 /// CK_BlockPointerToObjCPointerCast - Casting a block pointer to an
 /// ObjC pointer.
-// CAST_OPERATION(BlockPointerToObjCPointerCast)
+CAST_OPERATION(BlockPointerToObjCPointerCast)
 
 /// CK_AnyPointerToBlockPointerCast - Casting any non-block pointer
 /// to a block pointer.  Block-to-block casts are bitcasts.
@@ -250,7 +250,7 @@ CAST_OPERATION(AnyPointerToBlockPointerCast)
 /// Converting between two Objective-C object types, which
 /// can occur when performing reference binding to an Objective-C
 /// object.
-// CAST_OPERATION(ObjCObjectLValueCast)
+CAST_OPERATION(ObjCObjectLValueCast)
 
 /// A conversion of a floating point real to a floating point
 /// complex of the original type.  Injects the value as the real
@@ -400,6 +400,7 @@ BINARY_OPERATION(XorAssign, "^=")
 BINARY_OPERATION(OrAssign, "|=")
 // [C99 6.5.17] Comma operator.
 BINARY_OPERATION(Comma, ",")
+
 
 //===- Unary Operations ---------------------------------------------------===//
 // Note that additions to this should also update the StmtVisitor class and

@@ -1,4 +1,4 @@
-include "latino/Basic/ASTNode.td"
+include "clang/Basic/ASTNode.td"
 
 class TypeNode<TypeNode base, bit abstract = 0> : ASTNode {
 	TypeNode Base = base;
@@ -89,11 +89,22 @@ def TagType : TypeNode<Type, 1>;
 def RecordType : TypeNode<TagType>, LeafType;
 def EnumType : TypeNode<TagType>, LeafType;
 def ElaboratedType : TypeNode<Type>, NeverCanonical;
+def AttributedType : TypeNode<Type>, NeverCanonical;
+def TemplateTypeParmType : TypeNode<Type>, AlwaysDependent, LeafType;
+def SubstTemplateTypeParmType : TypeNode<Type>, NeverCanonical;
+def SubstTemplateTypeParmPackType : TypeNode<Type>, AlwaysDependent;
+def TemplateSpecializationType : TypeNode<Type>, NeverCanonicalUnlessDependent;
 def DeducedType : TypeNode<Type, 1>;
 def AutoType : TypeNode<DeducedType>;
+def DeducedTemplateSpecializationType : TypeNode<DeducedType>;
 def InjectedClassNameType : TypeNode<Type>, AlwaysDependent, LeafType;
 def DependentNameType : TypeNode<Type>, AlwaysDependent;
-// def PackExpansionType : TypeNode<Type>, NeverCanonicalUnlessDependent;
+def DependentTemplateSpecializationType : TypeNode<Type>, AlwaysDependent;
+def PackExpansionType : TypeNode<Type>, NeverCanonicalUnlessDependent;
+def ObjCTypeParamType : TypeNode<Type>, NeverCanonical;
+def ObjCObjectType : TypeNode<Type>;
+def ObjCInterfaceType : TypeNode<ObjCObjectType>, LeafType;
+def ObjCObjectPointerType : TypeNode<Type>;
 def PipeType : TypeNode<Type>;
 def AtomicType : TypeNode<Type>;
 def ExtIntType : TypeNode<Type>;

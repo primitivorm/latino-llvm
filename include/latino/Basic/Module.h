@@ -160,7 +160,7 @@ private:
   std::vector<std::string> TopHeaderNames;
 
   /// Cache of modules visible to lookup in this module.
-  mutable llvm::DenseSet<const Module *> VisibleModulesCache;
+  mutable llvm::DenseSet<const Module*> VisibleModulesCache;
 
   /// The ID used when referencing this module within a VisibleModuleSet.
   unsigned VisibilityID;
@@ -448,8 +448,10 @@ public:
   ///
   /// \param ShadowingModule If this module is unavailable because it is
   /// shadowed, this parameter will be set to the shadowing module.
-  bool isAvailable(const LangOptions &LangOpts, const TargetInfo &Target,
-                   Requirement &Req, UnresolvedHeaderDirective &MissingHeader,
+  bool isAvailable(const LangOptions &LangOpts,
+                   const TargetInfo &Target,
+                   Requirement &Req,
+                   UnresolvedHeaderDirective &MissingHeader,
                    Module *&ShadowingModule) const;
 
   /// Determine whether this module is a submodule.
@@ -501,7 +503,7 @@ public:
   /// be this module.
   Module *getTopLevelModule() {
     return const_cast<Module *>(
-        const_cast<const Module *>(this)->getTopLevelModule());
+             const_cast<const Module *>(this)->getTopLevelModule());
   }
 
   /// Retrieve the top-level module for this (sub)module, which may
@@ -509,16 +511,19 @@ public:
   const Module *getTopLevelModule() const;
 
   /// Retrieve the name of the top-level module.
-  StringRef getTopLevelModuleName() const { return getTopLevelModule()->Name; }
+  StringRef getTopLevelModuleName() const {
+    return getTopLevelModule()->Name;
+  }
 
   /// The serialized AST file for this module, if one was created.
-  const FileEntry *getASTFile() const { return getTopLevelModule()->ASTFile; }
+  const FileEntry *getASTFile() const {
+    return getTopLevelModule()->ASTFile;
+  }
 
   /// Set the serialized AST file for the top-level module of this module.
   void setASTFile(const FileEntry *File) {
-    assert(
-        (File == nullptr || getASTFile() == nullptr || getASTFile() == File) &&
-        "file path changed");
+    assert((File == nullptr || getASTFile() == nullptr ||
+            getASTFile() == File) && "file path changed");
     getTopLevelModule()->ASTFile = File;
   }
 
@@ -569,7 +574,8 @@ public:
   /// \param Target The target options that will be used to evaluate the
   /// availability of this feature.
   void addRequirement(StringRef Feature, bool RequiredState,
-                      const LangOptions &LangOpts, const TargetInfo &Target);
+                      const LangOptions &LangOpts,
+                      const TargetInfo &Target);
 
   /// Mark this module and all of its submodules as unavailable.
   void markUnavailable(bool Unimportable);
@@ -598,10 +604,8 @@ public:
   using submodule_const_iterator = std::vector<Module *>::const_iterator;
 
   submodule_iterator submodule_begin() { return SubModules.begin(); }
-  submodule_const_iterator submodule_begin() const {
-    return SubModules.begin();
-  }
-  submodule_iterator submodule_end() { return SubModules.end(); }
+  submodule_const_iterator submodule_begin() const {return SubModules.begin();}
+  submodule_iterator submodule_end()   { return SubModules.end(); }
   submodule_const_iterator submodule_end() const { return SubModules.end(); }
 
   llvm::iterator_range<submodule_iterator> submodules() {
@@ -617,7 +621,9 @@ public:
   /// directly exported), not the complete set of exported modules.
   void getExportedModules(SmallVectorImpl<Module *> &Exported) const;
 
-  static StringRef getModuleInputBufferName() { return "<module-includes>"; }
+  static StringRef getModuleInputBufferName() {
+    return "<module-includes>";
+  }
 
   /// Print the module map for this module to the given stream.
   void print(raw_ostream &OS, unsigned Indent = 0) const;
@@ -654,7 +660,9 @@ public:
   unsigned getGeneration() const { return Generation; }
 
   /// Determine whether a module is visible.
-  bool isVisible(const Module *M) const { return getImportLoc(M).isValid(); }
+  bool isVisible(const Module *M) const {
+    return getImportLoc(M).isValid();
+  }
 
   /// Get the location at which the import of a module was triggered.
   SourceLocation getImportLoc(const Module *M) const {
@@ -670,13 +678,15 @@ public:
   /// A callback to call when a module conflict is found. \p Path
   /// consists of a sequence of modules from the conflicting module to the one
   /// made visible, where each was exported by the next.
-  using ConflictCallback = llvm::function_ref<void(
-      ArrayRef<Module *> Path, Module *Conflict, StringRef Message)>;
+  using ConflictCallback =
+      llvm::function_ref<void(ArrayRef<Module *> Path, Module *Conflict,
+                         StringRef Message)>;
 
   /// Make a specific module visible.
-  void setVisible(
-      Module *M, SourceLocation Loc, VisibleCallback Vis = [](Module *) {},
-      ConflictCallback Cb = [](ArrayRef<Module *>, Module *, StringRef) {});
+  void setVisible(Module *M, SourceLocation Loc,
+                  VisibleCallback Vis = [](Module *) {},
+                  ConflictCallback Cb = [](ArrayRef<Module *>, Module *,
+                                           StringRef) {});
 
 private:
   /// Import locations for each visible module. Indexed by the module's
@@ -687,7 +697,7 @@ private:
   unsigned Generation = 0;
 };
 
-/// Abstracts latino modules and precompiled header files and holds
+/// Abstracts clang modules and precompiled header files and holds
 /// everything needed to generate debug info for an imported module
 /// or PCH.
 class ASTSourceDescriptor {
@@ -711,6 +721,7 @@ public:
   ASTFileSignature getSignature() const { return Signature; }
   Module *getModuleOrNull() const { return ClangModule; }
 };
+
 
 } // namespace latino
 

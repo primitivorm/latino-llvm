@@ -18,7 +18,7 @@
 #include "llvm/ADT/BitmaskEnum.h"
 
 namespace latino {
-LLVM_ENABLE_BITMASK_ENUMS_IN_NAMESPACE();
+  LLVM_ENABLE_BITMASK_ENUMS_IN_NAMESPACE();
 }
 
 #endif

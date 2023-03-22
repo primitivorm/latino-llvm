@@ -1,0 +1,31 @@
+set(LLVM_LINK_COMPONENTS
+  FrontendOpenMP
+  Support
+  )
+
+add_latino_unittest(StaticAnalysisTests
+  AnalyzerOptionsTest.cpp
+  CallDescriptionTest.cpp
+  CallEventTest.cpp
+  FalsePositiveRefutationBRVisitorTest.cpp
+  ParamRegionTest.cpp
+  RangeSetTest.cpp
+  RegisterCustomCheckersTest.cpp
+  StoreTest.cpp 
+  SymbolReaperTest.cpp
+  TestReturnValueUnderConstruction.cpp
+  )
+
+latino_target_link_libraries(StaticAnalysisTests
+  PRIVATE
+  latinoBasic
+  latinoAnalysis
+  latinoAST
+  latinoASTMatchers
+  latinoCrossTU
+  latinoFrontend
+  latinoSerialization
+  latinoStaticAnalyzerCore
+  latinoStaticAnalyzerFrontend
+  latinoTooling
+  )

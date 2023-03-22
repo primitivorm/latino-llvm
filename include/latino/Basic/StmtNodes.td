@@ -1,6 +1,6 @@
-include "latino/Basic/ASTNode.td"
+include "clang/Basic/ASTNode.td"
 
-class StmtNode<StmtNode base, bit abstract = 0> : ASTNode/*, AttrSubject*/ {
+class StmtNode<StmtNode base, bit abstract = 0> : ASTNode, AttrSubject {
 	StmtNode Base = base;
   bit Abstract = abstract;
 }
@@ -37,13 +37,13 @@ def GCCAsmStmt : StmtNode<AsmStmt>;
 def MSAsmStmt : StmtNode<AsmStmt>;
 
 // Obj-C statements
-// def ObjCAtTryStmt : StmtNode<Stmt>;
-// def ObjCAtCatchStmt : StmtNode<Stmt>;
-// def ObjCAtFinallyStmt : StmtNode<Stmt>;
-// def ObjCAtThrowStmt : StmtNode<Stmt>;
-// def ObjCAtSynchronizedStmt : StmtNode<Stmt>;
-// def ObjCForCollectionStmt : StmtNode<Stmt>;
-// def ObjCAutoreleasePoolStmt : StmtNode<Stmt>;
+def ObjCAtTryStmt : StmtNode<Stmt>;
+def ObjCAtCatchStmt : StmtNode<Stmt>;
+def ObjCAtFinallyStmt : StmtNode<Stmt>;
+def ObjCAtThrowStmt : StmtNode<Stmt>;
+def ObjCAtSynchronizedStmt : StmtNode<Stmt>;
+def ObjCForCollectionStmt : StmtNode<Stmt>;
+def ObjCAutoreleasePoolStmt : StmtNode<Stmt>;
 
 // C++ statements
 def CXXCatchStmt : StmtNode<Stmt>;
@@ -71,7 +71,7 @@ def UnaryExprOrTypeTraitExpr : StmtNode<Expr>;
 def ArraySubscriptExpr : StmtNode<Expr>;
 def MatrixSubscriptExpr : StmtNode<Expr>;
 def OMPArraySectionExpr : StmtNode<Expr>;
-// def OMPIteratorExpr : StmtNode<Expr>;
+def OMPIteratorExpr : StmtNode<Expr>;
 def CallExpr : StmtNode<Expr>;
 def MemberExpr : StmtNode<Expr>;
 def CastExpr : StmtNode<Expr, 1>;
@@ -153,6 +153,8 @@ def UnresolvedMemberExpr : StmtNode<OverloadExpr>;
 def CXXNoexceptExpr : StmtNode<Expr>;
 def PackExpansionExpr : StmtNode<Expr>;
 def SizeOfPackExpr : StmtNode<Expr>;
+def SubstNonTypeTemplateParmExpr : StmtNode<Expr>;
+def SubstNonTypeTemplateParmPackExpr : StmtNode<Expr>;
 def FunctionParmPackExpr : StmtNode<Expr>;
 def MaterializeTemporaryExpr : StmtNode<Expr>;
 def LambdaExpr : StmtNode<Expr>;
@@ -169,27 +171,27 @@ def ConceptSpecializationExpr : StmtNode<Expr>;
 def RequiresExpr : StmtNode<Expr>;
 
 // Obj-C Expressions.
-// def ObjCStringLiteral : StmtNode<Expr>;
-// def ObjCBoxedExpr : StmtNode<Expr>;
-// def ObjCArrayLiteral : StmtNode<Expr>;
-// def ObjCDictionaryLiteral : StmtNode<Expr>;
-// def ObjCEncodeExpr : StmtNode<Expr>;
-// def ObjCMessageExpr : StmtNode<Expr>;
-// def ObjCSelectorExpr : StmtNode<Expr>;
-// def ObjCProtocolExpr : StmtNode<Expr>;
-// def ObjCIvarRefExpr : StmtNode<Expr>;
-// def ObjCPropertyRefExpr : StmtNode<Expr>;
-// def ObjCIsaExpr : StmtNode<Expr>;
-// def ObjCIndirectCopyRestoreExpr : StmtNode<Expr>;
-// def ObjCBoolLiteralExpr : StmtNode<Expr>;
-// def ObjCSubscriptRefExpr : StmtNode<Expr>;
-// def ObjCAvailabilityCheckExpr : StmtNode<Expr>;
+def ObjCStringLiteral : StmtNode<Expr>;
+def ObjCBoxedExpr : StmtNode<Expr>;
+def ObjCArrayLiteral : StmtNode<Expr>;
+def ObjCDictionaryLiteral : StmtNode<Expr>;
+def ObjCEncodeExpr : StmtNode<Expr>;
+def ObjCMessageExpr : StmtNode<Expr>;
+def ObjCSelectorExpr : StmtNode<Expr>;
+def ObjCProtocolExpr : StmtNode<Expr>;
+def ObjCIvarRefExpr : StmtNode<Expr>;
+def ObjCPropertyRefExpr : StmtNode<Expr>;
+def ObjCIsaExpr : StmtNode<Expr>;
+def ObjCIndirectCopyRestoreExpr : StmtNode<Expr>;
+def ObjCBoolLiteralExpr : StmtNode<Expr>;
+def ObjCSubscriptRefExpr : StmtNode<Expr>;
+def ObjCAvailabilityCheckExpr : StmtNode<Expr>;
 
 // Obj-C ARC Expressions.
-// def ObjCBridgedCastExpr : StmtNode<ExplicitCastExpr>;
+def ObjCBridgedCastExpr : StmtNode<ExplicitCastExpr>;
 
 // CUDA Expressions.
-// def CUDAKernelCallExpr : StmtNode<CallExpr>;
+def CUDAKernelCallExpr : StmtNode<CallExpr>;
 
 // Clang Extensions.
 def ShuffleVectorExpr : StmtNode<Expr>;

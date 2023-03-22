@@ -76,7 +76,9 @@ public:
   bool empty() const { return Decls.empty(); }
   unsigned size() const { return Decls.size(); }
 
-  void reserve(ASTContext &C, unsigned N) { Decls.reserve(C, N); }
+  void reserve(ASTContext &C, unsigned N) {
+    Decls.reserve(C, N);
+  }
 
   void append(ASTContext &C, iterator I, iterator E) {
     Decls.append(C, I.I, E.I);

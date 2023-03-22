@@ -19,8 +19,8 @@ namespace latino {
 /// Enumeration specifying the different kinds of C++ overloaded
 /// operators.
 enum OverloadedOperatorKind : int {
-  OO_None, ///< Not an overloaded operator
-#define OVERLOADED_OPERATOR(Name, Spelling, Token, Unary, Binary, MemberOnly)  \
+  OO_None,                ///< Not an overloaded operator
+#define OVERLOADED_OPERATOR(Name,Spelling,Token,Unary,Binary,MemberOnly) \
   OO_##Name,
 #include "latino/Basic/OperatorKinds.def"
   NUM_OVERLOADED_OPERATORS

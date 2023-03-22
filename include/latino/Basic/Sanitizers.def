@@ -25,6 +25,7 @@
 // The second value is an identifier which can be used to refer to the
 // sanitizer.
 
+
 // SANITIZER_GROUP(NAME, ID, ALIAS)
 
 // The first two values have the same semantics as the corresponding SANITIZER
@@ -34,6 +35,7 @@
 #ifndef SANITIZER_GROUP
 #define SANITIZER_GROUP(NAME, ID, ALIAS)
 #endif
+
 
 // AddressSanitizer
 SANITIZER("address", Address)
@@ -131,10 +133,11 @@ SANITIZER("shadow-call-stack", ShadowCallStack)
 // ABI or address space layout implications, and only catch undefined behavior.
 SANITIZER_GROUP("undefined", Undefined,
                 Alignment | Bool | Builtin | ArrayBounds | Enum |
-                    FloatCastOverflow | IntegerDivideByZero | NonnullAttribute |
-                    Null | ObjectSize | PointerOverflow | Return |
-                    ReturnsNonnullAttribute | Shift | SignedIntegerOverflow |
-                    Unreachable | VLABound | Function | Vptr)
+                    FloatCastOverflow |
+                    IntegerDivideByZero | NonnullAttribute | Null | ObjectSize |
+                    PointerOverflow | Return | ReturnsNonnullAttribute | Shift |
+                    SignedIntegerOverflow | Unreachable | VLABound | Function |
+                    Vptr)
 
 // -fsanitize=undefined-trap is an alias for -fsanitize=undefined.
 SANITIZER_GROUP("undefined-trap", UndefinedTrap, Undefined)
@@ -156,10 +159,10 @@ SANITIZER_GROUP("implicit-integer-arithmetic-value-change",
 SANITIZER("objc-cast", ObjCCast)
 
 // FIXME:
-// SANITIZER_GROUP("implicit-integer-conversion", ImplicitIntegerConversion,
+//SANITIZER_GROUP("implicit-integer-conversion", ImplicitIntegerConversion,
 //                ImplicitIntegerArithmeticValueChange |
 //                    ImplicitUnsignedIntegerTruncation)
-// SANITIZER_GROUP("implicit-conversion", ImplicitConversion,
+//SANITIZER_GROUP("implicit-conversion", ImplicitConversion,
 //                ImplicitIntegerConversion)
 
 SANITIZER_GROUP("implicit-conversion", ImplicitConversion,

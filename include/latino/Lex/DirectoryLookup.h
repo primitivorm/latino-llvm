@@ -13,8 +13,8 @@
 #ifndef LLVM_LATINO_LEX_DIRECTORYLOOKUP_H
 #define LLVM_LATINO_LEX_DIRECTORYLOOKUP_H
 
-#include "latino/Basic/FileManager.h"
 #include "latino/Basic/LLVM.h"
+#include "latino/Basic/FileManager.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/Lex/ModuleMap.h"
 
@@ -29,8 +29,11 @@ class Module;
 ///
 class DirectoryLookup {
 public:
-  enum LookupType_t { LT_NormalDir, LT_Framework, LT_HeaderMap };
-
+  enum LookupType_t {
+    LT_NormalDir,
+    LT_Framework,
+    LT_HeaderMap
+  };
 private:
   union DLU { // This union is discriminated by isHeaderMap.
     /// Dir - This is the actual directory that we're referring to for a normal
@@ -120,7 +123,9 @@ public:
 
   /// Specify whether we have already searched all of the subdirectories
   /// for module maps.
-  void setSearchedAllModuleMaps(bool SAMM) { SearchedAllModuleMaps = SAMM; }
+  void setSearchedAllModuleMaps(bool SAMM) {
+    SearchedAllModuleMaps = SAMM;
+  }
 
   /// DirCharacteristic - The type of directory this is, one of the DirType enum
   /// values.
@@ -134,7 +139,9 @@ public:
   }
 
   /// Whether this header map is building a framework or not.
-  bool isIndexHeaderMap() const { return isHeaderMap() && IsIndexHeaderMap; }
+  bool isIndexHeaderMap() const {
+    return isHeaderMap() && IsIndexHeaderMap;
+  }
 
   /// LookupFile - Lookup the specified file in this search path, returning it
   /// if it exists or returning null if not.
@@ -185,6 +192,6 @@ private:
       bool &InUserSpecifiedSystemFramework, bool &IsFrameworkFound) const;
 };
 
-} // end namespace latino
+}  // end namespace latino
 
 #endif

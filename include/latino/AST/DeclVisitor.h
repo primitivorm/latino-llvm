@@ -17,8 +17,8 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-// #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/Support/ErrorHandling.h"
@@ -27,30 +27,28 @@ namespace latino {
 
 namespace declvisitor {
 /// A simple visitor class that helps create declaration visitors.
-template <template <typename> class Ptr, typename ImplClass,
-          typename RetTy = void>
+template<template <typename> class Ptr, typename ImplClass, typename RetTy=void>
 class Base {
 public:
 #define PTR(CLASS) typename Ptr<CLASS>::type
-#define DISPATCH(NAME, CLASS)                                                  \
-  return static_cast<ImplClass *>(this)->Visit##NAME(static_cast<PTR(CLASS)>(D))
+#define DISPATCH(NAME, CLASS) \
+  return static_cast<ImplClass*>(this)->Visit##NAME(static_cast<PTR(CLASS)>(D))
 
   RetTy Visit(PTR(Decl) D) {
     switch (D->getKind()) {
-#define DECL(DERIVED, BASE)                                                    \
-  case Decl::DERIVED:                                                          \
-    DISPATCH(DERIVED##Decl, DERIVED##Decl);
+#define DECL(DERIVED, BASE) \
+      case Decl::DERIVED: DISPATCH(DERIVED##Decl, DERIVED##Decl);
 #define ABSTRACT_DECL(DECL)
-#include "latino/AST/DeclNodes.inc"
+#include "clang/AST/DeclNodes.inc"
     }
     llvm_unreachable("Decl that isn't part of DeclNodes.inc!");
   }
 
   // If the implementation chooses not to implement a certain visit
   // method, fall back to the parent.
-#define DECL(DERIVED, BASE)                                                    \
+#define DECL(DERIVED, BASE) \
   RetTy Visit##DERIVED##Decl(PTR(DERIVED##Decl) D) { DISPATCH(BASE, BASE); }
-#include "latino/AST/DeclNodes.inc"
+#include "clang/AST/DeclNodes.inc"
 
   RetTy VisitDecl(PTR(Decl) D) { return RetTy(); }
 

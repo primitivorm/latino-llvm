@@ -21,6 +21,7 @@
 #include "llvm/Support/raw_ostream.h"
 
 namespace latino {
+
 class ASTContext;
 class QualType;
 
@@ -36,7 +37,7 @@ public:
       : Width(Width), Scale(Scale), IsSigned(IsSigned),
         IsSaturated(IsSaturated), HasUnsignedPadding(HasUnsignedPadding) {
     assert(Width >= Scale && "Not enough room for the scale");
-    assert(!(IsSaturated && HasUnsignedPadding) &&
+    assert(!(IsSigned && HasUnsignedPadding) &&
            "Cannot have unsigned padding on a signed type.");
   }
 
@@ -46,7 +47,7 @@ public:
   bool isSaturated() const { return IsSaturated; }
   bool hasUnsignedPadding() const { return HasUnsignedPadding; }
 
-  void setSatured(bool Saturated) { IsSaturated = Saturated; }
+  void setSaturated(bool Saturated) { IsSaturated = Saturated; }
 
   /// Return the number of integral bits represented by these semantics. These
   /// are separate from the fractional bits and do not include the sign or
@@ -74,19 +75,19 @@ public:
   }
 
 private:
-  unsigned Width : 16;
-  unsigned Scale : 13;
-  unsigned IsSigned : 1;
-  unsigned IsSaturated : 1;
+  unsigned Width          : 16;
+  unsigned Scale          : 13;
+  unsigned IsSigned       : 1;
+  unsigned IsSaturated    : 1;
   unsigned HasUnsignedPadding : 1;
 };
 
 /// The APFixedPoint class works similarly to APInt/APSInt in that it is a
 /// functional replacement for a scaled integer. It is meant to replicate the
-/// fixed point types proposed in ISO/IEC JTC1 SC22 WG14 N1169. The class
-/// carries info about the fixed point type's width, sign, scale, and
-/// saturation, and provides different operations that would normally be
-/// performed on fixed point types.
+/// fixed point types proposed in ISO/IEC JTC1 SC22 WG14 N1169. The class carries
+/// info about the fixed point type's width, sign, scale, and saturation, and
+/// provides different operations that would normally be performed on fixed point
+/// types.
 ///
 /// Semantically this does not represent any existing C type other than fixed
 /// point types and should eventually be moved to LLVM if fixed point types gain
@@ -100,8 +101,8 @@ public:
   }
 
   APFixedPoint(uint64_t Val, const FixedPointSemantics &Sema)
-      : APFixedPoint(llvm::APInt(Sema.getWidth(), Val, Sema.isSigned()), Sema) {
-  }
+      : APFixedPoint(llvm::APInt(Sema.getWidth(), Val, Sema.isSigned()),
+                     Sema) {}
 
   // Zero initialization.
   APFixedPoint(const FixedPointSemantics &Sema) : APFixedPoint(0, Sema) {}
@@ -111,7 +112,7 @@ public:
   inline unsigned getScale() const { return Sema.getScale(); }
   inline bool isSaturated() const { return Sema.isSaturated(); }
   inline bool isSigned() const { return Sema.isSigned(); }
-  inline bool isPadding() const { return Sema.hasUnsignedPadding(); }
+  inline bool hasPadding() const { return Sema.hasUnsignedPadding(); }
   FixedPointSemantics getSemantics() const { return Sema; }
 
   bool getBoolValue() const { return Val.getBoolValue(); }
@@ -182,7 +183,7 @@ public:
   bool operator<(const APFixedPoint &Other) const { return compare(Other) < 0; }
   bool operator>=(const APFixedPoint &Other) const {
     return compare(Other) >= 0;
-  };
+  }
   bool operator<=(const APFixedPoint &Other) const {
     return compare(Other) <= 0;
   }
@@ -209,6 +210,6 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &OS,
   return OS;
 }
 
-} // namespace latino
+}  // namespace latino
 
 #endif

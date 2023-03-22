@@ -32,7 +32,8 @@ namespace latino {
 
 class ASTContext;
 
-template <typename T> class ASTVector {
+template<typename T>
+class ASTVector {
 private:
   T *Begin = nullptr;
   T *End = nullptr;
@@ -99,17 +100,13 @@ public:
   const_iterator end() const { return End; }
 
   // reverse iterator creation methods.
-  reverse_iterator rbegin() { return reverse_iterator(end()); }
-  const_reverse_iterator rbegin() const {
-    return const_reverse_iterator(end());
-  }
-  reverse_iterator rend() { return reverse_iterator(begin()); }
-  const_reverse_iterator rend() const {
-    return const_reverse_iterator(begin());
-  }
+  reverse_iterator rbegin()            { return reverse_iterator(end()); }
+  const_reverse_iterator rbegin() const{ return const_reverse_iterator(end()); }
+  reverse_iterator rend()              { return reverse_iterator(begin()); }
+  const_reverse_iterator rend() const { return const_reverse_iterator(begin());}
 
   bool empty() const { return Begin == End; }
-  size_type size() const { return End - Begin; }
+  size_type size() const { return End-Begin; }
 
   reference operator[](unsigned idx) {
     assert(Begin + idx < End);
@@ -120,11 +117,19 @@ public:
     return Begin[idx];
   }
 
-  reference front() { return begin()[0]; }
-  const_reference front() const { return begin()[0]; }
+  reference front() {
+    return begin()[0];
+  }
+  const_reference front() const {
+    return begin()[0];
+  }
 
-  reference back() { return end()[-1]; }
-  const_reference back() const { return end()[-1]; }
+  reference back() {
+    return end()[-1];
+  }
+  const_reference back() const {
+    return end()[-1];
+  }
 
   void pop_back() {
     --End;
@@ -145,10 +150,14 @@ public:
   }
 
   /// data - Return a pointer to the vector's buffer, even if empty().
-  pointer data() { return pointer(Begin); }
+  pointer data() {
+    return pointer(Begin);
+  }
 
   /// data - Return a pointer to the vector's buffer, even if empty().
-  const_pointer data() const { return const_pointer(Begin); }
+  const_pointer data() const {
+    return const_pointer(Begin);
+  }
 
   void push_back(const_reference Elt, const ASTContext &C) {
     if (End < this->capacity_ptr()) {
@@ -162,7 +171,7 @@ public:
   }
 
   void reserve(const ASTContext &C, unsigned N) {
-    if (unsigned(this->capacity_ptr() - Begin) < N)
+    if (unsigned(this->capacity_ptr()-Begin) < N)
       grow(C, N);
   }
 
@@ -171,7 +180,7 @@ public:
   size_t capacity() const { return this->capacity_ptr() - Begin; }
 
   /// append - Add the specified range to the end of the SmallVector.
-  template <typename in_iter>
+  template<typename in_iter>
   void append(const ASTContext &C, in_iter in_start, in_iter in_end) {
     size_type NumInputs = std::distance(in_start, in_end);
 
@@ -179,8 +188,8 @@ public:
       return;
 
     // Grow allocated space if needed.
-    if (NumInputs > size_type(this->capacity_ptr() - this->end()))
-      this->grow(C, this->size() + NumInputs);
+    if (NumInputs > size_type(this->capacity_ptr()-this->end()))
+      this->grow(C, this->size()+NumInputs);
 
     // Copy the new elements over.
     // TODO: NEED To compile time dispatch on whether in_iter is a random access
@@ -192,8 +201,8 @@ public:
   /// append - Add the specified range to the end of the SmallVector.
   void append(const ASTContext &C, size_type NumInputs, const T &Elt) {
     // Grow allocated space if needed.
-    if (NumInputs > size_type(this->capacity_ptr() - this->end()))
-      this->grow(C, this->size() + NumInputs);
+    if (NumInputs > size_type(this->capacity_ptr()-this->end()))
+      this->grow(C, this->size()+NumInputs);
 
     // Copy the new elements over.
     std::uninitialized_fill_n(this->end(), NumInputs, Elt);
@@ -202,29 +211,29 @@ public:
 
   /// uninitialized_copy - Copy the range [I, E) onto the uninitialized memory
   /// starting with "Dest", constructing elements into it as needed.
-  template <typename It1, typename It2>
+  template<typename It1, typename It2>
   static void uninitialized_copy(It1 I, It1 E, It2 Dest) {
     std::uninitialized_copy(I, E, Dest);
   }
 
   iterator insert(const ASTContext &C, iterator I, const T &Elt) {
-    if (I == this->end()) { // Important special case for empty vector.
+    if (I == this->end()) {  // Important special case for empty vector.
       push_back(Elt, C);
-      return this->end() - 1;
+      return this->end()-1;
     }
 
     if (this->End < this->capacity_ptr()) {
     Retry:
       new (this->end()) T(this->back());
-      this->setEnd(this->end() + 1);
+      this->setEnd(this->end()+1);
       // Push everything else over.
-      std::copy_backward(I, this->end() - 1, this->end());
+      std::copy_backward(I, this->end()-1, this->end());
       *I = Elt;
       return I;
     }
-    size_t EltNo = I - this->begin();
+    size_t EltNo = I-this->begin();
     this->grow(C);
-    I = this->begin() + EltNo;
+    I = this->begin()+EltNo;
     goto Retry;
   }
 
@@ -242,18 +251,18 @@ public:
     reserve(C, static_cast<unsigned>(this->size() + NumToInsert));
 
     // Uninvalidate the iterator.
-    I = this->begin() + InsertElt;
+    I = this->begin()+InsertElt;
 
     // If there are more elements between the insertion point and the end of the
     // range than there are being inserted, we can use a simple approach to
     // insertion.  Since we already reserved space, we know that this won't
     // reallocate the vector.
-    if (size_t(this->end() - I) >= NumToInsert) {
+    if (size_t(this->end()-I) >= NumToInsert) {
       T *OldEnd = this->end();
-      append(C, this->end() - NumToInsert, this->end());
+      append(C, this->end()-NumToInsert, this->end());
 
       // Copy the existing elements that get replaced.
-      std::copy_backward(I, OldEnd - NumToInsert, OldEnd);
+      std::copy_backward(I, OldEnd-NumToInsert, OldEnd);
 
       std::fill_n(I, NumToInsert, Elt);
       return I;
@@ -265,18 +274,18 @@ public:
     // Copy over the elements that we're about to overwrite.
     T *OldEnd = this->end();
     this->setEnd(this->end() + NumToInsert);
-    size_t NumOverwritten = OldEnd - I;
-    this->uninitialized_copy(I, OldEnd, this->end() - NumOverwritten);
+    size_t NumOverwritten = OldEnd-I;
+    this->uninitialized_copy(I, OldEnd, this->end()-NumOverwritten);
 
     // Replace the overwritten part.
     std::fill_n(I, NumOverwritten, Elt);
 
     // Insert the non-overwritten middle part.
-    std::uninitialized_fill_n(OldEnd, NumToInsert - NumOverwritten, Elt);
+    std::uninitialized_fill_n(OldEnd, NumToInsert-NumOverwritten, Elt);
     return I;
   }
 
-  template <typename ItTy>
+  template<typename ItTy>
   iterator insert(const ASTContext &C, iterator I, ItTy From, ItTy To) {
     // Convert iterator to elt# to avoid invalidating iterator when we reserve()
     size_t InsertElt = I - this->begin();
@@ -292,18 +301,18 @@ public:
     reserve(C, static_cast<unsigned>(this->size() + NumToInsert));
 
     // Uninvalidate the iterator.
-    I = this->begin() + InsertElt;
+    I = this->begin()+InsertElt;
 
     // If there are more elements between the insertion point and the end of the
     // range than there are being inserted, we can use a simple approach to
     // insertion.  Since we already reserved space, we know that this won't
     // reallocate the vector.
-    if (size_t(this->end() - I) >= NumToInsert) {
+    if (size_t(this->end()-I) >= NumToInsert) {
       T *OldEnd = this->end();
-      append(C, this->end() - NumToInsert, this->end());
+      append(C, this->end()-NumToInsert, this->end());
 
       // Copy the existing elements that get replaced.
-      std::copy_backward(I, OldEnd - NumToInsert, OldEnd);
+      std::copy_backward(I, OldEnd-NumToInsert, OldEnd);
 
       std::copy(From, To, I);
       return I;
@@ -315,14 +324,13 @@ public:
     // Copy over the elements that we're about to overwrite.
     T *OldEnd = this->end();
     this->setEnd(this->end() + NumToInsert);
-    size_t NumOverwritten = OldEnd - I;
-    this->uninitialized_copy(I, OldEnd, this->end() - NumOverwritten);
+    size_t NumOverwritten = OldEnd-I;
+    this->uninitialized_copy(I, OldEnd, this->end()-NumOverwritten);
 
     // Replace the overwritten part.
     for (; NumOverwritten > 0; --NumOverwritten) {
       *I = *From;
-      ++I;
-      ++From;
+      ++I; ++From;
     }
 
     // Insert the non-overwritten middle part.
@@ -332,13 +340,13 @@ public:
 
   void resize(const ASTContext &C, unsigned N, const T &NV) {
     if (N < this->size()) {
-      this->destroy_range(this->begin() + N, this->end());
-      this->setEnd(this->begin() + N);
+      this->destroy_range(this->begin()+N, this->end());
+      this->setEnd(this->begin()+N);
     } else if (N > this->size()) {
       if (this->capacity() < N)
         this->grow(C, N);
-      construct_range(this->end(), this->begin() + N, NV);
-      this->setEnd(this->begin() + N);
+      construct_range(this->end(), this->begin()+N, NV);
+      this->setEnd(this->begin()+N);
     }
   }
 
@@ -361,7 +369,7 @@ private:
 
 protected:
   const_iterator capacity_ptr() const {
-    return (iterator)Capacity.getPointer();
+    return (iterator) Capacity.getPointer();
   }
 
   iterator capacity_ptr() { return (iterator)Capacity.getPointer(); }
@@ -372,7 +380,7 @@ template <typename T>
 void ASTVector<T>::grow(const ASTContext &C, size_t MinSize) {
   size_t CurCapacity = this->capacity();
   size_t CurSize = size();
-  size_t NewCapacity = 2 * CurCapacity;
+  size_t NewCapacity = 2*CurCapacity;
   if (NewCapacity < MinSize)
     NewCapacity = MinSize;
 
@@ -393,8 +401,8 @@ void ASTVector<T>::grow(const ASTContext &C, size_t MinSize) {
 
   // ASTContext never frees any memory.
   Begin = NewElts;
-  End = NewElts + CurSize;
-  Capacity.setPointer(Begin + NewCapacity);
+  End = NewElts+CurSize;
+  Capacity.setPointer(Begin+NewCapacity);
 }
 
 } // namespace latino

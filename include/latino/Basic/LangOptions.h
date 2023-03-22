@@ -16,9 +16,9 @@
 
 #include "latino/Basic/CommentOptions.h"
 #include "latino/Basic/LLVM.h"
+#include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/Sanitizers.h"
 #include "latino/Basic/Visibility.h"
-
 #include "llvm/ADT/FloatingPointMode.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Triple.h"
@@ -39,18 +39,24 @@ public:
 protected:
   // Define language options of enumeration type. These are private, and will
   // have accessors (below).
-
 #define LANGOPT(Name, Bits, Default, Description)
-#define ENUM_LANGOPT(Name, Type, Bits, Default, Description)                   \
+#define ENUM_LANGOPT(Name, Type, Bits, Default, Description) \
   unsigned Name : Bits;
 #include "latino/Basic/LangOptions.def"
 };
 
+/// In the Microsoft ABI, this controls the placement of virtual displacement
+/// members used to implement virtual inheritance.
+enum class MSVtorDispMode { Never, ForVBaseOverride, ForVFTable };
+
+/// Keeps track of the various options that can be
+/// enabled, which controls the dialect of C or C++ that is accepted.
 class LangOptions : public LangOptionsBase {
 public:
   using Visibility = latino::Visibility;
   using RoundingMode = llvm::RoundingMode;
 
+  enum GCMode { NonGC, GCOnly, HybridGC };
   enum StackProtectorMode { SSPOff, SSPOn, SSPStrong, SSPReq };
 
   // Automatic variables live on the stack, and when trivial they're usually
@@ -84,6 +90,15 @@ public:
     CMK_ModuleInterface,
   };
 
+  enum PragmaMSPointersToMembersKind {
+    PPTMK_BestCase,
+    PPTMK_FullGeneralitySingleInheritance,
+    PPTMK_FullGeneralityMultipleInheritance,
+    PPTMK_FullGeneralityVirtualInheritance
+  };
+
+  using MSVtorDispMode = latino::MSVtorDispMode;
+
   enum DefaultCallingConvention {
     DCC_None,
     DCC_CDecl,
@@ -94,6 +109,17 @@ public:
   };
 
   enum AddrSpaceMapMangling { ASMM_Target, ASMM_On, ASMM_Off };
+
+  // Corresponds to _MSC_VER
+  enum MSVCMajorVersion {
+    MSVC2010 = 1600,
+    MSVC2012 = 1700,
+    MSVC2013 = 1800,
+    MSVC2015 = 1900,
+    MSVC2017 = 1910,
+    MSVC2017_5 = 1912,
+    MSVC2017_7 = 1914,
+  };
 
   /// Clang versions with different platform ABI conformance.
   enum class ClangABI {
@@ -225,7 +251,11 @@ public:
   /// attribute(s).
   std::vector<std::string> XRayAttrListFiles;
 
+  latino::ObjCRuntime ObjCRuntime;
+
   CoreFoundationABI CFRuntime = CoreFoundationABI::Unspecified;
+
+  std::string ObjCConstantStringClass;
 
   /// The name of the handler function to be called when -ftrapv is
   /// specified.
@@ -255,22 +285,31 @@ public:
   /// A list of all -fno-builtin-* function names (e.g., memset).
   std::vector<std::string> NoBuiltinFuncs;
 
+  /// Triples of the OpenMP targets that the host code codegen should
+  /// take into account in order to generate accurate offloading descriptors.
+  std::vector<llvm::Triple> OMPTargetTriples;
+
+  /// Name of the IR file that contains the result of the OpenMP target
+  /// host code generation.
+  std::string OMPHostIRFile;
+
   /// Indicates whether the front-end is explicitly told that the
   /// input is a header file (i.e. -x c-header).
   bool IsHeaderFile = false;
 
   LangOptions();
 
-// Define accessors/mutators for language options of enumeration type.
+  // Define accessors/mutators for language options of enumeration type.
 #define LANGOPT(Name, Bits, Default, Description)
-#define ENUM_LANGOPT(Name, Type, Bits, Default, Description)                   \
-  Type get##Name() const { return static_cast<Type>(Name); }                   \
+#define ENUM_LANGOPT(Name, Type, Bits, Default, Description) \
+  Type get##Name() const { return static_cast<Type>(Name); } \
   void set##Name(Type Value) { Name = static_cast<unsigned>(Value); }
-
 #include "latino/Basic/LangOptions.def"
 
   /// Are we compiling a module interface (.cppm or module map)?
-  bool isCompilingModule() const { return getCompilingModule() != CMK_None; }
+  bool isCompilingModule() const {
+    return getCompilingModule() != CMK_None;
+  }
 
   /// Do we need to track the owning module for a local declaration?
   bool trackLocalOwningModule() const {
@@ -281,14 +320,14 @@ public:
     return getSignedOverflowBehavior() == SOB_Defined;
   }
 
-  // bool isSubscriptPointerArithmetic() const {
-  //   return ObjCRuntime.isSubscriptPointerArithmetic() &&
-  //          !ObjCSubscriptingLegacyRuntime;
-  // }
+  bool isSubscriptPointerArithmetic() const {
+    return ObjCRuntime.isSubscriptPointerArithmetic() &&
+           !ObjCSubscriptingLegacyRuntime;
+  }
 
-  // bool isCompatibleWithMSVC(MSVCMajorVersion MajorVersion) const {
-  //   return MSCompatibilityVersion >= MajorVersion * 100000U;
-  // }
+  bool isCompatibleWithMSVC(MSVCMajorVersion MajorVersion) const {
+    return MSCompatibilityVersion >= MajorVersion * 100000U;
+  }
 
   /// Reset all of the options that are not considered when building a
   /// module.
@@ -299,11 +338,13 @@ public:
   bool isNoBuiltinFunc(StringRef Name) const;
 
   /// True if any ObjC types may have non-trivial lifetime qualifiers.
-  // bool allowsNonTrivialObjCLifetimeQualifiers() const {
-  //   return ObjCAutoRefCount || ObjCWeak;
-  // }
+  bool allowsNonTrivialObjCLifetimeQualifiers() const {
+    return ObjCAutoRefCount || ObjCWeak;
+  }
 
-  bool assumeFunctionsAreConvergent() const { return ConvergentFunctions; }
+  bool assumeFunctionsAreConvergent() const {
+    return ConvergentFunctions;
+  }
 
   /// Return the OpenCL C or C++ version as a VersionTuple.
   VersionTuple getOpenCLVersionTuple() const;
@@ -511,4 +552,4 @@ enum TranslationUnitKind {
 
 } // namespace latino
 
-#endif
+#endif // LLVM_LATINO_BASIC_LANGOPTIONS_H

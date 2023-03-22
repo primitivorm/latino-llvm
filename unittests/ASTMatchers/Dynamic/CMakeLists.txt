@@ -1,13 +1,22 @@
 set(LLVM_LINK_COMPONENTS
-    Support
-)
+  FrontendOpenMP
+  Support
+  )
 
 add_latino_unittest(DynamicASTMatchersTests
-    ParserTest.cpp
-)
+  VariantValueTest.cpp
+  ParserTest.cpp
+  RegistryTest.cpp
+  )
 
 latino_target_link_libraries(DynamicASTMatchersTests
-    PRIVATE
-    clangAST
-    latinoBasic
-)
+  PRIVATE
+  latinoAST
+  latinoASTMatchers
+  latinoBasic
+  latinoDynamicASTMatchers
+  latinoFrontend
+  latinoSerialization
+  latinoTesting
+  latinoTooling
+  )

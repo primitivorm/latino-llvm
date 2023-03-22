@@ -17,30 +17,31 @@
 #include "latino/AST/ASTConsumer.h"
 
 namespace latino {
-class Sema;
+  class Sema;
 
-/// An abstract interface that should be implemented by
-/// clients that read ASTs and then require further semantic
-/// analysis of the entities in those ASTs.
-class SemaConsumer : public ASTConsumer {
-  virtual void anchor();
+  /// An abstract interface that should be implemented by
+  /// clients that read ASTs and then require further semantic
+  /// analysis of the entities in those ASTs.
+  class SemaConsumer : public ASTConsumer {
+    virtual void anchor();
+  public:
+    SemaConsumer() {
+      ASTConsumer::SemaConsumer = true;
+    }
 
-public:
-  SemaConsumer() { ASTConsumer::SemaConsumer = true; }
+    /// Initialize the semantic consumer with the Sema instance
+    /// being used to perform semantic analysis on the abstract syntax
+    /// tree.
+    virtual void InitializeSema(Sema &S) {}
 
-  /// Initialize the semantic consumer with the Sema instance
-  /// being used to perform semantic analysis on the abstract syntax
-  /// tree.
-  virtual void InitializeSema(Sema &S) {}
+    /// Inform the semantic consumer that Sema is no longer available.
+    virtual void ForgetSema() {}
 
-  /// Inform the semantic consumer that Sema is no longer available.
-  virtual void ForgetSema() {}
-
-  // isa/cast/dyn_cast support
-  static bool classof(const ASTConsumer *Consumer) {
-    return Consumer->SemaConsumer;
-  }
-};
-} // namespace latino
+    // isa/cast/dyn_cast support
+    static bool classof(const ASTConsumer *Consumer) {
+      return Consumer->SemaConsumer;
+    }
+  };
+}
 
 #endif

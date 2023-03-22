@@ -17,13 +17,16 @@
 #include "latino/Basic/LangOptions.h"
 
 namespace latino {
+
 class LangOptions;
+class SourceManager;
 class Stmt;
+class TagDecl;
 
 class PrinterHelper {
 public:
   virtual ~PrinterHelper();
-  virtual void handledStmt(Stmt *E, raw_ostream &OS) = 0;
+  virtual bool handledStmt(Stmt* E, raw_ostream& OS) = 0;
 };
 
 /// Callbacks to use to customize the behavior of the pretty-printer.
@@ -47,16 +50,17 @@ struct PrintingPolicy {
   /// Create a default printing policy for the specified language.
   PrintingPolicy(const LangOptions &LO)
       : Indentation(2), SuppressSpecifiers(false),
-        SuppressTagKeyword(/*LO.CPlusPlus*/ true), IncludeTagDefinition(false),
+        SuppressTagKeyword(LO.CPlusPlus), IncludeTagDefinition(false),
         SuppressScope(false), SuppressUnwrittenScope(false),
         SuppressInitializers(false), ConstantArraySizeAsWritten(false),
         AnonymousTagLocations(true), SuppressStrongLifetime(false),
-        SuppressLifetimeQualifiers(false), Bool(/*LO.Bool*/ true),
-        Restrict(/*LO.C99*/ true), Alignof(/*LO.CPlusPlus11*/ true),
-        UnderscoreAlignof(/*LO.C11*/ true),
-        UseVoidForZeroParams(/*!LO.CPlusPlus*/ false), TerseOutput(false),
-        PolishForDeclaration(false), Half(/*LO.Half*/ false),
-        MSWChar(/*LO.MicrosoftExt && !LO.WChar*/ false), IncludeNewlines(true),
+        SuppressLifetimeQualifiers(false),
+        SuppressTemplateArgsInCXXConstructors(false), Bool(LO.Bool),
+        Restrict(LO.C99), Alignof(LO.CPlusPlus11), UnderscoreAlignof(LO.C11),
+        UseVoidForZeroParams(!LO.CPlusPlus),
+        SplitTemplateClosers(!LO.CPlusPlus11), TerseOutput(false),
+        PolishForDeclaration(false), Half(LO.Half),
+        MSWChar(LO.MicrosoftExt && !LO.WChar), IncludeNewlines(true),
         MSVCFormatting(false), ConstantsAsWritten(false),
         SuppressImplicitBase(false), FullyQualifiedName(false),
         PrintCanonicalTypes(false), PrintInjectedClassNameWithArguments(true) {}
@@ -159,6 +163,10 @@ struct PrintingPolicy {
   /// When true, suppress printing of lifetime qualifier in ARC.
   unsigned SuppressLifetimeQualifiers : 1;
 
+  /// When true, suppresses printing template arguments in names of C++
+  /// constructors.
+  unsigned SuppressTemplateArgsInCXXConstructors : 1;
+
   /// Whether we can use 'bool' rather than '_Bool' (even if the language
   /// doesn't actually have 'bool', because, e.g., it is defined as a macro).
   unsigned Bool : 1;
@@ -175,6 +183,10 @@ struct PrintingPolicy {
   /// Whether we should use '(void)' rather than '()' for a function prototype
   /// with zero parameters.
   unsigned UseVoidForZeroParams : 1;
+
+  /// Whether nested templates must be closed like 'a\<b\<c\> \>' rather than
+  /// 'a\<b\<c\>\>'.
+  unsigned SplitTemplateClosers : 1;
 
   /// Provide a 'terse' output.
   ///
@@ -241,6 +253,6 @@ struct PrintingPolicy {
   const PrintingCallbacks *Callbacks = nullptr;
 };
 
-} // namespace latino
+} // end namespace latino
 
 #endif

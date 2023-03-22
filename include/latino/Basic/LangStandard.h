@@ -13,6 +13,7 @@
 #include "llvm/ADT/StringRef.h"
 
 namespace latino {
+
 /// The language for the input, used to select and validate the language
 /// standard and possible actions.
 enum class Language : uint8_t {
@@ -26,9 +27,110 @@ enum class Language : uint8_t {
   LLVM_IR,
 
   ///@{ Languages that the frontend can parse and compile.
-  Latino
+  C,
+  CXX,
+  ObjC,
+  ObjCXX,
+  OpenCL,
+  CUDA,
+  RenderScript,
+  HIP,
   ///@}
 };
-} // namespace latino
+
+enum LangFeatures {
+  LineComment = (1 << 0),
+  C99 = (1 << 1),
+  C11 = (1 << 2),
+  C17 = (1 << 3),
+  C2x = (1 << 4),
+  CPlusPlus = (1 << 5),
+  CPlusPlus11 = (1 << 6),
+  CPlusPlus14 = (1 << 7),
+  CPlusPlus17 = (1 << 8),
+  CPlusPlus20 = (1 << 9),
+  Digraphs = (1 << 10),
+  GNUMode = (1 << 11),
+  HexFloat = (1 << 12),
+  ImplicitInt = (1 << 13),
+  OpenCL = (1 << 14)
+};
+
+/// LangStandard - Information about the properties of a particular language
+/// standard.
+struct LangStandard {
+  enum Kind {
+#define LANGSTANDARD(id, name, lang, desc, features) \
+    lang_##id,
+#include "latino/Basic/LangStandards.def"
+    lang_unspecified
+  };
+
+  const char *ShortName;
+  const char *Description;
+  unsigned Flags;
+  latino::Language Language;
+
+public:
+  /// getName - Get the name of this standard.
+  const char *getName() const { return ShortName; }
+
+  /// getDescription - Get the description of this standard.
+  const char *getDescription() const { return Description; }
+
+  /// Get the language that this standard describes.
+  latino::Language getLanguage() const { return Language; }
+
+  /// Language supports '//' comments.
+  bool hasLineComments() const { return Flags & LineComment; }
+
+  /// isC99 - Language is a superset of C99.
+  bool isC99() const { return Flags & C99; }
+
+  /// isC11 - Language is a superset of C11.
+  bool isC11() const { return Flags & C11; }
+
+  /// isC17 - Language is a superset of C17.
+  bool isC17() const { return Flags & C17; }
+
+  /// isC2x - Language is a superset of C2x.
+  bool isC2x() const { return Flags & C2x; }
+
+  /// isCPlusPlus - Language is a C++ variant.
+  bool isCPlusPlus() const { return Flags & CPlusPlus; }
+
+  /// isCPlusPlus11 - Language is a C++11 variant (or later).
+  bool isCPlusPlus11() const { return Flags & CPlusPlus11; }
+
+  /// isCPlusPlus14 - Language is a C++14 variant (or later).
+  bool isCPlusPlus14() const { return Flags & CPlusPlus14; }
+
+  /// isCPlusPlus17 - Language is a C++17 variant (or later).
+  bool isCPlusPlus17() const { return Flags & CPlusPlus17; }
+
+  /// isCPlusPlus20 - Language is a C++20 variant (or later).
+  bool isCPlusPlus20() const { return Flags & CPlusPlus20; }
+
+  /// hasDigraphs - Language supports digraphs.
+  bool hasDigraphs() const { return Flags & Digraphs; }
+
+  /// isGNUMode - Language includes GNU extensions.
+  bool isGNUMode() const { return Flags & GNUMode; }
+
+  /// hasHexFloats - Language supports hexadecimal float constants.
+  bool hasHexFloats() const { return Flags & HexFloat; }
+
+  /// hasImplicitInt - Language allows variables to be typed as int implicitly.
+  bool hasImplicitInt() const { return Flags & ImplicitInt; }
+
+  /// isOpenCL - Language is a OpenCL variant.
+  bool isOpenCL() const { return Flags & OpenCL; }
+
+  static Kind getLangKind(StringRef Name);
+  static const LangStandard &getLangStandardForKind(Kind K);
+  static const LangStandard *getLangStandardForName(StringRef Name);
+};
+
+}  // end namespace latino
 
 #endif

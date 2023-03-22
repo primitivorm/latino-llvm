@@ -36,8 +36,9 @@ class DeclarationName;
 class DeclarationNameTable;
 class MultiKeywordSelector;
 struct PrintingPolicy;
+class TemplateDecl;
 class TypeSourceInfo;
-// class UsingDirectiveDecl;
+class UsingDirectiveDecl;
 
 using CanQualType = CanQual<Type>;
 
@@ -76,6 +77,21 @@ class alignas(IdentifierInfoAlignment) CXXDeductionGuideNameExtra
       public llvm::FoldingSetNode {
   friend class latino::DeclarationName;
   friend class latino::DeclarationNameTable;
+
+  /// The template named by the deduction guide.
+  TemplateDecl *Template;
+
+  /// Extra information associated with this operator name that
+  /// can be used by the front end. All bits are really needed
+  /// so it is not possible to stash something in the low order bits.
+  void *FETokenInfo;
+
+  CXXDeductionGuideNameExtra(TemplateDecl *TD)
+      : DeclarationNameExtra(CXXDeductionGuideName), Template(TD),
+        FETokenInfo(nullptr) {}
+
+public:
+  void Profile(llvm::FoldingSetNodeID &ID) { ID.AddPointer(Template); }
 };
 
 /// Contains extra information for the name of an overloaded operator
@@ -158,13 +174,13 @@ class DeclarationName {
   /// * PtrMask must mask the low 3 bits of Ptr.
   enum StoredNameKind {
     StoredIdentifier = 0,
-    // StoredObjCZeroArgSelector = Selector::ZeroArg,
-    // StoredObjCOneArgSelector = Selector::OneArg,
+    StoredObjCZeroArgSelector = Selector::ZeroArg,
+    StoredObjCOneArgSelector = Selector::OneArg,
     StoredCXXConstructorName = 3,
     StoredCXXDestructorName = 4,
     StoredCXXConversionFunctionName = 5,
     StoredCXXOperatorName = 6,
-    // StoredDeclarationNameExtra = Selector::MultiArg,
+    StoredDeclarationNameExtra = Selector::MultiArg,
     PtrMask = 7,
     UncommonNameKindOffset = 8
   };
@@ -185,8 +201,8 @@ public:
   /// and correspond to infrequently used kinds.
   enum NameKind {
     Identifier = StoredIdentifier,
-    // ObjCZeroArgSelector = StoredObjCZeroArgSelector,
-    // ObjCOneArgSelector = StoredObjCOneArgSelector,
+    ObjCZeroArgSelector = StoredObjCZeroArgSelector,
+    ObjCOneArgSelector = StoredObjCOneArgSelector,
     CXXConstructorName = StoredCXXConstructorName,
     CXXDestructorName = StoredCXXDestructorName,
     CXXConversionFunctionName = StoredCXXConversionFunctionName,
@@ -197,9 +213,9 @@ public:
         UncommonNameKindOffset +
         detail::DeclarationNameExtra::CXXLiteralOperatorName,
     CXXUsingDirective = UncommonNameKindOffset +
-                        detail::DeclarationNameExtra::CXXUsingDirective /*,
+                        detail::DeclarationNameExtra::CXXUsingDirective,
     ObjCMultiArgSelector = UncommonNameKindOffset +
-                           detail::DeclarationNameExtra::ObjCMultiArgSelector*/
+                           detail::DeclarationNameExtra::ObjCMultiArgSelector
   };
 
 private:
@@ -254,17 +270,17 @@ private:
 
   /// Construct a declaration name from a DeclarationNameExtra.
   DeclarationName(detail::DeclarationNameExtra *Name) {
-    setPtrAndKind(Name, PtrMask);
+    setPtrAndKind(Name, StoredDeclarationNameExtra);
   }
 
   /// Construct a declaration name from a CXXSpecialNameExtra.
   DeclarationName(detail::CXXSpecialNameExtra *Name,
                   StoredNameKind StoredKind) {
     assert((StoredKind == StoredCXXConstructorName ||
-            StoredKind == StoredCXXDestructorName ||
-            StoredKind == StoredCXXConversionFunctionName) &&
-           "Invalid StoredNameKind when constructing a DeclarationName"
-           " from a CXXSpecialNameExtra!");
+           StoredKind == StoredCXXDestructorName ||
+           StoredKind == StoredCXXConversionFunctionName) &&
+               "Invalid StoredNameKind when constructing a DeclarationName"
+               " from a CXXSpecialNameExtra!");
     setPtrAndKind(Name, StoredKind);
   }
 
@@ -292,9 +308,9 @@ private:
   /// and return it.
   detail::CXXSpecialNameExtra *castAsCXXSpecialNameExtra() const {
     assert((getStoredNameKind() == StoredCXXConstructorName ||
-            getStoredNameKind() == StoredCXXDestructorName ||
-            getStoredNameKind() == StoredCXXConversionFunctionName) &&
-           "DeclarationName does not store a CXXSpecialNameExtra!");
+           getStoredNameKind() == StoredCXXDestructorName ||
+           getStoredNameKind() == StoredCXXConversionFunctionName) &&
+               "DeclarationName does not store a CXXSpecialNameExtra!");
     return static_cast<detail::CXXSpecialNameExtra *>(getPtr());
   }
 
@@ -336,6 +352,9 @@ public:
     setPtrAndKind(II, StoredIdentifier);
   }
 
+  /// Construct a declaration name from an Objective-C selector.
+  DeclarationName(Selector Sel) : Ptr(Sel.InfoPtr) {}
+
   /// Returns the name for all C++ using-directives.
   static DeclarationName getUsingDirectiveName() {
     // Single instance of DeclarationNameExtra for using-directive
@@ -354,17 +373,23 @@ public:
 
   /// Predicate functions for querying what type of name this is.
   bool isIdentifier() const { return getStoredNameKind() == StoredIdentifier; }
+  bool isObjCZeroArgSelector() const {
+    return getStoredNameKind() == StoredObjCZeroArgSelector;
+  }
+  bool isObjCOneArgSelector() const {
+    return getStoredNameKind() == StoredObjCOneArgSelector;
+  }
 
   /// Determine what kind of name this is.
   NameKind getNameKind() const {
     // We rely on the fact that the first 7 NameKind and StoredNameKind
     // have the same numerical value. This makes the usual case efficient.
     StoredNameKind StoredKind = getStoredNameKind();
-    // if (StoredKind != StoredDeclarationNameExtra)
-    //   return static_cast<NameKind>(StoredKind);
-    //  We have to consult DeclarationNameExtra. We rely on the fact that the
-    //  enumeration values of ExtraKind correspond to the enumeration values of
-    //  NameKind minus an offset of UncommonNameKindOffset.
+    if (StoredKind != StoredDeclarationNameExtra)
+      return static_cast<NameKind>(StoredKind);
+    // We have to consult DeclarationNameExtra. We rely on the fact that the
+    // enumeration values of ExtraKind correspond to the enumeration values of
+    // NameKind minus an offset of UncommonNameKindOffset.
     unsigned ExtraKind = castAsExtra()->getKind();
     return static_cast<NameKind>(UncommonNameKindOffset + ExtraKind);
   }
@@ -421,6 +446,17 @@ public:
     return QualType();
   }
 
+  /// If this name is the name of a C++ deduction guide, return the
+  /// template associated with that name.
+  TemplateDecl *getCXXDeductionGuideTemplate() const {
+    if (getNameKind() == CXXDeductionGuideName) {
+      assert(getPtr() &&
+             "getCXXDeductionGuideTemplate on a null DeclarationName!");
+      return castAsCXXDeductionGuideNameExtra()->Template;
+    }
+    return nullptr;
+  }
+
   /// If this name is the name of an overloadable operator in C++
   /// (e.g., @c operator+), retrieve the kind of overloaded operator.
   OverloadedOperatorKind getCXXOverloadedOperator() const {
@@ -439,6 +475,15 @@ public:
       return castAsCXXLiteralOperatorIdName()->ID;
     }
     return nullptr;
+  }
+
+  /// Get the Objective-C selector stored in this declaration name.
+  Selector getObjCSelector() const {
+    assert((getNameKind() == ObjCZeroArgSelector ||
+            getNameKind() == ObjCOneArgSelector ||
+            getNameKind() == ObjCMultiArgSelector || !getPtr()) &&
+           "Not a selector!");
+    return Selector(Ptr);
   }
 
   /// Get and set FETokenInfo. The language front-end is allowed to associate
@@ -575,6 +620,9 @@ public:
   /// Returns the name of a C++ destructor for the given Type.
   DeclarationName getCXXDestructorName(CanQualType Ty);
 
+  /// Returns the name of a C++ deduction guide for the given template.
+  DeclarationName getCXXDeductionGuideName(TemplateDecl *TD);
+
   /// Returns the name of a C++ conversion function for the given Type.
   DeclarationName getCXXConversionFunctionName(CanQualType Ty);
 
@@ -634,7 +682,7 @@ struct DeclarationNameLoc {
   DeclarationNameLoc(DeclarationName Name);
 
   // FIXME: this should go away once all DNLocs are properly initialized.
-  DeclarationNameLoc() { memset((void *)this, 0, sizeof(*this)); }
+  DeclarationNameLoc() { memset((void*) this, 0, sizeof(*this)); }
 };
 
 /// DeclarationNameInfo - A collector data type for bundling together
@@ -701,10 +749,10 @@ public:
   SourceRange getCXXOperatorNameRange() const {
     if (Name.getNameKind() != DeclarationName::CXXOperatorName)
       return SourceRange();
-    return SourceRange(SourceLocation::getFromRawEncoding(
-                           LocInfo.CXXOperatorName.BeginOpNameLoc),
-                       SourceLocation::getFromRawEncoding(
-                           LocInfo.CXXOperatorName.EndOpNameLoc));
+    return SourceRange(
+     SourceLocation::getFromRawEncoding(LocInfo.CXXOperatorName.BeginOpNameLoc),
+     SourceLocation::getFromRawEncoding(LocInfo.CXXOperatorName.EndOpNameLoc)
+                       );
   }
 
   /// setCXXOperatorNameRange - Sets the range of the operator name
@@ -721,8 +769,8 @@ public:
   SourceLocation getCXXLiteralOperatorNameLoc() const {
     if (Name.getNameKind() != DeclarationName::CXXLiteralOperatorName)
       return SourceLocation();
-    return SourceLocation::getFromRawEncoding(
-        LocInfo.CXXLiteralOperatorName.OpNameLoc);
+    return SourceLocation::
+      getFromRawEncoding(LocInfo.CXXLiteralOperatorName.OpNameLoc);
   }
 
   /// setCXXLiteralOperatorNameLoc - Sets the location of the literal
@@ -789,7 +837,8 @@ namespace llvm {
 
 /// Define DenseMapInfo so that DeclarationNames can be used as keys
 /// in DenseMap and DenseSets.
-template <> struct DenseMapInfo<latino::DeclarationName> {
+template<>
+struct DenseMapInfo<latino::DeclarationName> {
   static inline latino::DeclarationName getEmptyKey() {
     return latino::DeclarationName::getEmptyMarker();
   }
@@ -799,15 +848,35 @@ template <> struct DenseMapInfo<latino::DeclarationName> {
   }
 
   static unsigned getHashValue(latino::DeclarationName Name) {
-    return DenseMapInfo<void *>::getHashValue(Name.getAsOpaquePtr());
+    return DenseMapInfo<void*>::getHashValue(Name.getAsOpaquePtr());
   }
 
-  static inline bool isEqual(latino::DeclarationName LHS,
-                             latino::DeclarationName RHS) {
+  static inline bool
+  isEqual(latino::DeclarationName LHS, latino::DeclarationName RHS) {
     return LHS == RHS;
   }
 };
 
 } // namespace llvm
 
-#endif
+// The definition of AssumedTemplateStorage is factored out of TemplateName to
+// resolve a cyclic dependency between it and DeclarationName (via Type).
+namespace latino {
+
+/// A structure for storing the information associated with a name that has
+/// been assumed to be a template name (despite finding no TemplateDecls).
+class AssumedTemplateStorage : public UncommonTemplateNameStorage {
+  friend class ASTContext;
+
+  AssumedTemplateStorage(DeclarationName Name)
+      : UncommonTemplateNameStorage(Assumed, 0), Name(Name) {}
+  DeclarationName Name;
+
+public:
+  /// Get the name of the template.
+  DeclarationName getDeclName() const { return Name; }
+};
+
+} // namespace latino
+
+#endif // LLVM_LATINO_AST_DECLARATIONNAME_H

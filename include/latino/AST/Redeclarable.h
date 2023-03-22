@@ -80,7 +80,8 @@ class Decl;
 //        +-->-------------------------------------------+
 
 /// Provides common interface for the Decls that can be redeclared.
-template <typename decl_type> class Redeclarable {
+template<typename decl_type>
+class Redeclarable {
 protected:
   class DeclLink {
     /// A pointer to a known latest declaration, either statically known or
@@ -114,7 +115,7 @@ protected:
     bool isFirst() const {
       return Link.is<KnownLatest>() ||
              // FIXME: 'template' is required on the next line due to an
-             // apparent latino bug.
+             // apparent clang bug.
              Link.get<NotKnownLatest>().template is<UninitializedLatest>();
     }
 
@@ -122,7 +123,7 @@ protected:
       if (Link.is<NotKnownLatest>()) {
         NotKnownLatest NKL = Link.get<NotKnownLatest>();
         if (NKL.is<Previous>())
-          return static_cast<decl_type *>(NKL.get<Previous>());
+          return static_cast<decl_type*>(NKL.get<Previous>());
 
         // Allocate the generational 'most recent' cache now, if needed.
         Link = KnownLatest(*reinterpret_cast<const ASTContext *>(
@@ -130,7 +131,7 @@ protected:
                            const_cast<decl_type *>(D));
       }
 
-      return static_cast<decl_type *>(Link.get<KnownLatest>().get(D));
+      return static_cast<decl_type*>(Link.get<KnownLatest>().get(D));
     }
 
     void setPrevious(decl_type *D) {
@@ -194,8 +195,8 @@ public:
   friend class ASTDeclWriter;
 
   Redeclarable(const ASTContext &Ctx)
-      : RedeclLink(LatestDeclLink(Ctx)), First(static_cast<decl_type *>(this)) {
-  }
+      : RedeclLink(LatestDeclLink(Ctx)),
+        First(static_cast<decl_type *>(this)) {}
 
   /// Return the previous declaration of this declaration or NULL if this
   /// is the first declaration.
@@ -205,8 +206,8 @@ public:
     return nullptr;
   }
   const decl_type *getPreviousDecl() const {
-    return const_cast<decl_type *>(static_cast<const decl_type *>(this))
-        ->getPreviousDecl();
+    return const_cast<decl_type *>(
+                 static_cast<const decl_type*>(this))->getPreviousDecl();
   }
 
   /// Return the first declaration of this declaration or itself if this
@@ -254,7 +255,7 @@ public:
     reference operator*() const { return Current; }
     pointer operator->() const { return Current; }
 
-    redecl_iterator &operator++() {
+    redecl_iterator& operator++() {
       assert(Current && "Advancing while iterator has reached end");
       // Sanity check to avoid infinite loop on invalid redecl chain.
       if (Current->isFirstDecl()) {
@@ -307,7 +308,8 @@ Decl *getPrimaryMergedDecl(Decl *D);
 /// Provides common interface for the Decls that cannot be redeclared,
 /// but can be merged if the same declaration is brought in from multiple
 /// modules.
-template <typename decl_type> class Mergeable {
+template<typename decl_type>
+class Mergeable {
 public:
   Mergeable() = default;
 
@@ -317,7 +319,7 @@ public:
     auto *D = static_cast<decl_type *>(this);
     if (!D->isFromASTFile())
       return D;
-    return cast<decl_type>(getPrimaryMergedDecl(const_cast<decl_type *>(D)));
+    return cast<decl_type>(getPrimaryMergedDecl(const_cast<decl_type*>(D)));
   }
 
   /// Return the first declaration of this declaration or itself if this
@@ -326,7 +328,7 @@ public:
     const auto *D = static_cast<const decl_type *>(this);
     if (!D->isFromASTFile())
       return D;
-    return cast<decl_type>(getPrimaryMergedDecl(const_cast<decl_type *>(D)));
+    return cast<decl_type>(getPrimaryMergedDecl(const_cast<decl_type*>(D)));
   }
 
   /// Returns true if this is the first declaration.

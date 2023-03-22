@@ -1,4 +1,4 @@
-//===--- ParseAST.cpp - Provide the ParseAST method ----------------===//
+//===--- ParseAST.cpp - Provide the latino::ParseAST method ----------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -6,25 +6,23 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file implements the ParseAST method.
+// This file implements the latino::ParseAST method.
 //
 //===----------------------------------------------------------------------===//
 
 #include "latino/Parse/ParseAST.h"
-#include "latino/Parse/Parser.h"
-#include "latino/Sema/Sema.h"
-
 #include "latino/AST/ASTConsumer.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/ExternalASTSource.h"
 #include "latino/AST/Stmt.h"
+#include "latino/Parse/ParseDiagnostic.h"
+#include "latino/Parse/Parser.h"
 #include "latino/Sema/CodeCompleteConsumer.h"
-
+#include "latino/Sema/Sema.h"
 #include "latino/Sema/SemaConsumer.h"
-
+#include "latino/Sema/TemplateInstCallback.h"
 #include "llvm/Support/CrashRecoveryContext.h"
 #include "llvm/Support/TimeProfiler.h"
-
 #include <cstdio>
 #include <memory>
 
@@ -38,19 +36,18 @@ namespace {
 class ResetStackCleanup
     : public llvm::CrashRecoveryContextCleanupBase<ResetStackCleanup,
                                                    const void> {
-
 public:
   ResetStackCleanup(llvm::CrashRecoveryContext *Context, const void *Top)
       : llvm::CrashRecoveryContextCleanupBase<ResetStackCleanup, const void>(
             Context, Top) {}
-
-  void recoverResources() override { llvm::RestorePrettyStackState(resource); }
+  void recoverResources() override {
+    llvm::RestorePrettyStackState(resource);
+  }
 };
 
 /// If a crash happens while the parser is active, an entry is printed for it.
 class PrettyStackTraceParserEntry : public llvm::PrettyStackTraceEntry {
   const Parser &P;
-
 public:
   PrettyStackTraceParserEntry(const Parser &p) : P(p) {}
   void print(raw_ostream &OS) const override;
@@ -89,7 +86,7 @@ void PrettyStackTraceParserEntry::print(raw_ostream &OS) const {
   }
 }
 
-} // namespace
+}  // namespace
 
 //===----------------------------------------------------------------------===//
 // Public interface to the file
@@ -99,10 +96,12 @@ void PrettyStackTraceParserEntry::print(raw_ostream &OS) const {
 /// the file is parsed.  This inserts the parsed decls into the translation unit
 /// held by Ctx.
 ///
-void latino::ParseAST(Preprocessor &PP, ASTConsumer *Consumer, ASTContext &Ctx,
-                      bool PrintStats, TranslationUnitKind TUKind,
-                      CodeCompleteConsumer *CompletionConsumer,
-                      bool SkipFunctionBodies) {
+void latino::ParseAST(Preprocessor &PP, ASTConsumer *Consumer,
+                     ASTContext &Ctx, bool PrintStats,
+                     TranslationUnitKind TUKind,
+                     CodeCompleteConsumer *CompletionConsumer,
+                     bool SkipFunctionBodies) {
+
   std::unique_ptr<Sema> S(
       new Sema(PP, Ctx, *Consumer, TUKind, CompletionConsumer));
 
@@ -123,53 +122,68 @@ void latino::ParseAST(Sema &S, bool PrintStats, bool SkipFunctionBodies) {
   bool OldCollectStats = PrintStats;
   std::swap(OldCollectStats, S.CollectStats);
 
+  // Initialize the template instantiation observer chain.
+  // FIXME: See note on "finalize" below.
+  initialize(S.TemplateInstCallbacks, S);
+
   ASTConsumer *Consumer = &S.getASTConsumer();
 
-  std::unique_ptr<Parser> ParserOP(
+  std::unique_ptr<Parser> ParseOP(
       new Parser(S.getPreprocessor(), S, SkipFunctionBodies));
-  Parser &P = *ParserOP.get();
+  Parser &P = *ParseOP.get();
 
   llvm::CrashRecoveryContextCleanupRegistrar<const void, ResetStackCleanup>
-      CleanupParser(ParserOP.get());
+      CleanupPrettyStack(llvm::SavePrettyStackState());
   PrettyStackTraceParserEntry CrashInfo(P);
 
+  // Recover resources if we crash before exiting this method.
+  llvm::CrashRecoveryContextCleanupRegistrar<Parser>
+    CleanupParser(ParseOP.get());
+
   S.getPreprocessor().EnterMainSourceFile();
-  // ExternalASTSource *External = S.getASTContext().getExternalSource();
-  // if (External)
-  //   External->StartTranslationUnit(Consumer);
+  ExternalASTSource *External = S.getASTContext().getExternalSource();
+  if (External)
+    External->StartTranslationUnit(Consumer);
 
   // If a PCH through header is specified that does not have an include in
   // the source, or a PCH is being created with #pragma hdrstop with nothing
   // after the pragma, there won't be any tokens or a Lexer.
-  // bool HaveLexer = S.getPreprocessor().getCurrentLexer();
+  bool HaveLexer = S.getPreprocessor().getCurrentLexer();
 
-  // if (HaveLexer) {
-  //   llvm::TimeTraceScope TimeScope("Frontend");
-  //   // P.Initialize();
-  //   Parser::DeclGroupPtrTy ADecl;
-  //   for (bool AtEOF = P.ParseFirstTopLevelDecl(ADecl); !AtEOF;
-  //        AtEOF = P.ParseTopLevelDecl(ADecl)) {
-  //     // If we got a null return and something *was* parsed, ignore it.  This
-  //     // is due to a top-level semicolon, an action override, or a parse
-  //     error
-  //     // skipping something.
-  //     if (ADecl && !Consumer->HandleTopLevelDecl(ADecl.get()))
-  //       return;
-  //   }
-  // }
+  if (HaveLexer) {
+    llvm::TimeTraceScope TimeScope("Frontend");
+    P.Initialize();
+    Parser::DeclGroupPtrTy ADecl;
+    for (bool AtEOF = P.ParseFirstTopLevelDecl(ADecl); !AtEOF;
+         AtEOF = P.ParseTopLevelDecl(ADecl)) {
+      // If we got a null return and something *was* parsed, ignore it.  This
+      // is due to a top-level semicolon, an action override, or a parse error
+      // skipping something.
+      if (ADecl && !Consumer->HandleTopLevelDecl(ADecl.get()))
+        return;
+    }
+  }
 
   // Process any TopLevelDecls generated by #pragma weak.
-  // for (Decl *D : S.WeakTopLevelDecls())
-  //   Consumer->HandleTopLevelDecl(DeclGroupRef(D));
+  for (Decl *D : S.WeakTopLevelDecls())
+    Consumer->HandleTopLevelDecl(DeclGroupRef(D));
 
-  // Consumer->HandleTranslationUnit(S.getASTContext());
+  Consumer->HandleTranslationUnit(S.getASTContext());
 
   // Finalize the template instantiation observer chain.
   // FIXME: This (and init.) should be done in the Sema class, but because
   // Sema does not have a reliable "Finalize" function (it has a
   // destructor, but it is not guaranteed to be called ("-disable-free")).
   // So, do the initialization above and do the finalization here:
-  // finalize(S.TemplateInstCallbacks, S);
+  finalize(S.TemplateInstCallbacks, S);
 
   std::swap(OldCollectStats, S.CollectStats);
+  if (PrintStats) {
+    llvm::errs() << "\nSTATISTICS:\n";
+    if (HaveLexer) P.getActions().PrintStats();
+    S.getASTContext().PrintStats();
+    Decl::PrintStats();
+    Stmt::PrintStats();
+    Consumer->PrintStats();
+  }
 }

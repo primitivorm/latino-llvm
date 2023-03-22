@@ -17,7 +17,6 @@
 #include "latino/Basic/LangOptions.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/TargetInfo.h"
-
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
@@ -80,7 +79,7 @@ static bool isPlatformEnvironment(const TargetInfo &Target, StringRef Feature) {
     if (Pos == StringRef::npos)
       return false;
     SmallString<128> NewLHS = LHS.slice(0, Pos);
-    NewLHS += LHS.slice(Pos + 1, LHS.size());
+    NewLHS += LHS.slice(Pos+1, LHS.size());
     return NewLHS == RHS;
   };
 
@@ -101,32 +100,31 @@ static bool isPlatformEnvironment(const TargetInfo &Target, StringRef Feature) {
 /// language options has the given feature.
 static bool hasFeature(StringRef Feature, const LangOptions &LangOpts,
                        const TargetInfo &Target) {
-  // bool HasFeature = llvm::StringSwitch<bool>(Feature)
-  //                       .Case("altivec", LangOpts.AltiVec)
-  //                       .Case("blocks", LangOpts.Blocks)
-  //                       .Case("coroutines", LangOpts.Coroutines)
-  //                       .Case("cplusplus", LangOpts.CPlusPlus)
-  //                       .Case("cplusplus11", LangOpts.CPlusPlus11)
-  //                       .Case("cplusplus14", LangOpts.CPlusPlus14)
-  //                       .Case("cplusplus17", LangOpts.CPlusPlus17)
-  //                       .Case("c99", LangOpts.C99)
-  //                       .Case("c11", LangOpts.C11)
-  //                       .Case("c17", LangOpts.C17)
-  //                       .Case("freestanding", LangOpts.Freestanding)
-  //                       .Case("gnuinlineasm", LangOpts.GNUAsm)
-  //                       .Case("objc", LangOpts.ObjC)
-  //                       .Case("objc_arc", LangOpts.ObjCAutoRefCount)
-  //                       .Case("opencl", LangOpts.OpenCL)
-  //                       .Case("tls", Target.isTLSSupported())
-  //                       .Case("zvector", LangOpts.ZVector)
-  //                       .Default(Target.hasFeature(Feature) ||
-  //                                isPlatformEnvironment(Target, Feature));
-  // if (!HasFeature)
-  //   HasFeature = std::find(LangOpts.ModuleFeatures.begin(),
-  //                          LangOpts.ModuleFeatures.end(),
-  //                          Feature) != LangOpts.ModuleFeatures.end();
-  // return HasFeature;
-  return false;
+  bool HasFeature = llvm::StringSwitch<bool>(Feature)
+                        .Case("altivec", LangOpts.AltiVec)
+                        .Case("blocks", LangOpts.Blocks)
+                        .Case("coroutines", LangOpts.Coroutines)
+                        .Case("cplusplus", LangOpts.CPlusPlus)
+                        .Case("cplusplus11", LangOpts.CPlusPlus11)
+                        .Case("cplusplus14", LangOpts.CPlusPlus14)
+                        .Case("cplusplus17", LangOpts.CPlusPlus17)
+                        .Case("c99", LangOpts.C99)
+                        .Case("c11", LangOpts.C11)
+                        .Case("c17", LangOpts.C17)
+                        .Case("freestanding", LangOpts.Freestanding)
+                        .Case("gnuinlineasm", LangOpts.GNUAsm)
+                        .Case("objc", LangOpts.ObjC)
+                        .Case("objc_arc", LangOpts.ObjCAutoRefCount)
+                        .Case("opencl", LangOpts.OpenCL)
+                        .Case("tls", Target.isTLSSupported())
+                        .Case("zvector", LangOpts.ZVector)
+                        .Default(Target.hasFeature(Feature) ||
+                                 isPlatformEnvironment(Target, Feature));
+  if (!HasFeature)
+    HasFeature = std::find(LangOpts.ModuleFeatures.begin(),
+                           LangOpts.ModuleFeatures.end(),
+                           Feature) != LangOpts.ModuleFeatures.end();
+  return HasFeature;
 }
 
 bool Module::isUnimportable(const LangOptions &LangOpts,
@@ -142,7 +140,7 @@ bool Module::isUnimportable(const LangOptions &LangOpts,
     }
     for (unsigned I = 0, N = Current->Requirements.size(); I != N; ++I) {
       if (hasFeature(Current->Requirements[I].first, LangOpts, Target) !=
-          Current->Requirements[I].second) {
+              Current->Requirements[I].second) {
         Req = Current->Requirements[I];
         return true;
       }
@@ -201,7 +199,7 @@ static StringRef getModuleNameFromComponent(
 
 static StringRef getModuleNameFromComponent(StringRef R) { return R; }
 
-template <typename InputIter>
+template<typename InputIter>
 static void printModuleId(raw_ostream &OS, InputIter Begin, InputIter End,
                           bool AllowStringLiterals = true) {
   for (InputIter It = Begin; It != End; ++It) {
@@ -219,7 +217,7 @@ static void printModuleId(raw_ostream &OS, InputIter Begin, InputIter End,
   }
 }
 
-template <typename Container>
+template<typename Container>
 static void printModuleId(raw_ostream &OS, const Container &C) {
   return printModuleId(OS, C.begin(), C.end());
 }
@@ -263,9 +261,8 @@ void Module::addTopHeader(const FileEntry *File) {
 
 ArrayRef<const FileEntry *> Module::getTopHeaders(FileManager &FileMgr) {
   if (!TopHeaderNames.empty()) {
-    for (std::vector<std::string>::iterator I = TopHeaderNames.begin(),
-                                            E = TopHeaderNames.end();
-         I != E; ++I) {
+    for (std::vector<std::string>::iterator
+           I = TopHeaderNames.begin(), E = TopHeaderNames.end(); I != E; ++I) {
       if (auto FE = FileMgr.getFile(*I))
         TopHeaders.insert(*FE);
     }
@@ -302,7 +299,7 @@ void Module::addRequirement(StringRef Feature, bool RequiredState,
   if (hasFeature(Feature, LangOpts, Target) == RequiredState)
     return;
 
-  markUnavailable(/*Unimportable*/ true);
+  markUnavailable(/*Unimportable*/true);
 }
 
 void Module::markUnavailable(bool Unimportable) {
@@ -325,7 +322,7 @@ void Module::markUnavailable(bool Unimportable) {
     Current->IsAvailable = false;
     Current->IsUnimportable |= Unimportable;
     for (submodule_iterator Sub = Current->submodule_begin(),
-                            SubEnd = Current->submodule_end();
+                         SubEnd = Current->submodule_end();
          Sub != SubEnd; ++Sub) {
       if (needUpdate(*Sub))
         Stack.push_back(*Sub);
@@ -347,8 +344,7 @@ Module *Module::findOrInferSubmodule(StringRef Name) {
     return SubModules[Pos->getValue()];
   if (!InferSubmodules)
     return nullptr;
-  Module *Result = new Module(Name, SourceLocation(), this, false,
-                              InferExplicitSubmodules, 0);
+  Module *Result = new Module(Name, SourceLocation(), this, false, InferExplicitSubmodules, 0);
   Result->InferExplicitSubmodules = InferExplicitSubmodules;
   Result->InferSubmodules = InferSubmodules;
   Result->InferExportWildcard = InferExportWildcard;
@@ -509,8 +505,8 @@ void Module::print(raw_ostream &OS, unsigned Indent) const {
       OS.indent(Indent + 2);
       OS << K.Prefix << "header \"";
       OS.write_escaped(H.NameAsWritten);
-      OS << "\" { size " << H.Entry->getSize() << " mtime "
-         << H.Entry->getModificationTime() << " }\n";
+      OS << "\" { size " << H.Entry->getSize()
+         << " mtime " << H.Entry->getModificationTime() << " }\n";
     }
   }
   for (auto *Unresolved : {&UnresolvedHeaders, &MissingHeaders}) {
@@ -626,7 +622,9 @@ void Module::print(raw_ostream &OS, unsigned Indent) const {
   OS << "}\n";
 }
 
-LLVM_DUMP_METHOD void Module::dump() const { print(llvm::errs()); }
+LLVM_DUMP_METHOD void Module::dump() const {
+  print(llvm::errs());
+}
 
 void VisibleModuleSet::setVisible(Module *M, SourceLocation Loc,
                                   VisibleCallback Vis, ConflictCallback Cb) {
@@ -663,7 +661,7 @@ void VisibleModuleSet::setVisible(Module *M, SourceLocation Loc,
 
     for (auto &C : V.M->Conflicts) {
       if (isVisible(C.Other)) {
-        llvm::SmallVector<Module *, 8> Path;
+        llvm::SmallVector<Module*, 8> Path;
         for (Visiting *I = &V; I; I = I->ExportedBy)
           Path.push_back(I->M);
         Cb(Path, C.Other, C.Message);

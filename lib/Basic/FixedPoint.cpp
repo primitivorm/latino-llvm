@@ -31,7 +31,7 @@ APFixedPoint APFixedPoint::convert(const FixedPointSemantics &DstSema,
     NewVal >>= (getScale() - DstScale);
   }
 
-  auto Mask = llvm::APSInt::getBitsSetFrom(
+  auto Mask = llvm::APInt::getBitsSetFrom(
       NewVal.getBitWidth(),
       std::min(DstScale + DstSema.getIntegralBits(), NewVal.getBitWidth()));
   llvm::APInt Masked(NewVal & Mask);
@@ -55,7 +55,7 @@ APFixedPoint APFixedPoint::convert(const FixedPointSemantics &DstSema,
       *Overflow = true;
   }
 
-  NewVal = NewVal.extOrTrunc(DstSema.isSigned());
+  NewVal = NewVal.extOrTrunc(DstWidth);
   NewVal.setIsSigned(DstSema.isSigned());
   return APFixedPoint(NewVal, DstSema);
 }
@@ -134,6 +134,7 @@ FixedPointSemantics FixedPointSemantics::getCommonSemantics(
   bool ResultIsSaturated = isSaturated() || Other.isSaturated();
   bool ResultHasUnsignedPadding = false;
   if (!ResultIsSigned) {
+    // Both are unsigned.
     ResultHasUnsignedPadding = hasUnsignedPadding() &&
                                Other.hasUnsignedPadding() && !ResultIsSaturated;
   }
@@ -156,6 +157,7 @@ APFixedPoint APFixedPoint::add(const APFixedPoint &Other,
   llvm::APSInt ThisVal = ConvertedThis.getValue();
   llvm::APSInt OtherVal = ConvertedOther.getValue();
   bool Overflowed = false;
+
   llvm::APSInt Result;
   if (CommonFXSema.isSaturated()) {
     Result = CommonFXSema.isSigned() ? ThisVal.sadd_sat(OtherVal)
@@ -223,22 +225,20 @@ APFixedPoint APFixedPoint::mul(const APFixedPoint &Other,
   // arise.
   llvm::APSInt Result;
   if (CommonFXSema.isSigned())
-    Result =
-        ThisVal.smul_ov(OtherVal, Overflowed).ashr(CommonFXSema.getScale());
+    Result = ThisVal.smul_ov(OtherVal, Overflowed)
+                    .ashr(CommonFXSema.getScale());
   else
-    Result =
-        ThisVal.umul_ov(OtherVal, Overflowed).lshr(CommonFXSema.getScale());
-
-  assert(!Overflowed && "Full multiplication  cannot overflow!");
+    Result = ThisVal.umul_ov(OtherVal, Overflowed)
+                    .lshr(CommonFXSema.getScale());
+  assert(!Overflowed && "Full multiplication cannot overflow!");
   Result.setIsSigned(CommonFXSema.isSigned());
 
   // If our result lies outside of the representative range of the common
   // semantic, we either have overflow or saturation.
-  llvm::APSInt Max =
-      APFixedPoint::getMax(CommonFXSema).getValue().extOrTrunc(Wide);
-  llvm::APSInt Min =
-      APFixedPoint::getMin(CommonFXSema).getValue().extOrTrunc(Wide);
-
+  llvm::APSInt Max = APFixedPoint::getMax(CommonFXSema).getValue()
+                                                       .extOrTrunc(Wide);
+  llvm::APSInt Min = APFixedPoint::getMin(CommonFXSema).getValue()
+                                                       .extOrTrunc(Wide);
   if (CommonFXSema.isSaturated()) {
     if (Result < Min)
       Result = Min;
@@ -278,24 +278,22 @@ APFixedPoint APFixedPoint::div(const APFixedPoint &Other,
   ThisVal = ThisVal.shl(CommonFXSema.getScale());
   llvm::APSInt Result;
   if (CommonFXSema.isSigned()) {
-    llvm::APSInt Rem;
-    llvm::APSInt::sdivrem(ThisVal, OtherVal, Result, Rem);
+    llvm::APInt Rem;
+    llvm::APInt::sdivrem(ThisVal, OtherVal, Result, Rem);
     // If the quotient is negative and the remainder is nonzero, round
     // towards negative infinity by subtracting epsilon from the result.
     if (ThisVal.isNegative() != OtherVal.isNegative() && !Rem.isNullValue())
       Result = Result - 1;
-
   } else
     Result = ThisVal.udiv(OtherVal);
   Result.setIsSigned(CommonFXSema.isSigned());
 
   // If our result lies outside of the representative range of the common
   // semantic, we either have overflow or saturation.
-  llvm::APSInt Max =
-      APFixedPoint::getMax(CommonFXSema).getValue().extOrTrunc(Wide);
-  llvm::APSInt Min =
-      APFixedPoint::getMin(CommonFXSema).getValue().extOrTrunc(Wide);
-
+  llvm::APSInt Max = APFixedPoint::getMax(CommonFXSema).getValue()
+                                                       .extOrTrunc(Wide);
+  llvm::APSInt Min = APFixedPoint::getMin(CommonFXSema).getValue()
+                                                       .extOrTrunc(Wide);
   if (CommonFXSema.isSaturated()) {
     if (Result < Min)
       Result = Min;
@@ -372,7 +370,7 @@ llvm::APSInt APFixedPoint::convertToInt(unsigned DstWidth, bool DstSign,
   }
 
   if (Overflow) {
-    if (Result.isSigned() && !DstWidth) {
+    if (Result.isSigned() && !DstSign) {
       *Overflow = Result.isNegative() || Result.ugt(DstMax);
     } else if (Result.isUnsigned() && DstSign) {
       *Overflow = Result.ugt(DstMax);
@@ -393,4 +391,4 @@ APFixedPoint APFixedPoint::getFromIntValue(const llvm::APSInt &Value,
   return APFixedPoint(Value, IntFXSema).convert(DstFXSema, Overflow);
 }
 
-} // namespace latino
+}  // namespace latino

@@ -15,16 +15,15 @@
 #define LLVM_LATINO_AST_COMPARISONCATEGORIES_H
 
 #include "latino/Basic/LLVM.h"
-
 #include "llvm/ADT/APSInt.h"
 #include "llvm/ADT/DenseMap.h"
 #include <array>
 #include <cassert>
 
 namespace llvm {
-class StringRef;
-class APSInt;
-} // namespace llvm
+  class StringRef;
+  class APSInt;
+}
 
 namespace latino {
 
@@ -96,7 +95,6 @@ public:
     /// the comparison category result type.
     llvm::APSInt getIntValue() const;
   };
-
 private:
   const ASTContext &Ctx;
 

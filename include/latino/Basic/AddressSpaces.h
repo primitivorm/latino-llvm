@@ -58,7 +58,7 @@ enum class LangAS : unsigned {
 using LangASMap = unsigned[(unsigned)LangAS::FirstTargetAddressSpace];
 
 /// \return whether \p AS is a target-specific address space rather than a
-/// latino AST address space
+/// clang AST address space
 inline bool isTargetAddressSpace(LangAS AS) {
   return (unsigned)AS >= (unsigned)LangAS::FirstTargetAddressSpace;
 }

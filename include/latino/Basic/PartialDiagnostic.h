@@ -18,7 +18,6 @@
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/SourceLocation.h"
-
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include <cassert>
@@ -35,21 +34,21 @@ class IdentifierInfo;
 class PartialDiagnostic {
 public:
   enum {
-    // The MaxArguments and MaxFixItHints member enum values from
-    // DiagnosticsEngine are private but DiagnosticsEngine declares
-    // PartialDiagnostic a friend.  These enum values are redeclared
-    // here so that the nested Storage class below can access them.
-    MaxArguments = DiagnosticsEngine::MaxArguments
+      // The MaxArguments and MaxFixItHints member enum values from
+      // DiagnosticsEngine are private but DiagnosticsEngine declares
+      // PartialDiagnostic a friend.  These enum values are redeclared
+      // here so that the nested Storage class below can access them.
+      MaxArguments = DiagnosticsEngine::MaxArguments
   };
 
   struct Storage {
     enum {
-      /// The maximum number of arguments we can hold. We
-      /// currently only support up to 10 arguments (%0-%9).
-      ///
-      /// A single diagnostic with more than that almost certainly has to
-      /// be simplified anyway.
-      MaxArguments = PartialDiagnostic::MaxArguments
+        /// The maximum number of arguments we can hold. We
+        /// currently only support up to 10 arguments (%0-%9).
+        ///
+        /// A single diagnostic with more than that almost certainly has to
+        /// be simplified anyway.
+        MaxArguments = PartialDiagnostic::MaxArguments
     };
 
     /// The number of entries in Arguments.
@@ -75,7 +74,7 @@ public:
 
     /// If valid, provides a hint with some code to insert, remove, or
     /// modify at a particular position.
-    SmallVector<FixItHint, 6> FixItHints;
+    SmallVector<FixItHint, 6>  FixItHints;
 
     Storage() = default;
   };
@@ -256,7 +255,9 @@ public:
     return *this;
   }
 
-  ~PartialDiagnostic() { freeStorage(); }
+  ~PartialDiagnostic() {
+    freeStorage();
+  }
 
   void swap(PartialDiagnostic &PD) {
     std::swap(DiagID, PD.DiagID);
@@ -282,8 +283,8 @@ public:
 
     assert(DiagStorage->NumDiagArgs < Storage::MaxArguments &&
            "Too many arguments to diagnostic!");
-    DiagStorage->DiagArgumentsKind[DiagStorage->NumDiagArgs] =
-        DiagnosticsEngine::ak_std_string;
+    DiagStorage->DiagArgumentsKind[DiagStorage->NumDiagArgs]
+      = DiagnosticsEngine::ak_std_string;
     DiagStorage->DiagArgumentsStr[DiagStorage->NumDiagArgs++] = std::string(V);
   }
 
@@ -293,12 +294,11 @@ public:
 
     // Add all arguments.
     for (unsigned i = 0, e = DiagStorage->NumDiagArgs; i != e; ++i) {
-      if ((DiagnosticsEngine::ArgumentKind)DiagStorage->DiagArgumentsKind[i] ==
-          DiagnosticsEngine::ak_std_string)
+      if ((DiagnosticsEngine::ArgumentKind)DiagStorage->DiagArgumentsKind[i]
+            == DiagnosticsEngine::ak_std_string)
         DB.AddString(DiagStorage->DiagArgumentsStr[i]);
       else
-        DB.AddTaggedVal(
-            DiagStorage->DiagArgumentsVal[i],
+        DB.AddTaggedVal(DiagStorage->DiagArgumentsVal[i],
             (DiagnosticsEngine::ArgumentKind)DiagStorage->DiagArgumentsKind[i]);
     }
 
@@ -336,9 +336,8 @@ public:
   StringRef getStringArg(unsigned I) {
     assert(DiagStorage && "No diagnostic storage?");
     assert(I < DiagStorage->NumDiagArgs && "Not enough diagnostic args");
-    assert(DiagStorage->DiagArgumentsKind[I] ==
-               DiagnosticsEngine::ak_std_string &&
-           "Not a string arg");
+    assert(DiagStorage->DiagArgumentsKind[I]
+             == DiagnosticsEngine::ak_std_string && "Not a string arg");
     return DiagStorage->DiagArgumentsStr[I];
   }
 

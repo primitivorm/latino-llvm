@@ -14,12 +14,9 @@
 #ifndef LLVM_LATINO_BASIC_TARGETOPTIONS_H
 #define LLVM_LATINO_BASIC_TARGETOPTIONS_H
 
-// #include "latino/Basic/OpenCLOptions.h"
-
-#include "llvm/ADT/StringMap.h"
+#include "latino/Basic/OpenCLOptions.h"
 #include "llvm/Support/VersionTuple.h"
 #include "llvm/Target/TargetOptions.h"
-
 #include <string>
 #include <vector>
 
@@ -50,8 +47,7 @@ public:
   /// If given, the version string of the linker in use.
   std::string LinkerVersion;
 
-  /// The list of target specific features to enable or disable, as written on
-  /// the command line.
+  /// The list of target specific features to enable or disable, as written on the command line.
   std::vector<std::string> FeaturesAsWritten;
 
   /// The list of target specific features to enable or disable -- this should
@@ -63,7 +59,7 @@ public:
   llvm::StringMap<bool> FeatureMap;
 
   /// Supported OpenCL extensions and optional core features.
-  //   OpenCLOptions SupportedOpenCLOptions;
+  OpenCLOptions SupportedOpenCLOptions;
 
   /// The list of OpenCL extensions to enable or disable, as written on
   /// the command line.
@@ -87,10 +83,10 @@ public:
   /// * on darwin the version is propagated to LLVM where it's used
   ///   to support SDK Version metadata (See D55673).
   /// * CUDA compilation uses it to control parts of CUDA compilation
-  ///   in latino that depend on specific version of the CUDA SDK.
+  ///   in clang that depend on specific version of the CUDA SDK.
   llvm::VersionTuple SDKVersion;
 };
 
-} // end namespace latino
+}  // end namespace latino
 
 #endif

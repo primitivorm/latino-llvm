@@ -17,23 +17,23 @@
 #define LAST_STMT_RANGE(Base, First, Last) STMT_RANGE(Base, First, Last)
 #endif
 
-// #ifndef ASMSTMT
-// #define ASMSTMT(Type, Base) STMT(Type, Base)
-// #endif
-// ABSTRACT_STMT(ASMSTMT(AsmStmt, Stmt))
-// #ifndef GCCASMSTMT
-// #define GCCASMSTMT(Type, Base) ASMSTMT(Type, Base)
-// #endif
-// GCCASMSTMT(GCCAsmStmt, AsmStmt)
-// #undef GCCASMSTMT
+#ifndef ASMSTMT
+#define ASMSTMT(Type, Base) STMT(Type, Base)
+#endif
+ABSTRACT_STMT(ASMSTMT(AsmStmt, Stmt))
+#ifndef GCCASMSTMT
+#define GCCASMSTMT(Type, Base) ASMSTMT(Type, Base)
+#endif
+GCCASMSTMT(GCCAsmStmt, AsmStmt)
+#undef GCCASMSTMT
 
-// #ifndef MSASMSTMT
-// #define MSASMSTMT(Type, Base) ASMSTMT(Type, Base)
-// #endif
-// MSASMSTMT(MSAsmStmt, AsmStmt)
-// #undef MSASMSTMT
+#ifndef MSASMSTMT
+#define MSASMSTMT(Type, Base) ASMSTMT(Type, Base)
+#endif
+MSASMSTMT(MSAsmStmt, AsmStmt)
+#undef MSASMSTMT
 
-// STMT_RANGE(AsmStmt, GCCAsmStmt, MSAsmStmt)
+STMT_RANGE(AsmStmt, GCCAsmStmt, MSAsmStmt)
 
 // #undef ASMSTMT
 

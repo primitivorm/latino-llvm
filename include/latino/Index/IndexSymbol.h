@@ -15,8 +15,8 @@
 #include "llvm/Support/DataTypes.h"
 
 namespace latino {
-class Decl;
-class LangOptions;
+  class Decl;
+  class LangOptions;
 
 namespace index {
 
@@ -80,22 +80,22 @@ enum class SymbolSubKind : uint8_t {
 typedef uint16_t SymbolPropertySet;
 /// Set of properties that provide additional info about a symbol.
 enum class SymbolProperty : SymbolPropertySet {
-  Generic = 1 << 0,
+  Generic                       = 1 << 0,
   TemplatePartialSpecialization = 1 << 1,
-  TemplateSpecialization = 1 << 2,
-  UnitTest = 1 << 3,
-  IBAnnotated = 1 << 4,
-  IBOutletCollection = 1 << 5,
-  GKInspectable = 1 << 6,
-  Local = 1 << 7,
+  TemplateSpecialization        = 1 << 2,
+  UnitTest                      = 1 << 3,
+  IBAnnotated                   = 1 << 4,
+  IBOutletCollection            = 1 << 5,
+  GKInspectable                 = 1 << 6,
+  Local                         = 1 << 7,
   /// Symbol is part of a protocol interface.
-  ProtocolInterface = 1 << 8,
+  ProtocolInterface             = 1 << 8,
 };
 static const unsigned SymbolPropertyBitNum = 9;
 
 /// Set of roles that are attributed to symbol occurrences.
 ///
-/// Low 9 bits of latino-c/include/Index.h CXSymbolRole mirrors this enum.
+/// Low 9 bits of clang-c/include/Index.h CXSymbolRole mirrors this enum.
 enum class SymbolRole : uint32_t {
   Declaration = 1 << 0,
   Definition = 1 << 1,
@@ -107,7 +107,7 @@ enum class SymbolRole : uint32_t {
   AddressOf = 1 << 7,
   Implicit = 1 << 8,
   // FIXME: this is not mirrored in CXSymbolRole.
-  // Note that macro occurrences aren't currently supported in liblatino.
+  // Note that macro occurrences aren't currently supported in libclang.
   Undefinition = 1 << 9, // macro #undef
 
   // Relation roles.
@@ -135,7 +135,7 @@ struct SymbolRelation {
   const Decl *RelatedSymbol;
 
   SymbolRelation(SymbolRoleSet Roles, const Decl *Sym)
-      : Roles(Roles), RelatedSymbol(Sym) {}
+    : Roles(Roles), RelatedSymbol(Sym) {}
 };
 
 struct SymbolInfo {
@@ -153,8 +153,8 @@ bool isFunctionLocalSymbol(const Decl *D);
 
 void applyForEachSymbolRole(SymbolRoleSet Roles,
                             llvm::function_ref<void(SymbolRole)> Fn);
-bool applyForEachSymbolRoleInterruptible(
-    SymbolRoleSet Roles, llvm::function_ref<bool(SymbolRole)> Fn);
+bool applyForEachSymbolRoleInterruptible(SymbolRoleSet Roles,
+                            llvm::function_ref<bool(SymbolRole)> Fn);
 void printSymbolRoles(SymbolRoleSet Roles, raw_ostream &OS);
 
 /// \returns true if no name was printed, false otherwise.
@@ -165,7 +165,7 @@ StringRef getSymbolSubKindString(SymbolSubKind K);
 StringRef getSymbolLanguageString(SymbolLanguage K);
 
 void applyForEachSymbolProperty(SymbolPropertySet Props,
-                                llvm::function_ref<void(SymbolProperty)> Fn);
+                            llvm::function_ref<void(SymbolProperty)> Fn);
 void printSymbolProperties(SymbolPropertySet Props, raw_ostream &OS);
 
 } // namespace index

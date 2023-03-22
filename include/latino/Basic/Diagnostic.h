@@ -18,7 +18,6 @@
 #include "latino/Basic/DiagnosticOptions.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/Specifiers.h"
-
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
@@ -88,15 +87,18 @@ public:
   /// modification is known.
   FixItHint() = default;
 
-  bool isNull() const { return !RemoveRange.isValid(); }
+  bool isNull() const {
+    return !RemoveRange.isValid();
+  }
 
   /// Create a code modification hint that inserts the given
   /// code string at a specific location.
-  static FixItHint CreateInsertion(SourceLocation InsertionLoc, StringRef Code,
+  static FixItHint CreateInsertion(SourceLocation InsertionLoc,
+                                   StringRef Code,
                                    bool BeforePreviousInsertions = false) {
     FixItHint Hint;
     Hint.RemoveRange =
-        CharSourceRange::getCharRange(InsertionLoc, InsertionLoc);
+      CharSourceRange::getCharRange(InsertionLoc, InsertionLoc);
     Hint.CodeToInsert = std::string(Code);
     Hint.BeforePreviousInsertions = BeforePreviousInsertions;
     return Hint;
@@ -104,13 +106,12 @@ public:
 
   /// Create a code modification hint that inserts the given
   /// code from \p FromRange at a specific location.
-  static FixItHint
-  CreateInsertionFromRange(SourceLocation InsertionLoc,
-                           CharSourceRange FromRange,
-                           bool BeforePreviousInsertions = false) {
+  static FixItHint CreateInsertionFromRange(SourceLocation InsertionLoc,
+                                            CharSourceRange FromRange,
+                                        bool BeforePreviousInsertions = false) {
     FixItHint Hint;
     Hint.RemoveRange =
-        CharSourceRange::getCharRange(InsertionLoc, InsertionLoc);
+      CharSourceRange::getCharRange(InsertionLoc, InsertionLoc);
     Hint.InsertFromRange = FromRange;
     Hint.BeforePreviousInsertions = BeforePreviousInsertions;
     return Hint;
@@ -137,7 +138,8 @@ public:
     return Hint;
   }
 
-  static FixItHint CreateReplacement(SourceRange RemoveRange, StringRef Code) {
+  static FixItHint CreateReplacement(SourceRange RemoveRange,
+                                     StringRef Code) {
     return CreateReplacement(CharSourceRange::getTokenRange(RemoveRange), Code);
   }
 };
@@ -224,6 +226,9 @@ private:
   // Elide common types of templates.
   bool ElideType = true;
 
+  // Print a tree when comparing templates.
+  bool PrintTemplateTree = false;
+
   // Color printing is enabled.
   bool ShowColors = false;
 
@@ -232,6 +237,9 @@ private:
 
   // Cap of # errors emitted, 0 -> no limit.
   unsigned ErrorLimit = 0;
+
+  // Cap on depth of template backtrace stack, 0 -> no limit.
+  unsigned TemplateBacktraceLimit = 0;
 
   // Cap on depth of constexpr evaluation backtrace stack, 0 -> no limit.
   unsigned ConstexprBacktraceLimit = 0;
@@ -450,11 +458,13 @@ private:
   /// avoid redundancy across arguments.
   ///
   /// This is a hack to avoid a layering violation between libbasic and libsema.
-  using ArgToStringFnTy = void (*)(ArgumentKind Kind, intptr_t Val,
-                                   StringRef Modifier, StringRef Argument,
-                                   ArrayRef<ArgumentValue> PrevArgs,
-                                   SmallVectorImpl<char> &Output, void *Cookie,
-                                   ArrayRef<intptr_t> QualTypeVals);
+  using ArgToStringFnTy = void (*)(
+      ArgumentKind Kind, intptr_t Val,
+      StringRef Modifier, StringRef Argument,
+      ArrayRef<ArgumentValue> PrevArgs,
+      SmallVectorImpl<char> &Output,
+      void *Cookie,
+      ArrayRef<intptr_t> QualTypeVals);
 
   void *ArgToStringCookie = nullptr;
   ArgToStringFnTy ArgToStringFn;
@@ -558,6 +568,18 @@ public:
   /// Zero disables the limit.
   void setErrorLimit(unsigned Limit) { ErrorLimit = Limit; }
 
+  /// Specify the maximum number of template instantiation
+  /// notes to emit along with a given diagnostic.
+  void setTemplateBacktraceLimit(unsigned Limit) {
+    TemplateBacktraceLimit = Limit;
+  }
+
+  /// Retrieve the maximum number of template instantiation
+  /// notes to emit along with a given diagnostic.
+  unsigned getTemplateBacktraceLimit() const {
+    return TemplateBacktraceLimit;
+  }
+
   /// Specify the maximum number of constexpr evaluation
   /// notes to emit along with a given diagnostic.
   void setConstexprBacktraceLimit(unsigned Limit) {
@@ -628,6 +650,11 @@ public:
   void setElideType(bool Val) { ElideType = Val; }
   bool getElideType() { return ElideType; }
 
+  /// Set tree printing, to outputting the template difference in a
+  /// tree format.
+  void setPrintTemplateTree(bool Val) { PrintTemplateTree = Val; }
+  bool getPrintTemplateTree() { return PrintTemplateTree; }
+
   /// Set color printing, so the type diffing will inject color markers
   /// into the output.
   void setShowColors(bool Val) { ShowColors = Val; }
@@ -637,7 +664,9 @@ public:
   /// fails.
   ///
   /// By default, we show all candidates.
-  void setShowOverloads(OverloadsShown Val) { ShowOverloads = Val; }
+  void setShowOverloads(OverloadsShown Val) {
+    ShowOverloads = Val;
+  }
   OverloadsShown getShowOverloads() const { return ShowOverloads; }
 
   /// Pretend that the last diagnostic issued was ignored, so any
@@ -741,7 +770,9 @@ public:
 
   unsigned getNumWarnings() const { return NumWarnings; }
 
-  void setNumWarnings(unsigned NumWarnings) { this->NumWarnings = NumWarnings; }
+  void setNumWarnings(unsigned NumWarnings) {
+    this->NumWarnings = NumWarnings;
+  }
 
   /// Return an ID for a diagnostic with the specified format string and
   /// level.
@@ -759,8 +790,9 @@ public:
 
   /// Converts a diagnostic argument (as an intptr_t) into the string
   /// that represents it.
-  void ConvertArgToString(ArgumentKind Kind, intptr_t Val, StringRef Modifier,
-                          StringRef Argument, ArrayRef<ArgumentValue> PrevArgs,
+  void ConvertArgToString(ArgumentKind Kind, intptr_t Val,
+                          StringRef Modifier, StringRef Argument,
+                          ArrayRef<ArgumentValue> PrevArgs,
                           SmallVectorImpl<char> &Output,
                           ArrayRef<intptr_t> QualTypeVals) const {
     ArgToStringFn(Kind, Val, Modifier, Argument, PrevArgs, Output,
@@ -947,7 +979,9 @@ private:
   /// Used to report a diagnostic that is finally fully formed.
   ///
   /// \returns true if the diagnostic was emitted, false if it was suppressed.
-  bool ProcessDiag() { return Diags->ProcessDiag(*this); }
+  bool ProcessDiag() {
+    return Diags->ProcessDiag(*this);
+  }
 
   /// @name Diagnostic Emission
   /// @{
@@ -987,9 +1021,8 @@ class DiagnosticErrorTrap {
   unsigned NumUnrecoverableErrors;
 
 public:
-  explicit DiagnosticErrorTrap(DiagnosticsEngine &Diag) : Diag(Diag) {
-    reset();
-  }
+  explicit DiagnosticErrorTrap(DiagnosticsEngine &Diag)
+      : Diag(Diag) { reset(); }
 
   /// Determine whether any errors have occurred since this
   /// object instance was created.
@@ -1054,7 +1087,9 @@ class DiagnosticBuilder {
   }
 
 protected:
-  void FlushCounts() { DiagObj->NumDiagArgs = NumArgs; }
+  void FlushCounts() {
+    DiagObj->NumDiagArgs = NumArgs;
+  }
 
   /// Clear out the current diagnostic.
   void Clear() const {
@@ -1076,8 +1111,7 @@ protected:
   bool Emit() {
     // If this diagnostic is inactive, then its soul was stolen by the copy ctor
     // (or by a subclass, as in SemaDiagnosticBuilder).
-    if (!isActive())
-      return false;
+    if (!isActive()) return false;
 
     // When emitting diagnostics, we set the final argument count into
     // the DiagnosticsEngine object.
@@ -1106,7 +1140,9 @@ public:
   DiagnosticBuilder &operator=(const DiagnosticBuilder &) = delete;
 
   /// Emits the diagnostic.
-  ~DiagnosticBuilder() { Emit(); }
+  ~DiagnosticBuilder() {
+    Emit();
+  }
 
   /// Forces the diagnostic to be emitted.
   const DiagnosticBuilder &setForceEmit() const {
@@ -1328,9 +1364,7 @@ public:
   unsigned getID() const { return DiagObj->CurDiagID; }
   const SourceLocation &getLocation() const { return DiagObj->CurDiagLoc; }
   bool hasSourceManager() const { return DiagObj->hasSourceManager(); }
-  SourceManager &getSourceManager() const {
-    return DiagObj->getSourceManager();
-  }
+  SourceManager &getSourceManager() const { return DiagObj->getSourceManager();}
 
   unsigned getNumArgs() const { return DiagObj->NumDiagArgs; }
 
@@ -1358,7 +1392,7 @@ public:
   const char *getArgCStr(unsigned Idx) const {
     assert(getArgKind(Idx) == DiagnosticsEngine::ak_c_string &&
            "invalid argument accessor!");
-    return reinterpret_cast<const char *>(DiagObj->DiagArgumentsVal[Idx]);
+    return reinterpret_cast<const char*>(DiagObj->DiagArgumentsVal[Idx]);
   }
 
   /// Return the specified signed integer argument.
@@ -1382,7 +1416,7 @@ public:
   const IdentifierInfo *getArgIdentifier(unsigned Idx) const {
     assert(getArgKind(Idx) == DiagnosticsEngine::ak_identifierinfo &&
            "invalid argument accessor!");
-    return reinterpret_cast<IdentifierInfo *>(DiagObj->DiagArgumentsVal[Idx]);
+    return reinterpret_cast<IdentifierInfo*>(DiagObj->DiagArgumentsVal[Idx]);
   }
 
   /// Return the specified non-string argument in an opaque form.
@@ -1394,7 +1428,9 @@ public:
   }
 
   /// Return the number of source ranges associated with this diagnostic.
-  unsigned getNumRanges() const { return DiagObj->DiagRanges.size(); }
+  unsigned getNumRanges() const {
+    return DiagObj->DiagRanges.size();
+  }
 
   /// \pre Idx < getNumRanges()
   const CharSourceRange &getRange(unsigned Idx) const {
@@ -1403,16 +1439,22 @@ public:
   }
 
   /// Return an array reference for this diagnostic's ranges.
-  ArrayRef<CharSourceRange> getRanges() const { return DiagObj->DiagRanges; }
+  ArrayRef<CharSourceRange> getRanges() const {
+    return DiagObj->DiagRanges;
+  }
 
-  unsigned getNumFixItHints() const { return DiagObj->DiagFixItHints.size(); }
+  unsigned getNumFixItHints() const {
+    return DiagObj->DiagFixItHints.size();
+  }
 
   const FixItHint &getFixItHint(unsigned Idx) const {
     assert(Idx < getNumFixItHints() && "Invalid index!");
     return DiagObj->DiagFixItHints[Idx];
   }
 
-  ArrayRef<FixItHint> getFixItHints() const { return DiagObj->DiagFixItHints; }
+  ArrayRef<FixItHint> getFixItHints() const {
+    return DiagObj->DiagFixItHints;
+  }
 
   /// Format this diagnostic into a string, substituting the
   /// formal arguments into the %0 slots.
@@ -1474,15 +1516,17 @@ public:
   fixit_iterator fixit_end() const { return FixIts.end(); }
   unsigned fixit_size() const { return FixIts.size(); }
 
-  ArrayRef<FixItHint> getFixIts() const { return llvm::makeArrayRef(FixIts); }
+  ArrayRef<FixItHint> getFixIts() const {
+    return llvm::makeArrayRef(FixIts);
+  }
 };
 
 /// Abstract interface, implemented by clients of the front-end, which
 /// formats and prints fully processed diagnostics.
 class DiagnosticConsumer {
 protected:
-  unsigned NumWarnings = 0; ///< Number of warnings reported
-  unsigned NumErrors = 0;   ///< Number of errors reported
+  unsigned NumWarnings = 0;       ///< Number of warnings reported
+  unsigned NumErrors = 0;         ///< Number of errors reported
 
 public:
   DiagnosticConsumer() = default;
@@ -1558,6 +1602,19 @@ public:
   void clear() override;
 
   bool IncludeInDiagnosticCounts() const override;
+};
+
+// Struct used for sending info about how a type should be printed.
+struct TemplateDiffTypes {
+  intptr_t FromType;
+  intptr_t ToType;
+  unsigned PrintTree : 1;
+  unsigned PrintFromType : 1;
+  unsigned ElideType : 1;
+  unsigned ShowColors : 1;
+
+  // The printer sets this variable to true if the template diff was used.
+  unsigned TemplateDiffUsed : 1;
 };
 
 /// Special character that the diagnostic printer will use to toggle the bold

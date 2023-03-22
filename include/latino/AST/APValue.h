@@ -15,24 +15,23 @@
 
 #include "latino/Basic/FixedPoint.h"
 #include "latino/Basic/LLVM.h"
-
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/APSInt.h"
 #include "llvm/ADT/PointerIntPair.h"
 #include "llvm/ADT/PointerUnion.h"
 
 namespace latino {
-class AddrLabelExpr;
-class ASTContext;
-class CharUnits;
-class CXXRecordDecl;
-class Decl;
-class DiagnosticBuilder;
-class Expr;
-class FieldDecl;
-struct PrintingPolicy;
-class Type;
-class ValueDecl;
+  class AddrLabelExpr;
+  class ASTContext;
+  class CharUnits;
+  class CXXRecordDecl;
+  class Decl;
+  class DiagnosticBuilder;
+  class Expr;
+  class FieldDecl;
+  struct PrintingPolicy;
+  class Type;
+  class ValueDecl;
 
 /// Symbolic representation of typeid(T) for some type T.
 class TypeInfoLValue {
@@ -45,10 +44,10 @@ public:
   const Type *getType() const { return T; }
   explicit operator bool() const { return T; }
 
-  void *getOpaqueValue() { return const_cast<Type *>(T); }
+  void *getOpaqueValue() { return const_cast<Type*>(T); }
   static TypeInfoLValue getFromOpaqueValue(void *Value) {
     TypeInfoLValue V;
-    V.T = reinterpret_cast<const Type *>(Value);
+    V.T = reinterpret_cast<const Type*>(Value);
     return V;
   }
 
@@ -82,10 +81,10 @@ public:
 
   static constexpr int NumLowBitsAvailable = 3;
 };
-} // namespace latino
+}
 
 namespace llvm {
-template <> struct PointerLikeTypeTraits<latino::TypeInfoLValue> {
+template<> struct PointerLikeTypeTraits<latino::TypeInfoLValue> {
   static void *getAsVoidPointer(latino::TypeInfoLValue V) {
     return V.getOpaqueValue();
   }
@@ -97,7 +96,7 @@ template <> struct PointerLikeTypeTraits<latino::TypeInfoLValue> {
   static constexpr int NumLowBitsAvailable = 3;
 };
 
-template <> struct PointerLikeTypeTraits<latino::DynamicAllocLValue> {
+template<> struct PointerLikeTypeTraits<latino::DynamicAllocLValue> {
   static void *getAsVoidPointer(latino::DynamicAllocLValue V) {
     return V.getOpaqueValue();
   }
@@ -107,7 +106,7 @@ template <> struct PointerLikeTypeTraits<latino::DynamicAllocLValue> {
   static constexpr int NumLowBitsAvailable =
       latino::DynamicAllocLValue::NumLowBitsAvailable;
 };
-} // namespace llvm
+}
 
 namespace latino {
 /// APValue - This class implements a discriminated union of [uninitialized]
@@ -116,7 +115,6 @@ namespace latino {
 class APValue {
   typedef llvm::APSInt APSInt;
   typedef llvm::APFloat APFloat;
-
 public:
   enum ValueKind {
     /// There is no such object (it's outside its lifetime).
@@ -149,11 +147,14 @@ public:
     static LValueBase getDynamicAlloc(DynamicAllocLValue LV, QualType Type);
     static LValueBase getTypeInfo(TypeInfoLValue LV, QualType TypeInfo);
 
-    template <class T> bool is() const { return Ptr.is<T>(); }
+    template <class T>
+    bool is() const { return Ptr.is<T>(); }
 
-    template <class T> T get() const { return Ptr.get<T>(); }
+    template <class T>
+    T get() const { return Ptr.get<T>(); }
 
-    template <class T> T dyn_cast() const { return Ptr.dyn_cast<T>(); }
+    template <class T>
+    T dyn_cast() const { return Ptr.dyn_cast<T>(); }
 
     void *getOpaqueValue() const;
 
@@ -267,16 +268,15 @@ private:
     ~UnionData();
   };
   struct AddrLabelDiffData {
-    const AddrLabelExpr *LHSExpr;
-    const AddrLabelExpr *RHSExpr;
+    const AddrLabelExpr* LHSExpr;
+    const AddrLabelExpr* RHSExpr;
   };
   struct MemberPointerData;
 
   // We ensure elsewhere that Data is big enough for LV and MemberPointerData.
   typedef llvm::AlignedCharArrayUnion<void *, APSInt, APFloat, ComplexAPSInt,
                                       ComplexAPFloat, Vec, Arr, StructData,
-                                      UnionData, AddrLabelDiffData>
-      DataType;
+                                      UnionData, AddrLabelDiffData> DataType;
   static const size_t DataSize = sizeof(DataType);
 
   DataType Data;
@@ -284,41 +284,34 @@ private:
 public:
   APValue() : Kind(None) {}
   explicit APValue(APSInt I) : Kind(None) {
-    MakeInt();
-    setInt(std::move(I));
+    MakeInt(); setInt(std::move(I));
   }
   explicit APValue(APFloat F) : Kind(None) {
-    MakeFloat();
-    setFloat(std::move(F));
+    MakeFloat(); setFloat(std::move(F));
   }
   explicit APValue(APFixedPoint FX) : Kind(None) {
     MakeFixedPoint(std::move(FX));
   }
   explicit APValue(const APValue *E, unsigned N) : Kind(None) {
-    MakeVector();
-    setVector(E, N);
+    MakeVector(); setVector(E, N);
   }
   APValue(APSInt R, APSInt I) : Kind(None) {
-    MakeComplexInt();
-    setComplexInt(std::move(R), std::move(I));
+    MakeComplexInt(); setComplexInt(std::move(R), std::move(I));
   }
   APValue(APFloat R, APFloat I) : Kind(None) {
-    MakeComplexFloat();
-    setComplexFloat(std::move(R), std::move(I));
+    MakeComplexFloat(); setComplexFloat(std::move(R), std::move(I));
   }
   APValue(const APValue &RHS);
   APValue(APValue &&RHS) : Kind(None) { swap(RHS); }
   APValue(LValueBase B, const CharUnits &O, NoLValuePath N,
           bool IsNullPtr = false)
       : Kind(None) {
-    MakeLValue();
-    setLValue(B, O, N, IsNullPtr);
+    MakeLValue(); setLValue(B, O, N, IsNullPtr);
   }
   APValue(LValueBase B, const CharUnits &O, ArrayRef<LValuePathEntry> Path,
           bool OnePastTheEnd, bool IsNullPtr = false)
       : Kind(None) {
-    MakeLValue();
-    setLValue(B, O, Path, OnePastTheEnd, IsNullPtr);
+    MakeLValue(); setLValue(B, O, Path, OnePastTheEnd, IsNullPtr);
   }
   APValue(UninitArray, unsigned InitElts, unsigned Size) : Kind(None) {
     MakeArray(InitElts, Size);
@@ -328,18 +321,15 @@ public:
   }
   explicit APValue(const FieldDecl *D, const APValue &V = APValue())
       : Kind(None) {
-    MakeUnion();
-    setUnion(D, V);
+    MakeUnion(); setUnion(D, V);
   }
   APValue(const ValueDecl *Member, bool IsDerivedMember,
-          ArrayRef<const CXXRecordDecl *> Path)
-      : Kind(None) {
+          ArrayRef<const CXXRecordDecl*> Path) : Kind(None) {
     MakeMemberPointer(Member, IsDerivedMember, Path);
   }
-  APValue(const AddrLabelExpr *LHSExpr, const AddrLabelExpr *RHSExpr)
+  APValue(const AddrLabelExpr* LHSExpr, const AddrLabelExpr* RHSExpr)
       : Kind(None) {
-    MakeAddrLabelDiff();
-    setAddrLabelDiff(LHSExpr, RHSExpr);
+    MakeAddrLabelDiff(); setAddrLabelDiff(LHSExpr, RHSExpr);
   }
   static APValue IndeterminateValue() {
     APValue Result;
@@ -389,9 +379,11 @@ public:
 
   APSInt &getInt() {
     assert(isInt() && "Invalid accessor");
-    return *(APSInt *)(char *)Data.buffer;
+    return *(APSInt*)(char*)Data.buffer;
   }
-  const APSInt &getInt() const { return const_cast<APValue *>(this)->getInt(); }
+  const APSInt &getInt() const {
+    return const_cast<APValue*>(this)->getInt();
+  }
 
   /// Try to convert this value to an integral constant. This works if it's an
   /// integer, null pointer, or offset from a null pointer. Returns true on
@@ -401,10 +393,10 @@ public:
 
   APFloat &getFloat() {
     assert(isFloat() && "Invalid accessor");
-    return *(APFloat *)(char *)Data.buffer;
+    return *(APFloat*)(char*)Data.buffer;
   }
   const APFloat &getFloat() const {
-    return const_cast<APValue *>(this)->getFloat();
+    return const_cast<APValue*>(this)->getFloat();
   }
 
   APFixedPoint &getFixedPoint() {
@@ -417,40 +409,40 @@ public:
 
   APSInt &getComplexIntReal() {
     assert(isComplexInt() && "Invalid accessor");
-    return ((ComplexAPSInt *)(char *)Data.buffer)->Real;
+    return ((ComplexAPSInt*)(char*)Data.buffer)->Real;
   }
   const APSInt &getComplexIntReal() const {
-    return const_cast<APValue *>(this)->getComplexIntReal();
+    return const_cast<APValue*>(this)->getComplexIntReal();
   }
 
   APSInt &getComplexIntImag() {
     assert(isComplexInt() && "Invalid accessor");
-    return ((ComplexAPSInt *)(char *)Data.buffer)->Imag;
+    return ((ComplexAPSInt*)(char*)Data.buffer)->Imag;
   }
   const APSInt &getComplexIntImag() const {
-    return const_cast<APValue *>(this)->getComplexIntImag();
+    return const_cast<APValue*>(this)->getComplexIntImag();
   }
 
   APFloat &getComplexFloatReal() {
     assert(isComplexFloat() && "Invalid accessor");
-    return ((ComplexAPFloat *)(char *)Data.buffer)->Real;
+    return ((ComplexAPFloat*)(char*)Data.buffer)->Real;
   }
   const APFloat &getComplexFloatReal() const {
-    return const_cast<APValue *>(this)->getComplexFloatReal();
+    return const_cast<APValue*>(this)->getComplexFloatReal();
   }
 
   APFloat &getComplexFloatImag() {
     assert(isComplexFloat() && "Invalid accessor");
-    return ((ComplexAPFloat *)(char *)Data.buffer)->Imag;
+    return ((ComplexAPFloat*)(char*)Data.buffer)->Imag;
   }
   const APFloat &getComplexFloatImag() const {
-    return const_cast<APValue *>(this)->getComplexFloatImag();
+    return const_cast<APValue*>(this)->getComplexFloatImag();
   }
 
   const LValueBase getLValueBase() const;
   CharUnits &getLValueOffset();
   const CharUnits &getLValueOffset() const {
-    return const_cast<APValue *>(this)->getLValueOffset();
+    return const_cast<APValue*>(this)->getLValueOffset();
   }
   bool isLValueOnePastTheEnd() const;
   bool hasLValuePath() const;
@@ -462,23 +454,23 @@ public:
   APValue &getVectorElt(unsigned I) {
     assert(isVector() && "Invalid accessor");
     assert(I < getVectorLength() && "Index out of range");
-    return ((Vec *)(char *)Data.buffer)->Elts[I];
+    return ((Vec*)(char*)Data.buffer)->Elts[I];
   }
   const APValue &getVectorElt(unsigned I) const {
-    return const_cast<APValue *>(this)->getVectorElt(I);
+    return const_cast<APValue*>(this)->getVectorElt(I);
   }
   unsigned getVectorLength() const {
     assert(isVector() && "Invalid accessor");
-    return ((const Vec *)(const void *)Data.buffer)->NumElts;
+    return ((const Vec*)(const void *)Data.buffer)->NumElts;
   }
 
   APValue &getArrayInitializedElt(unsigned I) {
     assert(isArray() && "Invalid accessor");
     assert(I < getArrayInitializedElts() && "Index out of range");
-    return ((Arr *)(char *)Data.buffer)->Elts[I];
+    return ((Arr*)(char*)Data.buffer)->Elts[I];
   }
   const APValue &getArrayInitializedElt(unsigned I) const {
-    return const_cast<APValue *>(this)->getArrayInitializedElt(I);
+    return const_cast<APValue*>(this)->getArrayInitializedElt(I);
   }
   bool hasArrayFiller() const {
     return getArrayInitializedElts() != getArraySize();
@@ -486,66 +478,66 @@ public:
   APValue &getArrayFiller() {
     assert(isArray() && "Invalid accessor");
     assert(hasArrayFiller() && "No array filler");
-    return ((Arr *)(char *)Data.buffer)->Elts[getArrayInitializedElts()];
+    return ((Arr*)(char*)Data.buffer)->Elts[getArrayInitializedElts()];
   }
   const APValue &getArrayFiller() const {
-    return const_cast<APValue *>(this)->getArrayFiller();
+    return const_cast<APValue*>(this)->getArrayFiller();
   }
   unsigned getArrayInitializedElts() const {
     assert(isArray() && "Invalid accessor");
-    return ((const Arr *)(const void *)Data.buffer)->NumElts;
+    return ((const Arr*)(const void *)Data.buffer)->NumElts;
   }
   unsigned getArraySize() const {
     assert(isArray() && "Invalid accessor");
-    return ((const Arr *)(const void *)Data.buffer)->ArrSize;
+    return ((const Arr*)(const void *)Data.buffer)->ArrSize;
   }
 
   unsigned getStructNumBases() const {
     assert(isStruct() && "Invalid accessor");
-    return ((const StructData *)(const char *)Data.buffer)->NumBases;
+    return ((const StructData*)(const char*)Data.buffer)->NumBases;
   }
   unsigned getStructNumFields() const {
     assert(isStruct() && "Invalid accessor");
-    return ((const StructData *)(const char *)Data.buffer)->NumFields;
+    return ((const StructData*)(const char*)Data.buffer)->NumFields;
   }
   APValue &getStructBase(unsigned i) {
     assert(isStruct() && "Invalid accessor");
-    return ((StructData *)(char *)Data.buffer)->Elts[i];
+    return ((StructData*)(char*)Data.buffer)->Elts[i];
   }
   APValue &getStructField(unsigned i) {
     assert(isStruct() && "Invalid accessor");
-    return ((StructData *)(char *)Data.buffer)->Elts[getStructNumBases() + i];
+    return ((StructData*)(char*)Data.buffer)->Elts[getStructNumBases() + i];
   }
   const APValue &getStructBase(unsigned i) const {
-    return const_cast<APValue *>(this)->getStructBase(i);
+    return const_cast<APValue*>(this)->getStructBase(i);
   }
   const APValue &getStructField(unsigned i) const {
-    return const_cast<APValue *>(this)->getStructField(i);
+    return const_cast<APValue*>(this)->getStructField(i);
   }
 
   const FieldDecl *getUnionField() const {
     assert(isUnion() && "Invalid accessor");
-    return ((const UnionData *)(const char *)Data.buffer)->Field;
+    return ((const UnionData*)(const char*)Data.buffer)->Field;
   }
   APValue &getUnionValue() {
     assert(isUnion() && "Invalid accessor");
-    return *((UnionData *)(char *)Data.buffer)->Value;
+    return *((UnionData*)(char*)Data.buffer)->Value;
   }
   const APValue &getUnionValue() const {
-    return const_cast<APValue *>(this)->getUnionValue();
+    return const_cast<APValue*>(this)->getUnionValue();
   }
 
   const ValueDecl *getMemberPointerDecl() const;
   bool isMemberPointerToDerivedMember() const;
-  ArrayRef<const CXXRecordDecl *> getMemberPointerPath() const;
+  ArrayRef<const CXXRecordDecl*> getMemberPointerPath() const;
 
-  const AddrLabelExpr *getAddrLabelDiffLHS() const {
+  const AddrLabelExpr* getAddrLabelDiffLHS() const {
     assert(isAddrLabelDiff() && "Invalid accessor");
-    return ((const AddrLabelDiffData *)(const char *)Data.buffer)->LHSExpr;
+    return ((const AddrLabelDiffData*)(const char*)Data.buffer)->LHSExpr;
   }
-  const AddrLabelExpr *getAddrLabelDiffRHS() const {
+  const AddrLabelExpr* getAddrLabelDiffRHS() const {
     assert(isAddrLabelDiff() && "Invalid accessor");
-    return ((const AddrLabelDiffData *)(const char *)Data.buffer)->RHSExpr;
+    return ((const AddrLabelDiffData*)(const char*)Data.buffer)->RHSExpr;
   }
 
   void setInt(APSInt I) {
@@ -562,10 +554,10 @@ public:
   }
   void setVector(const APValue *E, unsigned N) {
     assert(isVector() && "Invalid accessor");
-    ((Vec *)(char *)Data.buffer)->Elts = new APValue[N];
-    ((Vec *)(char *)Data.buffer)->NumElts = N;
+    ((Vec*)(char*)Data.buffer)->Elts = new APValue[N];
+    ((Vec*)(char*)Data.buffer)->NumElts = N;
     for (unsigned i = 0; i != N; ++i)
-      ((Vec *)(char *)Data.buffer)->Elts[i] = E[i];
+      ((Vec*)(char*)Data.buffer)->Elts[i] = E[i];
   }
   void setComplexInt(APSInt R, APSInt I) {
     assert(R.getBitWidth() == I.getBitWidth() &&
@@ -588,13 +580,13 @@ public:
                  bool IsNullPtr);
   void setUnion(const FieldDecl *Field, const APValue &Value) {
     assert(isUnion() && "Invalid accessor");
-    ((UnionData *)(char *)Data.buffer)->Field = Field;
-    *((UnionData *)(char *)Data.buffer)->Value = Value;
+    ((UnionData*)(char*)Data.buffer)->Field = Field;
+    *((UnionData*)(char*)Data.buffer)->Value = Value;
   }
-  void setAddrLabelDiff(const AddrLabelExpr *LHSExpr,
-                        const AddrLabelExpr *RHSExpr) {
-    ((AddrLabelDiffData *)(char *)Data.buffer)->LHSExpr = LHSExpr;
-    ((AddrLabelDiffData *)(char *)Data.buffer)->RHSExpr = RHSExpr;
+  void setAddrLabelDiff(const AddrLabelExpr* LHSExpr,
+                        const AddrLabelExpr* RHSExpr) {
+    ((AddrLabelDiffData*)(char*)Data.buffer)->LHSExpr = LHSExpr;
+    ((AddrLabelDiffData*)(char*)Data.buffer)->RHSExpr = RHSExpr;
   }
 
   /// Assign by swapping from a copy of the RHS.
@@ -607,12 +599,12 @@ private:
   void DestroyDataAndMakeUninit();
   void MakeInt() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)Data.buffer) APSInt(1);
+    new ((void*)Data.buffer) APSInt(1);
     Kind = Int;
   }
   void MakeFloat() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) APFloat(0.0);
+    new ((void*)(char*)Data.buffer) APFloat(0.0);
     Kind = Float;
   }
   void MakeFixedPoint(APFixedPoint &&FX) {
@@ -622,36 +614,36 @@ private:
   }
   void MakeVector() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) Vec();
+    new ((void*)(char*)Data.buffer) Vec();
     Kind = Vector;
   }
   void MakeComplexInt() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) ComplexAPSInt();
+    new ((void*)(char*)Data.buffer) ComplexAPSInt();
     Kind = ComplexInt;
   }
   void MakeComplexFloat() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) ComplexAPFloat();
+    new ((void*)(char*)Data.buffer) ComplexAPFloat();
     Kind = ComplexFloat;
   }
   void MakeLValue();
   void MakeArray(unsigned InitElts, unsigned Size);
   void MakeStruct(unsigned B, unsigned M) {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) StructData(B, M);
+    new ((void*)(char*)Data.buffer) StructData(B, M);
     Kind = Struct;
   }
   void MakeUnion() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) UnionData();
+    new ((void*)(char*)Data.buffer) UnionData();
     Kind = Union;
   }
   void MakeMemberPointer(const ValueDecl *Member, bool IsDerivedMember,
-                         ArrayRef<const CXXRecordDecl *> Path);
+                         ArrayRef<const CXXRecordDecl*> Path);
   void MakeAddrLabelDiff() {
     assert(isAbsent() && "Bad state change");
-    new ((void *)(char *)Data.buffer) AddrLabelDiffData();
+    new ((void*)(char*)Data.buffer) AddrLabelDiffData();
     Kind = AddrLabelDiff;
   }
 };
@@ -659,13 +651,13 @@ private:
 } // end namespace latino.
 
 namespace llvm {
-template <> struct DenseMapInfo<latino::APValue::LValueBase> {
+template<> struct DenseMapInfo<latino::APValue::LValueBase> {
   static latino::APValue::LValueBase getEmptyKey();
   static latino::APValue::LValueBase getTombstoneKey();
   static unsigned getHashValue(const latino::APValue::LValueBase &Base);
   static bool isEqual(const latino::APValue::LValueBase &LHS,
                       const latino::APValue::LValueBase &RHS);
 };
-} // namespace llvm
+}
 
 #endif

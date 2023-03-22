@@ -33,12 +33,13 @@ class ConstraintSatisfaction : public llvm::FoldingSetNode {
   llvm::SmallVector<TemplateArgument, 4> TemplateArgs;
 
 public:
+
   ConstraintSatisfaction() = default;
 
   ConstraintSatisfaction(const NamedDecl *ConstraintOwner,
-                         ArrayRef<TemplateArgument> TemplateArgs)
-      : ConstraintOwner(ConstraintOwner),
-        TemplateArgs(TemplateArgs.begin(), TemplateArgs.end()) {}
+                         ArrayRef<TemplateArgument> TemplateArgs) :
+      ConstraintOwner(ConstraintOwner), TemplateArgs(TemplateArgs.begin(),
+                                                     TemplateArgs.end()) { }
 
   using SubstitutionDiagnostic = std::pair<SourceLocation, StringRef>;
   using Detail = llvm::PointerUnion<Expr *, SubstitutionDiagnostic *>;
@@ -64,17 +65,18 @@ public:
 /// substituted constraint expr, if the template arguments could be
 /// substituted into them, or a diagnostic if substitution resulted in
 /// an invalid expression.
-using UnsatisfiedConstraintRecord = std::pair<
-    const Expr *,
-    llvm::PointerUnion<Expr *, std::pair<SourceLocation, StringRef> *>>;
+using UnsatisfiedConstraintRecord =
+    std::pair<const Expr *,
+              llvm::PointerUnion<Expr *,
+                                 std::pair<SourceLocation, StringRef> *>>;
 
 /// \brief The result of a constraint satisfaction check, containing the
 /// necessary information to diagnose an unsatisfied constraint.
 ///
 /// This is safe to store in an AST node, as opposed to ConstraintSatisfaction.
-struct ASTConstraintSatisfaction final
-    : llvm::TrailingObjects<ASTConstraintSatisfaction,
-                            UnsatisfiedConstraintRecord> {
+struct ASTConstraintSatisfaction final :
+    llvm::TrailingObjects<ASTConstraintSatisfaction,
+                          UnsatisfiedConstraintRecord> {
   std::size_t NumRecords;
   bool IsSatisfied : 1;
 
@@ -121,17 +123,17 @@ protected:
   const ASTTemplateArgumentListInfo *ArgsAsWritten;
 
 public:
+
   ConceptReference(NestedNameSpecifierLoc NNS, SourceLocation TemplateKWLoc,
                    DeclarationNameInfo ConceptNameInfo, NamedDecl *FoundDecl,
                    ConceptDecl *NamedConcept,
-                   const ASTTemplateArgumentListInfo *ArgsAsWritten)
-      : NestedNameSpec(NNS), TemplateKWLoc(TemplateKWLoc),
-        ConceptName(ConceptNameInfo), FoundDecl(FoundDecl),
-        NamedConcept(NamedConcept), ArgsAsWritten(ArgsAsWritten) {}
+                   const ASTTemplateArgumentListInfo *ArgsAsWritten) :
+      NestedNameSpec(NNS), TemplateKWLoc(TemplateKWLoc),
+      ConceptName(ConceptNameInfo), FoundDecl(FoundDecl),
+      NamedConcept(NamedConcept), ArgsAsWritten(ArgsAsWritten) {}
 
-  ConceptReference()
-      : NestedNameSpec(), TemplateKWLoc(), ConceptName(), FoundDecl(nullptr),
-        NamedConcept(nullptr), ArgsAsWritten(nullptr) {}
+  ConceptReference() : NestedNameSpec(), TemplateKWLoc(), ConceptName(),
+      FoundDecl(nullptr), NamedConcept(nullptr), ArgsAsWritten(nullptr) {}
 
   const NestedNameSpecifierLoc &getNestedNameSpecifierLoc() const {
     return NestedNameSpec;
@@ -145,9 +147,13 @@ public:
 
   SourceLocation getTemplateKWLoc() const { return TemplateKWLoc; }
 
-  NamedDecl *getFoundDecl() const { return FoundDecl; }
+  NamedDecl *getFoundDecl() const {
+    return FoundDecl;
+  }
 
-  ConceptDecl *getNamedConcept() const { return NamedConcept; }
+  ConceptDecl *getNamedConcept() const {
+    return NamedConcept;
+  }
 
   const ASTTemplateArgumentListInfo *getTemplateArgsAsWritten() const {
     return ArgsAsWritten;
@@ -155,7 +161,9 @@ public:
 
   /// \brief Whether or not template arguments were explicitly specified in the
   /// concept reference (they might not be in type constraints, for example)
-  bool hasExplicitTemplateArgs() const { return ArgsAsWritten != nullptr; }
+  bool hasExplicitTemplateArgs() const {
+    return ArgsAsWritten != nullptr;
+  }
 };
 
 class TypeConstraint : public ConceptReference {
@@ -168,11 +176,10 @@ public:
                  DeclarationNameInfo ConceptNameInfo, NamedDecl *FoundDecl,
                  ConceptDecl *NamedConcept,
                  const ASTTemplateArgumentListInfo *ArgsAsWritten,
-                 Expr *ImmediatelyDeclaredConstraint)
-      : ConceptReference(NNS, /*TemplateKWLoc=*/SourceLocation(),
-                         ConceptNameInfo, FoundDecl, NamedConcept,
-                         ArgsAsWritten),
-        ImmediatelyDeclaredConstraint(ImmediatelyDeclaredConstraint) {}
+                 Expr *ImmediatelyDeclaredConstraint) :
+      ConceptReference(NNS, /*TemplateKWLoc=*/SourceLocation(), ConceptNameInfo,
+                       FoundDecl, NamedConcept, ArgsAsWritten),
+      ImmediatelyDeclaredConstraint(ImmediatelyDeclaredConstraint) {}
 
   /// \brief Get the immediately-declared constraint expression introduced by
   /// this type-constraint, that is - the constraint expression that is added to
@@ -184,6 +191,6 @@ public:
   void print(llvm::raw_ostream &OS, PrintingPolicy Policy) const;
 };
 
-} // namespace latino
+} // latino
 
 #endif // LLVM_LATINO_AST_ASTCONCEPT_H

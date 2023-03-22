@@ -14,11 +14,9 @@
 #ifndef LLVM_LATINO_AST_NESTEDNAMESPECIFIER_H
 #define LLVM_LATINO_AST_NESTEDNAMESPECIFIER_H
 
+#include "latino/AST/DependenceFlags.h"
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/SourceLocation.h"
-
-#include "latino/AST/DependenceFlags.h"
-
 #include "llvm/ADT/FoldingSet.h"
 #include "llvm/ADT/PointerIntPair.h"
 #include "llvm/Support/Compiler.h"
@@ -53,7 +51,8 @@ class NestedNameSpecifier : public llvm::FoldingSetNode {
   enum StoredSpecifierKind {
     StoredIdentifier = 0,
     StoredDecl = 1,
-    StoredTypeSpec = 2
+    StoredTypeSpec = 2,
+    StoredTypeSpecWithTemplate = 3
   };
 
   /// The nested name specifier that precedes this nested name
@@ -71,7 +70,7 @@ class NestedNameSpecifier : public llvm::FoldingSetNode {
   /// specifier '::'. Otherwise, the pointer is one of
   /// IdentifierInfo*, Namespace*, or Type*, depending on the kind of
   /// specifier as encoded within the prefix.
-  void *Specifier = nullptr;
+  void* Specifier = nullptr;
 
 public:
   /// The kind of specifier that completes this nested name
@@ -88,6 +87,10 @@ public:
 
     /// A type, stored as a Type*.
     TypeSpec,
+
+    /// A type that was preceded by the 'template' keyword,
+    /// stored as a Type*.
+    TypeSpecWithTemplate,
 
     /// The global specifier '::'. There is no stored value.
     Global,
@@ -133,8 +136,9 @@ public:
                                      NamespaceAliasDecl *Alias);
 
   /// Builds a nested name specifier that names a type.
-  static NestedNameSpecifier *
-  Create(const ASTContext &Context, NestedNameSpecifier *Prefix, const Type *T);
+  static NestedNameSpecifier *Create(const ASTContext &Context,
+                                     NestedNameSpecifier *Prefix,
+                                     bool Template, const Type *T);
 
   /// Builds a specifier that consists of just an identifier.
   ///
@@ -189,7 +193,8 @@ public:
 
   /// Retrieve the type stored in this nested name specifier.
   const Type *getAsType() const {
-    if (Prefix.getInt() == StoredTypeSpec)
+    if (Prefix.getInt() == StoredTypeSpec ||
+        Prefix.getInt() == StoredTypeSpecWithTemplate)
       return (const Type *)Specifier;
 
     return nullptr;
@@ -216,7 +221,8 @@ public:
   /// `ResolveTemplateArguments` is true, we'll print actual types, e.g.
   /// `ns::SomeTemplate<int, MyClass>` instead of
   /// `ns::SomeTemplate<Container::value_type, T>`.
-  void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
+  void print(raw_ostream &OS, const PrintingPolicy &Policy,
+             bool ResolveTemplateArguments = false) const;
 
   void Profile(llvm::FoldingSetNodeID &ID) const {
     ID.AddPointer(Prefix.getOpaqueValue());
@@ -264,7 +270,9 @@ public:
 
   /// Retrieve the nested-name-specifier to which this instance
   /// refers.
-  NestedNameSpecifier *getNestedNameSpecifier() const { return Qualifier; }
+  NestedNameSpecifier *getNestedNameSpecifier() const {
+    return Qualifier;
+  }
 
   /// Retrieve the opaque pointer that refers to source-location data.
   void *getOpaqueData() const { return Data; }
@@ -287,11 +295,15 @@ public:
 
   /// Retrieve the location of the beginning of this
   /// nested-name-specifier.
-  SourceLocation getBeginLoc() const { return getSourceRange().getBegin(); }
+  SourceLocation getBeginLoc() const {
+    return getSourceRange().getBegin();
+  }
 
   /// Retrieve the location of the end of this
   /// nested-name-specifier.
-  SourceLocation getEndLoc() const { return getSourceRange().getEnd(); }
+  SourceLocation getEndLoc() const {
+    return getSourceRange().getEnd();
+  }
 
   /// Retrieve the location of the beginning of this
   /// component of the nested-name-specifier.
@@ -326,11 +338,13 @@ public:
   /// nested-name-specifier.
   unsigned getDataLength() const { return getDataLength(Qualifier); }
 
-  friend bool operator==(NestedNameSpecifierLoc X, NestedNameSpecifierLoc Y) {
+  friend bool operator==(NestedNameSpecifierLoc X,
+                         NestedNameSpecifierLoc Y) {
     return X.Qualifier == Y.Qualifier && X.Data == Y.Data;
   }
 
-  friend bool operator!=(NestedNameSpecifierLoc X, NestedNameSpecifierLoc Y) {
+  friend bool operator!=(NestedNameSpecifierLoc X,
+                         NestedNameSpecifierLoc Y) {
     return !(X == Y);
   }
 };
@@ -373,6 +387,20 @@ public:
 
   /// Retrieve the representation of the nested-name-specifier.
   NestedNameSpecifier *getRepresentation() const { return Representation; }
+
+  /// Extend the current nested-name-specifier by another
+  /// nested-name-specifier component of the form 'type::'.
+  ///
+  /// \param Context The AST context in which this nested-name-specifier
+  /// resides.
+  ///
+  /// \param TemplateKWLoc The location of the 'template' keyword, if present.
+  ///
+  /// \param TL The TypeLoc that describes the type preceding the '::'.
+  ///
+  /// \param ColonColonLoc The location of the trailing '::'.
+  void Extend(ASTContext &Context, SourceLocation TemplateKWLoc, TypeLoc TL,
+              SourceLocation ColonColonLoc);
 
   /// Extend the current nested-name-specifier by another
   /// nested-name-specifier component of the form 'identifier::'.
@@ -490,12 +518,12 @@ public:
 
 /// Insertion operator for diagnostics.  This allows sending
 /// NestedNameSpecifiers into a diagnostic with <<.
-// inline const DiagnosticBuilder &operator<<(const DiagnosticBuilder &DB,
-//                                            NestedNameSpecifier *NNS) {
-//   DB.AddTaggedVal(reinterpret_cast<intptr_t>(NNS),
-//                   DiagnosticsEngine::ak_nestednamespec);
-//   return DB;
-// }
+inline const DiagnosticBuilder &operator<<(const DiagnosticBuilder &DB,
+                                           NestedNameSpecifier *NNS) {
+  DB.AddTaggedVal(reinterpret_cast<intptr_t>(NNS),
+                  DiagnosticsEngine::ak_nestednamespec);
+  return DB;
+}
 
 } // namespace latino
 

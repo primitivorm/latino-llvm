@@ -27,52 +27,52 @@ namespace latino {
 /// Function object that provides a total ordering on QualType values.
 struct QualTypeOrdering {
   bool operator()(QualType T1, QualType T2) const {
-    return std::less<void *>()(T1.getAsOpaquePtr(), T2.getAsOpaquePtr());
+    return std::less<void*>()(T1.getAsOpaquePtr(), T2.getAsOpaquePtr());
   }
 };
 
-} // namespace latino
+}
 
 namespace llvm {
-template <class> struct DenseMapInfo;
+  template<class> struct DenseMapInfo;
 
-template <> struct DenseMapInfo<latino::QualType> {
-  static inline latino::QualType getEmptyKey() { return latino::QualType(); }
+  template<> struct DenseMapInfo<latino::QualType> {
+    static inline latino::QualType getEmptyKey() { return latino::QualType(); }
 
-  static inline latino::QualType getTombstoneKey() {
-    using latino::QualType;
-    return QualType::getFromOpaquePtr(reinterpret_cast<latino::Type *>(-1));
-  }
+    static inline latino::QualType getTombstoneKey() {
+      using latino::QualType;
+      return QualType::getFromOpaquePtr(reinterpret_cast<latino::Type *>(-1));
+    }
 
-  static unsigned getHashValue(latino::QualType Val) {
-    return (unsigned)((uintptr_t)Val.getAsOpaquePtr()) ^
-           ((unsigned)((uintptr_t)Val.getAsOpaquePtr() >> 9));
-  }
+    static unsigned getHashValue(latino::QualType Val) {
+      return (unsigned)((uintptr_t)Val.getAsOpaquePtr()) ^
+            ((unsigned)((uintptr_t)Val.getAsOpaquePtr() >> 9));
+    }
 
-  static bool isEqual(latino::QualType LHS, latino::QualType RHS) {
-    return LHS == RHS;
-  }
-};
+    static bool isEqual(latino::QualType LHS, latino::QualType RHS) {
+      return LHS == RHS;
+    }
+  };
 
-template <> struct DenseMapInfo<latino::CanQualType> {
-  static inline latino::CanQualType getEmptyKey() {
-    return latino::CanQualType();
-  }
+  template<> struct DenseMapInfo<latino::CanQualType> {
+    static inline latino::CanQualType getEmptyKey() {
+      return latino::CanQualType();
+    }
 
-  static inline latino::CanQualType getTombstoneKey() {
-    using latino::CanQualType;
-    return CanQualType::getFromOpaquePtr(reinterpret_cast<latino::Type *>(-1));
-  }
+    static inline latino::CanQualType getTombstoneKey() {
+      using latino::CanQualType;
+      return CanQualType::getFromOpaquePtr(reinterpret_cast<latino::Type *>(-1));
+    }
 
-  static unsigned getHashValue(latino::CanQualType Val) {
-    return (unsigned)((uintptr_t)Val.getAsOpaquePtr()) ^
-           ((unsigned)((uintptr_t)Val.getAsOpaquePtr() >> 9));
-  }
+    static unsigned getHashValue(latino::CanQualType Val) {
+      return (unsigned)((uintptr_t)Val.getAsOpaquePtr()) ^
+      ((unsigned)((uintptr_t)Val.getAsOpaquePtr() >> 9));
+    }
 
-  static bool isEqual(latino::CanQualType LHS, latino::CanQualType RHS) {
-    return LHS == RHS;
-  }
-};
-} // namespace llvm
+    static bool isEqual(latino::CanQualType LHS, latino::CanQualType RHS) {
+      return LHS == RHS;
+    }
+  };
+}
 
 #endif

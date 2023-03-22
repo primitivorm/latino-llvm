@@ -1,14 +1,25 @@
+//===--- TokenKinds.cpp - Token Kinds Support -----------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+//  This file implements the TokenKind enum and support functions.
+//
+//===----------------------------------------------------------------------===//
+
 #include "latino/Basic/TokenKinds.h"
-
 #include "llvm/Support/ErrorHandling.h"
-
 using namespace latino;
 
-static const char *const TokNames[] = {
+static const char * const TokNames[] = {
 #define TOK(X) #X,
-#define KEYWORD(X, Y) #X,
+#define KEYWORD(X,Y) #X,
 #include "latino/Basic/TokenKinds.def"
-    nullptr};
+  nullptr
+};
 
 const char *tok::getTokenName(TokenKind Kind) {
   if (Kind < tok::NUM_TOKENS)
@@ -17,11 +28,37 @@ const char *tok::getTokenName(TokenKind Kind) {
   return nullptr;
 }
 
+const char *tok::getPunctuatorSpelling(TokenKind Kind) {
+  switch (Kind) {
+#define PUNCTUATOR(X,Y) case X: return Y;
+#include "latino/Basic/TokenKinds.def"
+  default: break;
+  }
+  return nullptr;
+}
+
+const char *tok::getKeywordSpelling(TokenKind Kind) {
+  switch (Kind) {
+#define KEYWORD(X,Y) case kw_ ## X: return #X;
+#include "latino/Basic/TokenKinds.def"
+    default: break;
+  }
+  return nullptr;
+}
+
 bool tok::isAnnotation(TokenKind Kind) {
   switch (Kind) {
-#define ANNOTATION(X)                                                          \
-  case annot_##X:                                                              \
-    return true;
+#define ANNOTATION(X) case annot_ ## X: return true;
+#include "latino/Basic/TokenKinds.def"
+  default:
+    break;
+  }
+  return false;
+}
+
+bool tok::isPragmaAnnotation(TokenKind Kind) {
+  switch (Kind) {
+#define PRAGMA_ANNOTATION(X) case annot_ ## X: return true;
 #include "latino/Basic/TokenKinds.def"
   default:
     break;

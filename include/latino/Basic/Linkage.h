@@ -88,7 +88,9 @@ inline bool isUniqueGVALinkage(GVALinkage L) {
   return L == GVA_Internal || L == GVA_StrongExternal;
 }
 
-inline bool isExternallyVisible(Linkage L) { return L >= VisibleNoLinkage; }
+inline bool isExternallyVisible(Linkage L) {
+  return L >= VisibleNoLinkage;
+}
 
 inline Linkage getFormalLinkage(Linkage L) {
   switch (L) {

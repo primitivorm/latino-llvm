@@ -15,10 +15,8 @@
 #define LLVM_LATINO_BASIC_SANITIZERS_H
 
 #include "latino/Basic/LLVM.h"
-
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/MathExtras.h"
-
 #include <cassert>
 #include <cstdint>
 
@@ -73,7 +71,9 @@ public:
       Val = ~Val;
   }
 
-  bool isPowerOf2() const { return countPopulation() == 1; }
+  bool isPowerOf2() const {
+    return countPopulation() == 1;
+  }
 
   llvm::hash_code hash_value() const;
 
@@ -121,7 +121,7 @@ public:
   }
 };
 
-// Declaring in latino namespace so that it can be found by ADL.
+// Declaring in clang namespace so that it can be found by ADL.
 llvm::hash_code hash_value(const latino::SanitizerMask &Arg);
 
 // Define the set of sanitizer kinds, as well as the set of sanitizers each

@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.14.0)
 
-project(latino C CXX)
+if ("${CMAKE_VERSION}" VERSION_LESS "3.13.4")
+  message(WARNING
+    "Your CMake version is ${CMAKE_VERSION}. Starting with LLVM 12.0.0, the "
+    "minimum version of CMake required to build LLVM will become 3.13.4, and "
+    "using an older CMake will become an error. Please upgrade your CMake to "
+    "at least 3.13.4 now to avoid issues in the future!")
+endif()
 
 # if(POLICY CMP0068)
 #   cmake_policy(SET CMP0068 NEW)
@@ -14,6 +20,8 @@ project(latino C CXX)
 # if(POLICY CMP0077)
 #   cmake_policy(SET CMP0077 NEW)
 # endif()
+
+project(latino C CXX)
 
 set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard to conform to")
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -34,8 +42,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Releas
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-  # set(CMAKE_BUILD_TYPE Debug)
-  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_BUILD_TYPE Debug)
+  # set(CMAKE_BUILD_TYPE Release)
 endif()
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
@@ -56,7 +64,7 @@ message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
 set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm")
 message(STATUS "LLVM_MAIN_SRC_DIR: ${LLVM_MAIN_SRC_DIR}")
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/clang/cmake/modules/")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/latino/cmake/modules/")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
 set(CONFIG_OUTPUT)
@@ -133,20 +141,23 @@ if(LLVM_CONFIG)
   message(STATUS "LLVM_SHLIB_OUTPUT_INTDIR: ${LLVM_SHLIB_OUTPUT_INTDIR}")
 endif()
 
-option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." ON)
+option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." OFF)
+option(LATINO_BUILD_TOOLS
+  "Build the Clang tools. If OFF, just generate build targets." ON)
 
 # set(LLVM_TARGETS_TO_BUILD "all")
-set(LLVM_TARGETS_TO_BUILD host CACHE STRING "")
+set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
 set(LLVM_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/lib/)
 
 if(NOT LLVM_TARGETS_TO_BUILD)
-  set(LLVM_TARGETS_TO_BUILD "x64")
+  set(LLVM_TARGETS_TO_BUILD "Native")
 endif()
 message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
 
+include(CMakeParseArguments)
 include(AddLLVM)
 include(TableGen)
-# include(AddClang)
+include(AddClang)
 include(AddLatino)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -156,19 +167,30 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
+message(STATUS "LLVM_INSTALL_TOOLCHAIN_ONLY: ${LLVM_INSTALL_TOOLCHAIN_ONLY}")
 if(NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
   install(DIRECTORY include/latino
-  DESTINATION include
-  COMPONENT latino-headers
-  FILES_MATCHING
-  PATTERN "CMakeFiles" EXCLUDE
-  PATTERN "*.inc"
-  PATTERN "*.h"
+    DESTINATION include
+    COMPONENT clang-headers
+    FILES_MATCHING
+    PATTERN "*.def"
+    PATTERN "*.h"
+    PATTERN "config.h" EXCLUDE
+    PATTERN ".svn" EXCLUDE
   )
+
+  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/latino
+    DESTINATION include
+    COMPONENT latino-headers
+    FILES_MATCHING
+    PATTERN "CMakeFiles" EXCLUDE
+    PATTERN "*.inc"
+    PATTERN "*.h"
+    )
 
   # Installing the headers needs to depend on generating any public
   # tablegen'd headers.
-  add_custom_target(latino-headers DEPENDS clang-tablegen-targets)
+  add_custom_target(latino-headers DEPENDS latino-tablegen-targets)
   set_target_properties(latino-headers PROPERTIES FOLDER "Misc")
   if(NOT LLVM_ENABLE_IDE)
     add_llvm_install_targets(install-latino-headers
@@ -176,13 +198,22 @@ if(NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
     COMPONENT latino-headers)
   endif()
 
+  # add_custom_target(bash-autocomplete DEPENDS utils/bash-autocomplete.sh)
+  # install(PROGRAMS utils/bash-autocomplete.sh
+  #         DESTINATION share/clang
+  #         COMPONENT bash-autocomplete)
+  # if(NOT LLVM_ENABLE_IDE)
+  #   add_llvm_install_targets(install-bash-autocomplete
+  #                            DEPENDS bash-autocomplete
+  #                            COMPONENT bash-autocomplete)
+  # endif()
 endif()
 
 # All targets below may depend on all tablegen'd files.
-get_property(LATINO_TABLEGEN_TARGETS GLOBAL PROPERTY LATINO_TABLEGEN_TARGETS)
+get_property(CLANG_TABLEGEN_TARGETS GLOBAL PROPERTY CLANG_TABLEGEN_TARGETS)
 add_custom_target(latino-tablegen-targets
   DEPENDS
-  ${LATINO_TABLEGEN_TARGETS})
+  ${CLANG_TABLEGEN_TARGETS})
 set_target_properties(latino-tablegen-targets PROPERTIES FOLDER "Misc")
 list(APPEND LLVM_COMMON_DEPENDS latino-tablegen-targets)
 
@@ -194,20 +225,24 @@ set(LATINO_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(BACKEND_PACKAGE_STRING "LLVM ${LLVM_PACKAGE_VERSION}")
 
 #Latino version
-set(LATINO_VERSION_MAJOR 2)
+set(LATINO_VERSION_MAJOR 11)
 set(LATINO_VERSION_MINOR 0)
 set(LATINO_VERSION_PATCHLEVEL 0)
 set(LATINO_VERSION "${LATINO_VERSION_MAJOR}.${LATINO_VERSION_MINOR}.${LATINO_VERSION_PATCHLEVEL}")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/latino/Basic/Version.inc.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/latino/Basic/Version.in)
+  ${CMAKE_CURRENT_BINARY_DIR}/include/latino/Basic/Version.inc)
 
-# if(LLVM_BUILD_MAIN_SRC_DIR)
-#   include_directories(${LLVM_BUILD_MAIN_SRC_DIR}/clang/include)
-#   include_directories(${LLVM_BUILD_BINARY_DIR}/clang/include)
-#   include_directories(${LLVM_BUILD_BINARY_DIR}/clang/include)
-# endif()
+configure_file(
+  ${LATINO_SOURCE_DIR}/include/latino/Config/config.h.cmake
+  ${LATINO_BINARY_DIR}/include/latino/Config/config.h)
+
+if(LLVM_BUILD_MAIN_SRC_DIR)
+  include_directories(${LLVM_BUILD_MAIN_SRC_DIR}/latino/include)
+  include_directories(${LLVM_BUILD_BINARY_DIR}/latino/include)
+  include_directories(${LLVM_BUILD_BINARY_DIR}/latino/include)
+endif()
 
 message(STATUS "LLVM_INSTALL_PREFIX: ${LLVM_INSTALL_PREFIX}")
 message(STATUS "LLVM_LIBRARY_DIR: ${LLVM_LIBRARY_DIR}")
@@ -217,7 +252,7 @@ message(STATUS "LLVM_BUILD_MAIN_SRC_DIR: ${LLVM_BUILD_MAIN_SRC_DIR}")
 message(STATUS "LLVM_BUILD_BINARY_DIR: ${LLVM_BUILD_BINARY_DIR}")
 
 if(LLVM_INSTALL_PREFIX)
-  include_directories(${LLVM_INSTALL_PREFIX}/tools/clang/include)
+  include_directories(${LLVM_INSTALL_PREFIX}/tools/latino/include)
 endif()
 
 set(LLVM_MAIN_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
@@ -228,7 +263,7 @@ if(WIN32)
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/clang/include")
   # to include .inc files
-  # include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/tools/clang/include")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/tools/clang/include")
 endif()
 add_definitions(${LLVM_DEFINITIONS})
 
@@ -242,7 +277,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")
 
 add_subdirectory(lib)
-# add_subdirectory(tools)
+add_subdirectory(tools)
 
 set(LATINO_MAIN_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(LATINO_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to latino/lib")

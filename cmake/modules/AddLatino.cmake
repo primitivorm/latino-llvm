@@ -156,6 +156,44 @@ macro(add_latino_executable name)
   set_latino_windows_version_resource_properties(${name})
 endmacro(add_latino_executable)
 
+
+macro(add_latino_tool name)
+  if (NOT LATINO_BUILD_TOOLS)
+    set(EXCLUDE_FROM_ALL ON)
+  endif()
+
+  add_latino_executable(${name} ${ARGN})
+  add_dependencies(${name} latino-resource-headers)
+
+  if (LATINO_BUILD_TOOLS)
+    set(export_to_latinotargets)
+    if(${name} IN_LIST LLVM_DISTRIBUTION_COMPONENTS OR
+        NOT LLVM_DISTRIBUTION_COMPONENTS)
+      set(export_to_latinotargets EXPORT LatinoTargets)
+      set_property(GLOBAL PROPERTY CLANG_HAS_EXPORTS True)
+    endif()
+
+    install(TARGETS ${name}
+      ${export_to_latinotargets}
+      RUNTIME DESTINATION bin
+      COMPONENT ${name})
+
+    if(NOT LLVM_ENABLE_IDE)
+      add_llvm_install_targets(install-${name}
+                               DEPENDS ${name}
+                               COMPONENT ${name})
+    endif()
+    set_property(GLOBAL APPEND PROPERTY CLANG_EXPORTS ${name})
+  endif()
+endmacro()
+
+macro(add_latino_symlink name dest)
+  add_llvm_tool_symlink(${name} ${dest} ALWAYS_GENERATE)
+  # Always generate install targets
+  llvm_install_symlink(${name} ${dest} ALWAYS_GENERATE)
+endmacro()
+
+
 function(latino_target_link_libraries target type)
   if(LATINO_LINK_LATINO_DYLIB)
     target_link_libraries(${target} ${type} latino-cpp)

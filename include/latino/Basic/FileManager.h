@@ -79,21 +79,23 @@ private:
 class FileEntry {
   friend class FileManager;
 
-  StringRef Name;            // Name of the file.
-  std::string RealPathName;  // Real path to the file; could be empty.
-  off_t Size;                // File size in bytes.
-  time_t ModTime;            // Modification time of file.
-  const DirectoryEntry *Dir; // Directory file lives in.
+  StringRef Name;             // Name of the file.
+  std::string RealPathName;   // Real path to the file; could be empty.
+  off_t Size;                 // File size in bytes.
+  time_t ModTime;             // Modification time of file.
+  const DirectoryEntry *Dir;  // Directory file lives in.
   llvm::sys::fs::UniqueID UniqueID;
-  unsigned UID; // A unique (small) ID for the file.
+  unsigned UID;               // A unique (small) ID for the file.
   bool IsNamedPipe;
-  bool IsValid; // Is this \c FileEntry initialized and valid?
+  bool IsValid;               // Is this \c FileEntry initialized and valid?
 
   /// The open file, if it is owned by the \p FileEntry.
   mutable std::unique_ptr<llvm::vfs::File> File;
 
 public:
-  FileEntry() : UniqueID(0, 0), IsNamedPipe(false), IsValid(false) {}
+  FileEntry()
+      : UniqueID(0, 0), IsNamedPipe(false), IsValid(false)
+  {}
 
   FileEntry(const FileEntry &) = delete;
   FileEntry &operator=(const FileEntry &) = delete;
@@ -199,7 +201,7 @@ class FileManager : public RefCountedBase<FileManager> {
   /// VirtualDirectoryEntries/VirtualFileEntries above.
   ///
   llvm::StringMap<llvm::ErrorOr<DirectoryEntry &>, llvm::BumpPtrAllocator>
-      SeenDirEntries;
+  SeenDirEntries;
 
   /// A reference to the file entry that is associated with a particular
   /// filename, or a reference to another filename that should be looked up
@@ -301,8 +303,8 @@ public:
   ///
   /// \param CacheFailure If true and the file does not exist, we'll cache
   /// the failure to find this file.
-  llvm::ErrorOr<const DirectoryEntry *> getDirectory(StringRef DirName,
-                                                     bool CacheFailure = true);
+  llvm::ErrorOr<const DirectoryEntry *>
+  getDirectory(StringRef DirName, bool CacheFailure = true);
 
   /// Lookup, cache, and verify the specified file (real or
   /// virtual).
@@ -414,7 +416,8 @@ public:
 
   /// Produce an array mapping from the unique IDs assigned to each
   /// file to the corresponding FileEntry pointer.
-  void GetUniqueIDMapping(SmallVectorImpl<const FileEntry *> &UIDToFiles) const;
+  void GetUniqueIDMapping(
+                    SmallVectorImpl<const FileEntry *> &UIDToFiles) const;
 
   /// Retrieve the canonical name for a given directory.
   ///

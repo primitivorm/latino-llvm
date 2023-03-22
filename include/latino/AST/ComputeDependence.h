@@ -15,7 +15,6 @@
 
 #include "latino/AST/DependenceFlags.h"
 #include "latino/Basic/ExceptionSpecificationType.h"
-
 #include "llvm/ADT/ArrayRef.h"
 
 namespace latino {
@@ -63,6 +62,7 @@ class ArrayTypeTraitExpr;
 class ExpressionTraitExpr;
 class CXXNoexceptExpr;
 class PackExpansionExpr;
+class SubstNonTypeTemplateParmExpr;
 class CoroutineSuspendExpr;
 class DependentCoawaitExpr;
 class CXXNewExpr;
@@ -87,19 +87,19 @@ class DesignatedInitExpr;
 class ParenListExpr;
 class PseudoObjectExpr;
 class AtomicExpr;
-// class OMPArraySectionExpr;
-// class OMPArrayShapingExpr;
-// class OMPIteratorExpr;
-// class ObjCArrayLiteral;
-// class ObjCDictionaryLiteral;
-// class ObjCBoxedExpr;
-// class ObjCEncodeExpr;
-// class ObjCIvarRefExpr;
-// class ObjCPropertyRefExpr;
-// class ObjCSubscriptRefExpr;
-// class ObjCIsaExpr;
-// class ObjCIndirectCopyRestoreExpr;
-// class ObjCMessageExpr;
+class OMPArraySectionExpr;
+class OMPArrayShapingExpr;
+class OMPIteratorExpr;
+class ObjCArrayLiteral;
+class ObjCDictionaryLiteral;
+class ObjCBoxedExpr;
+class ObjCEncodeExpr;
+class ObjCIvarRefExpr;
+class ObjCPropertyRefExpr;
+class ObjCSubscriptRefExpr;
+class ObjCIsaExpr;
+class ObjCIndirectCopyRestoreExpr;
+class ObjCMessageExpr;
 
 // The following functions are called from constructors of `Expr`, so they
 // should not access anything beyond basic
@@ -115,6 +115,7 @@ ExprDependence computeDependence(CastExpr *E);
 ExprDependence computeDependence(BinaryOperator *E);
 ExprDependence computeDependence(ConditionalOperator *E);
 ExprDependence computeDependence(BinaryConditionalOperator *E);
+ExprDependence computeDependence(StmtExpr *E, unsigned TemplateDepth);
 ExprDependence computeDependence(ConvertVectorExpr *E);
 ExprDependence computeDependence(VAArgExpr *E);
 ExprDependence computeDependence(ChooseExpr *E);
@@ -142,6 +143,7 @@ ExprDependence computeDependence(ArrayTypeTraitExpr *E);
 ExprDependence computeDependence(ExpressionTraitExpr *E);
 ExprDependence computeDependence(CXXNoexceptExpr *E, CanThrowResult CT);
 ExprDependence computeDependence(PackExpansionExpr *E);
+ExprDependence computeDependence(SubstNonTypeTemplateParmExpr *E);
 ExprDependence computeDependence(CoroutineSuspendExpr *E);
 ExprDependence computeDependence(DependentCoawaitExpr *E);
 ExprDependence computeDependence(CXXNewExpr *E);
@@ -173,20 +175,20 @@ ExprDependence computeDependence(ParenListExpr *E);
 ExprDependence computeDependence(PseudoObjectExpr *E);
 ExprDependence computeDependence(AtomicExpr *E);
 
-// ExprDependence computeDependence(OMPArraySectionExpr *E);
-// ExprDependence computeDependence(OMPArrayShapingExpr *E);
-// ExprDependence computeDependence(OMPIteratorExpr *E);
+ExprDependence computeDependence(OMPArraySectionExpr *E);
+ExprDependence computeDependence(OMPArrayShapingExpr *E);
+ExprDependence computeDependence(OMPIteratorExpr *E);
 
-// ExprDependence computeDependence(ObjCArrayLiteral *E);
-// ExprDependence computeDependence(ObjCDictionaryLiteral *E);
-// ExprDependence computeDependence(ObjCBoxedExpr *E);
-// ExprDependence computeDependence(ObjCEncodeExpr *E);
-// ExprDependence computeDependence(ObjCIvarRefExpr *E);
-// ExprDependence computeDependence(ObjCPropertyRefExpr *E);
-// ExprDependence computeDependence(ObjCSubscriptRefExpr *E);
-// ExprDependence computeDependence(ObjCIsaExpr *E);
-// ExprDependence computeDependence(ObjCIndirectCopyRestoreExpr *E);
-// ExprDependence computeDependence(ObjCMessageExpr *E);
+ExprDependence computeDependence(ObjCArrayLiteral *E);
+ExprDependence computeDependence(ObjCDictionaryLiteral *E);
+ExprDependence computeDependence(ObjCBoxedExpr *E);
+ExprDependence computeDependence(ObjCEncodeExpr *E);
+ExprDependence computeDependence(ObjCIvarRefExpr *E);
+ExprDependence computeDependence(ObjCPropertyRefExpr *E);
+ExprDependence computeDependence(ObjCSubscriptRefExpr *E);
+ExprDependence computeDependence(ObjCIsaExpr *E);
+ExprDependence computeDependence(ObjCIndirectCopyRestoreExpr *E);
+ExprDependence computeDependence(ObjCMessageExpr *E);
 
 } // namespace latino
 #endif

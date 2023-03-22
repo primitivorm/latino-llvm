@@ -44,6 +44,6 @@ public:
                              StringRef Category = StringRef()) const;
 };
 
-} // end namespace latino
+}  // end namespace latino
 
 #endif

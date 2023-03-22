@@ -47,10 +47,10 @@ public:
   /// success for directories (not files).  On a successful file lookup, the
   /// implementation can optionally fill in \p F with a valid \p File object and
   /// the client guarantees that it will close it.
-  static std::error_code get(StringRef Path, llvm::vfs::Status &Status,
-                             bool isFile, std::unique_ptr<llvm::vfs::File> *F,
-                             FileSystemStatCache *Cache,
-                             llvm::vfs::FileSystem &FS);
+  static std::error_code
+  get(StringRef Path, llvm::vfs::Status &Status, bool isFile,
+      std::unique_ptr<llvm::vfs::File> *F,
+      FileSystemStatCache *Cache, llvm::vfs::FileSystem &FS);
 
 protected:
   // FIXME: The pointer here is a non-owning/optional reference to the
@@ -70,14 +70,16 @@ public:
   /// The set of stat() calls that have been seen.
   llvm::StringMap<llvm::vfs::Status, llvm::BumpPtrAllocator> StatCalls;
 
-  using iterator = llvm::StringMap<llvm::vfs::Status,
-                                   llvm::BumpPtrAllocator>::const_iterator;
+  using iterator =
+      llvm::StringMap<llvm::vfs::Status,
+                      llvm::BumpPtrAllocator>::const_iterator;
 
   iterator begin() const { return StatCalls.begin(); }
   iterator end() const { return StatCalls.end(); }
 
   std::error_code getStat(StringRef Path, llvm::vfs::Status &Status,
-                          bool isFile, std::unique_ptr<llvm::vfs::File> *F,
+                          bool isFile,
+                          std::unique_ptr<llvm::vfs::File> *F,
                           llvm::vfs::FileSystem &FS) override;
 };
 

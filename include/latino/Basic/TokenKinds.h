@@ -28,6 +28,27 @@ enum TokenKind : unsigned short {
   NUM_TOKENS
 };
 
+/// Provides a namespace for preprocessor keywords which start with a
+/// '#' at the beginning of the line.
+enum PPKeywordKind {
+#define PPKEYWORD(X) pp_##X,
+#include "latino/Basic/TokenKinds.def"
+  NUM_PP_KEYWORDS
+};
+
+/// Provides a namespace for Objective-C keywords which start with
+/// an '@'.
+enum ObjCKeywordKind {
+#define OBJC_AT_KEYWORD(X) objc_##X,
+#include "latino/Basic/TokenKinds.def"
+  NUM_OBJC_KEYWORDS
+};
+
+/// Defines the possible values of an on-off-switch (C99 6.10.6p2).
+enum OnOffSwitch {
+  OOS_ON, OOS_OFF, OOS_DEFAULT
+};
+
 /// Determines the name of a token as used within the front end.
 ///
 /// The name of a token will be an internal name (such as "l_square")
@@ -54,19 +75,46 @@ inline bool isAnyIdentifier(TokenKind K) {
 
 /// Return true if this is a C or C++ string-literal (or
 /// C++11 user-defined-string-literal) token.
-inline bool isStringLiteral(TokenKind K) { return K == tok::string_literal; }
+inline bool isStringLiteral(TokenKind K) {
+  return K == tok::string_literal || K == tok::wide_string_literal ||
+         K == tok::utf8_string_literal || K == tok::utf16_string_literal ||
+         K == tok::utf32_string_literal;
+}
 
 /// Return true if this is a "literal" kind, like a numeric
 /// constant, string, etc.
 inline bool isLiteral(TokenKind K) {
   return K == tok::numeric_constant || K == tok::char_constant ||
-         isStringLiteral(K);
+         K == tok::wide_char_constant || K == tok::utf8_char_constant ||
+         K == tok::utf16_char_constant || K == tok::utf32_char_constant ||
+         isStringLiteral(K) || K == tok::header_name;
 }
 
 /// Return true if this is any of tok::annot_* kinds.
 bool isAnnotation(TokenKind K);
 
+/// Return true if this is an annotation token representing a pragma.
+bool isPragmaAnnotation(TokenKind K);
+
 } // end namespace tok
-} // namespace latino
+} // end namespace latino
+
+namespace llvm {
+template <> struct DenseMapInfo<latino::tok::PPKeywordKind> {
+  static inline latino::tok::PPKeywordKind getEmptyKey() {
+    return latino::tok::PPKeywordKind::pp_not_keyword;
+  }
+  static inline latino::tok::PPKeywordKind getTombstoneKey() {
+    return latino::tok::PPKeywordKind::NUM_PP_KEYWORDS;
+  }
+  static unsigned getHashValue(const latino::tok::PPKeywordKind &Val) {
+    return static_cast<unsigned>(Val);
+  }
+  static bool isEqual(const latino::tok::PPKeywordKind &LHS,
+                      const latino::tok::PPKeywordKind &RHS) {
+    return LHS == RHS;
+  }
+};
+} // namespace llvm
 
 #endif

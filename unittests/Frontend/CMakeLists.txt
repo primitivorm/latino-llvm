@@ -1,17 +1,26 @@
 set(LLVM_LINK_COMPONENTS
-    Support
-)
+  Support
+  )
 
 add_latino_unittest(FrontendTests
-    FrontendActionTest.cpp
-)
-
+  ASTUnitTest.cpp
+  CompilerInvocationTest.cpp
+  CompilerInstanceTest.cpp
+  FixedPointString.cpp
+  FrontendActionTest.cpp
+  CodeGenActionTest.cpp
+  ParsedSourceLocationTest.cpp
+  PCHPreambleTest.cpp
+  OutputStreamTest.cpp
+  )
 latino_target_link_libraries(FrontendTests
-    PRIVATE
-    latinoAST
-    latinoBasic
-    latinoFrontend
-    latinoLex
-    latinoSema
-    latinoSerialization
-)
+  PRIVATE
+  latinoAST
+  latinoBasic
+  latinoFrontend
+  latinoLex
+  latinoSema
+  latinoCodeGen
+  latinoFrontendTool
+  latinoSerialization
+  )

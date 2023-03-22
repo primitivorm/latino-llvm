@@ -257,7 +257,7 @@ public:
   /// Retrieve the type for a type template argument.
   QualType getAsType() const {
     assert(getKind() == Type && "Unexpected kind");
-    return QualType::getFromOpaquePtr(reinterpret_cast<void *>(TypeOrValue.V));
+    return QualType::getFromOpaquePtr(reinterpret_cast<void*>(TypeOrValue.V));
   }
 
   /// Retrieve the declaration for a declaration non-type
@@ -275,7 +275,7 @@ public:
   /// Retrieve the type for null non-type template argument.
   QualType getNullPtrType() const {
     assert(getKind() == NullPtr && "Unexpected kind");
-    return QualType::getFromOpaquePtr(reinterpret_cast<void *>(TypeOrValue.V));
+    return QualType::getFromOpaquePtr(reinterpret_cast<void*>(TypeOrValue.V));
   }
 
   /// Retrieve the template name for a template name argument.
@@ -424,9 +424,13 @@ public:
     Template.EllipsisLoc = EllipsisLoc.getRawEncoding();
   }
 
-  TypeSourceInfo *getAsTypeSourceInfo() const { return Declarator; }
+  TypeSourceInfo *getAsTypeSourceInfo() const {
+    return Declarator;
+  }
 
-  Expr *getAsExpr() const { return Expression; }
+  Expr *getAsExpr() const {
+    return Expression;
+  }
 
   NestedNameSpecifierLoc getTemplateQualifierLoc() const {
     return NestedNameSpecifierLoc(Template.Qualifier,
@@ -493,9 +497,13 @@ public:
   /// - Fetches the full source range of the argument.
   SourceRange getSourceRange() const LLVM_READONLY;
 
-  const TemplateArgument &getArgument() const { return Argument; }
+  const TemplateArgument &getArgument() const {
+    return Argument;
+  }
 
-  TemplateArgumentLocInfo getLocInfo() const { return LocInfo; }
+  TemplateArgumentLocInfo getLocInfo() const {
+    return LocInfo;
+  }
 
   TypeSourceInfo *getTypeSourceInfo() const {
     assert(Argument.getKind() == TemplateArgument::Type);
@@ -553,7 +561,8 @@ class TemplateArgumentListInfo {
 public:
   TemplateArgumentListInfo() = default;
 
-  TemplateArgumentListInfo(SourceLocation LAngleLoc, SourceLocation RAngleLoc)
+  TemplateArgumentListInfo(SourceLocation LAngleLoc,
+                           SourceLocation RAngleLoc)
       : LAngleLoc(LAngleLoc), RAngleLoc(RAngleLoc) {}
 
   // This can leak if used in an AST node, use ASTTemplateArgumentListInfo
@@ -572,15 +581,21 @@ public:
     return Arguments.data();
   }
 
-  llvm::ArrayRef<TemplateArgumentLoc> arguments() const { return Arguments; }
+  llvm::ArrayRef<TemplateArgumentLoc> arguments() const {
+    return Arguments;
+  }
 
   const TemplateArgumentLoc &operator[](unsigned I) const {
     return Arguments[I];
   }
 
-  TemplateArgumentLoc &operator[](unsigned I) { return Arguments[I]; }
+  TemplateArgumentLoc &operator[](unsigned I) {
+    return Arguments[I];
+  }
 
-  void addArgument(const TemplateArgumentLoc &Loc) { Arguments.push_back(Loc); }
+  void addArgument(const TemplateArgumentLoc &Loc) {
+    Arguments.push_back(Loc);
+  }
 };
 
 /// Represents an explicit template argument list in C++, e.g.,
@@ -669,32 +684,32 @@ struct alignas(void *) ASTTemplateKWAndArgsInfo {
 const DiagnosticBuilder &operator<<(const DiagnosticBuilder &DB,
                                     const TemplateArgument &Arg);
 
-// inline TemplateSpecializationType::iterator
-// TemplateSpecializationType::end() const {
-//   return getArgs() + getNumArgs();
-// }
-//
-// inline DependentTemplateSpecializationType::iterator
-// DependentTemplateSpecializationType::end() const {
-//   return getArgs() + getNumArgs();
-// }
-//
-// inline const TemplateArgument &
-// TemplateSpecializationType::getArg(unsigned Idx) const {
-//   assert(Idx < getNumArgs() && "Template argument out of range");
-//   return getArgs()[Idx];
-// }
-//
-// inline const TemplateArgument &
-// DependentTemplateSpecializationType::getArg(unsigned Idx) const {
-//   assert(Idx < getNumArgs() && "Template argument out of range");
-//   return getArgs()[Idx];
-// }
-//
-// inline const TemplateArgument &AutoType::getArg(unsigned Idx) const {
-//   assert(Idx < getNumArgs() && "Template argument out of range");
-//   return getArgs()[Idx];
-// }
+inline TemplateSpecializationType::iterator
+    TemplateSpecializationType::end() const {
+  return getArgs() + getNumArgs();
+}
+
+inline DependentTemplateSpecializationType::iterator
+    DependentTemplateSpecializationType::end() const {
+  return getArgs() + getNumArgs();
+}
+
+inline const TemplateArgument &
+    TemplateSpecializationType::getArg(unsigned Idx) const {
+  assert(Idx < getNumArgs() && "Template argument out of range");
+  return getArgs()[Idx];
+}
+
+inline const TemplateArgument &
+    DependentTemplateSpecializationType::getArg(unsigned Idx) const {
+  assert(Idx < getNumArgs() && "Template argument out of range");
+  return getArgs()[Idx];
+}
+
+inline const TemplateArgument &AutoType::getArg(unsigned Idx) const {
+  assert(Idx < getNumArgs() && "Template argument out of range");
+  return getArgs()[Idx];
+}
 
 } // namespace latino
 
