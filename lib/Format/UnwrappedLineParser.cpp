@@ -956,7 +956,7 @@ static bool mustBeJSIdentOrValue(const AdditionalKeywords &Keywords,
 static bool isJSDeclOrStmt(const AdditionalKeywords &Keywords,
                            const FormatToken *FormatTok) {
   return FormatTok->isOneOf(
-      tok::kw_return, Keywords.kw_yield,
+      tok::kw_ret, Keywords.kw_yield,
       // conditionals
       tok::kw_if, tok::kw_else,
       // loops

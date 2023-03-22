@@ -435,7 +435,7 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
   if (Style.AlwaysBreakBeforeMultilineStrings &&
       (NewLineColumn == State.FirstIndent + Style.ContinuationIndentWidth ||
        Previous.is(tok::comma) || Current.NestingLevel < 2) &&
-      !Previous.isOneOf(tok::kw_return, tok::lessless, tok::at,
+      !Previous.isOneOf(tok::kw_ret, tok::lessless, tok::at,
                         Keywords.kw_dollar) &&
       !Previous.isOneOf(TT_InlineASMColon, TT_ConditionalExpr) &&
       nextIsMultilineString(State))
@@ -1312,7 +1312,7 @@ void ContinuationIndenter::moveStatePastFakeLParens(LineState &State,
   // is special cased.
   bool SkipFirstExtraIndent =
       (Previous && (Previous->opensScope() ||
-                    Previous->isOneOf(tok::semi, tok::kw_return) ||
+                    Previous->isOneOf(tok::semi, tok::kw_ret) ||
                     (Previous->getPrecedence() == prec::Assignment &&
                      Style.AlignOperands != FormatStyle::OAS_DontAlign) ||
                     Previous->is(TT_ObjCMethodExpr)));
@@ -1340,7 +1340,7 @@ void ContinuationIndenter::moveStatePastFakeLParens(LineState &State,
     if (!Current.isTrailingComment() &&
         (Style.AlignOperands != FormatStyle::OAS_DontAlign ||
          *I < prec::Assignment) &&
-        (!Previous || Previous->isNot(tok::kw_return) ||
+        (!Previous || Previous->isNot(tok::kw_ret) ||
          (Style.Language != FormatStyle::LK_Java && *I > 0)) &&
         (Style.AlignAfterOpenBracket != FormatStyle::BAS_DontAlign ||
          *I != prec::Comma || Current.NestingLevel == 0)) {
@@ -1354,7 +1354,7 @@ void ContinuationIndenter::moveStatePastFakeLParens(LineState &State,
     if (Style.AlignOperands == FormatStyle::OAS_AlignAfterOperator &&
         Previous &&
         (Previous->getPrecedence() == prec::Assignment ||
-         Previous->is(tok::kw_return) ||
+         Previous->is(tok::kw_ret) ||
          (*I == prec::Conditional && Previous->is(tok::question) &&
           Previous->is(TT_ConditionalExpr))) &&
         !Newline)

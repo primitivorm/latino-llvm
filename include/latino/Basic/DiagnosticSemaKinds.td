@@ -5074,9 +5074,9 @@ def err_unexpected_typedef : Error<
   "unexpected type name %0: expected expression">;
 def err_unexpected_namespace : Error<
   "unexpected namespace name %0: expected expression">;
-def err_undeclared_var_use : Error<"use of undeclared identifier %0">;
+def err_undeclared_var_use : Error<"uso de identificador no declarado %0">;
 def ext_undeclared_unqual_id_with_dependent_base : ExtWarn<
-  "use of undeclared identifier %0; "
+  "uso de identificador no declarado %0; "
   "unqualified lookup into dependent bases of class template %1 is a Microsoft extension">,
   InGroup<MicrosoftTemplate>;
 def ext_found_via_dependent_bases_lookup : ExtWarn<"use of identifier %0 "
@@ -9497,7 +9497,7 @@ def err_no_member_suggest : Error<"no member named %0 in %1; did you mean %selec
 def err_undeclared_use_suggest : Error<
   "use of undeclared %0; did you mean %1?">;
 def err_undeclared_var_use_suggest : Error<
-  "use of undeclared identifier %0; did you mean %1?">;
+  "uso de identificador no declarado %0; did you mean %1?">;
 def err_no_template : Error<"no template named %0">;
 def err_no_template_suggest : Error<"no template named %0; did you mean %1?">;
 def err_no_member_template : Error<"no template named %0 in %1">;

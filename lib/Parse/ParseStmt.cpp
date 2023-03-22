@@ -278,7 +278,7 @@ Retry:
     Res = ParseBreakStatement();
     SemiError = "break";
     break;
-  case tok::kw_return:              // C99 6.8.6.4: return-statement
+  case tok::kw_ret:              // C99 6.8.6.4: return-statement
     Res = ParseReturnStatement();
     SemiError = "return";
     break;
@@ -2143,7 +2143,7 @@ StmtResult Parser::ParseBreakStatement() {
 ///         'co_return' expression[opt] ';'
 ///         'co_return' braced-init-list ';'
 StmtResult Parser::ParseReturnStatement() {
-  assert((Tok.is(tok::kw_return) || Tok.is(tok::kw_co_return)) &&
+  assert((Tok.is(tok::kw_ret) || Tok.is(tok::kw_co_return)) &&
          "Not a return stmt!");
   bool IsCoreturn = Tok.is(tok::kw_co_return);
   SourceLocation ReturnLoc = ConsumeToken();  // eat the 'return'.

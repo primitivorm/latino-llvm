@@ -283,7 +283,7 @@ TEST_F(TokenCollectorTest, RawMode) {
   EXPECT_THAT(tokenize("int m[[ain() {ret]]urn 0;}"),
               ElementsAre(AllOf(HasText("ain"), Kind(tok::identifier)),
                           Kind(tok::l_paren), Kind(tok::r_paren),
-                          Kind(tok::l_brace), Kind(tok::kw_return)));
+                          Kind(tok::l_brace), Kind(tok::kw_ret)));
 }
 
 TEST_F(TokenCollectorTest, Basic) {

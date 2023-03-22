@@ -470,7 +470,7 @@ bool FormatTokenLexer::precedesOperand(FormatToken *Tok) {
   return Tok->isOneOf(tok::period, tok::l_paren, tok::comma, tok::l_brace,
                       tok::r_brace, tok::l_square, tok::semi, tok::exclaim,
                       tok::colon, tok::question, tok::tilde) ||
-         Tok->isOneOf(tok::kw_return, tok::kw_do, tok::kw_case, tok::kw_throw,
+         Tok->isOneOf(tok::kw_ret, tok::kw_do, tok::kw_case, tok::kw_throw,
                       tok::kw_else, tok::kw_new, tok::kw_delete, tok::kw_void,
                       tok::kw_typeof, Keywords.kw_instanceof, Keywords.kw_in) ||
          Tok->isBinaryOperator();

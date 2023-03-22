@@ -524,7 +524,7 @@ private:
         !CurrentToken->isOneOf(tok::l_brace, tok::r_square) &&
         (!Parent ||
          Parent->isOneOf(tok::colon, tok::l_square, tok::l_paren,
-                         tok::kw_return, tok::kw_throw) ||
+                         tok::kw_ret, tok::kw_throw) ||
          Parent->isUnaryOperator() ||
          // FIXME(bug 36976): ObjC return types shouldn't use TT_CastRParen.
          Parent->isOneOf(TT_ObjCForIn, TT_CastRParen) ||
@@ -594,7 +594,7 @@ private:
       } else if (!CppArrayTemplates && Parent &&
                  Parent->isOneOf(TT_BinaryOperator, TT_TemplateCloser, tok::at,
                                  tok::comma, tok::l_paren, tok::l_square,
-                                 tok::question, tok::colon, tok::kw_return,
+                                 tok::question, tok::colon, tok::kw_ret,
                                  // Should only be relevant to JavaScript:
                                  tok::kw_default)) {
         Left->setType(TT_ArrayInitializerLSquare);
@@ -1415,7 +1415,7 @@ private:
 
   void modifyContext(const FormatToken &Current) {
     if (Current.getPrecedence() == prec::Assignment &&
-        !Line.First->isOneOf(tok::kw_template, tok::kw_using, tok::kw_return) &&
+        !Line.First->isOneOf(tok::kw_template, tok::kw_using, tok::kw_ret) &&
         // Type aliases use `type X = ...;` in TypeScript and can be exported
         // using `export type ...`.
         !(Style.Language == FormatStyle::LK_JavaScript &&
@@ -1445,7 +1445,7 @@ private:
     } else if (Current.is(tok::lessless) &&
                (!Current.Previous || !Current.Previous->is(tok::kw_operator))) {
       Contexts.back().IsExpression = true;
-    } else if (Current.isOneOf(tok::kw_return, tok::kw_throw)) {
+    } else if (Current.isOneOf(tok::kw_ret, tok::kw_throw)) {
       Contexts.back().IsExpression = true;
     } else if (Current.is(TT_TrailingReturnArrow)) {
       Contexts.back().IsExpression = false;
@@ -1802,7 +1802,7 @@ private:
       // If there is an identifier (or with a few exceptions a keyword) right
       // before the parentheses, this is unlikely to be a cast.
       if (LeftOfParens->Tok.getIdentifierInfo() &&
-          !LeftOfParens->isOneOf(Keywords.kw_in, tok::kw_return, tok::kw_case,
+          !LeftOfParens->isOneOf(Keywords.kw_in, tok::kw_ret, tok::kw_case,
                                  tok::kw_delete))
         return false;
 
@@ -1912,7 +1912,7 @@ private:
       return TT_PointerOrReference;
 
     if (PrevToken->isOneOf(tok::l_paren, tok::l_square, tok::l_brace,
-                           tok::comma, tok::semi, tok::kw_return, tok::colon,
+                           tok::comma, tok::semi, tok::kw_ret, tok::colon,
                            tok::equal, tok::kw_delete, tok::kw_sizeof,
                            tok::kw_throw) ||
         PrevToken->isOneOf(TT_BinaryOperator, TT_ConditionalExpr,
@@ -1978,7 +1978,7 @@ private:
 
     // Use heuristics to recognize unary operators.
     if (PrevToken->isOneOf(tok::equal, tok::l_paren, tok::comma, tok::l_square,
-                           tok::question, tok::colon, tok::kw_return,
+                           tok::question, tok::colon, tok::kw_ret,
                            tok::kw_case, tok::at, tok::l_brace, tok::kw_throw,
                            tok::kw_co_return, tok::kw_co_yield))
       return TT_UnaryOperator;
@@ -2032,7 +2032,7 @@ public:
   void parse(int Precedence = 0) {
     // Skip 'return' and ObjC selector colons as they are not part of a binary
     // expression.
-    while (Current && (Current->is(tok::kw_return) ||
+    while (Current && (Current->is(tok::kw_ret) ||
                        (Current->is(tok::colon) &&
                         Current->isOneOf(TT_ObjCMethodExpr, TT_DictLiteral))))
       next();
@@ -2749,7 +2749,7 @@ bool TokenAnnotator::spaceRequiredBeforeParens(const FormatToken &Right) const {
 bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
                                           const FormatToken &Left,
                                           const FormatToken &Right) {
-  if (Left.is(tok::kw_return) && Right.isNot(tok::semi))
+  if (Left.is(tok::kw_ret) && Right.isNot(tok::semi))
     return true;
   if (Left.is(Keywords.kw_assert) && Style.Language == FormatStyle::LK_Java)
     return true;
@@ -3730,7 +3730,7 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
     const FormatToken *NonComment = Right.getPreviousNonComment();
     if (NonComment &&
         NonComment->isOneOf(
-            tok::kw_return, Keywords.kw_yield, tok::kw_continue, tok::kw_break,
+            tok::kw_ret, Keywords.kw_yield, tok::kw_continue, tok::kw_break,
             tok::kw_throw, Keywords.kw_interface, Keywords.kw_type,
             tok::kw_static, tok::kw_public, tok::kw_private, tok::kw_protected,
             Keywords.kw_readonly, Keywords.kw_abstract, Keywords.kw_get,

@@ -251,7 +251,7 @@ TEST(ASTFrontendAction, ExternalSemaSource) {
   SyntaxOnlyAction TestAction;
   ASSERT_TRUE(Compiler.ExecuteAction(TestAction));
   // There should be one error correcting to 'moo' and a note attached to it.
-  EXPECT_EQ("use of undeclared identifier 'foo'; did you mean 'moo'?",
+  EXPECT_EQ("uso de identificador no declarado 'foo'; did you mean 'moo'?",
             std::string(TDC->Error));
   EXPECT_EQ("This is a note", std::string(TDC->Note));
 }

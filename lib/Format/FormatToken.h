@@ -456,7 +456,7 @@ struct FormatToken {
     switch (Tok.getKind()) {
     case tok::kw_throw:
     case tok::kw_typeid:
-    case tok::kw_return:
+    case tok::kw_ret:
     case tok::kw_sizeof:
     case tok::kw_alignof:
     case tok::kw_alignas:
@@ -946,7 +946,7 @@ struct AdditionalKeywords {
     case tok::kw_private:
     case tok::kw_protected:
     case tok::kw_public:
-    case tok::kw_return:
+    case tok::kw_ret:
     case tok::kw_static:
     case tok::kw_switch:
     case tok::kw_this:
@@ -1017,7 +1017,7 @@ struct AdditionalKeywords {
     case tok::kw_private:
     case tok::kw_protected:
     case tok::kw_public:
-    case tok::kw_return:
+    case tok::kw_ret:
     case tok::kw_short:
     case tok::kw_sizeof:
     case tok::kw_static:

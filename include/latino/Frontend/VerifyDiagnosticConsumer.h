@@ -42,7 +42,7 @@ class TextDiagnosticBuffer;
 /// example:
 ///
 /// \code
-///   int A = B; // expected-error {{use of undeclared identifier 'B'}}
+///   int A = B; // expected-error {{uso de identificador no declarado 'B'}}
 /// \endcode
 ///
 /// Custom prefixes can be specified as a comma-separated sequence.  Each
@@ -52,8 +52,8 @@ class TextDiagnosticBuffer;
 /// be recognized:
 ///
 /// \code
-///   int A = B; // foo-error {{use of undeclared identifier 'B'}}
-///   int C = D; // bar-error {{use of undeclared identifier 'D'}}
+///   int A = B; // foo-error {{uso de identificador no declarado 'B'}}
+///   int C = D; // bar-error {{uso de identificador no declarado 'D'}}
 /// \endcode
 ///
 /// Multiple occurrences accumulate prefixes.  For example,
@@ -76,7 +76,7 @@ class TextDiagnosticBuffer;
 /// Here's an example:
 ///
 /// \code
-///   int A = B; // expected-error {{use of undeclared identifier 'B'}}
+///   int A = B; // expected-error {{uso de identificador no declarado 'B'}}
 /// \endcode
 ///
 /// You can place as many diagnostics on one line as you wish. To make the code
