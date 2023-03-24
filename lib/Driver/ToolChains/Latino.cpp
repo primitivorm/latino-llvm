@@ -1,4 +1,4 @@
-//===-- Clang.cpp - Clang+LLVM ToolChain Implementations --------*- C++ -*-===//
+//===-- Latino.cpp - Clang+LLVM ToolChain Implementations --------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "Clang.h"
+#include "Latino.h"
 #include "AMDGPU.h"
 #include "Arch/AArch64.h"
 #include "Arch/ARM.h"
@@ -6282,7 +6282,7 @@ Clang::Clang(const ToolChain &TC)
     // CAUTION! The first constructor argument ("clang") is not arbitrary,
     // as it is for other tools. Some operations on a Tool actually test
     // whether that tool is Clang based on the Tool's Name as a string.
-    : Tool("clang", "clang frontend", TC) {}
+    : Tool("latino", "latino frontend", TC) {}
 
 Clang::~Clang() {}
 
@@ -6875,7 +6875,7 @@ void ClangAs::ConstructJob(Compilation &C, const JobAction &JA,
     // Set the AT_producer to the clang version when using the integrated
     // assembler on assembly source files.
     CmdArgs.push_back("-dwarf-debug-producer");
-    CmdArgs.push_back(Args.MakeArgString(getClangFullVersion()));
+    CmdArgs.push_back(Args.MakeArgString(getLatinoFullVersion()));
 
     // And pass along -I options
     Args.AddAllArgs(CmdArgs, options::OPT_I);

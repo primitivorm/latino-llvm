@@ -3837,10 +3837,10 @@ std::string CompilerInvocation::getModuleHash() const {
   // Start the signature with the compiler version.
   // FIXME: We'd rather use something more cryptographically sound than
   // CityHash, but this will do for now.
-  hash_code code = hash_value(getClangFullRepositoryVersion());
+  hash_code code = hash_value(getLatinoFullRepositoryVersion());
 
   // Also include the serialization version, in case LLVM_APPEND_VC_REV is off
-  // and getClangFullRepositoryVersion() doesn't include git revision.
+  // and getLatinoFullRepositoryVersion() doesn't include git revision.
   code = hash_combine(code, serialization::VERSION_MAJOR,
                       serialization::VERSION_MINOR);
 

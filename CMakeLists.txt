@@ -42,8 +42,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Releas
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug)
-  # set(CMAKE_BUILD_TYPE Release)
+  # set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
@@ -143,14 +143,14 @@ endif()
 
 option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." OFF)
 option(LATINO_BUILD_TOOLS
-  "Build the Clang tools. If OFF, just generate build targets." ON)
+  "Build the Latino tools. If OFF, just generate build targets." ON)
 
 # set(LLVM_TARGETS_TO_BUILD "all")
-set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
+set(LLVM_TARGETS_TO_BUILD host CACHE STRING "")
 set(LLVM_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/lib/)
 
 if(NOT LLVM_TARGETS_TO_BUILD)
-  set(LLVM_TARGETS_TO_BUILD "Native")
+  set(LLVM_TARGETS_TO_BUILD "host")
 endif()
 message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
 

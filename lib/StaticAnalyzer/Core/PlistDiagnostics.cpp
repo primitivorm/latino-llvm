@@ -672,7 +672,7 @@ void PlistDiagnostics::FlushDiagnosticsImpl(
   //  - "diagnostics", an <array> containing the path diagnostics
   o << "<dict>\n" <<
        " <key>clang_version</key>\n";
-  EmitString(o, getClangFullVersion()) << '\n';
+  EmitString(o, getLatinoFullVersion()) << '\n';
   o << " <key>diagnostics</key>\n"
        " <array>\n";
 

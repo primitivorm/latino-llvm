@@ -38,7 +38,7 @@ add_latino_library(latinoDriver
   ToolChains/AMDGPU.cpp
   ToolChains/AVR.cpp
   ToolChains/BareMetal.cpp
-  ToolChains/Clang.cpp
+  ToolChains/Latino.cpp
   ToolChains/CloudABI.cpp
   ToolChains/CommonArgs.cpp
   ToolChains/Contiki.cpp

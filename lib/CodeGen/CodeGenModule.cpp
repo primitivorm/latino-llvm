@@ -5766,7 +5766,7 @@ void CodeGenFunction::EmitDeclMetadata() {
 void CodeGenModule::EmitVersionIdentMetadata() {
   llvm::NamedMDNode *IdentMetadata =
     TheModule.getOrInsertNamedMetadata("llvm.ident");
-  std::string Version = getClangFullVersion();
+  std::string Version = getLatinoFullVersion();
   llvm::LLVMContext &Ctx = TheModule.getContext();
 
   llvm::Metadata *IdentNode[] = {llvm::MDString::get(Ctx, Version)};

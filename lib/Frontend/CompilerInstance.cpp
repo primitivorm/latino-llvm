@@ -603,9 +603,9 @@ void CompilerInstance::createCodeCompletionConsumer() {
 
 void CompilerInstance::createFrontendTimer() {
   FrontendTimerGroup.reset(
-      new llvm::TimerGroup("frontend", "Clang front-end time report"));
+      new llvm::TimerGroup("frontend", "Latino front-end time report"));
   FrontendTimer.reset(
-      new llvm::Timer("frontend", "Clang front-end timer",
+      new llvm::Timer("frontend", "Latino front-end timer",
                       *FrontendTimerGroup));
 }
 

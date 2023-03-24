@@ -23,7 +23,7 @@
 
 namespace latino {
 
-std::string getClangRepositoryPath() {
+std::string getLatinoRepositoryPath() {
 #if defined(LATINO_REPOSITORY_STRING)
   return LATINO_REPOSITORY_STRING;
 #else
@@ -43,7 +43,7 @@ std::string getLLVMRepositoryPath() {
 #endif
 }
 
-std::string getClangRevision() {
+std::string getLatinoRevision() {
 #ifdef LATINO_REVISION
   return LATINO_REVISION;
 #else
@@ -59,11 +59,11 @@ std::string getLLVMRevision() {
 #endif
 }
 
-std::string getClangFullRepositoryVersion() {
+std::string getLatinoFullRepositoryVersion() {
   std::string buf;
   llvm::raw_string_ostream OS(buf);
-  std::string Path = getClangRepositoryPath();
-  std::string Revision = getClangRevision();
+  std::string Path = getLatinoRepositoryPath();
+  std::string Revision = getLatinoRevision();
   if (!Path.empty() || !Revision.empty()) {
     OS << '(';
     if (!Path.empty())
@@ -87,11 +87,11 @@ std::string getClangFullRepositoryVersion() {
   return OS.str();
 }
 
-std::string getClangFullVersion() {
-  return getClangToolFullVersion("clang");
+std::string getLatinoFullVersion() {
+  return getLatinoToolFullVersion("latino");
 }
 
-std::string getClangToolFullVersion(StringRef ToolName) {
+std::string getLatinoToolFullVersion(StringRef ToolName) {
   std::string buf;
   llvm::raw_string_ostream OS(buf);
 #ifdef LATINO_VENDOR
@@ -99,7 +99,7 @@ std::string getClangToolFullVersion(StringRef ToolName) {
 #endif
   OS << ToolName << " version " LATINO_VERSION_STRING;
 
-  std::string repo = getClangFullRepositoryVersion();
+  std::string repo = getLatinoFullRepositoryVersion();
   if (!repo.empty()) {
     OS << " " << repo;
   }
@@ -107,7 +107,7 @@ std::string getClangToolFullVersion(StringRef ToolName) {
   return OS.str();
 }
 
-std::string getClangFullCPPVersion() {
+std::string getLatinoFullCPPVersion() {
   // The version string we report in __VERSION__ is just a compacted version of
   // the one we report on the command line.
   std::string buf;
@@ -115,9 +115,9 @@ std::string getClangFullCPPVersion() {
 #ifdef LATINO_VENDOR
   OS << LATINO_VENDOR;
 #endif
-  OS << "Clang " LATINO_VERSION_STRING;
+  OS << "Latino " LATINO_VERSION_STRING;
 
-  std::string repo = getClangFullRepositoryVersion();
+  std::string repo = getLatinoFullRepositoryVersion();
   if (!repo.empty()) {
     OS << " " << repo;
   }

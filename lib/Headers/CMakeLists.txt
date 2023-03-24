@@ -167,7 +167,7 @@ function(copy_header_to_output_dir src_dir file)
   add_custom_command(OUTPUT ${dst}
     DEPENDS ${src}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${src} ${dst}
-    COMMENT "Copying clang's ${file}...")
+    COMMENT "Copying latino's ${file}...")
   list(APPEND out_files ${dst})
   set(out_files ${out_files} PARENT_SCOPE)
 endfunction(copy_header_to_output_dir)

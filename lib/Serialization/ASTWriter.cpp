@@ -1137,7 +1137,7 @@ void ASTWriter::WriteControlBlock(Preprocessor &PP, ASTContext &Context,
         Context.getLangOpts().BuildingPCHWithObjectFile,
         ASTHasCompilerErrors};
     Stream.EmitRecordWithBlob(MetadataAbbrevCode, Record,
-                              getClangFullRepositoryVersion());
+                              getLatinoFullRepositoryVersion());
   }
 
   if (WritingModule) {

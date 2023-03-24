@@ -118,7 +118,7 @@ public:
   /// \returns true to indicate that the version is invalid. Subclasses should
   /// generally defer to this implementation.
   virtual bool ReadFullVersionInformation(StringRef FullVersion) {
-    return FullVersion != getClangFullRepositoryVersion();
+    return FullVersion != getLatinoFullRepositoryVersion();
   }
 
   virtual void ReadModuleName(StringRef ModuleName) {}

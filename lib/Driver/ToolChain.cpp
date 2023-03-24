@@ -9,7 +9,7 @@
 #include "latino/Driver/ToolChain.h"
 #include "InputInfo.h"
 #include "ToolChains/Arch/ARM.h"
-#include "ToolChains/Clang.h"
+#include "ToolChains/Latino.h"
 #include "ToolChains/InterfaceStubs.h"
 #include "ToolChains/Flang.h"
 #include "latino/Basic/ObjCRuntime.h"

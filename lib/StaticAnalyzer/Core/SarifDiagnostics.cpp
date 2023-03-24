@@ -359,7 +359,7 @@ static json::Object createTool(std::vector<const PathDiagnostic *> &Diags,
       {"driver", json::Object{{"name", "clang"},
                               {"fullName", "clang static analyzer"},
                               {"language", "en-US"},
-                              {"version", getClangFullVersion()},
+                              {"version", getLatinoFullVersion()},
                               {"rules", createRules(Diags, RuleMapping)}}}};
 }
 

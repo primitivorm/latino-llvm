@@ -22,7 +22,7 @@ namespace latino {
   /// Retrieves the repository path (e.g., Subversion path) that
   /// identifies the particular Clang branch, tag, or trunk from which this
   /// Clang was built.
-  std::string getClangRepositoryPath();
+  std::string getLatinoRepositoryPath();
 
   /// Retrieves the repository path from which LLVM was built.
   ///
@@ -31,31 +31,31 @@ namespace latino {
 
   /// Retrieves the repository revision number (or identifier) from which
   /// this Clang was built.
-  std::string getClangRevision();
+  std::string getLatinoRevision();
 
   /// Retrieves the repository revision number (or identifier) from which
   /// LLVM was built.
   ///
   /// If Clang and LLVM are in the same repository, this returns the same
-  /// string as getClangRevision.
+  /// string as getLatinoRevision.
   std::string getLLVMRevision();
 
   /// Retrieves the full repository version that is an amalgamation of
-  /// the information in getClangRepositoryPath() and getClangRevision().
-  std::string getClangFullRepositoryVersion();
+  /// the information in getLatinoRepositoryPath() and getLatinoRevision().
+  std::string getLatinoFullRepositoryVersion();
 
   /// Retrieves a string representing the complete clang version,
   /// which includes the clang version number, the repository version,
   /// and the vendor tag.
-  std::string getClangFullVersion();
+  std::string getLatinoFullVersion();
 
-  /// Like getClangFullVersion(), but with a custom tool name.
-  std::string getClangToolFullVersion(llvm::StringRef ToolName);
+  /// Like getLatinoFullVersion(), but with a custom tool name.
+  std::string getLatinoToolFullVersion(llvm::StringRef ToolName);
 
   /// Retrieves a string representing the complete clang version suitable
   /// for use in the CPP __VERSION__ macro, which includes the clang version
   /// number, the repository version, and the vendor tag.
-  std::string getClangFullCPPVersion();
+  std::string getLatinoFullCPPVersion();
 }
 
 #endif // LLVM_LATINO_BASIC_VERSION_H

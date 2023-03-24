@@ -2759,7 +2759,7 @@ ASTReader::ReadControlBlock(ModuleFile &F,
 
       F.PCHHasObjectFile = Record[6];
 
-      const std::string &CurBranch = getClangFullRepositoryVersion();
+      const std::string &CurBranch = getLatinoFullRepositoryVersion();
       StringRef ASTBranch = Blob;
       if (StringRef(CurBranch) != ASTBranch && !DisableValidation) {
         if ((ClientLoadCapabilities & ARR_VersionMismatch) == 0)

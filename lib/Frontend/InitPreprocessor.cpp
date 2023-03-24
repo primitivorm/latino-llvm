@@ -602,7 +602,7 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
 #undef TOSTR2
   Builder.defineMacro("__clang_version__",
                       "\"" LATINO_VERSION_STRING " "
-                      + getClangFullRepositoryVersion() + "\"");
+                      + getLatinoFullRepositoryVersion() + "\"");
 
   if (LangOpts.GNUCVersion != 0) {
     // Major, minor, patch, are given two decimal places each, so 4.2.1 becomes
@@ -649,7 +649,7 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   // Previously this macro was set to a string aiming to achieve compatibility
   // with GCC 4.2.1. Now, just return the full Clang version
   Builder.defineMacro("__VERSION__", "\"" +
-                      Twine(getClangFullCPPVersion()) + "\"");
+                      Twine(getLatinoFullCPPVersion()) + "\"");
 
   // Initialize language-specific preprocessor defines.
 

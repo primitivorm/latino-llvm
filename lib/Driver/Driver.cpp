@@ -13,7 +13,7 @@
 #include "ToolChains/AVR.h"
 #include "ToolChains/Ananas.h"
 #include "ToolChains/BareMetal.h"
-#include "ToolChains/Clang.h"
+#include "ToolChains/Latino.h"
 #include "ToolChains/CloudABI.h"
 #include "ToolChains/Contiki.h"
 #include "ToolChains/CrossWindows.h"
@@ -1431,7 +1431,7 @@ void Driver::generateCompilationDiagnostics(
     Diag(latino::diag::note_drv_command_failed_diag_msg)
         << "Error generating run script: " << Script << " " << EC.message();
   } else {
-    ScriptOS << "# Crash reproducer for " << getClangFullVersion() << "\n"
+    ScriptOS << "# Crash reproducer for " << getLatinoFullVersion() << "\n"
              << "# Driver args: ";
     printArgList(ScriptOS, C.getInputArgs());
     ScriptOS << "# Original command: ";
@@ -1576,7 +1576,7 @@ void Driver::PrintHelp(bool ShowHidden) const {
 void Driver::PrintVersion(const Compilation &C, raw_ostream &OS) const {
   // FIXME: The following handlers should use a callback mechanism, we don't
   // know what the client would like to do.
-  OS << getClangFullVersion() << '\n';
+  OS << getLatinoFullVersion() << '\n';
   const ToolChain &TC = C.getDefaultToolChain();
   OS << "Target: " << TC.getTripleString() << '\n';
 

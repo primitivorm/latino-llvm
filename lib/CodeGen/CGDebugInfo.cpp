@@ -584,7 +584,7 @@ void CGDebugInfo::CreateCompileUnit() {
     LangTag = llvm::dwarf::DW_LANG_C89;
   }
 
-  std::string Producer = getClangFullVersion();
+  std::string Producer = getLatinoFullVersion();
 
   // Figure out which version of the ObjC runtime we have.
   unsigned RuntimeVers = 0;
