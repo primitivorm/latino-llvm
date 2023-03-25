@@ -4243,7 +4243,7 @@ void ASTRecordWriter::AddAttr(const Attr *A) {
   Record.push_back(A->getSyntax());
   Record.push_back(A->getAttributeSpellingListIndexRaw());
 
-#include "clang/Serialization/AttrPCHWrite.inc"
+#include "latino/Serialization/AttrPCHWrite.inc"
 }
 
 /// Emit the list of attributes to the specified record.

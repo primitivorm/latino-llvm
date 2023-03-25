@@ -517,7 +517,7 @@ enum class TemplateSubstitutionKind : char {
 #define CAPTURED(DERIVED, BASE)
 #define IMPLICITPARAM(DERIVED, BASE)
 
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 
     enum class RewriteKind { None, RewriteSpaceshipAsEqualEqual };
 

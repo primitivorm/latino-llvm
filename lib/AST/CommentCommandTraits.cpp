@@ -13,7 +13,7 @@
 namespace latino {
 namespace comments {
 
-#include "clang/AST/CommentCommandInfo.inc"
+#include "latino/AST/CommentCommandInfo.inc"
 
 CommandTraits::CommandTraits(llvm::BumpPtrAllocator &Allocator,
                              const CommentOptions &CommentOptions) :

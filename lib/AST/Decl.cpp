@@ -1675,7 +1675,7 @@ static bool isRedeclarable(Decl::Kind K) {
   case Decl::Type: \
     return isRedeclarableImpl((Type##Decl *)nullptr);
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
   llvm_unreachable("unknown decl kind");
 }

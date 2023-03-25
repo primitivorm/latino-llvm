@@ -417,7 +417,7 @@ AnalyzerOptions::getRegisteredCheckers(bool IncludeExperimental) {
 #define GET_CHECKERS
 #define CHECKER(FULLNAME, CLASS, HELPTEXT, DOC_URI, IS_HIDDEN)                 \
   llvm::StringLiteral(FULLNAME),
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef CHECKER
 #undef GET_CHECKERS
   };
@@ -435,7 +435,7 @@ AnalyzerOptions::getRegisteredPackages(bool IncludeExperimental) {
   static constexpr llvm::StringLiteral StaticAnalyzerPackageNames[] = {
 #define GET_PACKAGES
 #define PACKAGE(FULLNAME) llvm::StringLiteral(FULLNAME),
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef PACKAGE
 #undef GET_PACKAGES
   };

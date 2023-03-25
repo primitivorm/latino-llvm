@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define SERIALIZATIONSTART
-#include "clang/Basic/DiagnosticSerializationKinds.inc"
+#include "latino/Basic/DiagnosticSerializationKinds.inc"
 #undef DIAG
   NUM_BUILTIN_SERIALIZATION_DIAGNOSTICS
 };

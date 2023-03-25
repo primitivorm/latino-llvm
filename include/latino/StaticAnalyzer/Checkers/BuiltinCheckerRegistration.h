@@ -29,7 +29,7 @@ class CheckerRegistry;
 #define CHECKER(FULLNAME, CLASS, HELPTEXT, DOC_URI, IS_HIDDEN)                 \
   void register##CLASS(CheckerManager &mgr);                                   \
   bool shouldRegister##CLASS(const CheckerManager &mgr);
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef CHECKER
 #undef GET_CHECKERS
 

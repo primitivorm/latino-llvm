@@ -12,7 +12,7 @@ void JSONNodeDumper::addPreviousDeclaration(const Decl *D) {
   case Decl::DERIVED:                                                          \
     return writePreviousDeclImpl(cast<DERIVED##Decl>(D));
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 #undef ABSTRACT_DECL
 #undef DECL
   }
@@ -26,7 +26,7 @@ void JSONNodeDumper::Visit(const Attr *A) {
   case attr::X:                                                                \
     AttrName = #X"Attr";                                                       \
     break;
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
 #undef ATTR
   }
   JOS.attribute("id", createPointerRepresentation(A));

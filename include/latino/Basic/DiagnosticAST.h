@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define ASTSTART
-#include "clang/Basic/DiagnosticASTKinds.inc"
+#include "latino/Basic/DiagnosticASTKinds.inc"
 #undef DIAG
   NUM_BUILTIN_AST_DIAGNOSTICS
 };

@@ -3167,7 +3167,7 @@ ExprResult Sema::BuildDeclarationNameExpr(
 #define VALUE(type, base)
 #define DECL(type, base) \
     case Decl::type:
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
       llvm_unreachable("invalid value decl kind");
 
     // These shouldn't make it here.
@@ -4278,7 +4278,7 @@ static void captureVariablyModifiedType(ASTContext &Context, QualType T,
 #define NON_CANONICAL_TYPE(Class, Base)
 #define DEPENDENT_TYPE(Class, Base) case Type::Class:
 #define NON_CANONICAL_UNLESS_DEPENDENT_TYPE(Class, Base)
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
       T = QualType();
       break;
     // These types are never variably-modified.

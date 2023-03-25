@@ -47,7 +47,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
-set(CLANG_ENABLE_STATIC_ANALYZER ON)
+set(LATINO_ENABLE_STATIC_ANALYZER ON)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 if(WIN32)
@@ -112,10 +112,10 @@ if(LLVM_CONFIG)
     NO_DEFAULT_PATH)
   message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
   
-  find_program(CLANG_TABLEGEN_EXE "clang-tblgen" ${LLVM_TOOLS_BINARY_DIR}
-    NO_DEFAULT_PATH)
-  message(STATUS "CLANG_TABLEGEN_EXE: ${CLANG_TABLEGEN_EXE}")
-  set(CLANG_TABLEGEN_TARGET ${CLANG_TABLEGEN_EXE})
+  # find_program(LATINO_TABLEGEN_EXE "latino-tblgen" ${LLVM_TOOLS_BINARY_DIR}
+  # NO_DEFAULT_PATH)
+  # message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
+  # set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})
 
   option(LLVM_INSTALL_TOOLCHAIN_ONLY
   "Only include toolchain files in the 'install' target." OFF)
@@ -157,8 +157,116 @@ message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
 include(CMakeParseArguments)
 include(AddLLVM)
 include(TableGen)
-include(AddClang)
+# include(AddClang)
 include(AddLatino)
+
+set(PACKAGE_VERSION "${LLVM_PACKAGE_VERSION}")
+  set(BUG_REPORT_URL "${LLVM_PACKAGE_BUGREPORT}" CACHE STRING
+    "Default URL where bug reports are to be submitted.")
+
+  if (NOT DEFINED LLVM_INCLUDE_TESTS)
+    set(LLVM_INCLUDE_TESTS ON)
+  endif()
+
+  include_directories("${LLVM_BINARY_DIR}/include" "${LLVM_MAIN_INCLUDE_DIR}")
+  link_directories("${LLVM_LIBRARY_DIR}")
+
+  set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
+  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX} )
+  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX} )
+
+  if(LLVM_INCLUDE_TESTS)
+    if(CMAKE_VERSION VERSION_LESS 3.12)
+      include(FindPythonInterp)
+      if(NOT PYTHONINTERP_FOUND)
+        message(FATAL_ERROR
+  "Unable to find Python interpreter, required for builds and testing.
+
+  Please install Python or specify the PYTHON_EXECUTABLE CMake variable.")
+      endif()
+
+      if( ${PYTHON_VERSION_STRING} VERSION_LESS 2.7 )
+        message(FATAL_ERROR "Python 2.7 or newer is required")
+      endif()
+
+      add_executable(Python3::Interpreter IMPORTED)
+      set_target_properties(Python3::Interpreter PROPERTIES
+        IMPORTED_LOCATION ${PYTHON_EXECUTABLE})
+      set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+    else()
+      find_package(Python3 COMPONENTS Interpreter)
+      if(NOT Python3_Interpreter_FOUND)
+        message(WARNING "Python3 not found, using python2 as a fallback")
+        find_package(Python2 COMPONENTS Interpreter REQUIRED)
+        if(Python2_VERSION VERSION_LESS 2.7)
+          message(SEND_ERROR "Python 2.7 or newer is required")
+        endif()
+
+        # Treat python2 as python3
+        add_executable(Python3::Interpreter IMPORTED)
+        set_target_properties(Python3::Interpreter PROPERTIES
+          IMPORTED_LOCATION ${Python2_EXECUTABLE})
+        set(Python3_EXECUTABLE ${Python2_EXECUTABLE})
+      endif()
+    endif()
+
+    # Check prebuilt llvm/utils.
+    if(EXISTS ${LLVM_TOOLS_BINARY_DIR}/FileCheck${CMAKE_EXECUTABLE_SUFFIX}
+        AND EXISTS ${LLVM_TOOLS_BINARY_DIR}/count${CMAKE_EXECUTABLE_SUFFIX}
+        AND EXISTS ${LLVM_TOOLS_BINARY_DIR}/not${CMAKE_EXECUTABLE_SUFFIX})
+      set(LLVM_UTILS_PROVIDED ON)
+    endif()
+
+    if(EXISTS ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
+      # Note: path not really used, except for checking if lit was found
+      set(LLVM_LIT ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
+      if(EXISTS ${LLVM_MAIN_SRC_DIR}/utils/llvm-lit)
+        add_subdirectory(${LLVM_MAIN_SRC_DIR}/utils/llvm-lit utils/llvm-lit)
+      endif()
+      if(NOT LLVM_UTILS_PROVIDED)
+        add_subdirectory(${LLVM_MAIN_SRC_DIR}/utils/FileCheck utils/FileCheck)
+        add_subdirectory(${LLVM_MAIN_SRC_DIR}/utils/count utils/count)
+        add_subdirectory(${LLVM_MAIN_SRC_DIR}/utils/not utils/not)
+        set(LLVM_UTILS_PROVIDED ON)
+        set(LATINO_TEST_DEPS FileCheck count not)
+      endif()
+      set(UNITTEST_DIR ${LLVM_MAIN_SRC_DIR}/utils/unittest)
+      if(EXISTS ${UNITTEST_DIR}/googletest/include/gtest/gtest.h
+          AND NOT EXISTS ${LLVM_LIBRARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}
+          AND EXISTS ${UNITTEST_DIR}/CMakeLists.txt)
+        add_subdirectory(${UNITTEST_DIR} utils/unittest)
+      endif()
+    else()
+      # Seek installed Lit.
+      find_program(LLVM_LIT
+                   NAMES llvm-lit lit.py lit
+                   PATHS "${LLVM_MAIN_SRC_DIR}/utils/lit"
+                   DOC "Path to lit.py")
+    endif()
+
+    if(LLVM_LIT)
+      # Define the default arguments to use with 'lit', and an option for the user
+      # to override.
+      set(LIT_ARGS_DEFAULT "-sv")
+      if (MSVC OR XCODE)
+        set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --no-progress-bar")
+      endif()
+      set(LLVM_LIT_ARGS "${LIT_ARGS_DEFAULT}" CACHE STRING "Default options for lit")
+
+      # On Win32 hosts, provide an option to specify the path to the GnuWin32 tools.
+      if( WIN32 AND NOT CYGWIN )
+        set(LLVM_LIT_TOOLS_DIR "" CACHE PATH "Path to GnuWin32 tools")
+      endif()
+    else()
+      set(LLVM_INCLUDE_TESTS OFF)
+    endif()
+  endif()
+
+  set( LATINO_BUILT_STANDALONE 1 )
+  set(BACKEND_PACKAGE_STRING "LLVM ${LLVM_PACKAGE_VERSION}")
+else()
+  set(BACKEND_PACKAGE_STRING "${PACKAGE_STRING}")
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -209,14 +317,6 @@ if(NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
   # endif()
 endif()
 
-# All targets below may depend on all tablegen'd files.
-get_property(CLANG_TABLEGEN_TARGETS GLOBAL PROPERTY CLANG_TABLEGEN_TARGETS)
-add_custom_target(latino-tablegen-targets
-  DEPENDS
-  ${CLANG_TABLEGEN_TARGETS})
-set_target_properties(latino-tablegen-targets PROPERTIES FOLDER "Misc")
-list(APPEND LLVM_COMMON_DEPENDS latino-tablegen-targets)
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LATINO_LIBS}")
 
 set(LATINO_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -263,7 +363,7 @@ if(WIN32)
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/clang/include")
   # to include .inc files
-  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/tools/clang/include")
+  # include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/tools/clang/include")
 endif()
 add_definitions(${LLVM_DEFINITIONS})
 
@@ -271,7 +371,25 @@ add_definitions(${LLVM_DEFINITIONS})
 # that we wish to use
 llvm_map_components_to_libnames(all)
 
-include_directories(include)
+add_subdirectory(utils/TableGen)
+
+add_subdirectory(include)
+
+# All targets below may depend on all tablegen'd files.
+get_property(LATINO_TABLEGEN_TARGETS GLOBAL PROPERTY LATINO_TABLEGEN_TARGETS)
+add_custom_target(latino-tablegen-targets
+  DEPENDS
+  omp_gen
+  ${LATINO_TABLEGEN_TARGETS})
+set_target_properties(latino-tablegen-targets PROPERTIES FOLDER "Misc")
+list(APPEND LLVM_COMMON_DEPENDS latino-tablegen-targets)
+
+# Force target to be built as soon as possible. Clang modules builds depend
+# header-wise on it as they ship all headers from the umbrella folders. Building
+# an entire module might include header, which depends on intrinsics_gen.
+if(LLVM_ENABLE_MODULES AND NOT LATINO_BUILT_STANDALONE)
+  list(APPEND LLVM_COMMON_DEPENDS intrinsics_gen)
+endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")

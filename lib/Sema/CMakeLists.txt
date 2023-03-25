@@ -12,7 +12,7 @@ if (MSVC)
   set_source_files_properties(SemaOpenMP.cpp PROPERTIES COMPILE_FLAGS /bigobj)
 endif()
 
-clang_tablegen(OpenCLBuiltins.inc -gen-clang-opencl-builtins
+latino_tablegen(OpenCLBuiltins.inc -gen-clang-opencl-builtins
   SOURCE OpenCLBuiltins.td
   TARGET ClangOpenCLBuiltinsImpl
   )

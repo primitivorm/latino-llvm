@@ -390,7 +390,7 @@ public:
 #define ATTR(X)
 #define PRAGMA_SPELLING_ATTR(X)                                                \
   const X##Attr *Transform##X##Attr(const X##Attr *R) { return R; }
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
 
   /// Transform the given expression.
   ///
@@ -728,7 +728,7 @@ public:
   LLVM_ATTRIBUTE_NOINLINE \
   ExprResult Transform##Node(Node *E);
 #define ABSTRACT_STMT(Stmt)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
 #define OMP_CLAUSE_CLASS(Enum, Str, Class)                                           \
   LLVM_ATTRIBUTE_NOINLINE \
@@ -3650,13 +3650,13 @@ StmtResult TreeTransform<Derived>::TransformStmt(Stmt *S, StmtDiscardKind SDK) {
     return getDerived().Transform##Node(cast<Node>(S), SDK);
 #define ABSTRACT_STMT(Node)
 #define EXPR(Node, Parent)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
   // Transform expressions by calling TransformExpr.
 #define STMT(Node, Parent)
 #define ABSTRACT_STMT(Stmt)
 #define EXPR(Node, Parent) case Stmt::Node##Class:
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
     {
       ExprResult E = getDerived().TransformExpr(cast<Expr>(S));
 
@@ -3698,7 +3698,7 @@ ExprResult TreeTransform<Derived>::TransformExpr(Expr *E) {
 #define ABSTRACT_STMT(Stmt)
 #define EXPR(Node, Parent)                                              \
     case Stmt::Node##Class: return getDerived().Transform##Node(cast<Node>(E));
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
 
   return E;
@@ -7203,7 +7203,7 @@ const Attr *TreeTransform<Derived>::TransformAttr(const Attr *R) {
 #define PRAGMA_SPELLING_ATTR(X)                                                \
   case attr::X:                                                                \
     return getDerived().Transform##X##Attr(cast<X##Attr>(R));
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
   default:
     return R;
   }

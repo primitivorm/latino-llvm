@@ -8,7 +8,7 @@ set(LLVM_LINK_COMPONENTS
 # FIXME: the entry points to the interpreter should be moved out of latinoAST
 # into the parser or Sema in order to allow the interpreter to be moved to
 # another library which depends on latinoAST.
-clang_tablegen(Opcodes.inc
+latino_tablegen(Opcodes.inc
   -gen-clang-opcodes
   SOURCE Interp/Opcodes.td
   TARGET Opcodes)

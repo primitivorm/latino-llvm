@@ -2,7 +2,7 @@
 
 set(LLVM_LINK_COMPONENTS support)
 
-add_clang_library(latinoLex
+add_latino_library(latinoLex
   DependencyDirectivesSourceMinimizer.cpp
   HeaderMap.cpp
   HeaderSearch.cpp

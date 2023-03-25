@@ -178,30 +178,30 @@ namespace latino {
 
   public:
 #define LLVM_GET_SVE_TYPEFLAGS
-#include "clang/Basic/arm_sve_typeflags.inc"
+#include "latino/Basic/arm_sve_typeflags.inc"
 #undef LLVM_GET_SVE_TYPEFLAGS
 
     enum EltType {
 #define LLVM_GET_SVE_ELTTYPES
-#include "clang/Basic/arm_sve_typeflags.inc"
+#include "latino/Basic/arm_sve_typeflags.inc"
 #undef LLVM_GET_SVE_ELTTYPES
     };
 
     enum MemEltType {
 #define LLVM_GET_SVE_MEMELTTYPES
-#include "clang/Basic/arm_sve_typeflags.inc"
+#include "latino/Basic/arm_sve_typeflags.inc"
 #undef LLVM_GET_SVE_MEMELTTYPES
     };
 
     enum MergeType {
 #define LLVM_GET_SVE_MERGETYPES
-#include "clang/Basic/arm_sve_typeflags.inc"
+#include "latino/Basic/arm_sve_typeflags.inc"
 #undef LLVM_GET_SVE_MERGETYPES
     };
 
     enum ImmCheckType {
 #define LLVM_GET_SVE_IMMCHECKTYPES
-#include "clang/Basic/arm_sve_typeflags.inc"
+#include "latino/Basic/arm_sve_typeflags.inc"
 #undef LLVM_GET_SVE_IMMCHECKTYPES
     };
 

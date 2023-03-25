@@ -102,18 +102,18 @@ static const StaticDiagInfoRec StaticDiagInfo[] = {
         SHOWINSYSHEADER, CATEGORY, GROUP, STR_SIZE(DESC, uint16_t), DESC       \
   }                                                                            \
   ,
-#include "clang/Basic/DiagnosticCommonKinds.inc"
-#include "clang/Basic/DiagnosticDriverKinds.inc"
-#include "clang/Basic/DiagnosticFrontendKinds.inc"
-#include "clang/Basic/DiagnosticSerializationKinds.inc"
-#include "clang/Basic/DiagnosticLexKinds.inc"
-#include "clang/Basic/DiagnosticParseKinds.inc"
-#include "clang/Basic/DiagnosticASTKinds.inc"
-#include "clang/Basic/DiagnosticCommentKinds.inc"
-#include "clang/Basic/DiagnosticCrossTUKinds.inc"
-#include "clang/Basic/DiagnosticSemaKinds.inc"
-#include "clang/Basic/DiagnosticAnalysisKinds.inc"
-#include "clang/Basic/DiagnosticRefactoringKinds.inc"
+#include "latino/Basic/DiagnosticCommonKinds.inc"
+#include "latino/Basic/DiagnosticDriverKinds.inc"
+#include "latino/Basic/DiagnosticFrontendKinds.inc"
+#include "latino/Basic/DiagnosticSerializationKinds.inc"
+#include "latino/Basic/DiagnosticLexKinds.inc"
+#include "latino/Basic/DiagnosticParseKinds.inc"
+#include "latino/Basic/DiagnosticASTKinds.inc"
+#include "latino/Basic/DiagnosticCommentKinds.inc"
+#include "latino/Basic/DiagnosticCrossTUKinds.inc"
+#include "latino/Basic/DiagnosticSemaKinds.inc"
+#include "latino/Basic/DiagnosticAnalysisKinds.inc"
+#include "latino/Basic/DiagnosticRefactoringKinds.inc"
 #undef DIAG
 };
 
@@ -225,7 +225,7 @@ DiagnosticsEngine::DiagState::getOrAddMapping(diag::kind Diag) {
 static const StaticDiagCategoryRec CategoryNameTable[] = {
 #define GET_CATEGORY_TABLE
 #define CATEGORY(X, ENUM) { X, STR_SIZE(X, uint8_t) },
-#include "clang/Basic/DiagnosticGroups.inc"
+#include "latino/Basic/DiagnosticGroups.inc"
 #undef GET_CATEGORY_TABLE
   { nullptr, 0 }
 };
@@ -501,7 +501,7 @@ DiagnosticIDs::getDiagnosticSeverity(unsigned DiagID, SourceLocation Loc,
 }
 
 #define GET_DIAG_ARRAYS
-#include "clang/Basic/DiagnosticGroups.inc"
+#include "latino/Basic/DiagnosticGroups.inc"
 #undef GET_DIAG_ARRAYS
 
 namespace {
@@ -521,7 +521,7 @@ namespace {
 // Second the table of options, sorted by name for fast binary lookup.
 static const WarningOption OptionTable[] = {
 #define GET_DIAG_TABLE
-#include "clang/Basic/DiagnosticGroups.inc"
+#include "latino/Basic/DiagnosticGroups.inc"
 #undef GET_DIAG_TABLE
 };
 

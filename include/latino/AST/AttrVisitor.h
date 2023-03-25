@@ -34,7 +34,7 @@ public:
 #define ATTR(NAME)                                                             \
   case attr::NAME:                                                             \
     DISPATCH(NAME##Attr);
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
     }
     llvm_unreachable("Attr that isn't part of AttrList.inc!");
   }
@@ -43,7 +43,7 @@ public:
   // method, fall back to the parent.
 #define ATTR(NAME)                                                             \
   RetTy Visit##NAME##Attr(PTR(NAME##Attr) A) { DISPATCH(Attr); }
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
 
   RetTy VisitAttr(PTR(Attr)) { return RetTy(); }
 

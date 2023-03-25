@@ -63,7 +63,7 @@ static StmtClassNameTable &getStmtInfoTableEntry(Stmt::StmtClass E) {
 #define STMT(CLASS, PARENT) \
   StmtClassInfo[(unsigned)Stmt::CLASS##Class].Name = #CLASS;    \
   StmtClassInfo[(unsigned)Stmt::CLASS##Class].Size = sizeof(CLASS);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
   return StmtClassInfo[E];
 }
@@ -83,7 +83,7 @@ const char *Stmt::getStmtClassName() const {
 #define STMT(CLASS, PARENT) \
   static_assert(!std::is_polymorphic<CLASS>::value, \
                 #CLASS " should not be polymorphic!");
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
 // Check that no statement / expression class has a non-trival destructor.
 // Statements and expressions are allocated with the BumpPtrAllocator from
@@ -93,7 +93,7 @@ const char *Stmt::getStmtClassName() const {
                 #CLASS " should be trivially destructible!");
 // FIXME: InitListExpr is not trivially destructible due to its ASTVector.
 #define INITLISTEXPR(CLASS, PARENT)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
 void Stmt::PrintStats() {
   // Ensure the table is primed.
@@ -218,7 +218,7 @@ static inline void check_implementations() {
   ASSERT_IMPLEMENTS_children(type);                                            \
   ASSERT_IMPLEMENTS_getBeginLoc(type);                                         \
   ASSERT_IMPLEMENTS_getEndLoc(type);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 }
 
 Stmt::child_range Stmt::children() {
@@ -228,7 +228,7 @@ Stmt::child_range Stmt::children() {
 #define STMT(type, base) \
   case Stmt::type##Class: \
     return static_cast<type*>(this)->children();
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
   llvm_unreachable("unknown statement kind!");
 }
@@ -267,7 +267,7 @@ SourceRange Stmt::getSourceRange() const {
 #define STMT(type, base) \
   case Stmt::type##Class: \
     return getSourceRangeImpl<type>(this, &type::getSourceRange);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
   llvm_unreachable("unknown statement kind!");
 }
@@ -279,7 +279,7 @@ SourceLocation Stmt::getBeginLoc() const {
 #define STMT(type, base)                                                       \
   case Stmt::type##Class:                                                      \
     return static_cast<const type *>(this)->getBeginLoc();
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
   llvm_unreachable("unknown statement kind");
 }
@@ -291,7 +291,7 @@ SourceLocation Stmt::getEndLoc() const {
 #define STMT(type, base)                                                       \
   case Stmt::type##Class:                                                      \
     return static_cast<const type *>(this)->getEndLoc();
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
   llvm_unreachable("unknown statement kind");
 }

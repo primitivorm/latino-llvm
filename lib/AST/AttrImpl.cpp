@@ -167,4 +167,4 @@ void OMPDeclareVariantAttr::printPrettyPragma(
   OS << " match(" << traitInfos << ")";
 }
 
-#include "clang/AST/AttrImpl.inc"
+#include "latino/AST/AttrImpl.inc"

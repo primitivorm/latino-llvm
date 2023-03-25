@@ -1206,7 +1206,7 @@ struct PragmaAttributeInfo {
   PragmaAttributeInfo(ParsedAttributes &Attributes) : Attributes(Attributes) {}
 };
 
-#include "clang/Parse/AttrSubMatchRulesParserStringSwitches.inc"
+#include "latino/Parse/AttrSubMatchRulesParserStringSwitches.inc"
 
 } // end anonymous namespace
 
@@ -1225,7 +1225,7 @@ static bool isAbstractAttrMatcherRule(attr::SubjectMatchRule Rule) {
 #define ATTR_MATCH_RULE(Value, Spelling, IsAbstract)                           \
   case Value:                                                                  \
     return IsAbstract;
-#include "clang/Basic/AttrSubMatchRulesList.inc"
+#include "latino/Basic/AttrSubMatchRulesList.inc"
   }
   llvm_unreachable("Invalid attribute subject match rule");
   return false;

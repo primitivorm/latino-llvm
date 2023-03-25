@@ -20,7 +20,7 @@ int latino::hasAttribute(AttrSyntax Syntax, const IdentifierInfo *Scope,
   else if (ScopeName == "_Clang")
     ScopeName = "clang";
 
-#include "clang/Basic/AttrHasAttributeImpl.inc"
+#include "latino/Basic/AttrHasAttributeImpl.inc"
 
   return 0;
 }
@@ -30,7 +30,7 @@ const char *attr::getSubjectMatchRuleSpelling(attr::SubjectMatchRule Rule) {
 #define ATTR_MATCH_RULE(NAME, SPELLING, IsAbstract)                            \
   case attr::NAME:                                                             \
     return SPELLING;
-#include "clang/Basic/AttrSubMatchRulesList.inc"
+#include "latino/Basic/AttrSubMatchRulesList.inc"
   }
   llvm_unreachable("Invalid subject match rule");
 }
@@ -77,7 +77,7 @@ bool AttributeCommonInfo::isGNUScope() const {
   return ScopeName && (ScopeName->isStr("gnu") || ScopeName->isStr("__gnu__"));
 }
 
-#include "clang/Sema/AttrParsedAttrKinds.inc"
+#include "latino/Sema/AttrParsedAttrKinds.inc"
 
 static SmallString<64> normalizeName(const IdentifierInfo *Name,
                                      const IdentifierInfo *Scope,
@@ -115,5 +115,5 @@ unsigned AttributeCommonInfo::calculateAttributeSpellingListIndex() const {
   StringRef Scope = normalizeAttrScopeName(getScopeName(), Syntax);
   StringRef Name = normalizeAttrName(getAttrName(), Scope, Syntax);
 
-#include "clang/Sema/AttrSpellingListIndex.inc"
+#include "latino/Sema/AttrSpellingListIndex.inc"
 }

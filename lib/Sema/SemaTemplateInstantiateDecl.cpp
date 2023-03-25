@@ -78,7 +78,7 @@ bool TemplateDeclInstantiator::SubstQualifier(const TagDecl *OldDecl,
 }
 
 // Include attribute instantiation code.
-#include "clang/Sema/AttrTemplateInstantiate.inc"
+#include "latino/Sema/AttrTemplateInstantiate.inc"
 
 static void instantiateDependentAlignedAttr(
     Sema &S, const MultiLevelTemplateArgumentList &TemplateArgs,

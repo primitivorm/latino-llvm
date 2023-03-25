@@ -24,7 +24,7 @@ namespace comments {
 #define COMMENT(CLASS, PARENT)                                                 \
   static_assert(std::is_trivially_destructible<CLASS>::value,                  \
                 #CLASS " should be trivially destructible!");
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef COMMENT
 #undef ABSTRACT_COMMENT
 
@@ -39,7 +39,7 @@ const char *Comment::getCommentKindName() const {
 #define COMMENT(CLASS, PARENT) \
   case CLASS##Kind: \
     return #CLASS;
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef COMMENT
 #undef ABSTRACT_COMMENT
   }
@@ -70,7 +70,7 @@ static inline void CheckCommentASTNodes() {
 #define COMMENT(CLASS, PARENT) \
   ASSERT_IMPLEMENTS_child_begin(&CLASS::child_begin); \
   ASSERT_IMPLEMENTS_child_begin(&CLASS::child_end);
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef COMMENT
 #undef ABSTRACT_COMMENT
 }
@@ -86,7 +86,7 @@ Comment::child_iterator Comment::child_begin() const {
 #define COMMENT(CLASS, PARENT) \
   case CLASS##Kind: \
     return static_cast<const CLASS *>(this)->child_begin();
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef COMMENT
 #undef ABSTRACT_COMMENT
   }
@@ -100,7 +100,7 @@ Comment::child_iterator Comment::child_end() const {
 #define COMMENT(CLASS, PARENT) \
   case CLASS##Kind: \
     return static_cast<const CLASS *>(this)->child_end();
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef COMMENT
 #undef ABSTRACT_COMMENT
   }

@@ -23,7 +23,7 @@ namespace serialization {
 // };
 //
 // The actual class is auto-generated; see latinoASTPropertiesEmitter.cpp.
-#include "clang/AST/AbstractTypeReader.inc"
+#include "latino/AST/AbstractTypeReader.inc"
 
 } // end namespace serialization
 } // end namespace latino

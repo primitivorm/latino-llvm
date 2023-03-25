@@ -80,7 +80,7 @@ static StringRef normalizeAttrName(StringRef Name) {
 static bool isAttributeLateParsed(const IdentifierInfo &II) {
 #define LATINO_ATTR_LATE_PARSED_LIST
     return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
-#include "clang/Parse/AttrParserStringSwitches.inc"
+#include "latino/Parse/AttrParserStringSwitches.inc"
         .Default(false);
 #undef LATINO_ATTR_LATE_PARSED_LIST
 }
@@ -247,7 +247,7 @@ void Parser::ParseGNUAttributes(ParsedAttributes &attrs,
 static bool attributeHasIdentifierArg(const IdentifierInfo &II) {
 #define LATINO_ATTR_IDENTIFIER_ARG_LIST
   return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
-#include "clang/Parse/AttrParserStringSwitches.inc"
+#include "latino/Parse/AttrParserStringSwitches.inc"
            .Default(false);
 #undef LATINO_ATTR_IDENTIFIER_ARG_LIST
 }
@@ -256,7 +256,7 @@ static bool attributeHasIdentifierArg(const IdentifierInfo &II) {
 static bool attributeHasVariadicIdentifierArg(const IdentifierInfo &II) {
 #define LATINO_ATTR_VARIADIC_IDENTIFIER_ARG_LIST
   return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
-#include "clang/Parse/AttrParserStringSwitches.inc"
+#include "latino/Parse/AttrParserStringSwitches.inc"
            .Default(false);
 #undef LATINO_ATTR_VARIADIC_IDENTIFIER_ARG_LIST
 }
@@ -265,7 +265,7 @@ static bool attributeHasVariadicIdentifierArg(const IdentifierInfo &II) {
 static bool attributeTreatsKeywordThisAsIdentifier(const IdentifierInfo &II) {
 #define LATINO_ATTR_THIS_ISA_IDENTIFIER_ARG_LIST
   return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
-#include "clang/Parse/AttrParserStringSwitches.inc"
+#include "latino/Parse/AttrParserStringSwitches.inc"
            .Default(false);
 #undef LATINO_ATTR_THIS_ISA_IDENTIFIER_ARG_LIST
 }
@@ -274,7 +274,7 @@ static bool attributeTreatsKeywordThisAsIdentifier(const IdentifierInfo &II) {
 static bool attributeIsTypeArgAttr(const IdentifierInfo &II) {
 #define LATINO_ATTR_TYPE_ARG_LIST
   return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
-#include "clang/Parse/AttrParserStringSwitches.inc"
+#include "latino/Parse/AttrParserStringSwitches.inc"
            .Default(false);
 #undef LATINO_ATTR_TYPE_ARG_LIST
 }
@@ -284,7 +284,7 @@ static bool attributeIsTypeArgAttr(const IdentifierInfo &II) {
 static bool attributeParsedArgsUnevaluated(const IdentifierInfo &II) {
 #define LATINO_ATTR_ARG_CONTEXT_LIST
   return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
-#include "clang/Parse/AttrParserStringSwitches.inc"
+#include "latino/Parse/AttrParserStringSwitches.inc"
            .Default(false);
 #undef LATINO_ATTR_ARG_CONTEXT_LIST
 }

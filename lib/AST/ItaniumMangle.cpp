@@ -518,7 +518,7 @@ private:
 #define ABSTRACT_TYPE(CLASS, PARENT)
 #define NON_CANONICAL_TYPE(CLASS, PARENT)
 #define TYPE(CLASS, PARENT) void mangleType(const CLASS##Type *T);
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
 
   void mangleType(const TagType*);
   void mangleType(TemplateName);
@@ -2606,7 +2606,7 @@ void CXXNameMangler::mangleType(QualType T) {
     case Type::CLASS: \
       mangleType(static_cast<const CLASS##Type*>(ty)); \
       break;
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
     }
   }
 
@@ -3779,7 +3779,7 @@ recurse:
 #define EXPR(Type, Base)
 #define STMT(Type, Base) \
   case Expr::Type##Class:
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
     // fallthrough
 
   // These all can only appear in local or variable-initialization

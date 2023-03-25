@@ -22,7 +22,7 @@ namespace latino {
 namespace comments {
 
 namespace {
-#include "clang/AST/CommentHTMLTagsProperties.inc"
+#include "latino/AST/CommentHTMLTagsProperties.inc"
 } // end anonymous namespace
 
 Sema::Sema(llvm::BumpPtrAllocator &Allocator, const SourceManager &SourceMgr,

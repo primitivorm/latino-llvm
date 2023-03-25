@@ -108,7 +108,7 @@ public:
 #define ABSTRACT_TYPE(Class, Base)
 #define TYPE(Class, Base) \
     Class = Type::Class,
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
     Qualified
   };
 

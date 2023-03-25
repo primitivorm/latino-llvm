@@ -647,7 +647,7 @@ getParentAttrMatcherRule(attr::SubjectMatchRule Rule) {
 #define ATTR_MATCH_SUB_RULE(Value, Spelling, IsAbstract, Parent, IsNegated)    \
   case Value:                                                                  \
     return Parent;
-#include "clang/Basic/AttrSubMatchRulesList.inc"
+#include "latino/Basic/AttrSubMatchRulesList.inc"
   }
 }
 
@@ -660,7 +660,7 @@ bool isNegatedAttrMatcherSubRule(attr::SubjectMatchRule Rule) {
 #define ATTR_MATCH_SUB_RULE(Value, Spelling, IsAbstract, Parent, IsNegated)    \
   case Value:                                                                  \
     return IsNegated;
-#include "clang/Basic/AttrSubMatchRulesList.inc"
+#include "latino/Basic/AttrSubMatchRulesList.inc"
   }
 }
 

@@ -142,13 +142,13 @@ private:
     NKI_NestedNameSpecifier,
     NKI_Decl,
 #define DECL(DERIVED, BASE) NKI_##DERIVED##Decl,
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
     NKI_Stmt,
 #define STMT(DERIVED, BASE) NKI_##DERIVED,
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
     NKI_Type,
 #define TYPE(DERIVED, BASE) NKI_##DERIVED##Type,
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
     NKI_OMPClause,
 #define OMP_CLAUSE_CLASS(Enum, Str, Class) NKI_##Class,
 #include "llvm/Frontend/OpenMP/OMPKinds.def"
@@ -202,11 +202,11 @@ KIND_TO_KIND_ID(Type)
 KIND_TO_KIND_ID(OMPClause)
 KIND_TO_KIND_ID(CXXBaseSpecifier)
 #define DECL(DERIVED, BASE) KIND_TO_KIND_ID(DERIVED##Decl)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 #define STMT(DERIVED, BASE) KIND_TO_KIND_ID(DERIVED)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 #define TYPE(DERIVED, BASE) KIND_TO_KIND_ID(DERIVED##Type)
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
 #define OMP_CLAUSE_CLASS(Enum, Str, Class) KIND_TO_KIND_ID(Class)
 #include "llvm/Frontend/OpenMP/OMPKinds.def"
 #undef KIND_TO_KIND_ID

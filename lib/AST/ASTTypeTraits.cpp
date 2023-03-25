@@ -32,13 +32,13 @@ const ASTNodeKind::KindInfo ASTNodeKind::AllKindInfo[] = {
   { NKI_None, "NestedNameSpecifier" },
   { NKI_None, "Decl" },
 #define DECL(DERIVED, BASE) { NKI_##BASE, #DERIVED "Decl" },
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   { NKI_None, "Stmt" },
 #define STMT(DERIVED, BASE) { NKI_##BASE, #DERIVED },
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   { NKI_None, "Type" },
 #define TYPE(DERIVED, BASE) { NKI_##BASE, #DERIVED "Type" },
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   { NKI_None, "OMPClause" },
 #define OMP_CLAUSE_CLASS(Enum, Str, Class) {NKI_OMPClause, #Class},
 #include "llvm/Frontend/OpenMP/OMPKinds.def"
@@ -84,7 +84,7 @@ ASTNodeKind ASTNodeKind::getFromNode(const Decl &D) {
 #define DECL(DERIVED, BASE)                                                    \
     case Decl::DERIVED: return ASTNodeKind(NKI_##DERIVED##Decl);
 #define ABSTRACT_DECL(D)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   };
   llvm_unreachable("invalid decl kind");
 }
@@ -95,7 +95,7 @@ ASTNodeKind ASTNodeKind::getFromNode(const Stmt &S) {
 #define STMT(CLASS, PARENT)                                                    \
     case Stmt::CLASS##Class: return ASTNodeKind(NKI_##CLASS);
 #define ABSTRACT_STMT(S)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
   llvm_unreachable("invalid stmt kind");
 }
@@ -105,7 +105,7 @@ ASTNodeKind ASTNodeKind::getFromNode(const Type &T) {
 #define TYPE(Class, Base)                                                      \
     case Type::Class: return ASTNodeKind(NKI_##Class##Type);
 #define ABSTRACT_TYPE(Class, Base)
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   }
   llvm_unreachable("invalid type kind");
  }

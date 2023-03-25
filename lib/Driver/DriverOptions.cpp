@@ -17,7 +17,7 @@ using namespace latino::driver::options;
 using namespace llvm::opt;
 
 #define PREFIX(NAME, VALUE) static const char *const NAME[] = VALUE;
-#include "clang/Driver/Options.inc"
+#include "latino/Driver/Options.inc"
 #undef PREFIX
 
 static const OptTable::Info InfoTable[] = {
@@ -25,7 +25,7 @@ static const OptTable::Info InfoTable[] = {
                HELPTEXT, METAVAR, VALUES)                                      \
   {PREFIX, NAME,  HELPTEXT,    METAVAR,     OPT_##ID,  Option::KIND##Class,    \
    PARAM,  FLAGS, OPT_##GROUP, OPT_##ALIAS, ALIASARGS, VALUES},
-#include "clang/Driver/Options.inc"
+#include "latino/Driver/Options.inc"
 #undef OPTION
 };
 
@@ -47,7 +47,7 @@ const llvm::opt::OptTable &latino::driver::getDriverOptTable() {
     // Opt is a variable used in the code fragment in Options.inc.
     OptTable &Opt = *Result;
 #define OPTTABLE_ARG_INIT
-#include "clang/Driver/Options.inc"
+#include "latino/Driver/Options.inc"
 #undef OPTTABLE_ARG_INIT
     return Result.release();
   }();

@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define REFACTORINGSTART
-#include "clang/Basic/DiagnosticRefactoringKinds.inc"
+#include "latino/Basic/DiagnosticRefactoringKinds.inc"
 #undef DIAG
   NUM_BUILTIN_REFACTORING_DIAGNOSTICS
 };

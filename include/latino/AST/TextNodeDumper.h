@@ -226,7 +226,7 @@ public:
                                 const comments::FullComment *);
 
 // Implements Visit methods for Attrs.
-#include "clang/AST/AttrTextNodeDump.inc"
+#include "latino/AST/AttrTextNodeDump.inc"
 
   void VisitNullTemplateArgument(const TemplateArgument &TA);
   void VisitTypeTemplateArgument(const TemplateArgument &TA);

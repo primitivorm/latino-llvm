@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define FRONTENDSTART
-#include "clang/Basic/DiagnosticFrontendKinds.inc"
+#include "latino/Basic/DiagnosticFrontendKinds.inc"
 #undef DIAG
   NUM_BUILTIN_FRONTEND_DIAGNOSTICS
 };

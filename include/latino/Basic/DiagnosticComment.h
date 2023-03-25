@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define COMMENTSTART
-#include "clang/Basic/DiagnosticCommentKinds.inc"
+#include "latino/Basic/DiagnosticCommentKinds.inc"
 #undef DIAG
   NUM_BUILTIN_COMMENT_DIAGNOSTICS
 };

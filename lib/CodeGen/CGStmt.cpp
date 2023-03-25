@@ -107,7 +107,7 @@ void CodeGenFunction::EmitStmt(const Stmt *S, ArrayRef<const Attr *> Attrs) {
 #define ABSTRACT_STMT(Op)
 #define EXPR(Type, Base) \
   case Stmt::Type##Class:
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   {
     // Remember the block we came in on.
     llvm::BasicBlock *incoming = Builder.GetInsertBlock();

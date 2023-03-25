@@ -157,7 +157,7 @@ set(openmp_wrapper_files
   openmp_wrappers/new
 )
 
-set(output_dir ${LLVM_LIBRARY_OUTPUT_INTDIR}/clang/${CLANG_VERSION}/include)
+set(output_dir ${LLVM_LIBRARY_OUTPUT_INTDIR}/latino/${LATINO_VERSION}/include)
 set(out_files)
 set(generated_files)
 
@@ -172,19 +172,8 @@ function(copy_header_to_output_dir src_dir file)
   set(out_files ${out_files} PARENT_SCOPE)
 endfunction(copy_header_to_output_dir)
 
-# function(clang_generate_header td_option td_file out_file)
-#   clang_tablegen(${out_file} ${td_option}
-#   -I ${CLANG_SOURCE_DIR}/include/clang/Basic/
-#   SOURCE ${CLANG_SOURCE_DIR}/include/clang/Basic/${td_file})
-
-#   copy_header_to_output_dir(${CMAKE_CURRENT_BINARY_DIR} ${out_file})
-#   set(out_files ${out_files} PARENT_SCOPE)
-#   list(APPEND generated_files "${CMAKE_CURRENT_BINARY_DIR}/${out_file}")
-#   set(generated_files ${generated_files} PARENT_SCOPE)
-# endfunction(clang_generate_header)
-
-function(clang_generate_header td_option td_file out_file)
-  clang_tablegen(${out_file} ${td_option}
+function(latino_generate_header td_option td_file out_file)
+  latino_tablegen(${out_file} ${td_option}
   -I ${LATINO_SOURCE_DIR}/include/latino/Basic/
   SOURCE ${LATINO_SOURCE_DIR}/include/latino/Basic/${td_file})
 
@@ -192,7 +181,7 @@ function(clang_generate_header td_option td_file out_file)
   set(out_files ${out_files} PARENT_SCOPE)
   list(APPEND generated_files "${CMAKE_CURRENT_BINARY_DIR}/${out_file}")
   set(generated_files ${generated_files} PARENT_SCOPE)
-endfunction(clang_generate_header)
+endfunction(latino_generate_header)
 
 
 # Copy header files from the source directory to the build directory
@@ -202,17 +191,17 @@ endforeach( f )
 
 # Generate header files and copy them to the build directory
 # Generate arm_neon.h
-clang_generate_header(-gen-arm-neon arm_neon.td arm_neon.h)
+latino_generate_header(-gen-arm-neon arm_neon.td arm_neon.h)
 # Generate arm_fp16.h
-clang_generate_header(-gen-arm-fp16 arm_fp16.td arm_fp16.h)
+latino_generate_header(-gen-arm-fp16 arm_fp16.td arm_fp16.h)
 # Generate arm_sve.h
-clang_generate_header(-gen-arm-sve-header arm_sve.td arm_sve.h)
+latino_generate_header(-gen-arm-sve-header arm_sve.td arm_sve.h)
 # Generate arm_bf16.h
-clang_generate_header(-gen-arm-bf16 arm_bf16.td arm_bf16.h)
+latino_generate_header(-gen-arm-bf16 arm_bf16.td arm_bf16.h)
 # Generate arm_mve.h
-clang_generate_header(-gen-arm-mve-header arm_mve.td arm_mve.h)
+latino_generate_header(-gen-arm-mve-header arm_mve.td arm_mve.h)
 # Generate arm_cde.h
-clang_generate_header(-gen-arm-cde-header arm_cde.td arm_cde.h)
+latino_generate_header(-gen-arm-cde-header arm_cde.td arm_cde.h)
 
 add_custom_target(latino-resource-headers ALL DEPENDS ${out_files})
 set_target_properties(latino-resource-headers PROPERTIES

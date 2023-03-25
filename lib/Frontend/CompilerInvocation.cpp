@@ -122,7 +122,7 @@ CompilerInvocationBase::~CompilerInvocationBase() = default;
 //===----------------------------------------------------------------------===//
 
 #define SIMPLE_ENUM_VALUE_TABLE
-#include "clang/Driver/Options.inc"
+#include "latino/Driver/Options.inc"
 #undef SIMPLE_ENUM_VALUE_TABLE
 
 static llvm::Optional<unsigned> normalizeSimpleEnum(OptSpecifier Opt,
@@ -3684,7 +3684,7 @@ bool CompilerInvocation::parseSimpleArgs(const ArgList &Args,
       this->KEYPATH = DEFAULT_VALUE;                                           \
   }
 
-#include "clang/Driver/Options.inc"
+#include "latino/Driver/Options.inc"
 #undef OPTION_WITH_MARSHALLING_STRING
 #undef OPTION_WITH_MARSHALLING_FLAG
   return true;
@@ -3961,7 +3961,7 @@ void CompilerInvocation::generateCC1CommandLine(
     }                                                                          \
   }
 
-#include "clang/Driver/Options.inc"
+#include "latino/Driver/Options.inc"
 #undef OPTION_WITH_MARSHALLING_STRING
 #undef OPTION_WITH_MARSHALLING_FLAG
 }

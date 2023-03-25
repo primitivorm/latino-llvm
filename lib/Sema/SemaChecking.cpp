@@ -2065,7 +2065,7 @@ bool Sema::CheckSVEBuiltinFunctionCall(unsigned BuiltinID, CallExpr *TheCall) {
   default:
     return false;
 #define GET_SVE_IMMEDIATE_CHECK
-#include "clang/Basic/arm_sve_sema_rangechecks.inc"
+#include "latino/Basic/arm_sve_sema_rangechecks.inc"
 #undef GET_SVE_IMMEDIATE_CHECK
   }
 
@@ -2187,8 +2187,8 @@ bool Sema::CheckNeonBuiltinFunctionCall(const TargetInfo &TI,
   bool HasConstPtr = false;
   switch (BuiltinID) {
 #define GET_NEON_OVERLOAD_CHECK
-#include "clang/Basic/arm_neon.inc"
-#include "clang/Basic/arm_fp16.inc"
+#include "latino/Basic/arm_neon.inc"
+#include "latino/Basic/arm_fp16.inc"
 #undef GET_NEON_OVERLOAD_CHECK
   }
 
@@ -2239,8 +2239,8 @@ bool Sema::CheckNeonBuiltinFunctionCall(const TargetInfo &TI,
   default:
     return false;
   #define GET_NEON_IMMEDIATE_CHECK
-  #include "clang/Basic/arm_neon.inc"
-  #include "clang/Basic/arm_fp16.inc"
+  #include "latino/Basic/arm_neon.inc"
+  #include "latino/Basic/arm_fp16.inc"
   #undef GET_NEON_IMMEDIATE_CHECK
   }
 
@@ -2251,7 +2251,7 @@ bool Sema::CheckMVEBuiltinFunctionCall(unsigned BuiltinID, CallExpr *TheCall) {
   switch (BuiltinID) {
   default:
     return false;
-  #include "clang/Basic/arm_mve_builtin_sema.inc"
+  #include "latino/Basic/arm_mve_builtin_sema.inc"
   }
 }
 
@@ -2261,7 +2261,7 @@ bool Sema::CheckCDEBuiltinFunctionCall(const TargetInfo &TI, unsigned BuiltinID,
   switch (BuiltinID) {
   default:
     return false;
-#include "clang/Basic/arm_cde_builtin_sema.inc"
+#include "latino/Basic/arm_cde_builtin_sema.inc"
   }
 
   if (Err)

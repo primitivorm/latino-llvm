@@ -204,7 +204,7 @@ public:
     ConstStmtVisitor<CloneTypeIIStmtDataCollector<T>>::Visit##CLASS(S);        \
   }
 
-#include "clang/AST/StmtDataCollectors.inc"
+#include "latino/AST/StmtDataCollectors.inc"
 
 // Type II clones ignore variable names and literals, so let's skip them.
 #define SKIP(CLASS)                                                            \

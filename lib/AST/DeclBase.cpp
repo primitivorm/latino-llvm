@@ -58,7 +58,7 @@ using namespace latino;
 
 #define DECL(DERIVED, BASE) static int n##DERIVED##s = 0;
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 
 void Decl::updateOutOfDate(IdentifierInfo &II) const {
   getASTContext().getExternalSource()->updateOutOfDateIdentifier(II);
@@ -68,7 +68,7 @@ void Decl::updateOutOfDate(IdentifierInfo &II) const {
   static_assert(alignof(Decl) >= alignof(DERIVED##Decl),                       \
                 "Alignment sufficient after objects prepended to " #DERIVED);
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 
 void *Decl::operator new(std::size_t Size, const ASTContext &Context,
                          unsigned ID, std::size_t Extra) {
@@ -125,7 +125,7 @@ const char *Decl::getDeclKindName() const {
   default: llvm_unreachable("Declaration not in DeclNodes.inc!");
 #define DECL(DERIVED, BASE) case DERIVED: return #DERIVED;
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
 }
 
@@ -156,7 +156,7 @@ const char *DeclContext::getDeclKindName() const {
   switch (getDeclKind()) {
 #define DECL(DERIVED, BASE) case Decl::DERIVED: return #DERIVED;
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
   llvm_unreachable("Declaration context not in DeclNodes.inc!");
 }
@@ -172,7 +172,7 @@ void Decl::PrintStats() {
   int totalDecls = 0;
 #define DECL(DERIVED, BASE) totalDecls += n##DERIVED##s;
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   llvm::errs() << "  " << totalDecls << " decls total.\n";
 
   int totalBytes = 0;
@@ -185,7 +185,7 @@ void Decl::PrintStats() {
                  << " bytes)\n";                                        \
   }
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 
   llvm::errs() << "Total bytes = " << totalBytes << "\n";
 }
@@ -194,7 +194,7 @@ void Decl::add(Kind k) {
   switch (k) {
 #define DECL(DERIVED, BASE) case DERIVED: ++n##DERIVED##s; break;
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
 }
 
@@ -914,13 +914,13 @@ Decl *Decl::castFromDeclContext (const DeclContext *D) {
     case Decl::NAME:       \
       return static_cast<NAME##Decl *>(const_cast<DeclContext *>(D));
 #define DECL_CONTEXT_BASE(NAME)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
     default:
 #define DECL(NAME, BASE)
 #define DECL_CONTEXT_BASE(NAME)                  \
       if (DK >= first##NAME && DK <= last##NAME) \
         return static_cast<NAME##Decl *>(const_cast<DeclContext *>(D));
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
       llvm_unreachable("a decl that inherits DeclContext isn't handled");
   }
 }
@@ -933,13 +933,13 @@ DeclContext *Decl::castToDeclContext(const Decl *D) {
     case Decl::NAME:       \
       return static_cast<NAME##Decl *>(const_cast<Decl *>(D));
 #define DECL_CONTEXT_BASE(NAME)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
     default:
 #define DECL(NAME, BASE)
 #define DECL_CONTEXT_BASE(NAME)                                   \
       if (DK >= first##NAME && DK <= last##NAME)                  \
         return static_cast<NAME##Decl *>(const_cast<Decl *>(D));
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
       llvm_unreachable("a decl that inherits DeclContext isn't handled");
   }
 }
@@ -1067,7 +1067,7 @@ bool DeclContext::classof(const Decl *D) {
 #define DECL(NAME, BASE)
 #define DECL_CONTEXT(NAME) case Decl::NAME:
 #define DECL_CONTEXT_BASE(NAME)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
       return true;
     default:
 #define DECL(NAME, BASE)
@@ -1075,7 +1075,7 @@ bool DeclContext::classof(const Decl *D) {
       if (D->getKind() >= Decl::first##NAME &&  \
           D->getKind() <= Decl::last##NAME)     \
         return true;
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
       return false;
   }
 }

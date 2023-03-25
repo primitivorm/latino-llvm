@@ -107,7 +107,7 @@ public:
 #define ABSTRACT_STMT(STMT)
 #define STMT(CLASS, PARENT)                              \
     case Stmt::CLASS ## Class: DISPATCH(CLASS, CLASS);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
     }
   }
 
@@ -115,7 +115,7 @@ public:
   // back on VisitExpr or whatever else is the superclass.
 #define STMT(CLASS, PARENT)                                   \
   RetTy Visit ## CLASS(PTR(CLASS) S, ParamTys... P) { DISPATCH(PARENT, PARENT); }
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
   // If the implementation doesn't implement binary operator methods, fall back
   // on VisitBinaryOperator.

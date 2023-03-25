@@ -6802,7 +6802,7 @@ class BufferToAPValueConverter {
 #define NON_CANONICAL_UNLESS_DEPENDENT(Class, Base)                            \
   case Type::Class:                                                            \
     llvm_unreachable("either dependent or not canonical!");
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
     }
     llvm_unreachable("Unhandled Type::TypeClass");
   }
@@ -10501,7 +10501,7 @@ EvaluateBuiltinClassifyType(QualType T, const LangOptions &LangOpts) {
 #define DEPENDENT_TYPE(ID, BASE) case Type::ID:
 #define NON_CANONICAL_TYPE(ID, BASE) case Type::ID:
 #define NON_CANONICAL_UNLESS_DEPENDENT_TYPE(ID, BASE) case Type::ID:
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   case Type::Auto:
   case Type::DeducedTemplateSpecialization:
       llvm_unreachable("unexpected non-canonical or dependent type");
@@ -10515,7 +10515,7 @@ EvaluateBuiltinClassifyType(QualType T, const LangOptions &LangOpts) {
     case BuiltinType::ID: return GCCTypeClass::RealFloat;
 #define PLACEHOLDER_TYPE(ID, SINGLETON_ID) \
     case BuiltinType::ID: break;
-#include "clang/AST/BuiltinTypes.def"
+#include "latino/AST/BuiltinTypes.def"
     case BuiltinType::Void:
       return GCCTypeClass::Void;
 
@@ -14469,7 +14469,7 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
 #define ABSTRACT_STMT(Node)
 #define STMT(Node, Base) case Expr::Node##Class:
 #define EXPR(Node, Base)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   case Expr::PredefinedExprClass:
   case Expr::FloatingLiteralClass:
   case Expr::ImaginaryLiteralClass:

@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define CROSSTUSTART
-#include "clang/Basic/DiagnosticCrossTUKinds.inc"
+#include "latino/Basic/DiagnosticCrossTUKinds.inc"
 #undef DIAG
   NUM_BUILTIN_CROSSTU_DIAGNOSTICS
 };

@@ -342,7 +342,7 @@ struct ParsedTargetAttr {
   }
 };
 
-#include "clang/AST/Attrs.inc"
+#include "latino/AST/Attrs.inc"
 
 inline const DiagnosticBuilder &operator<<(const DiagnosticBuilder &DB,
                                            const Attr *At) {

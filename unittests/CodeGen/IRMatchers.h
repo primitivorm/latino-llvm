@@ -30,8 +30,8 @@
 /// given tree.
 //===----------------------------------------------------------------------===//
 
-#ifndef CLANG_UNITTESTS_CODEGEN_IRMATCHERS_H
-#define CLANG_UNITTESTS_CODEGEN_IRMATCHERS_H
+#ifndef LATINO_UNITTESTS_CODEGEN_IRMATCHERS_H
+#define LATINO_UNITTESTS_CODEGEN_IRMATCHERS_H
 
 #include "llvm/ADT/PointerUnion.h"
 #include "llvm/IR/BasicBlock.h"

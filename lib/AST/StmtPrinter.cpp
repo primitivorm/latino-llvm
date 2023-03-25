@@ -161,7 +161,7 @@ namespace {
 #define ABSTRACT_STMT(CLASS)
 #define STMT(CLASS, PARENT) \
     void Visit##CLASS(CLASS *Node);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   };
 
 } // namespace

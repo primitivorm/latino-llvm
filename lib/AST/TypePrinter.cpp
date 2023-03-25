@@ -125,7 +125,7 @@ namespace {
 #define TYPE(CLASS, PARENT) \
     void print##CLASS##Before(const CLASS##Type *T, raw_ostream &OS); \
     void print##CLASS##After(const CLASS##Type *T, raw_ostream &OS);
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
 
   private:
     void printBefore(const Type *ty, Qualifiers qs, raw_ostream &OS);
@@ -325,7 +325,7 @@ void TypePrinter::printBefore(const Type *T,Qualifiers Quals, raw_ostream &OS) {
 #define TYPE(CLASS, PARENT) case Type::CLASS: \
     print##CLASS##Before(cast<CLASS##Type>(T), OS); \
     break;
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   }
 
   if (hasAfterQuals) {
@@ -351,7 +351,7 @@ void TypePrinter::printAfter(const Type *T, Qualifiers Quals, raw_ostream &OS) {
 #define TYPE(CLASS, PARENT) case Type::CLASS: \
     print##CLASS##After(cast<CLASS##Type>(T), OS); \
     break;
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   }
 }
 
@@ -1559,7 +1559,7 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
 #define TYPE_ATTR(NAME)
 #define DECL_OR_TYPE_ATTR(NAME)
 #define ATTR(NAME) case attr::NAME:
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
     llvm_unreachable("non-type attribute attached to type");
 
   case attr::OpenCLPrivateAddressSpace:

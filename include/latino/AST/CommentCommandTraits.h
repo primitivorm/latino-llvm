@@ -128,7 +128,7 @@ class CommandTraits {
 public:
   enum KnownCommandIDs {
 #define COMMENT_COMMAND(NAME) KCI_##NAME,
-#include "clang/AST/CommentCommandList.inc"
+#include "latino/AST/CommentCommandList.inc"
 #undef COMMENT_COMMAND
     KCI_Last
   };

@@ -3198,7 +3198,7 @@ llvm::DIType *CGDebugInfo::CreateTypeNode(QualType Ty, llvm::DIFile *Unit) {
 #define ABSTRACT_TYPE(Class, Base)
 #define NON_CANONICAL_TYPE(Class, Base)
 #define DEPENDENT_TYPE(Class, Base) case Type::Class:
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
     llvm_unreachable("Dependent types cannot show up in debug information");
 
   case Type::ExtVector:

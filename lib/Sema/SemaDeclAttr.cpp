@@ -5008,7 +5008,7 @@ static bool ArmBuiltinAliasValid(unsigned BuiltinID, StringRef AliasName,
 }
 
 static bool ArmMveAliasValid(unsigned BuiltinID, StringRef AliasName) {
-#include "clang/Basic/arm_mve_builtin_aliases.inc"
+#include "latino/Basic/arm_mve_builtin_aliases.inc"
   // The included file defines:
   // - ArrayRef<IntrinToName> Map
   // - const char IntrinNames[]
@@ -5016,7 +5016,7 @@ static bool ArmMveAliasValid(unsigned BuiltinID, StringRef AliasName) {
 }
 
 static bool ArmCdeAliasValid(unsigned BuiltinID, StringRef AliasName) {
-#include "clang/Basic/arm_cde_builtin_aliases.inc"
+#include "latino/Basic/arm_cde_builtin_aliases.inc"
   return ArmBuiltinAliasValid(BuiltinID, AliasName, Map, IntrinNames);
 }
 
@@ -5026,7 +5026,7 @@ static bool ArmSveAliasValid(unsigned BuiltinID, StringRef AliasName) {
     return false;
 #define GET_SVE_BUILTINS
 #define BUILTIN(name, types, attr) case SVE::BI##name:
-#include "clang/Basic/arm_sve_builtins.inc"
+#include "latino/Basic/arm_sve_builtins.inc"
     return true;
   }
 }

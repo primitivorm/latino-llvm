@@ -305,7 +305,7 @@ static StringRef getRuleDescription(StringRef CheckName) {
 #define GET_CHECKERS
 #define CHECKER(FULLNAME, CLASS, HELPTEXT, DOC_URI, IS_HIDDEN)                 \
   .Case(FULLNAME, HELPTEXT)
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef CHECKER
 #undef GET_CHECKERS
       ;
@@ -316,7 +316,7 @@ static StringRef getRuleHelpURIStr(StringRef CheckName) {
 #define GET_CHECKERS
 #define CHECKER(FULLNAME, CLASS, HELPTEXT, DOC_URI, IS_HIDDEN)                 \
   .Case(FULLNAME, DOC_URI)
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef CHECKER
 #undef GET_CHECKERS
       ;

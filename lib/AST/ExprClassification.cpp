@@ -108,7 +108,7 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
 #define ABSTRACT_STMT(Kind)
 #define STMT(Kind, Base) case Expr::Kind##Class:
 #define EXPR(Kind, Base)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
     llvm_unreachable("cannot classify a statement");
 
     // First come the expressions that are always lvalues, unconditionally.

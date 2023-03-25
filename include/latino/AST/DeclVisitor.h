@@ -39,7 +39,7 @@ public:
 #define DECL(DERIVED, BASE) \
       case Decl::DERIVED: DISPATCH(DERIVED##Decl, DERIVED##Decl);
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
     }
     llvm_unreachable("Decl that isn't part of DeclNodes.inc!");
   }
@@ -48,7 +48,7 @@ public:
   // method, fall back to the parent.
 #define DECL(DERIVED, BASE) \
   RetTy Visit##DERIVED##Decl(PTR(DERIVED##Decl) D) { DISPATCH(BASE, BASE); }
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 
   RetTy VisitDecl(PTR(Decl) D) { return RetTy(); }
 

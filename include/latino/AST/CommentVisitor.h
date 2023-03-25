@@ -33,7 +33,7 @@ public:
 #define ABSTRACT_COMMENT(COMMENT)
 #define COMMENT(CLASS, PARENT) \
     case Comment::CLASS##Kind: DISPATCH(CLASS, CLASS);
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef ABSTRACT_COMMENT
 #undef COMMENT
     }
@@ -44,7 +44,7 @@ public:
 #define ABSTRACT_COMMENT(COMMENT) COMMENT
 #define COMMENT(CLASS, PARENT)                                                 \
   RetTy visit##CLASS(PTR(CLASS) C, ParamTys... P) { DISPATCH(PARENT, PARENT); }
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
 #undef ABSTRACT_COMMENT
 #undef COMMENT
 

@@ -49,8 +49,8 @@ static inline StringRef convertCodePointToUTF8(
 
 namespace {
 
-#include "clang/AST/CommentHTMLTags.inc"
-#include "clang/AST/CommentHTMLNamedCharacterReferences.inc"
+#include "latino/AST/CommentHTMLTags.inc"
+#include "latino/AST/CommentHTMLNamedCharacterReferences.inc"
 
 } // end anonymous namespace
 

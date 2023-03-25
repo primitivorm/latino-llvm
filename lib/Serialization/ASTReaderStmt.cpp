@@ -122,7 +122,7 @@ namespace latino {
     void VisitStmt(Stmt *S);
 #define STMT(Type, Base) \
     void Visit##Type(Type *);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   };
 
 } // namespace latino

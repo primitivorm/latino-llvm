@@ -98,7 +98,7 @@ inline T *makePointerFromOptional(Optional<T *> value) {
 // };
 
 // The actual classes are auto-generated; see latinoASTPropertiesEmitter.cpp.
-#include "clang/AST/AbstractBasicReader.inc"
+#include "latino/AST/AbstractBasicReader.inc"
 
 /// DataStreamBasicReader provides convenience implementations for many
 /// BasicReader methods based on the assumption that the

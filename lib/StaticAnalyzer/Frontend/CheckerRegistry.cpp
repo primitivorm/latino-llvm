@@ -63,7 +63,7 @@ CheckerRegistry::CheckerRegistry(
 #define GET_PACKAGES
 #define PACKAGE(FULLNAME) addPackage(FULLNAME);
 
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef CHECKER
 #undef GET_CHECKERS
 #undef PACKAGE
@@ -137,7 +137,7 @@ CheckerRegistry::CheckerRegistry(
   addPackageOption(TYPE, FULLNAME, CMDFLAG, DEFAULT_VAL, DESC,                 \
                    DEVELOPMENT_STATUS, IS_HIDDEN);
 
-#include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+#include "latino/StaticAnalyzer/Checkers/Checkers.inc"
 #undef CHECKER_DEPENDENCY
 #undef GET_CHECKER_DEPENDENCIES
 #undef CHECKER_WEAK_DEPENDENCY

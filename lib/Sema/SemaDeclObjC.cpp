@@ -4257,7 +4257,7 @@ private:
 #define ABSTRACT_DECL(expansion)
 #define DECL(type, base) \
     case Decl::type:
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
       llvm_unreachable("not an ObjC container!");
     }
   }

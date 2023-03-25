@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define ANALYSISSTART
-#include "clang/Basic/DiagnosticAnalysisKinds.inc"
+#include "latino/Basic/DiagnosticAnalysisKinds.inc"
 #undef DIAG
   NUM_BUILTIN_ANALYSIS_DIAGNOSTICS
 };

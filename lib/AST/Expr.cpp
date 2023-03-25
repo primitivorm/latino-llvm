@@ -231,7 +231,7 @@ SourceLocation Expr::getExprLoc() const {
   case Stmt::type##Class: break;
 #define EXPR(type, base) \
   case Stmt::type##Class: return getExprLocImpl<type>(this, &type::getExprLoc);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
   llvm_unreachable("unknown expression kind");
 }
@@ -1858,7 +1858,7 @@ CXXBaseSpecifier **CastExpr::path_buffer() {
   case Stmt::Type##Class:                                                      \
     return static_cast<Type *>(this)->getTrailingObjects<CXXBaseSpecifier *>();
 #define STMT(Type, Base)
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   default:
     llvm_unreachable("non-cast expressions not possible here");
   }
@@ -3405,7 +3405,7 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
   #define ABSTRACT_STMT(Type)
   #define STMT(Type, Base) case Type##Class:
   #define EXPR(Type, Base)
-  #include "clang/AST/StmtNodes.inc"
+  #include "latino/AST/StmtNodes.inc"
     llvm_unreachable("unexpected Expr kind");
 
   case DependentScopeDeclRefExprClass:

@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define PARSESTART
-#include "clang/Basic/DiagnosticParseKinds.inc"
+#include "latino/Basic/DiagnosticParseKinds.inc"
 #undef DIAG
   NUM_BUILTIN_PARSE_DIAGNOSTICS
 };

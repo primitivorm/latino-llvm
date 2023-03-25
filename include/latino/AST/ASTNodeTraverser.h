@@ -716,7 +716,7 @@ public:
   }
 
   // Implements Visit methods for Attrs.
-#include "clang/AST/AttrNodeTraverse.inc"
+#include "latino/AST/AttrNodeTraverse.inc"
 };
 
 } // namespace latino

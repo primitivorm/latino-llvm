@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define LEXSTART
-#include "clang/Basic/DiagnosticLexKinds.inc"
+#include "latino/Basic/DiagnosticLexKinds.inc"
 #undef DIAG
   NUM_BUILTIN_LEX_DIAGNOSTICS
 };

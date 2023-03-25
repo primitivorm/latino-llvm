@@ -2801,7 +2801,7 @@ Attr *ASTRecordReader::readAttr() {
                            AttributeCommonInfo::Kind(ParsedKind),
                            AttributeCommonInfo::Syntax(Syntax), SpellingIndex);
 
-#include "clang/Serialization/AttrPCHRead.inc"
+#include "latino/Serialization/AttrPCHRead.inc"
 
   assert(New && "Unable to decode attribute?");
   return New;
@@ -3536,7 +3536,7 @@ Decl *ASTDeclReader::getMostRecentDecl(Decl *D) {
 #define DECL(TYPE, BASE)                               \
   case Decl::TYPE:                                     \
     return getMostRecentDeclImpl(cast<TYPE##Decl>(D));
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
   llvm_unreachable("unknown decl kind");
 }
@@ -3686,7 +3686,7 @@ void ASTDeclReader::attachPreviousDecl(ASTReader &Reader, Decl *D,
   case Decl::TYPE:                                                        \
     attachPreviousDeclImpl(Reader, cast<TYPE##Decl>(D), Previous, Canon); \
     break;
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
 
   // If the declaration was visible in one module, a redeclaration of it in
@@ -3723,7 +3723,7 @@ void ASTDeclReader::attachLatestDecl(Decl *D, Decl *Latest) {
   case Decl::TYPE:                                        \
     attachLatestDeclImpl(cast<TYPE##Decl>(D), Latest); \
     break;
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
 }
 
@@ -3743,7 +3743,7 @@ void ASTReader::markIncompleteDeclChain(Decl *D) {
   case Decl::TYPE:                                                   \
     ASTDeclReader::markIncompleteDeclChainImpl(cast<TYPE##Decl>(D)); \
     break;
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
 }
 

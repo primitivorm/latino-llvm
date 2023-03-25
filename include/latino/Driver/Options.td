@@ -3550,11 +3550,11 @@ def analyzer_checker : Separate<["-"], "analyzer-checker">,
     const char *Values =
     #define GET_CHECKERS
     #define CHECKER(FULLNAME, CLASS, HT, DOC_URI, IS_HIDDEN)  FULLNAME ","
-    #include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+    #include "latino/StaticAnalyzer/Checkers/Checkers.inc"
     #undef GET_CHECKERS
     #define GET_PACKAGES
     #define PACKAGE(FULLNAME)  FULLNAME ","
-    #include "clang/StaticAnalyzer/Checkers/Checkers.inc"
+    #include "latino/StaticAnalyzer/Checkers/Checkers.inc"
     #undef GET_PACKAGES
     ;
   }]>;

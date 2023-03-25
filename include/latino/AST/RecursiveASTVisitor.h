@@ -330,7 +330,7 @@ public:
 
 // Declare Traverse* and empty Visit* for all Attr classes.
 #define ATTR_VISITOR_DECLS_ONLY
-#include "clang/AST/AttrVisitor.inc"
+#include "latino/AST/AttrVisitor.inc"
 #undef ATTR_VISITOR_DECLS_ONLY
 
 // ---- Methods on Stmts ----
@@ -369,7 +369,7 @@ public:
 #define ABSTRACT_STMT(STMT)
 #define STMT(CLASS, PARENT) \
   bool Traverse##CLASS(CLASS *S, DataRecursionQueue *Queue = nullptr);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   // The above header #undefs ABSTRACT_STMT and STMT upon exit.
 
   // Define WalkUpFrom*() and empty Visit*() for all Stmt classes.
@@ -382,7 +382,7 @@ public:
     return true;                                                               \
   }                                                                            \
   bool Visit##CLASS(CLASS *S) { return true; }
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
 // ---- Methods on Types ----
 // FIXME: revamp to take TypeLoc's rather than Types.
@@ -390,7 +390,7 @@ public:
 // Declare Traverse*() for all concrete Type classes.
 #define ABSTRACT_TYPE(CLASS, BASE)
 #define TYPE(CLASS, BASE) bool Traverse##CLASS##Type(CLASS##Type *T);
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   // The above header #undefs ABSTRACT_TYPE and TYPE upon exit.
 
   // Define WalkUpFrom*() and empty Visit*() for all Type classes.
@@ -403,7 +403,7 @@ public:
     return true;                                                               \
   }                                                                            \
   bool Visit##CLASS##Type(CLASS##Type *T) { return true; }
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
 
 // ---- Methods on TypeLocs ----
 // FIXME: this currently just calls the matching Type methods
@@ -437,14 +437,14 @@ public:
     return true;                                                               \
   }                                                                            \
   bool Visit##CLASS##TypeLoc(CLASS##TypeLoc TL) { return true; }
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
 
 // ---- Methods on Decls ----
 
 // Declare Traverse*() for all concrete Decl classes.
 #define ABSTRACT_DECL(DECL)
 #define DECL(CLASS, BASE) bool Traverse##CLASS##Decl(CLASS##Decl *D);
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   // The above header #undefs ABSTRACT_DECL and DECL upon exit.
 
   // Define WalkUpFrom*() and empty Visit*() for all Decl classes.
@@ -457,7 +457,7 @@ public:
     return true;                                                               \
   }                                                                            \
   bool Visit##CLASS##Decl(CLASS##Decl *D) { return true; }
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 
   bool canIgnoreChildDeclWhileTraversingDeclContext(const Decl *Child);
 
@@ -510,7 +510,7 @@ bool RecursiveASTVisitor<Derived>::dataTraverseNode(Stmt *S,
 #define STMT(CLASS, PARENT)                                                    \
   case Stmt::CLASS##Class:                                                     \
     return TRAVERSE_STMT_BASE(CLASS, CLASS, S, Queue);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
 
   return true;
@@ -558,7 +558,7 @@ bool RecursiveASTVisitor<Derived>::PostVisitStmt(Stmt *S) {
         TRY_TO(WalkUpFrom##CLASS(Sem));                                        \
     }                                                                          \
     break;
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
   }
 
   return true;
@@ -618,7 +618,7 @@ bool RecursiveASTVisitor<Derived>::TraverseType(QualType T) {
   case Type::CLASS:                                                            \
     return getDerived().Traverse##CLASS##Type(                                 \
         static_cast<CLASS##Type *>(const_cast<Type *>(T.getTypePtr())));
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
   }
 
   return true;
@@ -642,7 +642,7 @@ bool RecursiveASTVisitor<Derived>::TraverseTypeLoc(TypeLoc TL) {
 
 // Define the Traverse*Attr(Attr* A) methods
 #define VISITORCLASS RecursiveASTVisitor
-#include "clang/AST/AttrVisitor.inc"
+#include "latino/AST/AttrVisitor.inc"
 #undef VISITORCLASS
 
 template <typename Derived>
@@ -662,7 +662,7 @@ bool RecursiveASTVisitor<Derived>::TraverseDecl(Decl *D) {
     if (!getDerived().Traverse##CLASS##Decl(static_cast<CLASS##Decl *>(D)))    \
       return false;                                                            \
     break;
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
   return true;
 }

@@ -64,7 +64,7 @@ latino::ast_matchers::dynamic::internal::ArgTypeTraits<
     latino::attr::Kind>::getBestGuess(const VariantValue &Value) {
   static constexpr llvm::StringRef Allowed[] = {
 #define ATTR(X) "attr::" #X,
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
   };
   if (Value.isString())
     return ::getBestGuess(Value.getString(), llvm::makeArrayRef(Allowed),

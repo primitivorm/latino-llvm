@@ -51,7 +51,7 @@ static void dumpPreviousDecl(raw_ostream &OS, const Decl *D) {
   case Decl::DERIVED:                                                          \
     return dumpPreviousDeclImpl(OS, cast<DERIVED##Decl>(D));
 #define ABSTRACT_DECL(DECL)
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   }
   llvm_unreachable("Decl that isn't part of DeclNodes.inc!");
 }
@@ -94,7 +94,7 @@ void TextNodeDumper::Visit(const Attr *A) {
   case attr::X:                                                                \
     OS << #X;                                                                  \
     break;
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
     }
     OS << "Attr";
   }

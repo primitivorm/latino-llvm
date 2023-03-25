@@ -238,7 +238,7 @@ void DeclPrinter::prettyPrintAttributes(Decl *D) {
       switch (A->getKind()) {
 #define ATTR(X)
 #define PRAGMA_SPELLING_ATTR(X) case attr::X:
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
         break;
       default:
         A->printPretty(Out, Policy);
@@ -258,7 +258,7 @@ void DeclPrinter::prettyPrintPragmas(Decl *D) {
       switch (A->getKind()) {
 #define ATTR(X)
 #define PRAGMA_SPELLING_ATTR(X) case attr::X:
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
         A->printPretty(Out, Policy);
         Indent();
         break;

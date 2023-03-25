@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define SEMASTART
-#include "clang/Basic/DiagnosticSemaKinds.inc"
+#include "latino/Basic/DiagnosticSemaKinds.inc"
 #undef DIAG
   NUM_BUILTIN_SEMA_DIAGNOSTICS
 };

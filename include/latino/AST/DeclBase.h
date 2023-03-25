@@ -96,7 +96,7 @@ public:
         first##BASE = START, last##BASE = END,
 #define LAST_DECL_RANGE(BASE, START, END) \
         first##BASE = START, last##BASE = END
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
   };
 
   /// A placeholder type used to construct an empty shell of a

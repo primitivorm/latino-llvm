@@ -24,7 +24,7 @@ enum Kind {
 #define ATTR_RANGE(CLASS, FIRST_NAME, LAST_NAME) \
   First##CLASS = FIRST_NAME,                    \
   Last##CLASS = LAST_NAME,
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
 };
 
 } // end namespace attr

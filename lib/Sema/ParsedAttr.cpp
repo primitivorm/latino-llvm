@@ -105,7 +105,7 @@ void AttributePool::takePool(AttributePool &pool) {
 
 namespace {
 
-#include "clang/Sema/AttrParsedAttrImpl.inc"
+#include "latino/Sema/AttrParsedAttrImpl.inc"
 
 } // namespace
 

@@ -45,7 +45,7 @@ public:
     ConstStmtVisitor<StmtDataCollector>::Visit##CLASS(S);                      \
   }
 
-#include "clang/AST/StmtDataCollectors.inc"
+#include "latino/AST/StmtDataCollectors.inc"
 };
 } // end anonymous namespace
 

@@ -18,13 +18,13 @@ namespace latino {
 
 class Decl;
 #define DECL(DERIVED, BASE) class DERIVED##Decl;
-#include "clang/AST/DeclNodes.inc"
+#include "latino/AST/DeclNodes.inc"
 class Stmt;
 #define STMT(DERIVED, BASE) class DERIVED;
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 class Type;
 #define TYPE(DERIVED, BASE) class DERIVED##Type;
-#include "clang/AST/TypeNodes.inc"
+#include "latino/AST/TypeNodes.inc"
 class CXXCtorInitializer;
 class OMPClause;
 #define OMP_CLAUSE_CLASS(Enum, Str, Class) class Class;

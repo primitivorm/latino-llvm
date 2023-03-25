@@ -148,7 +148,7 @@ private:
   static Optional<attr::Kind> getAttrKind(llvm::StringRef AttrKind) {
     return llvm::StringSwitch<Optional<attr::Kind>>(AttrKind)
 #define ATTR(X) .Case("attr::" #X, attr:: X)
-#include "clang/Basic/AttrList.inc"
+#include "latino/Basic/AttrList.inc"
         .Default(llvm::None);
   }
 

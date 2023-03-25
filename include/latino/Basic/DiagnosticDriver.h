@@ -18,7 +18,7 @@ enum {
              SHOWINSYSHEADER, CATEGORY)                                        \
   ENUM,
 #define DRIVERSTART
-#include "clang/Basic/DiagnosticDriverKinds.inc"
+#include "latino/Basic/DiagnosticDriverKinds.inc"
 #undef DIAG
   NUM_BUILTIN_DRIVER_DIAGNOSTICS
 };

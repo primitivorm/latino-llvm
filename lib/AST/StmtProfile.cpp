@@ -41,7 +41,7 @@ namespace {
     virtual void HandleStmtClass(Stmt::StmtClass SC) = 0;
 
 #define STMT(Node, Base) void Visit##Node(const Node *S);
-#include "clang/AST/StmtNodes.inc"
+#include "latino/AST/StmtNodes.inc"
 
     /// Visit a declaration that is referenced within an expression
     /// or statement.

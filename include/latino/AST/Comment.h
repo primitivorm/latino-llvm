@@ -191,7 +191,7 @@ public:
 #define LAST_COMMENT_RANGE(BASE, FIRST, LAST) \
     First##BASE##Constant=FIRST##Kind, Last##BASE##Constant=LAST##Kind
 #define ABSTRACT_COMMENT(COMMENT)
-#include "clang/AST/CommentNodes.inc"
+#include "latino/AST/CommentNodes.inc"
   };
 
   Comment(CommentKind K,

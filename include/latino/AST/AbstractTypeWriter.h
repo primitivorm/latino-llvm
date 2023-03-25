@@ -24,7 +24,7 @@ namespace serialization {
 // };
 //
 // The actual class is auto-generated; see latinoASTPropertiesEmitter.cpp.
-#include "clang/AST/AbstractTypeWriter.inc"
+#include "latino/AST/AbstractTypeWriter.inc"
 
 } // end namespace serialization
 } // end namespace latino

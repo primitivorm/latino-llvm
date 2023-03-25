@@ -96,7 +96,7 @@ inline llvm::Optional<T*> makeOptionalFromPointer(T *value) {
 // };
 
 // The actual classes are auto-generated; see latinoASTPropertiesEmitter.cpp.
-#include "clang/AST/AbstractBasicWriter.inc"
+#include "latino/AST/AbstractBasicWriter.inc"
 
 /// DataStreamBasicWriter provides convenience implementations for many
 /// BasicWriter methods based on the assumption that the

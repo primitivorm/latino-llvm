@@ -67,7 +67,7 @@ namespace latino {
 #define DIAG(ENUM,FLAGS,DEFAULT_MAPPING,DESC,GROUP,\
              SFINAE,CATEGORY,NOWERROR,SHOWINSYSHEADER) ENUM,
 #define COMMONSTART
-#include "clang/Basic/DiagnosticCommonKinds.inc"
+#include "latino/Basic/DiagnosticCommonKinds.inc"
       NUM_BUILTIN_COMMON_DIAGNOSTICS
 #undef DIAG
     };
