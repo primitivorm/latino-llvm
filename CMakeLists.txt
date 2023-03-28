@@ -21,6 +21,10 @@ endif()
 #   cmake_policy(SET CMP0077 NEW)
 # endif()
 
+# If we are not building as a part of LLVM, build Clang as an
+# standalone project, using LLVM as an external library:
+if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
+
 project(latino C CXX)
 
 set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard to conform to")
@@ -107,15 +111,29 @@ if(LLVM_CONFIG)
   endif()
 
   file(TO_CMAKE_PATH ${LLVM_CONFIG_CMAKE_PATH} LLVM_CMAKE_PATH)
+  
+  set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+  message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")
 
   find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
     NO_DEFAULT_PATH)
   message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
   
-  # find_program(LATINO_TABLEGEN_EXE "latino-tblgen" ${LLVM_TOOLS_BINARY_DIR}
-  # NO_DEFAULT_PATH)
-  # message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
-  # set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})
+  find_program(LATINO_TABLEGEN_EXE "latino-tblgen" ${EXECUTABLE_OUTPUT_PATH}
+  NO_DEFAULT_PATH)
+  message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
+  set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})  
+  message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
+
+  if(NOT LATINO_TABLEGEN_EXE)
+    if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
+      set(HOST_EXECUTABLE_SUFFIX ".exe")
+    endif()
+    set(LATINO_TABLEGEN_EXE "${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/bin/latino-tblgen${HOST_EXECUTABLE_SUFFIX}")
+    message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
+    set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})
+    message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
+  endif()
 
   option(LLVM_INSTALL_TOOLCHAIN_ONLY
   "Only include toolchain files in the 'install' target." OFF)
@@ -145,13 +163,14 @@ option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." 
 option(LATINO_BUILD_TOOLS
   "Build the Latino tools. If OFF, just generate build targets." ON)
 
-# set(LLVM_TARGETS_TO_BUILD "all")
-set(LLVM_TARGETS_TO_BUILD host CACHE STRING "")
+  set(LLVM_TARGETS_TO_BUILD "all"
+  CACHE STRING "Semicolon-separated list of targets to build, or \"all\".")
+# set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
 set(LLVM_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/lib/)
 
-if(NOT LLVM_TARGETS_TO_BUILD)
-  set(LLVM_TARGETS_TO_BUILD "host")
-endif()
+# if(NOT LLVM_TARGETS_TO_BUILD)
+#   set(LLVM_TARGETS_TO_BUILD "Native")
+# endif()
 message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
 
 include(CMakeParseArguments)
@@ -228,7 +247,7 @@ set(PACKAGE_VERSION "${LLVM_PACKAGE_VERSION}")
         add_subdirectory(${LLVM_MAIN_SRC_DIR}/utils/count utils/count)
         add_subdirectory(${LLVM_MAIN_SRC_DIR}/utils/not utils/not)
         set(LLVM_UTILS_PROVIDED ON)
-        set(LATINO_TEST_DEPS FileCheck count not)
+        set(CLANG_TEST_DEPS FileCheck count not)
       endif()
       set(UNITTEST_DIR ${LLVM_MAIN_SRC_DIR}/utils/unittest)
       if(EXISTS ${UNITTEST_DIR}/googletest/include/gtest/gtest.h
@@ -261,8 +280,7 @@ set(PACKAGE_VERSION "${LLVM_PACKAGE_VERSION}")
       set(LLVM_INCLUDE_TESTS OFF)
     endif()
   endif()
-
-  set( LATINO_BUILT_STANDALONE 1 )
+  set( CLANG_BUILT_STANDALONE 1 )
   set(BACKEND_PACKAGE_STRING "LLVM ${LLVM_PACKAGE_VERSION}")
 else()
   set(BACKEND_PACKAGE_STRING "${PACKAGE_STRING}")
@@ -369,7 +387,7 @@ add_definitions(${LLVM_DEFINITIONS})
 
 # Find the libraries that correspond to the LLVM components
 # that we wish to use
-llvm_map_components_to_libnames(all)
+# llvm_map_components_to_libnames(all)
 
 add_subdirectory(utils/TableGen)
 
@@ -390,9 +408,6 @@ list(APPEND LLVM_COMMON_DEPENDS latino-tablegen-targets)
 if(LLVM_ENABLE_MODULES AND NOT LATINO_BUILT_STANDALONE)
   list(APPEND LLVM_COMMON_DEPENDS intrinsics_gen)
 endif()
-
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")
 
 add_subdirectory(lib)
 add_subdirectory(tools)

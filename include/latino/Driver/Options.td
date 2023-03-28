@@ -251,7 +251,7 @@ multiclass OptOutFFlag<string name, string pos_prefix, string neg_prefix,
 // Options
 
 // The internal option ID must be a valid C++ identifier and results in a
-// latino::driver::options::OPT_XX enum constant for XX.
+// clang::driver::options::OPT_XX enum constant for XX.
 //
 // We want to unambiguously be able to refer to options from the driver source
 // code, for this reason the option name is mangled into an ID. This mangling
@@ -2825,7 +2825,7 @@ def std_EQ : Joined<["-", "--"], "std=">, Flags<[CC1Option]>,
     const char *Values =
     #define LANGSTANDARD(id, name, lang, desc, features) name ","
     #define LANGSTANDARD_ALIAS(id, alias) alias ","
-    #include "latino/Basic/LangStandards.def"
+    #include "clang/Basic/LangStandards.def"
     ;
   }]>;
 def stdlib_EQ : Joined<["-", "--"], "stdlib=">, Flags<[CC1Option]>,

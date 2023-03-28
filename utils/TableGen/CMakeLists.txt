@@ -20,4 +20,4 @@ add_tablegen(latino-tblgen CLANG
   SveEmitter.cpp
   TableGen.cpp
   )
-set_target_properties(latino-tblgen PROPERTIES FOLDER "Clang tablegenning")
+set_target_properties(latino-tblgen PROPERTIES FOLDER "Latino tablegenning")

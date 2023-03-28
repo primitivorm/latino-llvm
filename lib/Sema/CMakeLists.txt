@@ -14,7 +14,7 @@ endif()
 
 latino_tablegen(OpenCLBuiltins.inc -gen-clang-opencl-builtins
   SOURCE OpenCLBuiltins.td
-  TARGET ClangOpenCLBuiltinsImpl
+  TARGET LatinoOpenCLBuiltinsImpl
   )
 
 add_latino_library(latinoSema
@@ -71,7 +71,7 @@ add_latino_library(latinoSema
   TypeLocBuilder.cpp
 
   DEPENDS
-  ClangOpenCLBuiltinsImpl
+  LatinoOpenCLBuiltinsImpl
   omp_gen
 
   LINK_LIBS
