@@ -4069,7 +4069,7 @@ bool ValuesWereAdded;
     const char *Values =
     #define LANGSTANDARD(id, name, lang, desc, features) name ","
     #define LANGSTANDARD_ALIAS(id, alias) alias ","
-    #include "clang/Basic/LangStandards.def"
+    #include "latino/Basic/LangStandards.def"
     ;
   
 ValuesWereAdded = Opt.addValues("-std=", Values);

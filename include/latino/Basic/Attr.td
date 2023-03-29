@@ -55,7 +55,7 @@ def Undocumented : Documentation {
   let Category = DocCatUndocumented;
 }
 
-include "clang/Basic/AttrDocs.td"
+include "latino/Basic/AttrDocs.td"
 
 // An attribute's subject is whatever it appertains to. In this file, it is
 // more accurately a list of things that an attribute can appertain to. All
@@ -63,8 +63,8 @@ include "clang/Basic/AttrDocs.td"
 // allow attributes on a given Decl or Stmt).
 class AttrSubject;
 
-include "clang/Basic/DeclNodes.td"
-include "clang/Basic/StmtNodes.td"
+include "latino/Basic/DeclNodes.td"
+include "latino/Basic/StmtNodes.td"
 
 // A subset-subject is an AttrSubject constrained to operate only on some subset
 // of that subject.

@@ -1,4 +1,4 @@
-include "clang/Basic/ASTNode.td"
+include "latino/Basic/ASTNode.td"
 
 class StmtNode<StmtNode base, bit abstract = 0> : ASTNode, AttrSubject {
 	StmtNode Base = base;

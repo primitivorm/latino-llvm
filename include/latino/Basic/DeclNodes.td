@@ -1,4 +1,4 @@
-include "clang/Basic/ASTNode.td"
+include "latino/Basic/ASTNode.td"
 
 class DeclNode<DeclNode base, string diagSpelling = "", bit abstract = 0>
     : ASTNode, AttrSubject {

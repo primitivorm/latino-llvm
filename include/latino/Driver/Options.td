@@ -2825,7 +2825,7 @@ def std_EQ : Joined<["-", "--"], "std=">, Flags<[CC1Option]>,
     const char *Values =
     #define LANGSTANDARD(id, name, lang, desc, features) name ","
     #define LANGSTANDARD_ALIAS(id, alias) alias ","
-    #include "clang/Basic/LangStandards.def"
+    #include "latino/Basic/LangStandards.def"
     ;
   }]>;
 def stdlib_EQ : Joined<["-", "--"], "stdlib=">, Flags<[CC1Option]>,

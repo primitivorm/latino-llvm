@@ -6,8 +6,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-include "clang/AST/PropertiesBase.td"
-include "clang/Basic/TypeNodes.td"
+include "latino/AST/PropertiesBase.td"
+include "latino/Basic/TypeNodes.td"
 
 let Class = ComplexType in {
   def : Property<"elementType", QualType> {
