@@ -436,7 +436,7 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
       (NewLineColumn == State.FirstIndent + Style.ContinuationIndentWidth ||
        Previous.is(tok::comma) || Current.NestingLevel < 2) &&
       !Previous.isOneOf(tok::kw_ret, tok::lessless, tok::at,
-                        Keywords.kw_dollar) &&
+                        Keywords.kw_hacerllar) &&
       !Previous.isOneOf(TT_InlineASMColon, TT_ConditionalExpr) &&
       nextIsMultilineString(State))
     return true;
@@ -495,7 +495,7 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
         (!Style.isCSharp() ||
          Style.AlwaysBreakAfterReturnType != FormatStyle::RTBS_None)) ||
        (Current.is(tok::kw_operator) && !Previous.is(tok::coloncolon))) &&
-      !Previous.is(tok::kw_template) && State.Stack.back().BreakBeforeParameter)
+      !Previous.is(tok::kw_plantilla) && State.Stack.back().BreakBeforeParameter)
     return true;
 
   // The following could be precomputed as they do not depend on the state.
@@ -562,7 +562,7 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
   FormatToken &Current = *State.NextToken;
   const FormatToken &Previous = *State.NextToken->Previous;
   if (Current.is(tok::equal) &&
-      (State.Line->First->is(tok::kw_for) || Current.NestingLevel == 0) &&
+      (State.Line->First->is(tok::kw_desde) || Current.NestingLevel == 0) &&
       State.Stack.back().VariablePos == 0) {
     State.Stack.back().VariablePos = State.Column;
     // Move over * and & if they are bound to the variable name.
@@ -631,7 +631,7 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
         Style.Cpp11BracedListStyle)) &&
       State.Column > getNewLineColumn(State) &&
       (!Previous.Previous || !Previous.Previous->isOneOf(
-                                 tok::kw_for, tok::kw_while, tok::kw_switch)) &&
+                                 tok::kw_desde, tok::kw_mientras, tok::kw_elegir)) &&
       // Don't do this for simple (no expressions) one-argument function calls
       // as that feels like needlessly wasting whitespace, e.g.:
       //
@@ -703,7 +703,7 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
   State.Column += Spaces;
   if (Current.isNot(tok::comment) && Previous.is(tok::l_paren) &&
       Previous.Previous &&
-      (Previous.Previous->is(tok::kw_for) || Previous.Previous->isIf())) {
+      (Previous.Previous->is(tok::kw_desde) || Previous.Previous->isIf())) {
     // Treat the condition inside an if as if it was a second function
     // parameter, i.e. let nested calls have a continuation indent.
     State.Stack.back().LastSpace = State.Column;

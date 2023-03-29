@@ -85,7 +85,7 @@ struct UsingDeclaration {
 /// using A = B::C;
 /// Type aliases are in general not safe to permute.
 std::string computeUsingDeclarationLabel(const FormatToken *UsingTok) {
-  assert(UsingTok && UsingTok->is(tok::kw_using) && "Expecting a using token");
+  assert(UsingTok && UsingTok->is(tok::kw_usar) && "Expecting a using token");
   std::string Label;
   const FormatToken *Tok = UsingTok->Next;
   if (Tok && Tok->is(tok::kw_typename)) {
@@ -191,7 +191,7 @@ std::pair<tooling::Replacements, unsigned> UsingDeclarationsSorter::analyze(
   for (size_t I = 0, E = AnnotatedLines.size(); I != E; ++I) {
     const auto *FirstTok = AnnotatedLines[I]->First;
     if (AnnotatedLines[I]->InPPDirective ||
-        !AnnotatedLines[I]->startsWith(tok::kw_using) || FirstTok->Finalized) {
+        !AnnotatedLines[I]->startsWith(tok::kw_usar) || FirstTok->Finalized) {
       endUsingDeclarationBlock(&UsingDeclarations, SourceMgr, &Fixes);
       continue;
     }

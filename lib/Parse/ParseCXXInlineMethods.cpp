@@ -26,7 +26,7 @@ NamedDecl *Parser::ParseCXXInlineMethodDef(
     const ParsedTemplateInfo &TemplateInfo, const VirtSpecifiers &VS,
     SourceLocation PureSpecLoc) {
   assert(D.isFunctionDeclarator() && "This isn't a function declarator!");
-  assert(Tok.isOneOf(tok::l_brace, tok::colon, tok::kw_try, tok::equal) &&
+  assert(Tok.isOneOf(tok::l_brace, tok::colon, tok::kw_intentar, tok::equal) &&
          "Current token not a '{', ':', '=', or 'try'!");
 
   MultiTemplateParamsArg TemplateParams(
@@ -63,7 +63,7 @@ NamedDecl *Parser::ParseCXXInlineMethodDef(
     bool Delete = false;
     SourceLocation KWLoc;
     SourceLocation KWEndLoc = Tok.getEndLoc().getLocWithOffset(-1);
-    if (TryConsumeToken(tok::kw_delete, KWLoc)) {
+    if (TryConsumeToken(tok::kw_borrar, KWLoc)) {
       Diag(KWLoc, getLangOpts().CPlusPlus11
                       ? diag::warn_cxx98_compat_defaulted_deleted_function
                       : diag::ext_defaulted_deleted_function)
@@ -73,7 +73,7 @@ NamedDecl *Parser::ParseCXXInlineMethodDef(
       if (auto *DeclAsFunction = dyn_cast<FunctionDecl>(FnD)) {
         DeclAsFunction->setRangeEnd(KWEndLoc);
       }
-    } else if (TryConsumeToken(tok::kw_default, KWLoc)) {
+    } else if (TryConsumeToken(tok::kw_otro, KWLoc)) {
       Diag(KWLoc, getLangOpts().CPlusPlus11
                       ? diag::warn_cxx98_compat_defaulted_deleted_function
                       : diag::ext_defaulted_deleted_function)
@@ -154,8 +154,8 @@ NamedDecl *Parser::ParseCXXInlineMethodDef(
   }
 
   // If we're in a function-try-block, we need to store all the catch blocks.
-  if (kind == tok::kw_try) {
-    while (Tok.is(tok::kw_catch)) {
+  if (kind == tok::kw_intentar) {
+    while (Tok.is(tok::kw_atrapar)) {
       ConsumeAndStoreUntil(tok::l_brace, Toks, /*StopAtSemi=*/false);
       ConsumeAndStoreUntil(tok::r_brace, Toks, /*StopAtSemi=*/false);
     }
@@ -527,7 +527,7 @@ void Parser::ParseLexedMethodDef(LexedMethod &LM) {
 
   // Consume the previously pushed token.
   ConsumeAnyToken(/*ConsumeCodeCompletionTok=*/true);
-  assert(Tok.isOneOf(tok::l_brace, tok::colon, tok::kw_try)
+  assert(Tok.isOneOf(tok::l_brace, tok::colon, tok::kw_intentar)
          && "Inline method not starting with '{', ':' or 'try'");
 
   // Parse the method body. Function body parsing code is similar enough
@@ -536,7 +536,7 @@ void Parser::ParseLexedMethodDef(LexedMethod &LM) {
                                Scope::CompoundStmtScope);
   Actions.ActOnStartOfFunctionDef(getCurScope(), LM.D);
 
-  if (Tok.is(tok::kw_try)) {
+  if (Tok.is(tok::kw_intentar)) {
     ParseFunctionTryBlock(LM.D, FnScope);
 
     while (Tok.isNot(tok::eof))
@@ -876,7 +876,7 @@ bool Parser::ConsumeAndStoreUntil(tok::TokenKind T1, tok::TokenKind T2,
 ///
 /// \return True on error.
 bool Parser::ConsumeAndStoreFunctionPrologue(CachedTokens &Toks) {
-  if (Tok.is(tok::kw_try)) {
+  if (Tok.is(tok::kw_intentar)) {
     Toks.push_back(Tok);
     ConsumeToken();
   }
@@ -935,7 +935,7 @@ bool Parser::ConsumeAndStoreFunctionPrologue(CachedTokens &Toks) {
         Toks.push_back(Tok);
         ConsumeToken();
 
-        if (Tok.is(tok::kw_template)) {
+        if (Tok.is(tok::kw_plantilla)) {
           Toks.push_back(Tok);
           ConsumeToken();
         }
@@ -1248,7 +1248,7 @@ bool Parser::ConsumeAndStoreInitializer(CachedTokens &Toks,
       if (KnownTemplateCount) --KnownTemplateCount;
       goto consume_token;
 
-    case tok::kw_template:
+    case tok::kw_plantilla:
       // 'template' identifier '<' is known to start a template argument list,
       // and can be used to disambiguate the parse.
       // FIXME: Support all forms of 'template' unqualified-id '<'.

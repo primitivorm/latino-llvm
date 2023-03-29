@@ -582,10 +582,10 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
 
   case tok::kw_export:
     switch (NextToken().getKind()) {
-    case tok::kw_module:
+    case tok::kw_modulo:
       goto module_decl;
 
-    // Note: no need to handle kw_import here. We only form kw_import under
+    // Note: no need to handle kw_importar here. We only form kw_importar under
     // the Modules TS, and in that case 'export import' is parsed as an
     // export-declaration containing an import-declaration.
 
@@ -608,12 +608,12 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
     }
     break;
 
-  case tok::kw_module:
+  case tok::kw_modulo:
   module_decl:
     Result = ParseModuleDecl(IsFirstDecl);
     return false;
 
-  // tok::kw_import is handled by ParseExternalDeclaration. (Under the Modules
+  // tok::kw_importar is handled by ParseExternalDeclaration. (Under the Modules
   // TS, an import can occur within an export block.)
   import_decl: {
     Decl *ImportDecl = ParseModuleImport(SourceLocation());
@@ -845,7 +845,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
         CurParsedObjCImpl ? Sema::PCC_ObjCImplementation : Sema::PCC_Namespace);
     cutOffParsing();
     return nullptr;
-  case tok::kw_import:
+  case tok::kw_importar:
     SingleDecl = ParseModuleImport(SourceLocation());
     break;
   case tok::kw_export:
@@ -856,10 +856,10 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     // This must be 'export template'. Parse it so we can diagnose our lack
     // of support.
     LLVM_FALLTHROUGH;
-  case tok::kw_using:
-  case tok::kw_namespace:
+  case tok::kw_usar:
+  case tok::kw_contexto:
   case tok::kw_typedef:
-  case tok::kw_template:
+  case tok::kw_plantilla:
   case tok::kw_static_assert:
   case tok::kw__Static_assert:
     // A function definition cannot start with any of these keywords.
@@ -871,7 +871,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   case tok::kw_static:
     // Parse (then ignore) 'static' prior to a template instantiation. This is
     // a GCC extension that we intentionally do not support.
-    if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_template)) {
+    if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_plantilla)) {
       Diag(ConsumeToken(), diag::warn_static_inline_explicit_inst_ignored)
         << 0;
       SourceLocation DeclEnd;
@@ -884,14 +884,14 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
       tok::TokenKind NextKind = NextToken().getKind();
 
       // Inline namespaces. Allowed as an extension even in C++03.
-      if (NextKind == tok::kw_namespace) {
+      if (NextKind == tok::kw_contexto) {
         SourceLocation DeclEnd;
         return ParseDeclaration(DeclaratorContext::FileContext, DeclEnd, attrs);
       }
 
       // Parse (then ignore) 'inline' prior to a template instantiation. This is
       // a GCC extension that we intentionally do not support.
-      if (NextKind == tok::kw_template) {
+      if (NextKind == tok::kw_plantilla) {
         Diag(ConsumeToken(), diag::warn_static_inline_explicit_inst_ignored)
           << 1;
         SourceLocation DeclEnd;
@@ -901,7 +901,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     goto dont_know;
 
   case tok::kw_extern:
-    if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_template)) {
+    if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_plantilla)) {
       // Extern templates
       SourceLocation ExternLoc = ConsumeToken();
       SourceLocation TemplateLoc = ConsumeToken();
@@ -920,7 +920,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     ParseMicrosoftIfExistsExternalDeclaration();
     return nullptr;
 
-  case tok::kw_module:
+  case tok::kw_modulo:
     Diag(Tok, diag::err_unexpected_module_decl);
     SkipUntil(tok::semi);
     return nullptr;
@@ -946,7 +946,7 @@ bool Parser::isDeclarationAfterDeclarator() {
   // Check for '= delete' or '= default'
   if (getLangOpts().CPlusPlus && Tok.is(tok::equal)) {
     const Token &KW = NextToken();
-    if (KW.is(tok::kw_default) || KW.is(tok::kw_delete))
+    if (KW.is(tok::kw_otro) || KW.is(tok::kw_borrar))
       return false;
   }
 
@@ -973,11 +973,11 @@ bool Parser::isStartOfFunctionDefinition(const ParsingDeclarator &Declarator) {
 
   if (getLangOpts().CPlusPlus && Tok.is(tok::equal)) {
     const Token &KW = NextToken();
-    return KW.is(tok::kw_default) || KW.is(tok::kw_delete);
+    return KW.is(tok::kw_otro) || KW.is(tok::kw_borrar);
   }
 
   return Tok.is(tok::colon) ||         // X() : Base() {} (used for ctors)
-         Tok.is(tok::kw_try);          // X() try { ... }
+         Tok.is(tok::kw_intentar);          // X() try { ... }
 }
 
 /// Parse either a function-definition or a declaration.  We can't tell which
@@ -1162,7 +1162,7 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
   // we may have a colon.
   if (Tok.isNot(tok::l_brace) &&
       (!getLangOpts().CPlusPlus ||
-       (Tok.isNot(tok::colon) && Tok.isNot(tok::kw_try) &&
+       (Tok.isNot(tok::colon) && Tok.isNot(tok::kw_intentar) &&
         Tok.isNot(tok::equal)))) {
     Diag(Tok, diag::err_expected_fn_body);
 
@@ -1217,7 +1217,7 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
   }
   else if (CurParsedObjCImpl &&
            !TemplateInfo.TemplateParams &&
-           (Tok.is(tok::l_brace) || Tok.is(tok::kw_try) ||
+           (Tok.is(tok::l_brace) || Tok.is(tok::kw_intentar) ||
             Tok.is(tok::colon)) &&
       Actions.CurContext->isTranslationUnit()) {
     ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
@@ -1277,14 +1277,14 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
 
     bool Delete = false;
     SourceLocation KWLoc;
-    if (TryConsumeToken(tok::kw_delete, KWLoc)) {
+    if (TryConsumeToken(tok::kw_borrar, KWLoc)) {
       Diag(KWLoc, getLangOpts().CPlusPlus11
                       ? diag::warn_cxx98_compat_defaulted_deleted_function
                       : diag::ext_defaulted_deleted_function)
         << 1 /* deleted */;
       Actions.SetDeclDeleted(Res, KWLoc);
       Delete = true;
-    } else if (TryConsumeToken(tok::kw_default, KWLoc)) {
+    } else if (TryConsumeToken(tok::kw_otro, KWLoc)) {
       Diag(KWLoc, getLangOpts().CPlusPlus11
                       ? diag::warn_cxx98_compat_defaulted_deleted_function
                       : diag::ext_defaulted_deleted_function)
@@ -1315,7 +1315,7 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
     return Actions.ActOnFinishFunctionBody(Res, nullptr, false);
   }
 
-  if (Tok.is(tok::kw_try))
+  if (Tok.is(tok::kw_intentar))
     return ParseFunctionTryBlock(Res, BodyScope);
 
   // If we have a colon, then we're probably parsing a C++
@@ -1345,7 +1345,7 @@ void Parser::SkipFunctionBody() {
     return;
   }
 
-  bool IsFunctionTryBlock = Tok.is(tok::kw_try);
+  bool IsFunctionTryBlock = Tok.is(tok::kw_intentar);
   if (IsFunctionTryBlock)
     ConsumeToken();
 
@@ -1354,7 +1354,7 @@ void Parser::SkipFunctionBody() {
     SkipMalformedDecl();
   else {
     SkipUntil(tok::r_brace);
-    while (IsFunctionTryBlock && Tok.is(tok::kw_catch)) {
+    while (IsFunctionTryBlock && Tok.is(tok::kw_atrapar)) {
       SkipUntil(tok::l_brace);
       SkipUntil(tok::r_brace);
     }
@@ -2251,7 +2251,7 @@ Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
                                  : Sema::ModuleDeclKind::Implementation;
 
   assert(
-      (Tok.is(tok::kw_module) ||
+      (Tok.is(tok::kw_modulo) ||
        (Tok.is(tok::identifier) && Tok.getIdentifierInfo() == Ident_module)) &&
       "not a module declaration");
   SourceLocation ModuleLoc = ConsumeToken();
@@ -2277,7 +2277,7 @@ Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
 
   // Parse a private-module-fragment, if present.
   if (getLangOpts().CPlusPlusModules && Tok.is(tok::colon) &&
-      NextToken().is(tok::kw_private)) {
+      NextToken().is(tok::kw_pri)) {
     if (MDK == Sema::ModuleDeclKind::Interface) {
       Diag(StartLoc, diag::err_module_fragment_exported)
         << /*private*/1 << FixItHint::CreateRemoval(StartLoc);
@@ -2337,7 +2337,7 @@ Decl *Parser::ParseModuleImport(SourceLocation AtLoc) {
   SourceLocation ExportLoc;
   TryConsumeToken(tok::kw_export, ExportLoc);
 
-  assert((AtLoc.isInvalid() ? Tok.isOneOf(tok::kw_import, tok::identifier)
+  assert((AtLoc.isInvalid() ? Tok.isOneOf(tok::kw_importar, tok::identifier)
                             : Tok.isObjCAtKeyword(tok::objc_import)) &&
          "Improper start to module import");
   bool IsObjCAtImport = Tok.isObjCAtKeyword(tok::objc_import);

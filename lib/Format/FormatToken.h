@@ -344,8 +344,8 @@ struct FormatToken {
   template <typename T> bool isNot(T Kind) const { return !is(Kind); }
 
   bool isIf(bool AllowConstexprMacro = true) const {
-    return is(tok::kw_if) || endsSequence(tok::kw_constexpr, tok::kw_if) ||
-           (endsSequence(tok::identifier, tok::kw_if) && AllowConstexprMacro);
+    return is(tok::kw_si) || endsSequence(tok::kw_constexpr, tok::kw_si) ||
+           (endsSequence(tok::identifier, tok::kw_si) && AllowConstexprMacro);
   }
 
   bool closesScopeAfterBlock() const {
@@ -381,7 +381,7 @@ struct FormatToken {
   }
 
   bool isAccessSpecifier(bool ColonRequired = true) const {
-    return isOneOf(tok::kw_public, tok::kw_protected, tok::kw_private) &&
+    return isOneOf(tok::kw_pub, tok::kw_pro, tok::kw_pri) &&
            (!ColonRequired || (Next && Next->is(tok::colon)));
   }
 
@@ -454,7 +454,7 @@ struct FormatToken {
   /// like a function call (e.g. sizeof, typeid, ...).
   bool isFunctionLikeKeyword() const {
     switch (Tok.getKind()) {
-    case tok::kw_throw:
+    case tok::kw_lanzar:
     case tok::kw_typeid:
     case tok::kw_ret:
     case tok::kw_sizeof:
@@ -561,7 +561,7 @@ struct FormatToken {
     if (NamespaceTok && NamespaceTok->isOneOf(tok::kw_inline, tok::kw_export))
       NamespaceTok = NamespaceTok->getNextNonComment();
     return NamespaceTok &&
-                   NamespaceTok->isOneOf(tok::kw_namespace, TT_NamespaceMacro)
+                   NamespaceTok->isOneOf(tok::kw_contexto, TT_NamespaceMacro)
                ? NamespaceTok
                : nullptr;
   }
@@ -722,11 +722,11 @@ struct AdditionalKeywords {
     kw_from = &IdentTable.get("from");
     kw_function = &IdentTable.get("function");
     kw_get = &IdentTable.get("get");
-    kw_import = &IdentTable.get("import");
+    kw_importar = &IdentTable.get("import");
     kw_infer = &IdentTable.get("infer");
     kw_is = &IdentTable.get("is");
     kw_let = &IdentTable.get("let");
-    kw_module = &IdentTable.get("module");
+    kw_modulo = &IdentTable.get("module");
     kw_readonly = &IdentTable.get("readonly");
     kw_set = &IdentTable.get("set");
     kw_type = &IdentTable.get("type");
@@ -743,7 +743,7 @@ struct AdditionalKeywords {
     kw_native = &IdentTable.get("native");
     kw_package = &IdentTable.get("package");
     kw_synchronized = &IdentTable.get("synchronized");
-    kw_throws = &IdentTable.get("throws");
+    kw_lanzars = &IdentTable.get("throws");
     kw___except = &IdentTable.get("__except");
     kw___has_include = &IdentTable.get("__has_include");
     kw___has_include_next = &IdentTable.get("__has_include_next");
@@ -763,7 +763,7 @@ struct AdditionalKeywords {
     kw_qslots = &IdentTable.get("Q_SLOTS");
 
     // C# keywords
-    kw_dollar = &IdentTable.get("dollar");
+    kw_hacerllar = &IdentTable.get("dollar");
     kw_base = &IdentTable.get("base");
     kw_byte = &IdentTable.get("byte");
     kw_checked = &IdentTable.get("checked");
@@ -771,7 +771,7 @@ struct AdditionalKeywords {
     kw_delegate = &IdentTable.get("delegate");
     kw_event = &IdentTable.get("event");
     kw_fixed = &IdentTable.get("fixed");
-    kw_foreach = &IdentTable.get("foreach");
+    kw_desdeeach = &IdentTable.get("foreach");
     kw_implicit = &IdentTable.get("implicit");
     kw_internal = &IdentTable.get("internal");
     kw_lock = &IdentTable.get("lock");
@@ -797,21 +797,21 @@ struct AdditionalKeywords {
     // already initialized.
     JsExtraKeywords = std::unordered_set<IdentifierInfo *>(
         {kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
-         kw_function, kw_get, kw_import, kw_is, kw_let, kw_module, kw_readonly,
+         kw_function, kw_get, kw_importar, kw_is, kw_let, kw_modulo, kw_readonly,
          kw_set, kw_type, kw_typeof, kw_var, kw_yield,
          // Keywords from the Java section.
          kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
 
     CSharpExtraKeywords = std::unordered_set<IdentifierInfo *>(
         {kw_base, kw_byte, kw_checked, kw_decimal, kw_delegate, kw_event,
-         kw_fixed, kw_foreach, kw_implicit, kw_in, kw_interface, kw_internal,
+         kw_fixed, kw_desdeeach, kw_implicit, kw_in, kw_interface, kw_internal,
          kw_is, kw_lock, kw_null, kw_object, kw_out, kw_override, kw_params,
          kw_readonly, kw_ref, kw_string, kw_stackalloc, kw_sbyte, kw_sealed,
          kw_uint, kw_ulong, kw_unchecked, kw_unsafe, kw_ushort, kw_when,
          kw_where,
          // Keywords from the JavaScript section.
          kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
-         kw_function, kw_get, kw_import, kw_is, kw_let, kw_module, kw_readonly,
+         kw_function, kw_get, kw_importar, kw_is, kw_let, kw_modulo, kw_readonly,
          kw_set, kw_type, kw_typeof, kw_var, kw_yield,
          // Keywords from the Java section.
          kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
@@ -841,11 +841,11 @@ struct AdditionalKeywords {
   IdentifierInfo *kw_from;
   IdentifierInfo *kw_function;
   IdentifierInfo *kw_get;
-  IdentifierInfo *kw_import;
+  IdentifierInfo *kw_importar;
   IdentifierInfo *kw_infer;
   IdentifierInfo *kw_is;
   IdentifierInfo *kw_let;
-  IdentifierInfo *kw_module;
+  IdentifierInfo *kw_modulo;
   IdentifierInfo *kw_readonly;
   IdentifierInfo *kw_set;
   IdentifierInfo *kw_type;
@@ -863,7 +863,7 @@ struct AdditionalKeywords {
   IdentifierInfo *kw_native;
   IdentifierInfo *kw_package;
   IdentifierInfo *kw_synchronized;
-  IdentifierInfo *kw_throws;
+  IdentifierInfo *kw_lanzars;
 
   // Pragma keywords.
   IdentifierInfo *kw_mark;
@@ -883,7 +883,7 @@ struct AdditionalKeywords {
   IdentifierInfo *kw_qslots;
 
   // C# keywords
-  IdentifierInfo *kw_dollar;
+  IdentifierInfo *kw_hacerllar;
   IdentifierInfo *kw_base;
   IdentifierInfo *kw_byte;
   IdentifierInfo *kw_checked;
@@ -891,7 +891,7 @@ struct AdditionalKeywords {
   IdentifierInfo *kw_delegate;
   IdentifierInfo *kw_event;
   IdentifierInfo *kw_fixed;
-  IdentifierInfo *kw_foreach;
+  IdentifierInfo *kw_desdeeach;
   IdentifierInfo *kw_implicit;
   IdentifierInfo *kw_internal;
 
@@ -925,37 +925,37 @@ struct AdditionalKeywords {
     // Based on the list of JavaScript & TypeScript keywords here:
     // https://github.com/microsoft/TypeScript/blob/master/src/compiler/scanner.ts#L74
     switch (Tok.Tok.getKind()) {
-    case tok::kw_break:
-    case tok::kw_case:
-    case tok::kw_catch:
-    case tok::kw_class:
-    case tok::kw_continue:
+    case tok::kw_romper:
+    case tok::kw_caso:
+    case tok::kw_atrapar:
+    case tok::kw_clase:
+    case tok::kw_continuar:
     case tok::kw_const:
-    case tok::kw_default:
-    case tok::kw_delete:
-    case tok::kw_do:
-    case tok::kw_else:
+    case tok::kw_otro:
+    case tok::kw_borrar:
+    case tok::kw_hacer:
+    case tok::kw_sino:
     case tok::kw_enum:
     case tok::kw_export:
     case tok::kw_false:
-    case tok::kw_for:
-    case tok::kw_if:
-    case tok::kw_import:
-    case tok::kw_module:
+    case tok::kw_desde:
+    case tok::kw_si:
+    case tok::kw_importar:
+    case tok::kw_modulo:
     case tok::kw_new:
-    case tok::kw_private:
-    case tok::kw_protected:
-    case tok::kw_public:
+    case tok::kw_pri:
+    case tok::kw_pro:
+    case tok::kw_pub:
     case tok::kw_ret:
     case tok::kw_static:
-    case tok::kw_switch:
-    case tok::kw_this:
-    case tok::kw_throw:
+    case tok::kw_elegir:
+    case tok::kw_mi:
+    case tok::kw_lanzar:
     case tok::kw_true:
-    case tok::kw_try:
+    case tok::kw_intentar:
     case tok::kw_typeof:
     case tok::kw_void:
-    case tok::kw_while:
+    case tok::kw_mientras:
       // These are JS keywords that are lexed by LLVM/clang as keywords.
       return false;
     case tok::identifier: {
@@ -990,49 +990,49 @@ struct AdditionalKeywords {
   bool isCSharpKeyword(const FormatToken &Tok) const {
     switch (Tok.Tok.getKind()) {
     case tok::kw_bool:
-    case tok::kw_break:
-    case tok::kw_case:
-    case tok::kw_catch:
+    case tok::kw_romper:
+    case tok::kw_caso:
+    case tok::kw_atrapar:
     case tok::kw_char:
-    case tok::kw_class:
+    case tok::kw_clase:
     case tok::kw_const:
-    case tok::kw_continue:
-    case tok::kw_default:
-    case tok::kw_do:
+    case tok::kw_continuar:
+    case tok::kw_otro:
+    case tok::kw_hacer:
     case tok::kw_double:
-    case tok::kw_else:
+    case tok::kw_sino:
     case tok::kw_enum:
     case tok::kw_explicit:
     case tok::kw_extern:
     case tok::kw_false:
     case tok::kw_float:
-    case tok::kw_for:
-    case tok::kw_goto:
-    case tok::kw_if:
+    case tok::kw_desde:
+    case tok::kw_ir:
+    case tok::kw_si:
     case tok::kw_int:
     case tok::kw_long:
-    case tok::kw_namespace:
+    case tok::kw_contexto:
     case tok::kw_new:
     case tok::kw_operator:
-    case tok::kw_private:
-    case tok::kw_protected:
-    case tok::kw_public:
+    case tok::kw_pri:
+    case tok::kw_pro:
+    case tok::kw_pub:
     case tok::kw_ret:
     case tok::kw_short:
     case tok::kw_sizeof:
     case tok::kw_static:
     case tok::kw_struct:
-    case tok::kw_switch:
-    case tok::kw_this:
-    case tok::kw_throw:
+    case tok::kw_elegir:
+    case tok::kw_mi:
+    case tok::kw_lanzar:
     case tok::kw_true:
-    case tok::kw_try:
+    case tok::kw_intentar:
     case tok::kw_typeof:
-    case tok::kw_using:
+    case tok::kw_usar:
     case tok::kw_virtual:
     case tok::kw_void:
     case tok::kw_volatile:
-    case tok::kw_while:
+    case tok::kw_mientras:
       return true;
     default:
       return Tok.is(tok::identifier) &&

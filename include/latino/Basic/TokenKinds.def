@@ -280,21 +280,21 @@ PUNCTUATOR(caretcaret,            "^^")
 //   CHAR8SUPPORT - This is a keyword if 'char8_t' is a built-in type
 //
 KEYWORD(auto                        , KEYALL)
-KEYWORD(break                       , KEYALL)
-KEYWORD(case                        , KEYALL)
+KEYWORD(romper                       , KEYALL) // break
+KEYWORD(caso                        , KEYALL) // case
 KEYWORD(char                        , KEYALL)
 KEYWORD(const                       , KEYALL)
-KEYWORD(continue                    , KEYALL)
-KEYWORD(default                     , KEYALL)
-KEYWORD(do                          , KEYALL)
+KEYWORD(continuar                    , KEYALL) // continue
+KEYWORD(otro                     , KEYALL) // default
+KEYWORD(hacer                          , KEYALL) // do
 KEYWORD(double                      , KEYALL)
-KEYWORD(else                        , KEYALL)
+KEYWORD(sino                        , KEYALL) // else
 KEYWORD(enum                        , KEYALL)
 KEYWORD(extern                      , KEYALL)
 KEYWORD(float                       , KEYALL)
-KEYWORD(for                         , KEYALL)
-KEYWORD(goto                        , KEYALL)
-KEYWORD(if                          , KEYALL)
+KEYWORD(desde                         , KEYALL) // for
+KEYWORD(ir                        , KEYALL) // goto
+KEYWORD(si                          , KEYALL) // if
 KEYWORD(inline                      , KEYC99|KEYCXX|KEYGNU)
 KEYWORD(int                         , KEYALL)
 KEYWORD(_ExtInt                     , KEYALL)
@@ -307,13 +307,13 @@ KEYWORD(signed                      , KEYALL)
 UNARY_EXPR_OR_TYPE_TRAIT(sizeof, SizeOf, KEYALL)
 KEYWORD(static                      , KEYALL)
 KEYWORD(struct                      , KEYALL)
-KEYWORD(switch                      , KEYALL)
+KEYWORD(elegir                      , KEYALL) // switch
 KEYWORD(typedef                     , KEYALL)
 KEYWORD(union                       , KEYALL)
 KEYWORD(unsigned                    , KEYALL)
 KEYWORD(void                        , KEYALL)
 KEYWORD(volatile                    , KEYALL)
-KEYWORD(while                       , KEYALL)
+KEYWORD(mientras                       , KEYALL) // while
 KEYWORD(_Alignas                    , KEYALL)
 KEYWORD(_Alignof                    , KEYALL)
 KEYWORD(_Atomic                     , KEYALL|KEYNOOPENCL)
@@ -332,32 +332,32 @@ KEYWORD(__objc_no                   , KEYALL)
 // C++ 2.11p1: Keywords.
 KEYWORD(asm                         , KEYCXX|KEYGNU)
 KEYWORD(bool                        , BOOLSUPPORT)
-KEYWORD(catch                       , KEYCXX)
-KEYWORD(class                       , KEYCXX)
+KEYWORD(atrapar                       , KEYCXX) // catch
+KEYWORD(clase                       , KEYCXX) // class
 KEYWORD(const_cast                  , KEYCXX)
-KEYWORD(delete                      , KEYCXX)
+KEYWORD(borrar                      , KEYCXX) // delete
 KEYWORD(dynamic_cast                , KEYCXX)
 KEYWORD(explicit                    , KEYCXX)
 KEYWORD(export                      , KEYCXX)
 KEYWORD(false                       , BOOLSUPPORT)
 KEYWORD(friend                      , KEYCXX)
 KEYWORD(mutable                     , KEYCXX)
-KEYWORD(namespace                   , KEYCXX)
+KEYWORD(contexto                   , KEYCXX) // namespace
 KEYWORD(new                         , KEYCXX)
 KEYWORD(operator                    , KEYCXX)
-KEYWORD(private                     , KEYCXX)
-KEYWORD(protected                   , KEYCXX)
-KEYWORD(public                      , KEYCXX)
+KEYWORD(pri                     , KEYCXX) // private
+KEYWORD(pro                   , KEYCXX) // protected
+KEYWORD(pub                      , KEYCXX) // public
 KEYWORD(reinterpret_cast            , KEYCXX)
 KEYWORD(static_cast                 , KEYCXX)
-KEYWORD(template                    , KEYCXX)
-KEYWORD(this                        , KEYCXX)
-KEYWORD(throw                       , KEYCXX)
+KEYWORD(plantilla                    , KEYCXX)   // template
+KEYWORD(mi                        , KEYCXX) // this
+KEYWORD(lanzar                       , KEYCXX)   // throw
 KEYWORD(true                        , BOOLSUPPORT)
-KEYWORD(try                         , KEYCXX)
+KEYWORD(intentar                         , KEYCXX) // try
 KEYWORD(typename                    , KEYCXX)
 KEYWORD(typeid                      , KEYCXX)
-KEYWORD(using                       , KEYCXX)
+KEYWORD(usar                       , KEYCXX) // using
 KEYWORD(virtual                     , KEYCXX)
 KEYWORD(wchar_t                     , WCHARSUPPORT)
 
@@ -397,8 +397,8 @@ COROUTINES_KEYWORD(co_return)
 COROUTINES_KEYWORD(co_yield)
 
 // C++ modules TS keywords
-MODULES_KEYWORD(module)
-MODULES_KEYWORD(import)
+MODULES_KEYWORD(modulo) // module
+MODULES_KEYWORD(importar) // import
 
 // C++20 keywords.
 CXX20_KEYWORD(consteval             , 0)

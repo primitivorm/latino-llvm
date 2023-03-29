@@ -355,7 +355,7 @@ bool FormatTokenLexer::tryMergeCSharpKeywordVariables() {
   return true;
 }
 
-// In C# transform identifier foreach into kw_foreach
+// In C# transform identifier foreach into kw_desdeeach
 bool FormatTokenLexer::tryTransformCSharpForEach() {
   if (Tokens.size() < 1)
     return false;
@@ -366,7 +366,7 @@ bool FormatTokenLexer::tryTransformCSharpForEach() {
     return false;
 
   Identifier->setType(TT_ForEachMacro);
-  Identifier->Tok.setKind(tok::kw_for);
+  Identifier->Tok.setKind(tok::kw_desde);
   return true;
 }
 
@@ -375,7 +375,7 @@ bool FormatTokenLexer::tryMergeForEach() {
     return false;
   auto &For = *(Tokens.end() - 2);
   auto &Each = *(Tokens.end() - 1);
-  if (!For->is(tok::kw_for))
+  if (!For->is(tok::kw_desde))
     return false;
   if (!Each->is(tok::identifier))
     return false;
@@ -383,7 +383,7 @@ bool FormatTokenLexer::tryMergeForEach() {
     return false;
 
   For->setType(TT_ForEachMacro);
-  For->Tok.setKind(tok::kw_for);
+  For->Tok.setKind(tok::kw_desde);
 
   For->TokenText = StringRef(For->TokenText.begin(),
                              Each->TokenText.end() - For->TokenText.begin());
@@ -396,7 +396,7 @@ bool FormatTokenLexer::tryTransformTryUsageForC() {
   if (Tokens.size() < 2)
     return false;
   auto &Try = *(Tokens.end() - 2);
-  if (!Try->is(tok::kw_try))
+  if (!Try->is(tok::kw_intentar))
     return false;
   auto &Next = *(Tokens.end() - 1);
   if (Next->isOneOf(tok::l_brace, tok::colon))
@@ -470,8 +470,8 @@ bool FormatTokenLexer::precedesOperand(FormatToken *Tok) {
   return Tok->isOneOf(tok::period, tok::l_paren, tok::comma, tok::l_brace,
                       tok::r_brace, tok::l_square, tok::semi, tok::exclaim,
                       tok::colon, tok::question, tok::tilde) ||
-         Tok->isOneOf(tok::kw_ret, tok::kw_do, tok::kw_case, tok::kw_throw,
-                      tok::kw_else, tok::kw_new, tok::kw_delete, tok::kw_void,
+         Tok->isOneOf(tok::kw_ret, tok::kw_hacer, tok::kw_caso, tok::kw_lanzar,
+                      tok::kw_sino, tok::kw_new, tok::kw_borrar, tok::kw_void,
                       tok::kw_typeof, Keywords.kw_instanceof, Keywords.kw_in) ||
          Tok->isBinaryOperator();
 }
@@ -964,7 +964,7 @@ FormatToken *FormatTokenLexer::getNextToken() {
     FormatTok->Tok.setIdentifierInfo(&Info);
     FormatTok->Tok.setKind(Info.getTokenID());
     if (Style.Language == FormatStyle::LK_Java &&
-        FormatTok->isOneOf(tok::kw_struct, tok::kw_union, tok::kw_delete,
+        FormatTok->isOneOf(tok::kw_struct, tok::kw_union, tok::kw_borrar,
                            tok::kw_operator)) {
       FormatTok->Tok.setKind(tok::identifier);
       FormatTok->Tok.setIdentifierInfo(nullptr);

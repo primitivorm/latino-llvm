@@ -230,7 +230,7 @@ ExprResult Parser::ParseMSAsmIdentifier(llvm::SmallVectorImpl<Token> &LineToks,
   UnqualifiedId Id;
   bool Invalid = true;
   ExprResult Result;
-  if (Tok.is(tok::kw_this)) {
+  if (Tok.is(tok::kw_mi)) {
     Result = ParseCXXThis();
     Invalid = false;
   } else {
@@ -949,7 +949,7 @@ Parser::getGNUAsmQualifier(const Token &Tok) const {
   switch (Tok.getKind()) {
     case tok::kw_volatile: return GNUAsmQualifiers::AQ_volatile;
     case tok::kw_inline: return GNUAsmQualifiers::AQ_inline;
-    case tok::kw_goto: return GNUAsmQualifiers::AQ_goto;
+    case tok::kw_ir: return GNUAsmQualifiers::AQ_goto;
     default: return GNUAsmQualifiers::AQ_unspecified;
   }
 }

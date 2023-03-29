@@ -30,7 +30,7 @@ static const int kShortNamespaceMaxLines = 1;
 // Returns "" for anonymous namespace.
 std::string computeName(const FormatToken *NamespaceTok) {
   assert(NamespaceTok &&
-         NamespaceTok->isOneOf(tok::kw_namespace, TT_NamespaceMacro) &&
+         NamespaceTok->isOneOf(tok::kw_contexto, TT_NamespaceMacro) &&
          "expecting a namespace token");
   std::string name = "";
   const FormatToken *Tok = NamespaceTok->getNextNonComment();
@@ -108,7 +108,7 @@ bool validEndComment(const FormatToken *RBraceTok, StringRef NamespaceName,
     // The name of the macro must be used.
     if (NamespaceTokenText != NamespaceTok->TokenText)
       return false;
-  } else if (NamespaceTok->isNot(tok::kw_namespace) ||
+  } else if (NamespaceTok->isNot(tok::kw_contexto) ||
              !NamespaceCommentPattern.match(Comment->TokenText, &Groups)) {
     // Comment does not match regex.
     return false;

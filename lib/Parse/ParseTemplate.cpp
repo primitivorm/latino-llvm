@@ -39,7 +39,7 @@ Decl *Parser::ParseDeclarationStartingWithTemplate(
     ParsedAttributes &AccessAttrs, AccessSpecifier AS) {
   ObjCDeclContextSwitch ObjCDC(*this);
 
-  if (Tok.is(tok::kw_template) && NextToken().isNot(tok::less)) {
+  if (Tok.is(tok::kw_plantilla) && NextToken().isNot(tok::less)) {
     return ParseExplicitInstantiation(Context, SourceLocation(), ConsumeToken(),
                                       DeclEnd, AccessAttrs, AS);
   }
@@ -74,7 +74,7 @@ Decl *Parser::ParseDeclarationStartingWithTemplate(
 Decl *Parser::ParseTemplateDeclarationOrSpecialization(
     DeclaratorContext Context, SourceLocation &DeclEnd,
     ParsedAttributes &AccessAttrs, AccessSpecifier AS) {
-  assert(Tok.isOneOf(tok::kw_export, tok::kw_template) &&
+  assert(Tok.isOneOf(tok::kw_export, tok::kw_plantilla) &&
          "Token does not start a template declaration.");
 
   MultiParseScope TemplateParamScopes(*this);
@@ -117,7 +117,7 @@ Decl *Parser::ParseTemplateDeclarationOrSpecialization(
 
     // Consume the 'template', which should be here.
     SourceLocation TemplateLoc;
-    if (!TryConsumeToken(tok::kw_template, TemplateLoc)) {
+    if (!TryConsumeToken(tok::kw_plantilla, TemplateLoc)) {
       Diag(Tok.getLocation(), diag::err_expected_template);
       return nullptr;
     }
@@ -158,7 +158,7 @@ Decl *Parser::ParseTemplateDeclarationOrSpecialization(
     ParamLists.push_back(Actions.ActOnTemplateParameterList(
         CurTemplateDepthTracker.getDepth(), ExportLoc, TemplateLoc, LAngleLoc,
         TemplateParams, RAngleLoc, OptionalRequiresClauseConstraintER.get()));
-  } while (Tok.isOneOf(tok::kw_export, tok::kw_template));
+  } while (Tok.isOneOf(tok::kw_export, tok::kw_plantilla));
 
   // Parse the actual template declaration.
   if (Tok.is(tok::kw_concept))
@@ -208,7 +208,7 @@ Decl *Parser::ParseSingleDeclarationAfterTemplate(
   ParsedAttributesWithRange prefixAttrs(AttrFactory);
   MaybeParseCXX11Attributes(prefixAttrs);
 
-  if (Tok.is(tok::kw_using)) {
+  if (Tok.is(tok::kw_usar)) {
     auto usingDeclPtr = ParseUsingDirectiveOrDeclaration(Context, TemplateInfo, DeclEnd,
                                                          prefixAttrs);
     if (!usingDeclPtr || !usingDeclPtr.get().isSingleDecl())
@@ -515,7 +515,7 @@ Parser::ParseTemplateParameterList(const unsigned Depth,
 /// Determine whether the parser is at the start of a template
 /// type parameter.
 Parser::TPResult Parser::isStartOfTemplateTypeParameter() {
-  if (Tok.is(tok::kw_class)) {
+  if (Tok.is(tok::kw_clase)) {
     // "class" may be the start of an elaborated-type-specifier or a
     // type-parameter. Per C++ [temp.param]p3, we prefer the type-parameter.
     switch (NextToken().getKind()) {
@@ -585,7 +585,7 @@ Parser::TPResult Parser::isStartOfTemplateTypeParameter() {
 
   case tok::kw_typename:
   case tok::kw_typedef:
-  case tok::kw_class:
+  case tok::kw_clase:
     // These indicate that a comma was missed after a type parameter, not that
     // we have found a non-type parameter.
     return TPResult::True;
@@ -662,7 +662,7 @@ NamedDecl *Parser::ParseTemplateParameter(unsigned Depth, unsigned Position) {
     llvm_unreachable("template param classification can't be ambiguous");
   }
 
-  if (Tok.is(tok::kw_template))
+  if (Tok.is(tok::kw_plantilla))
     return ParseTemplateTemplateParameter(Depth, Position);
 
   // If it's none of the above, then it must be a parameter declaration.
@@ -758,7 +758,7 @@ bool Parser::TryAnnotateTypeConstraint() {
 ///         'typename' ...[opt][C++0x] identifier[opt]
 ///         'typename' identifier[opt] '=' type-id
 NamedDecl *Parser::ParseTypeParameter(unsigned Depth, unsigned Position) {
-  assert((Tok.isOneOf(tok::kw_class, tok::kw_typename) ||
+  assert((Tok.isOneOf(tok::kw_clase, tok::kw_typename) ||
           isTypeConstraintAnnotation()) &&
          "A type-parameter starts with 'class', 'typename' or a "
          "type-constraint");
@@ -854,7 +854,7 @@ NamedDecl *Parser::ParseTypeParameter(unsigned Depth, unsigned Position) {
 ///         'typename'       [C++1z]
 NamedDecl *
 Parser::ParseTemplateTemplateParameter(unsigned Depth, unsigned Position) {
-  assert(Tok.is(tok::kw_template) && "Expected 'template' keyword");
+  assert(Tok.is(tok::kw_plantilla) && "Expected 'template' keyword");
 
   // Handle the template <...> part.
   SourceLocation TemplateLoc = ConsumeToken();
@@ -873,7 +873,7 @@ Parser::ParseTemplateTemplateParameter(unsigned Depth, unsigned Position) {
   // identifier, comma, or greater. Provide a fixit if the identifier, comma,
   // or greater appear immediately or after 'struct'. In the latter case,
   // replace the keyword with 'class'.
-  if (!TryConsumeToken(tok::kw_class)) {
+  if (!TryConsumeToken(tok::kw_clase)) {
     bool Replace = Tok.isOneOf(tok::kw_typename, tok::kw_struct);
     const Token &Next = Tok.is(tok::kw_struct) ? NextToken() : Tok;
     if (Tok.is(tok::kw_typename)) {
@@ -1450,7 +1450,7 @@ ParsedTemplateArgument Parser::ParseTemplateTemplateArgument() {
 
   ParsedTemplateArgument Result;
   SourceLocation EllipsisLoc;
-  if (SS.isSet() && Tok.is(tok::kw_template)) {
+  if (SS.isSet() && Tok.is(tok::kw_plantilla)) {
     // Parse the optional 'template' keyword following the
     // nested-name-specifier.
     SourceLocation TemplateKWLoc = ConsumeToken();
@@ -1668,7 +1668,7 @@ void Parser::ParseLateTemplatedFuncDef(LateParsedTemplate &LPT) {
 
   // Consume the previously pushed token.
   ConsumeAnyToken(/*ConsumeCodeCompletionTok=*/true);
-  assert(Tok.isOneOf(tok::l_brace, tok::colon, tok::kw_try) &&
+  assert(Tok.isOneOf(tok::l_brace, tok::colon, tok::kw_intentar) &&
          "Inline method not starting with '{', ':' or 'try'");
 
   // Parse the method body. Function body parsing code is similar enough
@@ -1681,7 +1681,7 @@ void Parser::ParseLateTemplatedFuncDef(LateParsedTemplate &LPT) {
 
   Actions.ActOnStartOfFunctionDef(getCurScope(), FunD);
 
-  if (Tok.is(tok::kw_try)) {
+  if (Tok.is(tok::kw_intentar)) {
     ParseFunctionTryBlock(LPT.D, FnScope);
   } else {
     if (Tok.is(tok::colon))
@@ -1712,8 +1712,8 @@ void Parser::LexTemplateFunctionForLateParsing(CachedTokens &Toks) {
   }
 
   // If we're in a function-try-block, we need to store all the catch blocks.
-  if (kind == tok::kw_try) {
-    while (Tok.is(tok::kw_catch)) {
+  if (kind == tok::kw_intentar) {
+    while (Tok.is(tok::kw_atrapar)) {
       ConsumeAndStoreUntil(tok::l_brace, Toks, /*StopAtSemi=*/false);
       ConsumeAndStoreUntil(tok::r_brace, Toks, /*StopAtSemi=*/false);
     }

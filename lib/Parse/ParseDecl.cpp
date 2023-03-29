@@ -261,7 +261,7 @@ static bool attributeHasVariadicIdentifierArg(const IdentifierInfo &II) {
 #undef LATINO_ATTR_VARIADIC_IDENTIFIER_ARG_LIST
 }
 
-/// Determine whether the given attribute treats kw_this as an identifier.
+/// Determine whether the given attribute treats kw_mi as an identifier.
 static bool attributeTreatsKeywordThisAsIdentifier(const IdentifierInfo &II) {
 #define LATINO_ATTR_THIS_ISA_IDENTIFIER_ARG_LIST
   return llvm::StringSwitch<bool>(normalizeAttrName(II.getName()))
@@ -337,8 +337,8 @@ unsigned Parser::ParseAttributeArgsCommon(
   bool ChangeKWThisToIdent = attributeTreatsKeywordThisAsIdentifier(*AttrName);
   bool AttributeIsTypeArgAttr = attributeIsTypeArgAttr(*AttrName);
 
-  // Interpret "kw_this" as an identifier if the attributed requests it.
-  if (ChangeKWThisToIdent && Tok.is(tok::kw_this))
+  // Interpret "kw_mi" as an identifier if the attributed requests it.
+  if (ChangeKWThisToIdent && Tok.is(tok::kw_mi))
     Tok.setKind(tok::identifier);
 
   ArgsVector ArgExprs;
@@ -369,8 +369,8 @@ unsigned Parser::ParseAttributeArgsCommon(
 
     // Parse the non-empty comma-separated list of expressions.
     do {
-      // Interpret "kw_this" as an identifier if the attributed requests it.
-      if (ChangeKWThisToIdent && Tok.is(tok::kw_this))
+      // Interpret "kw_mi" as an identifier if the attributed requests it.
+      if (ChangeKWThisToIdent && Tok.is(tok::kw_mi))
         Tok.setKind(tok::identifier);
 
       ExprResult ArgExpr;
@@ -1604,24 +1604,24 @@ Parser::ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
 
   Decl *SingleDecl = nullptr;
   switch (Tok.getKind()) {
-  case tok::kw_template:
+  case tok::kw_plantilla:
   case tok::kw_export:
     ProhibitAttributes(attrs);
     SingleDecl = ParseDeclarationStartingWithTemplate(Context, DeclEnd, attrs);
     break;
   case tok::kw_inline:
     // Could be the start of an inline namespace. Allowed as an ext in C++03.
-    if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_namespace)) {
+    if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_contexto)) {
       ProhibitAttributes(attrs);
       SourceLocation InlineLoc = ConsumeToken();
       return ParseNamespace(Context, DeclEnd, InlineLoc);
     }
     return ParseSimpleDeclaration(Context, DeclEnd, attrs, true, nullptr,
                                   DeclSpecStart);
-  case tok::kw_namespace:
+  case tok::kw_contexto:
     ProhibitAttributes(attrs);
     return ParseNamespace(Context, DeclEnd);
-  case tok::kw_using:
+  case tok::kw_usar:
     return ParseUsingDirectiveOrDeclaration(Context, ParsedTemplateInfo(),
                                             DeclEnd, attrs);
   case tok::kw_static_assert:
@@ -1779,7 +1779,7 @@ void Parser::SkipMalformedDecl() {
       // a malformed class or function definition or similar.
       ConsumeBrace();
       SkipUntil(tok::r_brace);
-      if (Tok.isOneOf(tok::comma, tok::l_brace, tok::kw_try)) {
+      if (Tok.isOneOf(tok::comma, tok::l_brace, tok::kw_intentar)) {
         // This declaration isn't over yet. Keep skipping.
         continue;
       }
@@ -1807,12 +1807,12 @@ void Parser::SkipMalformedDecl() {
       // 'inline namespace' at the start of a line is almost certainly
       // a good place to pick back up parsing, except in an Objective-C
       // @interface context.
-      if (Tok.isAtStartOfLine() && NextToken().is(tok::kw_namespace) &&
+      if (Tok.isAtStartOfLine() && NextToken().is(tok::kw_contexto) &&
           (!ParsingInObjCContainer || CurParsedObjCImpl))
         return;
       break;
 
-    case tok::kw_namespace:
+    case tok::kw_contexto:
       // 'namespace' at the start of a line is almost certainly a good
       // place to pick back up parsing, except in an Objective-C
       // @interface context.
@@ -1888,7 +1888,7 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
       // and we don't have any other declarators in this declaration.
       bool Fixit = !DS.setFunctionSpecNoreturn(Loc, PrevSpec, DiagID);
       MaybeParseGNUAttributes(D, &LateParsedAttrs);
-      Fixit &= Tok.isOneOf(tok::semi, tok::l_brace, tok::kw_try);
+      Fixit &= Tok.isOneOf(tok::semi, tok::l_brace, tok::kw_intentar);
 
       Diag(Loc, diag::err_c11_noreturn_misplaced)
           << (Fixit ? FixItHint::CreateRemoval(Loc) : FixItHint())
@@ -2205,13 +2205,13 @@ Decl *Parser::ParseDeclarationAfterDeclaratorAndAttributes(
   if (isTokenEqualOrEqualTypo()) {
     SourceLocation EqualLoc = ConsumeToken();
 
-    if (Tok.is(tok::kw_delete)) {
+    if (Tok.is(tok::kw_borrar)) {
       if (D.isFunctionDeclarator())
         Diag(ConsumeToken(), diag::err_default_delete_in_multiple_declaration)
           << 1 /* delete */;
       else
         Diag(ConsumeToken(), diag::err_deleted_non_function);
-    } else if (Tok.is(tok::kw_default)) {
+    } else if (Tok.is(tok::kw_otro)) {
       if (D.isFunctionDeclarator())
         Diag(ConsumeToken(), diag::err_default_delete_in_multiple_declaration)
           << 0 /* default */;
@@ -2511,7 +2511,7 @@ bool Parser::ParseImplicitInt(DeclSpec &DS, CXXScopeSpec *SS,
         TagName="__interface"; FixitTagName = "__interface ";
         TagKind=tok::kw___interface;break;
       case DeclSpec::TST_class:
-        TagName="class" ; FixitTagName = "class " ;TagKind=tok::kw_class ;break;
+        TagName="class" ; FixitTagName = "class " ;TagKind=tok::kw_clase ;break;
     }
 
     if (TagName) {
@@ -3820,7 +3820,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       break;
 
     // class-specifier:
-    case tok::kw_class:
+    case tok::kw_clase:
     case tok::kw_struct:
     case tok::kw___interface:
     case tok::kw_union: {
@@ -3930,7 +3930,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
         break;
       }
       LLVM_FALLTHROUGH;
-    case tok::kw_private:
+    case tok::kw_pri:
       // It's fine (but redundant) to check this for __generic on the
       // fallthrough path; we only form the __generic token in OpenCL mode.
       if (!getLangOpts().OpenCL)
@@ -4277,10 +4277,10 @@ void Parser::ParseEnumSpecifier(SourceLocation StartLoc, DeclSpec &DS,
   bool IsScopedUsingClassTag = false;
 
   // In C++11, recognize 'enum class' and 'enum struct'.
-  if (Tok.isOneOf(tok::kw_class, tok::kw_struct)) {
+  if (Tok.isOneOf(tok::kw_clase, tok::kw_struct)) {
     Diag(Tok, getLangOpts().CPlusPlus11 ? diag::warn_cxx98_compat_scoped_enum
                                         : diag::ext_scoped_enum);
-    IsScopedUsingClassTag = Tok.is(tok::kw_class);
+    IsScopedUsingClassTag = Tok.is(tok::kw_clase);
     ScopedEnumKWLoc = ConsumeToken();
 
     // Attributes are not allowed between these keywords.  Diagnose,
@@ -4821,7 +4821,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
 #include "latino/Basic/OpenCLImageTypes.def"
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw___interface:
   case tok::kw_union:
@@ -4855,7 +4855,7 @@ bool Parser::isTypeSpecifierQualifier() {
 
   case tok::coloncolon:   // ::foo::bar
     if (NextToken().is(tok::kw_new) ||    // ::new
-        NextToken().is(tok::kw_delete))   // ::delete
+        NextToken().is(tok::kw_borrar))   // ::delete
       return false;
 
     if (TryAnnotateTypeOrScopeToken())
@@ -4902,7 +4902,7 @@ bool Parser::isTypeSpecifierQualifier() {
 #include "latino/Basic/OpenCLImageTypes.def"
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw___interface:
   case tok::kw_union:
@@ -4954,7 +4954,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw___write_only:
     return true;
 
-  case tok::kw_private:
+  case tok::kw_pri:
     return getLangOpts().OpenCL;
 
   // C11 _Atomic
@@ -5007,7 +5007,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
   case tok::coloncolon:   // ::foo::bar
     if (NextToken().is(tok::kw_new) ||    // ::new
-        NextToken().is(tok::kw_delete))   // ::delete
+        NextToken().is(tok::kw_borrar))   // ::delete
       return false;
 
     // Annotate typenames and C++ scope specifiers.  If we get one, just
@@ -5068,7 +5068,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw___vector:
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
   case tok::kw___interface:
@@ -5184,7 +5184,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
     return true;
 
-  case tok::kw_private:
+  case tok::kw_pri:
     return getLangOpts().OpenCL;
   }
 }
@@ -5295,7 +5295,7 @@ bool Parser::isConstructorDeclarator(bool IsUnqualified, bool DeductionGuide) {
         IsConstructor = Tok.is(tok::arrow);
         break;
       }
-      if (Tok.is(tok::colon) || Tok.is(tok::kw_try)) {
+      if (Tok.is(tok::colon) || Tok.is(tok::kw_intentar)) {
         // Assume these were meant to be constructors:
         //   C(X)   :    (the name of a bit-field cannot be parenthesized).
         //   C(X)   try  (this is otherwise ill-formed).
@@ -5389,7 +5389,7 @@ void Parser::ParseTypeQualifierListOpt(
       break;
 
     // OpenCL qualifiers:
-    case tok::kw_private:
+    case tok::kw_pri:
       if (!getLangOpts().OpenCL)
         goto DoneWithTypeQuals;
       LLVM_FALLTHROUGH;
@@ -5938,7 +5938,7 @@ void Parser::ParseDirectDeclarator(Declarator &D) {
               D.getContext() == DeclaratorContext::TrailingReturnVarContext) &&
              !isCXX11VirtSpecifier(Tok))
       DiagnoseIdentifier = NextToken().isOneOf(
-          tok::comma, tok::semi, tok::equal, tok::l_brace, tok::kw_try);
+          tok::comma, tok::semi, tok::equal, tok::l_brace, tok::kw_intentar);
     if (DiagnoseIdentifier) {
       Diag(Tok.getLocation(), diag::err_unexpected_unqualified_id)
         << FixItHint::CreateRemoval(Tok.getLocation());

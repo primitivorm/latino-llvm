@@ -165,7 +165,7 @@ ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
     return ExprError();
   }
 
-  if (Tok.is(tok::kw_throw))
+  if (Tok.is(tok::kw_lanzar))
     return ParseThrowExpression();
   if (Tok.is(tok::kw_co_yield))
     return ParseCoyieldExpression();
@@ -373,9 +373,9 @@ Parser::ParseConstraintLogicalOrExpression(bool IsTrailingRequiresClause) {
 bool Parser::isNotExpressionStart() {
   tok::TokenKind K = Tok.getKind();
   if (K == tok::l_brace || K == tok::r_brace  ||
-      K == tok::kw_for  || K == tok::kw_while ||
-      K == tok::kw_if   || K == tok::kw_else  ||
-      K == tok::kw_goto || K == tok::kw_try)
+      K == tok::kw_desde  || K == tok::kw_mientras ||
+      K == tok::kw_si   || K == tok::kw_sino  ||
+      K == tok::kw_ir || K == tok::kw_intentar)
     return true;
   // If this is a decl-specifier, we can't be at the start of an expression.
   return isKnownToBeDeclarationSpecifier();
@@ -1175,7 +1175,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       }
       // Allow either an identifier or the keyword 'class' (in C++).
       if (Tok.isNot(tok::identifier) &&
-          !(getLangOpts().CPlusPlus && Tok.is(tok::kw_class))) {
+          !(getLangOpts().CPlusPlus && Tok.is(tok::kw_clase))) {
         Diag(Tok, diag::err_expected_property_name);
         return ExprError();
       }
@@ -1478,7 +1478,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       *NotPrimaryExpression = true;
     Res = ParseCXXUuidof();
     break;
-  case tok::kw_this:
+  case tok::kw_mi:
     Res = ParseCXXThis();
     break;
   case tok::kw___builtin_unique_stable_name:
@@ -1651,7 +1651,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       AllowSuffix = false;
       break;
     }
-    if (Tok.is(tok::kw_delete)) {
+    if (Tok.is(tok::kw_borrar)) {
       if (NotPrimaryExpression)
         *NotPrimaryExpression = true;
       Res = ParseCXXDeleteExpression(true, CCLoc);
@@ -1671,7 +1671,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     AllowSuffix = false;
     break;
 
-  case tok::kw_delete: // [C++] delete-expression
+  case tok::kw_borrar: // [C++] delete-expression
     if (NotPrimaryExpression)
       *NotPrimaryExpression = true;
     Res = ParseCXXDeleteExpression(false, Tok.getLocation());
@@ -2177,7 +2177,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       SourceLocation TemplateKWLoc;
       UnqualifiedId Name;
       if (getLangOpts().ObjC && OpKind == tok::period &&
-          Tok.is(tok::kw_class)) {
+          Tok.is(tok::kw_clase)) {
         // Objective-C++:
         //   After a '.' in a member access expression, treat the keyword
         //   'class' as if it were an identifier.
@@ -3239,7 +3239,7 @@ ExprResult Parser::ParseGenericSelectionExpression() {
   ExprVector Exprs;
   do {
     ParsedType Ty;
-    if (Tok.is(tok::kw_default)) {
+    if (Tok.is(tok::kw_otro)) {
       // C11 6.5.1.1p2 "A generic selection shall have no more than one default
       // generic association."
       if (!DefaultLoc.isInvalid()) {

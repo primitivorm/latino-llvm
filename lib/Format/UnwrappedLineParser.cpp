@@ -394,7 +394,7 @@ void UnwrappedLineParser::parseLevel(bool HasOpeningBrace) {
       nextToken();
       addUnwrappedLine();
       break;
-    case tok::kw_default: {
+    case tok::kw_otro: {
       unsigned StoredPosition = Tokens->getPosition();
       FormatToken *Next;
       do {
@@ -410,7 +410,7 @@ void UnwrappedLineParser::parseLevel(bool HasOpeningBrace) {
       // Else, if it is 'default:', fall through to the case handling.
       LLVM_FALLTHROUGH;
     }
-    case tok::kw_case:
+    case tok::kw_caso:
       if (Style.Language == FormatStyle::LK_JavaScript &&
           Line->MustBeDeclaration) {
         // A 'case: string' style field declaration.
@@ -539,11 +539,11 @@ void UnwrappedLineParser::calculateBraceTypes(bool ExpectClassBody) {
       LLVM_FALLTHROUGH;
     case tok::at:
     case tok::semi:
-    case tok::kw_if:
-    case tok::kw_while:
-    case tok::kw_for:
-    case tok::kw_switch:
-    case tok::kw_try:
+    case tok::kw_si:
+    case tok::kw_mientras:
+    case tok::kw_desde:
+    case tok::kw_elegir:
+    case tok::kw_intentar:
     case tok::kw___try:
       if (!LBraceStack.empty() && LBraceStack.back()->BlockKind == BK_Unknown)
         LBraceStack.back()->BlockKind = BK_Block;
@@ -678,9 +678,9 @@ static bool isIIFE(const UnwrappedLine &Line,
 
 static bool ShouldBreakBeforeBrace(const FormatStyle &Style,
                                    const FormatToken &InitialToken) {
-  if (InitialToken.isOneOf(tok::kw_namespace, TT_NamespaceMacro))
+  if (InitialToken.isOneOf(tok::kw_contexto, TT_NamespaceMacro))
     return Style.BraceWrapping.AfterNamespace;
-  if (InitialToken.is(tok::kw_class))
+  if (InitialToken.is(tok::kw_clase))
     return Style.BraceWrapping.AfterClass;
   if (InitialToken.is(tok::kw_union))
     return Style.BraceWrapping.AfterUnion;
@@ -937,10 +937,10 @@ static bool mustBeJSIdent(const AdditionalKeywords &Keywords,
           !FormatTok->isOneOf(
               Keywords.kw_in, Keywords.kw_of, Keywords.kw_as, Keywords.kw_async,
               Keywords.kw_await, Keywords.kw_yield, Keywords.kw_finally,
-              Keywords.kw_function, Keywords.kw_import, Keywords.kw_is,
+              Keywords.kw_function, Keywords.kw_importar, Keywords.kw_is,
               Keywords.kw_let, Keywords.kw_var, tok::kw_const,
               Keywords.kw_abstract, Keywords.kw_extends, Keywords.kw_implements,
-              Keywords.kw_instanceof, Keywords.kw_interface, Keywords.kw_throws,
+              Keywords.kw_instanceof, Keywords.kw_interface, Keywords.kw_lanzars,
               Keywords.kw_from));
 }
 
@@ -958,18 +958,18 @@ static bool isJSDeclOrStmt(const AdditionalKeywords &Keywords,
   return FormatTok->isOneOf(
       tok::kw_ret, Keywords.kw_yield,
       // conditionals
-      tok::kw_if, tok::kw_else,
+      tok::kw_si, tok::kw_sino,
       // loops
-      tok::kw_for, tok::kw_while, tok::kw_do, tok::kw_continue, tok::kw_break,
+      tok::kw_desde, tok::kw_mientras, tok::kw_hacer, tok::kw_continuar, tok::kw_romper,
       // switch/case
-      tok::kw_switch, tok::kw_case,
+      tok::kw_elegir, tok::kw_caso,
       // exceptions
-      tok::kw_throw, tok::kw_try, tok::kw_catch, Keywords.kw_finally,
+      tok::kw_lanzar, tok::kw_intentar, tok::kw_atrapar, Keywords.kw_finally,
       // declaration
-      tok::kw_const, tok::kw_class, Keywords.kw_var, Keywords.kw_let,
+      tok::kw_const, tok::kw_clase, Keywords.kw_var, Keywords.kw_let,
       Keywords.kw_async, Keywords.kw_function,
       // import/export
-      Keywords.kw_import, tok::kw_export);
+      Keywords.kw_importar, tok::kw_export);
 }
 
 // readTokenWithJavaScriptASI reads the next token and terminates the current
@@ -1047,44 +1047,44 @@ void UnwrappedLineParser::parseStructuralElement() {
       }
     }
     break;
-  case tok::kw_namespace:
+  case tok::kw_contexto:
     parseNamespace();
     return;
-  case tok::kw_public:
-  case tok::kw_protected:
-  case tok::kw_private:
+  case tok::kw_pub:
+  case tok::kw_pro:
+  case tok::kw_pri:
     if (Style.Language == FormatStyle::LK_Java ||
         Style.Language == FormatStyle::LK_JavaScript || Style.isCSharp())
       nextToken();
     else
       parseAccessSpecifier();
     return;
-  case tok::kw_if:
+  case tok::kw_si:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // field/method declaration.
       break;
     parseIfThenElse();
     return;
-  case tok::kw_for:
-  case tok::kw_while:
+  case tok::kw_desde:
+  case tok::kw_mientras:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // field/method declaration.
       break;
     parseForOrWhileLoop();
     return;
-  case tok::kw_do:
+  case tok::kw_hacer:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // field/method declaration.
       break;
     parseDoWhile();
     return;
-  case tok::kw_switch:
+  case tok::kw_elegir:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // 'switch: string' field declaration.
       break;
     parseSwitch();
     return;
-  case tok::kw_default:
+  case tok::kw_otro:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // 'default: string' field declaration.
       break;
@@ -1095,13 +1095,13 @@ void UnwrappedLineParser::parseStructuralElement() {
     }
     // e.g. "default void f() {}" in a Java interface.
     break;
-  case tok::kw_case:
+  case tok::kw_caso:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // 'case: string' field declaration.
       break;
     parseCaseLabel();
     return;
-  case tok::kw_try:
+  case tok::kw_intentar:
   case tok::kw___try:
     if (Style.Language == FormatStyle::LK_JavaScript && Line->MustBeDeclaration)
       // field/method declaration.
@@ -1140,7 +1140,7 @@ void UnwrappedLineParser::parseStructuralElement() {
     LLVM_FALLTHROUGH;
   case tok::kw_inline:
     nextToken();
-    if (FormatTok->Tok.is(tok::kw_namespace)) {
+    if (FormatTok->Tok.is(tok::kw_contexto)) {
       parseNamespace();
       return;
     }
@@ -1155,14 +1155,14 @@ void UnwrappedLineParser::parseStructuralElement() {
                  /*MunchSemi=*/false);
       return;
     }
-    if (FormatTok->is(Keywords.kw_import)) {
+    if (FormatTok->is(Keywords.kw_importar)) {
       if (Style.Language == FormatStyle::LK_JavaScript) {
         parseJavaScriptEs6ImportExport();
         return;
       }
       if (Style.Language == FormatStyle::LK_Proto) {
         nextToken();
-        if (FormatTok->is(tok::kw_public))
+        if (FormatTok->is(tok::kw_pub))
           nextToken();
         if (!FormatTok->is(tok::string_literal))
           return;
@@ -1254,7 +1254,7 @@ void UnwrappedLineParser::parseStructuralElement() {
         addUnwrappedLine();
         return;
       case tok::objc_try:
-        // This branch isn't strictly necessary (the kw_try case below would
+        // This branch isn't strictly necessary (the kw_intentar case below would
         // do this too after the tok::at is parsed above).  But be explicit.
         parseTryCatch();
         return;
@@ -1289,7 +1289,7 @@ void UnwrappedLineParser::parseStructuralElement() {
       break;
     case tok::kw_struct:
     case tok::kw_union:
-    case tok::kw_class:
+    case tok::kw_clase:
       // parseRecord falls through and does not yet add an unwrapped line as a
       // record declaration or definition can start a structural element.
       parseRecord();
@@ -1306,7 +1306,7 @@ void UnwrappedLineParser::parseStructuralElement() {
       nextToken();
       // In Java, classes have an implicit static member "class".
       if (Style.Language == FormatStyle::LK_Java && FormatTok &&
-          FormatTok->is(tok::kw_class))
+          FormatTok->is(tok::kw_clase))
         nextToken();
       if (Style.Language == FormatStyle::LK_JavaScript && FormatTok &&
           FormatTok->Tok.getIdentifierInfo())
@@ -1355,7 +1355,7 @@ void UnwrappedLineParser::parseStructuralElement() {
       // Otherwise this was a braced init list, and the structural
       // element continues.
       break;
-    case tok::kw_try:
+    case tok::kw_intentar:
       if (Style.Language == FormatStyle::LK_JavaScript &&
           Line->MustBeDeclaration) {
         // field/method declaration.
@@ -1521,8 +1521,8 @@ bool UnwrappedLineParser::tryToParsePropertyAccessor() {
   bool HasGetOrSet = false;
   bool IsTrivialPropertyAccessor = true;
   while (!eof()) {
-    if (Tok->isOneOf(tok::semi, tok::kw_public, tok::kw_private,
-                     tok::kw_protected, Keywords.kw_internal, Keywords.kw_get,
+    if (Tok->isOneOf(tok::semi, tok::kw_pub, tok::kw_pri,
+                     tok::kw_pro, Keywords.kw_internal, Keywords.kw_get,
                      Keywords.kw_set)) {
       if (Tok->isOneOf(Keywords.kw_get, Keywords.kw_set))
         HasGetOrSet = true;
@@ -1621,10 +1621,10 @@ bool UnwrappedLineParser::tryToParseLambda() {
     case tok::identifier:
     case tok::numeric_constant:
     case tok::coloncolon:
-    case tok::kw_class:
+    case tok::kw_clase:
     case tok::kw_mutable:
     case tok::kw_noexcept:
-    case tok::kw_template:
+    case tok::kw_plantilla:
     case tok::kw_typename:
       nextToken();
       break;
@@ -1689,7 +1689,7 @@ bool UnwrappedLineParser::tryToParseLambdaIntroducer() {
   const FormatToken *Previous = FormatTok->Previous;
   if (Previous &&
       (Previous->isOneOf(tok::identifier, tok::kw_operator, tok::kw_new,
-                         tok::kw_delete, tok::l_square) ||
+                         tok::kw_borrar, tok::l_square) ||
        FormatTok->isCppStructuredBinding(Style) || Previous->closesScope() ||
        Previous->isSimpleTypeSpecifier())) {
     nextToken();
@@ -1900,7 +1900,7 @@ void UnwrappedLineParser::parseParens() {
         parseBracedList();
       }
       break;
-    case tok::kw_class:
+    case tok::kw_clase:
       if (Style.Language == FormatStyle::LK_JavaScript)
         parseRecord(/*ParseAsExpr=*/true);
       else
@@ -1961,7 +1961,7 @@ void UnwrappedLineParser::parseSquare(bool LambdaIntroducer) {
 }
 
 void UnwrappedLineParser::parseIfThenElse() {
-  assert(FormatTok->Tok.is(tok::kw_if) && "'if' expected");
+  assert(FormatTok->Tok.is(tok::kw_si) && "'if' expected");
   nextToken();
   if (FormatTok->Tok.isOneOf(tok::kw_constexpr, tok::identifier))
     nextToken();
@@ -1984,7 +1984,7 @@ void UnwrappedLineParser::parseIfThenElse() {
     parseStructuralElement();
     --Line->Level;
   }
-  if (FormatTok->Tok.is(tok::kw_else)) {
+  if (FormatTok->Tok.is(tok::kw_sino)) {
     nextToken();
     // handle [[likely]] / [[unlikely]]
     if (FormatTok->Tok.is(tok::l_square) && tryToParseSimpleAttribute())
@@ -1993,7 +1993,7 @@ void UnwrappedLineParser::parseIfThenElse() {
       CompoundStatementIndenter Indenter(this, Style, Line->Level);
       parseBlock(/*MustBeDeclaration=*/false);
       addUnwrappedLine();
-    } else if (FormatTok->Tok.is(tok::kw_if)) {
+    } else if (FormatTok->Tok.is(tok::kw_si)) {
       parseIfThenElse();
     } else {
       addUnwrappedLine();
@@ -2009,7 +2009,7 @@ void UnwrappedLineParser::parseIfThenElse() {
 }
 
 void UnwrappedLineParser::parseTryCatch() {
-  assert(FormatTok->isOneOf(tok::kw_try, tok::kw___try) && "'try' expected");
+  assert(FormatTok->isOneOf(tok::kw_intentar, tok::kw___try) && "'try' expected");
   nextToken();
   bool NeedsUnwrappedLine = false;
   if (FormatTok->is(tok::colon)) {
@@ -2044,7 +2044,7 @@ void UnwrappedLineParser::parseTryCatch() {
     } else {
       NeedsUnwrappedLine = true;
     }
-  } else if (!FormatTok->is(tok::kw_catch)) {
+  } else if (!FormatTok->is(tok::kw_atrapar)) {
     // The C++ standard requires a compound-statement after a try.
     // If there's none, we try to assume there's a structuralElement
     // and try to continue.
@@ -2056,7 +2056,7 @@ void UnwrappedLineParser::parseTryCatch() {
   while (1) {
     if (FormatTok->is(tok::at))
       nextToken();
-    if (!(FormatTok->isOneOf(tok::kw_catch, Keywords.kw___except,
+    if (!(FormatTok->isOneOf(tok::kw_atrapar, Keywords.kw___except,
                              tok::kw___finally) ||
           ((Style.Language == FormatStyle::LK_Java ||
             Style.Language == FormatStyle::LK_JavaScript) &&
@@ -2087,7 +2087,7 @@ void UnwrappedLineParser::parseTryCatch() {
 }
 
 void UnwrappedLineParser::parseNamespace() {
-  assert(FormatTok->isOneOf(tok::kw_namespace, TT_NamespaceMacro) &&
+  assert(FormatTok->isOneOf(tok::kw_contexto, TT_NamespaceMacro) &&
          "'namespace' expected");
 
   const FormatToken &InitialToken = *FormatTok;
@@ -2159,7 +2159,7 @@ void UnwrappedLineParser::parseNew() {
 }
 
 void UnwrappedLineParser::parseForOrWhileLoop() {
-  assert(FormatTok->isOneOf(tok::kw_for, tok::kw_while, TT_ForEachMacro) &&
+  assert(FormatTok->isOneOf(tok::kw_desde, tok::kw_mientras, TT_ForEachMacro) &&
          "'for', 'while' or foreach macro expected");
   nextToken();
   // JS' for await ( ...
@@ -2181,7 +2181,7 @@ void UnwrappedLineParser::parseForOrWhileLoop() {
 }
 
 void UnwrappedLineParser::parseDoWhile() {
-  assert(FormatTok->Tok.is(tok::kw_do) && "'do' expected");
+  assert(FormatTok->Tok.is(tok::kw_hacer) && "'do' expected");
   nextToken();
   if (FormatTok->Tok.is(tok::l_brace)) {
     CompoundStatementIndenter Indenter(this, Style, Line->Level);
@@ -2196,7 +2196,7 @@ void UnwrappedLineParser::parseDoWhile() {
   }
 
   // FIXME: Add error handling.
-  if (!FormatTok->Tok.is(tok::kw_while)) {
+  if (!FormatTok->Tok.is(tok::kw_mientras)) {
     addUnwrappedLine();
     return;
   }
@@ -2218,7 +2218,7 @@ void UnwrappedLineParser::parseLabel(bool LeftAlignLabel) {
                                        Style.BraceWrapping.AfterCaseLabel,
                                        Style.BraceWrapping.IndentBraces);
     parseBlock(/*MustBeDeclaration=*/false);
-    if (FormatTok->Tok.is(tok::kw_break)) {
+    if (FormatTok->Tok.is(tok::kw_romper)) {
       if (Style.BraceWrapping.AfterControlStatement ==
           FormatStyle::BWACS_Always) {
         addUnwrappedLine();
@@ -2243,7 +2243,7 @@ void UnwrappedLineParser::parseLabel(bool LeftAlignLabel) {
 }
 
 void UnwrappedLineParser::parseCaseLabel() {
-  assert(FormatTok->Tok.is(tok::kw_case) && "'case' expected");
+  assert(FormatTok->Tok.is(tok::kw_caso) && "'case' expected");
   // FIXME: fix handling of complex expressions here.
   do {
     nextToken();
@@ -2252,7 +2252,7 @@ void UnwrappedLineParser::parseCaseLabel() {
 }
 
 void UnwrappedLineParser::parseSwitch() {
-  assert(FormatTok->Tok.is(tok::kw_switch) && "'switch' expected");
+  assert(FormatTok->Tok.is(tok::kw_elegir) && "'switch' expected");
   nextToken();
   if (FormatTok->Tok.is(tok::l_paren))
     parseParens();
@@ -2296,7 +2296,7 @@ bool UnwrappedLineParser::parseEnum() {
     return false;
 
   // Eat up enum class ...
-  if (FormatTok->Tok.is(tok::kw_class) || FormatTok->Tok.is(tok::kw_struct))
+  if (FormatTok->Tok.is(tok::kw_clase) || FormatTok->Tok.is(tok::kw_struct))
     nextToken();
 
   while (FormatTok->Tok.getIdentifierInfo() ||
@@ -2691,12 +2691,12 @@ bool UnwrappedLineParser::parseObjCProtocol() {
 }
 
 void UnwrappedLineParser::parseJavaScriptEs6ImportExport() {
-  bool IsImport = FormatTok->is(Keywords.kw_import);
+  bool IsImport = FormatTok->is(Keywords.kw_importar);
   assert(IsImport || FormatTok->is(tok::kw_export));
   nextToken();
 
   // Consume the "default" in "export default class/function".
-  if (FormatTok->is(tok::kw_default))
+  if (FormatTok->is(tok::kw_otro))
     nextToken();
 
   // Consume "async function", "function" and "default function", so that these

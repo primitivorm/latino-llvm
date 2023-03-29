@@ -240,9 +240,9 @@ Retry:
     goto Retry;
   }
 
-  case tok::kw_case:                // C99 6.8.1: labeled-statement
+  case tok::kw_caso:                // C99 6.8.1: labeled-statement
     return ParseCaseStatement(StmtCtx);
-  case tok::kw_default:             // C99 6.8.1: labeled-statement
+  case tok::kw_otro:             // C99 6.8.1: labeled-statement
     return ParseDefaultStatement(StmtCtx);
 
   case tok::l_brace:                // C99 6.8.2: compound-statement
@@ -252,29 +252,29 @@ Retry:
     return Actions.ActOnNullStmt(ConsumeToken(), HasLeadingEmptyMacro);
   }
 
-  case tok::kw_if:                  // C99 6.8.4.1: if-statement
+  case tok::kw_si:                  // C99 6.8.4.1: if-statement
     return ParseIfStatement(TrailingElseLoc);
-  case tok::kw_switch:              // C99 6.8.4.2: switch-statement
+  case tok::kw_elegir:              // C99 6.8.4.2: switch-statement
     return ParseSwitchStatement(TrailingElseLoc);
 
-  case tok::kw_while:               // C99 6.8.5.1: while-statement
+  case tok::kw_mientras:               // C99 6.8.5.1: while-statement
     return ParseWhileStatement(TrailingElseLoc);
-  case tok::kw_do:                  // C99 6.8.5.2: do-statement
+  case tok::kw_hacer:                  // C99 6.8.5.2: do-statement
     Res = ParseDoStatement();
     SemiError = "do/while";
     break;
-  case tok::kw_for:                 // C99 6.8.5.3: for-statement
+  case tok::kw_desde:                 // C99 6.8.5.3: for-statement
     return ParseForStatement(TrailingElseLoc);
 
-  case tok::kw_goto:                // C99 6.8.6.1: goto-statement
+  case tok::kw_ir:                // C99 6.8.6.1: goto-statement
     Res = ParseGotoStatement();
     SemiError = "goto";
     break;
-  case tok::kw_continue:            // C99 6.8.6.2: continue-statement
+  case tok::kw_continuar:            // C99 6.8.6.2: continue-statement
     Res = ParseContinueStatement();
     SemiError = "continue";
     break;
-  case tok::kw_break:               // C99 6.8.6.3: break-statement
+  case tok::kw_romper:               // C99 6.8.6.3: break-statement
     Res = ParseBreakStatement();
     SemiError = "break";
     break;
@@ -305,7 +305,7 @@ Retry:
     // a new scope.
     return StmtEmpty();
 
-  case tok::kw_try:                 // C++ 15: try-block
+  case tok::kw_intentar:                 // C++ 15: try-block
     return ParseCXXTryBlock();
 
   case tok::kw___try:
@@ -672,7 +672,7 @@ StmtResult Parser::ParseLabeledStatement(ParsedAttributesWithRange &attrs,
 ///
 StmtResult Parser::ParseCaseStatement(ParsedStmtContext StmtCtx,
                                       bool MissingCase, ExprResult Expr) {
-  assert((MissingCase || Tok.is(tok::kw_case)) && "Not a case stmt!");
+  assert((MissingCase || Tok.is(tok::kw_caso)) && "Not a case stmt!");
 
   // The substatement is always a 'statement', not a 'declaration', but is
   // otherwise in the same context as the labeled-statement.
@@ -783,7 +783,7 @@ StmtResult Parser::ParseCaseStatement(ParsedStmtContext StmtCtx,
     }
 
     // Handle all case statements.
-  } while (Tok.is(tok::kw_case));
+  } while (Tok.is(tok::kw_caso));
 
   // If we found a non-case statement, start by parsing it.
   StmtResult SubStmt;
@@ -820,7 +820,7 @@ StmtResult Parser::ParseCaseStatement(ParsedStmtContext StmtCtx,
 /// Note that this does not parse the 'statement' at the end.
 ///
 StmtResult Parser::ParseDefaultStatement(ParsedStmtContext StmtCtx) {
-  assert(Tok.is(tok::kw_default) && "Not a default stmt!");
+  assert(Tok.is(tok::kw_otro) && "Not a default stmt!");
 
   // The substatement is always a 'statement', not a 'declaration', but is
   // otherwise in the same context as the labeled-statement.
@@ -1314,7 +1314,7 @@ struct MisleadingIndentationChecker {
 /// [C++]   'if' '(' condition ')' statement 'else' statement
 ///
 StmtResult Parser::ParseIfStatement(SourceLocation *TrailingElseLoc) {
-  assert(Tok.is(tok::kw_if) && "Not an if stmt!");
+  assert(Tok.is(tok::kw_si) && "Not an if stmt!");
   SourceLocation IfLoc = ConsumeToken();  // eat the 'if'.
 
   bool IsConstexpr = false;
@@ -1396,7 +1396,7 @@ StmtResult Parser::ParseIfStatement(SourceLocation *TrailingElseLoc) {
     ThenStmt = ParseStatement(&InnerStatementTrailingElseLoc);
   }
 
-  if (Tok.isNot(tok::kw_else))
+  if (Tok.isNot(tok::kw_sino))
     MIChecker.Check();
 
   // Pop the 'if' scope if needed.
@@ -1407,7 +1407,7 @@ StmtResult Parser::ParseIfStatement(SourceLocation *TrailingElseLoc) {
   SourceLocation ElseStmtLoc;
   StmtResult ElseStmt;
 
-  if (Tok.is(tok::kw_else)) {
+  if (Tok.is(tok::kw_sino)) {
     if (TrailingElseLoc)
       *TrailingElseLoc = Tok.getLocation();
 
@@ -1474,7 +1474,7 @@ StmtResult Parser::ParseIfStatement(SourceLocation *TrailingElseLoc) {
 ///         'switch' '(' expression ')' statement
 /// [C++]   'switch' '(' condition ')' statement
 StmtResult Parser::ParseSwitchStatement(SourceLocation *TrailingElseLoc) {
-  assert(Tok.is(tok::kw_switch) && "Not a switch stmt!");
+  assert(Tok.is(tok::kw_elegir) && "Not a switch stmt!");
   SourceLocation SwitchLoc = ConsumeToken();  // eat the 'switch'.
 
   if (Tok.isNot(tok::l_paren)) {
@@ -1559,7 +1559,7 @@ StmtResult Parser::ParseSwitchStatement(SourceLocation *TrailingElseLoc) {
 ///         'while' '(' expression ')' statement
 /// [C++]   'while' '(' condition ')' statement
 StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc) {
-  assert(Tok.is(tok::kw_while) && "Not a while stmt!");
+  assert(Tok.is(tok::kw_mientras) && "Not a while stmt!");
   SourceLocation WhileLoc = Tok.getLocation();
   ConsumeToken();  // eat the 'while'.
 
@@ -1634,7 +1634,7 @@ StmtResult Parser::ParseWhileStatement(SourceLocation *TrailingElseLoc) {
 ///         'do' statement 'while' '(' expression ')' ';'
 /// Note: this lets the caller parse the end ';'.
 StmtResult Parser::ParseDoStatement() {
-  assert(Tok.is(tok::kw_do) && "Not a do stmt!");
+  assert(Tok.is(tok::kw_hacer) && "Not a do stmt!");
   SourceLocation DoLoc = ConsumeToken();  // eat the 'do'.
 
   // C99 6.8.5p5 - In C99, the do statement is a block.  This is not
@@ -1664,7 +1664,7 @@ StmtResult Parser::ParseDoStatement() {
   // Pop the body scope if needed.
   InnerScope.Exit();
 
-  if (Tok.isNot(tok::kw_while)) {
+  if (Tok.isNot(tok::kw_mientras)) {
     if (!Body.isInvalid()) {
       Diag(Tok, diag::err_expected_while);
       Diag(DoLoc, diag::note_matching) << "'do'";
@@ -1743,7 +1743,7 @@ bool Parser::isForRangeIdentifier() {
 /// [C++0x]   expression
 /// [C++0x]   braced-init-list            [TODO]
 StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
-  assert(Tok.is(tok::kw_for) && "Not a for stmt!");
+  assert(Tok.is(tok::kw_desde) && "Not a for stmt!");
   SourceLocation ForLoc = ConsumeToken();  // eat the 'for'.
 
   SourceLocation CoawaitLoc;
@@ -2087,7 +2087,7 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
 /// Note: this lets the caller parse the end ';'.
 ///
 StmtResult Parser::ParseGotoStatement() {
-  assert(Tok.is(tok::kw_goto) && "Not a goto stmt!");
+  assert(Tok.is(tok::kw_ir) && "Not a goto stmt!");
   SourceLocation GotoLoc = ConsumeToken();  // eat the 'goto'.
 
   StmtResult Res;
@@ -2252,7 +2252,7 @@ Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
 ///         'try' ctor-initializer[opt] compound-statement handler-seq
 ///
 Decl *Parser::ParseFunctionTryBlock(Decl *Decl, ParseScope &BodyScope) {
-  assert(Tok.is(tok::kw_try) && "Expected 'try'");
+  assert(Tok.is(tok::kw_intentar) && "Expected 'try'");
   SourceLocation TryLoc = ConsumeToken();
 
   PrettyDeclStackTraceEntry CrashInfo(Actions.Context, Decl, TryLoc,
@@ -2294,7 +2294,7 @@ bool Parser::trySkippingFunctionBody() {
   // We're in code-completion mode. Skip parsing for all function bodies unless
   // the body contains the code-completion point.
   TentativeParsingAction PA(*this);
-  bool IsTryCatch = Tok.is(tok::kw_try);
+  bool IsTryCatch = Tok.is(tok::kw_intentar);
   CachedTokens Toks;
   bool ErrorInPrologue = ConsumeAndStoreFunctionPrologue(Toks);
   if (llvm::any_of(Toks, [](const Token &Tok) {
@@ -2312,7 +2312,7 @@ bool Parser::trySkippingFunctionBody() {
     PA.Revert();
     return false;
   }
-  while (IsTryCatch && Tok.is(tok::kw_catch)) {
+  while (IsTryCatch && Tok.is(tok::kw_atrapar)) {
     if (!SkipUntil(tok::l_brace, StopAtCodeCompletion) ||
         !SkipUntil(tok::r_brace, StopAtCodeCompletion)) {
       PA.Revert();
@@ -2329,7 +2329,7 @@ bool Parser::trySkippingFunctionBody() {
 ///         'try' compound-statement handler-seq
 ///
 StmtResult Parser::ParseCXXTryBlock() {
-  assert(Tok.is(tok::kw_try) && "Expected 'try'");
+  assert(Tok.is(tok::kw_intentar) && "Expected 'try'");
 
   SourceLocation TryLoc = ConsumeToken();
   return ParseCXXTryBlockCommon(TryLoc);
@@ -2392,9 +2392,9 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
     // statement-like.
     DiagnoseAndSkipCXX11Attributes();
 
-    if (Tok.isNot(tok::kw_catch))
+    if (Tok.isNot(tok::kw_atrapar))
       return StmtError(Diag(Tok, diag::err_expected_catch));
-    while (Tok.is(tok::kw_catch)) {
+    while (Tok.is(tok::kw_atrapar)) {
       StmtResult Handler(ParseCXXCatchBlock(FnTry));
       if (!Handler.isInvalid())
         Handlers.push_back(Handler.get());
@@ -2419,7 +2419,7 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
 ///     '...'
 ///
 StmtResult Parser::ParseCXXCatchBlock(bool FnCatch) {
-  assert(Tok.is(tok::kw_catch) && "Expected 'catch'");
+  assert(Tok.is(tok::kw_atrapar) && "Expected 'catch'");
 
   SourceLocation CatchLoc = ConsumeToken();
 
@@ -2535,7 +2535,7 @@ bool Parser::ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs) {
   if (Attrs.begin()->getKind() != ParsedAttr::AT_OpenCLUnrollHint)
     return true;
 
-  if (!(Tok.is(tok::kw_for) || Tok.is(tok::kw_while) || Tok.is(tok::kw_do))) {
+  if (!(Tok.is(tok::kw_desde) || Tok.is(tok::kw_mientras) || Tok.is(tok::kw_hacer))) {
     Diag(Tok, diag::err_opencl_unroll_hint_on_non_loop);
     return false;
   }

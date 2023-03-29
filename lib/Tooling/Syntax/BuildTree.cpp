@@ -1250,7 +1250,7 @@ private:
       const syntax::Token *TemplateKW,
       syntax::SimpleDeclaration *InnerDeclaration, Decl *From) {
     assert(!ExternKW || ExternKW->kind() == tok::kw_extern);
-    assert(TemplateKW && TemplateKW->kind() == tok::kw_template);
+    assert(TemplateKW && TemplateKW->kind() == tok::kw_plantilla);
     Builder.markChildToken(ExternKW, syntax::NodeRole::ExternKeyword);
     Builder.markChildToken(TemplateKW, syntax::NodeRole::IntroducerKeyword);
     Builder.markChild(
@@ -1263,7 +1263,7 @@ private:
   syntax::TemplateDeclaration *foldTemplateDeclaration(
       ArrayRef<syntax::Token> Range, const syntax::Token *TemplateKW,
       ArrayRef<syntax::Token> TemplatedDeclaration, Decl *From) {
-    assert(TemplateKW && TemplateKW->kind() == tok::kw_template);
+    assert(TemplateKW && TemplateKW->kind() == tok::kw_plantilla);
     Builder.markChildToken(TemplateKW, syntax::NodeRole::IntroducerKeyword);
 
     auto *N = new (allocator()) syntax::TemplateDeclaration;

@@ -527,7 +527,7 @@ Parser::ParseOpenMPDeclareMapperDirective(AccessSpecifier AS) {
   auto &DeclNames = Actions.getASTContext().DeclarationNames;
   DeclarationName MapperId;
   if (PP.LookAhead(0).is(tok::colon)) {
-    if (Tok.isNot(tok::identifier) && Tok.isNot(tok::kw_default)) {
+    if (Tok.isNot(tok::identifier) && Tok.isNot(tok::kw_otro)) {
       Diag(Tok.getLocation(), diag::err_omp_mapper_illegal_identifier);
       IsCorrect = false;
     } else {
@@ -3083,7 +3083,7 @@ bool Parser::parseMapperModifier(OpenMPVarListDataTy &Data) {
                                    /*ObjectType=*/nullptr,
                                    /*ObjectHadErrors=*/false,
                                    /*EnteringContext=*/false);
-  if (Tok.isNot(tok::identifier) && Tok.isNot(tok::kw_default)) {
+  if (Tok.isNot(tok::identifier) && Tok.isNot(tok::kw_otro)) {
     Diag(Tok.getLocation(), diag::err_omp_mapper_illegal_identifier);
     SkipUntil(tok::colon, tok::r_paren, tok::annot_pragma_openmp_end,
               StopBeforeMatch);
@@ -3139,7 +3139,7 @@ bool Parser::parseMapTypeModifiers(OpenMPVarListDataTy &Data) {
 static OpenMPMapClauseKind isMapType(Parser &P) {
   Token Tok = P.getCurToken();
   // The map-type token can be either an identifier or the C++ delete keyword.
-  if (!Tok.isOneOf(tok::identifier, tok::kw_delete))
+  if (!Tok.isOneOf(tok::identifier, tok::kw_borrar))
     return OMPC_MAP_unknown;
   Preprocessor &PP = P.getPreprocessor();
   OpenMPMapClauseKind MapType = static_cast<OpenMPMapClauseKind>(
@@ -3294,7 +3294,7 @@ bool Parser::ParseOpenMPVarList(OpenMPDirectiveKind DKind,
       Kind == OMPC_in_reduction) {
     Data.ExtraModifier = OMPC_REDUCTION_unknown;
     if (Kind == OMPC_reduction && getLangOpts().OpenMP >= 50 &&
-        (Tok.is(tok::identifier) || Tok.is(tok::kw_default)) &&
+        (Tok.is(tok::identifier) || Tok.is(tok::kw_otro)) &&
         NextToken().is(tok::comma)) {
       // Parse optional reduction modifier.
       Data.ExtraModifier = getOpenMPSimpleClauseType(Kind, PP.getSpelling(Tok));

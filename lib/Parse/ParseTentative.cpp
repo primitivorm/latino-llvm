@@ -51,10 +51,10 @@ bool Parser::isCXXDeclarationStatement() {
     // asm-definition
   case tok::kw_asm:
     // namespace-alias-definition
-  case tok::kw_namespace:
+  case tok::kw_contexto:
     // using-declaration
     // using-directive
-  case tok::kw_using:
+  case tok::kw_usar:
     // static_assert-declaration
   case tok::kw_static_assert:
   case tok::kw__Static_assert:
@@ -171,7 +171,7 @@ Parser::TPResult Parser::TryConsumeDeclarationSpecifier() {
     break;
   }
 
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
   case tok::kw___interface:
@@ -671,7 +671,7 @@ Parser::isCXX11AttributeSpecifier(bool Disambiguate,
     return CAK_AttributeSpecifier;
 
   // '[[using ns: ...]]' is an attribute.
-  if (GetLookAheadToken(2).is(tok::kw_using))
+  if (GetLookAheadToken(2).is(tok::kw_usar))
     return CAK_AttributeSpecifier;
 
   RevertingTentativeParsingAction PA(*this);
@@ -874,7 +874,7 @@ Parser::TPResult Parser::TryParseOperatorId() {
 
   // Maybe this is an operator-function-id.
   switch (Tok.getKind()) {
-  case tok::kw_new: case tok::kw_delete:
+  case tok::kw_new: case tok::kw_borrar:
     ConsumeToken();
     if (Tok.is(tok::l_square) && NextToken().is(tok::r_square)) {
       ConsumeBracket();
@@ -1340,7 +1340,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::coloncolon: {    // ::foo::bar
     const Token &Next = NextToken();
     if (Next.isOneOf(tok::kw_new,       // ::new
-                     tok::kw_delete))   // ::delete
+                     tok::kw_borrar))   // ::delete
       return TPResult::False;
     LLVM_FALLTHROUGH;
   }
@@ -1394,7 +1394,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
 
     // class-specifier
     // elaborated-type-specifier
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
   case tok::kw___interface:
@@ -1406,7 +1406,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     return TPResult::True;
 
     // OpenCL address space qualifiers
-  case tok::kw_private:
+  case tok::kw_pri:
     if (!getLangOpts().OpenCL)
       return TPResult::False;
     LLVM_FALLTHROUGH;
@@ -1730,7 +1730,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
     return true;
 
     // elaborated-type-specifier
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
   case tok::kw___interface:
@@ -1850,8 +1850,8 @@ bool Parser::isCXXFunctionDeclarator(bool *IsAmbiguous) {
     else {
       const Token &Next = NextToken();
       if (Next.isOneOf(tok::amp, tok::ampamp, tok::kw_const, tok::kw_volatile,
-                       tok::kw_throw, tok::kw_noexcept, tok::l_square,
-                       tok::l_brace, tok::kw_try, tok::equal, tok::arrow) ||
+                       tok::kw_lanzar, tok::kw_noexcept, tok::l_square,
+                       tok::l_brace, tok::kw_intentar, tok::equal, tok::arrow) ||
           isCXX11VirtSpecifier(Next))
         // The next token cannot appear after a constructor-style initializer,
         // and can appear next in a function definition. This must be a function
@@ -2030,7 +2030,7 @@ Parser::TPResult Parser::TryParseFunctionDeclarator() {
     ConsumeToken();
 
   // exception-specification
-  if (Tok.is(tok::kw_throw)) {
+  if (Tok.is(tok::kw_lanzar)) {
     ConsumeToken();
     if (Tok.isNot(tok::l_paren))
       return TPResult::Error;

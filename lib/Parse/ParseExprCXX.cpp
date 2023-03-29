@@ -183,7 +183,7 @@ bool Parser::ParseOptionalCXXScopeSpecifier(
   if (Tok.is(tok::coloncolon)) {
     // ::new and ::delete aren't nested-name-specifiers.
     tok::TokenKind NextKind = NextToken().getKind();
-    if (NextKind == tok::kw_new || NextKind == tok::kw_delete)
+    if (NextKind == tok::kw_new || NextKind == tok::kw_borrar)
       return false;
 
     if (NextKind == tok::l_brace) {
@@ -267,7 +267,7 @@ bool Parser::ParseOptionalCXXScopeSpecifier(
 
     // Parse the optional 'template' keyword, then make sure we have
     // 'identifier <' after it.
-    if (Tok.is(tok::kw_template)) {
+    if (Tok.is(tok::kw_plantilla)) {
       // If we don't have a scope specifier or an object type, this isn't a
       // nested-name-specifier, since they aren't allowed to start with
       // 'template'.
@@ -425,8 +425,8 @@ bool Parser::ParseOptionalCXXScopeSpecifier(
 
       if (ColonIsSacred) {
         const Token &Next2 = GetLookAheadToken(2);
-        if (Next2.is(tok::kw_private) || Next2.is(tok::kw_protected) ||
-            Next2.is(tok::kw_public) || Next2.is(tok::kw_virtual)) {
+        if (Next2.is(tok::kw_pri) || Next2.is(tok::kw_pro) ||
+            Next2.is(tok::kw_pub) || Next2.is(tok::kw_virtual)) {
           Diag(Next2, diag::err_unexpected_token_in_nested_name_spec)
               << Next2.getName()
               << FixItHint::CreateReplacement(Next.getLocation(), ":");
@@ -915,7 +915,7 @@ bool Parser::ParseLambdaIntroducer(LambdaIntroducer &Intro,
 
     if (Tok.is(tok::star)) {
       Loc = ConsumeToken();
-      if (Tok.is(tok::kw_this)) {
+      if (Tok.is(tok::kw_mi)) {
         ConsumeToken();
         Kind = LCK_StarThis;
       } else {
@@ -923,7 +923,7 @@ bool Parser::ParseLambdaIntroducer(LambdaIntroducer &Intro,
           Diag(Tok.getLocation(), diag::err_expected_star_this_capture);
         });
       }
-    } else if (Tok.is(tok::kw_this)) {
+    } else if (Tok.is(tok::kw_mi)) {
       Kind = LCK_This;
       Loc = ConsumeToken();
     } else {
@@ -946,7 +946,7 @@ bool Parser::ParseLambdaIntroducer(LambdaIntroducer &Intro,
       if (Tok.is(tok::identifier)) {
         Id = Tok.getIdentifierInfo();
         Loc = ConsumeToken();
-      } else if (Tok.is(tok::kw_this)) {
+      } else if (Tok.is(tok::kw_mi)) {
         return Invalid([&] {
           // FIXME: Suggest a fixit here.
           Diag(Tok.getLocation(), diag::err_this_captured_by_reference);
@@ -1809,7 +1809,7 @@ ExprResult Parser::ParseCXXBoolLiteral() {
 ///       throw-expression: [C++ 15]
 ///         'throw' assignment-expression[opt]
 ExprResult Parser::ParseThrowExpression() {
-  assert(Tok.is(tok::kw_throw) && "Not throw!");
+  assert(Tok.is(tok::kw_lanzar) && "Not throw!");
   SourceLocation ThrowLoc = ConsumeToken();           // Eat the throw token.
 
   // If the current token isn't the start of an assignment-expression,
@@ -1852,7 +1852,7 @@ ExprResult Parser::ParseCoyieldExpression() {
 /// a non-lvalue expression whose value is the address of the object for which
 /// the function is called.
 ExprResult Parser::ParseCXXThis() {
-  assert(Tok.is(tok::kw_this) && "Not 'this'!");
+  assert(Tok.is(tok::kw_mi) && "Not 'this'!");
   SourceLocation ThisLoc = ConsumeToken();
   return Actions.ActOnCXXThis(ThisLoc);
 }
@@ -2517,7 +2517,7 @@ bool Parser::ParseUnqualifiedIdOperator(CXXScopeSpec &SS, bool EnteringContext,
   OverloadedOperatorKind Op = OO_None;
   switch (Tok.getKind()) {
     case tok::kw_new:
-    case tok::kw_delete: {
+    case tok::kw_borrar: {
       bool isNew = Tok.getKind() == tok::kw_new;
       // Consume the 'new' or 'delete'.
       SymbolLocations[SymbolIdx++] = ConsumeToken();
@@ -2751,7 +2751,7 @@ bool Parser::ParseUnqualifiedId(CXXScopeSpec &SS, ParsedType ObjectType,
   // Handle 'A::template B'. This is for template-ids which have not
   // already been annotated by ParseOptionalCXXScopeSpecifier().
   bool TemplateSpecified = false;
-  if (Tok.is(tok::kw_template)) {
+  if (Tok.is(tok::kw_plantilla)) {
     if (TemplateKWLoc && (ObjectType || SS.isSet())) {
       TemplateSpecified = true;
       *TemplateKWLoc = ConsumeToken();
@@ -3248,7 +3248,7 @@ bool Parser::ParseExpressionListOrTypeId(
 ///                   '::'[opt] 'delete' '[' ']' cast-expression
 ExprResult
 Parser::ParseCXXDeleteExpression(bool UseGlobal, SourceLocation Start) {
-  assert(Tok.is(tok::kw_delete) && "Expected 'delete' keyword");
+  assert(Tok.is(tok::kw_borrar) && "Expected 'delete' keyword");
   ConsumeToken(); // Consume 'delete'
 
   // Array delete?

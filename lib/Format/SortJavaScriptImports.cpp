@@ -330,7 +330,7 @@ private:
   // for grammar EBNF (production ModuleItem).
   bool parseModuleReference(const AdditionalKeywords &Keywords,
                             JsModuleReference &Reference) {
-    if (!Current || !Current->isOneOf(Keywords.kw_import, tok::kw_export))
+    if (!Current || !Current->isOneOf(Keywords.kw_importar, tok::kw_export))
       return false;
     Reference.IsExport = Current->is(tok::kw_export);
 
@@ -409,7 +409,7 @@ private:
       nextToken();
       if (Current->is(tok::r_brace))
         break;
-      if (!Current->isOneOf(tok::identifier, tok::kw_default))
+      if (!Current->isOneOf(tok::identifier, tok::kw_otro))
         return false;
 
       JsImportedSymbol Symbol;
@@ -421,7 +421,7 @@ private:
 
       if (Current->is(Keywords.kw_as)) {
         nextToken();
-        if (!Current->isOneOf(tok::identifier, tok::kw_default))
+        if (!Current->isOneOf(tok::identifier, tok::kw_otro))
           return false;
         Symbol.Alias = Current->TokenText;
         nextToken();

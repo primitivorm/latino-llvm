@@ -877,7 +877,7 @@ bool Preprocessor::HandleIdentifier(Token &Identifier) {
   //
   // Likewise if this is the C++ Modules TS import keyword.
   if (((LastTokenWasAt && II.isModulesImport()) ||
-       Identifier.is(tok::kw_import)) &&
+       Identifier.is(tok::kw_importar)) &&
       !InMacroArgs && !DisableMacroExpansion &&
       (getLangOpts().Modules || getLangOpts().DebuggerSupport) &&
       CurLexerKind != CLK_CachingLexer) {
@@ -1183,7 +1183,7 @@ bool Preprocessor::LexAfterModuleImport(Token &Result) {
     // Reconstitute the import token.
     Token ImportTok;
     ImportTok.startToken();
-    ImportTok.setKind(tok::kw_import);
+    ImportTok.setKind(tok::kw_importar);
     ImportTok.setLocation(ModuleImportLoc);
     ImportTok.setIdentifierInfo(getIdentifierInfo("import"));
     ImportTok.setLength(6);

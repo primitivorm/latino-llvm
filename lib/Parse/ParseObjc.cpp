@@ -1038,40 +1038,40 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_asm:
   case tok::kw_auto:
   case tok::kw_bool:
-  case tok::kw_break:
-  case tok::kw_case:
-  case tok::kw_catch:
+  case tok::kw_romper:
+  case tok::kw_caso:
+  case tok::kw_atrapar:
   case tok::kw_char:
-  case tok::kw_class:
+  case tok::kw_clase:
   case tok::kw_const:
   case tok::kw_const_cast:
-  case tok::kw_continue:
-  case tok::kw_default:
-  case tok::kw_delete:
-  case tok::kw_do:
+  case tok::kw_continuar:
+  case tok::kw_otro:
+  case tok::kw_borrar:
+  case tok::kw_hacer:
   case tok::kw_double:
   case tok::kw_dynamic_cast:
-  case tok::kw_else:
+  case tok::kw_sino:
   case tok::kw_enum:
   case tok::kw_explicit:
   case tok::kw_export:
   case tok::kw_extern:
   case tok::kw_false:
   case tok::kw_float:
-  case tok::kw_for:
+  case tok::kw_desde:
   case tok::kw_friend:
-  case tok::kw_goto:
-  case tok::kw_if:
+  case tok::kw_ir:
+  case tok::kw_si:
   case tok::kw_inline:
   case tok::kw_int:
   case tok::kw_long:
   case tok::kw_mutable:
-  case tok::kw_namespace:
+  case tok::kw_contexto:
   case tok::kw_new:
   case tok::kw_operator:
-  case tok::kw_private:
-  case tok::kw_protected:
-  case tok::kw_public:
+  case tok::kw_pri:
+  case tok::kw_pro:
+  case tok::kw_pub:
   case tok::kw_register:
   case tok::kw_reinterpret_cast:
   case tok::kw_restrict:
@@ -1082,24 +1082,24 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_static:
   case tok::kw_static_cast:
   case tok::kw_struct:
-  case tok::kw_switch:
-  case tok::kw_template:
-  case tok::kw_this:
-  case tok::kw_throw:
+  case tok::kw_elegir:
+  case tok::kw_plantilla:
+  case tok::kw_mi:
+  case tok::kw_lanzar:
   case tok::kw_true:
-  case tok::kw_try:
+  case tok::kw_intentar:
   case tok::kw_typedef:
   case tok::kw_typeid:
   case tok::kw_typename:
   case tok::kw_typeof:
   case tok::kw_union:
   case tok::kw_unsigned:
-  case tok::kw_using:
+  case tok::kw_usar:
   case tok::kw_virtual:
   case tok::kw_void:
   case tok::kw_volatile:
   case tok::kw_wchar_t:
-  case tok::kw_while:
+  case tok::kw_mientras:
   case tok::kw__Bool:
   case tok::kw__Complex:
   case tok::kw___alignof:
@@ -2652,7 +2652,7 @@ void Parser::StashAwayMethodOrFunctionBodyTokens(Decl *MDecl) {
   CachedTokens &Toks = LM->Toks;
   // Begin by storing the '{' or 'try' or ':' token.
   Toks.push_back(Tok);
-  if (Tok.is(tok::kw_try)) {
+  if (Tok.is(tok::kw_intentar)) {
     ConsumeToken();
     if (Tok.is(tok::colon)) {
       Toks.push_back(Tok);
@@ -2676,7 +2676,7 @@ void Parser::StashAwayMethodOrFunctionBodyTokens(Decl *MDecl) {
   ConsumeBrace();
   // Consume everything up to (and including) the matching right brace.
   ConsumeAndStoreUntil(tok::r_brace, Toks, /*StopAtSemi=*/false);
-  while (Tok.is(tok::kw_catch)) {
+  while (Tok.is(tok::kw_atrapar)) {
     ConsumeAndStoreUntil(tok::l_brace, Toks, /*StopAtSemi=*/false);
     ConsumeAndStoreUntil(tok::r_brace, Toks, /*StopAtSemi=*/false);
   }
@@ -3660,7 +3660,7 @@ void Parser::ParseLexedObjCMethodDefs(LexedMethod &LM, bool parseMethod) {
   // Consume the previously pushed token.
   ConsumeAnyToken(/*ConsumeCodeCompletionTok=*/true);
 
-  assert(Tok.isOneOf(tok::l_brace, tok::kw_try, tok::colon) &&
+  assert(Tok.isOneOf(tok::l_brace, tok::kw_intentar, tok::colon) &&
          "Inline objective-c method not starting with '{' or 'try' or ':'");
   // Enter a scope for the method or c-function body.
   ParseScope BodyScope(this, (parseMethod ? Scope::ObjCMethodScope : 0) |
@@ -3673,7 +3673,7 @@ void Parser::ParseLexedObjCMethodDefs(LexedMethod &LM, bool parseMethod) {
     Actions.ActOnStartOfObjCMethodDef(getCurScope(), MCDecl);
   else
     Actions.ActOnStartOfFunctionDef(getCurScope(), MCDecl);
-  if (Tok.is(tok::kw_try))
+  if (Tok.is(tok::kw_intentar))
     ParseFunctionTryBlock(MCDecl, BodyScope);
   else {
     if (Tok.is(tok::colon))
