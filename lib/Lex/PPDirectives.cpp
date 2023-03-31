@@ -1009,8 +1009,8 @@ void Preprocessor::HandleDirective(Token &Result) {
       return HandleUndefDirective();
 
     // C99 6.10.4 - Line Control.
-    case tok::pp_line:
-      return HandleLineDirective();
+    // case tok::pp_line:
+    //   return HandleLineDirective();
 
     // C99 6.10.5 - Error Directive.
     case tok::pp_error:
@@ -1145,81 +1145,81 @@ static bool GetLineValue(Token &DigitTok, unsigned &Val,
 ///   # line digit-sequence
 ///   # line digit-sequence "s-char-sequence"
 /// \endverbatim
-void Preprocessor::HandleLineDirective() {
-  // Read the line # and string argument.  Per C99 6.10.4p5, these tokens are
-  // expanded.
-  Token DigitTok;
-  Lex(DigitTok);
+// void Preprocessor::HandleLineDirective() {
+//   // Read the line # and string argument.  Per C99 6.10.4p5, these tokens are
+//   // expanded.
+//   Token DigitTok;
+//   Lex(DigitTok);
 
-  // Validate the number and convert it to an unsigned.
-  unsigned LineNo;
-  if (GetLineValue(DigitTok, LineNo, diag::err_pp_line_requires_integer,*this))
-    return;
+//   // Validate the number and convert it to an unsigned.
+//   unsigned LineNo;
+//   if (GetLineValue(DigitTok, LineNo, diag::err_pp_line_requires_integer,*this))
+//     return;
 
-  if (LineNo == 0)
-    Diag(DigitTok, diag::ext_pp_line_zero);
+//   if (LineNo == 0)
+//     Diag(DigitTok, diag::ext_pp_line_zero);
 
-  // Enforce C99 6.10.4p3: "The digit sequence shall not specify ... a
-  // number greater than 2147483647".  C90 requires that the line # be <= 32767.
-  unsigned LineLimit = 32768U;
-  if (LangOpts.C99 || LangOpts.CPlusPlus11)
-    LineLimit = 2147483648U;
-  if (LineNo >= LineLimit)
-    Diag(DigitTok, diag::ext_pp_line_too_big) << LineLimit;
-  else if (LangOpts.CPlusPlus11 && LineNo >= 32768U)
-    Diag(DigitTok, diag::warn_cxx98_compat_pp_line_too_big);
+//   // Enforce C99 6.10.4p3: "The digit sequence shall not specify ... a
+//   // number greater than 2147483647".  C90 requires that the line # be <= 32767.
+//   unsigned LineLimit = 32768U;
+//   if (LangOpts.C99 || LangOpts.CPlusPlus11)
+//     LineLimit = 2147483648U;
+//   if (LineNo >= LineLimit)
+//     Diag(DigitTok, diag::ext_pp_line_too_big) << LineLimit;
+//   else if (LangOpts.CPlusPlus11 && LineNo >= 32768U)
+//     Diag(DigitTok, diag::warn_cxx98_compat_pp_line_too_big);
 
-  int FilenameID = -1;
-  Token StrTok;
-  Lex(StrTok);
+//   int FilenameID = -1;
+//   Token StrTok;
+//   Lex(StrTok);
 
-  // If the StrTok is "eod", then it wasn't present.  Otherwise, it must be a
-  // string followed by eod.
-  if (StrTok.is(tok::eod))
-    ; // ok
-  else if (StrTok.isNot(tok::string_literal)) {
-    Diag(StrTok, diag::err_pp_line_invalid_filename);
-    DiscardUntilEndOfDirective();
-    return;
-  } else if (StrTok.hasUDSuffix()) {
-    Diag(StrTok, diag::err_invalid_string_udl);
-    DiscardUntilEndOfDirective();
-    return;
-  } else {
-    // Parse and validate the string, converting it into a unique ID.
-    StringLiteralParser Literal(StrTok, *this);
-    assert(Literal.isAscii() && "Didn't allow wide strings in");
-    if (Literal.hadError) {
-      DiscardUntilEndOfDirective();
-      return;
-    }
-    if (Literal.Pascal) {
-      Diag(StrTok, diag::err_pp_linemarker_invalid_filename);
-      DiscardUntilEndOfDirective();
-      return;
-    }
-    FilenameID = SourceMgr.getLineTableFilenameID(Literal.GetString());
+//   // If the StrTok is "eod", then it wasn't present.  Otherwise, it must be a
+//   // string followed by eod.
+//   if (StrTok.is(tok::eod))
+//     ; // ok
+//   else if (StrTok.isNot(tok::string_literal)) {
+//     Diag(StrTok, diag::err_pp_line_invalid_filename);
+//     DiscardUntilEndOfDirective();
+//     return;
+//   } else if (StrTok.hasUDSuffix()) {
+//     Diag(StrTok, diag::err_invalid_string_udl);
+//     DiscardUntilEndOfDirective();
+//     return;
+//   } else {
+//     // Parse and validate the string, converting it into a unique ID.
+//     StringLiteralParser Literal(StrTok, *this);
+//     assert(Literal.isAscii() && "Didn't allow wide strings in");
+//     if (Literal.hadError) {
+//       DiscardUntilEndOfDirective();
+//       return;
+//     }
+//     if (Literal.Pascal) {
+//       Diag(StrTok, diag::err_pp_linemarker_invalid_filename);
+//       DiscardUntilEndOfDirective();
+//       return;
+//     }
+//     FilenameID = SourceMgr.getLineTableFilenameID(Literal.GetString());
 
-    // Verify that there is nothing after the string, other than EOD.  Because
-    // of C99 6.10.4p5, macros that expand to empty tokens are ok.
-    CheckEndOfDirective("line", true);
-  }
+//     // Verify that there is nothing after the string, other than EOD.  Because
+//     // of C99 6.10.4p5, macros that expand to empty tokens are ok.
+//     CheckEndOfDirective("line", true);
+//   }
 
-  // Take the file kind of the file containing the #line directive. #line
-  // directives are often used for generated sources from the same codebase, so
-  // the new file should generally be classified the same way as the current
-  // file. This is visible in GCC's pre-processed output, which rewrites #line
-  // to GNU line markers.
-  SrcMgr::CharacteristicKind FileKind =
-      SourceMgr.getFileCharacteristic(DigitTok.getLocation());
+//   // Take the file kind of the file containing the #line directive. #line
+//   // directives are often used for generated sources from the same codebase, so
+//   // the new file should generally be classified the same way as the current
+//   // file. This is visible in GCC's pre-processed output, which rewrites #line
+//   // to GNU line markers.
+//   SrcMgr::CharacteristicKind FileKind =
+//       SourceMgr.getFileCharacteristic(DigitTok.getLocation());
 
-  SourceMgr.AddLineNote(DigitTok.getLocation(), LineNo, FilenameID, false,
-                        false, FileKind);
+//   SourceMgr.AddLineNote(DigitTok.getLocation(), LineNo, FilenameID, false,
+//                         false, FileKind);
 
-  if (Callbacks)
-    Callbacks->FileChanged(CurPPLexer->getSourceLocation(),
-                           PPCallbacks::RenameFile, FileKind);
-}
+//   if (Callbacks)
+//     Callbacks->FileChanged(CurPPLexer->getSourceLocation(),
+//                            PPCallbacks::RenameFile, FileKind);
+// }
 
 /// ReadLineMarkerFlags - Parse and validate any flags at the end of a GNU line
 /// marker directive.
