@@ -1696,24 +1696,24 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw__Atomic:
     return TPResult::True;
 
-  case tok::kw__ExtInt: {
-    if (NextToken().isNot(tok::l_paren))
-      return TPResult::Error;
-    RevertingTentativeParsingAction PA(*this);
-    ConsumeToken();
-    ConsumeParen();
+  // case tok::kw__ExtInt: {
+  //   if (NextToken().isNot(tok::l_paren))
+  //     return TPResult::Error;
+  //   RevertingTentativeParsingAction PA(*this);
+  //   ConsumeToken();
+  //   ConsumeParen();
 
-    if (!SkipUntil(tok::r_paren, StopAtSemi))
-      return TPResult::Error;
+  //   if (!SkipUntil(tok::r_paren, StopAtSemi))
+  //     return TPResult::Error;
 
-    if (Tok.is(tok::l_paren))
-      return TPResult::Ambiguous;
+  //   if (Tok.is(tok::l_paren))
+  //     return TPResult::Ambiguous;
 
-    if (getLangOpts().CPlusPlus11 && Tok.is(tok::l_brace))
-      return BracedCastResult;
+  //   if (getLangOpts().CPlusPlus11 && Tok.is(tok::l_brace))
+  //     return BracedCastResult;
 
-    return TPResult::True;
-  }
+  //   return TPResult::True;
+  // }
   default:
     return TPResult::False;
   }
@@ -1746,7 +1746,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_bool:
   case tok::kw_short:
   case tok::kw_int:
-  case tok::kw__ExtInt:
+  // case tok::kw__ExtInt:
   case tok::kw_long:
   case tok::kw___int64:
   case tok::kw___int128:

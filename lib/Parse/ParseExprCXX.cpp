@@ -2159,18 +2159,18 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
     return;
   }
 
-  case tok::kw__ExtInt: {
-    ExprResult ER = ParseExtIntegerArgument();
-    if (ER.isInvalid())
-      DS.SetTypeSpecError();
-    else
-      DS.SetExtIntType(Loc, ER.get(), PrevSpec, DiagID, Policy);
+  // case tok::kw__ExtInt: {
+  //   ExprResult ER = ParseExtIntegerArgument();
+  //   if (ER.isInvalid())
+  //     DS.SetTypeSpecError();
+  //   else
+  //     DS.SetExtIntType(Loc, ER.get(), PrevSpec, DiagID, Policy);
 
-    // Do this here because we have already consumed the close paren.
-    DS.SetRangeEnd(PrevTokLocation);
-    DS.Finish(Actions, Policy);
-    return;
-  }
+  //   // Do this here because we have already consumed the close paren.
+  //   DS.SetRangeEnd(PrevTokLocation);
+  //   DS.Finish(Actions, Policy);
+  //   return;
+  // }
 
   // builtin types
   case tok::kw_short:

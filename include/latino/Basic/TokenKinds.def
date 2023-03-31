@@ -297,7 +297,7 @@ KEYWORD(ir                        , KEYALL) // goto
 KEYWORD(si                          , KEYALL) // if
 KEYWORD(inline                      , KEYC99|KEYCXX|KEYGNU)
 KEYWORD(int                         , KEYALL)
-KEYWORD(_ExtInt                     , KEYALL)
+// KEYWORD(_ExtInt                     , KEYALL)
 KEYWORD(long                        , KEYALL)
 KEYWORD(register                    , KEYALL)
 KEYWORD(restrict                    , KEYC99)
