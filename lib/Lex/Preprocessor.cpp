@@ -945,7 +945,7 @@ void Preprocessor::Lex(Token &Result) {
     case tok::annot_header_unit:
       ImportSeqState.handleHeaderName();
       break;
-    case tok::kw_export:
+    case tok::kw_exportar:
       ImportSeqState.handleExport();
       break;
     case tok::identifier:

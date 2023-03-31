@@ -580,7 +580,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
     HandlePragmaUnused();
     return false;
 
-  case tok::kw_export:
+  case tok::kw_exportar:
     switch (NextToken().getKind()) {
     case tok::kw_modulo:
       goto module_decl;
@@ -848,7 +848,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   case tok::kw_importar:
     SingleDecl = ParseModuleImport(SourceLocation());
     break;
-  case tok::kw_export:
+  case tok::kw_exportar:
     if (getLangOpts().CPlusPlusModules || getLangOpts().ModulesTS) {
       SingleDecl = ParseExportDeclaration();
       break;
@@ -2246,7 +2246,7 @@ void Parser::ParseMicrosoftIfExistsExternalDeclaration() {
 Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
   SourceLocation StartLoc = Tok.getLocation();
 
-  Sema::ModuleDeclKind MDK = TryConsumeToken(tok::kw_export)
+  Sema::ModuleDeclKind MDK = TryConsumeToken(tok::kw_exportar)
                                  ? Sema::ModuleDeclKind::Interface
                                  : Sema::ModuleDeclKind::Implementation;
 
@@ -2335,7 +2335,7 @@ Decl *Parser::ParseModuleImport(SourceLocation AtLoc) {
   SourceLocation StartLoc = AtLoc.isInvalid() ? Tok.getLocation() : AtLoc;
 
   SourceLocation ExportLoc;
-  TryConsumeToken(tok::kw_export, ExportLoc);
+  TryConsumeToken(tok::kw_exportar, ExportLoc);
 
   assert((AtLoc.isInvalid() ? Tok.isOneOf(tok::kw_importar, tok::identifier)
                             : Tok.isObjCAtKeyword(tok::objc_import)) &&

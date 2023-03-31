@@ -1054,7 +1054,7 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_sino:
   case tok::kw_enum:
   case tok::kw_explicit:
-  case tok::kw_export:
+  case tok::kw_exportar:
   case tok::kw_extern:
   case tok::kw_false:
   case tok::kw_float:

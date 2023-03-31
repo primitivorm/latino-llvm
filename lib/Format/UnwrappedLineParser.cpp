@@ -969,7 +969,7 @@ static bool isJSDeclOrStmt(const AdditionalKeywords &Keywords,
       tok::kw_const, tok::kw_clase, Keywords.kw_var, Keywords.kw_let,
       Keywords.kw_async, Keywords.kw_function,
       // import/export
-      Keywords.kw_importar, tok::kw_export);
+      Keywords.kw_importar, tok::kw_exportar);
 }
 
 // readTokenWithJavaScriptASI reads the next token and terminates the current
@@ -1129,7 +1129,7 @@ void UnwrappedLineParser::parseStructuralElement() {
       }
     }
     break;
-  case tok::kw_export:
+  case tok::kw_exportar:
     if (Style.Language == FormatStyle::LK_JavaScript) {
       parseJavaScriptEs6ImportExport();
       return;
@@ -2692,7 +2692,7 @@ bool UnwrappedLineParser::parseObjCProtocol() {
 
 void UnwrappedLineParser::parseJavaScriptEs6ImportExport() {
   bool IsImport = FormatTok->is(Keywords.kw_importar);
-  assert(IsImport || FormatTok->is(tok::kw_export));
+  assert(IsImport || FormatTok->is(tok::kw_exportar));
   nextToken();
 
   // Consume the "default" in "export default class/function".

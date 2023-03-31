@@ -1605,7 +1605,7 @@ Parser::ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
   Decl *SingleDecl = nullptr;
   switch (Tok.getKind()) {
   case tok::kw_plantilla:
-  case tok::kw_export:
+  case tok::kw_exportar:
     ProhibitAttributes(attrs);
     SingleDecl = ParseDeclarationStartingWithTemplate(Context, DeclEnd, attrs);
     break;

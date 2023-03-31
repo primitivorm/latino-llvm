@@ -223,7 +223,7 @@ private:
       Contexts.back().IsExpression = false;
     } else if (Style.Language == FormatStyle::LK_JavaScript &&
                (Line.startsWith(Keywords.kw_type, tok::identifier) ||
-                Line.startsWith(tok::kw_export, Keywords.kw_type,
+                Line.startsWith(tok::kw_exportar, Keywords.kw_type,
                                 tok::identifier))) {
       // type X = (...);
       // export type X = (...);
@@ -1300,7 +1300,7 @@ public:
         // LT_ImportStatement (i.e. prevent wraps on it for long URIs).
         // Just "export {...};" or "export class ..." should not be treated as
         // an import in this sense.
-        if (Line.First->is(tok::kw_export) &&
+        if (Line.First->is(tok::kw_exportar) &&
             CurrentToken->is(Keywords.kw_from) && CurrentToken->Next &&
             CurrentToken->Next->isStringLiteral())
           ImportStatement = true;
@@ -1420,7 +1420,7 @@ private:
         // using `export type ...`.
         !(Style.Language == FormatStyle::LK_JavaScript &&
           (Line.startsWith(Keywords.kw_type, tok::identifier) ||
-           Line.startsWith(tok::kw_export, Keywords.kw_type,
+           Line.startsWith(tok::kw_exportar, Keywords.kw_type,
                            tok::identifier))) &&
         (!Current.Previous || Current.Previous->isNot(tok::kw_operator))) {
       Contexts.back().IsExpression = true;
@@ -3187,7 +3187,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
         Right.isOneOf(tok::l_square, tok::l_brace, tok::l_paren))
       return true;
     if (Left.is(tok::kw_otro) && Left.Previous &&
-        Left.Previous->is(tok::kw_export))
+        Left.Previous->is(tok::kw_exportar))
       return true;
     if (Left.is(Keywords.kw_is) && Right.is(tok::l_brace))
       return true;
@@ -3196,7 +3196,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
     if (Left.is(TT_JsTypeOperator) || Right.is(TT_JsTypeOperator))
       return false;
     if ((Left.is(tok::l_brace) || Right.is(tok::r_brace)) &&
-        Line.First->isOneOf(Keywords.kw_importar, tok::kw_export))
+        Line.First->isOneOf(Keywords.kw_importar, tok::kw_exportar))
       return false;
     if (Left.is(tok::ellipsis))
       return false;
@@ -3433,7 +3433,7 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
       return true;
     if (Left.is(TT_DictLiteral) && Left.is(tok::l_brace) && Line.Level == 0 &&
         Left.Previous && Left.Previous->is(tok::equal) &&
-        Line.First->isOneOf(tok::identifier, Keywords.kw_importar, tok::kw_export,
+        Line.First->isOneOf(tok::identifier, Keywords.kw_importar, tok::kw_exportar,
                             tok::kw_const) &&
         // kw_var/kw_let are pseudo-tokens that are tok::identifier, so match
         // above.
@@ -3444,8 +3444,8 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
     if (Left.is(tok::l_brace) && Line.Level == 0 &&
         (Line.startsWith(tok::kw_enum) ||
          Line.startsWith(tok::kw_const, tok::kw_enum) ||
-         Line.startsWith(tok::kw_export, tok::kw_enum) ||
-         Line.startsWith(tok::kw_export, tok::kw_const, tok::kw_enum)))
+         Line.startsWith(tok::kw_exportar, tok::kw_enum) ||
+         Line.startsWith(tok::kw_exportar, tok::kw_const, tok::kw_enum)))
       // JavaScript top-level enum key/value pairs are put on separate lines
       // instead of bin-packing.
       return true;

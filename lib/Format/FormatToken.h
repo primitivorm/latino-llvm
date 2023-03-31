@@ -558,7 +558,7 @@ struct FormatToken {
     if (is(tok::comment))
       NamespaceTok = NamespaceTok->getNextNonComment();
     // Detect "(inline|export)? namespace" in the beginning of a line.
-    if (NamespaceTok && NamespaceTok->isOneOf(tok::kw_inline, tok::kw_export))
+    if (NamespaceTok && NamespaceTok->isOneOf(tok::kw_inline, tok::kw_exportar))
       NamespaceTok = NamespaceTok->getNextNonComment();
     return NamespaceTok &&
                    NamespaceTok->isOneOf(tok::kw_contexto, TT_NamespaceMacro)
@@ -936,7 +936,7 @@ struct AdditionalKeywords {
     case tok::kw_hacer:
     case tok::kw_sino:
     case tok::kw_enum:
-    case tok::kw_export:
+    case tok::kw_exportar:
     case tok::kw_false:
     case tok::kw_desde:
     case tok::kw_si:

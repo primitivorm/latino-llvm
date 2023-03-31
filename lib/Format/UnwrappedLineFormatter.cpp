@@ -584,7 +584,7 @@ private:
         // Skip record modifiers.
         while (RecordTok->Next &&
                RecordTok->isOneOf(
-                   tok::kw_typedef, tok::kw_export, Keywords.kw_declare,
+                   tok::kw_typedef, tok::kw_exportar, Keywords.kw_declare,
                    Keywords.kw_abstract, tok::kw_otro, tok::kw_pub,
                    tok::kw_pri, tok::kw_pro, Keywords.kw_internal))
           RecordTok = RecordTok->Next;

@@ -74,7 +74,7 @@ Decl *Parser::ParseDeclarationStartingWithTemplate(
 Decl *Parser::ParseTemplateDeclarationOrSpecialization(
     DeclaratorContext Context, SourceLocation &DeclEnd,
     ParsedAttributes &AccessAttrs, AccessSpecifier AS) {
-  assert(Tok.isOneOf(tok::kw_export, tok::kw_plantilla) &&
+  assert(Tok.isOneOf(tok::kw_exportar, tok::kw_plantilla) &&
          "Token does not start a template declaration.");
 
   MultiParseScope TemplateParamScopes(*this);
@@ -113,7 +113,7 @@ Decl *Parser::ParseTemplateDeclarationOrSpecialization(
   do {
     // Consume the 'export', if any.
     SourceLocation ExportLoc;
-    TryConsumeToken(tok::kw_export, ExportLoc);
+    TryConsumeToken(tok::kw_exportar, ExportLoc);
 
     // Consume the 'template', which should be here.
     SourceLocation TemplateLoc;
@@ -158,7 +158,7 @@ Decl *Parser::ParseTemplateDeclarationOrSpecialization(
     ParamLists.push_back(Actions.ActOnTemplateParameterList(
         CurTemplateDepthTracker.getDepth(), ExportLoc, TemplateLoc, LAngleLoc,
         TemplateParams, RAngleLoc, OptionalRequiresClauseConstraintER.get()));
-  } while (Tok.isOneOf(tok::kw_export, tok::kw_plantilla));
+  } while (Tok.isOneOf(tok::kw_exportar, tok::kw_plantilla));
 
   // Parse the actual template declaration.
   if (Tok.is(tok::kw_concept))

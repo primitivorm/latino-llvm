@@ -416,7 +416,7 @@ Decl *Parser::ParseLinkage(ParsingDeclSpec &DS, DeclaratorContext Context) {
 ///         'export' '{' declaration-seq[opt] '}'
 ///
 Decl *Parser::ParseExportDeclaration() {
-  assert(Tok.is(tok::kw_export));
+  assert(Tok.is(tok::kw_exportar));
   SourceLocation ExportLoc = ConsumeToken();
 
   ParseScope ExportScope(this, Scope::DeclScope);
