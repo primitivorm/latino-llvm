@@ -163,24 +163,24 @@ struct TokenCollector {
 
 /// HandlePragmaDirective - The "\#pragma" directive has been parsed.  Lex the
 /// rest of the pragma, passing it to the registered pragma handlers.
-void Preprocessor::HandlePragmaDirective(PragmaIntroducer Introducer) {
-  if (Callbacks)
-    Callbacks->PragmaDirective(Introducer.Loc, Introducer.Kind);
+// void Preprocessor::HandlePragmaDirective(PragmaIntroducer Introducer) {
+//   if (Callbacks)
+//     Callbacks->PragmaDirective(Introducer.Loc, Introducer.Kind);
 
-  if (!PragmasEnabled)
-    return;
+//   if (!PragmasEnabled)
+//     return;
 
-  ++NumPragma;
+//   ++NumPragma;
 
-  // Invoke the first level of pragma handlers which reads the namespace id.
-  Token Tok;
-  PragmaHandlers->HandlePragma(*this, Introducer, Tok);
+//   // Invoke the first level of pragma handlers which reads the namespace id.
+//   Token Tok;
+//   PragmaHandlers->HandlePragma(*this, Introducer, Tok);
 
-  // If the pragma handler didn't read the rest of the line, consume it now.
-  if ((CurTokenLexer && CurTokenLexer->isParsingPreprocessorDirective())
-   || (CurPPLexer && CurPPLexer->ParsingPreprocessorDirective))
-    DiscardUntilEndOfDirective();
-}
+//   // If the pragma handler didn't read the rest of the line, consume it now.
+//   if ((CurTokenLexer && CurTokenLexer->isParsingPreprocessorDirective())
+//    || (CurPPLexer && CurPPLexer->ParsingPreprocessorDirective))
+//     DiscardUntilEndOfDirective();
+// }
 
 /// Handle_Pragma - Read a _Pragma directive, slice it up, process it, then
 /// return the first token after the directive.  The _Pragma token has just
@@ -330,7 +330,7 @@ void Preprocessor::Handle_Pragma(Token &Tok) {
   EnterSourceFileWithLexer(TL, nullptr);
 
   // With everything set up, lex this as a #pragma directive.
-  HandlePragmaDirective({PIK__Pragma, PragmaLoc});
+  // HandlePragmaDirective({PIK__Pragma, PragmaLoc});
 
   // Finally, return whatever came after the pragma directive.
   return Lex(Tok);
@@ -390,7 +390,7 @@ void Preprocessor::HandleMicrosoft__pragma(Token &Tok) {
                    /*IsReinject*/ false);
 
   // With everything set up, lex this as a #pragma directive.
-  HandlePragmaDirective({PIK___pragma, PragmaLoc});
+  // HandlePragmaDirective({PIK___pragma, PragmaLoc});
 
   // Finally, return whatever came after the pragma directive.
   return Lex(Tok);

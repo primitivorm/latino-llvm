@@ -1154,20 +1154,20 @@ private:
   //   }
   // }
 
-  void parsePragma() {
-    next(); // Consume "pragma".
-    if (CurrentToken &&
-        CurrentToken->isOneOf(Keywords.kw_mark, Keywords.kw_option)) {
-      bool IsMark = CurrentToken->is(Keywords.kw_mark);
-      next(); // Consume "mark".
-      next(); // Consume first token (so we fix leading whitespace).
-      while (CurrentToken) {
-        if (IsMark || CurrentToken->Previous->is(TT_BinaryOperator))
-          CurrentToken->setType(TT_ImplicitStringLiteral);
-        next();
-      }
-    }
-  }
+  // void parsePragma() {
+  //   next(); // Consume "pragma".
+  //   if (CurrentToken &&
+  //       CurrentToken->isOneOf(Keywords.kw_mark, Keywords.kw_option)) {
+  //     bool IsMark = CurrentToken->is(Keywords.kw_mark);
+  //     next(); // Consume "mark".
+  //     next(); // Consume first token (so we fix leading whitespace).
+  //     while (CurrentToken) {
+  //       if (IsMark || CurrentToken->Previous->is(TT_BinaryOperator))
+  //         CurrentToken->setType(TT_ImplicitStringLiteral);
+  //       next();
+  //     }
+  //   }
+  // }
 
   void parseHasInclude() {
     if (!CurrentToken || !CurrentToken->is(tok::l_paren))
@@ -1206,7 +1206,7 @@ private:
       return Type;
     switch (CurrentToken->Tok.getIdentifierInfo()->getPPKeywordID()) {
     case tok::pp_include:
-    case tok::pp_include_next:
+    // case tok::pp_include_next:
     case tok::pp_import:
       next();
       parseIncludeDirective();
@@ -1216,9 +1216,9 @@ private:
     // case tok::pp_warning:
     //   parseWarningOrError();
     //   break;
-    case tok::pp_pragma:
-      parsePragma();
-      break;
+    // case tok::pp_pragma:
+    //   parsePragma();
+    //   break;
     case tok::pp_if:
     case tok::pp_elif:
       Contexts.back().IsExpression = true;

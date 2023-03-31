@@ -2218,9 +2218,9 @@ private:
   // void HandleLineDirective();
   void HandleDigitDirective(Token &Tok);
   // void HandleUserDiagnosticDirective(Token &Tok, bool isWarning);
-  void HandleIdentSCCSDirective(Token &Tok);
-  void HandleMacroPublicDirective(Token &Tok);
-  void HandleMacroPrivateDirective();
+  // void HandleIdentSCCSDirective(Token &Tok);
+  // void HandleMacroPublicDirective(Token &Tok);
+  // void HandleMacroPrivateDirective();
 
   /// An additional notification that can be produced by a header inclusion or
   /// import to tell the parser what happened.
@@ -2259,7 +2259,7 @@ private:
                               Token &FilenameTok, SourceLocation EndLoc,
                               const DirectoryLookup *LookupFrom = nullptr,
                               const FileEntry *LookupFromFile = nullptr);
-  void HandleIncludeNextDirective(SourceLocation HashLoc, Token &Tok);
+  // void HandleIncludeNextDirective(SourceLocation HashLoc, Token &Tok);
   // void HandleIncludeMacrosDirective(SourceLocation HashLoc, Token &Tok);
   void HandleImportDirective(SourceLocation HashLoc, Token &Tok);
   void HandleMicrosoftImportDirective(Token &Tok);
@@ -2341,7 +2341,7 @@ private:
   void HandleElifDirective(Token &ElifToken, const Token &HashToken);
 
   // Pragmas.
-  void HandlePragmaDirective(PragmaIntroducer Introducer);
+  // void HandlePragmaDirective(PragmaIntroducer Introducer);
 
 public:
   void HandlePragmaOnce(Token &OnceTok);

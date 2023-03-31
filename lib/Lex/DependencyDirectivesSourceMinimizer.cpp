@@ -841,7 +841,7 @@ bool Minimizer::lexPPLine(const char *&First, const char *const End) {
                   .Case("define", pp_define)
                   .Case("undef", pp_undef)
                   .Case("import", pp_import)
-                  .Case("include_next", pp_include_next)
+                  // .Case("include_next", pp_include_next)
                   .Case("if", pp_if)
                   .Case("ifdef", pp_ifdef)
                   .Case("ifndef", pp_ifndef)

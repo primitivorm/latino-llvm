@@ -479,9 +479,9 @@ void PreprocessingRecord::InclusionDirective(
     Kind = InclusionDirective::Import;
     break;
 
-  case tok::pp_include_next:
-    Kind = InclusionDirective::IncludeNext;
-    break;
+  // case tok::pp_include_next:
+  //   Kind = InclusionDirective::IncludeNext;
+  //   break;
 
   // case tok::pp___include_macros:
   //   Kind = InclusionDirective::IncludeMacros;

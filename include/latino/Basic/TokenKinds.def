@@ -121,16 +121,16 @@ PPKEYWORD(pragma)
 
 // GNU Extensions.
 PPKEYWORD(import)
-PPKEYWORD(include_next)
+// PPKEYWORD(include_next)
 // PPKEYWORD(warning)
-PPKEYWORD(ident)
-PPKEYWORD(sccs)
-PPKEYWORD(assert)
-PPKEYWORD(unassert)
+// PPKEYWORD(ident)
+// PPKEYWORD(sccs)
+// PPKEYWORD(assert)
+// PPKEYWORD(unassert)
 
 // Clang extensions
-PPKEYWORD(__public_macro)
-PPKEYWORD(__private_macro)
+// PPKEYWORD(__public_macro)
+// PPKEYWORD(__private_macro)
 
 //===----------------------------------------------------------------------===//
 // Language keywords.

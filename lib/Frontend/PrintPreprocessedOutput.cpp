@@ -352,7 +352,7 @@ void PrintPPOutputPPCallbacks::InclusionDirective(
     switch (IncludeTok.getIdentifierInfo()->getPPKeywordID()) {
     case tok::pp_include:
     case tok::pp_import:
-    case tok::pp_include_next:
+    // case tok::pp_include_next:
       startNewLineIfNeeded();
       MoveToLine(HashLoc);
       OS << "#pragma clang module import " << Imported->getFullModuleName(true)

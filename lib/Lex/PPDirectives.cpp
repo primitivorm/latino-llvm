@@ -882,12 +882,12 @@ void Preprocessor::HandleSkippedDirectiveWhileUsingPCH(Token &Result,
         II->getPPKeywordID() == tok::pp_include) {
       return HandleIncludeDirective(HashLoc, Result);
     }
-    if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
-      Lex(Result);
-      auto *II = Result.getIdentifierInfo();
-      if (II && II->getName() == "hdrstop")
-        return HandlePragmaHdrstop(Result);
-    }
+    // if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
+    //   Lex(Result);
+    //   auto *II = Result.getIdentifierInfo();
+    //   if (II && II->getName() == "hdrstop")
+    //     return HandlePragmaHdrstop(Result);
+    // }
   }
   DiscardUntilEndOfDirective();
 }
@@ -936,14 +936,14 @@ void Preprocessor::HandleDirective(Token &Result) {
       switch (II->getPPKeywordID()) {
       case tok::pp_include:
       case tok::pp_import:
-      case tok::pp_include_next:
+      // case tok::pp_include_next:
       // case tok::pp___include_macros:
-      case tok::pp_pragma:
-        Diag(Result, diag::err_embedded_directive) << II->getName();
-        Diag(*ArgMacro, diag::note_macro_expansion_here)
-            << ArgMacro->getIdentifierInfo();
-        DiscardUntilEndOfDirective();
-        return;
+      // case tok::pp_pragma:
+      //   Diag(Result, diag::err_embedded_directive) << II->getName();
+      //   Diag(*ArgMacro, diag::note_macro_expansion_here)
+      //       << ArgMacro->getIdentifierInfo();
+      //   DiscardUntilEndOfDirective();
+      //   return;
       default:
         break;
       }
@@ -1017,38 +1017,38 @@ void Preprocessor::HandleDirective(Token &Result) {
     //   return HandleUserDiagnosticDirective(Result, false);
 
     // C99 6.10.6 - Pragma Directive.
-    case tok::pp_pragma:
-      return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
+    // case tok::pp_pragma:
+    //   return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
 
     // GNU Extensions.
     case tok::pp_import:
       return HandleImportDirective(SavedHash.getLocation(), Result);
-    case tok::pp_include_next:
-      return HandleIncludeNextDirective(SavedHash.getLocation(), Result);
+    // case tok::pp_include_next:
+    //   return HandleIncludeNextDirective(SavedHash.getLocation(), Result);
 
     // case tok::pp_warning:
     //   Diag(Result, diag::ext_pp_warning_directive);
     //   return HandleUserDiagnosticDirective(Result, true);
-    case tok::pp_ident:
-      return HandleIdentSCCSDirective(Result);
-    case tok::pp_sccs:
-      return HandleIdentSCCSDirective(Result);
-    case tok::pp_assert:
-      //isExtension = true;  // FIXME: implement #assert
-      break;
-    case tok::pp_unassert:
-      //isExtension = true;  // FIXME: implement #unassert
-      break;
+    // case tok::pp_ident:
+    //   return HandleIdentSCCSDirective(Result);
+    // case tok::pp_sccs:
+    //   return HandleIdentSCCSDirective(Result);
+    // case tok::pp_assert:
+    //   //isExtension = true;  // FIXME: implement #assert
+    //   break;
+    // case tok::pp_unassert:
+    //   //isExtension = true;  // FIXME: implement #unassert
+    //   break;
 
-    case tok::pp___public_macro:
-      if (getLangOpts().Modules)
-        return HandleMacroPublicDirective(Result);
-      break;
+    // case tok::pp___public_macro:
+    //   if (getLangOpts().Modules)
+    //     return HandleMacroPublicDirective(Result);
+    //   break;
 
-    case tok::pp___private_macro:
-      if (getLangOpts().Modules)
-        return HandleMacroPrivateDirective();
-      break;
+    // case tok::pp___private_macro:
+    //   if (getLangOpts().Modules)
+    //     return HandleMacroPrivateDirective();
+    //   break;
     }
     break;
   }
@@ -1397,93 +1397,93 @@ void Preprocessor::HandleDigitDirective(Token &DigitTok) {
 
 /// HandleIdentSCCSDirective - Handle a #ident/#sccs directive.
 ///
-void Preprocessor::HandleIdentSCCSDirective(Token &Tok) {
-  // Yes, this directive is an extension.
-  Diag(Tok, diag::ext_pp_ident_directive);
+// void Preprocessor::HandleIdentSCCSDirective(Token &Tok) {
+//   // Yes, this directive is an extension.
+//   Diag(Tok, diag::ext_pp_ident_directive);
 
-  // Read the string argument.
-  Token StrTok;
-  Lex(StrTok);
+//   // Read the string argument.
+//   Token StrTok;
+//   Lex(StrTok);
 
-  // If the token kind isn't a string, it's a malformed directive.
-  if (StrTok.isNot(tok::string_literal) &&
-      StrTok.isNot(tok::wide_string_literal)) {
-    Diag(StrTok, diag::err_pp_malformed_ident);
-    if (StrTok.isNot(tok::eod))
-      DiscardUntilEndOfDirective();
-    return;
-  }
+//   // If the token kind isn't a string, it's a malformed directive.
+//   if (StrTok.isNot(tok::string_literal) &&
+//       StrTok.isNot(tok::wide_string_literal)) {
+//     Diag(StrTok, diag::err_pp_malformed_ident);
+//     if (StrTok.isNot(tok::eod))
+//       DiscardUntilEndOfDirective();
+//     return;
+//   }
 
-  if (StrTok.hasUDSuffix()) {
-    Diag(StrTok, diag::err_invalid_string_udl);
-    DiscardUntilEndOfDirective();
-    return;
-  }
+//   if (StrTok.hasUDSuffix()) {
+//     Diag(StrTok, diag::err_invalid_string_udl);
+//     DiscardUntilEndOfDirective();
+//     return;
+//   }
 
-  // Verify that there is nothing after the string, other than EOD.
-  CheckEndOfDirective("ident");
+//   // Verify that there is nothing after the string, other than EOD.
+//   CheckEndOfDirective("ident");
 
-  if (Callbacks) {
-    bool Invalid = false;
-    std::string Str = getSpelling(StrTok, &Invalid);
-    if (!Invalid)
-      Callbacks->Ident(Tok.getLocation(), Str);
-  }
-}
+//   if (Callbacks) {
+//     bool Invalid = false;
+//     std::string Str = getSpelling(StrTok, &Invalid);
+//     if (!Invalid)
+//       Callbacks->Ident(Tok.getLocation(), Str);
+//   }
+// }
 
 /// Handle a #public directive.
-void Preprocessor::HandleMacroPublicDirective(Token &Tok) {
-  Token MacroNameTok;
-  ReadMacroName(MacroNameTok, MU_Undef);
+// void Preprocessor::HandleMacroPublicDirective(Token &Tok) {
+//   Token MacroNameTok;
+//   ReadMacroName(MacroNameTok, MU_Undef);
 
-  // Error reading macro name?  If so, diagnostic already issued.
-  if (MacroNameTok.is(tok::eod))
-    return;
+//   // Error reading macro name?  If so, diagnostic already issued.
+//   if (MacroNameTok.is(tok::eod))
+//     return;
 
-  // Check to see if this is the last token on the #__public_macro line.
-  CheckEndOfDirective("__public_macro");
+//   // Check to see if this is the last token on the #__public_macro line.
+//   CheckEndOfDirective("__public_macro");
 
-  IdentifierInfo *II = MacroNameTok.getIdentifierInfo();
-  // Okay, we finally have a valid identifier to undef.
-  MacroDirective *MD = getLocalMacroDirective(II);
+//   IdentifierInfo *II = MacroNameTok.getIdentifierInfo();
+//   // Okay, we finally have a valid identifier to undef.
+//   MacroDirective *MD = getLocalMacroDirective(II);
 
-  // If the macro is not defined, this is an error.
-  if (!MD) {
-    Diag(MacroNameTok, diag::err_pp_visibility_non_macro) << II;
-    return;
-  }
+//   // If the macro is not defined, this is an error.
+//   if (!MD) {
+//     Diag(MacroNameTok, diag::err_pp_visibility_non_macro) << II;
+//     return;
+//   }
 
-  // Note that this macro has now been exported.
-  appendMacroDirective(II, AllocateVisibilityMacroDirective(
-                                MacroNameTok.getLocation(), /*isPublic=*/true));
-}
+//   // Note that this macro has now been exported.
+//   appendMacroDirective(II, AllocateVisibilityMacroDirective(
+//                                 MacroNameTok.getLocation(), /*isPublic=*/true));
+// }
 
 /// Handle a #private directive.
-void Preprocessor::HandleMacroPrivateDirective() {
-  Token MacroNameTok;
-  ReadMacroName(MacroNameTok, MU_Undef);
+// void Preprocessor::HandleMacroPrivateDirective() {
+//   Token MacroNameTok;
+//   ReadMacroName(MacroNameTok, MU_Undef);
 
-  // Error reading macro name?  If so, diagnostic already issued.
-  if (MacroNameTok.is(tok::eod))
-    return;
+//   // Error reading macro name?  If so, diagnostic already issued.
+//   if (MacroNameTok.is(tok::eod))
+//     return;
 
-  // Check to see if this is the last token on the #__private_macro line.
-  CheckEndOfDirective("__private_macro");
+//   // Check to see if this is the last token on the #__private_macro line.
+//   CheckEndOfDirective("__private_macro");
 
-  IdentifierInfo *II = MacroNameTok.getIdentifierInfo();
-  // Okay, we finally have a valid identifier to undef.
-  MacroDirective *MD = getLocalMacroDirective(II);
+//   IdentifierInfo *II = MacroNameTok.getIdentifierInfo();
+//   // Okay, we finally have a valid identifier to undef.
+//   MacroDirective *MD = getLocalMacroDirective(II);
 
-  // If the macro is not defined, this is an error.
-  if (!MD) {
-    Diag(MacroNameTok, diag::err_pp_visibility_non_macro) << II;
-    return;
-  }
+//   // If the macro is not defined, this is an error.
+//   if (!MD) {
+//     Diag(MacroNameTok, diag::err_pp_visibility_non_macro) << II;
+//     return;
+//   }
 
-  // Note that this macro has now been marked private.
-  appendMacroDirective(II, AllocateVisibilityMacroDirective(
-                               MacroNameTok.getLocation(), /*isPublic=*/false));
-}
+//   // Note that this macro has now been marked private.
+//   appendMacroDirective(II, AllocateVisibilityMacroDirective(
+//                                MacroNameTok.getLocation(), /*isPublic=*/false));
+// }
 
 //===----------------------------------------------------------------------===//
 // Preprocessor Include Directive Handling.
@@ -1588,9 +1588,9 @@ static void diagnoseAutoModuleImport(
     IncludeKind = 1;
     break;
 
-  case tok::pp_include_next:
-    IncludeKind = 2;
-    break;
+  // case tok::pp_include_next:
+  //   IncludeKind = 2;
+  //   break;
 
   // case tok::pp___include_macros:
   //   IncludeKind = 3;
@@ -2279,42 +2279,42 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
 
 /// HandleIncludeNextDirective - Implements \#include_next.
 ///
-void Preprocessor::HandleIncludeNextDirective(SourceLocation HashLoc,
-                                              Token &IncludeNextTok) {
-  Diag(IncludeNextTok, diag::ext_pp_include_next_directive);
+// void Preprocessor::HandleIncludeNextDirective(SourceLocation HashLoc,
+//                                               Token &IncludeNextTok) {
+//   Diag(IncludeNextTok, diag::ext_pp_include_next_directive);
 
-  // #include_next is like #include, except that we start searching after
-  // the current found directory.  If we can't do this, issue a
-  // diagnostic.
-  const DirectoryLookup *Lookup = CurDirLookup;
-  const FileEntry *LookupFromFile = nullptr;
-  if (isInPrimaryFile() && LangOpts.IsHeaderFile) {
-    // If the main file is a header, then it's either for PCH/AST generation,
-    // or libclang opened it. Either way, handle it as a normal include below
-    // and do not complain about include_next.
-  } else if (isInPrimaryFile()) {
-    Lookup = nullptr;
-    Diag(IncludeNextTok, diag::pp_include_next_in_primary);
-  } else if (CurLexerSubmodule) {
-    // Start looking up in the directory *after* the one in which the current
-    // file would be found, if any.
-    assert(CurPPLexer && "#include_next directive in macro?");
-    LookupFromFile = CurPPLexer->getFileEntry();
-    Lookup = nullptr;
-  } else if (!Lookup) {
-    // The current file was not found by walking the include path. Either it
-    // is the primary file (handled above), or it was found by absolute path,
-    // or it was found relative to such a file.
-    // FIXME: Track enough information so we know which case we're in.
-    Diag(IncludeNextTok, diag::pp_include_next_absolute_path);
-  } else {
-    // Start looking up in the next directory.
-    ++Lookup;
-  }
+//   // #include_next is like #include, except that we start searching after
+//   // the current found directory.  If we can't do this, issue a
+//   // diagnostic.
+//   const DirectoryLookup *Lookup = CurDirLookup;
+//   const FileEntry *LookupFromFile = nullptr;
+//   if (isInPrimaryFile() && LangOpts.IsHeaderFile) {
+//     // If the main file is a header, then it's either for PCH/AST generation,
+//     // or libclang opened it. Either way, handle it as a normal include below
+//     // and do not complain about include_next.
+//   } else if (isInPrimaryFile()) {
+//     Lookup = nullptr;
+//     Diag(IncludeNextTok, diag::pp_include_next_in_primary);
+//   } else if (CurLexerSubmodule) {
+//     // Start looking up in the directory *after* the one in which the current
+//     // file would be found, if any.
+//     assert(CurPPLexer && "#include_next directive in macro?");
+//     LookupFromFile = CurPPLexer->getFileEntry();
+//     Lookup = nullptr;
+//   } else if (!Lookup) {
+//     // The current file was not found by walking the include path. Either it
+//     // is the primary file (handled above), or it was found by absolute path,
+//     // or it was found relative to such a file.
+//     // FIXME: Track enough information so we know which case we're in.
+//     Diag(IncludeNextTok, diag::pp_include_next_absolute_path);
+//   } else {
+//     // Start looking up in the next directory.
+//     ++Lookup;
+//   }
 
-  return HandleIncludeDirective(HashLoc, IncludeNextTok, Lookup,
-                                LookupFromFile);
-}
+//   return HandleIncludeDirective(HashLoc, IncludeNextTok, Lookup,
+//                                 LookupFromFile);
+// }
 
 /// HandleMicrosoftImportDirective - Implements \#import for Microsoft Mode
 void Preprocessor::HandleMicrosoftImportDirective(Token &Tok) {

@@ -418,7 +418,7 @@ void InclusionRewriter::Process(FileID FileId,
       if (RawToken.getIdentifierInfo() != nullptr) {
         switch (RawToken.getIdentifierInfo()->getPPKeywordID()) {
           case tok::pp_include:
-          case tok::pp_include_next:
+          // case tok::pp_include_next:
           case tok::pp_import: {
             CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL, NextToWrite,
               Line);
@@ -450,25 +450,25 @@ void InclusionRewriter::Process(FileID FileId,
             WriteLineInfo(FileName, Line, FileType, LineInfoExtra);
             break;
           }
-          case tok::pp_pragma: {
-            StringRef Identifier = NextIdentifierName(RawLex, RawToken);
-            if (Identifier == "clang" || Identifier == "GCC") {
-              if (NextIdentifierName(RawLex, RawToken) == "system_header") {
-                // keep the directive in, commented out
-                CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL,
-                  NextToWrite, Line);
-                // update our own type
-                FileType = SM.getFileCharacteristic(RawToken.getLocation());
-                WriteLineInfo(FileName, Line, FileType);
-              }
-            } else if (Identifier == "once") {
-              // keep the directive in, commented out
-              CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL,
-                NextToWrite, Line);
-              WriteLineInfo(FileName, Line, FileType);
-            }
-            break;
-          }
+          // case tok::pp_pragma: {
+          //   StringRef Identifier = NextIdentifierName(RawLex, RawToken);
+          //   if (Identifier == "clang" || Identifier == "GCC") {
+          //     if (NextIdentifierName(RawLex, RawToken) == "system_header") {
+          //       // keep the directive in, commented out
+          //       CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL,
+          //         NextToWrite, Line);
+          //       // update our own type
+          //       FileType = SM.getFileCharacteristic(RawToken.getLocation());
+          //       WriteLineInfo(FileName, Line, FileType);
+          //     }
+          //   } else if (Identifier == "once") {
+          //     // keep the directive in, commented out
+          //     CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL,
+          //       NextToWrite, Line);
+          //     WriteLineInfo(FileName, Line, FileType);
+          //   }
+          //   break;
+          // }
           case tok::pp_if:
           case tok::pp_elif: {
             bool elif = (RawToken.getIdentifierInfo()->getPPKeywordID() ==
