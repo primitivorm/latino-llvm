@@ -1013,8 +1013,8 @@ void Preprocessor::HandleDirective(Token &Result) {
     //   return HandleLineDirective();
 
     // C99 6.10.5 - Error Directive.
-    case tok::pp_error:
-      return HandleUserDiagnosticDirective(Result, false);
+    // case tok::pp_error:
+    //   return HandleUserDiagnosticDirective(Result, false);
 
     // C99 6.10.6 - Pragma Directive.
     case tok::pp_pragma:
@@ -1026,9 +1026,9 @@ void Preprocessor::HandleDirective(Token &Result) {
     case tok::pp_include_next:
       return HandleIncludeNextDirective(SavedHash.getLocation(), Result);
 
-    case tok::pp_warning:
-      Diag(Result, diag::ext_pp_warning_directive);
-      return HandleUserDiagnosticDirective(Result, true);
+    // case tok::pp_warning:
+    //   Diag(Result, diag::ext_pp_warning_directive);
+    //   return HandleUserDiagnosticDirective(Result, true);
     case tok::pp_ident:
       return HandleIdentSCCSDirective(Result);
     case tok::pp_sccs:
@@ -1375,25 +1375,25 @@ void Preprocessor::HandleDigitDirective(Token &DigitTok) {
 
 /// HandleUserDiagnosticDirective - Handle a #warning or #error directive.
 ///
-void Preprocessor::HandleUserDiagnosticDirective(Token &Tok,
-                                                 bool isWarning) {
-  // Read the rest of the line raw.  We do this because we don't want macros
-  // to be expanded and we don't require that the tokens be valid preprocessing
-  // tokens.  For example, this is allowed: "#warning `   'foo".  GCC does
-  // collapse multiple consecutive white space between tokens, but this isn't
-  // specified by the standard.
-  SmallString<128> Message;
-  CurLexer->ReadToEndOfLine(&Message);
+// void Preprocessor::HandleUserDiagnosticDirective(Token &Tok,
+//                                                  bool isWarning) {
+//   // Read the rest of the line raw.  We do this because we don't want macros
+//   // to be expanded and we don't require that the tokens be valid preprocessing
+//   // tokens.  For example, this is allowed: "#warning `   'foo".  GCC does
+//   // collapse multiple consecutive white space between tokens, but this isn't
+//   // specified by the standard.
+//   SmallString<128> Message;
+//   CurLexer->ReadToEndOfLine(&Message);
 
-  // Find the first non-whitespace character, so that we can make the
-  // diagnostic more succinct.
-  StringRef Msg = StringRef(Message).ltrim(' ');
+//   // Find the first non-whitespace character, so that we can make the
+//   // diagnostic more succinct.
+//   StringRef Msg = StringRef(Message).ltrim(' ');
 
-  if (isWarning)
-    Diag(Tok, diag::pp_hash_warning) << Msg;
-  else
-    Diag(Tok, diag::err_pp_hash_error) << Msg;
-}
+//   if (isWarning)
+//     Diag(Tok, diag::pp_hash_warning) << Msg;
+//   else
+//     Diag(Tok, diag::err_pp_hash_error) << Msg;
+// }
 
 /// HandleIdentSCCSDirective - Handle a #ident/#sccs directive.
 ///

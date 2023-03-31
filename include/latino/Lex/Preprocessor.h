@@ -2217,7 +2217,7 @@ private:
   /// to Lex() will return the appropriate token next.
   // void HandleLineDirective();
   void HandleDigitDirective(Token &Tok);
-  void HandleUserDiagnosticDirective(Token &Tok, bool isWarning);
+  // void HandleUserDiagnosticDirective(Token &Tok, bool isWarning);
   void HandleIdentSCCSDirective(Token &Tok);
   void HandleMacroPublicDirective(Token &Tok);
   void HandleMacroPrivateDirective();

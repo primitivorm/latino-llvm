@@ -1143,16 +1143,16 @@ private:
     }
   }
 
-  void parseWarningOrError() {
-    next();
-    // We still want to format the whitespace left of the first token of the
-    // warning or error.
-    next();
-    while (CurrentToken) {
-      CurrentToken->setType(TT_ImplicitStringLiteral);
-      next();
-    }
-  }
+  // void parseWarningOrError() {
+  //   next();
+  //   // We still want to format the whitespace left of the first token of the
+  //   // warning or error.
+  //   next();
+  //   while (CurrentToken) {
+  //     CurrentToken->setType(TT_ImplicitStringLiteral);
+  //     next();
+  //   }
+  // }
 
   void parsePragma() {
     next(); // Consume "pragma".
@@ -1212,10 +1212,10 @@ private:
       parseIncludeDirective();
       Type = LT_ImportStatement;
       break;
-    case tok::pp_error:
-    case tok::pp_warning:
-      parseWarningOrError();
-      break;
+    // case tok::pp_error:
+    // case tok::pp_warning:
+    //   parseWarningOrError();
+    //   break;
     case tok::pp_pragma:
       parsePragma();
       break;

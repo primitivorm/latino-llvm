@@ -114,7 +114,7 @@ PPKEYWORD(undef)
 // PPKEYWORD(line)
 
 // C99 6.10.5 - Error Directive.
-PPKEYWORD(error)
+// PPKEYWORD(error)
 
 // C99 6.10.6 - Pragma Directive.
 PPKEYWORD(pragma)
@@ -122,7 +122,7 @@ PPKEYWORD(pragma)
 // GNU Extensions.
 PPKEYWORD(import)
 PPKEYWORD(include_next)
-PPKEYWORD(warning)
+// PPKEYWORD(warning)
 PPKEYWORD(ident)
 PPKEYWORD(sccs)
 PPKEYWORD(assert)
