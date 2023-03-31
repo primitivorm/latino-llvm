@@ -837,7 +837,7 @@ bool Minimizer::lexPPLine(const char *&First, const char *const End) {
   First = Id.Last;
   auto Kind = llvm::StringSwitch<TokenKind>(Id.Name)
                   .Case("include", pp_include)
-                  .Case("__include_macros", pp___include_macros)
+                  // .Case("__include_macros", pp___include_macros)
                   .Case("define", pp_define)
                   .Case("undef", pp_undef)
                   .Case("import", pp_import)

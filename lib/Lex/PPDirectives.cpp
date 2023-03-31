@@ -937,7 +937,7 @@ void Preprocessor::HandleDirective(Token &Result) {
       case tok::pp_include:
       case tok::pp_import:
       case tok::pp_include_next:
-      case tok::pp___include_macros:
+      // case tok::pp___include_macros:
       case tok::pp_pragma:
         Diag(Result, diag::err_embedded_directive) << II->getName();
         Diag(*ArgMacro, diag::note_macro_expansion_here)
@@ -998,9 +998,9 @@ void Preprocessor::HandleDirective(Token &Result) {
     case tok::pp_include:
       // Handle #include.
       return HandleIncludeDirective(SavedHash.getLocation(), Result);
-    case tok::pp___include_macros:
-      // Handle -imacros.
-      return HandleIncludeMacrosDirective(SavedHash.getLocation(), Result);
+    // case tok::pp___include_macros:
+    //   // Handle -imacros.
+    //   return HandleIncludeMacrosDirective(SavedHash.getLocation(), Result);
 
     // C99 6.10.3 - Macro Replacement.
     case tok::pp_define:
@@ -1592,9 +1592,9 @@ static void diagnoseAutoModuleImport(
     IncludeKind = 2;
     break;
 
-  case tok::pp___include_macros:
-    IncludeKind = 3;
-    break;
+  // case tok::pp___include_macros:
+  //   IncludeKind = 3;
+  //   break;
 
   default:
     llvm_unreachable("unknown include directive kind");
@@ -2201,9 +2201,9 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
 
     makeModuleVisible(M, EndLoc);
 
-    if (IncludeTok.getIdentifierInfo()->getPPKeywordID() ==
-        tok::pp___include_macros)
-      return {ImportAction::None};
+    // if (IncludeTok.getIdentifierInfo()->getPPKeywordID() ==
+    //     tok::pp___include_macros)
+    //   return {ImportAction::None};
 
     return {ImportAction::ModuleImport, M};
   }
@@ -2346,28 +2346,28 @@ void Preprocessor::HandleImportDirective(SourceLocation HashLoc,
 /// pseudo directive in the predefines buffer.  This handles it by sucking all
 /// tokens through the preprocessor and discarding them (only keeping the side
 /// effects on the preprocessor).
-void Preprocessor::HandleIncludeMacrosDirective(SourceLocation HashLoc,
-                                                Token &IncludeMacrosTok) {
-  // This directive should only occur in the predefines buffer.  If not, emit an
-  // error and reject it.
-  SourceLocation Loc = IncludeMacrosTok.getLocation();
-  if (SourceMgr.getBufferName(Loc) != "<built-in>") {
-    Diag(IncludeMacrosTok.getLocation(),
-         diag::pp_include_macros_out_of_predefines);
-    DiscardUntilEndOfDirective();
-    return;
-  }
+// void Preprocessor::HandleIncludeMacrosDirective(SourceLocation HashLoc,
+//                                                 Token &IncludeMacrosTok) {
+//   // This directive should only occur in the predefines buffer.  If not, emit an
+//   // error and reject it.
+//   SourceLocation Loc = IncludeMacrosTok.getLocation();
+//   if (SourceMgr.getBufferName(Loc) != "<built-in>") {
+//     Diag(IncludeMacrosTok.getLocation(),
+//          diag::pp_include_macros_out_of_predefines);
+//     DiscardUntilEndOfDirective();
+//     return;
+//   }
 
-  // Treat this as a normal #include for checking purposes.  If this is
-  // successful, it will push a new lexer onto the include stack.
-  HandleIncludeDirective(HashLoc, IncludeMacrosTok);
+//   // Treat this as a normal #include for checking purposes.  If this is
+//   // successful, it will push a new lexer onto the include stack.
+//   HandleIncludeDirective(HashLoc, IncludeMacrosTok);
 
-  Token TmpTok;
-  do {
-    Lex(TmpTok);
-    assert(TmpTok.isNot(tok::eof) && "Didn't find end of -imacros!");
-  } while (TmpTok.isNot(tok::hashhash));
-}
+//   Token TmpTok;
+//   do {
+//     Lex(TmpTok);
+//     assert(TmpTok.isNot(tok::eof) && "Didn't find end of -imacros!");
+//   } while (TmpTok.isNot(tok::hashhash));
+// }
 
 //===----------------------------------------------------------------------===//
 // Preprocessor Macro Directive Handling.

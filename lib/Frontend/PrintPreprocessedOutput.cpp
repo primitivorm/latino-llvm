@@ -366,13 +366,13 @@ void PrintPPOutputPPCallbacks::InclusionDirective(
       startNewLineIfNeeded();
       break;
 
-    case tok::pp___include_macros:
-      // #__include_macros has no effect on a user of a preprocessed source
-      // file; the only effect is on preprocessing.
-      //
-      // FIXME: That's not *quite* true: it causes the module in question to
-      // be loaded, which can affect downstream diagnostics.
-      break;
+    // case tok::pp___include_macros:
+    //   // #__include_macros has no effect on a user of a preprocessed source
+    //   // file; the only effect is on preprocessing.
+    //   //
+    //   // FIXME: That's not *quite* true: it causes the module in question to
+    //   // be loaded, which can affect downstream diagnostics.
+    //   break;
 
     default:
       llvm_unreachable("unknown include directive kind");

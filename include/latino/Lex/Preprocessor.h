@@ -2260,7 +2260,7 @@ private:
                               const DirectoryLookup *LookupFrom = nullptr,
                               const FileEntry *LookupFromFile = nullptr);
   void HandleIncludeNextDirective(SourceLocation HashLoc, Token &Tok);
-  void HandleIncludeMacrosDirective(SourceLocation HashLoc, Token &Tok);
+  // void HandleIncludeMacrosDirective(SourceLocation HashLoc, Token &Tok);
   void HandleImportDirective(SourceLocation HashLoc, Token &Tok);
   void HandleMicrosoftImportDirective(Token &Tok);
 

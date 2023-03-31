@@ -483,9 +483,9 @@ void PreprocessingRecord::InclusionDirective(
     Kind = InclusionDirective::IncludeNext;
     break;
 
-  case tok::pp___include_macros:
-    Kind = InclusionDirective::IncludeMacros;
-    break;
+  // case tok::pp___include_macros:
+  //   Kind = InclusionDirective::IncludeMacros;
+  //   break;
 
   default:
     llvm_unreachable("Unknown include directive kind");
