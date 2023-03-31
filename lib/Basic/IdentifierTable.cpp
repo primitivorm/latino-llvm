@@ -186,12 +186,12 @@ static void AddKeyword(StringRef Keyword,
 
 /// AddCXXOperatorKeyword - Register a C++ operator keyword alternative
 /// representations.
-static void AddCXXOperatorKeyword(StringRef Keyword,
-                                  tok::TokenKind TokenCode,
-                                  IdentifierTable &Table) {
-  IdentifierInfo &Info = Table.get(Keyword, TokenCode);
-  Info.setIsCPlusPlusOperatorKeyword();
-}
+// static void AddCXXOperatorKeyword(StringRef Keyword,
+//                                   tok::TokenKind TokenCode,
+//                                   IdentifierTable &Table) {
+//   IdentifierInfo &Info = Table.get(Keyword, TokenCode);
+//   Info.setIsCPlusPlusOperatorKeyword();
+// }
 
 /// AddObjCKeyword - Register an Objective-C \@keyword like "class" "selector"
 /// or "property".
@@ -211,9 +211,9 @@ void IdentifierTable::AddKeywords(const LangOptions &LangOpts) {
 #define ALIAS(NAME, TOK, FLAGS) \
   AddKeyword(StringRef(NAME), tok::kw_ ## TOK,  \
              FLAGS, LangOpts, *this);
-#define CXX_KEYWORD_OPERATOR(NAME, ALIAS) \
-  if (LangOpts.CXXOperatorNames)          \
-    AddCXXOperatorKeyword(StringRef(#NAME), tok::ALIAS, *this);
+// #define CXX_KEYWORD_OPERATOR(NAME, ALIAS) \
+//   if (LangOpts.CXXOperatorNames)          \
+//     AddCXXOperatorKeyword(StringRef(#NAME), tok::ALIAS, *this);
 #define OBJC_AT_KEYWORD(NAME)  \
   if (LangOpts.ObjC)           \
     AddObjCKeyword(StringRef(#NAME), tok::objc_##NAME, *this);

@@ -68,9 +68,9 @@
 #ifndef PPKEYWORD
 #define PPKEYWORD(X)
 #endif
-#ifndef CXX_KEYWORD_OPERATOR
-#define CXX_KEYWORD_OPERATOR(X,Y)
-#endif
+// #ifndef CXX_KEYWORD_OPERATOR
+// #define CXX_KEYWORD_OPERATOR(X,Y)
+// #endif
 #ifndef OBJC_AT_KEYWORD
 #define OBJC_AT_KEYWORD(X)
 #endif
@@ -338,7 +338,7 @@ KEYWORD(const_cast                  , KEYCXX)
 KEYWORD(borrar                      , KEYCXX) // delete
 KEYWORD(dynamic_cast                , KEYCXX)
 KEYWORD(explicit                    , KEYCXX)
-KEYWORD(kw_exportar                      , KEYCXX)
+KEYWORD(exportar                      , KEYCXX)
 KEYWORD(false                       , BOOLSUPPORT)
 KEYWORD(friend                      , KEYCXX)
 KEYWORD(mutable                     , KEYCXX)
@@ -362,17 +362,17 @@ KEYWORD(virtual                     , KEYCXX)
 KEYWORD(wchar_t                     , WCHARSUPPORT)
 
 // C++ 2.5p2: Alternative Representations.
-CXX_KEYWORD_OPERATOR(and     , ampamp)
-CXX_KEYWORD_OPERATOR(and_eq  , ampequal)
-CXX_KEYWORD_OPERATOR(bitand  , amp)
-CXX_KEYWORD_OPERATOR(bitor   , pipe)
-CXX_KEYWORD_OPERATOR(compl   , tilde)
-CXX_KEYWORD_OPERATOR(not     , exclaim)
-CXX_KEYWORD_OPERATOR(not_eq  , exclaimequal)
-CXX_KEYWORD_OPERATOR(or      , pipepipe)
-CXX_KEYWORD_OPERATOR(or_eq   , pipeequal)
-CXX_KEYWORD_OPERATOR(xor     , caret)
-CXX_KEYWORD_OPERATOR(xor_eq  , caretequal)
+// CXX_KEYWORD_OPERATOR(and     , ampamp)
+// CXX_KEYWORD_OPERATOR(and_eq  , ampequal)
+// CXX_KEYWORD_OPERATOR(bitand  , amp)
+// CXX_KEYWORD_OPERATOR(bitor   , pipe)
+// CXX_KEYWORD_OPERATOR(compl   , tilde)
+// CXX_KEYWORD_OPERATOR(not     , exclaim)
+// CXX_KEYWORD_OPERATOR(not_eq  , exclaimequal)
+// CXX_KEYWORD_OPERATOR(or      , pipepipe)
+// CXX_KEYWORD_OPERATOR(or_eq   , pipeequal)
+// CXX_KEYWORD_OPERATOR(xor     , caret)
+// CXX_KEYWORD_OPERATOR(xor_eq  , caretequal)
 
 // C++11 keywords
 CXX11_KEYWORD(alignas               , 0)
@@ -883,7 +883,7 @@ ANNOTATION(header_unit)
 #undef ANNOTATION
 #undef TESTING_KEYWORD
 #undef OBJC_AT_KEYWORD
-#undef CXX_KEYWORD_OPERATOR
+// #undef CXX_KEYWORD_OPERATOR
 #undef PPKEYWORD
 #undef ALIAS
 #undef EXPRESSION_TRAIT
