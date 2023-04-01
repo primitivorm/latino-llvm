@@ -997,10 +997,10 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     Res = ParseCXXBoolLiteral();
     break;
 
-  case tok::kw___objc_yes:
-  case tok::kw___objc_no:
-    Res = ParseObjCBoolLiteral();
-    break;
+  // case tok::kw___objc_yes:
+  // case tok::kw___objc_no:
+  //   Res = ParseObjCBoolLiteral();
+  //   break;
 
   case tok::kw_nullptr:
     Diag(Tok, diag::warn_cxx98_compat_nullptr);
@@ -1283,7 +1283,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     Res = Actions.ActOnCharacterConstant(Tok, /*UDLScope*/getCurScope());
     ConsumeToken();
     break;
-  case tok::kw___func__:       // primary-expression: __func__ [C99 6.4.2.2]
+  // case tok::kw___func__:       // primary-expression: __func__ [C99 6.4.2.2]
   case tok::kw___FUNCTION__:   // primary-expression: __FUNCTION__ [GNU]
   case tok::kw___FUNCDNAME__:   // primary-expression: __FUNCDNAME__ [MS]
   case tok::kw___FUNCSIG__:     // primary-expression: __FUNCSIG__ [MS]
@@ -1307,14 +1307,14 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     Res = ParseAvailabilityCheckExpr(Tok.getLocation());
     break;
   case tok::kw___builtin_va_arg:
-  case tok::kw___builtin_offsetof:
-  case tok::kw___builtin_choose_expr:
+  // case tok::kw___builtin_offsetof:
+  // case tok::kw___builtin_choose_expr:
   case tok::kw___builtin_astype: // primary-expression: [OCL] as_type()
   case tok::kw___builtin_convertvector:
-  case tok::kw___builtin_COLUMN:
-  case tok::kw___builtin_FILE:
-  case tok::kw___builtin_FUNCTION:
-  case tok::kw___builtin_LINE:
+  // case tok::kw___builtin_COLUMN:
+  // case tok::kw___builtin_FILE:
+  // case tok::kw___builtin_FUNCTION:
+  // case tok::kw___builtin_LINE:
     if (NotPrimaryExpression)
       *NotPrimaryExpression = true;
     // This parses the complete suffix; we can return early.
@@ -2541,120 +2541,120 @@ ExprResult Parser::ParseBuiltinPrimaryExpression() {
       Res = Actions.ActOnVAArg(StartLoc, Expr.get(), Ty.get(), ConsumeParen());
     break;
   }
-  case tok::kw___builtin_offsetof: {
-    SourceLocation TypeLoc = Tok.getLocation();
-    TypeResult Ty = ParseTypeName();
-    if (Ty.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  // case tok::kw___builtin_offsetof: {
+  //   SourceLocation TypeLoc = Tok.getLocation();
+  //   TypeResult Ty = ParseTypeName();
+  //   if (Ty.isInvalid()) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    if (ExpectAndConsume(tok::comma)) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  //   if (ExpectAndConsume(tok::comma)) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    // We must have at least one identifier here.
-    if (Tok.isNot(tok::identifier)) {
-      Diag(Tok, diag::err_expected) << tok::identifier;
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  //   // We must have at least one identifier here.
+  //   if (Tok.isNot(tok::identifier)) {
+  //     Diag(Tok, diag::err_expected) << tok::identifier;
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    // Keep track of the various subcomponents we see.
-    SmallVector<Sema::OffsetOfComponent, 4> Comps;
+  //   // Keep track of the various subcomponents we see.
+  //   SmallVector<Sema::OffsetOfComponent, 4> Comps;
 
-    Comps.push_back(Sema::OffsetOfComponent());
-    Comps.back().isBrackets = false;
-    Comps.back().U.IdentInfo = Tok.getIdentifierInfo();
-    Comps.back().LocStart = Comps.back().LocEnd = ConsumeToken();
+  //   Comps.push_back(Sema::OffsetOfComponent());
+  //   Comps.back().isBrackets = false;
+  //   Comps.back().U.IdentInfo = Tok.getIdentifierInfo();
+  //   Comps.back().LocStart = Comps.back().LocEnd = ConsumeToken();
 
-    // FIXME: This loop leaks the index expressions on error.
-    while (1) {
-      if (Tok.is(tok::period)) {
-        // offsetof-member-designator: offsetof-member-designator '.' identifier
-        Comps.push_back(Sema::OffsetOfComponent());
-        Comps.back().isBrackets = false;
-        Comps.back().LocStart = ConsumeToken();
+  //   // FIXME: This loop leaks the index expressions on error.
+  //   while (1) {
+  //     if (Tok.is(tok::period)) {
+  //       // offsetof-member-designator: offsetof-member-designator '.' identifier
+  //       Comps.push_back(Sema::OffsetOfComponent());
+  //       Comps.back().isBrackets = false;
+  //       Comps.back().LocStart = ConsumeToken();
 
-        if (Tok.isNot(tok::identifier)) {
-          Diag(Tok, diag::err_expected) << tok::identifier;
-          SkipUntil(tok::r_paren, StopAtSemi);
-          return ExprError();
-        }
-        Comps.back().U.IdentInfo = Tok.getIdentifierInfo();
-        Comps.back().LocEnd = ConsumeToken();
+  //       if (Tok.isNot(tok::identifier)) {
+  //         Diag(Tok, diag::err_expected) << tok::identifier;
+  //         SkipUntil(tok::r_paren, StopAtSemi);
+  //         return ExprError();
+  //       }
+  //       Comps.back().U.IdentInfo = Tok.getIdentifierInfo();
+  //       Comps.back().LocEnd = ConsumeToken();
 
-      } else if (Tok.is(tok::l_square)) {
-        if (CheckProhibitedCXX11Attribute())
-          return ExprError();
+  //     } else if (Tok.is(tok::l_square)) {
+  //       if (CheckProhibitedCXX11Attribute())
+  //         return ExprError();
 
-        // offsetof-member-designator: offsetof-member-design '[' expression ']'
-        Comps.push_back(Sema::OffsetOfComponent());
-        Comps.back().isBrackets = true;
-        BalancedDelimiterTracker ST(*this, tok::l_square);
-        ST.consumeOpen();
-        Comps.back().LocStart = ST.getOpenLocation();
-        Res = ParseExpression();
-        if (Res.isInvalid()) {
-          SkipUntil(tok::r_paren, StopAtSemi);
-          return Res;
-        }
-        Comps.back().U.E = Res.get();
+  //       // offsetof-member-designator: offsetof-member-design '[' expression ']'
+  //       Comps.push_back(Sema::OffsetOfComponent());
+  //       Comps.back().isBrackets = true;
+  //       BalancedDelimiterTracker ST(*this, tok::l_square);
+  //       ST.consumeOpen();
+  //       Comps.back().LocStart = ST.getOpenLocation();
+  //       Res = ParseExpression();
+  //       if (Res.isInvalid()) {
+  //         SkipUntil(tok::r_paren, StopAtSemi);
+  //         return Res;
+  //       }
+  //       Comps.back().U.E = Res.get();
 
-        ST.consumeClose();
-        Comps.back().LocEnd = ST.getCloseLocation();
-      } else {
-        if (Tok.isNot(tok::r_paren)) {
-          PT.consumeClose();
-          Res = ExprError();
-        } else if (Ty.isInvalid()) {
-          Res = ExprError();
-        } else {
-          PT.consumeClose();
-          Res = Actions.ActOnBuiltinOffsetOf(getCurScope(), StartLoc, TypeLoc,
-                                             Ty.get(), Comps,
-                                             PT.getCloseLocation());
-        }
-        break;
-      }
-    }
-    break;
-  }
-  case tok::kw___builtin_choose_expr: {
-    ExprResult Cond(ParseAssignmentExpression());
-    if (Cond.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return Cond;
-    }
-    if (ExpectAndConsume(tok::comma)) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  //       ST.consumeClose();
+  //       Comps.back().LocEnd = ST.getCloseLocation();
+  //     } else {
+  //       if (Tok.isNot(tok::r_paren)) {
+  //         PT.consumeClose();
+  //         Res = ExprError();
+  //       } else if (Ty.isInvalid()) {
+  //         Res = ExprError();
+  //       } else {
+  //         PT.consumeClose();
+  //         Res = Actions.ActOnBuiltinOffsetOf(getCurScope(), StartLoc, TypeLoc,
+  //                                            Ty.get(), Comps,
+  //                                            PT.getCloseLocation());
+  //       }
+  //       break;
+  //     }
+  //   }
+  //   break;
+  // }
+  // case tok::kw___builtin_choose_expr: {
+  //   ExprResult Cond(ParseAssignmentExpression());
+  //   if (Cond.isInvalid()) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return Cond;
+  //   }
+  //   if (ExpectAndConsume(tok::comma)) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    ExprResult Expr1(ParseAssignmentExpression());
-    if (Expr1.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return Expr1;
-    }
-    if (ExpectAndConsume(tok::comma)) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  //   ExprResult Expr1(ParseAssignmentExpression());
+  //   if (Expr1.isInvalid()) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return Expr1;
+  //   }
+  //   if (ExpectAndConsume(tok::comma)) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    ExprResult Expr2(ParseAssignmentExpression());
-    if (Expr2.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return Expr2;
-    }
-    if (Tok.isNot(tok::r_paren)) {
-      Diag(Tok, diag::err_expected) << tok::r_paren;
-      return ExprError();
-    }
-    Res = Actions.ActOnChooseExpr(StartLoc, Cond.get(), Expr1.get(),
-                                  Expr2.get(), ConsumeParen());
-    break;
-  }
+  //   ExprResult Expr2(ParseAssignmentExpression());
+  //   if (Expr2.isInvalid()) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return Expr2;
+  //   }
+  //   if (Tok.isNot(tok::r_paren)) {
+  //     Diag(Tok, diag::err_expected) << tok::r_paren;
+  //     return ExprError();
+  //   }
+  //   Res = Actions.ActOnChooseExpr(StartLoc, Cond.get(), Expr1.get(),
+  //                                 Expr2.get(), ConsumeParen());
+  //   break;
+  // }
   case tok::kw___builtin_astype: {
     // The first argument is an expression to be converted, followed by a comma.
     ExprResult Expr(ParseAssignmentExpression());
@@ -2713,33 +2713,33 @@ ExprResult Parser::ParseBuiltinPrimaryExpression() {
                                          ConsumeParen());
     break;
   }
-  case tok::kw___builtin_COLUMN:
-  case tok::kw___builtin_FILE:
-  case tok::kw___builtin_FUNCTION:
-  case tok::kw___builtin_LINE: {
-    // Attempt to consume the r-paren.
-    if (Tok.isNot(tok::r_paren)) {
-      Diag(Tok, diag::err_expected) << tok::r_paren;
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
-    SourceLocExpr::IdentKind Kind = [&] {
-      switch (T) {
-      case tok::kw___builtin_FILE:
-        return SourceLocExpr::File;
-      case tok::kw___builtin_FUNCTION:
-        return SourceLocExpr::Function;
-      case tok::kw___builtin_LINE:
-        return SourceLocExpr::Line;
-      case tok::kw___builtin_COLUMN:
-        return SourceLocExpr::Column;
-      default:
-        llvm_unreachable("invalid keyword");
-      }
-    }();
-    Res = Actions.ActOnSourceLocExpr(Kind, StartLoc, ConsumeParen());
-    break;
-  }
+  // case tok::kw___builtin_COLUMN:
+  // case tok::kw___builtin_FILE:
+  // case tok::kw___builtin_FUNCTION:
+  // case tok::kw___builtin_LINE: {
+  //   // Attempt to consume the r-paren.
+  //   if (Tok.isNot(tok::r_paren)) {
+  //     Diag(Tok, diag::err_expected) << tok::r_paren;
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
+  //   SourceLocExpr::IdentKind Kind = [&] {
+  //     switch (T) {
+  //     // case tok::kw___builtin_FILE:
+  //     //   return SourceLocExpr::File;
+  //     // case tok::kw___builtin_FUNCTION:
+  //     //   return SourceLocExpr::Function;
+  //     case tok::kw___builtin_LINE:
+  //       return SourceLocExpr::Line;
+  //     case tok::kw___builtin_COLUMN:
+  //       return SourceLocExpr::Column;
+  //     default:
+  //       llvm_unreachable("invalid keyword");
+  //     }
+  //   }();
+  //   Res = Actions.ActOnSourceLocExpr(Kind, StartLoc, ConsumeParen());
+  //   break;
+  // }
   }
 
   if (Res.isInvalid())
@@ -3582,10 +3582,10 @@ ExprResult Parser::ParseBlockLiteralExpression() {
 ///
 ///         '__objc_yes'
 ///         '__objc_no'
-ExprResult Parser::ParseObjCBoolLiteral() {
-  tok::TokenKind Kind = Tok.getKind();
-  return Actions.ActOnObjCBoolLiteral(ConsumeToken(), Kind);
-}
+// ExprResult Parser::ParseObjCBoolLiteral() {
+//   tok::TokenKind Kind = Tok.getKind();
+//   return Actions.ActOnObjCBoolLiteral(ConsumeToken(), Kind);
+// }
 
 /// Validate availability spec list, emitting diagnostics if necessary. Returns
 /// true if invalid.

@@ -3478,7 +3478,7 @@ ExprResult Sema::ActOnPredefinedExpr(SourceLocation Loc, tok::TokenKind Kind) {
 
   switch (Kind) {
   default: llvm_unreachable("Unknown simple primary expr!");
-  case tok::kw___func__: IK = PredefinedExpr::Func; break; // [C99 6.4.2.2]
+  // case tok::kw___func__: IK = PredefinedExpr::Func; break; // [C99 6.4.2.2]
   case tok::kw___FUNCTION__: IK = PredefinedExpr::Function; break;
   case tok::kw___FUNCDNAME__: IK = PredefinedExpr::FuncDName; break; // [MS]
   case tok::kw___FUNCSIG__: IK = PredefinedExpr::FuncSig; break; // [MS]
@@ -19134,25 +19134,25 @@ bool Sema::CheckCaseExpression(Expr *E) {
 }
 
 /// ActOnObjCBoolLiteral - Parse {__objc_yes,__objc_no} literals.
-ExprResult
-Sema::ActOnObjCBoolLiteral(SourceLocation OpLoc, tok::TokenKind Kind) {
-  assert((Kind == tok::kw___objc_yes || Kind == tok::kw___objc_no) &&
-         "Unknown Objective-C Boolean value!");
-  QualType BoolT = Context.ObjCBuiltinBoolTy;
-  if (!Context.getBOOLDecl()) {
-    LookupResult Result(*this, &Context.Idents.get("BOOL"), OpLoc,
-                        Sema::LookupOrdinaryName);
-    if (LookupName(Result, getCurScope()) && Result.isSingleResult()) {
-      NamedDecl *ND = Result.getFoundDecl();
-      if (TypedefDecl *TD = dyn_cast<TypedefDecl>(ND))
-        Context.setBOOLDecl(TD);
-    }
-  }
-  if (Context.getBOOLDecl())
-    BoolT = Context.getBOOLType();
-  return new (Context)
-      ObjCBoolLiteralExpr(Kind == tok::kw___objc_yes, BoolT, OpLoc);
-}
+// ExprResult
+// Sema::ActOnObjCBoolLiteral(SourceLocation OpLoc, tok::TokenKind Kind) {
+//   assert((Kind == tok::kw___objc_yes || Kind == tok::kw___objc_no) &&
+//          "Unknown Objective-C Boolean value!");
+//   QualType BoolT = Context.ObjCBuiltinBoolTy;
+//   if (!Context.getBOOLDecl()) {
+//     LookupResult Result(*this, &Context.Idents.get("BOOL"), OpLoc,
+//                         Sema::LookupOrdinaryName);
+//     if (LookupName(Result, getCurScope()) && Result.isSingleResult()) {
+//       NamedDecl *ND = Result.getFoundDecl();
+//       if (TypedefDecl *TD = dyn_cast<TypedefDecl>(ND))
+//         Context.setBOOLDecl(TD);
+//     }
+//   }
+//   if (Context.getBOOLDecl())
+//     BoolT = Context.getBOOLType();
+//   return new (Context)
+//       ObjCBoolLiteralExpr(Kind == tok::kw___objc_yes, BoolT, OpLoc);
+// }
 
 ExprResult Sema::ActOnObjCAvailabilityCheckExpr(
     llvm::ArrayRef<AvailabilitySpec> AvailSpecs, SourceLocation AtLoc,
