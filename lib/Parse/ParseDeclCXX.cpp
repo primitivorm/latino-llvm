@@ -1702,8 +1702,8 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
       // Okay, this is a class definition.
       TUK = Sema::TUK_Definition;
     }
-  } else if (isCXX11FinalKeyword() && (NextToken().is(tok::l_square) ||
-                                       NextToken().is(tok::kw_alignas))) {
+  } else if (isCXX11FinalKeyword() && (NextToken().is(tok::l_square) /*||
+                                       NextToken().is(tok::kw_alignas)*/)) {
     // We can't tell if this is a definition or reference
     // until we skipped the 'final' and C++11 attribute specifiers.
     TentativeParsingAction PA(*this);
@@ -1717,12 +1717,12 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
         ConsumeBracket();
         if (!SkipUntil(tok::r_square, StopAtSemi))
           break;
-      } else if (Tok.is(tok::kw_alignas) && NextToken().is(tok::l_paren)) {
+      } else /*if (Tok.is(tok::kw_alignas) && NextToken().is(tok::l_paren)) {
         ConsumeToken();
         ConsumeParen();
         if (!SkipUntil(tok::r_paren, StopAtSemi))
           break;
-      } else {
+      } else*/ {
         break;
       }
     }
@@ -4133,11 +4133,11 @@ bool Parser::ParseCXX11AttributeArgs(IdentifierInfo *AttrName,
 ///         identifier
 void Parser::ParseCXX11AttributeSpecifier(ParsedAttributes &attrs,
                                           SourceLocation *endLoc) {
-  if (Tok.is(tok::kw_alignas)) {
-    Diag(Tok.getLocation(), diag::warn_cxx98_compat_alignas);
-    ParseAlignmentSpecifier(attrs, endLoc);
-    return;
-  }
+  // if (Tok.is(tok::kw_alignas)) {
+  //   Diag(Tok.getLocation(), diag::warn_cxx98_compat_alignas);
+  //   ParseAlignmentSpecifier(attrs, endLoc);
+  //   return;
+  // }
 
   assert(Tok.is(tok::l_square) && NextToken().is(tok::l_square) &&
          "Not a double square bracket attribute list");
@@ -4278,14 +4278,15 @@ SourceLocation Parser::SkipCXX11Attributes() {
       T.consumeOpen();
       T.skipToEnd();
       EndLoc = T.getCloseLocation();
-    } else {
+    } /*else {
+      // TODO: proman. Revisar
       assert(Tok.is(tok::kw_alignas) && "not an attribute specifier");
       ConsumeToken();
       BalancedDelimiterTracker T(*this, tok::l_paren);
       if (!T.consumeOpen())
         T.skipToEnd();
       EndLoc = T.getCloseLocation();
-    }
+    }*/
   } while (isCXX11AttributeSpecifier());
 
   return EndLoc;

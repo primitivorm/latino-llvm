@@ -660,8 +660,8 @@ bool Parser::isCXXTypeId(TentativeCXXTypeIdContext Context, bool &isAmbiguous) {
 Parser::CXX11AttributeKind
 Parser::isCXX11AttributeSpecifier(bool Disambiguate,
                                   bool OuterMightBeMessageSend) {
-  if (Tok.is(tok::kw_alignas))
-    return CAK_AttributeSpecifier;
+  // if (Tok.is(tok::kw_alignas))
+  //   return CAK_AttributeSpecifier;
 
   if (Tok.isNot(tok::l_square) || NextToken().isNot(tok::l_square))
     return CAK_NotAttributeSpecifier;
@@ -801,8 +801,8 @@ Parser::isCXX11AttributeSpecifier(bool Disambiguate,
 }
 
 bool Parser::TrySkipAttributes() {
-  while (Tok.isOneOf(tok::l_square, tok::kw___attribute, tok::kw___declspec,
-                     tok::kw_alignas)) {
+  while (Tok.isOneOf(tok::l_square, tok::kw___attribute, tok::kw___declspec/*,
+                     tok::kw_alignas*/)) {
     if (Tok.is(tok::l_square)) {
       ConsumeBracket();
       if (Tok.isNot(tok::l_square))

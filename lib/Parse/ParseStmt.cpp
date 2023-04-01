@@ -1708,7 +1708,7 @@ bool Parser::isForRangeIdentifier() {
   if (Next.is(tok::colon))
     return true;
 
-  if (Next.isOneOf(tok::l_square, tok::kw_alignas)) {
+  if (Next.is(tok::l_square/*, tok::kw_alignas*/)) {
     TentativeParsingAction PA(*this);
     ConsumeToken();
     SkipCXX11Attributes();

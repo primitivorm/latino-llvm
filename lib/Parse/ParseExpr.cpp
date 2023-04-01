@@ -1419,11 +1419,11 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       Res = Actions.ActOnUnaryOp(getCurScope(), SavedLoc, SavedKind, Res.get());
     return Res;
   }
-  case tok::kw__Alignof:   // unary-expression: '_Alignof' '(' type-name ')'
-    if (!getLangOpts().C11)
-      Diag(Tok, diag::ext_c11_feature) << Tok.getName();
-    LLVM_FALLTHROUGH;
-  case tok::kw_alignof:    // unary-expression: 'alignof' '(' type-id ')'
+  // case tok::kw__Alignof:   // unary-expression: '_Alignof' '(' type-name ')'
+  //   if (!getLangOpts().C11)
+  //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+  //   LLVM_FALLTHROUGH;
+  // case tok::kw_alignof:    // unary-expression: 'alignof' '(' type-id ')'
   case tok::kw___alignof:  // unary-expression: '__alignof' unary-expression
                            // unary-expression: '__alignof' '(' type-name ')'
   case tok::kw_sizeof:     // unary-expression: 'sizeof' unary-expression
@@ -2260,7 +2260,7 @@ Parser::ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
                                            SourceRange &CastRange) {
 
   assert(OpTok.isOneOf(tok::kw_typeof, tok::kw_sizeof, tok::kw___alignof,
-                       tok::kw_alignof, tok::kw__Alignof, tok::kw_vec_step,
+                       /*tok::kw_alignof, tok::kw__Alignof,*/ tok::kw_vec_step,
                        tok::kw___builtin_omp_required_simd_align) &&
          "Not a typeof/sizeof/alignof/vec_step expression!");
 
@@ -2270,8 +2270,8 @@ Parser::ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
   if (Tok.isNot(tok::l_paren)) {
     // If construct allows a form without parenthesis, user may forget to put
     // pathenthesis around type name.
-    if (OpTok.isOneOf(tok::kw_sizeof, tok::kw___alignof, tok::kw_alignof,
-                      tok::kw__Alignof)) {
+    if (OpTok.isOneOf(tok::kw_sizeof, tok::kw___alignof/*, tok::kw_alignof,
+                      tok::kw__Alignof*/)) {
       if (isTypeIdUnambiguously()) {
         DeclSpec DS(AttrFactory);
         ParseSpecifierQualifierList(DS);
@@ -2382,8 +2382,8 @@ ExprResult Parser::ParseUniqueStableNameExpression() {
 /// [C++11] 'alignof' '(' type-id ')'
 /// \endverbatim
 ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
-  assert(Tok.isOneOf(tok::kw_sizeof, tok::kw___alignof, tok::kw_alignof,
-                     tok::kw__Alignof, tok::kw_vec_step,
+  assert(Tok.isOneOf(tok::kw_sizeof, tok::kw___alignof, /*tok::kw_alignof,
+                     tok::kw__Alignof,*/ tok::kw_vec_step,
                      tok::kw___builtin_omp_required_simd_align) &&
          "Not a sizeof/alignof/vec_step expression!");
   Token OpTok = Tok;
@@ -2436,8 +2436,8 @@ ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
                                                 RParenLoc);
   }
 
-  if (OpTok.isOneOf(tok::kw_alignof, tok::kw__Alignof))
-    Diag(OpTok, diag::warn_cxx98_compat_alignof);
+  // if (OpTok.isOneOf(/*tok::kw_alignof, tok::kw__Alignof*/))
+  //   Diag(OpTok, diag::warn_cxx98_compat_alignof);
 
   EnterExpressionEvaluationContext Unevaluated(
       Actions, Sema::ExpressionEvaluationContext::Unevaluated,
@@ -2452,9 +2452,9 @@ ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
                                                           CastRange);
 
   UnaryExprOrTypeTrait ExprKind = UETT_SizeOf;
-  if (OpTok.isOneOf(tok::kw_alignof, tok::kw__Alignof))
+  /*if (OpTok.isOneOf(tok::kw_alignof, tok::kw__Alignof))
     ExprKind = UETT_AlignOf;
-  else if (OpTok.is(tok::kw___alignof))
+  else*/ if (OpTok.is(tok::kw___alignof))
     ExprKind = UETT_PreferredAlignOf;
   else if (OpTok.is(tok::kw_vec_step))
     ExprKind = UETT_VecStep;
@@ -2468,8 +2468,8 @@ ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
                                                  CastTy.getAsOpaquePtr(),
                                                  CastRange);
 
-  if (OpTok.isOneOf(tok::kw_alignof, tok::kw__Alignof))
-    Diag(OpTok, diag::ext_alignof_expr) << OpTok.getIdentifierInfo();
+  // if (OpTok.isOneOf(/*tok::kw_alignof,*/ tok::kw__Alignof))
+  //   Diag(OpTok, diag::ext_alignof_expr) << OpTok.getIdentifierInfo();
 
   // If we get here, the operand to the sizeof/alignof was an expression.
   if (!Operand.isInvalid())

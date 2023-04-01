@@ -1511,8 +1511,8 @@ bool Parser::DiagnoseProhibitedCXX11Attribute() {
 /// provide a fixit moving them to the right place.
 void Parser::DiagnoseMisplacedCXX11Attribute(ParsedAttributesWithRange &Attrs,
                                              SourceLocation CorrectLocation) {
-  assert((Tok.is(tok::l_square) && NextToken().is(tok::l_square)) ||
-         Tok.is(tok::kw_alignas));
+  assert((Tok.is(tok::l_square) && NextToken().is(tok::l_square)) /*||
+         Tok.is(tok::kw_alignas)*/);
 
   // Consume the attributes.
   SourceLocation Loc = Tok.getLocation();
@@ -1735,7 +1735,7 @@ bool Parser::MightBeDeclarator(DeclaratorContext Context) {
     case tok::comma:
     case tok::equal:
     case tok::equalequal: // Might be a typo for '='.
-    case tok::kw_alignas:
+    // case tok::kw_alignas:
     case tok::kw_asm:
     case tok::kw___attribute:
     case tok::l_brace:
@@ -2709,34 +2709,34 @@ ExprResult Parser::ParseAlignArgument(SourceLocation Start,
 /// [C11]   '_Alignas' '(' constant-expression ')'
 /// [C++11] 'alignas' '(' type-id ...[opt] ')'
 /// [C++11] 'alignas' '(' assignment-expression ...[opt] ')'
-void Parser::ParseAlignmentSpecifier(ParsedAttributes &Attrs,
-                                     SourceLocation *EndLoc) {
-  assert(Tok.isOneOf(tok::kw_alignas, tok::kw__Alignas) &&
-         "Not an alignment-specifier!");
+// void Parser::ParseAlignmentSpecifier(ParsedAttributes &Attrs,
+//                                      SourceLocation *EndLoc) {
+//   assert(Tok.isOneOf(tok::kw_alignas, tok::kw__Alignas) &&
+//          "Not an alignment-specifier!");
 
-  IdentifierInfo *KWName = Tok.getIdentifierInfo();
-  SourceLocation KWLoc = ConsumeToken();
+//   IdentifierInfo *KWName = Tok.getIdentifierInfo();
+//   SourceLocation KWLoc = ConsumeToken();
 
-  BalancedDelimiterTracker T(*this, tok::l_paren);
-  if (T.expectAndConsume())
-    return;
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
+//   if (T.expectAndConsume())
+//     return;
 
-  SourceLocation EllipsisLoc;
-  ExprResult ArgExpr = ParseAlignArgument(T.getOpenLocation(), EllipsisLoc);
-  if (ArgExpr.isInvalid()) {
-    T.skipToEnd();
-    return;
-  }
+//   SourceLocation EllipsisLoc;
+//   ExprResult ArgExpr = ParseAlignArgument(T.getOpenLocation(), EllipsisLoc);
+//   if (ArgExpr.isInvalid()) {
+//     T.skipToEnd();
+//     return;
+//   }
 
-  T.consumeClose();
-  if (EndLoc)
-    *EndLoc = T.getCloseLocation();
+//   T.consumeClose();
+//   if (EndLoc)
+//     *EndLoc = T.getCloseLocation();
 
-  ArgsVector ArgExprs;
-  ArgExprs.push_back(ArgExpr.get());
-  Attrs.addNew(KWName, KWLoc, nullptr, KWLoc, ArgExprs.data(), 1,
-               ParsedAttr::AS_Keyword, EllipsisLoc);
-}
+//   ArgsVector ArgExprs;
+//   ArgExprs.push_back(ArgExpr.get());
+//   Attrs.addNew(KWName, KWLoc, nullptr, KWLoc, ArgExprs.data(), 1,
+//                ParsedAttr::AS_Keyword, EllipsisLoc);
+// }
 
 // ExprResult Parser::ParseExtIntegerArgument() {
 //   assert(Tok.is(tok::kw__ExtInt) && "Not an extended int type");
@@ -2969,20 +2969,20 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       return;
 
     case tok::l_square:
-    case tok::kw_alignas:
-      if (!standardAttributesAllowed() || !isCXX11AttributeSpecifier())
-        goto DoneWithDeclSpec;
+    // case tok::kw_alignas:
+    //   if (!standardAttributesAllowed() || !isCXX11AttributeSpecifier())
+    //     goto DoneWithDeclSpec;
 
-      ProhibitAttributes(attrs);
-      // FIXME: It would be good to recover by accepting the attributes,
-      //        but attempting to do that now would cause serious
-      //        madness in terms of diagnostics.
-      attrs.clear();
-      attrs.Range = SourceRange();
+    //   ProhibitAttributes(attrs);
+    //   // FIXME: It would be good to recover by accepting the attributes,
+    //   //        but attempting to do that now would cause serious
+    //   //        madness in terms of diagnostics.
+    //   attrs.clear();
+    //   attrs.Range = SourceRange();
 
-      ParseCXX11Attributes(attrs);
-      AttrsLastTime = true;
-      continue;
+    //   ParseCXX11Attributes(attrs);
+    //   AttrsLastTime = true;
+    //   continue;
 
     case tok::code_completion: {
       Sema::ParserCompletionContext CCC = Sema::PCC_Namespace;
@@ -3602,11 +3602,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       break;
 
     // alignment-specifier
-    case tok::kw__Alignas:
-      if (!getLangOpts().C11)
-        Diag(Tok, diag::ext_c11_feature) << Tok.getName();
-      ParseAlignmentSpecifier(DS.getAttributes());
-      continue;
+    // case tok::kw__Alignas:
+    //   if (!getLangOpts().C11)
+    //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+    //   ParseAlignmentSpecifier(DS.getAttributes());
+    //   continue;
 
     // friend
     case tok::kw_friend:
@@ -5088,7 +5088,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw__Noreturn:
 
     // alignment-specifier
-  case tok::kw__Alignas:
+  // case tok::kw__Alignas:
 
     // friend keyword.
   case tok::kw_friend:

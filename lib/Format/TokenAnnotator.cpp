@@ -1836,7 +1836,7 @@ private:
     // If a (non-string) literal follows, this is likely a cast.
     if (Tok.Next->isNot(tok::string_literal) &&
         (Tok.Next->Tok.isLiteral() ||
-         Tok.Next->isOneOf(tok::kw_sizeof, tok::kw_alignof)))
+         Tok.Next->is(tok::kw_sizeof/*, tok::kw_alignof*/)))
       return true;
 
     // Heuristically try to determine whether the parentheses contain a type.

@@ -2586,9 +2586,9 @@ private:
                                     SourceLocation CorrectLocation) {
     if (!standardAttributesAllowed())
       return;
-    if ((Tok.isNot(tok::l_square) || NextToken().isNot(tok::l_square)) &&
-        Tok.isNot(tok::kw_alignas))
-      return;
+    // if ((Tok.isNot(tok::l_square) || NextToken().isNot(tok::l_square)) &&
+    //     Tok.isNot(tok::kw_alignas))
+    //   return;
     DiagnoseMisplacedCXX11Attribute(Attrs, CorrectLocation);
   }
   void DiagnoseMisplacedCXX11Attribute(ParsedAttributesWithRange &Attrs,
@@ -2804,8 +2804,8 @@ private:
 
   ExprResult ParseAlignArgument(SourceLocation Start,
                                 SourceLocation &EllipsisLoc);
-  void ParseAlignmentSpecifier(ParsedAttributes &Attrs,
-                               SourceLocation *endLoc = nullptr);
+  // void ParseAlignmentSpecifier(ParsedAttributes &Attrs,
+  //                              SourceLocation *endLoc = nullptr);
   ExprResult ParseExtIntegerArgument();
 
   VirtSpecifiers::Specifier isCXX11VirtSpecifier(const Token &Tok) const;

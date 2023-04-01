@@ -117,7 +117,7 @@ PPKEYWORD(undef)
 // PPKEYWORD(error)
 
 // C99 6.10.6 - Pragma Directive.
-PPKEYWORD(pragma)
+// PPKEYWORD(pragma)
 
 // GNU Extensions.
 PPKEYWORD(import)
@@ -314,7 +314,7 @@ KEYWORD(unsigned                    , KEYALL)
 KEYWORD(void                        , KEYALL)
 KEYWORD(volatile                    , KEYALL)
 KEYWORD(mientras                       , KEYALL) // while
-KEYWORD(_Alignas                    , KEYALL)
+// KEYWORD(_Alignas                    , KEYALL)
 KEYWORD(_Alignof                    , KEYALL)
 KEYWORD(_Atomic                     , KEYALL|KEYNOOPENCL)
 KEYWORD(_Bool                       , KEYNOCXX)
@@ -375,7 +375,7 @@ KEYWORD(wchar_t                     , WCHARSUPPORT)
 // CXX_KEYWORD_OPERATOR(xor_eq  , caretequal)
 
 // C++11 keywords
-CXX11_KEYWORD(alignas               , 0)
+// CXX11_KEYWORD(alignas               , 0)
 // alignof and _Alignof return the required ABI alignment
 CXX11_UNARY_EXPR_OR_TYPE_TRAIT(alignof, AlignOf, 0)
 CXX11_KEYWORD(char16_t              , KEYNOMS18)
