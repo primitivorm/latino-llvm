@@ -4886,7 +4886,7 @@ public:
 
   ExprResult BuildPredefinedExpr(SourceLocation Loc,
                                  PredefinedExpr::IdentKind IK);
-  ExprResult ActOnPredefinedExpr(SourceLocation Loc, tok::TokenKind Kind);
+  // ExprResult ActOnPredefinedExpr(SourceLocation Loc, tok::TokenKind Kind);
   ExprResult ActOnIntegerConstant(SourceLocation Loc, uint64_t Val);
 
   ExprResult BuildUniqueStableName(SourceLocation Loc, TypeSourceInfo *Operand);

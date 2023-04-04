@@ -791,12 +791,12 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   case tok::eof:
     Diag(Tok, diag::err_expected_external_declaration);
     return nullptr;
-  case tok::kw___extension__: {
-    // __extension__ silences extension warnings in the subexpression.
-    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-    ConsumeToken();
-    return ParseExternalDeclaration(attrs);
-  }
+  // case tok::kw___extension__: {
+  //   // __extension__ silences extension warnings in the subexpression.
+  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+  //   ConsumeToken();
+  //   return ParseExternalDeclaration(attrs);
+  // }
   case tok::kw_asm: {
     ProhibitAttributes(attrs);
 

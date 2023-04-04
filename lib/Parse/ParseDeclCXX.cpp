@@ -2558,13 +2558,13 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
   }
 
   // Handle:  member-declaration ::= '__extension__' member-declaration
-  if (Tok.is(tok::kw___extension__)) {
-    // __extension__ silences extension warnings in the subexpression.
-    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-    ConsumeToken();
-    return ParseCXXClassMemberDeclaration(AS, AccessAttrs,
-                                          TemplateInfo, TemplateDiags);
-  }
+  // if (Tok.is(tok::kw___extension__)) {
+  //   // __extension__ silences extension warnings in the subexpression.
+  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+  //   ConsumeToken();
+  //   return ParseCXXClassMemberDeclaration(AS, AccessAttrs,
+  //                                         TemplateInfo, TemplateDiags);
+  // }
 
   ParsedAttributesWithRange attrs(AttrFactory);
   ParsedAttributesViewWithRange FnAttrs;

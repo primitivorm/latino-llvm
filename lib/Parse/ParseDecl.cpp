@@ -3514,11 +3514,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                            PrevSpec, DiagID, Policy);
       isStorageClass = true;
       break;
-    case tok::kw___auto_type:
-      Diag(Tok, diag::ext_auto_type);
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_auto_type, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
+    // case tok::kw___auto_type:
+    //   Diag(Tok, diag::ext_auto_type);
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_auto_type, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
     case tok::kw_register:
       isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_register, Loc,
                                          PrevSpec, DiagID, Policy);
@@ -3692,10 +3692,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   ConsumedEnd = PrevTokLocation;
     //   break;
     // }
-    case tok::kw___int128:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_int128, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
+    // case tok::kw___int128:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_int128, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
     case tok::kw_half:
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec,
                                      DiagID, Policy);
@@ -3739,10 +3739,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
         isInvalid = DS.SetTypeSpecSat(Loc, PrevSpec, DiagID);
       }
       break;
-    case tok::kw___float128:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float128, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
+    // case tok::kw___float128:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float128, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
     case tok::kw_wchar_t:
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_wchar, Loc, PrevSpec,
                                      DiagID, Policy);
@@ -4027,12 +4027,12 @@ void Parser::ParseStructDeclaration(
     ParsingDeclSpec &DS,
     llvm::function_ref<void(ParsingFieldDeclarator &)> FieldsCallback) {
 
-  if (Tok.is(tok::kw___extension__)) {
-    // __extension__ silences extension warnings in the subexpression.
-    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-    ConsumeToken();
-    return ParseStructDeclaration(DS, FieldsCallback);
-  }
+  // if (Tok.is(tok::kw___extension__)) {
+  //   // __extension__ silences extension warnings in the subexpression.
+  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+  //   ConsumeToken();
+  //   return ParseStructDeclaration(DS, FieldsCallback);
+  // }
 
   // Parse leading attributes.
   ParsedAttributesWithRange Attrs(AttrFactory);
@@ -4790,7 +4790,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   case tok::kw_short:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw__Complex:
@@ -4810,7 +4810,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   case tok::kw__Accum:
   case tok::kw__Fract:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_bool:
   case tok::kw__Bool:
   case tok::kw__Decimal32:
@@ -4871,7 +4871,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw_short:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw__Complex:
@@ -4891,7 +4891,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw__Accum:
   case tok::kw__Fract:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_bool:
   case tok::kw__Bool:
   case tok::kw__Decimal32:
@@ -5022,7 +5022,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw___private_extern__:
   case tok::kw_static:
   case tok::kw_auto:
-  case tok::kw___auto_type:
+  // case tok::kw___auto_type:
   case tok::kw_register:
   case tok::kw___thread:
   case tok::kw_thread_local:
@@ -5038,7 +5038,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_short:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw__Complex:
@@ -5059,7 +5059,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw__Accum:
   case tok::kw__Fract:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_bool:
   case tok::kw__Bool:
   case tok::kw__Decimal32:

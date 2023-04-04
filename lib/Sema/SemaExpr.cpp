@@ -3473,22 +3473,22 @@ ExprResult Sema::ActOnUniqueStableNameExpr(SourceLocation OpLoc,
   return BuildUniqueStableName(OpLoc, E);
 }
 
-ExprResult Sema::ActOnPredefinedExpr(SourceLocation Loc, tok::TokenKind Kind) {
-  PredefinedExpr::IdentKind IK;
+// ExprResult Sema::ActOnPredefinedExpr(SourceLocation Loc, tok::TokenKind Kind) {
+//   PredefinedExpr::IdentKind IK;
 
-  switch (Kind) {
-  default: llvm_unreachable("Unknown simple primary expr!");
+//   switch (Kind) {
+//   default: llvm_unreachable("Unknown simple primary expr!");
   // case tok::kw___func__: IK = PredefinedExpr::Func; break; // [C99 6.4.2.2]
-  case tok::kw___FUNCTION__: IK = PredefinedExpr::Function; break;
-  case tok::kw___FUNCDNAME__: IK = PredefinedExpr::FuncDName; break; // [MS]
-  case tok::kw___FUNCSIG__: IK = PredefinedExpr::FuncSig; break; // [MS]
-  case tok::kw_L__FUNCTION__: IK = PredefinedExpr::LFunction; break; // [MS]
-  case tok::kw_L__FUNCSIG__: IK = PredefinedExpr::LFuncSig; break; // [MS]
-  case tok::kw___PRETTY_FUNCTION__: IK = PredefinedExpr::PrettyFunction; break;
-  }
+  // case tok::kw___FUNCTION__: IK = PredefinedExpr::Function; break;
+  // case tok::kw___FUNCDNAME__: IK = PredefinedExpr::FuncDName; break; // [MS]
+  // case tok::kw___FUNCSIG__: IK = PredefinedExpr::FuncSig; break; // [MS]
+  // case tok::kw_L__FUNCTION__: IK = PredefinedExpr::LFunction; break; // [MS]
+  // case tok::kw_L__FUNCSIG__: IK = PredefinedExpr::LFuncSig; break; // [MS]
+  // case tok::kw___PRETTY_FUNCTION__: IK = PredefinedExpr::PrettyFunction; break;
+  // }
 
-  return BuildPredefinedExpr(Loc, IK);
-}
+//   return BuildPredefinedExpr(Loc, IK);
+// }
 
 ExprResult Sema::ActOnCharacterConstant(const Token &Tok, Scope *UDLScope) {
   SmallString<16> CharBuffer;
@@ -13496,9 +13496,9 @@ static inline UnaryOperatorKind ConvertTokenKindToUnaryOpcode(
   case tok::minus:        Opc = UO_Minus; break;
   case tok::tilde:        Opc = UO_Not; break;
   case tok::exclaim:      Opc = UO_LNot; break;
-  case tok::kw___real:    Opc = UO_Real; break;
-  case tok::kw___imag:    Opc = UO_Imag; break;
-  case tok::kw___extension__: Opc = UO_Extension; break;
+  // case tok::kw___real:    Opc = UO_Real; break;
+  // case tok::kw___imag:    Opc = UO_Imag; break;
+  // case tok::kw___extension__: Opc = UO_Extension; break;
   }
   return Opc;
 }

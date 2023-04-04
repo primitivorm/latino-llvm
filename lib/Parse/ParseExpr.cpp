@@ -139,22 +139,22 @@ Parser::ParseExpressionWithLeadingAt(SourceLocation AtLoc) {
 /// This routine is called when a leading '__extension__' is seen and
 /// consumed.  This is necessary because the token gets consumed in the
 /// process of disambiguating between an expression and a declaration.
-ExprResult
-Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
-  ExprResult LHS(true);
-  {
-    // Silence extension warnings in the sub-expression
-    ExtensionRAIIObject O(Diags);
+// ExprResult
+// Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
+//   ExprResult LHS(true);
+//   {
+//     // Silence extension warnings in the sub-expression
+//     ExtensionRAIIObject O(Diags);
 
-    LHS = ParseCastExpression(AnyCastExpr);
-  }
+//     LHS = ParseCastExpression(AnyCastExpr);
+//   }
 
-  if (!LHS.isInvalid())
-    LHS = Actions.ActOnUnaryOp(getCurScope(), ExtLoc, tok::kw___extension__,
-                               LHS.get());
+//   if (!LHS.isInvalid())
+//     LHS = Actions.ActOnUnaryOp(getCurScope(), ExtLoc, tok::kw___extension__,
+//                                LHS.get());
 
-  return ParseRHSOfBinaryExpression(LHS, prec::Comma);
-}
+//   return ParseRHSOfBinaryExpression(LHS, prec::Comma);
+// }
 
 /// Parse an expr that doesn't include (top-level) commas.
 ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
@@ -1284,15 +1284,15 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     ConsumeToken();
     break;
   // case tok::kw___func__:       // primary-expression: __func__ [C99 6.4.2.2]
-  case tok::kw___FUNCTION__:   // primary-expression: __FUNCTION__ [GNU]
-  case tok::kw___FUNCDNAME__:   // primary-expression: __FUNCDNAME__ [MS]
-  case tok::kw___FUNCSIG__:     // primary-expression: __FUNCSIG__ [MS]
-  case tok::kw_L__FUNCTION__:   // primary-expression: L__FUNCTION__ [MS]
-  case tok::kw_L__FUNCSIG__:    // primary-expression: L__FUNCSIG__ [MS]
-  case tok::kw___PRETTY_FUNCTION__:  // primary-expression: __P..Y_F..N__ [GNU]
-    Res = Actions.ActOnPredefinedExpr(Tok.getLocation(), SavedKind);
-    ConsumeToken();
-    break;
+  // case tok::kw___FUNCTION__:   // primary-expression: __FUNCTION__ [GNU]
+  // case tok::kw___FUNCDNAME__:   // primary-expression: __FUNCDNAME__ [MS]
+  // case tok::kw___FUNCSIG__:     // primary-expression: __FUNCSIG__ [MS]
+  // case tok::kw_L__FUNCTION__:   // primary-expression: L__FUNCTION__ [MS]
+  // case tok::kw_L__FUNCSIG__:    // primary-expression: L__FUNCSIG__ [MS]
+  // case tok::kw___PRETTY_FUNCTION__:  // primary-expression: __P..Y_F..N__ [GNU]
+    // Res = Actions.ActOnPredefinedExpr(Tok.getLocation(), SavedKind);
+    // ConsumeToken();
+    // break;
   case tok::string_literal:    // primary-expression: string-literal
   case tok::wide_string_literal:
   case tok::utf8_string_literal:
@@ -1306,7 +1306,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw___builtin_available:
     Res = ParseAvailabilityCheckExpr(Tok.getLocation());
     break;
-  case tok::kw___builtin_va_arg:
+  // case tok::kw___builtin_va_arg:
   // case tok::kw___builtin_offsetof:
   // case tok::kw___builtin_choose_expr:
   case tok::kw___builtin_astype: // primary-expression: [OCL] as_type()
@@ -1382,8 +1382,9 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::minus:         // unary-expression: '-' cast-expression
   case tok::tilde:         // unary-expression: '~' cast-expression
   case tok::exclaim:       // unary-expression: '!' cast-expression
-  case tok::kw___real:     // unary-expression: '__real' cast-expression [GNU]
-  case tok::kw___imag: {   // unary-expression: '__imag' cast-expression [GNU]
+  // case tok::kw___real:     // unary-expression: '__real' cast-expression [GNU]
+  // case tok::kw___imag: 
+  {   // unary-expression: '__imag' cast-expression [GNU]
     if (NotPrimaryExpression)
       *NotPrimaryExpression = true;
     SourceLocation SavedLoc = ConsumeToken();
@@ -1408,17 +1409,17 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     return Res;
   }
 
-  case tok::kw___extension__:{//unary-expression:'__extension__' cast-expr [GNU]
-    // __extension__ silences extension warnings in the subexpression.
-    if (NotPrimaryExpression)
-      *NotPrimaryExpression = true;
-    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-    SourceLocation SavedLoc = ConsumeToken();
-    Res = ParseCastExpression(AnyCastExpr);
-    if (!Res.isInvalid())
-      Res = Actions.ActOnUnaryOp(getCurScope(), SavedLoc, SavedKind, Res.get());
-    return Res;
-  }
+  // case tok::kw___extension__:{//unary-expression:'__extension__' cast-expr [GNU]
+  //   // __extension__ silences extension warnings in the subexpression.
+  //   if (NotPrimaryExpression)
+  //     *NotPrimaryExpression = true;
+  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+  //   SourceLocation SavedLoc = ConsumeToken();
+  //   Res = ParseCastExpression(AnyCastExpr);
+  //   if (!Res.isInvalid())
+  //     Res = Actions.ActOnUnaryOp(getCurScope(), SavedLoc, SavedKind, Res.get());
+  //   return Res;
+  // }
   // case tok::kw__Alignof:   // unary-expression: '_Alignof' '(' type-name ')'
   //   if (!getLangOpts().C11)
   //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
@@ -1522,7 +1523,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_int:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   // case tok::kw__ExtInt:
   case tok::kw_signed:
   case tok::kw_unsigned:
@@ -1531,7 +1532,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_double:
   case tok::kw___bf16:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_void:
   case tok::kw_typename:
   case tok::kw_typeof:
@@ -2520,27 +2521,27 @@ ExprResult Parser::ParseBuiltinPrimaryExpression() {
 
   switch (T) {
   default: llvm_unreachable("Not a builtin primary expression!");
-  case tok::kw___builtin_va_arg: {
-    ExprResult Expr(ParseAssignmentExpression());
+  // case tok::kw___builtin_va_arg: {
+  //   ExprResult Expr(ParseAssignmentExpression());
 
-    if (ExpectAndConsume(tok::comma)) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      Expr = ExprError();
-    }
+  //   if (ExpectAndConsume(tok::comma)) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     Expr = ExprError();
+  //   }
 
-    TypeResult Ty = ParseTypeName();
+  //   TypeResult Ty = ParseTypeName();
 
-    if (Tok.isNot(tok::r_paren)) {
-      Diag(Tok, diag::err_expected) << tok::r_paren;
-      Expr = ExprError();
-    }
+  //   if (Tok.isNot(tok::r_paren)) {
+  //     Diag(Tok, diag::err_expected) << tok::r_paren;
+  //     Expr = ExprError();
+  //   }
 
-    if (Expr.isInvalid() || Ty.isInvalid())
-      Res = ExprError();
-    else
-      Res = Actions.ActOnVAArg(StartLoc, Expr.get(), Ty.get(), ConsumeParen());
-    break;
-  }
+  //   if (Expr.isInvalid() || Ty.isInvalid())
+  //     Res = ExprError();
+  //   else
+  //     Res = Actions.ActOnVAArg(StartLoc, Expr.get(), Ty.get(), ConsumeParen());
+  //   break;
+  // }
   // case tok::kw___builtin_offsetof: {
   //   SourceLocation TypeLoc = Tok.getLocation();
   //   TypeResult Ty = ParseTypeName();

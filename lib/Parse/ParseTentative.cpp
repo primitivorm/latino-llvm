@@ -1426,7 +1426,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_restrict:
   case tok::kw__Complex:
   case tok::kw___attribute:
-  case tok::kw___auto_type:
+  // case tok::kw___auto_type:
     return TPResult::True;
 
     // Microsoft
@@ -1635,7 +1635,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_int:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw_half:
@@ -1643,7 +1643,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_double:
   case tok::kw___bf16:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_void:
   case tok::annot_decltype:
 #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
@@ -1749,7 +1749,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   // case tok::kw__ExtInt:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw_half:
@@ -1757,10 +1757,10 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_double:
   case tok::kw___bf16:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_void:
   case tok::kw___unknown_anytype:
-  case tok::kw___auto_type:
+  // case tok::kw___auto_type:
 #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
 #include "latino/Basic/OpenCLImageTypes.def"
     return true;

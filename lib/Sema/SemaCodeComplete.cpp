@@ -520,9 +520,9 @@ static QualType getPreferredTypeOfUnaryArg(Sema &S, QualType ContextType,
       return S.getASTContext().IntTy;
     // leave as is, these operators typically return the same type.
     return ContextType;
-  case tok::kw___real:
-  case tok::kw___imag:
-    return QualType();
+  // case tok::kw___real:
+  // case tok::kw___imag:
+    // return QualType();
   default:
     assert(false && "unhandled unary op");
     return QualType();

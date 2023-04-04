@@ -1594,7 +1594,7 @@ private:
       // with multiple increment statements is not confused with a for loop
       // having multiple variable declarations.
       Contexts.back().FirstStartOfName = nullptr;
-    } else if (Current.isOneOf(tok::kw_auto, tok::kw___auto_type)) {
+    } else if (Current.is(tok::kw_auto/*, tok::kw___auto_type*/)) {
       AutoFound = true;
     } else if (Current.is(tok::arrow) &&
                Style.Language == FormatStyle::LK_Java) {

@@ -41,7 +41,7 @@ bool FormatToken::isSimpleTypeSpecifier() const {
   case tok::kw_short:
   case tok::kw_long:
   case tok::kw___int64:
-  case tok::kw___int128:
+  // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw_void:
@@ -52,7 +52,7 @@ bool FormatToken::isSimpleTypeSpecifier() const {
   case tok::kw_double:
   case tok::kw___bf16:
   case tok::kw__Float16:
-  case tok::kw___float128:
+  // case tok::kw___float128:
   case tok::kw_wchar_t:
   case tok::kw_bool:
   case tok::kw___underlying_type:

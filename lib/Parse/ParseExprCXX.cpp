@@ -2197,9 +2197,9 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   case tok::kw_int:
     DS.SetTypeSpecType(DeclSpec::TST_int, Loc, PrevSpec, DiagID, Policy);
     break;
-  case tok::kw___int128:
-    DS.SetTypeSpecType(DeclSpec::TST_int128, Loc, PrevSpec, DiagID, Policy);
-    break;
+  // case tok::kw___int128:
+  //   DS.SetTypeSpecType(DeclSpec::TST_int128, Loc, PrevSpec, DiagID, Policy);
+  //   break;
   case tok::kw___bf16:
     DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec, DiagID, Policy);
     break;
@@ -2215,9 +2215,9 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   case tok::kw__Float16:
     DS.SetTypeSpecType(DeclSpec::TST_float16, Loc, PrevSpec, DiagID, Policy);
     break;
-  case tok::kw___float128:
-    DS.SetTypeSpecType(DeclSpec::TST_float128, Loc, PrevSpec, DiagID, Policy);
-    break;
+  // case tok::kw___float128:
+  //   DS.SetTypeSpecType(DeclSpec::TST_float128, Loc, PrevSpec, DiagID, Policy);
+  //   break;
   case tok::kw_wchar_t:
     DS.SetTypeSpecType(DeclSpec::TST_wchar, Loc, PrevSpec, DiagID, Policy);
     break;

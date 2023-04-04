@@ -1753,7 +1753,7 @@ public:
 private:
   ExprResult ParseExpressionWithLeadingAt(SourceLocation AtLoc);
 
-  ExprResult ParseExpressionWithLeadingExtension(SourceLocation ExtLoc);
+  // ExprResult ParseExpressionWithLeadingExtension(SourceLocation ExtLoc);
 
   ExprResult ParseRHSOfBinaryExpression(ExprResult LHS,
                                         prec::Level MinPrec);
