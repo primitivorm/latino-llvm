@@ -3467,11 +3467,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       continue;
 
     // Objective-C 'kindof' types.
-    case tok::kw___kindof:
-      DS.getAttributes().addNew(Tok.getIdentifierInfo(), Loc, nullptr, Loc,
-                                nullptr, 0, ParsedAttr::AS_Keyword);
-      (void)ConsumeToken();
-      continue;
+    // case tok::kw___kindof:
+    //   DS.getAttributes().addNew(Tok.getIdentifierInfo(), Loc, nullptr, Loc,
+    //                             nullptr, 0, ParsedAttr::AS_Keyword);
+    //   (void)ConsumeToken();
+    //   continue;
 
     // storage-class-specifier
     case tok::kw_typedef:
@@ -4942,7 +4942,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw__Nullable:
   case tok::kw__Null_unspecified:
 
-  case tok::kw___kindof:
+  // case tok::kw___kindof:
 
   case tok::kw___private:
   case tok::kw___local:
@@ -5169,7 +5169,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw__Nullable:
   case tok::kw__Null_unspecified:
 
-  case tok::kw___kindof:
+  // case tok::kw___kindof:
 
   case tok::kw___private:
   case tok::kw___local:
@@ -5447,11 +5447,11 @@ void Parser::ParseTypeQualifierListOpt(
       continue;
 
     // Objective-C 'kindof' types.
-    case tok::kw___kindof:
-      DS.getAttributes().addNew(Tok.getIdentifierInfo(), Loc, nullptr, Loc,
-                                nullptr, 0, ParsedAttr::AS_Keyword);
-      (void)ConsumeToken();
-      continue;
+    // case tok::kw___kindof:
+    //   DS.getAttributes().addNew(Tok.getIdentifierInfo(), Loc, nullptr, Loc,
+    //                             nullptr, 0, ParsedAttr::AS_Keyword);
+    //   (void)ConsumeToken();
+    //   continue;
 
     case tok::kw___attribute:
       if (AttrReqs & AR_GNUAttributesParsedAndRejected)

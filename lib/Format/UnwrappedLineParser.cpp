@@ -1216,7 +1216,7 @@ void UnwrappedLineParser::parseStructuralElement() {
       case tok::objc_package:
       case tok::objc_private:
         return parseAccessSpecifier();
-      case tok::objc_interface:
+      // case tok::objc_interface:
       case tok::objc_implementation:
         return parseObjCInterfaceOrImplementation();
       case tok::objc_protocol:

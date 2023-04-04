@@ -1058,33 +1058,33 @@ Parser::ParseDeclOrFunctionDefInternal(ParsedAttributesWithRange &attrs,
   // ObjC2 allows prefix attributes on class interfaces and protocols.
   // FIXME: This still needs better diagnostics. We should only accept
   // attributes here, no types, etc.
-  if (getLangOpts().ObjC && Tok.is(tok::at)) {
-    SourceLocation AtLoc = ConsumeToken(); // the "@"
-    if (!Tok.isObjCAtKeyword(tok::objc_interface) &&
-        !Tok.isObjCAtKeyword(tok::objc_protocol) &&
-        !Tok.isObjCAtKeyword(tok::objc_implementation)) {
-      Diag(Tok, diag::err_objc_unexpected_attr);
-      SkipUntil(tok::semi);
-      return nullptr;
-    }
+  // if (getLangOpts().ObjC && Tok.is(tok::at)) {
+  //   SourceLocation AtLoc = ConsumeToken(); // the "@"
+  //   if (!Tok.isObjCAtKeyword(tok::objc_interface) &&
+  //       !Tok.isObjCAtKeyword(tok::objc_protocol) &&
+  //       !Tok.isObjCAtKeyword(tok::objc_implementation)) {
+  //     Diag(Tok, diag::err_objc_unexpected_attr);
+  //     SkipUntil(tok::semi);
+  //     return nullptr;
+  //   }
 
-    DS.abort();
+  //   DS.abort();
 
-    const char *PrevSpec = nullptr;
-    unsigned DiagID;
-    if (DS.SetTypeSpecType(DeclSpec::TST_unspecified, AtLoc, PrevSpec, DiagID,
-                           Actions.getASTContext().getPrintingPolicy()))
-      Diag(AtLoc, DiagID) << PrevSpec;
+  //   const char *PrevSpec = nullptr;
+  //   unsigned DiagID;
+  //   if (DS.SetTypeSpecType(DeclSpec::TST_unspecified, AtLoc, PrevSpec, DiagID,
+  //                          Actions.getASTContext().getPrintingPolicy()))
+  //     Diag(AtLoc, DiagID) << PrevSpec;
 
-    if (Tok.isObjCAtKeyword(tok::objc_protocol))
-      return ParseObjCAtProtocolDeclaration(AtLoc, DS.getAttributes());
+  //   if (Tok.isObjCAtKeyword(tok::objc_protocol))
+  //     return ParseObjCAtProtocolDeclaration(AtLoc, DS.getAttributes());
 
-    if (Tok.isObjCAtKeyword(tok::objc_implementation))
-      return ParseObjCAtImplementationDeclaration(AtLoc, DS.getAttributes());
+  //   if (Tok.isObjCAtKeyword(tok::objc_implementation))
+  //     return ParseObjCAtImplementationDeclaration(AtLoc, DS.getAttributes());
 
-    return Actions.ConvertDeclToDeclGroup(
-            ParseObjCAtInterfaceDeclaration(AtLoc, DS.getAttributes()));
-  }
+  //   return Actions.ConvertDeclToDeclGroup(
+  //           ParseObjCAtInterfaceDeclaration(AtLoc, DS.getAttributes()));
+  // }
 
   // If the declspec consisted only of 'extern' and we have a string
   // literal following it, this must be a C++ linkage specifier like

@@ -1598,15 +1598,15 @@ private:
   // Objective-C External Declarations
   void MaybeSkipAttributes(tok::ObjCKeywordKind Kind);
   DeclGroupPtrTy ParseObjCAtDirectives(ParsedAttributesWithRange &Attrs);
-  DeclGroupPtrTy ParseObjCAtClassDeclaration(SourceLocation atLoc);
-  Decl *ParseObjCAtInterfaceDeclaration(SourceLocation AtLoc,
-                                        ParsedAttributes &prefixAttrs);
+  // DeclGroupPtrTy ParseObjCAtClassDeclaration(SourceLocation atLoc);
+  // Decl *ParseObjCAtInterfaceDeclaration(SourceLocation AtLoc,
+  //                                       ParsedAttributes &prefixAttrs);
   class ObjCTypeParamListScope;
-  ObjCTypeParamList *parseObjCTypeParamList();
-  ObjCTypeParamList *parseObjCTypeParamListOrProtocolRefs(
-      ObjCTypeParamListScope &Scope, SourceLocation &lAngleLoc,
-      SmallVectorImpl<IdentifierLocPair> &protocolIdents,
-      SourceLocation &rAngleLoc, bool mayBeProtocolList = true);
+  // ObjCTypeParamList *parseObjCTypeParamList();
+  // ObjCTypeParamList *parseObjCTypeParamListOrProtocolRefs(
+  //     ObjCTypeParamListScope &Scope, SourceLocation &lAngleLoc,
+  //     SmallVectorImpl<IdentifierLocPair> &protocolIdents,
+  //     SourceLocation &rAngleLoc, bool mayBeProtocolList = true);
 
   void HelperActionsForIvarDeclarations(Decl *interfaceDecl, SourceLocation atLoc,
                                         BalancedDelimiterTracker &T,

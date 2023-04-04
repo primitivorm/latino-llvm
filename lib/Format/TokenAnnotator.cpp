@@ -1672,7 +1672,7 @@ private:
       // In Java & JavaScript, "@..." is a decorator or annotation. In ObjC, it
       // marks declarations and properties that need special formatting.
       switch (Current.Next->Tok.getObjCKeywordID()) {
-      case tok::objc_interface:
+      // case tok::objc_interface:
       case tok::objc_implementation:
       case tok::objc_protocol:
         Current.setType(TT_ObjCDecl);
@@ -3803,8 +3803,8 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
 
   if (Left.is(tok::at))
     return false;
-  if (Left.Tok.getObjCKeywordID() == tok::objc_interface)
-    return false;
+  // if (Left.Tok.getObjCKeywordID() == tok::objc_interface)
+  //   return false;
   if (Left.isOneOf(TT_JavaAnnotation, TT_LeadingJavaAnnotation))
     return !Right.is(tok::l_paren);
   if (Right.is(TT_PointerOrReference))

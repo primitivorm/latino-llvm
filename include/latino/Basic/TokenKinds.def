@@ -612,15 +612,15 @@ KEYWORD(__bf16                      , KEYALL)
 KEYWORD(half                        , HALFSUPPORT)
 
 // Objective-C ARC keywords.
-KEYWORD(__bridge                     , KEYOBJC)
-KEYWORD(__bridge_transfer            , KEYOBJC)
-KEYWORD(__bridge_retained            , KEYOBJC)
-KEYWORD(__bridge_retain              , KEYOBJC)
+// KEYWORD(__bridge                     , KEYOBJC)
+// KEYWORD(__bridge_transfer            , KEYOBJC)
+// KEYWORD(__bridge_retained            , KEYOBJC)
+// KEYWORD(__bridge_retain              , KEYOBJC)
 
 // Objective-C keywords.
-KEYWORD(__covariant                  , KEYOBJC)
-KEYWORD(__contravariant              , KEYOBJC)
-KEYWORD(__kindof                     , KEYOBJC)
+// KEYWORD(__covariant                  , KEYOBJC)
+// KEYWORD(__contravariant              , KEYOBJC)
+// KEYWORD(__kindof                     , KEYOBJC)
 
 // Alternate spelling for various tokens.  There are GCC extensions in all
 // languages, but should not be disabled in strict conformance mode.
@@ -718,7 +718,7 @@ OBJC_AT_KEYWORD(defs)
 OBJC_AT_KEYWORD(encode)
 OBJC_AT_KEYWORD(end)
 OBJC_AT_KEYWORD(implementation)
-OBJC_AT_KEYWORD(interface)
+// OBJC_AT_KEYWORD(interface)
 OBJC_AT_KEYWORD(private)
 OBJC_AT_KEYWORD(protected)
 OBJC_AT_KEYWORD(protocol)

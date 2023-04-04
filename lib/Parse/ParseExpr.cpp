@@ -2831,22 +2831,22 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
   }
 
   // Diagnose use of bridge casts in non-arc mode.
-  bool BridgeCast = (getLangOpts().ObjC &&
-                     Tok.isOneOf(tok::kw___bridge,
-                                 tok::kw___bridge_transfer,
-                                 tok::kw___bridge_retained,
-                                 tok::kw___bridge_retain));
-  if (BridgeCast && !getLangOpts().ObjCAutoRefCount) {
-    if (!TryConsumeToken(tok::kw___bridge)) {
-      StringRef BridgeCastName = Tok.getName();
-      SourceLocation BridgeKeywordLoc = ConsumeToken();
-      if (!PP.getSourceManager().isInSystemHeader(BridgeKeywordLoc))
-        Diag(BridgeKeywordLoc, diag::warn_arc_bridge_cast_nonarc)
-          << BridgeCastName
-          << FixItHint::CreateReplacement(BridgeKeywordLoc, "");
-    }
-    BridgeCast = false;
-  }
+  // bool BridgeCast = (getLangOpts().ObjC &&
+  //                    Tok.isOneOf(tok::kw___bridge,
+  //                                tok::kw___bridge_transfer,
+  //                                tok::kw___bridge_retained,
+  //                                tok::kw___bridge_retain));
+  // if (BridgeCast && !getLangOpts().ObjCAutoRefCount) {
+  //   if (!TryConsumeToken(tok::kw___bridge)) {
+  //     StringRef BridgeCastName = Tok.getName();
+  //     SourceLocation BridgeKeywordLoc = ConsumeToken();
+  //     if (!PP.getSourceManager().isInSystemHeader(BridgeKeywordLoc))
+  //       Diag(BridgeKeywordLoc, diag::warn_arc_bridge_cast_nonarc)
+  //         << BridgeCastName
+  //         << FixItHint::CreateReplacement(BridgeKeywordLoc, "");
+  //   }
+  //   BridgeCast = false;
+  // }
 
   // None of these cases should fall through with an invalid Result
   // unless they've already reported an error.
@@ -2880,7 +2880,7 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
         Actions.ActOnStmtExprError();
       }
     }
-  } else if (ExprType >= CompoundLiteral && BridgeCast) {
+  } /*else if (ExprType >= CompoundLiteral && BridgeCast) {
     tok::TokenKind tokenKind = Tok.getKind();
     SourceLocation BridgeKeywordLoc = ConsumeToken();
 
@@ -2917,7 +2917,7 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
     return Actions.ActOnObjCBridgedCast(getCurScope(), OpenLoc, Kind,
                                         BridgeKeywordLoc, Ty.get(),
                                         RParenLoc, SubExpr.get());
-  } else if (ExprType >= CompoundLiteral &&
+  }*/ else if (ExprType >= CompoundLiteral &&
              isTypeIdInParens(isAmbiguousTypeId)) {
 
     // Otherwise, this is a compound literal expression or cast expression.
