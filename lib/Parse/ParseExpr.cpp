@@ -1474,11 +1474,11 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       *NotPrimaryExpression = true;
     Res = ParseCXXTypeid();
     break;
-  case tok::kw___uuidof:
-    if (NotPrimaryExpression)
-      *NotPrimaryExpression = true;
-    Res = ParseCXXUuidof();
-    break;
+  // case tok::kw___uuidof:
+  //   if (NotPrimaryExpression)
+  //     *NotPrimaryExpression = true;
+  //   Res = ParseCXXUuidof();
+  //   break;
   case tok::kw_mi:
     Res = ParseCXXThis();
     break;
@@ -1522,7 +1522,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_short:
   case tok::kw_int:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   // case tok::kw__ExtInt:
   case tok::kw_signed:

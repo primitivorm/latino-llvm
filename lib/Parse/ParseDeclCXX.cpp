@@ -1236,16 +1236,16 @@ TypeResult Parser::ParseBaseTypeSpecifier(SourceLocation &BaseLoc,
   return Actions.ActOnTypeName(getCurScope(), DeclaratorInfo);
 }
 
-void Parser::ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs) {
-  while (Tok.isOneOf(tok::kw___single_inheritance,
-                     tok::kw___multiple_inheritance,
-                     tok::kw___virtual_inheritance)) {
-    IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-    SourceLocation AttrNameLoc = ConsumeToken();
-    attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-                 ParsedAttr::AS_Keyword);
-  }
-}
+// void Parser::ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs) {
+//   while (Tok.isOneOf(tok::kw___single_inheritance,
+//                      tok::kw___multiple_inheritance,
+//                      tok::kw___virtual_inheritance)) {
+//     IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+//     SourceLocation AttrNameLoc = ConsumeToken();
+//     attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//                  ParsedAttr::AS_Keyword);
+//   }
+// }
 
 /// Determine whether the following tokens are valid after a type-specifier
 /// which could be a standalone declaration. This will conservatively return
@@ -1396,8 +1396,8 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   DeclSpec::TST TagType;
   if (TagTokKind == tok::kw_struct)
     TagType = DeclSpec::TST_struct;
-  else if (TagTokKind == tok::kw___interface)
-    TagType = DeclSpec::TST_interface;
+  // else if (TagTokKind == tok::kw___interface)
+  //   TagType = DeclSpec::TST_interface;
   else if (TagTokKind == tok::kw_clase)
     TagType = DeclSpec::TST_class;
   else {
@@ -1432,10 +1432,10 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   MaybeParseMicrosoftDeclSpecs(attrs);
 
   // Parse inheritance specifiers.
-  if (Tok.isOneOf(tok::kw___single_inheritance,
-                  tok::kw___multiple_inheritance,
-                  tok::kw___virtual_inheritance))
-    ParseMicrosoftInheritanceClassAttributes(attrs);
+  // if (Tok.isOneOf(tok::kw___single_inheritance,
+  //                 tok::kw___multiple_inheritance,
+  //                 tok::kw___virtual_inheritance))
+  //   ParseMicrosoftInheritanceClassAttributes(attrs);
 
   // If C++0x attributes exist here, parse them.
   // FIXME: Are we consistent with the ordering of parsing of different
@@ -3070,10 +3070,10 @@ Parser::DeclGroupPtrTy Parser::ParseCXXClassMemberDeclarationWithPragmas(
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
 
   switch (Tok.getKind()) {
-  case tok::kw___if_exists:
-  case tok::kw___if_not_exists:
-    ParseMicrosoftIfExistsClassDeclaration(TagType, AccessAttrs, AS);
-    return nullptr;
+  // case tok::kw___if_exists:
+  // case tok::kw___if_not_exists:
+  //   ParseMicrosoftIfExistsClassDeclaration(TagType, AccessAttrs, AS);
+  //   return nullptr;
 
   case tok::semi:
     // Check for extraneous top-level semicolon.
@@ -4411,67 +4411,67 @@ void Parser::ParseMicrosoftAttributes(ParsedAttributes &attrs,
   } while (Tok.is(tok::l_square));
 }
 
-void Parser::ParseMicrosoftIfExistsClassDeclaration(
-    DeclSpec::TST TagType, ParsedAttributes &AccessAttrs,
-    AccessSpecifier &CurAS) {
-  IfExistsCondition Result;
-  if (ParseMicrosoftIfExistsCondition(Result))
-    return;
+// void Parser::ParseMicrosoftIfExistsClassDeclaration(
+//     DeclSpec::TST TagType, ParsedAttributes &AccessAttrs,
+//     AccessSpecifier &CurAS) {
+//   IfExistsCondition Result;
+//   if (ParseMicrosoftIfExistsCondition(Result))
+//     return;
 
-  BalancedDelimiterTracker Braces(*this, tok::l_brace);
-  if (Braces.consumeOpen()) {
-    Diag(Tok, diag::err_expected) << tok::l_brace;
-    return;
-  }
+//   BalancedDelimiterTracker Braces(*this, tok::l_brace);
+//   if (Braces.consumeOpen()) {
+//     Diag(Tok, diag::err_expected) << tok::l_brace;
+//     return;
+//   }
 
-  switch (Result.Behavior) {
-  case IEB_Parse:
-    // Parse the declarations below.
-    break;
+//   switch (Result.Behavior) {
+//   case IEB_Parse:
+//     // Parse the declarations below.
+//     break;
 
-  case IEB_Dependent:
-    Diag(Result.KeywordLoc, diag::warn_microsoft_dependent_exists)
-      << Result.IsIfExists;
-    // Fall through to skip.
-    LLVM_FALLTHROUGH;
+//   case IEB_Dependent:
+//     Diag(Result.KeywordLoc, diag::warn_microsoft_dependent_exists)
+//       << Result.IsIfExists;
+//     // Fall through to skip.
+//     LLVM_FALLTHROUGH;
 
-  case IEB_Skip:
-    Braces.skipToEnd();
-    return;
-  }
+//   case IEB_Skip:
+//     Braces.skipToEnd();
+//     return;
+//   }
 
-  while (Tok.isNot(tok::r_brace) && !isEofOrEom()) {
-    // __if_exists, __if_not_exists can nest.
-    if (Tok.isOneOf(tok::kw___if_exists, tok::kw___if_not_exists)) {
-      ParseMicrosoftIfExistsClassDeclaration(TagType,
-                                             AccessAttrs, CurAS);
-      continue;
-    }
+//   while (Tok.isNot(tok::r_brace) && !isEofOrEom()) {
+//     // __if_exists, __if_not_exists can nest.
+//     // if (Tok.isOneOf(tok::kw___if_exists, tok::kw___if_not_exists)) {
+//     //   ParseMicrosoftIfExistsClassDeclaration(TagType,
+//     //                                          AccessAttrs, CurAS);
+//     //   continue;
+//     // }
 
-    // Check for extraneous top-level semicolon.
-    if (Tok.is(tok::semi)) {
-      ConsumeExtraSemi(InsideStruct, TagType);
-      continue;
-    }
+//     // Check for extraneous top-level semicolon.
+//     if (Tok.is(tok::semi)) {
+//       ConsumeExtraSemi(InsideStruct, TagType);
+//       continue;
+//     }
 
-    AccessSpecifier AS = getAccessSpecifierIfPresent();
-    if (AS != AS_none) {
-      // Current token is a C++ access specifier.
-      CurAS = AS;
-      SourceLocation ASLoc = Tok.getLocation();
-      ConsumeToken();
-      if (Tok.is(tok::colon))
-        Actions.ActOnAccessSpecifier(AS, ASLoc, Tok.getLocation(),
-                                     ParsedAttributesView{});
-      else
-        Diag(Tok, diag::err_expected) << tok::colon;
-      ConsumeToken();
-      continue;
-    }
+//     AccessSpecifier AS = getAccessSpecifierIfPresent();
+//     if (AS != AS_none) {
+//       // Current token is a C++ access specifier.
+//       CurAS = AS;
+//       SourceLocation ASLoc = Tok.getLocation();
+//       ConsumeToken();
+//       if (Tok.is(tok::colon))
+//         Actions.ActOnAccessSpecifier(AS, ASLoc, Tok.getLocation(),
+//                                      ParsedAttributesView{});
+//       else
+//         Diag(Tok, diag::err_expected) << tok::colon;
+//       ConsumeToken();
+//       continue;
+//     }
 
-    // Parse all the comma separated declarators.
-    ParseCXXClassMemberDeclaration(CurAS, AccessAttrs);
-  }
+//     // Parse all the comma separated declarators.
+//     ParseCXXClassMemberDeclaration(CurAS, AccessAttrs);
+//   }
 
-  Braces.consumeClose();
-}
+//   Braces.consumeClose();
+// }

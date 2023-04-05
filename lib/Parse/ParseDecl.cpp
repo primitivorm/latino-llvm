@@ -738,11 +738,12 @@ void Parser::ParseMicrosoftTypeAttributes(ParsedAttributes &attrs) {
     case tok::kw___regcall:
     case tok::kw___cdecl:
     case tok::kw___vectorcall:
-    case tok::kw___ptr64:
-    case tok::kw___w64:
-    case tok::kw___ptr32:
-    case tok::kw___sptr:
-    case tok::kw___uptr: {
+    // case tok::kw___ptr64:
+    // case tok::kw___w64:
+    // case tok::kw___ptr32:
+    // case tok::kw___sptr:
+    // case tok::kw___uptr: 
+    {
       IdentifierInfo *AttrName = Tok.getIdentifierInfo();
       SourceLocation AttrNameLoc = ConsumeToken();
       attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
@@ -777,12 +778,12 @@ SourceLocation Parser::SkipExtendedMicrosoftTypeAttributes() {
     case tok::kw___thiscall:
     case tok::kw___cdecl:
     case tok::kw___vectorcall:
-    case tok::kw___ptr32:
-    case tok::kw___ptr64:
-    case tok::kw___w64:
+    // case tok::kw___ptr32:
+    // case tok::kw___ptr64:
+    // case tok::kw___w64:
     case tok::kw___unaligned:
-    case tok::kw___sptr:
-    case tok::kw___uptr:
+    // case tok::kw___sptr:
+    // case tok::kw___uptr:
       EndLoc = ConsumeToken();
       break;
     default:
@@ -2507,9 +2508,9 @@ bool Parser::ParseImplicitInt(DeclSpec &DS, CXXScopeSpec *SS,
         TagName="union" ; FixitTagName = "union " ;TagKind=tok::kw_union ;break;
       case DeclSpec::TST_struct:
         TagName="struct"; FixitTagName = "struct ";TagKind=tok::kw_struct;break;
-      case DeclSpec::TST_interface:
-        TagName="__interface"; FixitTagName = "__interface ";
-        TagKind=tok::kw___interface;break;
+      // case DeclSpec::TST_interface:
+      //   TagName="__interface"; FixitTagName = "__interface ";
+      //   TagKind=tok::kw___interface;break;
       case DeclSpec::TST_class:
         TagName="class" ; FixitTagName = "class " ;TagKind=tok::kw_clase ;break;
     }
@@ -3435,11 +3436,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                  getLangOpts());
       break;
 
-    case tok::kw___sptr:
-    case tok::kw___uptr:
-    case tok::kw___ptr64:
-    case tok::kw___ptr32:
-    case tok::kw___w64:
+    // case tok::kw___sptr:
+    // case tok::kw___uptr:
+    // case tok::kw___ptr64:
+    // case tok::kw___ptr32:
+    // case tok::kw___w64:
     case tok::kw___cdecl:
     case tok::kw___stdcall:
     case tok::kw___fastcall:
@@ -3648,10 +3649,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
         isInvalid = DS.SetTypeSpecWidth(DeclSpec::TSW_longlong, Loc, PrevSpec,
                                         DiagID, Policy);
       break;
-    case tok::kw___int64:
-        isInvalid = DS.SetTypeSpecWidth(DeclSpec::TSW_longlong, Loc, PrevSpec,
-                                        DiagID, Policy);
-      break;
+    // case tok::kw___int64:
+    //     isInvalid = DS.SetTypeSpecWidth(DeclSpec::TSW_longlong, Loc, PrevSpec,
+    //                                     DiagID, Policy);
+    //   break;
     case tok::kw_signed:
       isInvalid = DS.SetTypeSpecSign(DeclSpec::TSS_signed, Loc, PrevSpec,
                                      DiagID);
@@ -3822,7 +3823,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     // class-specifier:
     case tok::kw_clase:
     case tok::kw_struct:
-    case tok::kw___interface:
+    // case tok::kw___interface:
     case tok::kw_union: {
       tok::TokenKind Kind = Tok.getKind();
       ConsumeToken();
@@ -4789,7 +4790,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
     // type-specifiers
   case tok::kw_short:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
@@ -4823,7 +4824,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
   case tok::kw_struct:
-  case tok::kw___interface:
+  // case tok::kw___interface:
   case tok::kw_union:
     // enum-specifier
   case tok::kw_enum:
@@ -4870,7 +4871,7 @@ bool Parser::isTypeSpecifierQualifier() {
     // type-specifiers
   case tok::kw_short:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
@@ -4904,7 +4905,7 @@ bool Parser::isTypeSpecifierQualifier() {
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
   case tok::kw_struct:
-  case tok::kw___interface:
+  // case tok::kw___interface:
   case tok::kw_union:
     // enum-specifier
   case tok::kw_enum:
@@ -4932,9 +4933,9 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw___thiscall:
   case tok::kw___regcall:
   case tok::kw___vectorcall:
-  case tok::kw___w64:
-  case tok::kw___ptr64:
-  case tok::kw___ptr32:
+  // case tok::kw___w64:
+  // case tok::kw___ptr64:
+  // case tok::kw___ptr32:
   case tok::kw___pascal:
   case tok::kw___unaligned:
 
@@ -5037,7 +5038,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
     // type-specifiers
   case tok::kw_short:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
@@ -5071,7 +5072,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
-  case tok::kw___interface:
+  // case tok::kw___interface:
     // enum-specifier
   case tok::kw_enum:
 
@@ -5156,11 +5157,11 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw___thiscall:
   case tok::kw___regcall:
   case tok::kw___vectorcall:
-  case tok::kw___w64:
-  case tok::kw___sptr:
-  case tok::kw___uptr:
-  case tok::kw___ptr64:
-  case tok::kw___ptr32:
+  // case tok::kw___w64:
+  // case tok::kw___sptr:
+  // case tok::kw___uptr:
+  // case tok::kw___ptr64:
+  // case tok::kw___ptr32:
   case tok::kw___forceinline:
   case tok::kw___pascal:
   case tok::kw___unaligned:
@@ -5408,19 +5409,19 @@ void Parser::ParseTypeQualifierListOpt(
       isInvalid = DS.SetTypeQual(DeclSpec::TQ_unaligned, Loc, PrevSpec, DiagID,
                                  getLangOpts());
       break;
-    case tok::kw___uptr:
-      // GNU libc headers in C mode use '__uptr' as an identifier which conflicts
-      // with the MS modifier keyword.
-      if ((AttrReqs & AR_DeclspecAttributesParsed) && !getLangOpts().CPlusPlus &&
-          IdentifierRequired && DS.isEmpty() && NextToken().is(tok::semi)) {
-        if (TryKeywordIdentFallback(false))
-          continue;
-      }
-      LLVM_FALLTHROUGH;
-    case tok::kw___sptr:
-    case tok::kw___w64:
-    case tok::kw___ptr64:
-    case tok::kw___ptr32:
+    // case tok::kw___uptr:
+    //   // GNU libc headers in C mode use '__uptr' as an identifier which conflicts
+    //   // with the MS modifier keyword.
+    //   if ((AttrReqs & AR_DeclspecAttributesParsed) && !getLangOpts().CPlusPlus &&
+    //       IdentifierRequired && DS.isEmpty() && NextToken().is(tok::semi)) {
+    //     if (TryKeywordIdentFallback(false))
+    //       continue;
+    //   }
+    //   LLVM_FALLTHROUGH;
+    // case tok::kw___sptr:
+    // case tok::kw___w64:
+    // case tok::kw___ptr64:
+    // case tok::kw___ptr32:
     case tok::kw___cdecl:
     case tok::kw___stdcall:
     case tok::kw___fastcall:

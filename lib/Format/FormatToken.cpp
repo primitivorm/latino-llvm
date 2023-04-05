@@ -40,7 +40,7 @@ bool FormatToken::isSimpleTypeSpecifier() const {
   switch (Tok.getKind()) {
   case tok::kw_short:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:

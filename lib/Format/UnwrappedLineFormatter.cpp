@@ -530,7 +530,7 @@ private:
         return 0;
     }
     if (Line.First->isOneOf(tok::kw_si, tok::kw_mientras, tok::kw_hacer, tok::kw_intentar,
-                            tok::kw___try, tok::kw_atrapar, tok::kw___finally,
+                            /*tok::kw___try,*/ tok::kw_atrapar, /*tok::kw___finally,*/
                             tok::kw_desde, tok::r_brace, Keywords.kw___except)) {
       if (Style.AllowShortBlocksOnASingleLine == FormatStyle::SBS_Never)
         return 0;
@@ -563,8 +563,8 @@ private:
       // FIXME: This isn't covered by tests.
       // FIXME: For catch, __except, __finally the first token on the line
       // is '}', so this isn't correct here.
-      if (Line.First->isOneOf(tok::kw_intentar, tok::kw___try, tok::kw_atrapar,
-                              Keywords.kw___except, tok::kw___finally))
+      if (Line.First->isOneOf(tok::kw_intentar, /*tok::kw___try,*/ tok::kw_atrapar,
+                              Keywords.kw___except/*, tok::kw___finally*/))
         return 0;
     }
 

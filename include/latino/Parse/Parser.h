@@ -1909,7 +1909,7 @@ private:
 
   //===--------------------------------------------------------------------===//
   //  C++ : Microsoft __uuidof Expression
-  ExprResult ParseCXXUuidof();
+  // ExprResult ParseCXXUuidof();
 
   //===--------------------------------------------------------------------===//
   // C++ 5.2.4: C++ Pseudo-Destructor Expressions
@@ -2122,14 +2122,14 @@ private:
     IfExistsBehavior Behavior;
   };
 
-  bool ParseMicrosoftIfExistsCondition(IfExistsCondition& Result);
-  void ParseMicrosoftIfExistsStatement(StmtVector &Stmts);
-  void ParseMicrosoftIfExistsExternalDeclaration();
-  void ParseMicrosoftIfExistsClassDeclaration(DeclSpec::TST TagType,
-                                              ParsedAttributes &AccessAttrs,
-                                              AccessSpecifier &CurAS);
-  bool ParseMicrosoftIfExistsBraceInitializer(ExprVector &InitExprs,
-                                              bool &InitExprsOk);
+  // bool ParseMicrosoftIfExistsCondition(IfExistsCondition& Result);
+  // void ParseMicrosoftIfExistsStatement(StmtVector &Stmts);
+  // void ParseMicrosoftIfExistsExternalDeclaration();
+  // void ParseMicrosoftIfExistsClassDeclaration(DeclSpec::TST TagType,
+  //                                             ParsedAttributes &AccessAttrs,
+  //                                             AccessSpecifier &CurAS);
+  // bool ParseMicrosoftIfExistsBraceInitializer(ExprVector &InitExprs,
+  //                                             bool &InitExprsOk);
   bool ParseAsmOperandsOpt(SmallVectorImpl<IdentifierInfo *> &Names,
                            SmallVectorImpl<Expr *> &Constraints,
                            SmallVectorImpl<Expr *> &Exprs);
@@ -2144,10 +2144,10 @@ private:
   //===--------------------------------------------------------------------===//
   // MS: SEH Statements and Blocks
 
-  StmtResult ParseSEHTryBlock();
+  // StmtResult ParseSEHTryBlock();
   StmtResult ParseSEHExceptBlock(SourceLocation Loc);
   StmtResult ParseSEHFinallyBlock(SourceLocation Loc);
-  StmtResult ParseSEHLeaveStatement();
+  // StmtResult ParseSEHLeaveStatement();
 
   //===--------------------------------------------------------------------===//
   // Objective-C Statements
@@ -2735,7 +2735,7 @@ private:
   void ParseMicrosoftTypeAttributes(ParsedAttributes &attrs);
   void DiagnoseAndSkipExtendedMicrosoftTypeAttributes();
   SourceLocation SkipExtendedMicrosoftTypeAttributes();
-  void ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs);
+  // void ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs);
   void ParseBorlandTypeAttributes(ParsedAttributes &attrs);
   void ParseOpenCLKernelAttributes(ParsedAttributes &attrs);
   void ParseOpenCLQualifiers(ParsedAttributes &Attrs);

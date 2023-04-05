@@ -174,7 +174,7 @@ Parser::TPResult Parser::TryConsumeDeclarationSpecifier() {
   case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
-  case tok::kw___interface:
+  // case tok::kw___interface:
   case tok::kw_enum:
     // elaborated-type-specifier:
     //     class-key attribute-specifier-seq[opt]
@@ -1397,7 +1397,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
-  case tok::kw___interface:
+  // case tok::kw___interface:
     // enum-specifier
   case tok::kw_enum:
     // cv-qualifier
@@ -1437,11 +1437,11 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw___thiscall:
   case tok::kw___regcall:
   case tok::kw___vectorcall:
-  case tok::kw___w64:
-  case tok::kw___sptr:
-  case tok::kw___uptr:
-  case tok::kw___ptr64:
-  case tok::kw___ptr32:
+  // case tok::kw___w64:
+  // case tok::kw___sptr:
+  // case tok::kw___uptr:
+  // case tok::kw___ptr64:
+  // case tok::kw___ptr32:
   case tok::kw___forceinline:
   case tok::kw___unaligned:
   case tok::kw__Nonnull:
@@ -1634,7 +1634,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_short:
   case tok::kw_int:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
@@ -1733,7 +1733,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_clase:
   case tok::kw_struct:
   case tok::kw_union:
-  case tok::kw___interface:
+  // case tok::kw___interface:
   case tok::kw_enum:
     return true;
 
@@ -1748,7 +1748,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_int:
   // case tok::kw__ExtInt:
   case tok::kw_long:
-  case tok::kw___int64:
+  // case tok::kw___int64:
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:

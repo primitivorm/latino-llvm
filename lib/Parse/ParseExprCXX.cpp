@@ -1647,49 +1647,49 @@ ExprResult Parser::ParseCXXTypeid() {
 ///         '__uuidof' '(' expression ')'
 ///         '__uuidof' '(' type-id ')'
 ///
-ExprResult Parser::ParseCXXUuidof() {
-  assert(Tok.is(tok::kw___uuidof) && "Not '__uuidof'!");
+// ExprResult Parser::ParseCXXUuidof() {
+//   assert(Tok.is(tok::kw___uuidof) && "Not '__uuidof'!");
 
-  SourceLocation OpLoc = ConsumeToken();
-  BalancedDelimiterTracker T(*this, tok::l_paren);
+//   SourceLocation OpLoc = ConsumeToken();
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
 
-  // __uuidof expressions are always parenthesized.
-  if (T.expectAndConsume(diag::err_expected_lparen_after, "__uuidof"))
-    return ExprError();
+//   // __uuidof expressions are always parenthesized.
+//   if (T.expectAndConsume(diag::err_expected_lparen_after, "__uuidof"))
+//     return ExprError();
 
-  ExprResult Result;
+//   ExprResult Result;
 
-  if (isTypeIdInParens()) {
-    TypeResult Ty = ParseTypeName();
+//   if (isTypeIdInParens()) {
+//     TypeResult Ty = ParseTypeName();
 
-    // Match the ')'.
-    T.consumeClose();
+//     // Match the ')'.
+//     T.consumeClose();
 
-    if (Ty.isInvalid())
-      return ExprError();
+//     if (Ty.isInvalid())
+//       return ExprError();
 
-    Result = Actions.ActOnCXXUuidof(OpLoc, T.getOpenLocation(), /*isType=*/true,
-                                    Ty.get().getAsOpaquePtr(),
-                                    T.getCloseLocation());
-  } else {
-    EnterExpressionEvaluationContext Unevaluated(
-        Actions, Sema::ExpressionEvaluationContext::Unevaluated);
-    Result = ParseExpression();
+//     Result = Actions.ActOnCXXUuidof(OpLoc, T.getOpenLocation(), /*isType=*/true,
+//                                     Ty.get().getAsOpaquePtr(),
+//                                     T.getCloseLocation());
+//   } else {
+//     EnterExpressionEvaluationContext Unevaluated(
+//         Actions, Sema::ExpressionEvaluationContext::Unevaluated);
+//     Result = ParseExpression();
 
-    // Match the ')'.
-    if (Result.isInvalid())
-      SkipUntil(tok::r_paren, StopAtSemi);
-    else {
-      T.consumeClose();
+//     // Match the ')'.
+//     if (Result.isInvalid())
+//       SkipUntil(tok::r_paren, StopAtSemi);
+//     else {
+//       T.consumeClose();
 
-      Result = Actions.ActOnCXXUuidof(OpLoc, T.getOpenLocation(),
-                                      /*isType=*/false,
-                                      Result.get(), T.getCloseLocation());
-    }
-  }
+//       Result = Actions.ActOnCXXUuidof(OpLoc, T.getOpenLocation(),
+//                                       /*isType=*/false,
+//                                       Result.get(), T.getCloseLocation());
+//     }
+//   }
 
-  return Result;
-}
+//   return Result;
+// }
 
 /// Parse a C++ pseudo-destructor expression after the base,
 /// . or -> operator, and nested-name-specifier have already been
@@ -2179,9 +2179,9 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   case tok::kw_long:
     DS.SetTypeSpecWidth(DeclSpec::TSW_long, Loc, PrevSpec, DiagID, Policy);
     break;
-  case tok::kw___int64:
-    DS.SetTypeSpecWidth(DeclSpec::TSW_longlong, Loc, PrevSpec, DiagID, Policy);
-    break;
+  // case tok::kw___int64:
+  //   DS.SetTypeSpecWidth(DeclSpec::TSW_longlong, Loc, PrevSpec, DiagID, Policy);
+  //   break;
   case tok::kw_signed:
     DS.SetTypeSpecSign(DeclSpec::TSS_signed, Loc, PrevSpec, DiagID);
     break;

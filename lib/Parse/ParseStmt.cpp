@@ -297,25 +297,25 @@ Retry:
     break;
   }
 
-  case tok::kw___if_exists:
-  case tok::kw___if_not_exists:
-    ProhibitAttributes(Attrs);
-    ParseMicrosoftIfExistsStatement(Stmts);
-    // An __if_exists block is like a compound statement, but it doesn't create
-    // a new scope.
-    return StmtEmpty();
+  // case tok::kw___if_exists:
+  // case tok::kw___if_not_exists:
+  //   ProhibitAttributes(Attrs);
+  //   ParseMicrosoftIfExistsStatement(Stmts);
+  //   // An __if_exists block is like a compound statement, but it doesn't create
+  //   // a new scope.
+  //   return StmtEmpty();
 
   case tok::kw_intentar:                 // C++ 15: try-block
     return ParseCXXTryBlock();
 
-  case tok::kw___try:
-    ProhibitAttributes(Attrs); // TODO: is it correct?
-    return ParseSEHTryBlock();
+  // case tok::kw___try:
+  //   ProhibitAttributes(Attrs); // TODO: is it correct?
+  //   return ParseSEHTryBlock();
 
-  case tok::kw___leave:
-    Res = ParseSEHLeaveStatement();
-    SemiError = "__leave";
-    break;
+  // case tok::kw___leave:
+  //   Res = ParseSEHLeaveStatement();
+  //   SemiError = "__leave";
+  //   break;
 
   case tok::annot_pragma_vis:
     ProhibitAttributes(Attrs);
@@ -473,39 +473,39 @@ StmtResult Parser::ParseExprStatement(ParsedStmtContext StmtCtx) {
 ///   seh-except-block
 ///   seh-finally-block
 ///
-StmtResult Parser::ParseSEHTryBlock() {
-  assert(Tok.is(tok::kw___try) && "Expected '__try'");
-  SourceLocation TryLoc = ConsumeToken();
+// StmtResult Parser::ParseSEHTryBlock() {
+//   assert(Tok.is(tok::kw___try) && "Expected '__try'");
+//   SourceLocation TryLoc = ConsumeToken();
 
-  if (Tok.isNot(tok::l_brace))
-    return StmtError(Diag(Tok, diag::err_expected) << tok::l_brace);
+//   if (Tok.isNot(tok::l_brace))
+//     return StmtError(Diag(Tok, diag::err_expected) << tok::l_brace);
 
-  StmtResult TryBlock(ParseCompoundStatement(
-      /*isStmtExpr=*/false,
-      Scope::DeclScope | Scope::CompoundStmtScope | Scope::SEHTryScope));
-  if (TryBlock.isInvalid())
-    return TryBlock;
+//   StmtResult TryBlock(ParseCompoundStatement(
+//       /*isStmtExpr=*/false,
+//       Scope::DeclScope | Scope::CompoundStmtScope | Scope::SEHTryScope));
+//   if (TryBlock.isInvalid())
+//     return TryBlock;
 
-  StmtResult Handler;
-  if (Tok.is(tok::identifier) &&
-      Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
-    SourceLocation Loc = ConsumeToken();
-    Handler = ParseSEHExceptBlock(Loc);
-  } else if (Tok.is(tok::kw___finally)) {
-    SourceLocation Loc = ConsumeToken();
-    Handler = ParseSEHFinallyBlock(Loc);
-  } else {
-    return StmtError(Diag(Tok, diag::err_seh_expected_handler));
-  }
+//   StmtResult Handler;
+//   if (Tok.is(tok::identifier) &&
+//       Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
+//     SourceLocation Loc = ConsumeToken();
+//     Handler = ParseSEHExceptBlock(Loc);
+//   } else if (Tok.is(tok::kw___finally)) {
+//     SourceLocation Loc = ConsumeToken();
+//     Handler = ParseSEHFinallyBlock(Loc);
+//   } else {
+//     return StmtError(Diag(Tok, diag::err_seh_expected_handler));
+//   }
 
-  if(Handler.isInvalid())
-    return Handler;
+//   if(Handler.isInvalid())
+//     return Handler;
 
-  return Actions.ActOnSEHTryBlock(false /* IsCXXTry */,
-                                  TryLoc,
-                                  TryBlock.get(),
-                                  Handler.get());
-}
+//   return Actions.ActOnSEHTryBlock(false /* IsCXXTry */,
+//                                   TryLoc,
+//                                   TryBlock.get(),
+//                                   Handler.get());
+// }
 
 /// ParseSEHExceptBlock - Handle __except
 ///
@@ -589,10 +589,10 @@ StmtResult Parser::ParseSEHFinallyBlock(SourceLocation FinallyLoc) {
 /// seh-leave-statement:
 ///   '__leave' ';'
 ///
-StmtResult Parser::ParseSEHLeaveStatement() {
-  SourceLocation LeaveLoc = ConsumeToken();  // eat the '__leave'.
-  return Actions.ActOnSEHLeaveStmt(LeaveLoc, getCurScope());
-}
+// StmtResult Parser::ParseSEHLeaveStatement() {
+//   SourceLocation LeaveLoc = ConsumeToken();  // eat the '__leave'.
+//   return Actions.ActOnSEHLeaveStmt(LeaveLoc, getCurScope());
+// }
 
 /// ParseLabeledStatement - We have an identifier and a ':' after it.
 ///
@@ -2366,8 +2366,8 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
   // Borland allows SEH-handlers with 'try'
 
   if ((Tok.is(tok::identifier) &&
-       Tok.getIdentifierInfo() == getSEHExceptKeyword()) ||
-      Tok.is(tok::kw___finally)) {
+       Tok.getIdentifierInfo() == getSEHExceptKeyword()) /*||
+      Tok.is(tok::kw___finally)*/) {
     // TODO: Factor into common return ParseSEHHandlerCommon(...)
     StmtResult Handler;
     if(Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
@@ -2469,63 +2469,63 @@ StmtResult Parser::ParseCXXCatchBlock(bool FnCatch) {
   return Actions.ActOnCXXCatchBlock(CatchLoc, ExceptionDecl, Block.get());
 }
 
-void Parser::ParseMicrosoftIfExistsStatement(StmtVector &Stmts) {
-  IfExistsCondition Result;
-  if (ParseMicrosoftIfExistsCondition(Result))
-    return;
+// void Parser::ParseMicrosoftIfExistsStatement(StmtVector &Stmts) {
+//   IfExistsCondition Result;
+//   if (ParseMicrosoftIfExistsCondition(Result))
+//     return;
 
-  // Handle dependent statements by parsing the braces as a compound statement.
-  // This is not the same behavior as Visual C++, which don't treat this as a
-  // compound statement, but for Clang's type checking we can't have anything
-  // inside these braces escaping to the surrounding code.
-  if (Result.Behavior == IEB_Dependent) {
-    if (!Tok.is(tok::l_brace)) {
-      Diag(Tok, diag::err_expected) << tok::l_brace;
-      return;
-    }
+//   // Handle dependent statements by parsing the braces as a compound statement.
+//   // This is not the same behavior as Visual C++, which don't treat this as a
+//   // compound statement, but for Clang's type checking we can't have anything
+//   // inside these braces escaping to the surrounding code.
+//   if (Result.Behavior == IEB_Dependent) {
+//     if (!Tok.is(tok::l_brace)) {
+//       Diag(Tok, diag::err_expected) << tok::l_brace;
+//       return;
+//     }
 
-    StmtResult Compound = ParseCompoundStatement();
-    if (Compound.isInvalid())
-      return;
+//     StmtResult Compound = ParseCompoundStatement();
+//     if (Compound.isInvalid())
+//       return;
 
-    StmtResult DepResult = Actions.ActOnMSDependentExistsStmt(Result.KeywordLoc,
-                                                              Result.IsIfExists,
-                                                              Result.SS,
-                                                              Result.Name,
-                                                              Compound.get());
-    if (DepResult.isUsable())
-      Stmts.push_back(DepResult.get());
-    return;
-  }
+//     StmtResult DepResult = Actions.ActOnMSDependentExistsStmt(Result.KeywordLoc,
+//                                                               Result.IsIfExists,
+//                                                               Result.SS,
+//                                                               Result.Name,
+//                                                               Compound.get());
+//     if (DepResult.isUsable())
+//       Stmts.push_back(DepResult.get());
+//     return;
+//   }
 
-  BalancedDelimiterTracker Braces(*this, tok::l_brace);
-  if (Braces.consumeOpen()) {
-    Diag(Tok, diag::err_expected) << tok::l_brace;
-    return;
-  }
+//   BalancedDelimiterTracker Braces(*this, tok::l_brace);
+//   if (Braces.consumeOpen()) {
+//     Diag(Tok, diag::err_expected) << tok::l_brace;
+//     return;
+//   }
 
-  switch (Result.Behavior) {
-  case IEB_Parse:
-    // Parse the statements below.
-    break;
+//   switch (Result.Behavior) {
+//   case IEB_Parse:
+//     // Parse the statements below.
+//     break;
 
-  case IEB_Dependent:
-    llvm_unreachable("Dependent case handled above");
+//   case IEB_Dependent:
+//     llvm_unreachable("Dependent case handled above");
 
-  case IEB_Skip:
-    Braces.skipToEnd();
-    return;
-  }
+//   case IEB_Skip:
+//     Braces.skipToEnd();
+//     return;
+//   }
 
-  // Condition is true, parse the statements.
-  while (Tok.isNot(tok::r_brace)) {
-    StmtResult R =
-        ParseStatementOrDeclaration(Stmts, ParsedStmtContext::Compound);
-    if (R.isUsable())
-      Stmts.push_back(R.get());
-  }
-  Braces.consumeClose();
-}
+//   // Condition is true, parse the statements.
+//   while (Tok.isNot(tok::r_brace)) {
+//     StmtResult R =
+//         ParseStatementOrDeclaration(Stmts, ParsedStmtContext::Compound);
+//     if (R.isUsable())
+//       Stmts.push_back(R.get());
+//   }
+//   Braces.consumeClose();
+// }
 
 bool Parser::ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs) {
   MaybeParseGNUAttributes(Attrs);

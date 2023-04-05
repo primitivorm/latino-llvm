@@ -915,10 +915,10 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     }
     goto dont_know;
 
-  case tok::kw___if_exists:
-  case tok::kw___if_not_exists:
-    ParseMicrosoftIfExistsExternalDeclaration();
-    return nullptr;
+  // case tok::kw___if_exists:
+  // case tok::kw___if_not_exists:
+  //   ParseMicrosoftIfExistsExternalDeclaration();
+  //   return nullptr;
 
   case tok::kw_modulo:
     Diag(Tok, diag::err_unexpected_module_decl);
@@ -2131,104 +2131,104 @@ void Parser::CodeCompleteNaturalLanguage() {
   Actions.CodeCompleteNaturalLanguage();
 }
 
-bool Parser::ParseMicrosoftIfExistsCondition(IfExistsCondition& Result) {
-  assert((Tok.is(tok::kw___if_exists) || Tok.is(tok::kw___if_not_exists)) &&
-         "Expected '__if_exists' or '__if_not_exists'");
-  Result.IsIfExists = Tok.is(tok::kw___if_exists);
-  Result.KeywordLoc = ConsumeToken();
+// bool Parser::ParseMicrosoftIfExistsCondition(IfExistsCondition& Result) {
+//   assert((Tok.is(tok::kw___if_exists) || Tok.is(tok::kw___if_not_exists)) &&
+//          "Expected '__if_exists' or '__if_not_exists'");
+//   Result.IsIfExists = Tok.is(tok::kw___if_exists);
+//   Result.KeywordLoc = ConsumeToken();
 
-  BalancedDelimiterTracker T(*this, tok::l_paren);
-  if (T.consumeOpen()) {
-    Diag(Tok, diag::err_expected_lparen_after)
-      << (Result.IsIfExists? "__if_exists" : "__if_not_exists");
-    return true;
-  }
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
+//   if (T.consumeOpen()) {
+//     Diag(Tok, diag::err_expected_lparen_after)
+//       << (Result.IsIfExists? "__if_exists" : "__if_not_exists");
+//     return true;
+//   }
 
-  // Parse nested-name-specifier.
-  if (getLangOpts().CPlusPlus)
-    ParseOptionalCXXScopeSpecifier(Result.SS, /*ObjectType=*/nullptr,
-                                   /*ObjectHadErrors=*/false,
-                                   /*EnteringContext=*/false);
+//   // Parse nested-name-specifier.
+//   if (getLangOpts().CPlusPlus)
+//     ParseOptionalCXXScopeSpecifier(Result.SS, /*ObjectType=*/nullptr,
+//                                    /*ObjectHadErrors=*/false,
+//                                    /*EnteringContext=*/false);
 
-  // Check nested-name specifier.
-  if (Result.SS.isInvalid()) {
-    T.skipToEnd();
-    return true;
-  }
+//   // Check nested-name specifier.
+//   if (Result.SS.isInvalid()) {
+//     T.skipToEnd();
+//     return true;
+//   }
 
-  // Parse the unqualified-id.
-  SourceLocation TemplateKWLoc; // FIXME: parsed, but unused.
-  if (ParseUnqualifiedId(Result.SS, /*ObjectType=*/nullptr,
-                         /*ObjectHadErrors=*/false, /*EnteringContext*/ false,
-                         /*AllowDestructorName*/ true,
-                         /*AllowConstructorName*/ true,
-                         /*AllowDeductionGuide*/ false, &TemplateKWLoc,
-                         Result.Name)) {
-    T.skipToEnd();
-    return true;
-  }
+//   // Parse the unqualified-id.
+//   SourceLocation TemplateKWLoc; // FIXME: parsed, but unused.
+//   if (ParseUnqualifiedId(Result.SS, /*ObjectType=*/nullptr,
+//                          /*ObjectHadErrors=*/false, /*EnteringContext*/ false,
+//                          /*AllowDestructorName*/ true,
+//                          /*AllowConstructorName*/ true,
+//                          /*AllowDeductionGuide*/ false, &TemplateKWLoc,
+//                          Result.Name)) {
+//     T.skipToEnd();
+//     return true;
+//   }
 
-  if (T.consumeClose())
-    return true;
+//   if (T.consumeClose())
+//     return true;
 
-  // Check if the symbol exists.
-  switch (Actions.CheckMicrosoftIfExistsSymbol(getCurScope(), Result.KeywordLoc,
-                                               Result.IsIfExists, Result.SS,
-                                               Result.Name)) {
-  case Sema::IER_Exists:
-    Result.Behavior = Result.IsIfExists ? IEB_Parse : IEB_Skip;
-    break;
+//   // Check if the symbol exists.
+//   switch (Actions.CheckMicrosoftIfExistsSymbol(getCurScope(), Result.KeywordLoc,
+//                                                Result.IsIfExists, Result.SS,
+//                                                Result.Name)) {
+//   case Sema::IER_Exists:
+//     Result.Behavior = Result.IsIfExists ? IEB_Parse : IEB_Skip;
+//     break;
 
-  case Sema::IER_DoesNotExist:
-    Result.Behavior = !Result.IsIfExists ? IEB_Parse : IEB_Skip;
-    break;
+//   case Sema::IER_DoesNotExist:
+//     Result.Behavior = !Result.IsIfExists ? IEB_Parse : IEB_Skip;
+//     break;
 
-  case Sema::IER_Dependent:
-    Result.Behavior = IEB_Dependent;
-    break;
+//   case Sema::IER_Dependent:
+//     Result.Behavior = IEB_Dependent;
+//     break;
 
-  case Sema::IER_Error:
-    return true;
-  }
+//   case Sema::IER_Error:
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
-void Parser::ParseMicrosoftIfExistsExternalDeclaration() {
-  IfExistsCondition Result;
-  if (ParseMicrosoftIfExistsCondition(Result))
-    return;
+// void Parser::ParseMicrosoftIfExistsExternalDeclaration() {
+//   IfExistsCondition Result;
+//   if (ParseMicrosoftIfExistsCondition(Result))
+//     return;
 
-  BalancedDelimiterTracker Braces(*this, tok::l_brace);
-  if (Braces.consumeOpen()) {
-    Diag(Tok, diag::err_expected) << tok::l_brace;
-    return;
-  }
+//   BalancedDelimiterTracker Braces(*this, tok::l_brace);
+//   if (Braces.consumeOpen()) {
+//     Diag(Tok, diag::err_expected) << tok::l_brace;
+//     return;
+//   }
 
-  switch (Result.Behavior) {
-  case IEB_Parse:
-    // Parse declarations below.
-    break;
+//   switch (Result.Behavior) {
+//   case IEB_Parse:
+//     // Parse declarations below.
+//     break;
 
-  case IEB_Dependent:
-    llvm_unreachable("Cannot have a dependent external declaration");
+//   case IEB_Dependent:
+//     llvm_unreachable("Cannot have a dependent external declaration");
 
-  case IEB_Skip:
-    Braces.skipToEnd();
-    return;
-  }
+//   case IEB_Skip:
+//     Braces.skipToEnd();
+//     return;
+//   }
 
-  // Parse the declarations.
-  // FIXME: Support module import within __if_exists?
-  while (Tok.isNot(tok::r_brace) && !isEofOrEom()) {
-    ParsedAttributesWithRange attrs(AttrFactory);
-    MaybeParseCXX11Attributes(attrs);
-    DeclGroupPtrTy Result = ParseExternalDeclaration(attrs);
-    if (Result && !getCurScope()->getParent())
-      Actions.getASTConsumer().HandleTopLevelDecl(Result.get());
-  }
-  Braces.consumeClose();
-}
+//   // Parse the declarations.
+//   // FIXME: Support module import within __if_exists?
+//   while (Tok.isNot(tok::r_brace) && !isEofOrEom()) {
+//     ParsedAttributesWithRange attrs(AttrFactory);
+//     MaybeParseCXX11Attributes(attrs);
+//     DeclGroupPtrTy Result = ParseExternalDeclaration(attrs);
+//     if (Result && !getCurScope()->getParent())
+//       Actions.getASTConsumer().HandleTopLevelDecl(Result.get());
+//   }
+//   Braces.consumeClose();
+// }
 
 /// Parse a declaration beginning with the 'module' keyword or C++20
 /// context-sensitive keyword (optionally preceded by 'export').
