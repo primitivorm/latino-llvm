@@ -539,7 +539,7 @@ struct FormatToken {
     const FormatToken *T = this;
     do {
       T = T->getPreviousNonComment();
-    } while (T && T->isOneOf(tok::kw_const, tok::kw_volatile, tok::amp,
+    } while (T && T->isOneOf(tok::kw_const, /*tok::kw_volatile,*/ tok::amp,
                              tok::ampamp));
     return T && T->is(tok::kw_auto);
   }
@@ -1031,7 +1031,7 @@ struct AdditionalKeywords {
     case tok::kw_usar:
     case tok::kw_virtual:
     case tok::kw_void:
-    case tok::kw_volatile:
+    // case tok::kw_volatile:
     case tok::kw_mientras:
       return true;
     default:

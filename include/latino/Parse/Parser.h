@@ -2721,14 +2721,14 @@ private:
   void ParseMicrosoftUuidAttributeArgs(ParsedAttributes &Attrs);
   void ParseMicrosoftAttributes(ParsedAttributes &attrs,
                                 SourceLocation *endLoc = nullptr);
-  void MaybeParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
-                                    SourceLocation *End = nullptr) {
-    const auto &LO = getLangOpts();
-    if (LO.DeclSpecKeyword && Tok.is(tok::kw___declspec))
-      ParseMicrosoftDeclSpecs(Attrs, End);
-  }
-  void ParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
-                               SourceLocation *End = nullptr);
+  // void MaybeParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
+  //                                   SourceLocation *End = nullptr) {
+  //   const auto &LO = getLangOpts();
+  //   if (LO.DeclSpecKeyword && Tok.is(tok::kw___declspec))
+  //     ParseMicrosoftDeclSpecs(Attrs, End);
+  // }
+  // void ParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
+  //                              SourceLocation *End = nullptr);
   bool ParseMicrosoftDeclSpecArgs(IdentifierInfo *AttrName,
                                   SourceLocation AttrNameLoc,
                                   ParsedAttributes &Attrs);
@@ -2750,7 +2750,7 @@ private:
   /// Parses opencl_unroll_hint attribute.
   /// \return false if error happens.
   bool ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs);
-  void ParseNullabilityTypeSpecifiers(ParsedAttributes &attrs);
+  // void ParseNullabilityTypeSpecifiers(ParsedAttributes &attrs);
 
   VersionTuple ParseVersionTuple(SourceRange &Range);
   void ParseAvailabilityAttribute(IdentifierInfo &Availability,

@@ -417,39 +417,39 @@ void InclusionRewriter::Process(FileID FileId,
         PP.LookUpIdentifierInfo(RawToken);
       if (RawToken.getIdentifierInfo() != nullptr) {
         switch (RawToken.getIdentifierInfo()->getPPKeywordID()) {
-          case tok::pp_include:
+          // case tok::pp_include:
           // case tok::pp_include_next:
-          case tok::pp_import: {
-            CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL, NextToWrite,
-              Line);
-            if (FileId != PP.getPredefinesFileID())
-              WriteLineInfo(FileName, Line - 1, FileType, "");
-            StringRef LineInfoExtra;
-            SourceLocation Loc = HashToken.getLocation();
-            if (const Module *Mod = FindModuleAtLocation(Loc))
-              WriteImplicitModuleImport(Mod);
-            else if (const IncludedFile *Inc = FindIncludeAtLocation(Loc)) {
-              const Module *Mod = FindEnteredModule(Loc);
-              if (Mod)
-                OS << "#pragma clang module begin "
-                   << Mod->getFullModuleName(true) << "\n";
+          // case tok::pp_import: {
+          //   CommentOutDirective(RawLex, HashToken, FromFile, LocalEOL, NextToWrite,
+          //     Line);
+          //   if (FileId != PP.getPredefinesFileID())
+          //     WriteLineInfo(FileName, Line - 1, FileType, "");
+          //   StringRef LineInfoExtra;
+          //   SourceLocation Loc = HashToken.getLocation();
+          //   if (const Module *Mod = FindModuleAtLocation(Loc))
+          //     WriteImplicitModuleImport(Mod);
+          //   else if (const IncludedFile *Inc = FindIncludeAtLocation(Loc)) {
+          //     const Module *Mod = FindEnteredModule(Loc);
+          //     if (Mod)
+          //       OS << "#pragma clang module begin "
+          //          << Mod->getFullModuleName(true) << "\n";
 
-              // Include and recursively process the file.
-              Process(Inc->Id, Inc->FileType, Inc->DirLookup);
+          //     // Include and recursively process the file.
+          //     Process(Inc->Id, Inc->FileType, Inc->DirLookup);
 
-              if (Mod)
-                OS << "#pragma clang module end /*"
-                   << Mod->getFullModuleName(true) << "*/\n";
+          //     if (Mod)
+          //       OS << "#pragma clang module end /*"
+          //          << Mod->getFullModuleName(true) << "*/\n";
 
-              // Add line marker to indicate we're returning from an included
-              // file.
-              LineInfoExtra = " 2";
-            }
-            // fix up lineinfo (since commented out directive changed line
-            // numbers) for inclusions that were skipped due to header guards
-            WriteLineInfo(FileName, Line, FileType, LineInfoExtra);
-            break;
-          }
+          //     // Add line marker to indicate we're returning from an included
+          //     // file.
+          //     LineInfoExtra = " 2";
+          //   }
+          //   // fix up lineinfo (since commented out directive changed line
+          //   // numbers) for inclusions that were skipped due to header guards
+          //   WriteLineInfo(FileName, Line, FileType, LineInfoExtra);
+          //   break;
+          // }
           // case tok::pp_pragma: {
           //   StringRef Identifier = NextIdentifierName(RawLex, RawToken);
           //   if (Identifier == "clang" || Identifier == "GCC") {

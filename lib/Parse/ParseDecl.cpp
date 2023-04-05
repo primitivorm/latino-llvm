@@ -662,71 +662,71 @@ bool Parser::ParseMicrosoftDeclSpecArgs(IdentifierInfo *AttrName,
 /// [MS] extended-decl-modifier-seq:
 ///             extended-decl-modifier[opt]
 ///             extended-decl-modifier extended-decl-modifier-seq
-void Parser::ParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
-                                     SourceLocation *End) {
-  assert(getLangOpts().DeclSpecKeyword && "__declspec keyword is not enabled");
-  assert(Tok.is(tok::kw___declspec) && "Not a declspec!");
+// void Parser::ParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
+//                                      SourceLocation *End) {
+//   assert(getLangOpts().DeclSpecKeyword && "__declspec keyword is not enabled");
+//   assert(Tok.is(tok::kw___declspec) && "Not a declspec!");
 
-  while (Tok.is(tok::kw___declspec)) {
-    ConsumeToken();
-    BalancedDelimiterTracker T(*this, tok::l_paren);
-    if (T.expectAndConsume(diag::err_expected_lparen_after, "__declspec",
-                           tok::r_paren))
-      return;
+//   while (Tok.is(tok::kw___declspec)) {
+//     ConsumeToken();
+//     BalancedDelimiterTracker T(*this, tok::l_paren);
+//     if (T.expectAndConsume(diag::err_expected_lparen_after, "__declspec",
+//                            tok::r_paren))
+//       return;
 
-    // An empty declspec is perfectly legal and should not warn.  Additionally,
-    // you can specify multiple attributes per declspec.
-    while (Tok.isNot(tok::r_paren)) {
-      // Attribute not present.
-      if (TryConsumeToken(tok::comma))
-        continue;
+//     // An empty declspec is perfectly legal and should not warn.  Additionally,
+//     // you can specify multiple attributes per declspec.
+//     while (Tok.isNot(tok::r_paren)) {
+//       // Attribute not present.
+//       if (TryConsumeToken(tok::comma))
+//         continue;
 
-      // We expect either a well-known identifier or a generic string.  Anything
-      // else is a malformed declspec.
-      bool IsString = Tok.getKind() == tok::string_literal;
-      if (!IsString && Tok.getKind() != tok::identifier &&
-          Tok.getKind() != tok::kw_restrict) {
-        Diag(Tok, diag::err_ms_declspec_type);
-        T.skipToEnd();
-        return;
-      }
+//       // We expect either a well-known identifier or a generic string.  Anything
+//       // else is a malformed declspec.
+//       bool IsString = Tok.getKind() == tok::string_literal;
+//       if (!IsString && Tok.getKind() != tok::identifier &&
+//           Tok.getKind() != tok::kw_restrict) {
+//         Diag(Tok, diag::err_ms_declspec_type);
+//         T.skipToEnd();
+//         return;
+//       }
 
-      IdentifierInfo *AttrName;
-      SourceLocation AttrNameLoc;
-      if (IsString) {
-        SmallString<8> StrBuffer;
-        bool Invalid = false;
-        StringRef Str = PP.getSpelling(Tok, StrBuffer, &Invalid);
-        if (Invalid) {
-          T.skipToEnd();
-          return;
-        }
-        AttrName = PP.getIdentifierInfo(Str);
-        AttrNameLoc = ConsumeStringToken();
-      } else {
-        AttrName = Tok.getIdentifierInfo();
-        AttrNameLoc = ConsumeToken();
-      }
+//       IdentifierInfo *AttrName;
+//       SourceLocation AttrNameLoc;
+//       if (IsString) {
+//         SmallString<8> StrBuffer;
+//         bool Invalid = false;
+//         StringRef Str = PP.getSpelling(Tok, StrBuffer, &Invalid);
+//         if (Invalid) {
+//           T.skipToEnd();
+//           return;
+//         }
+//         AttrName = PP.getIdentifierInfo(Str);
+//         AttrNameLoc = ConsumeStringToken();
+//       } else {
+//         AttrName = Tok.getIdentifierInfo();
+//         AttrNameLoc = ConsumeToken();
+//       }
 
-      bool AttrHandled = false;
+//       bool AttrHandled = false;
 
-      // Parse attribute arguments.
-      if (Tok.is(tok::l_paren))
-        AttrHandled = ParseMicrosoftDeclSpecArgs(AttrName, AttrNameLoc, Attrs);
-      else if (AttrName->getName() == "property")
-        // The property attribute must have an argument list.
-        Diag(Tok.getLocation(), diag::err_expected_lparen_after)
-            << AttrName->getName();
+//       // Parse attribute arguments.
+//       if (Tok.is(tok::l_paren))
+//         AttrHandled = ParseMicrosoftDeclSpecArgs(AttrName, AttrNameLoc, Attrs);
+//       else if (AttrName->getName() == "property")
+//         // The property attribute must have an argument list.
+//         Diag(Tok.getLocation(), diag::err_expected_lparen_after)
+//             << AttrName->getName();
 
-      if (!AttrHandled)
-        Attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-                     ParsedAttr::AS_Declspec);
-    }
-    T.consumeClose();
-    if (End)
-      *End = T.getCloseLocation();
-  }
-}
+//       if (!AttrHandled)
+//         Attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//                      ParsedAttr::AS_Declspec);
+//     }
+//     T.consumeClose();
+//     if (End)
+//       *End = T.getCloseLocation();
+//   }
+// }
 
 void Parser::ParseMicrosoftTypeAttributes(ParsedAttributes &attrs) {
   // Treat these like attributes
@@ -772,7 +772,7 @@ SourceLocation Parser::SkipExtendedMicrosoftTypeAttributes() {
   while (true) {
     switch (Tok.getKind()) {
     case tok::kw_const:
-    case tok::kw_volatile:
+    // case tok::kw_volatile:
     case tok::kw___fastcall:
     case tok::kw___stdcall:
     case tok::kw___thiscall:
@@ -819,27 +819,27 @@ void Parser::ParseOpenCLQualifiers(ParsedAttributes &Attrs) {
                ParsedAttr::AS_Keyword);
 }
 
-void Parser::ParseNullabilityTypeSpecifiers(ParsedAttributes &attrs) {
-  // Treat these like attributes, even though they're type specifiers.
-  while (true) {
-    switch (Tok.getKind()) {
-    case tok::kw__Nonnull:
-    case tok::kw__Nullable:
-    case tok::kw__Null_unspecified: {
-      IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-      SourceLocation AttrNameLoc = ConsumeToken();
-      if (!getLangOpts().ObjC)
-        Diag(AttrNameLoc, diag::ext_nullability)
-          << AttrName;
-      attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-                   ParsedAttr::AS_Keyword);
-      break;
-    }
-    default:
-      return;
-    }
-  }
-}
+// void Parser::ParseNullabilityTypeSpecifiers(ParsedAttributes &attrs) {
+//   // Treat these like attributes, even though they're type specifiers.
+//   while (true) {
+//     switch (Tok.getKind()) {
+//     case tok::kw__Nonnull:
+//     case tok::kw__Nullable:
+//     case tok::kw__Null_unspecified: {
+//       IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+//       SourceLocation AttrNameLoc = ConsumeToken();
+//       if (!getLangOpts().ObjC)
+//         Diag(AttrNameLoc, diag::ext_nullability)
+//           << AttrName;
+//       attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//                    ParsedAttr::AS_Keyword);
+//       break;
+//     }
+//     default:
+//       return;
+//     }
+//   }
+// }
 
 static bool VersionNumberSeparator(const char Separator) {
   return (Separator == '.' || Separator == '_');
@@ -3417,9 +3417,9 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       continue;
 
     // Microsoft declspec support.
-    case tok::kw___declspec:
-      ParseMicrosoftDeclSpecs(DS.getAttributes());
-      continue;
+    // case tok::kw___declspec:
+    //   ParseMicrosoftDeclSpecs(DS.getAttributes());
+    //   continue;
 
     // Microsoft single token adornments.
     case tok::kw___forceinline: {
@@ -3461,11 +3461,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       continue;
 
     // Nullability type specifiers.
-    case tok::kw__Nonnull:
-    case tok::kw__Nullable:
-    case tok::kw__Null_unspecified:
-      ParseNullabilityTypeSpecifiers(DS.getAttributes());
-      continue;
+    // case tok::kw__Nonnull:
+    // case tok::kw__Nullable:
+    // case tok::kw__Null_unspecified:
+    //   ParseNullabilityTypeSpecifiers(DS.getAttributes());
+    //   continue;
 
     // Objective-C 'kindof' types.
     // case tok::kw___kindof:
@@ -3520,11 +3520,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_auto_type, Loc, PrevSpec,
     //                                  DiagID, Policy);
     //   break;
-    case tok::kw_register:
-      isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_register, Loc,
-                                         PrevSpec, DiagID, Policy);
-      isStorageClass = true;
-      break;
+    // case tok::kw_register:
+    //   isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_register, Loc,
+    //                                      PrevSpec, DiagID, Policy);
+    //   isStorageClass = true;
+    //   break;
     case tok::kw_mutable:
       isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_mutable, Loc,
                                          PrevSpec, DiagID, Policy);
@@ -3855,14 +3855,14 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       isInvalid = DS.SetTypeQual(DeclSpec::TQ_const, Loc, PrevSpec, DiagID,
                                  getLangOpts());
       break;
-    case tok::kw_volatile:
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_volatile, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
-    case tok::kw_restrict:
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_restrict, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
+    // case tok::kw_volatile:
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_volatile, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
+    // case tok::kw_restrict:
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_restrict, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
 
     // C++ typename-specifier:
     case tok::kw_typename:
@@ -4272,7 +4272,7 @@ void Parser::ParseEnumSpecifier(SourceLocation StartLoc, DeclSpec &DS,
   ParsedAttributesWithRange attrs(AttrFactory);
   MaybeParseGNUAttributes(attrs);
   MaybeParseCXX11Attributes(attrs);
-  MaybeParseMicrosoftDeclSpecs(attrs);
+  // MaybeParseMicrosoftDeclSpecs(attrs);
 
   SourceLocation ScopedEnumKWLoc;
   bool IsScopedUsingClassTag = false;
@@ -4291,7 +4291,7 @@ void Parser::ParseEnumSpecifier(SourceLocation StartLoc, DeclSpec &DS,
     // They are allowed afterwards, though.
     MaybeParseGNUAttributes(attrs);
     MaybeParseCXX11Attributes(attrs);
-    MaybeParseMicrosoftDeclSpecs(attrs);
+    // MaybeParseMicrosoftDeclSpecs(attrs);
   }
 
   // C++11 [temp.explicit]p12:
@@ -4912,8 +4912,8 @@ bool Parser::isTypeSpecifierQualifier() {
 
     // type-qualifier
   case tok::kw_const:
-  case tok::kw_volatile:
-  case tok::kw_restrict:
+  // case tok::kw_volatile:
+  // case tok::kw_restrict:
   case tok::kw__Sat:
 
     // Debugger support.
@@ -4939,9 +4939,9 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw___pascal:
   case tok::kw___unaligned:
 
-  case tok::kw__Nonnull:
-  case tok::kw__Nullable:
-  case tok::kw__Null_unspecified:
+  // case tok::kw__Nonnull:
+  // case tok::kw__Nullable:
+  // case tok::kw__Null_unspecified:
 
   // case tok::kw___kindof:
 
@@ -5024,7 +5024,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_static:
   case tok::kw_auto:
   // case tok::kw___auto_type:
-  case tok::kw_register:
+  // case tok::kw_register:
   case tok::kw___thread:
   case tok::kw_thread_local:
   case tok::kw__Thread_local:
@@ -5078,8 +5078,8 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
     // type-qualifier
   case tok::kw_const:
-  case tok::kw_volatile:
-  case tok::kw_restrict:
+  // case tok::kw_volatile:
+  // case tok::kw_restrict:
   case tok::kw__Sat:
 
     // function-specifier
@@ -5166,9 +5166,9 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw___pascal:
   case tok::kw___unaligned:
 
-  case tok::kw__Nonnull:
-  case tok::kw__Nullable:
-  case tok::kw__Null_unspecified:
+  // case tok::kw__Nonnull:
+  // case tok::kw__Nullable:
+  // case tok::kw__Null_unspecified:
 
   // case tok::kw___kindof:
 
@@ -5372,14 +5372,14 @@ void Parser::ParseTypeQualifierListOpt(
       isInvalid = DS.SetTypeQual(DeclSpec::TQ_const   , Loc, PrevSpec, DiagID,
                                  getLangOpts());
       break;
-    case tok::kw_volatile:
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_volatile, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
-    case tok::kw_restrict:
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_restrict, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
+    // case tok::kw_volatile:
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_volatile, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
+    // case tok::kw_restrict:
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_restrict, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
     case tok::kw__Atomic:
       if (!AtomicAllowed)
         goto DoneWithTypeQuals;
@@ -5441,11 +5441,11 @@ void Parser::ParseTypeQualifierListOpt(
       goto DoneWithTypeQuals;
 
     // Nullability type specifiers.
-    case tok::kw__Nonnull:
-    case tok::kw__Nullable:
-    case tok::kw__Null_unspecified:
-      ParseNullabilityTypeSpecifiers(DS.getAttributes());
-      continue;
+    // case tok::kw__Nonnull:
+    // case tok::kw__Nullable:
+    // case tok::kw__Null_unspecified:
+    //   ParseNullabilityTypeSpecifiers(DS.getAttributes());
+    //   continue;
 
     // Objective-C 'kindof' types.
     // case tok::kw___kindof:

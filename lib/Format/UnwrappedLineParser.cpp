@@ -1021,14 +1021,14 @@ void UnwrappedLineParser::readTokenWithJavaScriptASI() {
 
 void UnwrappedLineParser::parseStructuralElement() {
   assert(!FormatTok->is(tok::l_brace));
-  if (Style.Language == FormatStyle::LK_TableGen &&
-      FormatTok->is(tok::pp_include)) {
-    nextToken();
-    if (FormatTok->is(tok::string_literal))
-      nextToken();
-    addUnwrappedLine();
-    return;
-  }
+  // if (Style.Language == FormatStyle::LK_TableGen &&
+  //     FormatTok->is(tok::pp_include)) {
+  //   nextToken();
+  //   if (FormatTok->is(tok::string_literal))
+  //     nextToken();
+  //   addUnwrappedLine();
+  //   return;
+  // }
   switch (FormatTok->Tok.getKind()) {
   case tok::kw_asm:
     nextToken();

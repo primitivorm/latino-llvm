@@ -840,9 +840,9 @@ Parser::TPResult Parser::TryParsePtrOperatorSeq() {
       if (!TrySkipAttributes())
         return TPResult::Error;
 
-      while (Tok.isOneOf(tok::kw_const, tok::kw_volatile, tok::kw_restrict,
+      while (Tok.isOneOf(tok::kw_const, /*tok::kw_volatile, tok::kw_restrict,
                          tok::kw__Nonnull, tok::kw__Nullable,
-                         tok::kw__Null_unspecified, tok::kw__Atomic))
+                         tok::kw__Null_unspecified,*/ tok::kw__Atomic))
         ConsumeToken();
     } else {
       return TPResult::True;
@@ -1365,7 +1365,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_consteval:
   case tok::kw_constinit:
     // storage-class-specifier
-  case tok::kw_register:
+  // case tok::kw_register:
   case tok::kw_static:
   case tok::kw_extern:
   case tok::kw_mutable:
@@ -1402,7 +1402,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_enum:
     // cv-qualifier
   case tok::kw_const:
-  case tok::kw_volatile:
+  // case tok::kw_volatile:
     return TPResult::True;
 
     // OpenCL address space qualifiers
@@ -1423,7 +1423,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_pipe:
 
     // GNU
-  case tok::kw_restrict:
+  // case tok::kw_restrict:
   case tok::kw__Complex:
   case tok::kw___attribute:
   // case tok::kw___auto_type:
@@ -1444,9 +1444,9 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   // case tok::kw___ptr32:
   case tok::kw___forceinline:
   case tok::kw___unaligned:
-  case tok::kw__Nonnull:
-  case tok::kw__Nullable:
-  case tok::kw__Null_unspecified:
+  // case tok::kw__Nonnull:
+  // case tok::kw__Nullable:
+  // case tok::kw__Null_unspecified:
   // case tok::kw___kindof:
     return TPResult::True;
 
@@ -1849,7 +1849,7 @@ bool Parser::isCXXFunctionDeclarator(bool *IsAmbiguous) {
       TPR = TPResult::False;
     else {
       const Token &Next = NextToken();
-      if (Next.isOneOf(tok::amp, tok::ampamp, tok::kw_const, tok::kw_volatile,
+      if (Next.isOneOf(tok::amp, tok::ampamp, tok::kw_const, /*tok::kw_volatile,*/
                        tok::kw_lanzar, tok::kw_noexcept, tok::l_square,
                        tok::l_brace, tok::kw_intentar, tok::equal, tok::arrow) ||
           isCXX11VirtSpecifier(Next))
@@ -2021,8 +2021,8 @@ Parser::TPResult Parser::TryParseFunctionDeclarator() {
     return TPResult::Error;
 
   // cv-qualifier-seq
-  while (Tok.isOneOf(tok::kw_const, tok::kw_volatile, tok::kw___unaligned,
-                     tok::kw_restrict))
+  while (Tok.isOneOf(tok::kw_const, /*tok::kw_volatile,*/ tok::kw___unaligned/*,
+                     tok::kw_restrict*/))
     ConsumeToken();
 
   // ref-qualifier[opt]

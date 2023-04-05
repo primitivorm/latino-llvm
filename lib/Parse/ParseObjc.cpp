@@ -1072,9 +1072,9 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_pri:
   case tok::kw_pro:
   case tok::kw_pub:
-  case tok::kw_register:
+  // case tok::kw_register:
   case tok::kw_reinterpret_cast:
-  case tok::kw_restrict:
+  // case tok::kw_restrict:
   case tok::kw_ret:
   case tok::kw_short:
   case tok::kw_signed:
@@ -1097,7 +1097,7 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_usar:
   case tok::kw_virtual:
   case tok::kw_void:
-  case tok::kw_volatile:
+  // case tok::kw_volatile:
   case tok::kw_wchar_t:
   case tok::kw_mientras:
   case tok::kw__Bool:

@@ -471,13 +471,13 @@ void PreprocessingRecord::InclusionDirective(
   InclusionDirective::InclusionKind Kind = InclusionDirective::Include;
 
   switch (IncludeTok.getIdentifierInfo()->getPPKeywordID()) {
-  case tok::pp_include:
-    Kind = InclusionDirective::Include;
-    break;
+  // case tok::pp_include:
+  //   Kind = InclusionDirective::Include;
+  //   break;
 
-  case tok::pp_import:
-    Kind = InclusionDirective::Import;
-    break;
+  // case tok::pp_import:
+  //   Kind = InclusionDirective::Import;
+  //   break;
 
   // case tok::pp_include_next:
   //   Kind = InclusionDirective::IncludeNext;

@@ -350,21 +350,21 @@ void PrintPPOutputPPCallbacks::InclusionDirective(
   // When preprocessing, turn implicit imports into module import pragmas.
   if (Imported) {
     switch (IncludeTok.getIdentifierInfo()->getPPKeywordID()) {
-    case tok::pp_include:
-    case tok::pp_import:
-    // case tok::pp_include_next:
-      startNewLineIfNeeded();
-      MoveToLine(HashLoc);
-      OS << "#pragma clang module import " << Imported->getFullModuleName(true)
-         << " /* clang -E: implicit import for "
-         << "#" << PP.getSpelling(IncludeTok) << " "
-         << (IsAngled ? '<' : '"') << FileName << (IsAngled ? '>' : '"')
-         << " */";
-      // Since we want a newline after the pragma, but not a #<line>, start a
-      // new line immediately.
-      EmittedTokensOnThisLine = true;
-      startNewLineIfNeeded();
-      break;
+    // case tok::pp_include:
+    // case tok::pp_import:
+    // // case tok::pp_include_next:
+    //   startNewLineIfNeeded();
+    //   MoveToLine(HashLoc);
+    //   OS << "#pragma clang module import " << Imported->getFullModuleName(true)
+    //      << " /* clang -E: implicit import for "
+    //      << "#" << PP.getSpelling(IncludeTok) << " "
+    //      << (IsAngled ? '<' : '"') << FileName << (IsAngled ? '>' : '"')
+    //      << " */";
+    //   // Since we want a newline after the pragma, but not a #<line>, start a
+    //   // new line immediately.
+    //   EmittedTokensOnThisLine = true;
+    //   startNewLineIfNeeded();
+    //   break;
 
     // case tok::pp___include_macros:
     //   // #__include_macros has no effect on a user of a preprocessed source

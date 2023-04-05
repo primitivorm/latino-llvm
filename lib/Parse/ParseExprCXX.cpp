@@ -1323,7 +1323,7 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
 
     // MSVC-style attributes must be parsed before the mutable specifier to be
     // compatible with MSVC.
-    MaybeParseMicrosoftDeclSpecs(Attr, &DeclEndLoc);
+    // MaybeParseMicrosoftDeclSpecs(Attr, &DeclEndLoc);
 
     // Parse mutable-opt and/or constexpr-opt or consteval-opt, and update the
     // DeclEndLoc.

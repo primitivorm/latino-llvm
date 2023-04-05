@@ -1513,8 +1513,8 @@ void Parser::HandlePragmaAttribute() {
       return SkipToEnd();
     if (ExpectAndConsume(tok::r_paren))
       return SkipToEnd();
-  } else if (Tok.is(tok::kw___declspec)) {
-    ParseMicrosoftDeclSpecs(Attrs);
+  /*} else if (Tok.is(tok::kw___declspec)) {
+    ParseMicrosoftDeclSpecs(Attrs);*/
   } else {
     Diag(Tok, diag::err_pragma_attribute_expected_attribute_syntax);
     if (Tok.getIdentifierInfo()) {

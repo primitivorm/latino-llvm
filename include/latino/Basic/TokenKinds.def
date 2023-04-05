@@ -103,7 +103,7 @@ PPKEYWORD(endif)
 PPKEYWORD(defined)
 
 // C99 6.10.2 - Source File Inclusion.
-PPKEYWORD(include)
+// PPKEYWORD(include)
 // PPKEYWORD(__include_macros)
 
 // C99 6.10.3 - Macro Replacement.
@@ -120,7 +120,7 @@ PPKEYWORD(undef)
 // PPKEYWORD(pragma)
 
 // GNU Extensions.
-PPKEYWORD(import)
+// PPKEYWORD(import)
 // PPKEYWORD(include_next)
 // PPKEYWORD(warning)
 // PPKEYWORD(ident)
@@ -299,8 +299,8 @@ KEYWORD(inline                      , KEYC99|KEYCXX|KEYGNU)
 KEYWORD(int                         , KEYALL)
 // KEYWORD(_ExtInt                     , KEYALL)
 KEYWORD(long                        , KEYALL)
-KEYWORD(register                    , KEYALL)
-KEYWORD(restrict                    , KEYC99)
+// KEYWORD(register                    , KEYALL)
+// KEYWORD(restrict                    , KEYC99)
 KEYWORD(ret                      , KEYALL)
 KEYWORD(short                       , KEYALL)
 KEYWORD(signed                      , KEYALL)
@@ -312,7 +312,7 @@ KEYWORD(typedef                     , KEYALL)
 KEYWORD(union                       , KEYALL)
 KEYWORD(unsigned                    , KEYALL)
 KEYWORD(void                        , KEYALL)
-KEYWORD(volatile                    , KEYALL)
+// KEYWORD(volatile                    , KEYALL)
 KEYWORD(mientras                       , KEYALL) // while
 // KEYWORD(_Alignas                    , KEYALL)
 // KEYWORD(_Alignof                    , KEYALL)
@@ -648,9 +648,9 @@ KEYWORD(half                        , HALFSUPPORT)
 // ALIAS("__volatile__" , volatile   , KEYALL)
 
 // Type nullability.
-KEYWORD(_Nonnull                 , KEYALL)
-KEYWORD(_Nullable                , KEYALL)
-KEYWORD(_Null_unspecified        , KEYALL)
+// KEYWORD(_Nonnull                 , KEYALL)
+// KEYWORD(_Nullable                , KEYALL)
+// KEYWORD(_Null_unspecified        , KEYALL)
 
 // Microsoft extensions which should be disabled in strict conformance mode
 // KEYWORD(__ptr64                       , KEYMS)

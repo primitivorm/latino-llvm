@@ -1205,13 +1205,13 @@ private:
     if (!CurrentToken->Tok.getIdentifierInfo())
       return Type;
     switch (CurrentToken->Tok.getIdentifierInfo()->getPPKeywordID()) {
-    case tok::pp_include:
+    // case tok::pp_include:
     // case tok::pp_include_next:
-    case tok::pp_import:
-      next();
-      parseIncludeDirective();
-      Type = LT_ImportStatement;
-      break;
+    // case tok::pp_import:
+    //   next();
+    //   parseIncludeDirective();
+    //   Type = LT_ImportStatement;
+    //   break;
     // case tok::pp_error:
     // case tok::pp_warning:
     //   parseWarningOrError();
@@ -1252,16 +1252,16 @@ public:
     // definitions (github.com/google/protobuf) or missing "#" (either way we
     // should not break the line).
     IdentifierInfo *Info = CurrentToken->Tok.getIdentifierInfo();
-    if ((Style.Language == FormatStyle::LK_Java &&
-         CurrentToken->is(Keywords.kw_package)) ||
-        (Info && Info->getPPKeywordID() == tok::pp_import &&
-         CurrentToken->Next &&
-         CurrentToken->Next->isOneOf(tok::string_literal, tok::identifier,
-                                     tok::kw_static))) {
-      next();
-      parseIncludeDirective();
-      return LT_ImportStatement;
-    }
+    // if ((Style.Language == FormatStyle::LK_Java &&
+    //      CurrentToken->is(Keywords.kw_package)) ||
+    //     (Info && Info->getPPKeywordID() == tok::pp_import &&
+    //      CurrentToken->Next &&
+    //      CurrentToken->Next->isOneOf(tok::string_literal, tok::identifier,
+    //                                  tok::kw_static))) {
+    //   next();
+    //   parseIncludeDirective();
+    //   return LT_ImportStatement;
+    // }
 
     // If this line starts and ends in '<' and '>', respectively, it is likely
     // part of "#define <a/b.h>".
@@ -1822,7 +1822,7 @@ private:
 
     // Functions which end with decorations like volatile, noexcept are unlikely
     // to be casts.
-    if (Tok.Next->isOneOf(tok::kw_noexcept, tok::kw_volatile, tok::kw_const,
+    if (Tok.Next->isOneOf(tok::kw_noexcept, /*tok::kw_volatile,*/ tok::kw_const,
                           tok::kw_lanzar, tok::arrow, Keywords.kw_override,
                           Keywords.kw_final) ||
         isCpp11AttributeSpecifier(*Tok.Next))
@@ -2888,8 +2888,8 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
     // dependent on PointerAlignment style.
     if (Previous &&
         (Previous->endsSequence(tok::kw_operator) ||
-         Previous->endsSequence(tok::kw_const, tok::kw_operator) ||
-         Previous->endsSequence(tok::kw_volatile, tok::kw_operator)))
+         Previous->endsSequence(tok::kw_const, tok::kw_operator) /*||
+         Previous->endsSequence(tok::kw_volatile, tok::kw_operator)*/))
       return (Style.PointerAlignment != FormatStyle::PAS_Left);
   }
   const auto SpaceRequiredForArrayInitializerLSquare =
@@ -2998,7 +2998,7 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
     return false;
   if (Right.getType() == TT_TrailingAnnotation &&
       Right.isOneOf(tok::amp, tok::ampamp) &&
-      Left.isOneOf(tok::kw_const, tok::kw_volatile) &&
+      Left.is(tok::kw_const/*, tok::kw_volatile*/) &&
       (!Right.Next || Right.Next->is(tok::semi)))
     // Match const and volatile ref-qualifiers without any additional
     // qualifiers such as

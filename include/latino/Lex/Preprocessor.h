@@ -2251,9 +2251,9 @@ private:
       ModuleMap::KnownHeader &SuggestedModule, bool isAngled);
 
   // File inclusion.
-  void HandleIncludeDirective(SourceLocation HashLoc, Token &Tok,
-                              const DirectoryLookup *LookupFrom = nullptr,
-                              const FileEntry *LookupFromFile = nullptr);
+  // void HandleIncludeDirective(SourceLocation HashLoc, Token &Tok,
+  //                             const DirectoryLookup *LookupFrom = nullptr,
+  //                             const FileEntry *LookupFromFile = nullptr);
   ImportAction
   HandleHeaderIncludeOrImport(SourceLocation HashLoc, Token &IncludeTok,
                               Token &FilenameTok, SourceLocation EndLoc,
@@ -2261,8 +2261,8 @@ private:
                               const FileEntry *LookupFromFile = nullptr);
   // void HandleIncludeNextDirective(SourceLocation HashLoc, Token &Tok);
   // void HandleIncludeMacrosDirective(SourceLocation HashLoc, Token &Tok);
-  void HandleImportDirective(SourceLocation HashLoc, Token &Tok);
-  void HandleMicrosoftImportDirective(Token &Tok);
+  // void HandleImportDirective(SourceLocation HashLoc, Token &Tok);
+  // void HandleMicrosoftImportDirective(Token &Tok);
 
 public:
   /// Check that the given module is available, producing a diagnostic if not.

@@ -392,7 +392,7 @@ void Minimizer::printToNewline(const char *&First, const char *const End) {
     do {
       // Iterate over strings correctly to avoid comments and newlines.
       if (*Last == '"' || *Last == '\'' ||
-          (*Last == '<' && top() == pp_include)) {
+          (*Last == '<' /*&& top() == pp_include*/)) {
         if (LLVM_UNLIKELY(isRawStringLiteral(First, Last)))
           skipRawString(Last, End);
         else
@@ -836,11 +836,11 @@ bool Minimizer::lexPPLine(const char *&First, const char *const End) {
   IdInfo Id = lexIdentifier(First, End);
   First = Id.Last;
   auto Kind = llvm::StringSwitch<TokenKind>(Id.Name)
-                  .Case("include", pp_include)
+                  // .Case("include", pp_include)
                   // .Case("__include_macros", pp___include_macros)
                   .Case("define", pp_define)
                   .Case("undef", pp_undef)
-                  .Case("import", pp_import)
+                  // .Case("import", pp_import)
                   // .Case("include_next", pp_include_next)
                   .Case("if", pp_if)
                   .Case("ifdef", pp_ifdef)

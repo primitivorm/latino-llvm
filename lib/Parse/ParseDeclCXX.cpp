@@ -1296,8 +1296,8 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
     return getLangOpts().MicrosoftExt;
   // Type qualifiers
   case tok::kw_const:           // struct foo {...} const     x;
-  case tok::kw_volatile:        // struct foo {...} volatile  x;
-  case tok::kw_restrict:        // struct foo {...} restrict  x;
+  // case tok::kw_volatile:        // struct foo {...} volatile  x;
+  // case tok::kw_restrict:        // struct foo {...} restrict  x;
   case tok::kw__Atomic:         // struct foo {...} _Atomic   x;
   case tok::kw___unaligned:     // struct foo {...} __unaligned *x;
   // Function specifiers
@@ -1310,7 +1310,7 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   case tok::kw_static:          // struct foo {...} static    x;
   case tok::kw_extern:          // struct foo {...} extern    x;
   case tok::kw_typedef:         // struct foo {...} typedef   x;
-  case tok::kw_register:        // struct foo {...} register  x;
+  // case tok::kw_register:        // struct foo {...} register  x;
   case tok::kw_auto:            // struct foo {...} auto      x;
   case tok::kw_mutable:         // struct foo {...} mutable   x;
   case tok::kw_thread_local:    // struct foo {...} thread_local x;
@@ -1429,7 +1429,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   ParsedAttributesWithRange attrs(AttrFactory);
   // If attributes exist after tag, parse them.
   MaybeParseGNUAttributes(attrs);
-  MaybeParseMicrosoftDeclSpecs(attrs);
+  // MaybeParseMicrosoftDeclSpecs(attrs);
 
   // Parse inheritance specifiers.
   // if (Tok.isOneOf(tok::kw___single_inheritance,

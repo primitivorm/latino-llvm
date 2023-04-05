@@ -878,10 +878,10 @@ void Preprocessor::HandleSkippedDirectiveWhileUsingPCH(Token &Result,
       return HandleDefineDirective(Result,
                                    /*ImmediatelyAfterHeaderGuard=*/false);
     }
-    if (SkippingUntilPCHThroughHeader &&
-        II->getPPKeywordID() == tok::pp_include) {
-      return HandleIncludeDirective(HashLoc, Result);
-    }
+    // if (SkippingUntilPCHThroughHeader &&
+    //     II->getPPKeywordID() == tok::pp_include) {
+    //   return HandleIncludeDirective(HashLoc, Result);
+    // }
     // if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
     //   Lex(Result);
     //   auto *II = Result.getIdentifierInfo();
@@ -934,8 +934,8 @@ void Preprocessor::HandleDirective(Token &Result) {
   if (InMacroArgs) {
     if (IdentifierInfo *II = Result.getIdentifierInfo()) {
       switch (II->getPPKeywordID()) {
-      case tok::pp_include:
-      case tok::pp_import:
+      // case tok::pp_include:
+      // case tok::pp_import:
       // case tok::pp_include_next:
       // case tok::pp___include_macros:
       // case tok::pp_pragma:
@@ -995,9 +995,9 @@ void Preprocessor::HandleDirective(Token &Result) {
       return HandleEndifDirective(Result);
 
     // C99 6.10.2 - Source File Inclusion.
-    case tok::pp_include:
+    // case tok::pp_include:
       // Handle #include.
-      return HandleIncludeDirective(SavedHash.getLocation(), Result);
+      // return HandleIncludeDirective(SavedHash.getLocation(), Result);
     // case tok::pp___include_macros:
     //   // Handle -imacros.
     //   return HandleIncludeMacrosDirective(SavedHash.getLocation(), Result);
@@ -1021,8 +1021,8 @@ void Preprocessor::HandleDirective(Token &Result) {
     //   return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
 
     // GNU Extensions.
-    case tok::pp_import:
-      return HandleImportDirective(SavedHash.getLocation(), Result);
+    // case tok::pp_import:
+    //   return HandleImportDirective(SavedHash.getLocation(), Result);
     // case tok::pp_include_next:
     //   return HandleIncludeNextDirective(SavedHash.getLocation(), Result);
 
@@ -1580,13 +1580,13 @@ static void diagnoseAutoModuleImport(
   int IncludeKind = 0;
 
   switch (IncludeTok.getIdentifierInfo()->getPPKeywordID()) {
-  case tok::pp_include:
-    IncludeKind = 0;
-    break;
+  // case tok::pp_include:
+  //   IncludeKind = 0;
+  //   break;
 
-  case tok::pp_import:
-    IncludeKind = 1;
-    break;
+  // case tok::pp_import:
+  //   IncludeKind = 1;
+  //   break;
 
   // case tok::pp_include_next:
   //   IncludeKind = 2;
@@ -1672,51 +1672,51 @@ bool Preprocessor::checkModuleIsAvailable(const LangOptions &LangOpts,
 /// routine with functionality shared between \#include, \#include_next and
 /// \#import.  LookupFrom is set when this is a \#include_next directive, it
 /// specifies the file to start searching from.
-void Preprocessor::HandleIncludeDirective(SourceLocation HashLoc,
-                                          Token &IncludeTok,
-                                          const DirectoryLookup *LookupFrom,
-                                          const FileEntry *LookupFromFile) {
-  Token FilenameTok;
-  if (LexHeaderName(FilenameTok))
-    return;
+// void Preprocessor::HandleIncludeDirective(SourceLocation HashLoc,
+//                                           Token &IncludeTok,
+//                                           const DirectoryLookup *LookupFrom,
+//                                           const FileEntry *LookupFromFile) {
+//   Token FilenameTok;
+//   if (LexHeaderName(FilenameTok))
+//     return;
 
-  if (FilenameTok.isNot(tok::header_name)) {
-    Diag(FilenameTok.getLocation(), diag::err_pp_expects_filename);
-    if (FilenameTok.isNot(tok::eod))
-      DiscardUntilEndOfDirective();
-    return;
-  }
+//   if (FilenameTok.isNot(tok::header_name)) {
+//     Diag(FilenameTok.getLocation(), diag::err_pp_expects_filename);
+//     if (FilenameTok.isNot(tok::eod))
+//       DiscardUntilEndOfDirective();
+//     return;
+//   }
 
-  // Verify that there is nothing after the filename, other than EOD.  Note
-  // that we allow macros that expand to nothing after the filename, because
-  // this falls into the category of "#include pp-tokens new-line" specified
-  // in C99 6.10.2p4.
-  SourceLocation EndLoc =
-      CheckEndOfDirective(IncludeTok.getIdentifierInfo()->getNameStart(), true);
+//   // Verify that there is nothing after the filename, other than EOD.  Note
+//   // that we allow macros that expand to nothing after the filename, because
+//   // this falls into the category of "#include pp-tokens new-line" specified
+//   // in C99 6.10.2p4.
+//   SourceLocation EndLoc =
+//       CheckEndOfDirective(IncludeTok.getIdentifierInfo()->getNameStart(), true);
 
-  auto Action = HandleHeaderIncludeOrImport(HashLoc, IncludeTok, FilenameTok,
-                                            EndLoc, LookupFrom, LookupFromFile);
-  switch (Action.Kind) {
-  case ImportAction::None:
-  case ImportAction::SkippedModuleImport:
-    break;
-  case ImportAction::ModuleBegin:
-    EnterAnnotationToken(SourceRange(HashLoc, EndLoc),
-                         tok::annot_module_begin, Action.ModuleForHeader);
-    break;
-  case ImportAction::ModuleImport:
-    EnterAnnotationToken(SourceRange(HashLoc, EndLoc),
-                         tok::annot_module_include, Action.ModuleForHeader);
-    break;
-  case ImportAction::Failure:
-    assert(TheModuleLoader.HadFatalFailure &&
-           "This should be an early exit only to a fatal error");
-    TheModuleLoader.HadFatalFailure = true;
-    IncludeTok.setKind(tok::eof);
-    CurLexer->cutOffLexing();
-    return;
-  }
-}
+//   auto Action = HandleHeaderIncludeOrImport(HashLoc, IncludeTok, FilenameTok,
+//                                             EndLoc, LookupFrom, LookupFromFile);
+//   switch (Action.Kind) {
+//   case ImportAction::None:
+//   case ImportAction::SkippedModuleImport:
+//     break;
+//   case ImportAction::ModuleBegin:
+//     EnterAnnotationToken(SourceRange(HashLoc, EndLoc),
+//                          tok::annot_module_begin, Action.ModuleForHeader);
+//     break;
+//   case ImportAction::ModuleImport:
+//     EnterAnnotationToken(SourceRange(HashLoc, EndLoc),
+//                          tok::annot_module_include, Action.ModuleForHeader);
+//     break;
+//   case ImportAction::Failure:
+//     assert(TheModuleLoader.HadFatalFailure &&
+//            "This should be an early exit only to a fatal error");
+//     TheModuleLoader.HadFatalFailure = true;
+//     IncludeTok.setKind(tok::eof);
+//     CurLexer->cutOffLexing();
+//     return;
+//   }
+// }
 
 Optional<FileEntryRef> Preprocessor::LookupHeaderIncludeOrImport(
     const DirectoryLookup *&CurDir, StringRef& Filename,
@@ -2031,9 +2031,11 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
   // FIXME: If we have a suggested module for a '#include', and we've already
   // visited this file, don't bother entering it again. We know it has no
   // further effect.
-  bool EnterOnce =
-      IsImportDecl ||
-      IncludeTok.getIdentifierInfo()->getPPKeywordID() == tok::pp_import;
+  // bool EnterOnce =
+  //     IsImportDecl ||
+  //     IncludeTok.getIdentifierInfo()->getPPKeywordID() == tok::pp_import;
+
+  bool EnterOnce = false;
 
   // Ask HeaderInfo if we should enter this #include file.  If not, #including
   // this file will have no effect.
@@ -2317,30 +2319,30 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
 // }
 
 /// HandleMicrosoftImportDirective - Implements \#import for Microsoft Mode
-void Preprocessor::HandleMicrosoftImportDirective(Token &Tok) {
-  // The Microsoft #import directive takes a type library and generates header
-  // files from it, and includes those.  This is beyond the scope of what clang
-  // does, so we ignore it and error out.  However, #import can optionally have
-  // trailing attributes that span multiple lines.  We're going to eat those
-  // so we can continue processing from there.
-  Diag(Tok, diag::err_pp_import_directive_ms );
+// void Preprocessor::HandleMicrosoftImportDirective(Token &Tok) {
+//   // The Microsoft #import directive takes a type library and generates header
+//   // files from it, and includes those.  This is beyond the scope of what clang
+//   // does, so we ignore it and error out.  However, #import can optionally have
+//   // trailing attributes that span multiple lines.  We're going to eat those
+//   // so we can continue processing from there.
+//   Diag(Tok, diag::err_pp_import_directive_ms );
 
-  // Read tokens until we get to the end of the directive.  Note that the
-  // directive can be split over multiple lines using the backslash character.
-  DiscardUntilEndOfDirective();
-}
+//   // Read tokens until we get to the end of the directive.  Note that the
+//   // directive can be split over multiple lines using the backslash character.
+//   DiscardUntilEndOfDirective();
+// }
 
 /// HandleImportDirective - Implements \#import.
 ///
-void Preprocessor::HandleImportDirective(SourceLocation HashLoc,
-                                         Token &ImportTok) {
-  if (!LangOpts.ObjC) {  // #import is standard for ObjC.
-    if (LangOpts.MSVCCompat)
-      return HandleMicrosoftImportDirective(ImportTok);
-    Diag(ImportTok, diag::ext_pp_import_directive);
-  }
-  return HandleIncludeDirective(HashLoc, ImportTok);
-}
+// void Preprocessor::HandleImportDirective(SourceLocation HashLoc,
+//                                          Token &ImportTok) {
+//   if (!LangOpts.ObjC) {  // #import is standard for ObjC.
+//     if (LangOpts.MSVCCompat)
+//       return HandleMicrosoftImportDirective(ImportTok);
+//     Diag(ImportTok, diag::ext_pp_import_directive);
+//   }
+//   return HandleIncludeDirective(HashLoc, ImportTok);
+// }
 
 /// HandleIncludeMacrosDirective - The -imacros command line option turns into a
 /// pseudo directive in the predefines buffer.  This handles it by sucking all
