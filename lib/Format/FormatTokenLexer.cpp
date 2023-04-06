@@ -471,7 +471,7 @@ bool FormatTokenLexer::precedesOperand(FormatToken *Tok) {
                       tok::r_brace, tok::l_square, tok::semi, tok::exclaim,
                       tok::colon, tok::question, tok::tilde) ||
          Tok->isOneOf(tok::kw_ret, tok::kw_hacer, tok::kw_caso, tok::kw_lanzar,
-                      tok::kw_sino, tok::kw_new, tok::kw_borrar, tok::kw_void,
+                      tok::kw_sino, tok::kw_nuevo, tok::kw_borrar, tok::kw_void,
                       tok::kw_typeof, Keywords.kw_instanceof, Keywords.kw_in) ||
          Tok->isBinaryOperator();
 }
@@ -965,12 +965,12 @@ FormatToken *FormatTokenLexer::getNextToken() {
     FormatTok->Tok.setKind(Info.getTokenID());
     if (Style.Language == FormatStyle::LK_Java &&
         FormatTok->isOneOf(tok::kw_struct, tok::kw_union, tok::kw_borrar,
-                           tok::kw_operator)) {
+                           tok::kw_operador)) {
       FormatTok->Tok.setKind(tok::identifier);
       FormatTok->Tok.setIdentifierInfo(nullptr);
     } else if (Style.Language == FormatStyle::LK_JavaScript &&
                FormatTok->isOneOf(tok::kw_struct, tok::kw_union,
-                                  tok::kw_operator)) {
+                                  tok::kw_operador)) {
       FormatTok->Tok.setKind(tok::identifier);
       FormatTok->Tok.setIdentifierInfo(nullptr);
     }

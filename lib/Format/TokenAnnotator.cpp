@@ -937,7 +937,7 @@ private:
         return false;
       break;
     case tok::l_paren:
-      // When faced with 'operator()()', the kw_operator handler incorrectly
+      // When faced with 'operator()()', the kw_operador handler incorrectly
       // marks the first l_paren as a OverloadedOperatorLParen. Here, we make
       // the first two parens OverloadedOperators and the second l_paren an
       // OverloadedOperatorLParen.
@@ -1008,7 +1008,7 @@ private:
       if (Tok->Previous && Tok->Previous->is(TT_TemplateCloser))
         Tok->SpacesRequiredBefore = 1;
       break;
-    case tok::kw_operator:
+    case tok::kw_operador:
       if (Style.Language == FormatStyle::LK_TextProto ||
           Style.Language == FormatStyle::LK_Proto)
         break;
@@ -1018,7 +1018,7 @@ private:
           CurrentToken->setType(TT_PointerOrReference);
         consumeToken();
         if (CurrentToken && CurrentToken->is(tok::comma) &&
-            CurrentToken->Previous->isNot(tok::kw_operator))
+            CurrentToken->Previous->isNot(tok::kw_operador))
           break;
         if (CurrentToken && CurrentToken->Previous->isOneOf(
                                 TT_BinaryOperator, TT_UnaryOperator, tok::comma,
@@ -1422,7 +1422,7 @@ private:
           (Line.startsWith(Keywords.kw_type, tok::identifier) ||
            Line.startsWith(tok::kw_exportar, Keywords.kw_type,
                            tok::identifier))) &&
-        (!Current.Previous || Current.Previous->isNot(tok::kw_operator))) {
+        (!Current.Previous || Current.Previous->isNot(tok::kw_operador))) {
       Contexts.back().IsExpression = true;
       if (!Line.startsWith(TT_UnaryOperator)) {
         for (FormatToken *Previous = Current.Previous;
@@ -1443,7 +1443,7 @@ private:
         }
       }
     } else if (Current.is(tok::lessless) &&
-               (!Current.Previous || !Current.Previous->is(tok::kw_operator))) {
+               (!Current.Previous || !Current.Previous->is(tok::kw_operador))) {
       Contexts.back().IsExpression = true;
     } else if (Current.isOneOf(tok::kw_ret, tok::kw_lanzar)) {
       Contexts.back().IsExpression = true;
@@ -1464,11 +1464,11 @@ private:
         Previous->setType(TT_PointerOrReference);
       if (Line.MustBeDeclaration && !Contexts.front().InCtorInitializer)
         Contexts.back().IsExpression = false;
-    } else if (Current.is(tok::kw_new)) {
+    } else if (Current.is(tok::kw_nuevo)) {
       Contexts.back().CanBeExpression = false;
     } else if (Current.is(tok::semi) ||
                (Current.is(tok::exclaim) && Current.Previous &&
-                !Current.Previous->is(tok::kw_operator))) {
+                !Current.Previous->is(tok::kw_operador))) {
       // This should be the condition or increment in a for-loop.
       // But not operator !() (can't use TT_OverloadedOperator here as its not
       // been annotated yet).
@@ -1601,7 +1601,7 @@ private:
       Current.setType(TT_LambdaArrow);
     } else if (Current.is(tok::arrow) && AutoFound && Line.MustBeDeclaration &&
                Current.NestingLevel == 0 &&
-               !Current.Previous->is(tok::kw_operator)) {
+               !Current.Previous->is(tok::kw_operador)) {
       // not auto operator->() -> xxx;
       Current.setType(TT_TrailingReturnArrow);
 
@@ -1921,7 +1921,7 @@ private:
 
     if (NextToken->is(tok::l_square) && NextToken->isNot(TT_LambdaLSquare))
       return TT_PointerOrReference;
-    if (NextToken->is(tok::kw_operator) && !IsExpression)
+    if (NextToken->is(tok::kw_operador) && !IsExpression)
       return TT_PointerOrReference;
     if (NextToken->isOneOf(tok::comma, tok::semi))
       return TT_PointerOrReference;
@@ -2308,7 +2308,7 @@ static bool isFunctionDeclarationName(const FormatToken &Current,
         return Next;
       if (Next->is(TT_OverloadedOperator))
         continue;
-      if (Next->isOneOf(tok::kw_new, tok::kw_borrar)) {
+      if (Next->isOneOf(tok::kw_nuevo, tok::kw_borrar)) {
         // For 'new[]' and 'delete[]'.
         if (Next->Next &&
             Next->Next->startsSequence(tok::l_square, tok::r_square))
@@ -2338,7 +2338,7 @@ static bool isFunctionDeclarationName(const FormatToken &Current,
 
   // Find parentheses of parameter list.
   const FormatToken *Next = Current.Next;
-  if (Current.is(tok::kw_operator)) {
+  if (Current.is(tok::kw_operador)) {
     if (Current.Previous && Current.Previous->is(tok::coloncolon))
       return false;
     Next = skipOperatorName(Next);
@@ -2352,7 +2352,7 @@ static bool isFunctionDeclarationName(const FormatToken &Current,
         Next = Next->Next;
         if (!Next)
           return false;
-        if (Next->is(tok::kw_operator)) {
+        if (Next->is(tok::kw_operador)) {
           Next = skipOperatorName(Next->Next);
           break;
         }
@@ -2597,7 +2597,7 @@ unsigned TokenAnnotator::splitPenalty(const AnnotatedLine &Line,
       (Right.is(tok::period) && Style.Language == FormatStyle::LK_Proto))
     return 500;
   if (Right.isOneOf(TT_StartOfName, TT_FunctionDeclarationName) ||
-      Right.is(tok::kw_operator)) {
+      Right.is(tok::kw_operador)) {
     if (Line.startsWith(tok::kw_desde) && Right.PartOfMultiVariableDeclStmt)
       return 3;
     if (Left.is(TT_StartOfName))
@@ -2861,7 +2861,7 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
     return false;
   if (Right.isOneOf(tok::star, tok::amp, tok::ampamp)) {
     const FormatToken *Previous = &Left;
-    while (Previous && !Previous->is(tok::kw_operator)) {
+    while (Previous && !Previous->is(tok::kw_operador)) {
       if (Previous->is(tok::identifier) || Previous->isSimpleTypeSpecifier()) {
         Previous = Previous->getPreviousNonComment();
         continue;
@@ -2887,9 +2887,9 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
     //   operator C<T>::D<U>*()
     // dependent on PointerAlignment style.
     if (Previous &&
-        (Previous->endsSequence(tok::kw_operator) ||
-         Previous->endsSequence(tok::kw_const, tok::kw_operator) /*||
-         Previous->endsSequence(tok::kw_volatile, tok::kw_operator)*/))
+        (Previous->endsSequence(tok::kw_operador) ||
+         Previous->endsSequence(tok::kw_const, tok::kw_operador) /*||
+         Previous->endsSequence(tok::kw_volatile, tok::kw_operador)*/))
       return (Style.PointerAlignment != FormatStyle::PAS_Left);
   }
   const auto SpaceRequiredForArrayInitializerLSquare =
@@ -2955,7 +2955,7 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
                           TT_ObjCForIn) ||
              Left.isIf(Line.Type != LT_PreprocessorDirective) ||
              (Left.isOneOf(tok::kw_intentar, Keywords.kw___except, tok::kw_atrapar,
-                           tok::kw_new, tok::kw_borrar) &&
+                           tok::kw_nuevo, tok::kw_borrar) &&
               (!Left.Previous || Left.Previous->isNot(tok::period))))) ||
            (spaceRequiredBeforeParens(Right) &&
             (Left.is(tok::identifier) || Left.isFunctionLikeKeyword() ||
@@ -3013,7 +3013,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
   if (Right.Tok.getIdentifierInfo() && Left.Tok.getIdentifierInfo())
     return true; // Never ever merge two identifiers.
   if (Style.isCpp()) {
-    if (Left.is(tok::kw_operator))
+    if (Left.is(tok::kw_operador))
       return Right.is(tok::coloncolon);
     if (Right.is(tok::l_brace) && Right.BlockKind == BK_BracedInit &&
         !Left.opensScope() && Style.SpaceBeforeCpp11BracedList)
@@ -3053,7 +3053,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
       return false;
 
     // No space between 'new' and '('
-    if (Left.is(tok::kw_new) && Right.is(tok::l_paren))
+    if (Left.is(tok::kw_nuevo) && Right.is(tok::l_paren))
       return false;
 
     // Space before { (including space within '{ {').
@@ -3812,7 +3812,7 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
            (Style.PointerAlignment == FormatStyle::PAS_Right &&
             (!Right.Next || Right.Next->isNot(TT_FunctionDeclarationName)));
   if (Right.isOneOf(TT_StartOfName, TT_FunctionDeclarationName) ||
-      Right.is(tok::kw_operator))
+      Right.is(tok::kw_operador))
     return true;
   if (Left.is(TT_PointerOrReference))
     return false;
@@ -3898,7 +3898,7 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
   if (Left.is(TT_TemplateCloser) && Right.is(TT_TemplateOpener))
     return true;
   if (Left.isOneOf(TT_TemplateCloser, TT_UnaryOperator) ||
-      Left.is(tok::kw_operator))
+      Left.is(tok::kw_operador))
     return false;
   if (Left.is(tok::equal) && !Right.isOneOf(tok::kw_otro, tok::kw_borrar) &&
       Line.Type == LT_VirtualFunctionDecl && Left.NestingLevel == 0)

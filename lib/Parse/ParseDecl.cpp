@@ -1712,7 +1712,7 @@ bool Parser::MightBeDeclarator(DeclaratorContext Context) {
   case tok::coloncolon:
   case tok::ellipsis:
   case tok::kw___attribute:
-  case tok::kw_operator:
+  case tok::kw_operador:
   case tok::l_paren:
   case tok::star:
     return true;
@@ -4855,7 +4855,7 @@ bool Parser::isTypeSpecifierQualifier() {
     return isTypeSpecifierQualifier();
 
   case tok::coloncolon:   // ::foo::bar
-    if (NextToken().is(tok::kw_new) ||    // ::new
+    if (NextToken().is(tok::kw_nuevo) ||    // ::new
         NextToken().is(tok::kw_borrar))   // ::delete
       return false;
 
@@ -5007,7 +5007,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
     return isDeclarationSpecifier();
 
   case tok::coloncolon:   // ::foo::bar
-    if (NextToken().is(tok::kw_new) ||    // ::new
+    if (NextToken().is(tok::kw_nuevo) ||    // ::new
         NextToken().is(tok::kw_borrar))   // ::delete
       return false;
 
@@ -5852,7 +5852,7 @@ void Parser::ParseDirectDeclarator(Declarator &D) {
       // the l_paren token.
     }
 
-    if (Tok.isOneOf(tok::identifier, tok::kw_operator, tok::annot_template_id,
+    if (Tok.isOneOf(tok::identifier, tok::kw_operador, tok::annot_template_id,
                     tok::tilde)) {
       // We found something that indicates the start of an unqualified-id.
       // Parse that unqualified-id.

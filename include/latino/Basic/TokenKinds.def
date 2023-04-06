@@ -343,8 +343,8 @@ KEYWORD(false                       , BOOLSUPPORT)
 KEYWORD(friend                      , KEYCXX)
 KEYWORD(mutable                     , KEYCXX)
 KEYWORD(contexto                   , KEYCXX) // namespace
-KEYWORD(new                         , KEYCXX)
-KEYWORD(operator                    , KEYCXX)
+KEYWORD(nuevo                         , KEYCXX) // new
+KEYWORD(operador                    , KEYCXX) // operator
 KEYWORD(pri                     , KEYCXX) // private
 KEYWORD(pro                   , KEYCXX) // protected
 KEYWORD(pub                      , KEYCXX) // public

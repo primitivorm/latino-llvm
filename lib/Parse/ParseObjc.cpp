@@ -1067,8 +1067,8 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_long:
   case tok::kw_mutable:
   case tok::kw_contexto:
-  case tok::kw_new:
-  case tok::kw_operator:
+  case tok::kw_nuevo:
+  case tok::kw_operador:
   case tok::kw_pri:
   case tok::kw_pro:
   case tok::kw_pub:

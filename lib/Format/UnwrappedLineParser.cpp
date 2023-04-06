@@ -1324,7 +1324,7 @@ void UnwrappedLineParser::parseStructuralElement() {
     case tok::l_paren:
       parseParens();
       break;
-    case tok::kw_operator:
+    case tok::kw_operador:
       nextToken();
       if (FormatTok->isBinaryOperator())
         nextToken();
@@ -1489,7 +1489,7 @@ void UnwrappedLineParser::parseStructuralElement() {
     case tok::l_square:
       parseSquare();
       break;
-    case tok::kw_new:
+    case tok::kw_nuevo:
       parseNew();
       break;
     default:
@@ -1688,7 +1688,7 @@ bool UnwrappedLineParser::tryToParseLambda() {
 bool UnwrappedLineParser::tryToParseLambdaIntroducer() {
   const FormatToken *Previous = FormatTok->Previous;
   if (Previous &&
-      (Previous->isOneOf(tok::identifier, tok::kw_operator, tok::kw_new,
+      (Previous->isOneOf(tok::identifier, tok::kw_operador, tok::kw_nuevo,
                          tok::kw_borrar, tok::l_square) ||
        FormatTok->isCppStructuredBinding(Style) || Previous->closesScope() ||
        Previous->isSimpleTypeSpecifier())) {
@@ -2121,7 +2121,7 @@ void UnwrappedLineParser::parseNamespace() {
 }
 
 void UnwrappedLineParser::parseNew() {
-  assert(FormatTok->is(tok::kw_new) && "'new' expected");
+  assert(FormatTok->is(tok::kw_nuevo) && "'new' expected");
   nextToken();
 
   if (Style.isCSharp()) {

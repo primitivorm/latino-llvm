@@ -869,12 +869,12 @@ Parser::TPResult Parser::TryParsePtrOperatorSeq() {
 ///           'operator' string-literal identifier
 ///           'operator' user-defined-string-literal
 Parser::TPResult Parser::TryParseOperatorId() {
-  assert(Tok.is(tok::kw_operator));
+  assert(Tok.is(tok::kw_operador));
   ConsumeToken();
 
   // Maybe this is an operator-function-id.
   switch (Tok.getKind()) {
-  case tok::kw_new: case tok::kw_borrar:
+  case tok::kw_nuevo: case tok::kw_borrar:
     ConsumeToken();
     if (Tok.is(tok::l_square) && NextToken().is(tok::r_square)) {
       ConsumeBracket();
@@ -1011,9 +1011,9 @@ Parser::TPResult Parser::TryParseDeclarator(bool mayBeAbstract,
   if (Tok.is(tok::ellipsis))
     ConsumeToken();
 
-  if ((Tok.isOneOf(tok::identifier, tok::kw_operator) ||
+  if ((Tok.isOneOf(tok::identifier, tok::kw_operador) ||
        (Tok.is(tok::annot_cxxscope) && (NextToken().is(tok::identifier) ||
-                                        NextToken().is(tok::kw_operator)))) &&
+                                        NextToken().is(tok::kw_operador)))) &&
       mayHaveIdentifier) {
     // declarator-id
     if (Tok.is(tok::annot_cxxscope)) {
@@ -1026,7 +1026,7 @@ Parser::TPResult Parser::TryParseDeclarator(bool mayBeAbstract,
     } else if (Tok.is(tok::identifier)) {
       TentativelyDeclaredIdentifiers.push_back(Tok.getIdentifierInfo());
     }
-    if (Tok.is(tok::kw_operator)) {
+    if (Tok.is(tok::kw_operador)) {
       if (TryParseOperatorId() == TPResult::Error)
         return TPResult::Error;
     } else
@@ -1339,7 +1339,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
 
   case tok::coloncolon: {    // ::foo::bar
     const Token &Next = NextToken();
-    if (Next.isOneOf(tok::kw_new,       // ::new
+    if (Next.isOneOf(tok::kw_nuevo,       // ::new
                      tok::kw_borrar))   // ::delete
       return TPResult::False;
     LLVM_FALLTHROUGH;
@@ -2158,7 +2158,7 @@ Parser::TPResult Parser::isExplicitBool() {
 
   // 'explicit(operator' might be explicit(bool) or the declaration of a
   // conversion function, but it's probably a conversion function.
-  if (Tok.is(tok::kw_operator))
+  if (Tok.is(tok::kw_operador))
     return TPResult::Ambiguous;
 
   // If this can't be a constructor name, it can only be explicit(bool).

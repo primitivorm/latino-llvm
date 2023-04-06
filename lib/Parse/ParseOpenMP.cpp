@@ -205,7 +205,7 @@ static DeclarationName parseOpenMPReductionId(Parser &P) {
   OverloadedOperatorKind OOK = OO_None;
   // Allow to use 'operator' keyword for C++ operators
   bool WithOperator = false;
-  if (Tok.is(tok::kw_operator)) {
+  if (Tok.is(tok::kw_operador)) {
     P.ConsumeToken();
     Tok = P.getCurToken();
     WithOperator = true;

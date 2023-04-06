@@ -1267,7 +1267,7 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   case tok::kw_decltype:        // struct foo {...} decltype  (a)::b;
   case tok::l_paren:            // struct foo {...} (         x);
   case tok::comma:              // __builtin_offsetof(struct foo{...} ,
-  case tok::kw_operator:        // struct foo       operator  ++() {...}
+  case tok::kw_operador:        // struct foo       operator  ++() {...}
   case tok::kw___declspec:      // struct foo {...} __declspec(...)
   case tok::l_square:           // void f(struct f  [         3])
   case tok::ellipsis:           // void f(struct f  ...       [Ns])
@@ -2498,7 +2498,7 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
     else if (NextToken().is(tok::identifier))
       isAccessDecl = GetLookAheadToken(2).is(tok::semi);
     else
-      isAccessDecl = NextToken().is(tok::kw_operator);
+      isAccessDecl = NextToken().is(tok::kw_operador);
 
     if (isAccessDecl) {
       // Collect the scope specifier token we annotated earlier.

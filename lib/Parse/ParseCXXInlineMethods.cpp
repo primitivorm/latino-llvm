@@ -1266,7 +1266,7 @@ bool Parser::ConsumeAndStoreInitializer(CachedTokens &Toks,
       }
       break;
 
-    case tok::kw_operator:
+    case tok::kw_operador:
       // If 'operator' precedes other punctuation, that punctuation loses
       // its special behavior.
       Toks.push_back(Tok);

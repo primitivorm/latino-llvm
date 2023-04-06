@@ -494,7 +494,7 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
         // Don't break before a C# function when no break after return type
         (!Style.isCSharp() ||
          Style.AlwaysBreakAfterReturnType != FormatStyle::RTBS_None)) ||
-       (Current.is(tok::kw_operator) && !Previous.is(tok::coloncolon))) &&
+       (Current.is(tok::kw_operador) && !Previous.is(tok::coloncolon))) &&
       !Previous.is(tok::kw_plantilla) && State.Stack.back().BreakBeforeParameter)
     return true;
 
@@ -1060,7 +1060,7 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
             TT_AttributeParen, TT_AttributeSquare, TT_FunctionAnnotationRParen,
             TT_JavaAnnotation, TT_LeadingJavaAnnotation))) ||
       (!Style.IndentWrappedFunctionNames &&
-       NextNonComment->isOneOf(tok::kw_operator, TT_FunctionDeclarationName)))
+       NextNonComment->isOneOf(tok::kw_operador, TT_FunctionDeclarationName)))
     return std::max(State.Stack.back().LastSpace, State.Stack.back().Indent);
   if (NextNonComment->is(TT_SelectorName)) {
     if (!State.Stack.back().ObjCSelectorNameFound) {

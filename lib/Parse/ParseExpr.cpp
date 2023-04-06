@@ -1629,7 +1629,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     LLVM_FALLTHROUGH;
   }
 
-  case tok::kw_operator: // [C++] id-expression: operator/conversion-function-id
+  case tok::kw_operador: // [C++] id-expression: operator/conversion-function-id
     Res = ParseCXXIdExpression(isAddressOfOperand);
     break;
 
@@ -1645,7 +1645,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     // ::new -> [C++] new-expression
     // ::delete -> [C++] delete-expression
     SourceLocation CCLoc = ConsumeToken();
-    if (Tok.is(tok::kw_new)) {
+    if (Tok.is(tok::kw_nuevo)) {
       if (NotPrimaryExpression)
         *NotPrimaryExpression = true;
       Res = ParseCXXNewExpression(true, CCLoc);
@@ -1665,7 +1665,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     return ExprError();
   }
 
-  case tok::kw_new: // [C++] new-expression
+  case tok::kw_nuevo: // [C++] new-expression
     if (NotPrimaryExpression)
       *NotPrimaryExpression = true;
     Res = ParseCXXNewExpression(false, Tok.getLocation());

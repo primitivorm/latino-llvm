@@ -649,9 +649,9 @@ void WhitespaceManager::alignConsecutiveDeclarations() {
   AlignTokens(
       Style,
       [](Change const &C) {
-        // tok::kw_operator is necessary for aligning operator overload
+        // tok::kw_operador is necessary for aligning operator overload
         // definitions.
-        if (C.Tok->isOneOf(TT_FunctionDeclarationName, tok::kw_operator))
+        if (C.Tok->isOneOf(TT_FunctionDeclarationName, tok::kw_operador))
           return true;
         if (C.Tok->isNot(TT_StartOfName))
           return false;
@@ -662,7 +662,7 @@ void WhitespaceManager::alignConsecutiveDeclarations() {
           if (!Next->Tok.getIdentifierInfo())
             break;
           if (Next->isOneOf(TT_StartOfName, TT_FunctionDeclarationName,
-                            tok::kw_operator))
+                            tok::kw_operador))
             return false;
         }
         return true;

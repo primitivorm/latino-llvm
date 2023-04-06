@@ -183,7 +183,7 @@ bool Parser::ParseOptionalCXXScopeSpecifier(
   if (Tok.is(tok::coloncolon)) {
     // ::new and ::delete aren't nested-name-specifiers.
     tok::TokenKind NextKind = NextToken().getKind();
-    if (NextKind == tok::kw_new || NextKind == tok::kw_borrar)
+    if (NextKind == tok::kw_nuevo || NextKind == tok::kw_borrar)
       return false;
 
     if (NextKind == tok::l_brace) {
@@ -282,7 +282,7 @@ bool Parser::ParseOptionalCXXScopeSpecifier(
         // Consume the identifier.
         TemplateName.setIdentifier(Tok.getIdentifierInfo(), Tok.getLocation());
         ConsumeToken();
-      } else if (Tok.is(tok::kw_operator)) {
+      } else if (Tok.is(tok::kw_operador)) {
         // We don't need to actually parse the unqualified-id in this case,
         // because a simple-template-id cannot start with 'operator', but
         // go ahead and parse it anyway for consistency with the case where
@@ -2506,7 +2506,7 @@ bool Parser::ParseUnqualifiedIdTemplateId(
 bool Parser::ParseUnqualifiedIdOperator(CXXScopeSpec &SS, bool EnteringContext,
                                         ParsedType ObjectType,
                                         UnqualifiedId &Result) {
-  assert(Tok.is(tok::kw_operator) && "Expected 'operator' keyword");
+  assert(Tok.is(tok::kw_operador) && "Expected 'operator' keyword");
 
   // Consume the 'operator' keyword.
   SourceLocation KeywordLoc = ConsumeToken();
@@ -2516,9 +2516,9 @@ bool Parser::ParseUnqualifiedIdOperator(CXXScopeSpec &SS, bool EnteringContext,
   SourceLocation SymbolLocations[3];
   OverloadedOperatorKind Op = OO_None;
   switch (Tok.getKind()) {
-    case tok::kw_new:
+    case tok::kw_nuevo:
     case tok::kw_borrar: {
-      bool isNew = Tok.getKind() == tok::kw_new;
+      bool isNew = Tok.getKind() == tok::kw_nuevo;
       // Consume the 'new' or 'delete'.
       SymbolLocations[SymbolIdx++] = ConsumeToken();
       // Check for array new/delete.
@@ -2873,7 +2873,7 @@ bool Parser::ParseUnqualifiedId(CXXScopeSpec &SS, ParsedType ObjectType,
   // unqualified-id:
   //   operator-function-id
   //   conversion-function-id
-  if (Tok.is(tok::kw_operator)) {
+  if (Tok.is(tok::kw_operador)) {
     if (ParseUnqualifiedIdOperator(SS, EnteringContext, ObjectType, Result))
       return true;
 
@@ -3035,7 +3035,7 @@ bool Parser::ParseUnqualifiedId(CXXScopeSpec &SS, ParsedType ObjectType,
 ///
 ExprResult
 Parser::ParseCXXNewExpression(bool UseGlobal, SourceLocation Start) {
-  assert(Tok.is(tok::kw_new) && "expected 'new' token");
+  assert(Tok.is(tok::kw_nuevo) && "expected 'new' token");
   ConsumeToken();   // Consume 'new'
 
   // A '(' now can be a new-placement or the '(' wrapping the type-id in the
