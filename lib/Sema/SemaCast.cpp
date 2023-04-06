@@ -370,17 +370,17 @@ Sema::BuildCXXNamedCast(SourceLocation OpLoc, tok::TokenKind Kind,
   }
 }
 
-ExprResult Sema::ActOnBuiltinBitCastExpr(SourceLocation KWLoc, Declarator &D,
-                                         ExprResult Operand,
-                                         SourceLocation RParenLoc) {
-  assert(!D.isInvalidType());
+// ExprResult Sema::ActOnBuiltinBitCastExpr(SourceLocation KWLoc, Declarator &D,
+//                                          ExprResult Operand,
+//                                          SourceLocation RParenLoc) {
+//   assert(!D.isInvalidType());
 
-  TypeSourceInfo *TInfo = GetTypeForDeclaratorCast(D, Operand.get()->getType());
-  if (D.isInvalidType())
-    return ExprError();
+//   TypeSourceInfo *TInfo = GetTypeForDeclaratorCast(D, Operand.get()->getType());
+//   if (D.isInvalidType())
+//     return ExprError();
 
-  return BuildBuiltinBitCastExpr(KWLoc, TInfo, Operand.get(), RParenLoc);
-}
+//   return BuildBuiltinBitCastExpr(KWLoc, TInfo, Operand.get(), RParenLoc);
+// }
 
 ExprResult Sema::BuildBuiltinBitCastExpr(SourceLocation KWLoc,
                                          TypeSourceInfo *TSI, Expr *Operand,

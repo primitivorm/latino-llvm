@@ -6463,13 +6463,13 @@ ExprResult Sema::ActOnAsTypeExpr(Expr *E, ParsedType ParsedDestTy,
 ///
 /// __builtin_convertvector( value, dst type )
 ///
-ExprResult Sema::ActOnConvertVectorExpr(Expr *E, ParsedType ParsedDestTy,
-                                        SourceLocation BuiltinLoc,
-                                        SourceLocation RParenLoc) {
-  TypeSourceInfo *TInfo;
-  GetTypeFromParser(ParsedDestTy, &TInfo);
-  return SemaConvertVectorExpr(E, TInfo, BuiltinLoc, RParenLoc);
-}
+// ExprResult Sema::ActOnConvertVectorExpr(Expr *E, ParsedType ParsedDestTy,
+//                                         SourceLocation BuiltinLoc,
+//                                         SourceLocation RParenLoc) {
+//   TypeSourceInfo *TInfo;
+//   GetTypeFromParser(ParsedDestTy, &TInfo);
+//   return SemaConvertVectorExpr(E, TInfo, BuiltinLoc, RParenLoc);
+// }
 
 /// BuildResolvedCallExpr - Build a call to a resolved expression,
 /// i.e. an expression not of \p OverloadTy.  The expression should
@@ -15426,23 +15426,23 @@ ExprResult Sema::BuildVAArgExpr(SourceLocation BuiltinLoc,
   return new (Context) VAArgExpr(BuiltinLoc, E, TInfo, RPLoc, T, IsMS);
 }
 
-ExprResult Sema::ActOnGNUNullExpr(SourceLocation TokenLoc) {
-  // The type of __null will be int or long, depending on the size of
-  // pointers on the target.
-  QualType Ty;
-  unsigned pw = Context.getTargetInfo().getPointerWidth(0);
-  if (pw == Context.getTargetInfo().getIntWidth())
-    Ty = Context.IntTy;
-  else if (pw == Context.getTargetInfo().getLongWidth())
-    Ty = Context.LongTy;
-  else if (pw == Context.getTargetInfo().getLongLongWidth())
-    Ty = Context.LongLongTy;
-  else {
-    llvm_unreachable("I don't know size of pointer!");
-  }
+// ExprResult Sema::ActOnGNUNullExpr(SourceLocation TokenLoc) {
+//   // The type of __null will be int or long, depending on the size of
+//   // pointers on the target.
+//   QualType Ty;
+//   unsigned pw = Context.getTargetInfo().getPointerWidth(0);
+//   if (pw == Context.getTargetInfo().getIntWidth())
+//     Ty = Context.IntTy;
+//   else if (pw == Context.getTargetInfo().getLongWidth())
+//     Ty = Context.LongTy;
+//   else if (pw == Context.getTargetInfo().getLongLongWidth())
+//     Ty = Context.LongLongTy;
+//   else {
+//     llvm_unreachable("I don't know size of pointer!");
+//   }
 
-  return new (Context) GNUNullExpr(Ty, TokenLoc);
-}
+//   return new (Context) GNUNullExpr(Ty, TokenLoc);
+// }
 
 ExprResult Sema::ActOnSourceLocExpr(SourceLocExpr::IdentKind Kind,
                                     SourceLocation BuiltinLoc,

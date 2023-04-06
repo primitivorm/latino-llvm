@@ -1303,14 +1303,14 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw__Generic:   // primary-expression: generic-selection [C11 6.5.1]
     Res = ParseGenericSelectionExpression();
     break;
-  case tok::kw___builtin_available:
-    Res = ParseAvailabilityCheckExpr(Tok.getLocation());
-    break;
+  // case tok::kw___builtin_available:
+  //   Res = ParseAvailabilityCheckExpr(Tok.getLocation());
+  //   break;
   // case tok::kw___builtin_va_arg:
   // case tok::kw___builtin_offsetof:
   // case tok::kw___builtin_choose_expr:
   case tok::kw___builtin_astype: // primary-expression: [OCL] as_type()
-  case tok::kw___builtin_convertvector:
+  // case tok::kw___builtin_convertvector:
   // case tok::kw___builtin_COLUMN:
   // case tok::kw___builtin_FILE:
   // case tok::kw___builtin_FUNCTION:
@@ -1319,9 +1319,9 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       *NotPrimaryExpression = true;
     // This parses the complete suffix; we can return early.
     return ParseBuiltinPrimaryExpression();
-  case tok::kw___null:
-    Res = Actions.ActOnGNUNullExpr(ConsumeToken());
-    break;
+  // case tok::kw___null:
+  //   Res = Actions.ActOnGNUNullExpr(ConsumeToken());
+  //   break;
 
   case tok::plusplus:      // unary-expression: '++' unary-expression [C99]
   case tok::minusminus: {  // unary-expression: '--' unary-expression [C99]
@@ -1464,11 +1464,11 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
       *NotPrimaryExpression = true;
     Res = ParseCXXCasts();
     break;
-  case tok::kw___builtin_bit_cast:
-    if (NotPrimaryExpression)
-      *NotPrimaryExpression = true;
-    Res = ParseBuiltinBitCast();
-    break;
+  // case tok::kw___builtin_bit_cast:
+  //   if (NotPrimaryExpression)
+  //     *NotPrimaryExpression = true;
+  //   Res = ParseBuiltinBitCast();
+  //   break;
   case tok::kw_typeid:
     if (NotPrimaryExpression)
       *NotPrimaryExpression = true;
@@ -1482,9 +1482,9 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_mi:
     Res = ParseCXXThis();
     break;
-  case tok::kw___builtin_unique_stable_name:
-    Res = ParseUniqueStableNameExpression();
-    break;
+  // case tok::kw___builtin_unique_stable_name:
+  //   Res = ParseUniqueStableNameExpression();
+  //   break;
   case tok::annot_typename:
     if (isStartOfObjCClassMessageMissingOpenBracket()) {
       TypeResult Type = getTypeAnnotation(Tok);
@@ -1530,13 +1530,13 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
-  case tok::kw___bf16:
+  // case tok::kw___bf16:
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_void:
   case tok::kw_typename:
   case tok::kw_typeof:
-  case tok::kw___vector:
+  // case tok::kw___vector:
 #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
 #include "latino/Basic/OpenCLImageTypes.def"
   {
@@ -2333,42 +2333,42 @@ Parser::ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
 }
 
 
-ExprResult Parser::ParseUniqueStableNameExpression() {
-  assert(Tok.is(tok::kw___builtin_unique_stable_name) &&
-         "Not __bulitin_unique_stable_name");
+// ExprResult Parser::ParseUniqueStableNameExpression() {
+//   assert(Tok.is(tok::kw___builtin_unique_stable_name) &&
+//          "Not __bulitin_unique_stable_name");
 
-  SourceLocation OpLoc = ConsumeToken();
-  BalancedDelimiterTracker T(*this, tok::l_paren);
+//   SourceLocation OpLoc = ConsumeToken();
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
 
-  // typeid expressions are always parenthesized.
-  if (T.expectAndConsume(diag::err_expected_lparen_after,
-                         "__builtin_unique_stable_name"))
-    return ExprError();
+//   // typeid expressions are always parenthesized.
+//   if (T.expectAndConsume(diag::err_expected_lparen_after,
+//                          "__builtin_unique_stable_name"))
+//     return ExprError();
 
-  if (isTypeIdInParens()) {
-    TypeResult Ty = ParseTypeName();
-    T.consumeClose();
+//   if (isTypeIdInParens()) {
+//     TypeResult Ty = ParseTypeName();
+//     T.consumeClose();
 
-    if (Ty.isInvalid())
-      return ExprError();
+//     if (Ty.isInvalid())
+//       return ExprError();
 
-    return Actions.ActOnUniqueStableNameExpr(OpLoc, T.getOpenLocation(),
-                                             T.getCloseLocation(), Ty.get());
-  }
+//     return Actions.ActOnUniqueStableNameExpr(OpLoc, T.getOpenLocation(),
+//                                              T.getCloseLocation(), Ty.get());
+//   }
 
-  EnterExpressionEvaluationContext Unevaluated(
-      Actions, Sema::ExpressionEvaluationContext::Unevaluated);
-  ExprResult Result = ParseExpression();
+//   EnterExpressionEvaluationContext Unevaluated(
+//       Actions, Sema::ExpressionEvaluationContext::Unevaluated);
+//   ExprResult Result = ParseExpression();
 
-  if (Result.isInvalid()) {
-    SkipUntil(tok::r_paren, StopAtSemi);
-    return Result;
-  }
+//   if (Result.isInvalid()) {
+//     SkipUntil(tok::r_paren, StopAtSemi);
+//     return Result;
+//   }
 
-  T.consumeClose();
-  return Actions.ActOnUniqueStableNameExpr(OpLoc, T.getOpenLocation(),
-                                           T.getCloseLocation(), Result.get());
-}
+//   T.consumeClose();
+//   return Actions.ActOnUniqueStableNameExpr(OpLoc, T.getOpenLocation(),
+//                                            T.getCloseLocation(), Result.get());
+// }
 
 /// Parse a sizeof or alignof expression.
 ///
@@ -2685,35 +2685,35 @@ ExprResult Parser::ParseBuiltinPrimaryExpression() {
                                   ConsumeParen());
     break;
   }
-  case tok::kw___builtin_convertvector: {
-    // The first argument is an expression to be converted, followed by a comma.
-    ExprResult Expr(ParseAssignmentExpression());
-    if (Expr.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  // case tok::kw___builtin_convertvector: {
+  //   // The first argument is an expression to be converted, followed by a comma.
+  //   ExprResult Expr(ParseAssignmentExpression());
+  //   if (Expr.isInvalid()) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    if (ExpectAndConsume(tok::comma)) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  //   if (ExpectAndConsume(tok::comma)) {
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    // Second argument is the type to bitcast to.
-    TypeResult DestTy = ParseTypeName();
-    if (DestTy.isInvalid())
-      return ExprError();
+  //   // Second argument is the type to bitcast to.
+  //   TypeResult DestTy = ParseTypeName();
+  //   if (DestTy.isInvalid())
+  //     return ExprError();
 
-    // Attempt to consume the r-paren.
-    if (Tok.isNot(tok::r_paren)) {
-      Diag(Tok, diag::err_expected) << tok::r_paren;
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+  //   // Attempt to consume the r-paren.
+  //   if (Tok.isNot(tok::r_paren)) {
+  //     Diag(Tok, diag::err_expected) << tok::r_paren;
+  //     SkipUntil(tok::r_paren, StopAtSemi);
+  //     return ExprError();
+  //   }
 
-    Res = Actions.ActOnConvertVectorExpr(Expr.get(), DestTy.get(), StartLoc,
-                                         ConsumeParen());
-    break;
-  }
+  //   Res = Actions.ActOnConvertVectorExpr(Expr.get(), DestTy.get(), StartLoc,
+  //                                        ConsumeParen());
+  //   break;
+  // }
   // case tok::kw___builtin_COLUMN:
   // case tok::kw___builtin_FILE:
   // case tok::kw___builtin_FUNCTION:
@@ -3671,40 +3671,40 @@ Optional<AvailabilitySpec> Parser::ParseAvailabilitySpec() {
   }
 }
 
-ExprResult Parser::ParseAvailabilityCheckExpr(SourceLocation BeginLoc) {
-  assert(Tok.is(tok::kw___builtin_available) ||
-         Tok.isObjCAtKeyword(tok::objc_available));
+// ExprResult Parser::ParseAvailabilityCheckExpr(SourceLocation BeginLoc) {
+//   assert(Tok.is(tok::kw___builtin_available) ||
+//          Tok.isObjCAtKeyword(tok::objc_available));
 
-  // Eat the available or __builtin_available.
-  ConsumeToken();
+//   // Eat the available or __builtin_available.
+//   ConsumeToken();
 
-  BalancedDelimiterTracker Parens(*this, tok::l_paren);
-  if (Parens.expectAndConsume())
-    return ExprError();
+//   BalancedDelimiterTracker Parens(*this, tok::l_paren);
+//   if (Parens.expectAndConsume())
+//     return ExprError();
 
-  SmallVector<AvailabilitySpec, 4> AvailSpecs;
-  bool HasError = false;
-  while (true) {
-    Optional<AvailabilitySpec> Spec = ParseAvailabilitySpec();
-    if (!Spec)
-      HasError = true;
-    else
-      AvailSpecs.push_back(*Spec);
+//   SmallVector<AvailabilitySpec, 4> AvailSpecs;
+//   bool HasError = false;
+//   while (true) {
+//     Optional<AvailabilitySpec> Spec = ParseAvailabilitySpec();
+//     if (!Spec)
+//       HasError = true;
+//     else
+//       AvailSpecs.push_back(*Spec);
 
-    if (!TryConsumeToken(tok::comma))
-      break;
-  }
+//     if (!TryConsumeToken(tok::comma))
+//       break;
+//   }
 
-  if (HasError) {
-    SkipUntil(tok::r_paren, StopAtSemi);
-    return ExprError();
-  }
+//   if (HasError) {
+//     SkipUntil(tok::r_paren, StopAtSemi);
+//     return ExprError();
+//   }
 
-  CheckAvailabilitySpecList(*this, AvailSpecs);
+//   CheckAvailabilitySpecList(*this, AvailSpecs);
 
-  if (Parens.consumeClose())
-    return ExprError();
+//   if (Parens.consumeClose())
+//     return ExprError();
 
-  return Actions.ActOnObjCAvailabilityCheckExpr(AvailSpecs, BeginLoc,
-                                                Parens.getCloseLocation());
-}
+//   return Actions.ActOnObjCAvailabilityCheckExpr(AvailSpecs, BeginLoc,
+//                                                 Parens.getCloseLocation());
+// }

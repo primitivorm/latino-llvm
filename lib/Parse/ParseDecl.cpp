@@ -728,33 +728,33 @@ bool Parser::ParseMicrosoftDeclSpecArgs(IdentifierInfo *AttrName,
 //   }
 // }
 
-void Parser::ParseMicrosoftTypeAttributes(ParsedAttributes &attrs) {
-  // Treat these like attributes
-  while (true) {
-    switch (Tok.getKind()) {
-    case tok::kw___fastcall:
-    case tok::kw___stdcall:
-    case tok::kw___thiscall:
-    case tok::kw___regcall:
-    case tok::kw___cdecl:
-    case tok::kw___vectorcall:
-    // case tok::kw___ptr64:
-    // case tok::kw___w64:
-    // case tok::kw___ptr32:
-    // case tok::kw___sptr:
-    // case tok::kw___uptr: 
-    {
-      IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-      SourceLocation AttrNameLoc = ConsumeToken();
-      attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-                   ParsedAttr::AS_Keyword);
-      break;
-    }
-    default:
-      return;
-    }
-  }
-}
+// void Parser::ParseMicrosoftTypeAttributes(ParsedAttributes &attrs) {
+//   // Treat these like attributes
+//   while (true) {
+//     switch (Tok.getKind()) {
+//     // case tok::kw___fastcall:
+//     // case tok::kw___stdcall:
+//     // case tok::kw___thiscall:
+//     // case tok::kw___regcall:
+//     // case tok::kw___cdecl:
+//     // case tok::kw___vectorcall:
+//     // case tok::kw___ptr64:
+//     // case tok::kw___w64:
+//     // case tok::kw___ptr32:
+//     // case tok::kw___sptr:
+//     // case tok::kw___uptr: 
+//     // {
+//     //   IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+//     //   SourceLocation AttrNameLoc = ConsumeToken();
+//     //   attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//     //                ParsedAttr::AS_Keyword);
+//     //   break;
+//     // }
+//     default:
+//       return;
+//     }
+//   }
+// }
 
 void Parser::DiagnoseAndSkipExtendedMicrosoftTypeAttributes() {
   SourceLocation StartLoc = Tok.getLocation();
@@ -773,15 +773,15 @@ SourceLocation Parser::SkipExtendedMicrosoftTypeAttributes() {
     switch (Tok.getKind()) {
     case tok::kw_const:
     // case tok::kw_volatile:
-    case tok::kw___fastcall:
-    case tok::kw___stdcall:
-    case tok::kw___thiscall:
-    case tok::kw___cdecl:
-    case tok::kw___vectorcall:
+    // case tok::kw___fastcall:
+    // case tok::kw___stdcall:
+    // case tok::kw___thiscall:
+    // case tok::kw___cdecl:
+    // case tok::kw___vectorcall:
     // case tok::kw___ptr32:
     // case tok::kw___ptr64:
     // case tok::kw___w64:
-    case tok::kw___unaligned:
+    // case tok::kw___unaligned:
     // case tok::kw___sptr:
     // case tok::kw___uptr:
       EndLoc = ConsumeToken();
@@ -792,15 +792,15 @@ SourceLocation Parser::SkipExtendedMicrosoftTypeAttributes() {
   }
 }
 
-void Parser::ParseBorlandTypeAttributes(ParsedAttributes &attrs) {
-  // Treat these like attributes
-  while (Tok.is(tok::kw___pascal)) {
-    IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-    SourceLocation AttrNameLoc = ConsumeToken();
-    attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-                 ParsedAttr::AS_Keyword);
-  }
-}
+// void Parser::ParseBorlandTypeAttributes(ParsedAttributes &attrs) {
+//   // Treat these like attributes
+//   while (Tok.is(tok::kw___pascal)) {
+//     IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+//     SourceLocation AttrNameLoc = ConsumeToken();
+//     attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//                  ParsedAttr::AS_Keyword);
+//   }
+// }
 
 void Parser::ParseOpenCLKernelAttributes(ParsedAttributes &attrs) {
   // Treat these like attributes
@@ -3422,38 +3422,38 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   continue;
 
     // Microsoft single token adornments.
-    case tok::kw___forceinline: {
-      isInvalid = DS.setFunctionSpecForceInline(Loc, PrevSpec, DiagID);
-      IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-      SourceLocation AttrNameLoc = Tok.getLocation();
-      DS.getAttributes().addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc,
-                                nullptr, 0, ParsedAttr::AS_Keyword);
-      break;
-    }
+    // case tok::kw___forceinline: {
+    //   isInvalid = DS.setFunctionSpecForceInline(Loc, PrevSpec, DiagID);
+    //   IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+    //   SourceLocation AttrNameLoc = Tok.getLocation();
+    //   DS.getAttributes().addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc,
+    //                             nullptr, 0, ParsedAttr::AS_Keyword);
+    //   break;
+    // }
 
-    case tok::kw___unaligned:
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_unaligned, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
+    // case tok::kw___unaligned:
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_unaligned, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
 
     // case tok::kw___sptr:
     // case tok::kw___uptr:
     // case tok::kw___ptr64:
     // case tok::kw___ptr32:
     // case tok::kw___w64:
-    case tok::kw___cdecl:
-    case tok::kw___stdcall:
-    case tok::kw___fastcall:
-    case tok::kw___thiscall:
-    case tok::kw___regcall:
-    case tok::kw___vectorcall:
-      ParseMicrosoftTypeAttributes(DS.getAttributes());
-      continue;
+    // case tok::kw___cdecl:
+    // case tok::kw___stdcall:
+    // case tok::kw___fastcall:
+    // case tok::kw___thiscall:
+    // case tok::kw___regcall:
+    // case tok::kw___vectorcall:
+    //   ParseMicrosoftTypeAttributes(DS.getAttributes());
+    //   continue;
 
     // Borland single token adornments.
-    case tok::kw___pascal:
-      ParseBorlandTypeAttributes(DS.getAttributes());
-      continue;
+    // case tok::kw___pascal:
+    //   ParseBorlandTypeAttributes(DS.getAttributes());
+    //   continue;
 
     // OpenCL single token adornments.
     case tok::kw___kernel:
@@ -3487,11 +3487,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                          PrevSpec, DiagID, Policy);
       isStorageClass = true;
       break;
-    case tok::kw___private_extern__:
-      isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_private_extern,
-                                         Loc, PrevSpec, DiagID, Policy);
-      isStorageClass = true;
-      break;
+    // case tok::kw___private_extern__:
+    //   isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_private_extern,
+    //                                      Loc, PrevSpec, DiagID, Policy);
+    //   isStorageClass = true;
+    //   break;
     case tok::kw_static:
       if (DS.getThreadStorageClassSpec() == DeclSpec::TSCS___thread)
         Diag(Tok, diag::ext_thread_before) << "static";
@@ -3621,9 +3621,9 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       break;
 
     // Modules
-    case tok::kw___module_private__:
-      isInvalid = DS.setModulePrivateSpec(Loc, PrevSpec, DiagID);
-      break;
+    // case tok::kw___module_private__:
+    //   isInvalid = DS.setModulePrivateSpec(Loc, PrevSpec, DiagID);
+    //   break;
 
     // constexpr, consteval, constinit specifiers
     case tok::kw_constexpr:
@@ -3701,10 +3701,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec,
                                      DiagID, Policy);
       break;
-    case tok::kw___bf16:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
+    // case tok::kw___bf16:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
     case tok::kw_float:
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float, Loc, PrevSpec,
                                      DiagID, Policy);
@@ -3717,29 +3717,29 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float16, Loc, PrevSpec,
                                      DiagID, Policy);
       break;
-    case tok::kw__Accum:
-      if (!getLangOpts().FixedPoint) {
-        SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
-      } else {
-        isInvalid = DS.SetTypeSpecType(DeclSpec::TST_accum, Loc, PrevSpec,
-                                       DiagID, Policy);
-      }
-      break;
-    case tok::kw__Fract:
-      if (!getLangOpts().FixedPoint) {
-        SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
-      } else {
-        isInvalid = DS.SetTypeSpecType(DeclSpec::TST_fract, Loc, PrevSpec,
-                                       DiagID, Policy);
-      }
-      break;
-    case tok::kw__Sat:
-      if (!getLangOpts().FixedPoint) {
-        SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
-      } else {
-        isInvalid = DS.SetTypeSpecSat(Loc, PrevSpec, DiagID);
-      }
-      break;
+    // case tok::kw__Accum:
+    //   if (!getLangOpts().FixedPoint) {
+    //     SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
+    //   } else {
+    //     isInvalid = DS.SetTypeSpecType(DeclSpec::TST_accum, Loc, PrevSpec,
+    //                                    DiagID, Policy);
+    //   }
+    //   break;
+    // case tok::kw__Fract:
+    //   if (!getLangOpts().FixedPoint) {
+    //     SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
+    //   } else {
+    //     isInvalid = DS.SetTypeSpecType(DeclSpec::TST_fract, Loc, PrevSpec,
+    //                                    DiagID, Policy);
+    //   }
+    //   break;
+    // case tok::kw__Sat:
+    //   if (!getLangOpts().FixedPoint) {
+    //     SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
+    //   } else {
+    //     isInvalid = DS.SetTypeSpecSat(Loc, PrevSpec, DiagID);
+    //   }
+    //   break;
     // case tok::kw___float128:
     //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float128, Loc, PrevSpec,
     //                                  DiagID, Policy);
@@ -3778,21 +3778,21 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                        DiagID, Policy);
       }
       break;
-    case tok::kw__Decimal32:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal32, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
-    case tok::kw__Decimal64:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal64, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
-    case tok::kw__Decimal128:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal128, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
-    case tok::kw___vector:
-      isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID, Policy);
-      break;
+    // case tok::kw__Decimal32:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal32, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
+    // case tok::kw__Decimal64:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal64, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
+    // case tok::kw__Decimal128:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_decimal128, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
+    // case tok::kw___vector:
+    //   isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID, Policy);
+    //   break;
     case tok::kw___pixel:
       isInvalid = DS.SetTypeAltiVecPixel(true, Loc, PrevSpec, DiagID, Policy);
       break;
@@ -4804,20 +4804,20 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   case tok::kw_char32_t:
   case tok::kw_int:
   // case tok::kw__ExtInt:
-  case tok::kw___bf16:
+  // case tok::kw___bf16:
   case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
-  case tok::kw__Accum:
-  case tok::kw__Fract:
+  // case tok::kw__Accum:
+  // case tok::kw__Fract:
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_bool:
   case tok::kw__Bool:
-  case tok::kw__Decimal32:
-  case tok::kw__Decimal64:
-  case tok::kw__Decimal128:
-  case tok::kw___vector:
+  // case tok::kw__Decimal32:
+  // case tok::kw__Decimal64:
+  // case tok::kw__Decimal128:
+  // case tok::kw___vector:
 #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
 #include "latino/Basic/OpenCLImageTypes.def"
 
@@ -4886,19 +4886,19 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw_int:
   // case tok::kw__ExtInt:
   case tok::kw_half:
-  case tok::kw___bf16:
+  // case tok::kw___bf16:
   case tok::kw_float:
   case tok::kw_double:
-  case tok::kw__Accum:
-  case tok::kw__Fract:
+  // case tok::kw__Accum:
+  // case tok::kw__Fract:
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_bool:
   case tok::kw__Bool:
-  case tok::kw__Decimal32:
-  case tok::kw__Decimal64:
-  case tok::kw__Decimal128:
-  case tok::kw___vector:
+  // case tok::kw__Decimal32:
+  // case tok::kw__Decimal64:
+  // case tok::kw__Decimal128:
+  // case tok::kw___vector:
 #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
 #include "latino/Basic/OpenCLImageTypes.def"
 
@@ -4914,7 +4914,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw_const:
   // case tok::kw_volatile:
   // case tok::kw_restrict:
-  case tok::kw__Sat:
+  // case tok::kw__Sat:
 
     // Debugger support.
   case tok::kw___unknown_anytype:
@@ -4927,17 +4927,17 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::less:
     return getLangOpts().ObjC;
 
-  case tok::kw___cdecl:
-  case tok::kw___stdcall:
-  case tok::kw___fastcall:
-  case tok::kw___thiscall:
-  case tok::kw___regcall:
-  case tok::kw___vectorcall:
+  // case tok::kw___cdecl:
+  // case tok::kw___stdcall:
+  // case tok::kw___fastcall:
+  // case tok::kw___thiscall:
+  // case tok::kw___regcall:
+  // case tok::kw___vectorcall:
   // case tok::kw___w64:
   // case tok::kw___ptr64:
   // case tok::kw___ptr32:
-  case tok::kw___pascal:
-  case tok::kw___unaligned:
+  // case tok::kw___pascal:
+  // case tok::kw___unaligned:
 
   // case tok::kw__Nonnull:
   // case tok::kw__Nullable:
@@ -5020,7 +5020,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
     // storage-class-specifier
   case tok::kw_typedef:
   case tok::kw_extern:
-  case tok::kw___private_extern__:
+  // case tok::kw___private_extern__:
   case tok::kw_static:
   case tok::kw_auto:
   // case tok::kw___auto_type:
@@ -5030,7 +5030,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw__Thread_local:
 
     // Modules
-  case tok::kw___module_private__:
+  // case tok::kw___module_private__:
 
     // Debugger support
   case tok::kw___unknown_anytype:
@@ -5054,19 +5054,19 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_int:
   // case tok::kw__ExtInt:
   case tok::kw_half:
-  case tok::kw___bf16:
+  // case tok::kw___bf16:
   case tok::kw_float:
   case tok::kw_double:
-  case tok::kw__Accum:
-  case tok::kw__Fract:
+  // case tok::kw__Accum:
+  // case tok::kw__Fract:
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_bool:
   case tok::kw__Bool:
-  case tok::kw__Decimal32:
-  case tok::kw__Decimal64:
-  case tok::kw__Decimal128:
-  case tok::kw___vector:
+  // case tok::kw__Decimal32:
+  // case tok::kw__Decimal64:
+  // case tok::kw__Decimal128:
+  // case tok::kw___vector:
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
@@ -5080,7 +5080,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_const:
   // case tok::kw_volatile:
   // case tok::kw_restrict:
-  case tok::kw__Sat:
+  // case tok::kw__Sat:
 
     // function-specifier
   case tok::kw_inline:
@@ -5150,21 +5150,21 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
         GetLookAheadToken(2).isOneOf(tok::kw_auto, tok::kw_decltype);
   }
 
-  case tok::kw___declspec:
-  case tok::kw___cdecl:
-  case tok::kw___stdcall:
-  case tok::kw___fastcall:
-  case tok::kw___thiscall:
-  case tok::kw___regcall:
-  case tok::kw___vectorcall:
+  // case tok::kw___declspec:
+  // case tok::kw___cdecl:
+  // case tok::kw___stdcall:
+  // case tok::kw___fastcall:
+  // case tok::kw___thiscall:
+  // case tok::kw___regcall:
+  // case tok::kw___vectorcall:
   // case tok::kw___w64:
   // case tok::kw___sptr:
   // case tok::kw___uptr:
   // case tok::kw___ptr64:
   // case tok::kw___ptr32:
-  case tok::kw___forceinline:
-  case tok::kw___pascal:
-  case tok::kw___unaligned:
+  // case tok::kw___forceinline:
+  // case tok::kw___pascal:
+  // case tok::kw___unaligned:
 
   // case tok::kw__Nonnull:
   // case tok::kw__Nullable:
@@ -5405,10 +5405,10 @@ void Parser::ParseTypeQualifierListOpt(
       ParseOpenCLQualifiers(DS.getAttributes());
       break;
 
-    case tok::kw___unaligned:
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_unaligned, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
+    // case tok::kw___unaligned:
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_unaligned, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
     // case tok::kw___uptr:
     //   // GNU libc headers in C mode use '__uptr' as an identifier which conflicts
     //   // with the MS modifier keyword.
@@ -5422,23 +5422,23 @@ void Parser::ParseTypeQualifierListOpt(
     // case tok::kw___w64:
     // case tok::kw___ptr64:
     // case tok::kw___ptr32:
-    case tok::kw___cdecl:
-    case tok::kw___stdcall:
-    case tok::kw___fastcall:
-    case tok::kw___thiscall:
-    case tok::kw___regcall:
-    case tok::kw___vectorcall:
-      if (AttrReqs & AR_DeclspecAttributesParsed) {
-        ParseMicrosoftTypeAttributes(DS.getAttributes());
-        continue;
-      }
-      goto DoneWithTypeQuals;
-    case tok::kw___pascal:
-      if (AttrReqs & AR_VendorAttributesParsed) {
-        ParseBorlandTypeAttributes(DS.getAttributes());
-        continue;
-      }
-      goto DoneWithTypeQuals;
+    // case tok::kw___cdecl:
+    // case tok::kw___stdcall:
+    // case tok::kw___fastcall:
+    // case tok::kw___thiscall:
+    // case tok::kw___regcall:
+    // case tok::kw___vectorcall:
+    //   if (AttrReqs & AR_DeclspecAttributesParsed) {
+    //     ParseMicrosoftTypeAttributes(DS.getAttributes());
+    //     continue;
+    //   }
+    //   goto DoneWithTypeQuals;
+    // case tok::kw___pascal:
+    //   if (AttrReqs & AR_VendorAttributesParsed) {
+    //     ParseBorlandTypeAttributes(DS.getAttributes());
+    //     continue;
+    //   }
+    //   goto DoneWithTypeQuals;
 
     // Nullability type specifiers.
     // case tok::kw__Nonnull:
@@ -6206,11 +6206,11 @@ void Parser::ParseParenDeclarator(Declarator &D) {
   }
 
   // Eat any Microsoft extensions.
-  ParseMicrosoftTypeAttributes(attrs);
+  // ParseMicrosoftTypeAttributes(attrs);
 
   // Eat any Borland extensions.
-  if  (Tok.is(tok::kw___pascal))
-    ParseBorlandTypeAttributes(attrs);
+  // if  (Tok.is(tok::kw___pascal))
+  //   ParseBorlandTypeAttributes(attrs);
 
   // If we haven't past the identifier yet (or where the identifier would be
   // stored, if this is an abstract declarator), then this is probably just

@@ -1800,7 +1800,7 @@ private:
   ExprResult ParsePostfixExpressionSuffix(ExprResult LHS);
   ExprResult ParseUnaryExprOrTypeTraitExpression();
   ExprResult ParseBuiltinPrimaryExpression();
-  ExprResult ParseUniqueStableNameExpression();
+  // ExprResult ParseUniqueStableNameExpression();
 
   ExprResult ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
                                                      bool &isCastExpr,
@@ -1901,7 +1901,7 @@ private:
   ExprResult ParseCXXCasts();
 
   /// Parse a __builtin_bit_cast(T, E), used to implement C++2a std::bit_cast.
-  ExprResult ParseBuiltinBitCast();
+  // ExprResult ParseBuiltinBitCast();
 
   //===--------------------------------------------------------------------===//
   // C++ 5.2p1: C++ Type Identification
@@ -2732,11 +2732,11 @@ private:
   bool ParseMicrosoftDeclSpecArgs(IdentifierInfo *AttrName,
                                   SourceLocation AttrNameLoc,
                                   ParsedAttributes &Attrs);
-  void ParseMicrosoftTypeAttributes(ParsedAttributes &attrs);
+  // void ParseMicrosoftTypeAttributes(ParsedAttributes &attrs);
   void DiagnoseAndSkipExtendedMicrosoftTypeAttributes();
   SourceLocation SkipExtendedMicrosoftTypeAttributes();
   // void ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs);
-  void ParseBorlandTypeAttributes(ParsedAttributes &attrs);
+  // void ParseBorlandTypeAttributes(ParsedAttributes &attrs);
   void ParseOpenCLKernelAttributes(ParsedAttributes &attrs);
   void ParseOpenCLQualifiers(ParsedAttributes &Attrs);
   /// Parses opencl_unroll_hint attribute if language is OpenCL v2.0
@@ -2762,7 +2762,7 @@ private:
                                   ParsedAttr::Syntax Syntax);
 
   Optional<AvailabilitySpec> ParseAvailabilitySpec();
-  ExprResult ParseAvailabilityCheckExpr(SourceLocation StartLoc);
+  // ExprResult ParseAvailabilityCheckExpr(SourceLocation StartLoc);
 
   void ParseExternalSourceSymbolAttribute(IdentifierInfo &ExternalSourceSymbol,
                                           SourceLocation Loc,

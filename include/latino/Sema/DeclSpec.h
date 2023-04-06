@@ -733,8 +733,8 @@ public:
 
   bool setFunctionSpecInline(SourceLocation Loc, const char *&PrevSpec,
                              unsigned &DiagID);
-  bool setFunctionSpecForceInline(SourceLocation Loc, const char *&PrevSpec,
-                                  unsigned &DiagID);
+  // bool setFunctionSpecForceInline(SourceLocation Loc, const char *&PrevSpec,
+  //                                 unsigned &DiagID);
   bool setFunctionSpecVirtual(SourceLocation Loc, const char *&PrevSpec,
                               unsigned &DiagID);
   bool setFunctionSpecExplicit(SourceLocation Loc, const char *&PrevSpec,

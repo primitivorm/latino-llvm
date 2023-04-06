@@ -801,7 +801,7 @@ Parser::isCXX11AttributeSpecifier(bool Disambiguate,
 }
 
 bool Parser::TrySkipAttributes() {
-  while (Tok.isOneOf(tok::l_square, tok::kw___attribute, tok::kw___declspec/*,
+  while (Tok.isOneOf(tok::l_square, tok::kw___attribute/*, tok::kw___declspec,
                      tok::kw_alignas*/)) {
     if (Tok.is(tok::l_square)) {
       ConsumeBracket();
@@ -1047,9 +1047,9 @@ Parser::TPResult Parser::TryParseDeclarator(bool mayBeAbstract,
       // '(' declarator ')'
       // '(' attributes declarator ')'
       // '(' abstract-declarator ')'
-      if (Tok.isOneOf(tok::kw___attribute, tok::kw___declspec, tok::kw___cdecl,
+      if (Tok.is(tok::kw___attribute/*, tok::kw___declspec, tok::kw___cdecl,
                       tok::kw___stdcall, tok::kw___fastcall, tok::kw___thiscall,
-                      tok::kw___regcall, tok::kw___vectorcall))
+                      tok::kw___regcall, tok::kw___vectorcall*/))
         return TPResult::True; // attributes indicate declaration
       TPResult TPR = TryParseDeclarator(mayBeAbstract, mayHaveIdentifier);
       if (TPR != TPResult::Ambiguous)
@@ -1379,7 +1379,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_explicit:
 
     // Modules
-  case tok::kw___module_private__:
+  // case tok::kw___module_private__:
 
     // Debugger support
   case tok::kw___unknown_anytype:
@@ -1430,20 +1430,20 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     return TPResult::True;
 
     // Microsoft
-  case tok::kw___declspec:
-  case tok::kw___cdecl:
-  case tok::kw___stdcall:
-  case tok::kw___fastcall:
-  case tok::kw___thiscall:
-  case tok::kw___regcall:
-  case tok::kw___vectorcall:
+  // case tok::kw___declspec:
+  // case tok::kw___cdecl:
+  // case tok::kw___stdcall:
+  // case tok::kw___fastcall:
+  // case tok::kw___thiscall:
+  // case tok::kw___regcall:
+  // case tok::kw___vectorcall:
   // case tok::kw___w64:
   // case tok::kw___sptr:
   // case tok::kw___uptr:
   // case tok::kw___ptr64:
   // case tok::kw___ptr32:
-  case tok::kw___forceinline:
-  case tok::kw___unaligned:
+  // case tok::kw___forceinline:
+  // case tok::kw___unaligned:
   // case tok::kw__Nonnull:
   // case tok::kw__Nullable:
   // case tok::kw__Null_unspecified:
@@ -1451,12 +1451,12 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     return TPResult::True;
 
     // Borland
-  case tok::kw___pascal:
-    return TPResult::True;
+  // case tok::kw___pascal:
+  //   return TPResult::True;
 
     // AltiVec
-  case tok::kw___vector:
-    return TPResult::True;
+  // case tok::kw___vector:
+  //   return TPResult::True;
 
   case tok::annot_template_id: {
     TemplateIdAnnotation *TemplateId = takeTemplateIdAnnotation(Tok);
@@ -1641,7 +1641,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
-  case tok::kw___bf16:
+  // case tok::kw___bf16:
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_void:
@@ -1755,7 +1755,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
-  case tok::kw___bf16:
+  // case tok::kw___bf16:
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_void:
@@ -2021,7 +2021,7 @@ Parser::TPResult Parser::TryParseFunctionDeclarator() {
     return TPResult::Error;
 
   // cv-qualifier-seq
-  while (Tok.isOneOf(tok::kw_const, /*tok::kw_volatile,*/ tok::kw___unaligned/*,
+  while (Tok.is(tok::kw_const/*, tok::kw_volatile, tok::kw___unaligned,
                      tok::kw_restrict*/))
     ConsumeToken();
 

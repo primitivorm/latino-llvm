@@ -5226,7 +5226,7 @@ public:
                                 DeclContext *ParentContext);
 
   // __null
-  ExprResult ActOnGNUNullExpr(SourceLocation TokenLoc);
+  // ExprResult ActOnGNUNullExpr(SourceLocation TokenLoc);
 
   bool CheckCaseExpression(Expr *E);
 
@@ -5288,9 +5288,9 @@ public:
   //===---------------------------- Clang Extensions ----------------------===//
 
   /// __builtin_convertvector(...)
-  ExprResult ActOnConvertVectorExpr(Expr *E, ParsedType ParsedDestTy,
-                                    SourceLocation BuiltinLoc,
-                                    SourceLocation RParenLoc);
+  // ExprResult ActOnConvertVectorExpr(Expr *E, ParsedType ParsedDestTy,
+  //                                   SourceLocation BuiltinLoc,
+  //                                   SourceLocation RParenLoc);
 
   //===---------------------------- OpenCL Features -----------------------===//
 
@@ -5801,9 +5801,9 @@ public:
                                SourceRange AngleBrackets,
                                SourceRange Parens);
 
-  ExprResult ActOnBuiltinBitCastExpr(SourceLocation KWLoc, Declarator &Dcl,
-                                     ExprResult Operand,
-                                     SourceLocation RParenLoc);
+  // ExprResult ActOnBuiltinBitCastExpr(SourceLocation KWLoc, Declarator &Dcl,
+  //                                    ExprResult Operand,
+  //                                    SourceLocation RParenLoc);
 
   ExprResult BuildBuiltinBitCastExpr(SourceLocation KWLoc, TypeSourceInfo *TSI,
                                      Expr *Operand, SourceLocation RParenLoc);

@@ -2845,8 +2845,8 @@ ExprResult Parser::ParseObjCAtExpression(SourceLocation AtLoc) {
       return ParsePostfixExpressionSuffix(ParseObjCProtocolExpression(AtLoc));
     case tok::objc_selector:
       return ParsePostfixExpressionSuffix(ParseObjCSelectorExpression(AtLoc));
-    case tok::objc_available:
-      return ParseAvailabilityCheckExpr(AtLoc);
+    // case tok::objc_available:
+    //   return ParseAvailabilityCheckExpr(AtLoc);
       default: {
         const char *str = nullptr;
         // Only provide the @try/@finally/@autoreleasepool fixit when we're sure

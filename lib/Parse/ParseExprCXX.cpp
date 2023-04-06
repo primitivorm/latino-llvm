@@ -2200,9 +2200,9 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   // case tok::kw___int128:
   //   DS.SetTypeSpecType(DeclSpec::TST_int128, Loc, PrevSpec, DiagID, Policy);
   //   break;
-  case tok::kw___bf16:
-    DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec, DiagID, Policy);
-    break;
+  // case tok::kw___bf16:
+  //   DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec, DiagID, Policy);
+  //   break;
   case tok::kw_half:
     DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec, DiagID, Policy);
     break;
@@ -3962,35 +3962,35 @@ Parser::ParseCXXAmbiguousParenExpression(ParenParseOption &ExprType,
 }
 
 /// Parse a __builtin_bit_cast(T, E).
-ExprResult Parser::ParseBuiltinBitCast() {
-  SourceLocation KWLoc = ConsumeToken();
+// ExprResult Parser::ParseBuiltinBitCast() {
+//   SourceLocation KWLoc = ConsumeToken();
 
-  BalancedDelimiterTracker T(*this, tok::l_paren);
-  if (T.expectAndConsume(diag::err_expected_lparen_after, "__builtin_bit_cast"))
-    return ExprError();
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
+//   if (T.expectAndConsume(diag::err_expected_lparen_after, "__builtin_bit_cast"))
+//     return ExprError();
 
-  // Parse the common declaration-specifiers piece.
-  DeclSpec DS(AttrFactory);
-  ParseSpecifierQualifierList(DS);
+//   // Parse the common declaration-specifiers piece.
+//   DeclSpec DS(AttrFactory);
+//   ParseSpecifierQualifierList(DS);
 
-  // Parse the abstract-declarator, if present.
-  Declarator DeclaratorInfo(DS, DeclaratorContext::TypeNameContext);
-  ParseDeclarator(DeclaratorInfo);
+//   // Parse the abstract-declarator, if present.
+//   Declarator DeclaratorInfo(DS, DeclaratorContext::TypeNameContext);
+//   ParseDeclarator(DeclaratorInfo);
 
-  if (ExpectAndConsume(tok::comma)) {
-    Diag(Tok.getLocation(), diag::err_expected) << tok::comma;
-    SkipUntil(tok::r_paren, StopAtSemi);
-    return ExprError();
-  }
+//   if (ExpectAndConsume(tok::comma)) {
+//     Diag(Tok.getLocation(), diag::err_expected) << tok::comma;
+//     SkipUntil(tok::r_paren, StopAtSemi);
+//     return ExprError();
+//   }
 
-  ExprResult Operand = ParseExpression();
+//   ExprResult Operand = ParseExpression();
 
-  if (T.consumeClose())
-    return ExprError();
+//   if (T.consumeClose())
+//     return ExprError();
 
-  if (Operand.isInvalid() || DeclaratorInfo.isInvalidType())
-    return ExprError();
+//   if (Operand.isInvalid() || DeclaratorInfo.isInvalidType())
+//     return ExprError();
 
-  return Actions.ActOnBuiltinBitCastExpr(KWLoc, DeclaratorInfo, Operand,
-                                         T.getCloseLocation());
-}
+//   return Actions.ActOnBuiltinBitCastExpr(KWLoc, DeclaratorInfo, Operand,
+//                                          T.getCloseLocation());
+// }

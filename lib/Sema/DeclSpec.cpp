@@ -983,17 +983,17 @@ bool DeclSpec::setFunctionSpecInline(SourceLocation Loc, const char *&PrevSpec,
   return false;
 }
 
-bool DeclSpec::setFunctionSpecForceInline(SourceLocation Loc, const char *&PrevSpec,
-                                          unsigned &DiagID) {
-  if (FS_forceinline_specified) {
-    DiagID = diag::warn_duplicate_declspec;
-    PrevSpec = "__forceinline";
-    return true;
-  }
-  FS_forceinline_specified = true;
-  FS_forceinlineLoc = Loc;
-  return false;
-}
+// bool DeclSpec::setFunctionSpecForceInline(SourceLocation Loc, const char *&PrevSpec,
+//                                           unsigned &DiagID) {
+//   if (FS_forceinline_specified) {
+//     DiagID = diag::warn_duplicate_declspec;
+//     PrevSpec = "__forceinline";
+//     return true;
+//   }
+//   FS_forceinline_specified = true;
+//   FS_forceinlineLoc = Loc;
+//   return false;
+// }
 
 bool DeclSpec::setFunctionSpecVirtual(SourceLocation Loc,
                                       const char *&PrevSpec,

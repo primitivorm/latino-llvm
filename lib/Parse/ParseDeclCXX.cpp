@@ -1268,7 +1268,7 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   case tok::l_paren:            // struct foo {...} (         x);
   case tok::comma:              // __builtin_offsetof(struct foo{...} ,
   case tok::kw_operador:        // struct foo       operator  ++() {...}
-  case tok::kw___declspec:      // struct foo {...} __declspec(...)
+  // case tok::kw___declspec:      // struct foo {...} __declspec(...)
   case tok::l_square:           // void f(struct f  [         3])
   case tok::ellipsis:           // void f(struct f  ...       [Ns])
   // FIXME: we should emit semantic diagnostic when declaration
@@ -1286,20 +1286,20 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
     return CouldBeBitfield ||   // enum E { ... }   :         2;
            ColonIsSacred;       // _Generic(..., enum E :     2);
   // Microsoft compatibility
-  case tok::kw___cdecl:         // struct foo {...} __cdecl      x;
-  case tok::kw___fastcall:      // struct foo {...} __fastcall   x;
-  case tok::kw___stdcall:       // struct foo {...} __stdcall    x;
-  case tok::kw___thiscall:      // struct foo {...} __thiscall   x;
-  case tok::kw___vectorcall:    // struct foo {...} __vectorcall x;
+  // case tok::kw___cdecl:         // struct foo {...} __cdecl      x;
+  // case tok::kw___fastcall:      // struct foo {...} __fastcall   x;
+  // case tok::kw___stdcall:       // struct foo {...} __stdcall    x;
+  // case tok::kw___thiscall:      // struct foo {...} __thiscall   x;
+  // case tok::kw___vectorcall:    // struct foo {...} __vectorcall x;
     // We will diagnose these calling-convention specifiers on non-function
     // declarations later, so claim they are valid after a type specifier.
-    return getLangOpts().MicrosoftExt;
+    // return getLangOpts().MicrosoftExt;
   // Type qualifiers
   case tok::kw_const:           // struct foo {...} const     x;
   // case tok::kw_volatile:        // struct foo {...} volatile  x;
   // case tok::kw_restrict:        // struct foo {...} restrict  x;
   case tok::kw__Atomic:         // struct foo {...} _Atomic   x;
-  case tok::kw___unaligned:     // struct foo {...} __unaligned *x;
+  // case tok::kw___unaligned:     // struct foo {...} __unaligned *x;
   // Function specifiers
   // Note, no 'explicit'. An explicit function must be either a conversion
   // operator or a constructor. Either way, it can't have a return type.
