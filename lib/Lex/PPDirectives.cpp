@@ -27,7 +27,7 @@
 #include "latino/Lex/ModuleLoader.h"
 #include "latino/Lex/ModuleMap.h"
 #include "latino/Lex/PPCallbacks.h"
-#include "latino/Lex/Pragma.h"
+// #include "latino/Lex/Pragma.h"
 #include "latino/Lex/Preprocessor.h"
 #include "latino/Lex/PreprocessorOptions.h"
 #include "latino/Lex/Token.h"

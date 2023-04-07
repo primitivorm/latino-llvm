@@ -72,8 +72,8 @@ class FileEntry;
 class FileManager;
 class HeaderSearch;
 class MacroArgs;
-class PragmaHandler;
-class PragmaNamespace;
+// class PragmaHandler;
+// class PragmaNamespace;
 class PreprocessingRecord;
 class PreprocessorLexer;
 class PreprocessorOptions;
@@ -246,11 +246,11 @@ class Preprocessor {
 
   /// Tracks all of the pragmas that the client registered
   /// with this preprocessor.
-  std::unique_ptr<PragmaNamespace> PragmaHandlers;
+  // std::unique_ptr<PragmaNamespace> PragmaHandlers;
 
   /// Pragma handlers of the original source is stored here during the
   /// parsing of a model file.
-  std::unique_ptr<PragmaNamespace> PragmaHandlersBackup;
+  // std::unique_ptr<PragmaNamespace> PragmaHandlersBackup;
 
   /// Tracks all of the comment handlers that the client registered
   /// with this preprocessor.
@@ -1196,23 +1196,23 @@ public:
   ///
   /// If \p Namespace is non-null, then it is a token required to exist on the
   /// pragma line before the pragma string starts, e.g. "STDC" or "GCC".
-  void AddPragmaHandler(StringRef Namespace, PragmaHandler *Handler);
-  void AddPragmaHandler(PragmaHandler *Handler) {
-    AddPragmaHandler(StringRef(), Handler);
-  }
+  // void AddPragmaHandler(StringRef Namespace, PragmaHandler *Handler);
+  // void AddPragmaHandler(PragmaHandler *Handler) {
+  //   AddPragmaHandler(StringRef(), Handler);
+  // }
 
   /// Remove the specific pragma handler from this preprocessor.
   ///
   /// If \p Namespace is non-null, then it should be the namespace that
   /// \p Handler was added to. It is an error to remove a handler that
   /// has not been registered.
-  void RemovePragmaHandler(StringRef Namespace, PragmaHandler *Handler);
-  void RemovePragmaHandler(PragmaHandler *Handler) {
-    RemovePragmaHandler(StringRef(), Handler);
-  }
+  // void RemovePragmaHandler(StringRef Namespace, PragmaHandler *Handler);
+  // void RemovePragmaHandler(PragmaHandler *Handler) {
+  //   RemovePragmaHandler(StringRef(), Handler);
+  // }
 
   /// Install empty handlers for all pragmas (making them ignored).
-  void IgnorePragmas();
+  // void IgnorePragmas();
 
   /// Add the specified comment handler to the preprocessor.
   void addCommentHandler(CommentHandler *Handler);
@@ -2120,7 +2120,7 @@ private:
 
   /// Install the standard preprocessor pragmas:
   /// \#pragma GCC poison/system_header/dependency and \#pragma once.
-  void RegisterBuiltinPragmas();
+  // void RegisterBuiltinPragmas();
 
   /// Register builtin macros such as __LINE__ with the identifier table.
   void RegisterBuiltinMacros();
@@ -2157,11 +2157,11 @@ private:
   /// Read a \c _Pragma directive, slice it up, process it, then
   /// return the first token after the directive.
   /// This assumes that the \c _Pragma token has just been read into \p Tok.
-  void Handle_Pragma(Token &Tok);
+  // void Handle_Pragma(Token &Tok);
 
   /// Like Handle_Pragma except the pragma text is not enclosed within
   /// a string literal.
-  void HandleMicrosoft__pragma(Token &Tok);
+  // void HandleMicrosoft__pragma(Token &Tok);
 
   /// Add a lexer to the top of the include stack and
   /// start lexing tokens from it instead of the current buffer.
@@ -2386,7 +2386,7 @@ public:
 };
 
 /// Registry of pragma handlers added by plugins
-using PragmaHandlerRegistry = llvm::Registry<PragmaHandler>;
+// using PragmaHandlerRegistry = llvm::Registry<PragmaHandler>;
 
 } // namespace latino
 

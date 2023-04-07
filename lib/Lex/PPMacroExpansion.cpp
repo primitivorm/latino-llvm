@@ -1469,10 +1469,10 @@ void Preprocessor::ExpandBuiltinMacro(Token &Tok) {
 
   // If this is an _Pragma or Microsoft __pragma directive, expand it,
   // invoke the pragma handler, then lex the token after it.
-  if (II == Ident_Pragma)
-    return Handle_Pragma(Tok);
-  else if (II == Ident__pragma) // in non-MS mode this is null
-    return HandleMicrosoft__pragma(Tok);
+  // if (II == Ident_Pragma)
+  //   return Handle_Pragma(Tok);
+  // else if (II == Ident__pragma) // in non-MS mode this is null
+  //   return HandleMicrosoft__pragma(Tok);
 
   ++NumBuiltinMacroExpanded;
 

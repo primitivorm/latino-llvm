@@ -62,7 +62,7 @@ Parser::Parser(Preprocessor &pp, Sema &actions, bool skipFunctionBodies)
 
   // Add #pragma handlers. These are removed and destroyed in the
   // destructor.
-  initializePragmaHandlers();
+  // initializePragmaHandlers();
 
   CommentSemaHandler.reset(new ActionCommentHandler(actions));
   PP.addCommentHandler(CommentSemaHandler.get());
@@ -276,13 +276,13 @@ bool Parser::SkipUntil(ArrayRef<tok::TokenKind> Toks, SkipUntilFlags Flags) {
       // Ran out of tokens.
       return false;
 
-    case tok::annot_pragma_openmp:
-    case tok::annot_pragma_openmp_end:
-      // Stop before an OpenMP pragma boundary.
-      if (OpenMPDirectiveParsing)
-        return false;
-      ConsumeAnnotationToken();
-      break;
+    // case tok::annot_pragma_openmp:
+    // case tok::annot_pragma_openmp_end:
+    //   // Stop before an OpenMP pragma boundary.
+    //   if (OpenMPDirectiveParsing)
+    //     return false;
+    //   ConsumeAnnotationToken();
+    //   break;
     case tok::annot_module_begin:
     case tok::annot_module_end:
     case tok::annot_module_include:
@@ -427,7 +427,7 @@ Parser::~Parser() {
   for (unsigned i = 0, e = NumCachedScopes; i != e; ++i)
     delete ScopeCache[i];
 
-  resetPragmaHandlers();
+  // resetPragmaHandlers();
 
   PP.removeCommentHandler(CommentSemaHandler.get());
 
@@ -576,9 +576,9 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
 
   Result = nullptr;
   switch (Tok.getKind()) {
-  case tok::annot_pragma_unused:
-    HandlePragmaUnused();
-    return false;
+  // case tok::annot_pragma_unused:
+  //   HandlePragmaUnused();
+  //   return false;
 
   case tok::kw_exportar:
     switch (NextToken().getKind()) {
@@ -723,61 +723,61 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
 
   Decl *SingleDecl = nullptr;
   switch (Tok.getKind()) {
-  case tok::annot_pragma_vis:
-    HandlePragmaVisibility();
-    return nullptr;
-  case tok::annot_pragma_pack:
-    HandlePragmaPack();
-    return nullptr;
-  case tok::annot_pragma_msstruct:
-    HandlePragmaMSStruct();
-    return nullptr;
-  case tok::annot_pragma_align:
-    HandlePragmaAlign();
-    return nullptr;
-  case tok::annot_pragma_weak:
-    HandlePragmaWeak();
-    return nullptr;
-  case tok::annot_pragma_weakalias:
-    HandlePragmaWeakAlias();
-    return nullptr;
-  case tok::annot_pragma_redefine_extname:
-    HandlePragmaRedefineExtname();
-    return nullptr;
-  case tok::annot_pragma_fp_contract:
-    HandlePragmaFPContract();
-    return nullptr;
-  case tok::annot_pragma_fenv_access:
-    HandlePragmaFEnvAccess();
-    return nullptr;
-  case tok::annot_pragma_float_control:
-    HandlePragmaFloatControl();
-    return nullptr;
-  case tok::annot_pragma_fp:
-    HandlePragmaFP();
-    break;
-  case tok::annot_pragma_opencl_extension:
-    HandlePragmaOpenCLExtension();
-    return nullptr;
-  case tok::annot_pragma_openmp: {
-    AccessSpecifier AS = AS_none;
-    return ParseOpenMPDeclarativeDirectiveWithExtDecl(AS, attrs);
-  }
-  case tok::annot_pragma_ms_pointers_to_members:
-    HandlePragmaMSPointersToMembers();
-    return nullptr;
-  case tok::annot_pragma_ms_vtordisp:
-    HandlePragmaMSVtorDisp();
-    return nullptr;
-  case tok::annot_pragma_ms_pragma:
-    HandlePragmaMSPragma();
-    return nullptr;
-  case tok::annot_pragma_dump:
-    HandlePragmaDump();
-    return nullptr;
-  case tok::annot_pragma_attribute:
-    HandlePragmaAttribute();
-    return nullptr;
+  // case tok::annot_pragma_vis:
+  //   HandlePragmaVisibility();
+  //   return nullptr;
+  // case tok::annot_pragma_pack:
+  //   HandlePragmaPack();
+  //   return nullptr;
+  // case tok::annot_pragma_msstruct:
+  //   HandlePragmaMSStruct();
+  //   return nullptr;
+  // case tok::annot_pragma_align:
+  //   HandlePragmaAlign();
+  //   return nullptr;
+  // case tok::annot_pragma_weak:
+  //   HandlePragmaWeak();
+  //   return nullptr;
+  // case tok::annot_pragma_weakalias:
+  //   HandlePragmaWeakAlias();
+  //   return nullptr;
+  // case tok::annot_pragma_redefine_extname:
+  //   HandlePragmaRedefineExtname();
+  //   return nullptr;
+  // case tok::annot_pragma_fp_contract:
+  //   HandlePragmaFPContract();
+  //   return nullptr;
+  // case tok::annot_pragma_fenv_access:
+  //   HandlePragmaFEnvAccess();
+  //   return nullptr;
+  // case tok::annot_pragma_float_control:
+  //   HandlePragmaFloatControl();
+  //   return nullptr;
+  // case tok::annot_pragma_fp:
+  //   HandlePragmaFP();
+  //   break;
+  // case tok::annot_pragma_opencl_extension:
+  //   HandlePragmaOpenCLExtension();
+  //   return nullptr;
+  // case tok::annot_pragma_openmp: {
+  //   AccessSpecifier AS = AS_none;
+  //   return ParseOpenMPDeclarativeDirectiveWithExtDecl(AS, attrs);
+  // }
+  // case tok::annot_pragma_ms_pointers_to_members:
+  //   HandlePragmaMSPointersToMembers();
+  //   return nullptr;
+  // case tok::annot_pragma_ms_vtordisp:
+  //   HandlePragmaMSVtorDisp();
+  //   return nullptr;
+  // case tok::annot_pragma_ms_pragma:
+  //   HandlePragmaMSPragma();
+  //   return nullptr;
+  // case tok::annot_pragma_dump:
+  //   HandlePragmaDump();
+  //   return nullptr;
+  // case tok::annot_pragma_attribute:
+  //   HandlePragmaAttribute();
+  //   return nullptr;
   case tok::semi:
     // Either a C++11 empty-declaration or attribute-declaration.
     SingleDecl =

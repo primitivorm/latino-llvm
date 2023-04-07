@@ -31,7 +31,7 @@
 #include <stack>
 
 namespace latino {
-  class PragmaHandler;
+  // class PragmaHandler;
   class Scope;
   class BalancedDelimiterTracker;
   class CorrectionCandidateCallback;
@@ -168,46 +168,46 @@ class Parser : public CodeCompletionHandler {
   // used as type traits.
   llvm::SmallDenseMap<IdentifierInfo *, tok::TokenKind> RevertibleTypeTraits;
 
-  std::unique_ptr<PragmaHandler> AlignHandler;
-  std::unique_ptr<PragmaHandler> GCCVisibilityHandler;
-  std::unique_ptr<PragmaHandler> OptionsHandler;
-  std::unique_ptr<PragmaHandler> PackHandler;
-  std::unique_ptr<PragmaHandler> MSStructHandler;
-  std::unique_ptr<PragmaHandler> UnusedHandler;
-  std::unique_ptr<PragmaHandler> WeakHandler;
-  std::unique_ptr<PragmaHandler> RedefineExtnameHandler;
-  std::unique_ptr<PragmaHandler> FPContractHandler;
-  std::unique_ptr<PragmaHandler> OpenCLExtensionHandler;
-  std::unique_ptr<PragmaHandler> OpenMPHandler;
-  std::unique_ptr<PragmaHandler> PCSectionHandler;
-  std::unique_ptr<PragmaHandler> MSCommentHandler;
-  std::unique_ptr<PragmaHandler> MSDetectMismatchHandler;
-  std::unique_ptr<PragmaHandler> FloatControlHandler;
-  std::unique_ptr<PragmaHandler> MSPointersToMembers;
-  std::unique_ptr<PragmaHandler> MSVtorDisp;
-  std::unique_ptr<PragmaHandler> MSInitSeg;
-  std::unique_ptr<PragmaHandler> MSDataSeg;
-  std::unique_ptr<PragmaHandler> MSBSSSeg;
-  std::unique_ptr<PragmaHandler> MSConstSeg;
-  std::unique_ptr<PragmaHandler> MSCodeSeg;
-  std::unique_ptr<PragmaHandler> MSSection;
-  std::unique_ptr<PragmaHandler> MSRuntimeChecks;
-  std::unique_ptr<PragmaHandler> MSIntrinsic;
-  std::unique_ptr<PragmaHandler> MSOptimize;
-  std::unique_ptr<PragmaHandler> CUDAForceHostDeviceHandler;
-  std::unique_ptr<PragmaHandler> OptimizeHandler;
-  std::unique_ptr<PragmaHandler> LoopHintHandler;
-  std::unique_ptr<PragmaHandler> UnrollHintHandler;
-  std::unique_ptr<PragmaHandler> NoUnrollHintHandler;
-  std::unique_ptr<PragmaHandler> UnrollAndJamHintHandler;
-  std::unique_ptr<PragmaHandler> NoUnrollAndJamHintHandler;
-  std::unique_ptr<PragmaHandler> FPHandler;
-  std::unique_ptr<PragmaHandler> STDCFENVHandler;
-  std::unique_ptr<PragmaHandler> STDCCXLIMITHandler;
-  std::unique_ptr<PragmaHandler> STDCUnknownHandler;
-  std::unique_ptr<PragmaHandler> AttributePragmaHandler;
-  std::unique_ptr<PragmaHandler> MaxTokensHerePragmaHandler;
-  std::unique_ptr<PragmaHandler> MaxTokensTotalPragmaHandler;
+  // std::unique_ptr<PragmaHandler> AlignHandler;
+  // std::unique_ptr<PragmaHandler> GCCVisibilityHandler;
+  // std::unique_ptr<PragmaHandler> OptionsHandler;
+  // std::unique_ptr<PragmaHandler> PackHandler;
+  // std::unique_ptr<PragmaHandler> MSStructHandler;
+  // std::unique_ptr<PragmaHandler> UnusedHandler;
+  // std::unique_ptr<PragmaHandler> WeakHandler;
+  // std::unique_ptr<PragmaHandler> RedefineExtnameHandler;
+  // std::unique_ptr<PragmaHandler> FPContractHandler;
+  // std::unique_ptr<PragmaHandler> OpenCLExtensionHandler;
+  // std::unique_ptr<PragmaHandler> OpenMPHandler;
+  // std::unique_ptr<PragmaHandler> PCSectionHandler;
+  // std::unique_ptr<PragmaHandler> MSCommentHandler;
+  // std::unique_ptr<PragmaHandler> MSDetectMismatchHandler;
+  // std::unique_ptr<PragmaHandler> FloatControlHandler;
+  // std::unique_ptr<PragmaHandler> MSPointersToMembers;
+  // std::unique_ptr<PragmaHandler> MSVtorDisp;
+  // std::unique_ptr<PragmaHandler> MSInitSeg;
+  // std::unique_ptr<PragmaHandler> MSDataSeg;
+  // std::unique_ptr<PragmaHandler> MSBSSSeg;
+  // std::unique_ptr<PragmaHandler> MSConstSeg;
+  // std::unique_ptr<PragmaHandler> MSCodeSeg;
+  // std::unique_ptr<PragmaHandler> MSSection;
+  // std::unique_ptr<PragmaHandler> MSRuntimeChecks;
+  // std::unique_ptr<PragmaHandler> MSIntrinsic;
+  // std::unique_ptr<PragmaHandler> MSOptimize;
+  // std::unique_ptr<PragmaHandler> CUDAForceHostDeviceHandler;
+  // std::unique_ptr<PragmaHandler> OptimizeHandler;
+  // std::unique_ptr<PragmaHandler> LoopHintHandler;
+  // std::unique_ptr<PragmaHandler> UnrollHintHandler;
+  // std::unique_ptr<PragmaHandler> NoUnrollHintHandler;
+  // std::unique_ptr<PragmaHandler> UnrollAndJamHintHandler;
+  // std::unique_ptr<PragmaHandler> NoUnrollAndJamHintHandler;
+  // std::unique_ptr<PragmaHandler> FPHandler;
+  // std::unique_ptr<PragmaHandler> STDCFENVHandler;
+  // std::unique_ptr<PragmaHandler> STDCCXLIMITHandler;
+  // std::unique_ptr<PragmaHandler> STDCUnknownHandler;
+  // std::unique_ptr<PragmaHandler> AttributePragmaHandler;
+  // std::unique_ptr<PragmaHandler> MaxTokensHerePragmaHandler;
+  // std::unique_ptr<PragmaHandler> MaxTokensTotalPragmaHandler;
 
   std::unique_ptr<CommentHandler> CommentSemaHandler;
 
@@ -681,10 +681,10 @@ private:
   bool isFoldOperator(tok::TokenKind Kind) const;
 
   /// Initialize all pragma handlers.
-  void initializePragmaHandlers();
+  // void initializePragmaHandlers();
 
   /// Destroy and reset all pragma handlers.
-  void resetPragmaHandlers();
+  // void resetPragmaHandlers();
 
   /// Handle the annotation token produced for #pragma unused(...)
   void HandlePragmaUnused();
@@ -705,7 +705,7 @@ private:
   /// #pragma comment...
   void HandlePragmaMSComment();
 
-  void HandlePragmaMSPointersToMembers();
+  // void HandlePragmaMSPointersToMembers();
 
   void HandlePragmaMSVtorDisp();
 
@@ -1226,7 +1226,7 @@ private:
     virtual void ParseLexedMemberInitializers();
     virtual void ParseLexedMethodDefs();
     virtual void ParseLexedAttributes();
-    virtual void ParseLexedPragmas();
+    // virtual void ParseLexedPragmas();
   };
 
   /// Inner node of the LateParsedDeclaration tree that parses
@@ -1240,7 +1240,7 @@ private:
     void ParseLexedMemberInitializers() override;
     void ParseLexedMethodDefs() override;
     void ParseLexedAttributes() override;
-    void ParseLexedPragmas() override;
+    // void ParseLexedPragmas() override;
 
   private:
     Parser *Self;
@@ -1287,7 +1287,7 @@ private:
     const CachedTokens &toks() const { return Toks; }
     AccessSpecifier getAccessSpecifier() const { return AS; }
 
-    void ParseLexedPragmas() override;
+    // void ParseLexedPragmas() override;
   };
 
   // A list of late-parsed attributes.  Used by ParseGNUAttributes.
@@ -1535,8 +1535,8 @@ private:
   void ParseLexedMemberInitializers(ParsingClass &Class);
   void ParseLexedMemberInitializer(LateParsedMemberInitializer &MI);
   void ParseLexedObjCMethodDefs(LexedMethod &LM, bool parseMethod);
-  void ParseLexedPragmas(ParsingClass &Class);
-  void ParseLexedPragma(LateParsedPragma &LP);
+  // void ParseLexedPragmas(ParsingClass &Class);
+  // void ParseLexedPragma(LateParsedPragma &LP);
   bool ConsumeAndStoreFunctionPrologue(CachedTokens &Toks);
   bool ConsumeAndStoreInitializer(CachedTokens &Toks, CachedInitKind CIK);
   bool ConsumeAndStoreConditional(CachedTokens &Toks);
@@ -2066,7 +2066,7 @@ private:
   StmtResult ParseCompoundStatement(bool isStmtExpr = false);
   StmtResult ParseCompoundStatement(bool isStmtExpr,
                                     unsigned ScopeFlags);
-  void ParseCompoundStatementLeadingPragmas();
+  // void ParseCompoundStatementLeadingPragmas();
   bool ConsumeNullStmt(StmtVector &Stmts);
   StmtResult ParseCompoundStatementBody(bool isStmtExpr = false);
   bool ParseParenExprOrCondition(StmtResult *InitStmt,
@@ -2085,10 +2085,10 @@ private:
   StmtResult ParseReturnStatement();
   StmtResult ParseAsmStatement(bool &msAsm);
   StmtResult ParseMicrosoftAsmStatement(SourceLocation AsmLoc);
-  StmtResult ParsePragmaLoopHint(StmtVector &Stmts,
-                                 ParsedStmtContext StmtCtx,
-                                 SourceLocation *TrailingElseLoc,
-                                 ParsedAttributesWithRange &Attrs);
+  // StmtResult ParsePragmaLoopHint(StmtVector &Stmts,
+  //                                ParsedStmtContext StmtCtx,
+  //                                SourceLocation *TrailingElseLoc,
+  //                                ParsedAttributesWithRange &Attrs);
 
   /// Describes the behavior that should be taken for an __if_exists
   /// block.
@@ -2742,14 +2742,14 @@ private:
   /// Parses opencl_unroll_hint attribute if language is OpenCL v2.0
   /// or higher.
   /// \return false if error happens.
-  bool MaybeParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs) {
-    if (getLangOpts().OpenCL)
-      return ParseOpenCLUnrollHintAttribute(Attrs);
-    return true;
-  }
+  // bool MaybeParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs) {
+  //   if (getLangOpts().OpenCL)
+  //     return ParseOpenCLUnrollHintAttribute(Attrs);
+  //   return true;
+  // }
   /// Parses opencl_unroll_hint attribute.
   /// \return false if error happens.
-  bool ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs);
+  // bool ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs);
   // void ParseNullabilityTypeSpecifiers(ParsedAttributes &attrs);
 
   VersionTuple ParseVersionTuple(SourceRange &Range);
@@ -3035,9 +3035,9 @@ private:
   //===--------------------------------------------------------------------===//
   // OpenMP: Directives and clauses.
   /// Parse clauses for '#pragma omp declare simd'.
-  DeclGroupPtrTy ParseOMPDeclareSimdClauses(DeclGroupPtrTy Ptr,
-                                            CachedTokens &Toks,
-                                            SourceLocation Loc);
+  // DeclGroupPtrTy ParseOMPDeclareSimdClauses(DeclGroupPtrTy Ptr,
+  //                                           CachedTokens &Toks,
+  //                                           SourceLocation Loc);
 
   /// Parse a property kind into \p TIProperty for the selector set \p Set and
   /// selector \p Selector.
@@ -3083,31 +3083,31 @@ private:
   /// Parse clauses for '#pragma omp declare target'.
   DeclGroupPtrTy ParseOMPDeclareTargetClauses();
   /// Parse '#pragma omp end declare target'.
-  void ParseOMPEndDeclareTargetDirective(OpenMPDirectiveKind DKind,
-                                         SourceLocation Loc);
+  // void ParseOMPEndDeclareTargetDirective(OpenMPDirectiveKind DKind,
+  //                                        SourceLocation Loc);
 
   /// Skip tokens until a `annot_pragma_openmp_end` was found. Emit a warning if
   /// it is not the current token.
-  void skipUntilPragmaOpenMPEnd(OpenMPDirectiveKind DKind);
+  // void skipUntilPragmaOpenMPEnd(OpenMPDirectiveKind DKind);
 
   /// Check the \p FoundKind against the \p ExpectedKind, if not issue an error
   /// that the "end" matching the "begin" directive of kind \p BeginKind was not
   /// found. Finally, if the expected kind was found or if \p SkipUntilOpenMPEnd
   /// is set, skip ahead using the helper `skipUntilPragmaOpenMPEnd`.
-  void parseOMPEndDirective(OpenMPDirectiveKind BeginKind,
-                            OpenMPDirectiveKind ExpectedKind,
-                            OpenMPDirectiveKind FoundKind,
-                            SourceLocation MatchingLoc,
-                            SourceLocation FoundLoc,
-                            bool SkipUntilOpenMPEnd);
+  // void parseOMPEndDirective(OpenMPDirectiveKind BeginKind,
+  //                           OpenMPDirectiveKind ExpectedKind,
+  //                           OpenMPDirectiveKind FoundKind,
+  //                           SourceLocation MatchingLoc,
+  //                           SourceLocation FoundLoc,
+  //                           bool SkipUntilOpenMPEnd);
 
   /// Parses declarative OpenMP directives.
-  DeclGroupPtrTy ParseOpenMPDeclarativeDirectiveWithExtDecl(
-      AccessSpecifier &AS, ParsedAttributesWithRange &Attrs,
-      bool Delayed = false, DeclSpec::TST TagType = DeclSpec::TST_unspecified,
-      Decl *TagDecl = nullptr);
+  // DeclGroupPtrTy ParseOpenMPDeclarativeDirectiveWithExtDecl(
+  //     AccessSpecifier &AS, ParsedAttributesWithRange &Attrs,
+  //     bool Delayed = false, DeclSpec::TST TagType = DeclSpec::TST_unspecified,
+  //     Decl *TagDecl = nullptr);
   /// Parse 'omp declare reduction' construct.
-  DeclGroupPtrTy ParseOpenMPDeclareReductionDirective(AccessSpecifier AS);
+  // DeclGroupPtrTy ParseOpenMPDeclareReductionDirective(AccessSpecifier AS);
   /// Parses initializer for provided omp_priv declaration inside the reduction
   /// initializer.
   void ParseOpenMPReductionInitializerForDecl(VarDecl *OmpPrivParm);
@@ -3121,7 +3121,7 @@ private:
 
   /// Tries to parse cast part of OpenMP array shaping operation:
   /// '[' expression ']' { '[' expression ']' } ')'.
-  bool tryParseOpenMPArrayShapingCastPart();
+  // bool tryParseOpenMPArrayShapingCastPart();
 
   /// Parses simple list of variables.
   ///
@@ -3138,8 +3138,8 @@ private:
   /// Parses declarative or executable directive.
   ///
   /// \param StmtCtx The context in which we're parsing the directive.
-  StmtResult
-  ParseOpenMPDeclarativeOrExecutableDirective(ParsedStmtContext StmtCtx);
+  // StmtResult
+  // ParseOpenMPDeclarativeOrExecutableDirective(ParsedStmtContext StmtCtx);
   /// Parses clause of kind \a CKind for directive of a kind \a Kind.
   ///
   /// \param DKind Kind of current directive.

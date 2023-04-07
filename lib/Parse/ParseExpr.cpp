@@ -2751,32 +2751,32 @@ ExprResult Parser::ParseBuiltinPrimaryExpression() {
   return ParsePostfixExpressionSuffix(Res.get());
 }
 
-bool Parser::tryParseOpenMPArrayShapingCastPart() {
-  assert(Tok.is(tok::l_square) && "Expected open bracket");
-  bool ErrorFound = true;
-  TentativeParsingAction TPA(*this);
-  do {
-    if (Tok.isNot(tok::l_square))
-      break;
-    // Consume '['
-    ConsumeBracket();
-    // Skip inner expression.
-    while (!SkipUntil(tok::r_square, tok::annot_pragma_openmp_end,
-                      StopAtSemi | StopBeforeMatch))
-      ;
-    if (Tok.isNot(tok::r_square))
-      break;
-    // Consume ']'
-    ConsumeBracket();
-    // Found ')' - done.
-    if (Tok.is(tok::r_paren)) {
-      ErrorFound = false;
-      break;
-    }
-  } while (Tok.isNot(tok::annot_pragma_openmp_end));
-  TPA.Revert();
-  return !ErrorFound;
-}
+// bool Parser::tryParseOpenMPArrayShapingCastPart() {
+//   assert(Tok.is(tok::l_square) && "Expected open bracket");
+//   bool ErrorFound = true;
+//   TentativeParsingAction TPA(*this);
+//   do {
+//     if (Tok.isNot(tok::l_square))
+//       break;
+//     // Consume '['
+//     ConsumeBracket();
+//     // Skip inner expression.
+//     while (!SkipUntil(tok::r_square, tok::annot_pragma_openmp_end,
+//                       StopAtSemi | StopBeforeMatch))
+//       ;
+//     if (Tok.isNot(tok::r_square))
+//       break;
+//     // Consume ']'
+//     ConsumeBracket();
+//     // Found ')' - done.
+//     if (Tok.is(tok::r_paren)) {
+//       ErrorFound = false;
+//       break;
+//     }
+//   } while (Tok.isNot(tok::annot_pragma_openmp_end));
+//   TPA.Revert();
+//   return !ErrorFound;
+// }
 
 /// ParseParenExpression - This parses the unit that starts with a '(' token,
 /// based on what is allowed by ExprType.  The actual thing parsed is returned
@@ -3080,7 +3080,7 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
       Result = Actions.ActOnParenListExpr(OpenLoc, Tok.getLocation(),
                                           ArgExprs);
     }
-  } else if (getLangOpts().OpenMP >= 50 && OpenMPDirectiveParsing &&
+  } /*else if (getLangOpts().OpenMP >= 50 && OpenMPDirectiveParsing &&
              ExprType == CastExpr && Tok.is(tok::l_square) &&
              tryParseOpenMPArrayShapingCastPart()) {
     bool ErrorFound = false;
@@ -3112,7 +3112,7 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
           Result.get(), OpenLoc, RParenLoc, OMPDimensions, OMPBracketsRanges);
     }
     return Result;
-  } else {
+  }*/ else {
     InMessageExpressionRAIIObject InMessage(*this, false);
 
     Result = ParseExpression(MaybeTypeCast);

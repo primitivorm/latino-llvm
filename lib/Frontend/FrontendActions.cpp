@@ -778,7 +778,7 @@ void PreprocessOnlyAction::ExecuteAction() {
   Preprocessor &PP = getCompilerInstance().getPreprocessor();
 
   // Ignore unknown pragmas.
-  PP.IgnorePragmas();
+  // PP.IgnorePragmas();
 
   Token Tok;
   // Start parsing the specified input file.

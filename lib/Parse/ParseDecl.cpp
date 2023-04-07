@@ -3883,21 +3883,21 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       ParseDecltypeSpecifier(DS);
       continue;
 
-    case tok::annot_pragma_pack:
-      HandlePragmaPack();
-      continue;
+    // case tok::annot_pragma_pack:
+    //   HandlePragmaPack();
+    //   continue;
 
-    case tok::annot_pragma_ms_pragma:
-      HandlePragmaMSPragma();
-      continue;
+    // case tok::annot_pragma_ms_pragma:
+    //   HandlePragmaMSPragma();
+    //   continue;
 
-    case tok::annot_pragma_ms_vtordisp:
-      HandlePragmaMSVtorDisp();
-      continue;
+    // case tok::annot_pragma_ms_vtordisp:
+    //   HandlePragmaMSVtorDisp();
+    //   continue;
 
-    case tok::annot_pragma_ms_pointers_to_members:
-      HandlePragmaMSPointersToMembers();
-      continue;
+    // case tok::annot_pragma_ms_pointers_to_members:
+    //   HandlePragmaMSPointersToMembers();
+    //   continue;
 
     case tok::kw___underlying_type:
       ParseUnderlyingTypeSpecifier(DS);
@@ -4138,31 +4138,31 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
       continue;
     }
 
-    if (Tok.is(tok::annot_pragma_pack)) {
-      HandlePragmaPack();
-      continue;
-    }
+    // if (Tok.is(tok::annot_pragma_pack)) {
+    //   HandlePragmaPack();
+    //   continue;
+    // }
 
-    if (Tok.is(tok::annot_pragma_align)) {
-      HandlePragmaAlign();
-      continue;
-    }
+    // if (Tok.is(tok::annot_pragma_align)) {
+    //   HandlePragmaAlign();
+    //   continue;
+    // }
 
-    if (Tok.is(tok::annot_pragma_openmp)) {
-      // Result can be ignored, because it must be always empty.
-      AccessSpecifier AS = AS_none;
-      ParsedAttributesWithRange Attrs(AttrFactory);
-      (void)ParseOpenMPDeclarativeDirectiveWithExtDecl(AS, Attrs);
-      continue;
-    }
+    // if (Tok.is(tok::annot_pragma_openmp)) {
+    //   // Result can be ignored, because it must be always empty.
+    //   AccessSpecifier AS = AS_none;
+    //   ParsedAttributesWithRange Attrs(AttrFactory);
+    //   (void)ParseOpenMPDeclarativeDirectiveWithExtDecl(AS, Attrs);
+    //   continue;
+    // }
 
-    if (tok::isPragmaAnnotation(Tok.getKind())) {
-      Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
-          << DeclSpec::getSpecifierName(
-                 TagType, Actions.getASTContext().getPrintingPolicy());
-      ConsumeAnnotationToken();
-      continue;
-    }
+    // if (tok::isPragmaAnnotation(Tok.getKind())) {
+    //   Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
+    //       << DeclSpec::getSpecifierName(
+    //              TagType, Actions.getASTContext().getPrintingPolicy());
+    //   ConsumeAnnotationToken();
+    //   continue;
+    // }
 
     if (!Tok.is(tok::at)) {
       auto CFieldCallback = [&](ParsingFieldDeclarator &FD) {
@@ -5991,8 +5991,8 @@ void Parser::ParseDirectDeclarator(Declarator &D) {
       Diag(PP.getLocForEndOfToken(D.getEllipsisLoc()),
            diag::ext_abstract_pack_declarator_parens);
   } else {
-    if (Tok.getKind() == tok::annot_pragma_parser_crash)
-      LLVM_BUILTIN_TRAP;
+    // if (Tok.getKind() == tok::annot_pragma_parser_crash)
+    //   LLVM_BUILTIN_TRAP;
     if (Tok.is(tok::l_square))
       return ParseMisplacedBracketDeclarator(D);
     if (D.getContext() == DeclaratorContext::MemberContext) {

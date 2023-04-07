@@ -223,7 +223,7 @@ void Parser::LateParsedDeclaration::ParseLexedMethodDeclarations() {}
 void Parser::LateParsedDeclaration::ParseLexedMemberInitializers() {}
 void Parser::LateParsedDeclaration::ParseLexedMethodDefs() {}
 void Parser::LateParsedDeclaration::ParseLexedAttributes() {}
-void Parser::LateParsedDeclaration::ParseLexedPragmas() {}
+// void Parser::LateParsedDeclaration::ParseLexedPragmas() {}
 
 Parser::LateParsedClass::LateParsedClass(Parser *P, ParsingClass *C)
   : Self(P), Class(C) {}
@@ -248,9 +248,9 @@ void Parser::LateParsedClass::ParseLexedAttributes() {
   Self->ParseLexedAttributes(*Class);
 }
 
-void Parser::LateParsedClass::ParseLexedPragmas() {
-  Self->ParseLexedPragmas(*Class);
-}
+// void Parser::LateParsedClass::ParseLexedPragmas() {
+//   Self->ParseLexedPragmas(*Class);
+// }
 
 void Parser::LateParsedMethodDeclaration::ParseLexedMethodDeclarations() {
   Self->ParseLexedMethodDeclaration(*this);
@@ -268,9 +268,9 @@ void Parser::LateParsedAttribute::ParseLexedAttributes() {
   Self->ParseLexedAttribute(*this, true, false);
 }
 
-void Parser::LateParsedPragma::ParseLexedPragmas() {
-  Self->ParseLexedPragma(*this);
-}
+// void Parser::LateParsedPragma::ParseLexedPragmas() {
+//   Self->ParseLexedPragma(*this);
+// }
 
 /// Utility to re-enter a possibly-templated scope while parsing its
 /// late-parsed components.
@@ -755,32 +755,32 @@ void Parser::ParseLexedAttribute(LateParsedAttribute &LA,
     ConsumeAnyToken();
 }
 
-void Parser::ParseLexedPragmas(ParsingClass &Class) {
-  ReenterClassScopeRAII InClassScope(*this, Class);
+// void Parser::ParseLexedPragmas(ParsingClass &Class) {
+//   ReenterClassScopeRAII InClassScope(*this, Class);
 
-  for (LateParsedDeclaration *D : Class.LateParsedDeclarations)
-    D->ParseLexedPragmas();
-}
+//   for (LateParsedDeclaration *D : Class.LateParsedDeclarations)
+//     D->ParseLexedPragmas();
+// }
 
-void Parser::ParseLexedPragma(LateParsedPragma &LP) {
-  PP.EnterToken(Tok, /*IsReinject=*/true);
-  PP.EnterTokenStream(LP.toks(), /*DisableMacroExpansion=*/true,
-                      /*IsReinject=*/true);
+// void Parser::ParseLexedPragma(LateParsedPragma &LP) {
+//   PP.EnterToken(Tok, /*IsReinject=*/true);
+//   PP.EnterTokenStream(LP.toks(), /*DisableMacroExpansion=*/true,
+//                       /*IsReinject=*/true);
 
-  // Consume the previously pushed token.
-  ConsumeAnyToken(/*ConsumeCodeCompletionTok=*/true);
-  assert(Tok.isAnnotation() && "Expected annotation token.");
-  switch (Tok.getKind()) {
-  case tok::annot_pragma_openmp: {
-    AccessSpecifier AS = LP.getAccessSpecifier();
-    ParsedAttributesWithRange Attrs(AttrFactory);
-    (void)ParseOpenMPDeclarativeDirectiveWithExtDecl(AS, Attrs);
-    break;
-  }
-  default:
-    llvm_unreachable("Unexpected token.");
-  }
-}
+//   // Consume the previously pushed token.
+//   ConsumeAnyToken(/*ConsumeCodeCompletionTok=*/true);
+//   assert(Tok.isAnnotation() && "Expected annotation token.");
+//   switch (Tok.getKind()) {
+//   case tok::annot_pragma_openmp: {
+//     AccessSpecifier AS = LP.getAccessSpecifier();
+//     ParsedAttributesWithRange Attrs(AttrFactory);
+//     (void)ParseOpenMPDeclarativeDirectiveWithExtDecl(AS, Attrs);
+//     break;
+//   }
+//   default:
+//     llvm_unreachable("Unexpected token.");
+//   }
+// }
 
 /// ConsumeAndStoreUntil - Consume and store the token at the passed token
 /// container until the token 'T' is reached (which gets

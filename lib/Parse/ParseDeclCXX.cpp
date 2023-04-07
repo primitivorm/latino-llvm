@@ -1274,13 +1274,13 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   // FIXME: we should emit semantic diagnostic when declaration
   // attribute is in type attribute position.
   case tok::kw___attribute:     // struct foo __attribute__((used)) x;
-  case tok::annot_pragma_pack:  // struct foo {...} _Pragma(pack(pop));
+  // case tok::annot_pragma_pack:  // struct foo {...} _Pragma(pack(pop));
   // struct foo {...} _Pragma(section(...));
-  case tok::annot_pragma_ms_pragma:
+  // case tok::annot_pragma_ms_pragma:
   // struct foo {...} _Pragma(vtordisp(pop));
-  case tok::annot_pragma_ms_vtordisp:
+  // case tok::annot_pragma_ms_vtordisp:
   // struct foo {...} _Pragma(pointers_to_members(...));
-  case tok::annot_pragma_ms_pointers_to_members:
+  // case tok::annot_pragma_ms_pointers_to_members:
     return true;
   case tok::colon:
     return CouldBeBitfield ||   // enum E { ... }   :         2;
@@ -3081,27 +3081,27 @@ Parser::DeclGroupPtrTy Parser::ParseCXXClassMemberDeclarationWithPragmas(
     return nullptr;
 
     // Handle pragmas that can appear as member declarations.
-  case tok::annot_pragma_vis:
-    HandlePragmaVisibility();
-    return nullptr;
-  case tok::annot_pragma_pack:
-    HandlePragmaPack();
-    return nullptr;
-  case tok::annot_pragma_align:
-    HandlePragmaAlign();
-    return nullptr;
-  case tok::annot_pragma_ms_pointers_to_members:
-    HandlePragmaMSPointersToMembers();
-    return nullptr;
-  case tok::annot_pragma_ms_pragma:
-    HandlePragmaMSPragma();
-    return nullptr;
-  case tok::annot_pragma_ms_vtordisp:
-    HandlePragmaMSVtorDisp();
-    return nullptr;
-  case tok::annot_pragma_dump:
-    HandlePragmaDump();
-    return nullptr;
+  // case tok::annot_pragma_vis:
+  //   HandlePragmaVisibility();
+  //   return nullptr;
+  // case tok::annot_pragma_pack:
+  //   HandlePragmaPack();
+  //   return nullptr;
+  // case tok::annot_pragma_align:
+  //   HandlePragmaAlign();
+  //   return nullptr;
+  // case tok::annot_pragma_ms_pointers_to_members:
+  //   HandlePragmaMSPointersToMembers();
+  //   return nullptr;
+  // case tok::annot_pragma_ms_pragma:
+  //   HandlePragmaMSPragma();
+  //   return nullptr;
+  // case tok::annot_pragma_ms_vtordisp:
+  //   HandlePragmaMSVtorDisp();
+  //   return nullptr;
+  // case tok::annot_pragma_dump:
+  //   HandlePragmaDump();
+  //   return nullptr;
 
   case tok::kw_contexto:
     // If we see a namespace here, a close brace was missing somewhere.
@@ -3151,18 +3151,18 @@ Parser::DeclGroupPtrTy Parser::ParseCXXClassMemberDeclarationWithPragmas(
     return nullptr;
   }
 
-  case tok::annot_pragma_openmp:
-    return ParseOpenMPDeclarativeDirectiveWithExtDecl(
-        AS, AccessAttrs, /*Delayed=*/true, TagType, TagDecl);
+  // case tok::annot_pragma_openmp:
+  //   return ParseOpenMPDeclarativeDirectiveWithExtDecl(
+  //       AS, AccessAttrs, /*Delayed=*/true, TagType, TagDecl);
 
   default:
-    if (tok::isPragmaAnnotation(Tok.getKind())) {
-      Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
-          << DeclSpec::getSpecifierName(TagType,
-                                   Actions.getASTContext().getPrintingPolicy());
-      ConsumeAnnotationToken();
-      return nullptr;
-    }
+    // if (tok::isPragmaAnnotation(Tok.getKind())) {
+    //   Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
+    //       << DeclSpec::getSpecifierName(TagType,
+    //                                Actions.getASTContext().getPrintingPolicy());
+    //   ConsumeAnnotationToken();
+    //   return nullptr;
+    // }
     return ParseCXXClassMemberDeclaration(AS, AccessAttrs);
   }
 }
@@ -3382,7 +3382,7 @@ void Parser::ParseCXXMemberSpecification(SourceLocation RecordLoc,
                               0 /*unused*/);
 
     SourceLocation SavedPrevTokLocation = PrevTokLocation;
-    ParseLexedPragmas(getCurrentClass());
+    // ParseLexedPragmas(getCurrentClass());
     ParseLexedAttributes(getCurrentClass());
     ParseLexedMethodDeclarations(getCurrentClass());
 

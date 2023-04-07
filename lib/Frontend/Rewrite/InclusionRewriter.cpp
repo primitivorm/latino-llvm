@@ -15,7 +15,7 @@
 #include "latino/Basic/SourceManager.h"
 #include "latino/Frontend/PreprocessorOutputOptions.h"
 #include "latino/Lex/HeaderSearch.h"
-#include "latino/Lex/Pragma.h"
+// #include "latino/Lex/Pragma.h"
 #include "latino/Lex/Preprocessor.h"
 #include "llvm/ADT/SmallString.h"
 #include "llvm/Support/raw_ostream.h"
@@ -543,7 +543,7 @@ void latino::RewriteIncludesInInput(Preprocessor &PP, raw_ostream *OS,
   Rewrite->detectMainFileEOL();
 
   PP.addPPCallbacks(std::unique_ptr<PPCallbacks>(Rewrite));
-  PP.IgnorePragmas();
+  // PP.IgnorePragmas();
 
   // First let the preprocessor process the entire file and call callbacks.
   // Callbacks will record which #include's were actually performed.
