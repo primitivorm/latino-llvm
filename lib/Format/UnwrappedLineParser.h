@@ -89,11 +89,11 @@ private:
                   bool MunchSemi = true);
   void parseChildBlock();
   void parsePPDirective();
-  void parsePPDefine();
-  void parsePPIf(bool IfDef);
-  void parsePPElIf();
+  // void parsePPDefine();
+  // void parsePPIf(bool IfDef);
+  // void parsePPElIf();
   void parsePPElse();
-  void parsePPEndIf();
+  // void parsePPEndIf();
   void parsePPUnknown();
   void readTokenWithJavaScriptASI();
   void parseStructuralElement();

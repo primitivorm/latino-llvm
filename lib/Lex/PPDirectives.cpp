@@ -259,10 +259,10 @@ bool Preprocessor::CheckMacroName(Token &MacroNameTok, MacroUse isDefineUndef,
     // recovery when legacy C headers are included in C++.
   }
 
-  if ((isDefineUndef != MU_Other) && II->getPPKeywordID() == tok::pp_defined) {
-    // Error if defining "defined": C99 6.10.8/4, C++ [cpp.predefined]p4.
-    return Diag(MacroNameTok, diag::err_defined_macro_name);
-  }
+  // if ((isDefineUndef != MU_Other) && II->getPPKeywordID() == tok::pp_defined) {
+  //   // Error if defining "defined": C99 6.10.8/4, C++ [cpp.predefined]p4.
+  //   return Diag(MacroNameTok, diag::err_defined_macro_name);
+  // }
 
   if (isDefineUndef == MU_Undef) {
     auto *MI = getMacroInfo(II);
@@ -873,11 +873,11 @@ private:
 /// All other directives are completely discarded.
 void Preprocessor::HandleSkippedDirectiveWhileUsingPCH(Token &Result,
                                                        SourceLocation HashLoc) {
-  if (const IdentifierInfo *II = Result.getIdentifierInfo()) {
-    if (II->getPPKeywordID() == tok::pp_define) {
-      return HandleDefineDirective(Result,
-                                   /*ImmediatelyAfterHeaderGuard=*/false);
-    }
+  // if (const IdentifierInfo *II = Result.getIdentifierInfo()) {
+    // if (II->getPPKeywordID() == tok::pp_define) {
+    //   return HandleDefineDirective(Result,
+    //                                /*ImmediatelyAfterHeaderGuard=*/false);
+    // }
     // if (SkippingUntilPCHThroughHeader &&
     //     II->getPPKeywordID() == tok::pp_include) {
     //   return HandleIncludeDirective(HashLoc, Result);
@@ -888,7 +888,7 @@ void Preprocessor::HandleSkippedDirectiveWhileUsingPCH(Token &Result,
     //   if (II && II->getName() == "hdrstop")
     //     return HandlePragmaHdrstop(Result);
     // }
-  }
+  // }
   DiscardUntilEndOfDirective();
 }
 
@@ -979,20 +979,20 @@ void Preprocessor::HandleDirective(Token &Result) {
     switch (II->getPPKeywordID()) {
     default: break;
     // C99 6.10.1 - Conditional Inclusion.
-    case tok::pp_if:
-      return HandleIfDirective(Result, SavedHash, ReadAnyTokensBeforeDirective);
-    case tok::pp_ifdef:
-      return HandleIfdefDirective(Result, SavedHash, false,
-                                  true /*not valid for miopt*/);
-    case tok::pp_ifndef:
-      return HandleIfdefDirective(Result, SavedHash, true,
-                                  ReadAnyTokensBeforeDirective);
-    case tok::pp_elif:
-      return HandleElifDirective(Result, SavedHash);
-    case tok::pp_else:
-      return HandleElseDirective(Result, SavedHash);
-    case tok::pp_endif:
-      return HandleEndifDirective(Result);
+    // case tok::pp_if:
+    //   return HandleIfDirective(Result, SavedHash, ReadAnyTokensBeforeDirective);
+    // case tok::pp_ifdef:
+    //   return HandleIfdefDirective(Result, SavedHash, false,
+    //                               true /*not valid for miopt*/);
+    // case tok::pp_ifndef:
+    //   return HandleIfdefDirective(Result, SavedHash, true,
+    //                               ReadAnyTokensBeforeDirective);
+    // case tok::pp_elif:
+    //   return HandleElifDirective(Result, SavedHash);
+    // case tok::pp_else:
+    //   return HandleElseDirective(Result, SavedHash);
+    // case tok::pp_endif:
+    //   return HandleEndifDirective(Result);
 
     // C99 6.10.2 - Source File Inclusion.
     // case tok::pp_include:
@@ -1003,10 +1003,10 @@ void Preprocessor::HandleDirective(Token &Result) {
     //   return HandleIncludeMacrosDirective(SavedHash.getLocation(), Result);
 
     // C99 6.10.3 - Macro Replacement.
-    case tok::pp_define:
-      return HandleDefineDirective(Result, ImmediatelyAfterTopLevelIfndef);
-    case tok::pp_undef:
-      return HandleUndefDirective();
+    // case tok::pp_define:
+    //   return HandleDefineDirective(Result, ImmediatelyAfterTopLevelIfndef);
+    // case tok::pp_undef:
+    //   return HandleUndefDirective();
 
     // C99 6.10.4 - Line Control.
     // case tok::pp_line:
@@ -1076,7 +1076,7 @@ void Preprocessor::HandleDirective(Token &Result) {
   }
 
   // If we reached here, the preprocessing token is not valid!
-  Diag(Result, diag::err_pp_invalid_directive);
+  // Diag(Result, diag::err_pp_invalid_directive);
 
   // Read the rest of the PP line.
   DiscardUntilEndOfDirective();
@@ -2747,168 +2747,168 @@ MacroInfo *Preprocessor::ReadOptionalMacroParameterListAndBody(
 }
 /// HandleDefineDirective - Implements \#define.  This consumes the entire macro
 /// line then lets the caller lex the next real token.
-void Preprocessor::HandleDefineDirective(
-    Token &DefineTok, const bool ImmediatelyAfterHeaderGuard) {
-  ++NumDefined;
+// void Preprocessor::HandleDefineDirective(
+//     Token &DefineTok, const bool ImmediatelyAfterHeaderGuard) {
+//   ++NumDefined;
 
-  Token MacroNameTok;
-  bool MacroShadowsKeyword;
-  ReadMacroName(MacroNameTok, MU_Define, &MacroShadowsKeyword);
+//   Token MacroNameTok;
+//   bool MacroShadowsKeyword;
+//   ReadMacroName(MacroNameTok, MU_Define, &MacroShadowsKeyword);
 
-  // Error reading macro name?  If so, diagnostic already issued.
-  if (MacroNameTok.is(tok::eod))
-    return;
+//   // Error reading macro name?  If so, diagnostic already issued.
+//   if (MacroNameTok.is(tok::eod))
+//     return;
 
-  // If we are supposed to keep comments in #defines, reenable comment saving
-  // mode.
-  if (CurLexer) CurLexer->SetCommentRetentionState(KeepMacroComments);
+//   // If we are supposed to keep comments in #defines, reenable comment saving
+//   // mode.
+//   if (CurLexer) CurLexer->SetCommentRetentionState(KeepMacroComments);
 
-  MacroInfo *const MI = ReadOptionalMacroParameterListAndBody(
-      MacroNameTok, ImmediatelyAfterHeaderGuard);
+//   MacroInfo *const MI = ReadOptionalMacroParameterListAndBody(
+//       MacroNameTok, ImmediatelyAfterHeaderGuard);
 
-  if (!MI) return;
+//   if (!MI) return;
 
-  if (MacroShadowsKeyword &&
-      !isConfigurationPattern(MacroNameTok, MI, getLangOpts())) {
-    Diag(MacroNameTok, diag::warn_pp_macro_hides_keyword);
-  }
-  // Check that there is no paste (##) operator at the beginning or end of the
-  // replacement list.
-  unsigned NumTokens = MI->getNumTokens();
-  if (NumTokens != 0) {
-    if (MI->getReplacementToken(0).is(tok::hashhash)) {
-      Diag(MI->getReplacementToken(0), diag::err_paste_at_start);
-      return;
-    }
-    if (MI->getReplacementToken(NumTokens-1).is(tok::hashhash)) {
-      Diag(MI->getReplacementToken(NumTokens-1), diag::err_paste_at_end);
-      return;
-    }
-  }
+//   if (MacroShadowsKeyword &&
+//       !isConfigurationPattern(MacroNameTok, MI, getLangOpts())) {
+//     Diag(MacroNameTok, diag::warn_pp_macro_hides_keyword);
+//   }
+//   // Check that there is no paste (##) operator at the beginning or end of the
+//   // replacement list.
+//   unsigned NumTokens = MI->getNumTokens();
+//   if (NumTokens != 0) {
+//     if (MI->getReplacementToken(0).is(tok::hashhash)) {
+//       Diag(MI->getReplacementToken(0), diag::err_paste_at_start);
+//       return;
+//     }
+//     if (MI->getReplacementToken(NumTokens-1).is(tok::hashhash)) {
+//       Diag(MI->getReplacementToken(NumTokens-1), diag::err_paste_at_end);
+//       return;
+//     }
+//   }
 
-  // When skipping just warn about macros that do not match.
-  if (SkippingUntilPCHThroughHeader) {
-    const MacroInfo *OtherMI = getMacroInfo(MacroNameTok.getIdentifierInfo());
-    if (!OtherMI || !MI->isIdenticalTo(*OtherMI, *this,
-                             /*Syntactic=*/LangOpts.MicrosoftExt))
-      Diag(MI->getDefinitionLoc(), diag::warn_pp_macro_def_mismatch_with_pch)
-          << MacroNameTok.getIdentifierInfo();
-    // Issue the diagnostic but allow the change if msvc extensions are enabled
-    if (!LangOpts.MicrosoftExt)
-      return;
-  }
+//   // When skipping just warn about macros that do not match.
+//   if (SkippingUntilPCHThroughHeader) {
+//     const MacroInfo *OtherMI = getMacroInfo(MacroNameTok.getIdentifierInfo());
+//     if (!OtherMI || !MI->isIdenticalTo(*OtherMI, *this,
+//                              /*Syntactic=*/LangOpts.MicrosoftExt))
+//       Diag(MI->getDefinitionLoc(), diag::warn_pp_macro_def_mismatch_with_pch)
+//           << MacroNameTok.getIdentifierInfo();
+//     // Issue the diagnostic but allow the change if msvc extensions are enabled
+//     if (!LangOpts.MicrosoftExt)
+//       return;
+//   }
 
-  // Finally, if this identifier already had a macro defined for it, verify that
-  // the macro bodies are identical, and issue diagnostics if they are not.
-  if (const MacroInfo *OtherMI=getMacroInfo(MacroNameTok.getIdentifierInfo())) {
-    // In Objective-C, ignore attempts to directly redefine the builtin
-    // definitions of the ownership qualifiers.  It's still possible to
-    // #undef them.
-    auto isObjCProtectedMacro = [](const IdentifierInfo *II) -> bool {
-      return II->isStr("__strong") ||
-             II->isStr("__weak") ||
-             II->isStr("__unsafe_unretained") ||
-             II->isStr("__autoreleasing");
-    };
-   if (getLangOpts().ObjC &&
-        SourceMgr.getFileID(OtherMI->getDefinitionLoc())
-          == getPredefinesFileID() &&
-        isObjCProtectedMacro(MacroNameTok.getIdentifierInfo())) {
-      // Warn if it changes the tokens.
-      if ((!getDiagnostics().getSuppressSystemWarnings() ||
-           !SourceMgr.isInSystemHeader(DefineTok.getLocation())) &&
-          !MI->isIdenticalTo(*OtherMI, *this,
-                             /*Syntactic=*/LangOpts.MicrosoftExt)) {
-        Diag(MI->getDefinitionLoc(), diag::warn_pp_objc_macro_redef_ignored);
-      }
-      assert(!OtherMI->isWarnIfUnused());
-      return;
-    }
+//   // Finally, if this identifier already had a macro defined for it, verify that
+//   // the macro bodies are identical, and issue diagnostics if they are not.
+//   if (const MacroInfo *OtherMI=getMacroInfo(MacroNameTok.getIdentifierInfo())) {
+//     // In Objective-C, ignore attempts to directly redefine the builtin
+//     // definitions of the ownership qualifiers.  It's still possible to
+//     // #undef them.
+//     auto isObjCProtectedMacro = [](const IdentifierInfo *II) -> bool {
+//       return II->isStr("__strong") ||
+//              II->isStr("__weak") ||
+//              II->isStr("__unsafe_unretained") ||
+//              II->isStr("__autoreleasing");
+//     };
+//    if (getLangOpts().ObjC &&
+//         SourceMgr.getFileID(OtherMI->getDefinitionLoc())
+//           == getPredefinesFileID() &&
+//         isObjCProtectedMacro(MacroNameTok.getIdentifierInfo())) {
+//       // Warn if it changes the tokens.
+//       if ((!getDiagnostics().getSuppressSystemWarnings() ||
+//            !SourceMgr.isInSystemHeader(DefineTok.getLocation())) &&
+//           !MI->isIdenticalTo(*OtherMI, *this,
+//                              /*Syntactic=*/LangOpts.MicrosoftExt)) {
+//         Diag(MI->getDefinitionLoc(), diag::warn_pp_objc_macro_redef_ignored);
+//       }
+//       assert(!OtherMI->isWarnIfUnused());
+//       return;
+//     }
 
-    // It is very common for system headers to have tons of macro redefinitions
-    // and for warnings to be disabled in system headers.  If this is the case,
-    // then don't bother calling MacroInfo::isIdenticalTo.
-    if (!getDiagnostics().getSuppressSystemWarnings() ||
-        !SourceMgr.isInSystemHeader(DefineTok.getLocation())) {
-      if (!OtherMI->isUsed() && OtherMI->isWarnIfUnused())
-        Diag(OtherMI->getDefinitionLoc(), diag::pp_macro_not_used);
+//     // It is very common for system headers to have tons of macro redefinitions
+//     // and for warnings to be disabled in system headers.  If this is the case,
+//     // then don't bother calling MacroInfo::isIdenticalTo.
+//     if (!getDiagnostics().getSuppressSystemWarnings() ||
+//         !SourceMgr.isInSystemHeader(DefineTok.getLocation())) {
+//       if (!OtherMI->isUsed() && OtherMI->isWarnIfUnused())
+//         Diag(OtherMI->getDefinitionLoc(), diag::pp_macro_not_used);
 
-      // Warn if defining "__LINE__" and other builtins, per C99 6.10.8/4 and
-      // C++ [cpp.predefined]p4, but allow it as an extension.
-      if (OtherMI->isBuiltinMacro())
-        Diag(MacroNameTok, diag::ext_pp_redef_builtin_macro);
-      // Macros must be identical.  This means all tokens and whitespace
-      // separation must be the same.  C99 6.10.3p2.
-      else if (!OtherMI->isAllowRedefinitionsWithoutWarning() &&
-               !MI->isIdenticalTo(*OtherMI, *this, /*Syntactic=*/LangOpts.MicrosoftExt)) {
-        Diag(MI->getDefinitionLoc(), diag::ext_pp_macro_redef)
-          << MacroNameTok.getIdentifierInfo();
-        Diag(OtherMI->getDefinitionLoc(), diag::note_previous_definition);
-      }
-    }
-    if (OtherMI->isWarnIfUnused())
-      WarnUnusedMacroLocs.erase(OtherMI->getDefinitionLoc());
-  }
+//       // Warn if defining "__LINE__" and other builtins, per C99 6.10.8/4 and
+//       // C++ [cpp.predefined]p4, but allow it as an extension.
+//       if (OtherMI->isBuiltinMacro())
+//         Diag(MacroNameTok, diag::ext_pp_redef_builtin_macro);
+//       // Macros must be identical.  This means all tokens and whitespace
+//       // separation must be the same.  C99 6.10.3p2.
+//       else if (!OtherMI->isAllowRedefinitionsWithoutWarning() &&
+//                !MI->isIdenticalTo(*OtherMI, *this, /*Syntactic=*/LangOpts.MicrosoftExt)) {
+//         Diag(MI->getDefinitionLoc(), diag::ext_pp_macro_redef)
+//           << MacroNameTok.getIdentifierInfo();
+//         Diag(OtherMI->getDefinitionLoc(), diag::note_previous_definition);
+//       }
+//     }
+//     if (OtherMI->isWarnIfUnused())
+//       WarnUnusedMacroLocs.erase(OtherMI->getDefinitionLoc());
+//   }
 
-  DefMacroDirective *MD =
-      appendDefMacroDirective(MacroNameTok.getIdentifierInfo(), MI);
+//   DefMacroDirective *MD =
+//       appendDefMacroDirective(MacroNameTok.getIdentifierInfo(), MI);
 
-  assert(!MI->isUsed());
-  // If we need warning for not using the macro, add its location in the
-  // warn-because-unused-macro set. If it gets used it will be removed from set.
-  if (getSourceManager().isInMainFile(MI->getDefinitionLoc()) &&
-      !Diags->isIgnored(diag::pp_macro_not_used, MI->getDefinitionLoc()) &&
-      !MacroExpansionInDirectivesOverride &&
-      getSourceManager().getFileID(MI->getDefinitionLoc()) !=
-          getPredefinesFileID()) {
-    MI->setIsWarnIfUnused(true);
-    WarnUnusedMacroLocs.insert(MI->getDefinitionLoc());
-  }
+//   assert(!MI->isUsed());
+//   // If we need warning for not using the macro, add its location in the
+//   // warn-because-unused-macro set. If it gets used it will be removed from set.
+//   if (getSourceManager().isInMainFile(MI->getDefinitionLoc()) &&
+//       !Diags->isIgnored(diag::pp_macro_not_used, MI->getDefinitionLoc()) &&
+//       !MacroExpansionInDirectivesOverride &&
+//       getSourceManager().getFileID(MI->getDefinitionLoc()) !=
+//           getPredefinesFileID()) {
+//     MI->setIsWarnIfUnused(true);
+//     WarnUnusedMacroLocs.insert(MI->getDefinitionLoc());
+//   }
 
-  // If the callbacks want to know, tell them about the macro definition.
-  if (Callbacks)
-    Callbacks->MacroDefined(MacroNameTok, MD);
-}
+//   // If the callbacks want to know, tell them about the macro definition.
+//   if (Callbacks)
+//     Callbacks->MacroDefined(MacroNameTok, MD);
+// }
 
 /// HandleUndefDirective - Implements \#undef.
 ///
-void Preprocessor::HandleUndefDirective() {
-  ++NumUndefined;
+// void Preprocessor::HandleUndefDirective() {
+//   ++NumUndefined;
 
-  Token MacroNameTok;
-  ReadMacroName(MacroNameTok, MU_Undef);
+//   Token MacroNameTok;
+//   ReadMacroName(MacroNameTok, MU_Undef);
 
-  // Error reading macro name?  If so, diagnostic already issued.
-  if (MacroNameTok.is(tok::eod))
-    return;
+//   // Error reading macro name?  If so, diagnostic already issued.
+//   if (MacroNameTok.is(tok::eod))
+//     return;
 
-  // Check to see if this is the last token on the #undef line.
-  CheckEndOfDirective("undef");
+//   // Check to see if this is the last token on the #undef line.
+//   CheckEndOfDirective("undef");
 
-  // Okay, we have a valid identifier to undef.
-  auto *II = MacroNameTok.getIdentifierInfo();
-  auto MD = getMacroDefinition(II);
-  UndefMacroDirective *Undef = nullptr;
+//   // Okay, we have a valid identifier to undef.
+//   auto *II = MacroNameTok.getIdentifierInfo();
+//   auto MD = getMacroDefinition(II);
+//   UndefMacroDirective *Undef = nullptr;
 
-  // If the macro is not defined, this is a noop undef.
-  if (const MacroInfo *MI = MD.getMacroInfo()) {
-    if (!MI->isUsed() && MI->isWarnIfUnused())
-      Diag(MI->getDefinitionLoc(), diag::pp_macro_not_used);
+//   // If the macro is not defined, this is a noop undef.
+//   if (const MacroInfo *MI = MD.getMacroInfo()) {
+//     if (!MI->isUsed() && MI->isWarnIfUnused())
+//       Diag(MI->getDefinitionLoc(), diag::pp_macro_not_used);
 
-    if (MI->isWarnIfUnused())
-      WarnUnusedMacroLocs.erase(MI->getDefinitionLoc());
+//     if (MI->isWarnIfUnused())
+//       WarnUnusedMacroLocs.erase(MI->getDefinitionLoc());
 
-    Undef = AllocateUndefMacroDirective(MacroNameTok.getLocation());
-  }
+//     Undef = AllocateUndefMacroDirective(MacroNameTok.getLocation());
+//   }
 
-  // If the callbacks want to know, tell them about the macro #undef.
-  // Note: no matter if the macro was defined or not.
-  if (Callbacks)
-    Callbacks->MacroUndefined(MacroNameTok, MD, Undef);
+//   // If the callbacks want to know, tell them about the macro #undef.
+//   // Note: no matter if the macro was defined or not.
+//   if (Callbacks)
+//     Callbacks->MacroUndefined(MacroNameTok, MD, Undef);
 
-  if (Undef)
-    appendMacroDirective(II, Undef);
-}
+//   if (Undef)
+//     appendMacroDirective(II, Undef);
+// }
 
 //===----------------------------------------------------------------------===//
 // Preprocessor Conditional Directive Handling.
@@ -2919,236 +2919,236 @@ void Preprocessor::HandleUndefDirective() {
 /// true if any tokens have been returned or pp-directives activated before this
 /// \#ifndef has been lexed.
 ///
-void Preprocessor::HandleIfdefDirective(Token &Result,
-                                        const Token &HashToken,
-                                        bool isIfndef,
-                                        bool ReadAnyTokensBeforeDirective) {
-  ++NumIf;
-  Token DirectiveTok = Result;
+// void Preprocessor::HandleIfdefDirective(Token &Result,
+//                                         const Token &HashToken,
+//                                         bool isIfndef,
+//                                         bool ReadAnyTokensBeforeDirective) {
+//   ++NumIf;
+//   Token DirectiveTok = Result;
 
-  Token MacroNameTok;
-  ReadMacroName(MacroNameTok);
+//   Token MacroNameTok;
+//   ReadMacroName(MacroNameTok);
 
-  // Error reading macro name?  If so, diagnostic already issued.
-  if (MacroNameTok.is(tok::eod)) {
-    // Skip code until we get to #endif.  This helps with recovery by not
-    // emitting an error when the #endif is reached.
-    SkipExcludedConditionalBlock(HashToken.getLocation(),
-                                 DirectiveTok.getLocation(),
-                                 /*Foundnonskip*/ false, /*FoundElse*/ false);
-    return;
-  }
+//   // Error reading macro name?  If so, diagnostic already issued.
+//   if (MacroNameTok.is(tok::eod)) {
+//     // Skip code until we get to #endif.  This helps with recovery by not
+//     // emitting an error when the #endif is reached.
+//     SkipExcludedConditionalBlock(HashToken.getLocation(),
+//                                  DirectiveTok.getLocation(),
+//                                  /*Foundnonskip*/ false, /*FoundElse*/ false);
+//     return;
+//   }
 
-  // Check to see if this is the last token on the #if[n]def line.
-  CheckEndOfDirective(isIfndef ? "ifndef" : "ifdef");
+//   // Check to see if this is the last token on the #if[n]def line.
+//   CheckEndOfDirective(isIfndef ? "ifndef" : "ifdef");
 
-  IdentifierInfo *MII = MacroNameTok.getIdentifierInfo();
-  auto MD = getMacroDefinition(MII);
-  MacroInfo *MI = MD.getMacroInfo();
+//   IdentifierInfo *MII = MacroNameTok.getIdentifierInfo();
+//   auto MD = getMacroDefinition(MII);
+//   MacroInfo *MI = MD.getMacroInfo();
 
-  if (CurPPLexer->getConditionalStackDepth() == 0) {
-    // If the start of a top-level #ifdef and if the macro is not defined,
-    // inform MIOpt that this might be the start of a proper include guard.
-    // Otherwise it is some other form of unknown conditional which we can't
-    // handle.
-    if (!ReadAnyTokensBeforeDirective && !MI) {
-      assert(isIfndef && "#ifdef shouldn't reach here");
-      CurPPLexer->MIOpt.EnterTopLevelIfndef(MII, MacroNameTok.getLocation());
-    } else
-      CurPPLexer->MIOpt.EnterTopLevelConditional();
-  }
+//   if (CurPPLexer->getConditionalStackDepth() == 0) {
+//     // If the start of a top-level #ifdef and if the macro is not defined,
+//     // inform MIOpt that this might be the start of a proper include guard.
+//     // Otherwise it is some other form of unknown conditional which we can't
+//     // handle.
+//     if (!ReadAnyTokensBeforeDirective && !MI) {
+//       assert(isIfndef && "#ifdef shouldn't reach here");
+//       CurPPLexer->MIOpt.EnterTopLevelIfndef(MII, MacroNameTok.getLocation());
+//     } else
+//       CurPPLexer->MIOpt.EnterTopLevelConditional();
+//   }
 
-  // If there is a macro, process it.
-  if (MI)  // Mark it used.
-    markMacroAsUsed(MI);
+//   // If there is a macro, process it.
+//   if (MI)  // Mark it used.
+//     markMacroAsUsed(MI);
 
-  if (Callbacks) {
-    if (isIfndef)
-      Callbacks->Ifndef(DirectiveTok.getLocation(), MacroNameTok, MD);
-    else
-      Callbacks->Ifdef(DirectiveTok.getLocation(), MacroNameTok, MD);
-  }
+//   if (Callbacks) {
+//     if (isIfndef)
+//       Callbacks->Ifndef(DirectiveTok.getLocation(), MacroNameTok, MD);
+//     else
+//       Callbacks->Ifdef(DirectiveTok.getLocation(), MacroNameTok, MD);
+//   }
 
-  bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
-    getSourceManager().isInMainFile(DirectiveTok.getLocation());
+//   bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
+//     getSourceManager().isInMainFile(DirectiveTok.getLocation());
 
-  // Should we include the stuff contained by this directive?
-  if (PPOpts->SingleFileParseMode && !MI) {
-    // In 'single-file-parse mode' undefined identifiers trigger parsing of all
-    // the directive blocks.
-    CurPPLexer->pushConditionalLevel(DirectiveTok.getLocation(),
-                                     /*wasskip*/false, /*foundnonskip*/false,
-                                     /*foundelse*/false);
-  } else if (!MI == isIfndef || RetainExcludedCB) {
-    // Yes, remember that we are inside a conditional, then lex the next token.
-    CurPPLexer->pushConditionalLevel(DirectiveTok.getLocation(),
-                                     /*wasskip*/false, /*foundnonskip*/true,
-                                     /*foundelse*/false);
-  } else {
-    // No, skip the contents of this block.
-    SkipExcludedConditionalBlock(HashToken.getLocation(),
-                                 DirectiveTok.getLocation(),
-                                 /*Foundnonskip*/ false,
-                                 /*FoundElse*/ false);
-  }
-}
+//   // Should we include the stuff contained by this directive?
+//   if (PPOpts->SingleFileParseMode && !MI) {
+//     // In 'single-file-parse mode' undefined identifiers trigger parsing of all
+//     // the directive blocks.
+//     CurPPLexer->pushConditionalLevel(DirectiveTok.getLocation(),
+//                                      /*wasskip*/false, /*foundnonskip*/false,
+//                                      /*foundelse*/false);
+//   } else if (!MI == isIfndef || RetainExcludedCB) {
+//     // Yes, remember that we are inside a conditional, then lex the next token.
+//     CurPPLexer->pushConditionalLevel(DirectiveTok.getLocation(),
+//                                      /*wasskip*/false, /*foundnonskip*/true,
+//                                      /*foundelse*/false);
+//   } else {
+//     // No, skip the contents of this block.
+//     SkipExcludedConditionalBlock(HashToken.getLocation(),
+//                                  DirectiveTok.getLocation(),
+//                                  /*Foundnonskip*/ false,
+//                                  /*FoundElse*/ false);
+//   }
+// }
 
 /// HandleIfDirective - Implements the \#if directive.
 ///
-void Preprocessor::HandleIfDirective(Token &IfToken,
-                                     const Token &HashToken,
-                                     bool ReadAnyTokensBeforeDirective) {
-  ++NumIf;
+// void Preprocessor::HandleIfDirective(Token &IfToken,
+//                                      const Token &HashToken,
+//                                      bool ReadAnyTokensBeforeDirective) {
+//   ++NumIf;
 
-  // Parse and evaluate the conditional expression.
-  IdentifierInfo *IfNDefMacro = nullptr;
-  const DirectiveEvalResult DER = EvaluateDirectiveExpression(IfNDefMacro);
-  const bool ConditionalTrue = DER.Conditional;
+//   // Parse and evaluate the conditional expression.
+//   IdentifierInfo *IfNDefMacro = nullptr;
+//   const DirectiveEvalResult DER = EvaluateDirectiveExpression(IfNDefMacro);
+//   const bool ConditionalTrue = DER.Conditional;
 
-  // If this condition is equivalent to #ifndef X, and if this is the first
-  // directive seen, handle it for the multiple-include optimization.
-  if (CurPPLexer->getConditionalStackDepth() == 0) {
-    if (!ReadAnyTokensBeforeDirective && IfNDefMacro && ConditionalTrue)
-      // FIXME: Pass in the location of the macro name, not the 'if' token.
-      CurPPLexer->MIOpt.EnterTopLevelIfndef(IfNDefMacro, IfToken.getLocation());
-    else
-      CurPPLexer->MIOpt.EnterTopLevelConditional();
-  }
+//   // If this condition is equivalent to #ifndef X, and if this is the first
+//   // directive seen, handle it for the multiple-include optimization.
+//   if (CurPPLexer->getConditionalStackDepth() == 0) {
+//     if (!ReadAnyTokensBeforeDirective && IfNDefMacro && ConditionalTrue)
+//       // FIXME: Pass in the location of the macro name, not the 'if' token.
+//       CurPPLexer->MIOpt.EnterTopLevelIfndef(IfNDefMacro, IfToken.getLocation());
+//     else
+//       CurPPLexer->MIOpt.EnterTopLevelConditional();
+//   }
 
-  if (Callbacks)
-    Callbacks->If(
-        IfToken.getLocation(), DER.ExprRange,
-        (ConditionalTrue ? PPCallbacks::CVK_True : PPCallbacks::CVK_False));
+//   if (Callbacks)
+//     Callbacks->If(
+//         IfToken.getLocation(), DER.ExprRange,
+//         (ConditionalTrue ? PPCallbacks::CVK_True : PPCallbacks::CVK_False));
 
-  bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
-    getSourceManager().isInMainFile(IfToken.getLocation());
+//   bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
+//     getSourceManager().isInMainFile(IfToken.getLocation());
 
-  // Should we include the stuff contained by this directive?
-  if (PPOpts->SingleFileParseMode && DER.IncludedUndefinedIds) {
-    // In 'single-file-parse mode' undefined identifiers trigger parsing of all
-    // the directive blocks.
-    CurPPLexer->pushConditionalLevel(IfToken.getLocation(), /*wasskip*/false,
-                                     /*foundnonskip*/false, /*foundelse*/false);
-  } else if (ConditionalTrue || RetainExcludedCB) {
-    // Yes, remember that we are inside a conditional, then lex the next token.
-    CurPPLexer->pushConditionalLevel(IfToken.getLocation(), /*wasskip*/false,
-                                   /*foundnonskip*/true, /*foundelse*/false);
-  } else {
-    // No, skip the contents of this block.
-    SkipExcludedConditionalBlock(HashToken.getLocation(), IfToken.getLocation(),
-                                 /*Foundnonskip*/ false,
-                                 /*FoundElse*/ false);
-  }
-}
+//   // Should we include the stuff contained by this directive?
+//   if (PPOpts->SingleFileParseMode && DER.IncludedUndefinedIds) {
+//     // In 'single-file-parse mode' undefined identifiers trigger parsing of all
+//     // the directive blocks.
+//     CurPPLexer->pushConditionalLevel(IfToken.getLocation(), /*wasskip*/false,
+//                                      /*foundnonskip*/false, /*foundelse*/false);
+//   } else if (ConditionalTrue || RetainExcludedCB) {
+//     // Yes, remember that we are inside a conditional, then lex the next token.
+//     CurPPLexer->pushConditionalLevel(IfToken.getLocation(), /*wasskip*/false,
+//                                    /*foundnonskip*/true, /*foundelse*/false);
+//   } else {
+//     // No, skip the contents of this block.
+//     SkipExcludedConditionalBlock(HashToken.getLocation(), IfToken.getLocation(),
+//                                  /*Foundnonskip*/ false,
+//                                  /*FoundElse*/ false);
+//   }
+// }
 
 /// HandleEndifDirective - Implements the \#endif directive.
 ///
-void Preprocessor::HandleEndifDirective(Token &EndifToken) {
-  ++NumEndif;
+// void Preprocessor::HandleEndifDirective(Token &EndifToken) {
+//   ++NumEndif;
 
-  // Check that this is the whole directive.
-  CheckEndOfDirective("endif");
+//   // Check that this is the whole directive.
+//   CheckEndOfDirective("endif");
 
-  PPConditionalInfo CondInfo;
-  if (CurPPLexer->popConditionalLevel(CondInfo)) {
-    // No conditionals on the stack: this is an #endif without an #if.
-    Diag(EndifToken, diag::err_pp_endif_without_if);
-    return;
-  }
+//   PPConditionalInfo CondInfo;
+//   if (CurPPLexer->popConditionalLevel(CondInfo)) {
+//     // No conditionals on the stack: this is an #endif without an #if.
+//     Diag(EndifToken, diag::err_pp_endif_without_if);
+//     return;
+//   }
 
-  // If this the end of a top-level #endif, inform MIOpt.
-  if (CurPPLexer->getConditionalStackDepth() == 0)
-    CurPPLexer->MIOpt.ExitTopLevelConditional();
+//   // If this the end of a top-level #endif, inform MIOpt.
+//   if (CurPPLexer->getConditionalStackDepth() == 0)
+//     CurPPLexer->MIOpt.ExitTopLevelConditional();
 
-  assert(!CondInfo.WasSkipping && !CurPPLexer->LexingRawMode &&
-         "This code should only be reachable in the non-skipping case!");
+//   assert(!CondInfo.WasSkipping && !CurPPLexer->LexingRawMode &&
+//          "This code should only be reachable in the non-skipping case!");
 
-  if (Callbacks)
-    Callbacks->Endif(EndifToken.getLocation(), CondInfo.IfLoc);
-}
+//   if (Callbacks)
+//     Callbacks->Endif(EndifToken.getLocation(), CondInfo.IfLoc);
+// }
 
 /// HandleElseDirective - Implements the \#else directive.
 ///
-void Preprocessor::HandleElseDirective(Token &Result, const Token &HashToken) {
-  ++NumElse;
+// void Preprocessor::HandleElseDirective(Token &Result, const Token &HashToken) {
+//   ++NumElse;
 
-  // #else directive in a non-skipping conditional... start skipping.
-  CheckEndOfDirective("else");
+//   // #else directive in a non-skipping conditional... start skipping.
+//   CheckEndOfDirective("else");
 
-  PPConditionalInfo CI;
-  if (CurPPLexer->popConditionalLevel(CI)) {
-    Diag(Result, diag::pp_err_else_without_if);
-    return;
-  }
+//   PPConditionalInfo CI;
+//   if (CurPPLexer->popConditionalLevel(CI)) {
+//     Diag(Result, diag::pp_err_else_without_if);
+//     return;
+//   }
 
-  // If this is a top-level #else, inform the MIOpt.
-  if (CurPPLexer->getConditionalStackDepth() == 0)
-    CurPPLexer->MIOpt.EnterTopLevelConditional();
+//   // If this is a top-level #else, inform the MIOpt.
+//   if (CurPPLexer->getConditionalStackDepth() == 0)
+//     CurPPLexer->MIOpt.EnterTopLevelConditional();
 
-  // If this is a #else with a #else before it, report the error.
-  if (CI.FoundElse) Diag(Result, diag::pp_err_else_after_else);
+//   // If this is a #else with a #else before it, report the error.
+//   if (CI.FoundElse) Diag(Result, diag::pp_err_else_after_else);
 
-  if (Callbacks)
-    Callbacks->Else(Result.getLocation(), CI.IfLoc);
+//   if (Callbacks)
+//     Callbacks->Else(Result.getLocation(), CI.IfLoc);
 
-  bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
-    getSourceManager().isInMainFile(Result.getLocation());
+//   bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
+//     getSourceManager().isInMainFile(Result.getLocation());
 
-  if ((PPOpts->SingleFileParseMode && !CI.FoundNonSkip) || RetainExcludedCB) {
-    // In 'single-file-parse mode' undefined identifiers trigger parsing of all
-    // the directive blocks.
-    CurPPLexer->pushConditionalLevel(CI.IfLoc, /*wasskip*/false,
-                                     /*foundnonskip*/false, /*foundelse*/true);
-    return;
-  }
+//   if ((PPOpts->SingleFileParseMode && !CI.FoundNonSkip) || RetainExcludedCB) {
+//     // In 'single-file-parse mode' undefined identifiers trigger parsing of all
+//     // the directive blocks.
+//     CurPPLexer->pushConditionalLevel(CI.IfLoc, /*wasskip*/false,
+//                                      /*foundnonskip*/false, /*foundelse*/true);
+//     return;
+//   }
 
-  // Finally, skip the rest of the contents of this block.
-  SkipExcludedConditionalBlock(HashToken.getLocation(), CI.IfLoc,
-                               /*Foundnonskip*/ true,
-                               /*FoundElse*/ true, Result.getLocation());
-}
+//   // Finally, skip the rest of the contents of this block.
+//   SkipExcludedConditionalBlock(HashToken.getLocation(), CI.IfLoc,
+//                                /*Foundnonskip*/ true,
+//                                /*FoundElse*/ true, Result.getLocation());
+// }
 
 /// HandleElifDirective - Implements the \#elif directive.
 ///
-void Preprocessor::HandleElifDirective(Token &ElifToken,
-                                       const Token &HashToken) {
-  ++NumElse;
+// void Preprocessor::HandleElifDirective(Token &ElifToken,
+//                                        const Token &HashToken) {
+//   ++NumElse;
 
-  // #elif directive in a non-skipping conditional... start skipping.
-  // We don't care what the condition is, because we will always skip it (since
-  // the block immediately before it was included).
-  SourceRange ConditionRange = DiscardUntilEndOfDirective();
+//   // #elif directive in a non-skipping conditional... start skipping.
+//   // We don't care what the condition is, because we will always skip it (since
+//   // the block immediately before it was included).
+//   SourceRange ConditionRange = DiscardUntilEndOfDirective();
 
-  PPConditionalInfo CI;
-  if (CurPPLexer->popConditionalLevel(CI)) {
-    Diag(ElifToken, diag::pp_err_elif_without_if);
-    return;
-  }
+//   PPConditionalInfo CI;
+//   if (CurPPLexer->popConditionalLevel(CI)) {
+//     Diag(ElifToken, diag::pp_err_elif_without_if);
+//     return;
+//   }
 
-  // If this is a top-level #elif, inform the MIOpt.
-  if (CurPPLexer->getConditionalStackDepth() == 0)
-    CurPPLexer->MIOpt.EnterTopLevelConditional();
+//   // If this is a top-level #elif, inform the MIOpt.
+//   if (CurPPLexer->getConditionalStackDepth() == 0)
+//     CurPPLexer->MIOpt.EnterTopLevelConditional();
 
-  // If this is a #elif with a #else before it, report the error.
-  if (CI.FoundElse) Diag(ElifToken, diag::pp_err_elif_after_else);
+//   // If this is a #elif with a #else before it, report the error.
+//   if (CI.FoundElse) Diag(ElifToken, diag::pp_err_elif_after_else);
 
-  if (Callbacks)
-    Callbacks->Elif(ElifToken.getLocation(), ConditionRange,
-                    PPCallbacks::CVK_NotEvaluated, CI.IfLoc);
+//   if (Callbacks)
+//     Callbacks->Elif(ElifToken.getLocation(), ConditionRange,
+//                     PPCallbacks::CVK_NotEvaluated, CI.IfLoc);
 
-  bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
-    getSourceManager().isInMainFile(ElifToken.getLocation());
+//   bool RetainExcludedCB = PPOpts->RetainExcludedConditionalBlocks &&
+//     getSourceManager().isInMainFile(ElifToken.getLocation());
 
-  if ((PPOpts->SingleFileParseMode && !CI.FoundNonSkip) || RetainExcludedCB) {
-    // In 'single-file-parse mode' undefined identifiers trigger parsing of all
-    // the directive blocks.
-    CurPPLexer->pushConditionalLevel(ElifToken.getLocation(), /*wasskip*/false,
-                                     /*foundnonskip*/false, /*foundelse*/false);
-    return;
-  }
+//   if ((PPOpts->SingleFileParseMode && !CI.FoundNonSkip) || RetainExcludedCB) {
+//     // In 'single-file-parse mode' undefined identifiers trigger parsing of all
+//     // the directive blocks.
+//     CurPPLexer->pushConditionalLevel(ElifToken.getLocation(), /*wasskip*/false,
+//                                      /*foundnonskip*/false, /*foundelse*/false);
+//     return;
+//   }
 
-  // Finally, skip the rest of the contents of this block.
-  SkipExcludedConditionalBlock(
-      HashToken.getLocation(), CI.IfLoc, /*Foundnonskip*/ true,
-      /*FoundElse*/ CI.FoundElse, ElifToken.getLocation());
-}
+//   // Finally, skip the rest of the contents of this block.
+//   SkipExcludedConditionalBlock(
+//       HashToken.getLocation(), CI.IfLoc, /*Foundnonskip*/ true,
+//       /*FoundElse*/ CI.FoundElse, ElifToken.getLocation());
+// }

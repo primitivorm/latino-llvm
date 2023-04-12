@@ -722,7 +722,7 @@ struct AdditionalKeywords {
     kw_from = &IdentTable.get("from");
     kw_function = &IdentTable.get("function");
     kw_get = &IdentTable.get("get");
-    kw_importar = &IdentTable.get("import");
+    kw_import = &IdentTable.get("import");
     kw_infer = &IdentTable.get("infer");
     kw_is = &IdentTable.get("is");
     kw_let = &IdentTable.get("let");
@@ -743,7 +743,7 @@ struct AdditionalKeywords {
     kw_native = &IdentTable.get("native");
     kw_package = &IdentTable.get("package");
     kw_synchronized = &IdentTable.get("synchronized");
-    kw_lanzars = &IdentTable.get("throws");
+    kw_throws = &IdentTable.get("throws");
     kw___except = &IdentTable.get("__except");
     kw___has_include = &IdentTable.get("__has_include");
     kw___has_include_next = &IdentTable.get("__has_include_next");
@@ -797,7 +797,7 @@ struct AdditionalKeywords {
     // already initialized.
     JsExtraKeywords = std::unordered_set<IdentifierInfo *>(
         {kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
-         kw_function, kw_get, kw_importar, kw_is, kw_let, kw_modulo, kw_readonly,
+         kw_function, kw_get, kw_import, kw_is, kw_let, kw_modulo, kw_readonly,
          kw_set, kw_type, kw_typeof, kw_var, kw_yield,
          // Keywords from the Java section.
          kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
@@ -811,7 +811,7 @@ struct AdditionalKeywords {
          kw_where,
          // Keywords from the JavaScript section.
          kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
-         kw_function, kw_get, kw_importar, kw_is, kw_let, kw_modulo, kw_readonly,
+         kw_function, kw_get, kw_import, kw_is, kw_let, kw_modulo, kw_readonly,
          kw_set, kw_type, kw_typeof, kw_var, kw_yield,
          // Keywords from the Java section.
          kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
@@ -841,7 +841,7 @@ struct AdditionalKeywords {
   IdentifierInfo *kw_from;
   IdentifierInfo *kw_function;
   IdentifierInfo *kw_get;
-  IdentifierInfo *kw_importar;
+  IdentifierInfo *kw_import;
   IdentifierInfo *kw_infer;
   IdentifierInfo *kw_is;
   IdentifierInfo *kw_let;
@@ -863,7 +863,7 @@ struct AdditionalKeywords {
   IdentifierInfo *kw_native;
   IdentifierInfo *kw_package;
   IdentifierInfo *kw_synchronized;
-  IdentifierInfo *kw_lanzars;
+  IdentifierInfo *kw_throws;
 
   // Pragma keywords.
   IdentifierInfo *kw_mark;

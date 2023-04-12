@@ -1012,12 +1012,12 @@ FormatToken *FormatTokenLexer::getNextToken() {
 
   if (Style.isCpp()) {
     auto it = Macros.find(FormatTok->Tok.getIdentifierInfo());
-    if (!(Tokens.size() > 0 && Tokens.back()->Tok.getIdentifierInfo() &&
+    /*if (!(Tokens.size() > 0 && Tokens.back()->Tok.getIdentifierInfo() &&
           Tokens.back()->Tok.getIdentifierInfo()->getPPKeywordID() ==
               tok::pp_define) &&
         it != Macros.end()) {
       FormatTok->setType(it->second);
-    } else if (FormatTok->is(tok::identifier)) {
+    } else*/ if (FormatTok->is(tok::identifier)) {
       if (MacroBlockBeginRegex.match(Text)) {
         FormatTok->setType(TT_MacroBlockBegin);
       } else if (MacroBlockEndRegex.match(Text)) {

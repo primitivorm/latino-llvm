@@ -2328,17 +2328,17 @@ private:
   void replayPreambleConditionalStack();
 
   // Macro handling.
-  void HandleDefineDirective(Token &Tok, bool ImmediatelyAfterHeaderGuard);
-  void HandleUndefDirective();
+  // void HandleDefineDirective(Token &Tok, bool ImmediatelyAfterHeaderGuard);
+  // void HandleUndefDirective();
 
   // Conditional Inclusion.
-  void HandleIfdefDirective(Token &Result, const Token &HashToken,
-                            bool isIfndef, bool ReadAnyTokensBeforeDirective);
-  void HandleIfDirective(Token &IfToken, const Token &HashToken,
-                         bool ReadAnyTokensBeforeDirective);
-  void HandleEndifDirective(Token &EndifToken);
-  void HandleElseDirective(Token &Result, const Token &HashToken);
-  void HandleElifDirective(Token &ElifToken, const Token &HashToken);
+  // void HandleIfdefDirective(Token &Result, const Token &HashToken,
+  //                           bool isIfndef, bool ReadAnyTokensBeforeDirective);
+  // void HandleIfDirective(Token &IfToken, const Token &HashToken,
+  //                        bool ReadAnyTokensBeforeDirective);
+  // void HandleEndifDirective(Token &EndifToken);
+  // void HandleElseDirective(Token &Result, const Token &HashToken);
+  // void HandleElifDirective(Token &ElifToken, const Token &HashToken);
 
   // Pragmas.
   // void HandlePragmaDirective(PragmaIntroducer Introducer);

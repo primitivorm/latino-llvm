@@ -94,21 +94,21 @@
 PPKEYWORD(not_keyword)
 
 // C99 6.10.1 - Conditional Inclusion.
-PPKEYWORD(if)
-PPKEYWORD(ifdef)
-PPKEYWORD(ifndef)
-PPKEYWORD(elif)
-PPKEYWORD(else)
-PPKEYWORD(endif)
-PPKEYWORD(defined)
+// PPKEYWORD(if)
+// PPKEYWORD(ifdef)
+// PPKEYWORD(ifndef)
+// PPKEYWORD(elif)
+// PPKEYWORD(else)
+// PPKEYWORD(endif)
+// PPKEYWORD(defined)
 
 // C99 6.10.2 - Source File Inclusion.
 // PPKEYWORD(include)
 // PPKEYWORD(__include_macros)
 
 // C99 6.10.3 - Macro Replacement.
-PPKEYWORD(define)
-PPKEYWORD(undef)
+// PPKEYWORD(define)
+// PPKEYWORD(undef)
 
 // C99 6.10.4 - Line Control.
 // PPKEYWORD(line)

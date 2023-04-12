@@ -585,7 +585,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
     case tok::kw_modulo:
       goto module_decl;
 
-    // Note: no need to handle kw_importar here. We only form kw_importar under
+    // Note: no need to handle kw_import here. We only form kw_import under
     // the Modules TS, and in that case 'export import' is parsed as an
     // export-declaration containing an import-declaration.
 

@@ -61,9 +61,9 @@ private:
   LLVM_NODISCARD bool lexPPLine(const char *&First, const char *const End);
   LLVM_NODISCARD bool lexAt(const char *&First, const char *const End);
   LLVM_NODISCARD bool lexModule(const char *&First, const char *const End);
-  LLVM_NODISCARD bool lexDefine(const char *&First, const char *const End);
+  // LLVM_NODISCARD bool lexDefine(const char *&First, const char *const End);
   LLVM_NODISCARD bool lexPragma(const char *&First, const char *const End);
-  LLVM_NODISCARD bool lexEndif(const char *&First, const char *const End);
+  // LLVM_NODISCARD bool lexEndif(const char *&First, const char *const End);
   LLVM_NODISCARD bool lexDefault(TokenKind Kind, StringRef Directive,
                                  const char *&First, const char *const End);
   Token &makeToken(TokenKind K) {
@@ -685,39 +685,39 @@ bool Minimizer::lexModule(const char *&First, const char *const End) {
   return false;
 }
 
-bool Minimizer::lexDefine(const char *&First, const char *const End) {
-  makeToken(pp_define);
-  append("#define ");
-  skipWhitespace(First, End);
+// bool Minimizer::lexDefine(const char *&First, const char *const End) {
+//   makeToken(pp_define);
+//   append("#define ");
+//   skipWhitespace(First, End);
 
-  if (!isIdentifierHead(*First))
-    return reportError(First, diag::err_pp_macro_not_identifier);
+//   if (!isIdentifierHead(*First))
+//     return reportError(First, diag::err_pp_macro_not_identifier);
 
-  IdInfo Id = lexIdentifier(First, End);
-  const char *Last = Id.Last;
-  append(Id.Name);
-  if (Last == End)
-    return false;
-  if (*Last == '(') {
-    size_t Size = Out.size();
-    if (printMacroArgs(Last, End)) {
-      // Be robust to bad macro arguments, since they can show up in disabled
-      // code.
-      Out.resize(Size);
-      append("(/* invalid */\n");
-      skipLine(Last, End);
-      return false;
-    }
-  }
-  skipWhitespace(Last, End);
-  if (Last == End)
-    return false;
-  if (!isVerticalWhitespace(*Last))
-    put(' ');
-  printDirectiveBody(Last, End);
-  First = Last;
-  return false;
-}
+//   IdInfo Id = lexIdentifier(First, End);
+//   const char *Last = Id.Last;
+//   append(Id.Name);
+//   if (Last == End)
+//     return false;
+//   if (*Last == '(') {
+//     size_t Size = Out.size();
+//     if (printMacroArgs(Last, End)) {
+//       // Be robust to bad macro arguments, since they can show up in disabled
+//       // code.
+//       Out.resize(Size);
+//       append("(/* invalid */\n");
+//       skipLine(Last, End);
+//       return false;
+//     }
+//   }
+//   skipWhitespace(Last, End);
+//   if (Last == End)
+//     return false;
+//   if (!isVerticalWhitespace(*Last))
+//     put(' ');
+//   printDirectiveBody(Last, End);
+//   First = Last;
+//   return false;
+// }
 
 bool Minimizer::lexPragma(const char *&First, const char *const End) {
   // #pragma.
@@ -759,25 +759,25 @@ bool Minimizer::lexPragma(const char *&First, const char *const End) {
   return false;
 }
 
-bool Minimizer::lexEndif(const char *&First, const char *const End) {
-  // Strip out "#else" if it's empty.
-  if (top() == pp_else)
-    popToken();
+// bool Minimizer::lexEndif(const char *&First, const char *const End) {
+//   // Strip out "#else" if it's empty.
+//   // if (top() == pp_else)
+//   //   popToken();
 
-  // If "#ifdef" is empty, strip it and skip the "#endif".
-  //
-  // FIXME: Once/if Clang starts disallowing __has_include in macro expansions,
-  // we can skip empty `#if` and `#elif` blocks as well after scanning for a
-  // literal __has_include in the condition.  Even without that rule we could
-  // drop the tokens if we scan for identifiers in the condition and find none.
-  if (top() == pp_ifdef || top() == pp_ifndef) {
-    popToken();
-    skipLine(First, End);
-    return false;
-  }
+//   // If "#ifdef" is empty, strip it and skip the "#endif".
+//   //
+//   // FIXME: Once/if Clang starts disallowing __has_include in macro expansions,
+//   // we can skip empty `#if` and `#elif` blocks as well after scanning for a
+//   // literal __has_include in the condition.  Even without that rule we could
+//   // drop the tokens if we scan for identifiers in the condition and find none.
+//   // if (top() == pp_ifdef || top() == pp_ifndef) {
+//   //   popToken();
+//   //   skipLine(First, End);
+//   //   return false;
+//   // }
 
-  return lexDefault(pp_endif, "endif", First, End);
-}
+//   // return lexDefault(pp_endif, "endif", First, End);
+// }
 
 bool Minimizer::lexDefault(TokenKind Kind, StringRef Directive,
                            const char *&First, const char *const End) {
@@ -838,16 +838,16 @@ bool Minimizer::lexPPLine(const char *&First, const char *const End) {
   auto Kind = llvm::StringSwitch<TokenKind>(Id.Name)
                   // .Case("include", pp_include)
                   // .Case("__include_macros", pp___include_macros)
-                  .Case("define", pp_define)
-                  .Case("undef", pp_undef)
+                  // .Case("define", pp_define)
+                  // .Case("undef", pp_undef)
                   // .Case("import", pp_import)
                   // .Case("include_next", pp_include_next)
-                  .Case("if", pp_if)
-                  .Case("ifdef", pp_ifdef)
-                  .Case("ifndef", pp_ifndef)
-                  .Case("elif", pp_elif)
-                  .Case("else", pp_else)
-                  .Case("endif", pp_endif)
+                  // .Case("if", pp_if)
+                  // .Case("ifdef", pp_ifdef)
+                  // .Case("ifndef", pp_ifndef)
+                  // .Case("elif", pp_elif)
+                  // .Case("else", pp_else)
+                  // .Case("endif", pp_endif)
                   .Case("pragma", pp_pragma_import)
                   .Default(pp_none);
   if (Kind == pp_none) {
@@ -855,11 +855,11 @@ bool Minimizer::lexPPLine(const char *&First, const char *const End) {
     return false;
   }
 
-  if (Kind == pp_endif)
-    return lexEndif(First, End);
+  // if (Kind == pp_endif)
+  //   return lexEndif(First, End);
 
-  if (Kind == pp_define)
-    return lexDefine(First, End);
+  // if (Kind == pp_define)
+  //   return lexDefine(First, End);
 
   if (Kind == pp_pragma_import)
     return lexPragma(First, End);
@@ -912,34 +912,34 @@ bool latino::minimize_source_to_dependency_directives::computeSkippedRanges(
   llvm::SmallVector<Directive, 32> Offsets;
   for (const Token &T : Input) {
     switch (T.K) {
-    case pp_if:
-    case pp_ifdef:
-    case pp_ifndef:
-      Offsets.push_back({T.Offset, Directive::If});
-      break;
+    // case pp_if:
+    // case pp_ifdef:
+    // case pp_ifndef:
+    //   Offsets.push_back({T.Offset, Directive::If});
+    //   break;
 
-    case pp_elif:
-    case pp_else: {
-      if (Offsets.empty())
-        return true;
-      int PreviousOffset = Offsets.back().Offset;
-      Range.push_back({PreviousOffset, T.Offset - PreviousOffset});
-      Offsets.push_back({T.Offset, Directive::Else});
-      break;
-    }
+    // case pp_elif:
+    // case pp_else: {
+    //   if (Offsets.empty())
+    //     return true;
+    //   int PreviousOffset = Offsets.back().Offset;
+    //   Range.push_back({PreviousOffset, T.Offset - PreviousOffset});
+    //   Offsets.push_back({T.Offset, Directive::Else});
+    //   break;
+    // }
 
-    case pp_endif: {
-      if (Offsets.empty())
-        return true;
-      int PreviousOffset = Offsets.back().Offset;
-      Range.push_back({PreviousOffset, T.Offset - PreviousOffset});
-      do {
-        Directive::DirectiveKind Kind = Offsets.pop_back_val().Kind;
-        if (Kind == Directive::If)
-          break;
-      } while (!Offsets.empty());
-      break;
-    }
+    // case pp_endif: {
+    //   if (Offsets.empty())
+    //     return true;
+    //   int PreviousOffset = Offsets.back().Offset;
+    //   Range.push_back({PreviousOffset, T.Offset - PreviousOffset});
+    //   do {
+    //     Directive::DirectiveKind Kind = Offsets.pop_back_val().Kind;
+    //     if (Kind == Directive::If)
+    //       break;
+    //   } while (!Offsets.empty());
+    //   break;
+    // }
     default:
       break;
     }

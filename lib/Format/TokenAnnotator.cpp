@@ -1219,12 +1219,12 @@ private:
     // case tok::pp_pragma:
     //   parsePragma();
     //   break;
-    case tok::pp_if:
-    case tok::pp_elif:
-      Contexts.back().IsExpression = true;
-      next();
-      parseLine();
-      break;
+    // case tok::pp_if:
+    // case tok::pp_elif:
+    //   Contexts.back().IsExpression = true;
+    //   next();
+    //   parseLine();
+    //   break;
     default:
       break;
     }
@@ -1287,7 +1287,7 @@ public:
 
     // import {...} from '...';
     if (Style.Language == FormatStyle::LK_JavaScript &&
-        CurrentToken->is(Keywords.kw_importar))
+        CurrentToken->is(Keywords.kw_import))
       ImportStatement = true;
 
     while (CurrentToken) {
@@ -2154,7 +2154,7 @@ private:
       if ((Style.Language == FormatStyle::LK_Java ||
            Style.Language == FormatStyle::LK_JavaScript) &&
           Current->isOneOf(Keywords.kw_extends, Keywords.kw_implements,
-                           Keywords.kw_lanzars))
+                           Keywords.kw_throws))
         return 0;
     }
     return -1;
@@ -2558,7 +2558,7 @@ unsigned TokenAnnotator::splitPenalty(const AnnotatedLine &Line,
     return 0;
 
   if (Style.Language == FormatStyle::LK_Java) {
-    if (Right.isOneOf(Keywords.kw_extends, Keywords.kw_lanzars))
+    if (Right.isOneOf(Keywords.kw_extends, Keywords.kw_throws))
       return 1;
     if (Right.is(Keywords.kw_implements))
       return 2;
@@ -2950,7 +2950,7 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
       return false;
     return Line.Type == LT_ObjCDecl || Left.is(tok::semi) ||
            (Style.SpaceBeforeParens != FormatStyle::SBPO_Never &&
-            (Left.isOneOf(tok::pp_elif, tok::kw_desde, tok::kw_mientras,
+            (Left.isOneOf(/*tok::pp_elif,*/ tok::kw_desde, tok::kw_mientras,
                           tok::kw_elegir, tok::kw_caso, TT_ForEachMacro,
                           TT_ObjCForIn) ||
              Left.isIf(Line.Type != LT_PreprocessorDirective) ||
@@ -3196,7 +3196,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
     if (Left.is(TT_JsTypeOperator) || Right.is(TT_JsTypeOperator))
       return false;
     if ((Left.is(tok::l_brace) || Right.is(tok::r_brace)) &&
-        Line.First->isOneOf(Keywords.kw_importar, tok::kw_exportar))
+        Line.First->isOneOf(Keywords.kw_import, tok::kw_exportar))
       return false;
     if (Left.is(tok::ellipsis))
       return false;
@@ -3433,7 +3433,7 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
       return true;
     if (Left.is(TT_DictLiteral) && Left.is(tok::l_brace) && Line.Level == 0 &&
         Left.Previous && Left.Previous->is(tok::equal) &&
-        Line.First->isOneOf(tok::identifier, Keywords.kw_importar, tok::kw_exportar,
+        Line.First->isOneOf(tok::identifier, Keywords.kw_import, tok::kw_exportar,
                             tok::kw_const) &&
         // kw_var/kw_let are pseudo-tokens that are tok::identifier, so match
         // above.
@@ -3720,10 +3720,10 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
     if (Line.First->is(TT_CSharpGenericTypeConstraint))
       return Left.is(TT_CSharpGenericTypeConstraintComma);
   } else if (Style.Language == FormatStyle::LK_Java) {
-    if (Left.isOneOf(Keywords.kw_lanzars, Keywords.kw_extends,
+    if (Left.isOneOf(Keywords.kw_throws, Keywords.kw_extends,
                      Keywords.kw_implements))
       return false;
-    if (Right.isOneOf(Keywords.kw_lanzars, Keywords.kw_extends,
+    if (Right.isOneOf(Keywords.kw_throws, Keywords.kw_extends,
                       Keywords.kw_implements))
       return true;
   } else if (Style.Language == FormatStyle::LK_JavaScript) {

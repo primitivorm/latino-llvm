@@ -330,7 +330,7 @@ private:
   // for grammar EBNF (production ModuleItem).
   bool parseModuleReference(const AdditionalKeywords &Keywords,
                             JsModuleReference &Reference) {
-    if (!Current || !Current->isOneOf(Keywords.kw_importar, tok::kw_exportar))
+    if (!Current || !Current->isOneOf(Keywords.kw_import, tok::kw_exportar))
       return false;
     Reference.IsExport = Current->is(tok::kw_exportar);
 

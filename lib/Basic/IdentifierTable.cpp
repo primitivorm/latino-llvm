@@ -287,24 +287,24 @@ tok::PPKeywordKind IdentifierInfo::getPPKeywordID() const {
   const char *Name = getNameStart();
   switch (HASH(Len, Name[0], Name[2])) {
   default: return tok::pp_not_keyword;
-  CASE( 2, 'i', '\0', if);
-  CASE( 4, 'e', 'i', elif);
-  CASE( 4, 'e', 's', else);
+  // CASE( 2, 'i', '\0', if);
+  // CASE( 4, 'e', 'i', elif);
+  // CASE( 4, 'e', 's', else);
   // CASE( 4, 'l', 'n', line);
   // CASE( 4, 's', 'c', sccs);
-  CASE( 5, 'e', 'd', endif);
+  // CASE( 5, 'e', 'd', endif);
   // CASE( 5, 'e', 'r', error);
   // CASE( 5, 'i', 'e', ident);
-  CASE( 5, 'i', 'd', ifdef);
-  CASE( 5, 'u', 'd', undef);
+  // CASE( 5, 'i', 'd', ifdef);
+  // CASE( 5, 'u', 'd', undef);
 
   // CASE( 6, 'a', 's', assert);
-  CASE( 6, 'd', 'f', define);
-  CASE( 6, 'i', 'n', ifndef);
+  // CASE( 6, 'd', 'f', define);
+  // CASE( 6, 'i', 'n', ifndef);
   // CASE( 6, 'i', 'p', import);
   // CASE( 6, 'p', 'a', pragma);
 
-  CASE( 7, 'd', 'f', defined);
+  // CASE( 7, 'd', 'f', defined);
   // CASE( 7, 'i', 'c', include);
   // CASE( 7, 'w', 'r', warning);
 
