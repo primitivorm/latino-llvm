@@ -654,7 +654,7 @@ void Parser::ParseObjCInterfaceDeclList(tok::ObjCKeywordKind contextKey,
       // Since we call ParseDeclarationOrFunctionDefinition() instead of
       // ParseExternalDeclaration() below (so that this doesn't parse nested
       // @interfaces), this needs to duplicate some code from the latter.
-      if (Tok.isOneOf(tok::kw_static_assert, tok::kw__Static_assert)) {
+      if (Tok.is(tok::kw_static_assert/*, tok::kw__Static_assert*/)) {
         SourceLocation DeclEnd;
         allTUVariables.push_back(
             ParseDeclaration(DeclaratorContext::FileContext, DeclEnd, attrs));
@@ -1062,7 +1062,7 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_friend:
   case tok::kw_ir:
   case tok::kw_si:
-  case tok::kw_inline:
+  case tok::kw_en_linea:
   case tok::kw_int:
   case tok::kw_long:
   case tok::kw_mutable:
@@ -1079,16 +1079,16 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   case tok::kw_short:
   case tok::kw_signed:
   case tok::kw_sizeof:
-  case tok::kw_static:
+  case tok::kw_estatica:
   case tok::kw_static_cast:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   case tok::kw_elegir:
   case tok::kw_plantilla:
   case tok::kw_mi:
   case tok::kw_lanzar:
   case tok::kw_true:
   case tok::kw_intentar:
-  case tok::kw_typedef:
+  case tok::kw_alias:
   case tok::kw_typeid:
   case tok::kw_typename:
   case tok::kw_typeof:
@@ -1100,8 +1100,8 @@ IdentifierInfo *Parser::ParseObjCSelectorPiece(SourceLocation &SelectorLoc) {
   // case tok::kw_volatile:
   case tok::kw_wchar_t:
   case tok::kw_mientras:
-  case tok::kw__Bool:
-  case tok::kw__Complex:
+  // case tok::kw__Bool:
+  // case tok::kw__Complex:
   case tok::kw___alignof:
   // case tok::kw___auto_type:
     IdentifierInfo *II = Tok.getIdentifierInfo();
@@ -1963,7 +1963,7 @@ void Parser::ParseObjCClassInstanceVariables(Decl *interfaceDecl,
     // This needs to duplicate a small amount of code from
     // ParseStructUnionBody() for things that should work in both
     // C struct and in Objective-C class instance variables.
-    if (Tok.isOneOf(tok::kw_static_assert, tok::kw__Static_assert)) {
+    if (Tok.is(tok::kw_static_assert/*, tok::kw__Static_assert*/)) {
       SourceLocation DeclEnd;
       ParseStaticAssertDeclaration(DeclEnd);
       continue;

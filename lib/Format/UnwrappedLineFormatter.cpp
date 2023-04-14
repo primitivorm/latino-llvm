@@ -241,9 +241,9 @@ private:
                    ? tryMergeSimpleBlock(I, E, Limit)
                    : 0;
 
-      if (Tok && Tok->is(tok::kw_typedef))
+      if (Tok && Tok->is(tok::kw_alias))
         Tok = Tok->getNextNonComment();
-      if (Tok && Tok->isOneOf(tok::kw_clase, tok::kw_struct, tok::kw_union,
+      if (Tok && Tok->isOneOf(tok::kw_clase, tok::kw_estructura, tok::kw_union,
                               tok::kw_extern, Keywords.kw_interface))
         return !Style.BraceWrapping.SplitEmptyRecord && EmptyBlock
                    ? tryMergeSimpleBlock(I, E, Limit)
@@ -584,12 +584,12 @@ private:
         // Skip record modifiers.
         while (RecordTok->Next &&
                RecordTok->isOneOf(
-                   tok::kw_typedef, tok::kw_exportar, Keywords.kw_declare,
+                   tok::kw_alias, tok::kw_exportar, Keywords.kw_declare,
                    Keywords.kw_abstract, tok::kw_otro, tok::kw_pub,
                    tok::kw_pri, tok::kw_pro, Keywords.kw_internal))
           RecordTok = RecordTok->Next;
         if (RecordTok &&
-            RecordTok->isOneOf(tok::kw_clase, tok::kw_union, tok::kw_struct,
+            RecordTok->isOneOf(tok::kw_clase, tok::kw_union, tok::kw_estructura,
                                Keywords.kw_interface))
           return 0;
 

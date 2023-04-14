@@ -964,12 +964,12 @@ FormatToken *FormatTokenLexer::getNextToken() {
     FormatTok->Tok.setIdentifierInfo(&Info);
     FormatTok->Tok.setKind(Info.getTokenID());
     if (Style.Language == FormatStyle::LK_Java &&
-        FormatTok->isOneOf(tok::kw_struct, tok::kw_union, tok::kw_borrar,
+        FormatTok->isOneOf(tok::kw_estructura, tok::kw_union, tok::kw_borrar,
                            tok::kw_operador)) {
       FormatTok->Tok.setKind(tok::identifier);
       FormatTok->Tok.setIdentifierInfo(nullptr);
     } else if (Style.Language == FormatStyle::LK_JavaScript &&
-               FormatTok->isOneOf(tok::kw_struct, tok::kw_union,
+               FormatTok->isOneOf(tok::kw_estructura, tok::kw_union,
                                   tok::kw_operador)) {
       FormatTok->Tok.setKind(tok::identifier);
       FormatTok->Tok.setIdentifierInfo(nullptr);

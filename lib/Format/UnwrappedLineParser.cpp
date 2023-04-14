@@ -684,7 +684,7 @@ static bool ShouldBreakBeforeBrace(const FormatStyle &Style,
     return Style.BraceWrapping.AfterClass;
   if (InitialToken.is(tok::kw_union))
     return Style.BraceWrapping.AfterUnion;
-  if (InitialToken.is(tok::kw_struct))
+  if (InitialToken.is(tok::kw_estructura))
     return Style.BraceWrapping.AfterStruct;
   return false;
 }
@@ -1138,7 +1138,7 @@ void UnwrappedLineParser::parseStructuralElement() {
       break;
     // Handle C++ "(inline|export) namespace".
     LLVM_FALLTHROUGH;
-  case tok::kw_inline:
+  case tok::kw_en_linea:
     nextToken();
     if (FormatTok->Tok.is(tok::kw_contexto)) {
       parseNamespace();
@@ -1279,7 +1279,7 @@ void UnwrappedLineParser::parseStructuralElement() {
         return;
       }
       break;
-    case tok::kw_typedef:
+    case tok::kw_alias:
       nextToken();
       if (FormatTok->isOneOf(Keywords.kw_NS_ENUM, Keywords.kw_NS_OPTIONS,
                              Keywords.kw_CF_ENUM, Keywords.kw_CF_OPTIONS,
@@ -1287,7 +1287,7 @@ void UnwrappedLineParser::parseStructuralElement() {
                              Keywords.kw_NS_CLOSED_ENUM))
         parseEnum();
       break;
-    case tok::kw_struct:
+    case tok::kw_estructura:
     case tok::kw_union:
     case tok::kw_clase:
       // parseRecord falls through and does not yet add an unwrapped line as a
@@ -2095,7 +2095,7 @@ void UnwrappedLineParser::parseNamespace() {
   if (InitialToken.is(TT_NamespaceMacro)) {
     parseParens();
   } else {
-    while (FormatTok->isOneOf(tok::identifier, tok::coloncolon, tok::kw_inline,
+    while (FormatTok->isOneOf(tok::identifier, tok::coloncolon, tok::kw_en_linea,
                               tok::l_square)) {
       if (FormatTok->is(tok::l_square))
         parseSquare();
@@ -2296,7 +2296,7 @@ bool UnwrappedLineParser::parseEnum() {
     return false;
 
   // Eat up enum class ...
-  if (FormatTok->Tok.is(tok::kw_clase) || FormatTok->Tok.is(tok::kw_struct))
+  if (FormatTok->Tok.is(tok::kw_clase) || FormatTok->Tok.is(tok::kw_estructura))
     nextToken();
 
   while (FormatTok->Tok.getIdentifierInfo() ||

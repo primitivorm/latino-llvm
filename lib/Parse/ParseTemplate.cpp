@@ -560,7 +560,7 @@ Parser::TPResult Parser::isStartOfTemplateTypeParameter() {
 
   // 'typedef' is a reasonably-common typo/thinko for 'typename', and is
   // ill-formed otherwise.
-  if (Tok.isNot(tok::kw_typename) && Tok.isNot(tok::kw_typedef))
+  if (Tok.isNot(tok::kw_typename) && Tok.isNot(tok::kw_alias))
     return TPResult::False;
 
   // C++ [temp.param]p2:
@@ -584,7 +584,7 @@ Parser::TPResult Parser::isStartOfTemplateTypeParameter() {
     return TPResult::True;
 
   case tok::kw_typename:
-  case tok::kw_typedef:
+  case tok::kw_alias:
   case tok::kw_clase:
     // These indicate that a comma was missed after a type parameter, not that
     // we have found a non-type parameter.
@@ -621,7 +621,7 @@ NamedDecl *Parser::ParseTemplateParameter(unsigned Depth, unsigned Position) {
   case TPResult::True:
     // Is there just a typo in the input code? ('typedef' instead of
     // 'typename')
-    if (Tok.is(tok::kw_typedef)) {
+    if (Tok.is(tok::kw_alias)) {
       Diag(Tok.getLocation(), diag::err_expected_template_parameter);
 
       Diag(Tok.getLocation(), diag::note_meant_to_use_typename)
@@ -874,8 +874,8 @@ Parser::ParseTemplateTemplateParameter(unsigned Depth, unsigned Position) {
   // or greater appear immediately or after 'struct'. In the latter case,
   // replace the keyword with 'class'.
   if (!TryConsumeToken(tok::kw_clase)) {
-    bool Replace = Tok.isOneOf(tok::kw_typename, tok::kw_struct);
-    const Token &Next = Tok.is(tok::kw_struct) ? NextToken() : Tok;
+    bool Replace = Tok.isOneOf(tok::kw_typename, tok::kw_estructura);
+    const Token &Next = Tok.is(tok::kw_estructura) ? NextToken() : Tok;
     if (Tok.is(tok::kw_typename)) {
       Diag(Tok.getLocation(),
            getLangOpts().CPlusPlus17
@@ -1069,9 +1069,9 @@ bool Parser::ParseGreaterThanInTemplateList(SourceLocation LAngleLoc,
     RemainingToken = tok::greater;
     break;
 
-  case tok::greatergreatergreater:
-    RemainingToken = tok::greatergreater;
-    break;
+  // case tok::greatergreatergreater:
+  //   RemainingToken = tok::greatergreater;
+  //   break;
 
   case tok::greaterequal:
     RemainingToken = tok::equal;
@@ -1111,7 +1111,7 @@ bool Parser::ParseGreaterThanInTemplateList(SourceLocation LAngleLoc,
       (RemainingToken == tok::greater ||
        RemainingToken == tok::greatergreater) &&
       (Next.isOneOf(tok::greater, tok::greatergreater,
-                    tok::greatergreatergreater, tok::equal, tok::greaterequal,
+                    /*tok::greatergreatergreater,*/ tok::equal, tok::greaterequal,
                     tok::greatergreaterequal, tok::equalequal)) &&
       areTokensAdjacent(Tok, Next);
 
@@ -1136,7 +1136,7 @@ bool Parser::ParseGreaterThanInTemplateList(SourceLocation LAngleLoc,
 
     unsigned DiagId = diag::err_two_right_angle_brackets_need_space;
     if (getLangOpts().CPlusPlus11 &&
-        (Tok.is(tok::greatergreater) || Tok.is(tok::greatergreatergreater)))
+        (Tok.is(tok::greatergreater) /*|| Tok.is(tok::greatergreatergreater)*/))
       DiagId = diag::warn_cxx98_compat_two_right_angle_brackets;
     else if (Tok.is(tok::greaterequal))
       DiagId = diag::err_right_angle_bracket_equal_needs_space;
@@ -1227,7 +1227,7 @@ Parser::ParseTemplateIdAfterTemplateName(bool ConsumeLastToken,
   {
     GreaterThanIsOperatorScope G(GreaterThanIsOperator, false);
     if (!Tok.isOneOf(tok::greater, tok::greatergreater,
-                     tok::greatergreatergreater, tok::greaterequal,
+                     /*tok::greatergreatergreater,*/ tok::greaterequal,
                      tok::greatergreaterequal))
       Invalid = ParseTemplateArgumentList(TemplateArgs);
 
@@ -1235,7 +1235,7 @@ Parser::ParseTemplateIdAfterTemplateName(bool ConsumeLastToken,
       // Try to find the closing '>'.
       if (getLangOpts().CPlusPlus11)
         SkipUntil(tok::greater, tok::greatergreater,
-                  tok::greatergreatergreater, StopAtSemi | StopBeforeMatch);
+                  /*tok::greatergreatergreater,*/ StopAtSemi | StopBeforeMatch);
       else
         SkipUntil(tok::greater, StopAtSemi | StopBeforeMatch);
     }
@@ -1422,8 +1422,8 @@ void Parser::AnnotateTemplateIdTokenAsType(CXXScopeSpec &SS,
 /// Determine whether the given token can end a template argument.
 static bool isEndOfTemplateArgument(Token Tok) {
   // FIXME: Handle '>>>'.
-  return Tok.isOneOf(tok::comma, tok::greater, tok::greatergreater,
-                     tok::greatergreatergreater);
+  return Tok.isOneOf(tok::comma, tok::greater, tok::greatergreater/*,
+                     tok::greatergreatergreater*/);
 }
 
 /// Parse a C++ template template argument.
@@ -1727,7 +1727,7 @@ void Parser::LexTemplateFunctionForLateParsing(CachedTokens &Toks) {
 bool Parser::diagnoseUnknownTemplateId(ExprResult LHS, SourceLocation Less) {
   TentativeParsingAction TPA(*this);
   // FIXME: We could look at the token sequence in a lot more detail here.
-  if (SkipUntil(tok::greater, tok::greatergreater, tok::greatergreatergreater,
+  if (SkipUntil(tok::greater, tok::greatergreater, /*tok::greatergreatergreater,*/
                 StopAtSemi | StopBeforeMatch)) {
     TPA.Commit();
 
@@ -1758,7 +1758,7 @@ void Parser::checkPotentialAngleBracket(ExprResult &PotentialTemplateName) {
   // If we have potential_template<>, then it's supposed to be a template-name.
   if (NextToken().is(tok::greater) ||
       (getLangOpts().CPlusPlus11 &&
-       NextToken().isOneOf(tok::greatergreater, tok::greatergreatergreater))) {
+       NextToken().is(tok::greatergreater/*, tok::greatergreatergreater*/))) {
     SourceLocation Less = ConsumeToken();
     SourceLocation Greater;
     ParseGreaterThanInTemplateList(Less, Greater, true, false);
@@ -1823,7 +1823,7 @@ bool Parser::checkPotentialAngleBracketDelimiter(
   // intended to be treated as a template-id.
   if (OpToken.is(tok::greater) ||
       (getLangOpts().CPlusPlus11 &&
-       OpToken.isOneOf(tok::greatergreater, tok::greatergreatergreater)))
+       OpToken.is(tok::greatergreater/*, tok::greatergreatergreater*/)))
     AngleBrackets.clear(*this);
   return false;
 }

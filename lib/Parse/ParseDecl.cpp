@@ -1610,7 +1610,7 @@ Parser::ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
     ProhibitAttributes(attrs);
     SingleDecl = ParseDeclarationStartingWithTemplate(Context, DeclEnd, attrs);
     break;
-  case tok::kw_inline:
+  case tok::kw_en_linea:
     // Could be the start of an inline namespace. Allowed as an ext in C++03.
     if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_contexto)) {
       ProhibitAttributes(attrs);
@@ -1626,7 +1626,7 @@ Parser::ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
     return ParseUsingDirectiveOrDeclaration(Context, ParsedTemplateInfo(),
                                             DeclEnd, attrs);
   case tok::kw_static_assert:
-  case tok::kw__Static_assert:
+  // case tok::kw__Static_assert:
     ProhibitAttributes(attrs);
     SingleDecl = ParseStaticAssertDeclaration(DeclEnd);
     break;
@@ -1804,7 +1804,7 @@ void Parser::SkipMalformedDecl() {
       ConsumeToken();
       return;
 
-    case tok::kw_inline:
+    case tok::kw_en_linea:
       // 'inline namespace' at the start of a line is almost certainly
       // a good place to pick back up parsing, except in an Objective-C
       // @interface context.
@@ -1880,22 +1880,22 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
     // The _Noreturn keyword can't appear here, unlike the GNU noreturn
     // attribute. If we find the keyword here, tell the user to put it
     // at the start instead.
-    if (Tok.is(tok::kw__Noreturn)) {
-      SourceLocation Loc = ConsumeToken();
-      const char *PrevSpec;
-      unsigned DiagID;
+    // if (Tok.is(tok::kw__Noreturn)) {
+    //   SourceLocation Loc = ConsumeToken();
+    //   const char *PrevSpec;
+    //   unsigned DiagID;
 
-      // We can offer a fixit if it's valid to mark this function as _Noreturn
-      // and we don't have any other declarators in this declaration.
-      bool Fixit = !DS.setFunctionSpecNoreturn(Loc, PrevSpec, DiagID);
-      MaybeParseGNUAttributes(D, &LateParsedAttrs);
-      Fixit &= Tok.isOneOf(tok::semi, tok::l_brace, tok::kw_intentar);
+    //   // We can offer a fixit if it's valid to mark this function as _Noreturn
+    //   // and we don't have any other declarators in this declaration.
+    //   bool Fixit = !DS.setFunctionSpecNoreturn(Loc, PrevSpec, DiagID);
+    //   MaybeParseGNUAttributes(D, &LateParsedAttrs);
+    //   Fixit &= Tok.isOneOf(tok::semi, tok::l_brace, tok::kw_intentar);
 
-      Diag(Loc, diag::err_c11_noreturn_misplaced)
-          << (Fixit ? FixItHint::CreateRemoval(Loc) : FixItHint())
-          << (Fixit ? FixItHint::CreateInsertion(D.getBeginLoc(), "_Noreturn ")
-                    : FixItHint());
-    }
+    //   Diag(Loc, diag::err_c11_noreturn_misplaced)
+    //       << (Fixit ? FixItHint::CreateRemoval(Loc) : FixItHint())
+    //       << (Fixit ? FixItHint::CreateInsertion(D.getBeginLoc(), "_Noreturn ")
+    //                 : FixItHint());
+    // }
   }
 
   // Check to see if we have a function *definition* which must have a body.
@@ -2507,7 +2507,7 @@ bool Parser::ParseImplicitInt(DeclSpec &DS, CXXScopeSpec *SS,
       case DeclSpec::TST_union:
         TagName="union" ; FixitTagName = "union " ;TagKind=tok::kw_union ;break;
       case DeclSpec::TST_struct:
-        TagName="struct"; FixitTagName = "struct ";TagKind=tok::kw_struct;break;
+        TagName="struct"; FixitTagName = "struct ";TagKind=tok::kw_estructura;break;
       // case DeclSpec::TST_interface:
       //   TagName="__interface"; FixitTagName = "__interface ";
       //   TagKind=tok::kw___interface;break;
@@ -2943,10 +2943,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     // A typedef declaration containing _Atomic<...> is among the places where
     // the class is used.  If we are currently parsing such a declaration, treat
     // the token as an identifier.
-    if (getLangOpts().MSVCCompat && Tok.is(tok::kw__Atomic) &&
-        DS.getStorageClassSpec() == latino::DeclSpec::SCS_typedef &&
-        !DS.hasTypeSpecifier() && GetLookAheadToken(1).is(tok::less))
-      Tok.setKind(tok::identifier);
+    // if (getLangOpts().MSVCCompat && Tok.is(tok::kw__Atomic) &&
+    //     DS.getStorageClassSpec() == latino::DeclSpec::SCS_typedef &&
+    //     !DS.hasTypeSpecifier() && GetLookAheadToken(1).is(tok::less))
+    //   Tok.setKind(tok::identifier);
 
     SourceLocation Loc = Tok.getLocation();
 
@@ -3475,7 +3475,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   continue;
 
     // storage-class-specifier
-    case tok::kw_typedef:
+    case tok::kw_alias:
       isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_typedef, Loc,
                                          PrevSpec, DiagID, Policy);
       isStorageClass = true;
@@ -3492,7 +3492,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //                                      Loc, PrevSpec, DiagID, Policy);
     //   isStorageClass = true;
     //   break;
-    case tok::kw_static:
+    case tok::kw_estatica:
       if (DS.getThreadStorageClassSpec() == DeclSpec::TSCS___thread)
         Diag(Tok, diag::ext_thread_before) << "static";
       isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_static, Loc,
@@ -3540,16 +3540,16 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                                PrevSpec, DiagID);
       isStorageClass = true;
       break;
-    case tok::kw__Thread_local:
-      if (!getLangOpts().C11)
-        Diag(Tok, diag::ext_c11_feature) << Tok.getName();
-      isInvalid = DS.SetStorageClassSpecThread(DeclSpec::TSCS__Thread_local,
-                                               Loc, PrevSpec, DiagID);
-      isStorageClass = true;
-      break;
+    // case tok::kw__Thread_local:
+    //   if (!getLangOpts().C11)
+    //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+    //   isInvalid = DS.SetStorageClassSpecThread(DeclSpec::TSCS__Thread_local,
+    //                                            Loc, PrevSpec, DiagID);
+    //   isStorageClass = true;
+    //   break;
 
     // function-specifier
-    case tok::kw_inline:
+    case tok::kw_en_linea:
       isInvalid = DS.setFunctionSpecInline(Loc, PrevSpec, DiagID);
       break;
     case tok::kw_virtual:
@@ -3596,11 +3596,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                              ExplicitSpec, CloseParenLoc);
       break;
     }
-    case tok::kw__Noreturn:
-      if (!getLangOpts().C11)
-        Diag(Tok, diag::ext_c11_feature) << Tok.getName();
-      isInvalid = DS.setFunctionSpecNoreturn(Loc, PrevSpec, DiagID);
-      break;
+    // case tok::kw__Noreturn:
+    //   if (!getLangOpts().C11)
+    //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+    //   isInvalid = DS.setFunctionSpecNoreturn(Loc, PrevSpec, DiagID);
+    //   break;
 
     // alignment-specifier
     // case tok::kw__Alignas:
@@ -3661,18 +3661,18 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       isInvalid = DS.SetTypeSpecSign(DeclSpec::TSS_unsigned, Loc, PrevSpec,
                                      DiagID);
       break;
-    case tok::kw__Complex:
-      if (!getLangOpts().C99)
-        Diag(Tok, diag::ext_c99_feature) << Tok.getName();
-      isInvalid = DS.SetTypeSpecComplex(DeclSpec::TSC_complex, Loc, PrevSpec,
-                                        DiagID);
-      break;
-    case tok::kw__Imaginary:
-      if (!getLangOpts().C99)
-        Diag(Tok, diag::ext_c99_feature) << Tok.getName();
-      isInvalid = DS.SetTypeSpecComplex(DeclSpec::TSC_imaginary, Loc, PrevSpec,
-                                        DiagID);
-      break;
+    // case tok::kw__Complex:
+    //   if (!getLangOpts().C99)
+    //     Diag(Tok, diag::ext_c99_feature) << Tok.getName();
+    //   isInvalid = DS.SetTypeSpecComplex(DeclSpec::TSC_complex, Loc, PrevSpec,
+    //                                     DiagID);
+    //   break;
+    // case tok::kw__Imaginary:
+    //   if (!getLangOpts().C99)
+    //     Diag(Tok, diag::ext_c99_feature) << Tok.getName();
+    //   isInvalid = DS.SetTypeSpecComplex(DeclSpec::TSC_imaginary, Loc, PrevSpec,
+    //                                     DiagID);
+    //   break;
     case tok::kw_void:
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_void, Loc, PrevSpec,
                                      DiagID, Policy);
@@ -3761,9 +3761,9 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                      DiagID, Policy);
       break;
     case tok::kw_bool:
-    case tok::kw__Bool:
-      if (Tok.is(tok::kw__Bool) && !getLangOpts().C99)
-        Diag(Tok, diag::ext_c99_feature) << Tok.getName();
+    // case tok::kw__Bool:
+      // if (Tok.is(tok::kw__Bool) && !getLangOpts().C99)
+      //   Diag(Tok, diag::ext_c99_feature) << Tok.getName();
 
       if (Tok.is(tok::kw_bool) &&
           DS.getTypeSpecType() != DeclSpec::TST_unspecified &&
@@ -3822,7 +3822,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
 
     // class-specifier:
     case tok::kw_clase:
-    case tok::kw_struct:
+    case tok::kw_estructura:
     // case tok::kw___interface:
     case tok::kw_union: {
       tok::TokenKind Kind = Tok.getKind();
@@ -3903,21 +3903,21 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       ParseUnderlyingTypeSpecifier(DS);
       continue;
 
-    case tok::kw__Atomic:
-      // C11 6.7.2.4/4:
-      //   If the _Atomic keyword is immediately followed by a left parenthesis,
-      //   it is interpreted as a type specifier (with a type name), not as a
-      //   type qualifier.
-      if (!getLangOpts().C11)
-        Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+    // case tok::kw__Atomic:
+    //   // C11 6.7.2.4/4:
+    //   //   If the _Atomic keyword is immediately followed by a left parenthesis,
+    //   //   it is interpreted as a type specifier (with a type name), not as a
+    //   //   type qualifier.
+    //   if (!getLangOpts().C11)
+    //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
 
-      if (NextToken().is(tok::l_paren)) {
-        ParseAtomicSpecifier(DS);
-        continue;
-      }
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_atomic, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
+    //   if (NextToken().is(tok::l_paren)) {
+    //     ParseAtomicSpecifier(DS);
+    //     continue;
+    //   }
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_atomic, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
 
     // OpenCL address space qualifiers:
     case tok::kw___generic:
@@ -4132,11 +4132,11 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
     }
 
     // Parse _Static_assert declaration.
-    if (Tok.is(tok::kw__Static_assert)) {
-      SourceLocation DeclEnd;
-      ParseStaticAssertDeclaration(DeclEnd);
-      continue;
-    }
+    // if (Tok.is(tok::kw__Static_assert)) {
+    //   SourceLocation DeclEnd;
+    //   ParseStaticAssertDeclaration(DeclEnd);
+    //   continue;
+    // }
 
     // if (Tok.is(tok::annot_pragma_pack)) {
     //   HandlePragmaPack();
@@ -4278,7 +4278,7 @@ void Parser::ParseEnumSpecifier(SourceLocation StartLoc, DeclSpec &DS,
   bool IsScopedUsingClassTag = false;
 
   // In C++11, recognize 'enum class' and 'enum struct'.
-  if (Tok.isOneOf(tok::kw_clase, tok::kw_struct)) {
+  if (Tok.isOneOf(tok::kw_clase, tok::kw_estructura)) {
     Diag(Tok, getLangOpts().CPlusPlus11 ? diag::warn_cxx98_compat_scoped_enum
                                         : diag::ext_scoped_enum);
     IsScopedUsingClassTag = Tok.is(tok::kw_clase);
@@ -4794,8 +4794,8 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
-  case tok::kw__Complex:
-  case tok::kw__Imaginary:
+  // case tok::kw__Complex:
+  // case tok::kw__Imaginary:
   case tok::kw_void:
   case tok::kw_char:
   case tok::kw_wchar_t:
@@ -4813,7 +4813,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_bool:
-  case tok::kw__Bool:
+  // case tok::kw__Bool:
   // case tok::kw__Decimal32:
   // case tok::kw__Decimal64:
   // case tok::kw__Decimal128:
@@ -4823,7 +4823,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   // case tok::kw___interface:
   case tok::kw_union:
     // enum-specifier
@@ -4875,8 +4875,8 @@ bool Parser::isTypeSpecifierQualifier() {
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
-  case tok::kw__Complex:
-  case tok::kw__Imaginary:
+  // case tok::kw__Complex:
+  // case tok::kw__Imaginary:
   case tok::kw_void:
   case tok::kw_char:
   case tok::kw_wchar_t:
@@ -4894,7 +4894,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_bool:
-  case tok::kw__Bool:
+  // case tok::kw__Bool:
   // case tok::kw__Decimal32:
   // case tok::kw__Decimal64:
   // case tok::kw__Decimal128:
@@ -4904,7 +4904,7 @@ bool Parser::isTypeSpecifierQualifier() {
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   // case tok::kw___interface:
   case tok::kw_union:
     // enum-specifier
@@ -4959,8 +4959,8 @@ bool Parser::isTypeSpecifierQualifier() {
     return getLangOpts().OpenCL;
 
   // C11 _Atomic
-  case tok::kw__Atomic:
-    return true;
+  // case tok::kw__Atomic:
+  //   return true;
   }
 }
 
@@ -5018,16 +5018,16 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
     return isDeclarationSpecifier();
 
     // storage-class-specifier
-  case tok::kw_typedef:
+  case tok::kw_alias:
   case tok::kw_extern:
   // case tok::kw___private_extern__:
-  case tok::kw_static:
+  case tok::kw_estatica:
   case tok::kw_auto:
   // case tok::kw___auto_type:
   // case tok::kw_register:
   case tok::kw___thread:
   case tok::kw_thread_local:
-  case tok::kw__Thread_local:
+  // case tok::kw__Thread_local:
 
     // Modules
   // case tok::kw___module_private__:
@@ -5042,8 +5042,8 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
-  case tok::kw__Complex:
-  case tok::kw__Imaginary:
+  // case tok::kw__Complex:
+  // case tok::kw__Imaginary:
   case tok::kw_void:
   case tok::kw_char:
   case tok::kw_wchar_t:
@@ -5062,7 +5062,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw__Float16:
   // case tok::kw___float128:
   case tok::kw_bool:
-  case tok::kw__Bool:
+  // case tok::kw__Bool:
   // case tok::kw__Decimal32:
   // case tok::kw__Decimal64:
   // case tok::kw__Decimal128:
@@ -5070,7 +5070,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   case tok::kw_union:
   // case tok::kw___interface:
     // enum-specifier
@@ -5083,10 +5083,10 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   // case tok::kw__Sat:
 
     // function-specifier
-  case tok::kw_inline:
+  case tok::kw_en_linea:
   case tok::kw_virtual:
   case tok::kw_explicit:
-  case tok::kw__Noreturn:
+  // case tok::kw__Noreturn:
 
     // alignment-specifier
   // case tok::kw__Alignas:
@@ -5095,7 +5095,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_friend:
 
     // static_assert-declaration
-  case tok::kw__Static_assert:
+  // case tok::kw__Static_assert:
 
     // GNU typeof support.
   case tok::kw_typeof:
@@ -5112,8 +5112,8 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_constinit:
 
     // C11 _Atomic
-  case tok::kw__Atomic:
-    return true;
+  // case tok::kw__Atomic:
+  //   return true;
 
     // GNU ObjC bizarre protocol extension: <proto1,proto2> with implicit 'id'.
   case tok::less:
@@ -5380,14 +5380,14 @@ void Parser::ParseTypeQualifierListOpt(
     //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_restrict, Loc, PrevSpec, DiagID,
     //                              getLangOpts());
     //   break;
-    case tok::kw__Atomic:
-      if (!AtomicAllowed)
-        goto DoneWithTypeQuals;
-      if (!getLangOpts().C11)
-        Diag(Tok, diag::ext_c11_feature) << Tok.getName();
-      isInvalid = DS.SetTypeQual(DeclSpec::TQ_atomic, Loc, PrevSpec, DiagID,
-                                 getLangOpts());
-      break;
+    // case tok::kw__Atomic:
+    //   if (!AtomicAllowed)
+    //     goto DoneWithTypeQuals;
+    //   if (!getLangOpts().C11)
+    //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+    //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_atomic, Loc, PrevSpec, DiagID,
+    //                              getLangOpts());
+    //   break;
 
     // OpenCL qualifiers:
     case tok::kw_pri:
@@ -6903,7 +6903,7 @@ void Parser::ParseBracketDeclarator(Declarator &D) {
 
   // If valid, this location is the position where we read the 'static' keyword.
   SourceLocation StaticLoc;
-  TryConsumeToken(tok::kw_static, StaticLoc);
+  TryConsumeToken(tok::kw_estatica, StaticLoc);
 
   // If there is a type-qualifier-list, read it now.
   // Type qualifiers in an array subscript are a C99 feature.
@@ -6913,7 +6913,7 @@ void Parser::ParseBracketDeclarator(Declarator &D) {
   // If we haven't already read 'static', check to see if there is one after the
   // type-qualifier-list.
   if (!StaticLoc.isValid())
-    TryConsumeToken(tok::kw_static, StaticLoc);
+    TryConsumeToken(tok::kw_estatica, StaticLoc);
 
   // Handle "direct-declarator [ type-qual-list[opt] * ]".
   bool isStar = false;
@@ -7133,37 +7133,37 @@ void Parser::ParseTypeofSpecifier(DeclSpec &DS) {
 /// [C11]   atomic-specifier:
 ///           _Atomic ( type-name )
 ///
-void Parser::ParseAtomicSpecifier(DeclSpec &DS) {
-  assert(Tok.is(tok::kw__Atomic) && NextToken().is(tok::l_paren) &&
-         "Not an atomic specifier");
+// void Parser::ParseAtomicSpecifier(DeclSpec &DS) {
+//   assert(Tok.is(tok::kw__Atomic) && NextToken().is(tok::l_paren) &&
+//          "Not an atomic specifier");
 
-  SourceLocation StartLoc = ConsumeToken();
-  BalancedDelimiterTracker T(*this, tok::l_paren);
-  if (T.consumeOpen())
-    return;
+//   SourceLocation StartLoc = ConsumeToken();
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
+//   if (T.consumeOpen())
+//     return;
 
-  TypeResult Result = ParseTypeName();
-  if (Result.isInvalid()) {
-    SkipUntil(tok::r_paren, StopAtSemi);
-    return;
-  }
+//   TypeResult Result = ParseTypeName();
+//   if (Result.isInvalid()) {
+//     SkipUntil(tok::r_paren, StopAtSemi);
+//     return;
+//   }
 
-  // Match the ')'
-  T.consumeClose();
+//   // Match the ')'
+//   T.consumeClose();
 
-  if (T.getCloseLocation().isInvalid())
-    return;
+//   if (T.getCloseLocation().isInvalid())
+//     return;
 
-  DS.setTypeofParensRange(T.getRange());
-  DS.SetRangeEnd(T.getCloseLocation());
+//   DS.setTypeofParensRange(T.getRange());
+//   DS.SetRangeEnd(T.getCloseLocation());
 
-  const char *PrevSpec = nullptr;
-  unsigned DiagID;
-  if (DS.SetTypeSpecType(DeclSpec::TST_atomic, StartLoc, PrevSpec,
-                         DiagID, Result.get(),
-                         Actions.getASTContext().getPrintingPolicy()))
-    Diag(StartLoc, DiagID) << PrevSpec;
-}
+//   const char *PrevSpec = nullptr;
+//   unsigned DiagID;
+//   if (DS.SetTypeSpecType(DeclSpec::TST_atomic, StartLoc, PrevSpec,
+//                          DiagID, Result.get(),
+//                          Actions.getASTContext().getPrintingPolicy()))
+//     Diag(StartLoc, DiagID) << PrevSpec;
+// }
 
 /// TryAltiVecVectorTokenOutOfLine - Out of line body that should only be called
 /// from TryAltiVecVectorToken.

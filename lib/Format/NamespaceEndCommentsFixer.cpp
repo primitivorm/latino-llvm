@@ -57,7 +57,7 @@ std::string computeName(const FormatToken *NamespaceTok) {
     Tok = FirstNSTok;
     while (Tok && !Tok->is(tok::l_brace)) {
       name += Tok->TokenText;
-      if (Tok->is(tok::kw_inline))
+      if (Tok->is(tok::kw_en_linea))
         name += " ";
       Tok = Tok->getNextNonComment();
     }

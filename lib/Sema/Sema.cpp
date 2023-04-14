@@ -78,8 +78,8 @@ PrintingPolicy Sema::getPrintingPolicy(const ASTContext &Context,
   if (!Policy.Bool) {
     if (const MacroInfo *BoolMacro = PP.getMacroInfo(Context.getBoolName())) {
       Policy.Bool = BoolMacro->isObjectLike() &&
-                    BoolMacro->getNumTokens() == 1 &&
-                    BoolMacro->getReplacementToken(0).is(tok::kw__Bool);
+                    BoolMacro->getNumTokens() == 1 /*&&
+                    BoolMacro->getReplacementToken(0).is(tok::kw__Bool)*/;
     }
   }
 

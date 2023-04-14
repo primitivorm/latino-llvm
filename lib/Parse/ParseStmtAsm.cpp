@@ -948,7 +948,7 @@ Parser::GNUAsmQualifiers::AQ
 Parser::getGNUAsmQualifier(const Token &Tok) const {
   switch (Tok.getKind()) {
     // case tok::kw_volatile: return GNUAsmQualifiers::AQ_volatile;
-    case tok::kw_inline: return GNUAsmQualifiers::AQ_inline;
+    case tok::kw_en_linea: return GNUAsmQualifiers::AQ_inline;
     case tok::kw_ir: return GNUAsmQualifiers::AQ_goto;
     default: return GNUAsmQualifiers::AQ_unspecified;
   }

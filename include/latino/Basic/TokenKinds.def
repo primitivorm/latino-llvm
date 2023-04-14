@@ -239,11 +239,11 @@ PUNCTUATOR(coloncolon,          "::")
 PUNCTUATOR(at,                  "@")
 
 // CUDA support.
-PUNCTUATOR(lesslessless,          "<<<")
-PUNCTUATOR(greatergreatergreater, ">>>")
+// PUNCTUATOR(lesslessless,          "<<<")
+// PUNCTUATOR(greatergreatergreater, ">>>")
 
 // CL support
-PUNCTUATOR(caretcaret,            "^^")
+// PUNCTUATOR(caretcaret,            "^^")
 
 // C99 6.4.1: Keywords.  These turn into kw_* tokens.
 // Flags allowed:
@@ -295,7 +295,7 @@ KEYWORD(float                       , KEYALL)
 KEYWORD(desde                         , KEYALL) // for
 KEYWORD(ir                        , KEYALL) // goto
 KEYWORD(si                          , KEYALL) // if
-KEYWORD(inline                      , KEYC99|KEYCXX|KEYGNU)
+KEYWORD(en_linea                      , KEYC99|KEYCXX|KEYGNU) // inline
 KEYWORD(int                         , KEYALL)
 // KEYWORD(_ExtInt                     , KEYALL)
 KEYWORD(long                        , KEYALL)
@@ -305,10 +305,10 @@ KEYWORD(ret                      , KEYALL)
 KEYWORD(short                       , KEYALL)
 KEYWORD(signed                      , KEYALL)
 UNARY_EXPR_OR_TYPE_TRAIT(sizeof, SizeOf, KEYALL)
-KEYWORD(static                      , KEYALL)
-KEYWORD(struct                      , KEYALL)
+KEYWORD(estatica                      , KEYALL) // static
+KEYWORD(estructura                      , KEYALL) // struct
 KEYWORD(elegir                      , KEYALL) // switch
-KEYWORD(typedef                     , KEYALL)
+KEYWORD(alias                     , KEYALL) // typedef
 KEYWORD(union                       , KEYALL)
 KEYWORD(unsigned                    , KEYALL)
 KEYWORD(void                        , KEYALL)
@@ -316,14 +316,14 @@ KEYWORD(void                        , KEYALL)
 KEYWORD(mientras                       , KEYALL) // while
 // KEYWORD(_Alignas                    , KEYALL)
 // KEYWORD(_Alignof                    , KEYALL)
-KEYWORD(_Atomic                     , KEYALL|KEYNOOPENCL)
-KEYWORD(_Bool                       , KEYNOCXX)
-KEYWORD(_Complex                    , KEYALL)
-KEYWORD(_Generic                    , KEYALL)
-KEYWORD(_Imaginary                  , KEYALL)
-KEYWORD(_Noreturn                   , KEYALL)
-KEYWORD(_Static_assert              , KEYALL)
-KEYWORD(_Thread_local               , KEYALL)
+// KEYWORD(_Atomic                     , KEYALL|KEYNOOPENCL)
+// KEYWORD(_Bool                       , KEYNOCXX)
+// KEYWORD(_Complex                    , KEYALL)
+// KEYWORD(_Generic                    , KEYALL)
+// KEYWORD(_Imaginary                  , KEYALL)
+// KEYWORD(_Noreturn                   , KEYALL)
+// KEYWORD(_Static_assert              , KEYALL)
+// KEYWORD(_Thread_local               , KEYALL)
 // KEYWORD(__func__                    , KEYALL)
 // KEYWORD(__objc_yes                  , KEYALL)
 // KEYWORD(__objc_no                   , KEYALL)

@@ -57,7 +57,7 @@ bool Parser::isCXXDeclarationStatement() {
   case tok::kw_usar:
     // static_assert-declaration
   case tok::kw_static_assert:
-  case tok::kw__Static_assert:
+  // case tok::kw__Static_assert:
     return true;
     // simple-declaration
   default:
@@ -153,12 +153,12 @@ bool Parser::isCXXSimpleDeclaration(bool AllowForRangeDecl) {
 /// (potentially) starting a decl-specifier.
 Parser::TPResult Parser::TryConsumeDeclarationSpecifier() {
   switch (Tok.getKind()) {
-  case tok::kw__Atomic:
-    if (NextToken().isNot(tok::l_paren)) {
-      ConsumeToken();
-      break;
-    }
-    LLVM_FALLTHROUGH;
+  // case tok::kw__Atomic:
+  //   if (NextToken().isNot(tok::l_paren)) {
+  //     ConsumeToken();
+  //     break;
+  //   }
+  //   LLVM_FALLTHROUGH;
   case tok::kw_typeof:
   case tok::kw___attribute:
   case tok::kw___underlying_type: {
@@ -172,7 +172,7 @@ Parser::TPResult Parser::TryConsumeDeclarationSpecifier() {
   }
 
   case tok::kw_clase:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   case tok::kw_union:
   // case tok::kw___interface:
   case tok::kw_enum:
@@ -607,11 +607,11 @@ bool Parser::isCXXTypeId(TentativeCXXTypeIdContext Context, bool &isAmbiguous) {
     } else if (Context == TypeIdAsTemplateArgument &&
                (Tok.isOneOf(tok::greater, tok::comma) ||
                 (getLangOpts().CPlusPlus11 &&
-                 (Tok.isOneOf(tok::greatergreater,
-                              tok::greatergreatergreater) ||
+                 (Tok.is(tok::greatergreater/*,
+                              tok::greatergreatergreater*/) ||
                   (Tok.is(tok::ellipsis) &&
                    NextToken().isOneOf(tok::greater, tok::greatergreater,
-                                       tok::greatergreatergreater,
+                                      //  tok::greatergreatergreater,
                                        tok::comma)))))) {
       TPR = TPResult::True;
       isAmbiguous = true;
@@ -840,9 +840,9 @@ Parser::TPResult Parser::TryParsePtrOperatorSeq() {
       if (!TrySkipAttributes())
         return TPResult::Error;
 
-      while (Tok.isOneOf(tok::kw_const, /*tok::kw_volatile, tok::kw_restrict,
+      while (Tok.is(tok::kw_const/*, tok::kw_volatile, tok::kw_restrict,
                          tok::kw__Nonnull, tok::kw__Nullable,
-                         tok::kw__Null_unspecified,*/ tok::kw__Atomic))
+                         tok::kw__Null_unspecified, tok::kw__Atomic*/))
         ConsumeToken();
     } else {
       return TPResult::True;
@@ -1360,21 +1360,21 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     //   'typedef'
     //   'constexpr'
   case tok::kw_friend:
-  case tok::kw_typedef:
+  case tok::kw_alias:
   case tok::kw_constexpr:
   case tok::kw_consteval:
   case tok::kw_constinit:
     // storage-class-specifier
   // case tok::kw_register:
-  case tok::kw_static:
+  case tok::kw_estatica:
   case tok::kw_extern:
   case tok::kw_mutable:
   case tok::kw_auto:
   case tok::kw___thread:
   case tok::kw_thread_local:
-  case tok::kw__Thread_local:
+  // case tok::kw__Thread_local:
     // function-specifier
-  case tok::kw_inline:
+  case tok::kw_en_linea:
   case tok::kw_virtual:
   case tok::kw_explicit:
 
@@ -1395,7 +1395,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     // class-specifier
     // elaborated-type-specifier
   case tok::kw_clase:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   case tok::kw_union:
   // case tok::kw___interface:
     // enum-specifier
@@ -1424,7 +1424,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
 
     // GNU
   // case tok::kw_restrict:
-  case tok::kw__Complex:
+  // case tok::kw__Complex:
   case tok::kw___attribute:
   // case tok::kw___auto_type:
     return TPResult::True;
@@ -1693,8 +1693,8 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     return TPResult::True;
 
   // C11 _Atomic
-  case tok::kw__Atomic:
-    return TPResult::True;
+  // case tok::kw__Atomic:
+  //   return TPResult::True;
 
   // case tok::kw__ExtInt: {
   //   if (NextToken().isNot(tok::l_paren))
@@ -1731,7 +1731,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
 
     // elaborated-type-specifier
   case tok::kw_clase:
-  case tok::kw_struct:
+  case tok::kw_estructura:
   case tok::kw_union:
   // case tok::kw___interface:
   case tok::kw_enum:
@@ -1768,9 +1768,9 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_auto:
     return getLangOpts().CPlusPlus11;
 
-  case tok::kw__Atomic:
-    // "_Atomic foo"
-    return NextToken().is(tok::l_paren);
+  // case tok::kw__Atomic:
+  //   // "_Atomic foo"
+  //   return NextToken().is(tok::l_paren);
 
   default:
     return false;
@@ -2121,7 +2121,7 @@ Parser::TPResult Parser::isTemplateArgumentList(unsigned TokensToSkip) {
   // We might be able to disambiguate a few more cases if we're careful.
 
   // A template-argument-list must be terminated by a '>'.
-  if (SkipUntil({tok::greater, tok::greatergreater, tok::greatergreatergreater},
+  if (SkipUntil({tok::greater, tok::greatergreater/*, tok::greatergreatergreater*/},
                 StopAtSemi | StopBeforeMatch))
     return TPResult::Ambiguous;
   return TPResult::False;

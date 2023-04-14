@@ -413,14 +413,14 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
     Token OpToken = Tok;
     ConsumeToken();
 
-    if (OpToken.is(tok::caretcaret)) {
-      return ExprError(Diag(Tok, diag::err_opencl_logical_exclusive_or));
-    }
+    // if (OpToken.is(tok::caretcaret)) {
+    //   return ExprError(Diag(Tok, diag::err_opencl_logical_exclusive_or));
+    // }
 
     // If we're potentially in a template-id, we may now be able to determine
     // whether we're actually in one or not.
-    if (OpToken.isOneOf(tok::comma, tok::greater, tok::greatergreater,
-                        tok::greatergreatergreater) &&
+    if (OpToken.isOneOf(tok::comma, tok::greater, tok::greatergreater/*,
+                        tok::greatergreatergreater*/) &&
         checkPotentialAngleBracketDelimiter(OpToken))
       return ExprError();
 
@@ -1300,9 +1300,9 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::utf32_string_literal:
     Res = ParseStringLiteralExpression(true);
     break;
-  case tok::kw__Generic:   // primary-expression: generic-selection [C11 6.5.1]
-    Res = ParseGenericSelectionExpression();
-    break;
+  // case tok::kw__Generic:   // primary-expression: generic-selection [C11 6.5.1]
+  //   Res = ParseGenericSelectionExpression();
+  //   break;
   // case tok::kw___builtin_available:
   //   Res = ParseAvailabilityCheckExpr(Tok.getLocation());
   //   break;
@@ -1970,7 +1970,8 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
     }
 
     case tok::l_paren:         // p-e: p-e '(' argument-expression-list[opt] ')'
-    case tok::lesslessless: {  // p-e: p-e '<<<' argument-expression-list '>>>'
+    // case tok::lesslessless: 
+    {  // p-e: p-e '<<<' argument-expression-list '>>>'
                                //   '(' argument-expression-list[opt] ')'
       tok::TokenKind OpKind = Tok.getKind();
       InMessageExpressionRAIIObject InMessage(*this, false);
@@ -1979,49 +1980,49 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
 
       BalancedDelimiterTracker PT(*this, tok::l_paren);
 
-      if (OpKind == tok::lesslessless) {
-        ExprVector ExecConfigExprs;
-        CommaLocsTy ExecConfigCommaLocs;
-        SourceLocation OpenLoc = ConsumeToken();
+      // if (OpKind == tok::lesslessless) {
+      //   ExprVector ExecConfigExprs;
+      //   CommaLocsTy ExecConfigCommaLocs;
+      //   SourceLocation OpenLoc = ConsumeToken();
 
-        if (ParseSimpleExpressionList(ExecConfigExprs, ExecConfigCommaLocs)) {
-          (void)Actions.CorrectDelayedTyposInExpr(LHS);
-          LHS = ExprError();
-        }
+      //   if (ParseSimpleExpressionList(ExecConfigExprs, ExecConfigCommaLocs)) {
+      //     (void)Actions.CorrectDelayedTyposInExpr(LHS);
+      //     LHS = ExprError();
+      //   }
 
-        SourceLocation CloseLoc;
-        if (TryConsumeToken(tok::greatergreatergreater, CloseLoc)) {
-        } else if (LHS.isInvalid()) {
-          SkipUntil(tok::greatergreatergreater, StopAtSemi);
-        } else {
-          // There was an error closing the brackets
-          Diag(Tok, diag::err_expected) << tok::greatergreatergreater;
-          Diag(OpenLoc, diag::note_matching) << tok::lesslessless;
-          SkipUntil(tok::greatergreatergreater, StopAtSemi);
-          LHS = ExprError();
-        }
+      //   SourceLocation CloseLoc;
+      //   if (TryConsumeToken(tok::greatergreatergreater, CloseLoc)) {
+      //   } else if (LHS.isInvalid()) {
+      //     SkipUntil(tok::greatergreatergreater, StopAtSemi);
+      //   } else {
+      //     // There was an error closing the brackets
+      //     Diag(Tok, diag::err_expected) << tok::greatergreatergreater;
+      //     Diag(OpenLoc, diag::note_matching) << tok::lesslessless;
+      //     SkipUntil(tok::greatergreatergreater, StopAtSemi);
+      //     LHS = ExprError();
+      //   }
 
-        if (!LHS.isInvalid()) {
-          if (ExpectAndConsume(tok::l_paren))
-            LHS = ExprError();
-          else
-            Loc = PrevTokLocation;
-        }
+      //   if (!LHS.isInvalid()) {
+      //     if (ExpectAndConsume(tok::l_paren))
+      //       LHS = ExprError();
+      //     else
+      //       Loc = PrevTokLocation;
+      //   }
 
-        if (!LHS.isInvalid()) {
-          ExprResult ECResult = Actions.ActOnCUDAExecConfigExpr(getCurScope(),
-                                    OpenLoc,
-                                    ExecConfigExprs,
-                                    CloseLoc);
-          if (ECResult.isInvalid())
-            LHS = ExprError();
-          else
-            ExecConfig = ECResult.get();
-        }
-      } else {
+      //   if (!LHS.isInvalid()) {
+      //     ExprResult ECResult = Actions.ActOnCUDAExecConfigExpr(getCurScope(),
+      //                               OpenLoc,
+      //                               ExecConfigExprs,
+      //                               CloseLoc);
+      //     if (ECResult.isInvalid())
+      //       LHS = ExprError();
+      //     else
+      //       ExecConfig = ECResult.get();
+      //   }
+      // } else {
         PT.consumeOpen();
         Loc = PT.getOpenLocation();
-      }
+      // }
 
       ExprVector ArgExprs;
       CommaLocsTy CommaLocs;
@@ -3206,87 +3207,87 @@ ExprResult Parser::ParseStringLiteralExpression(bool AllowUserDefinedLiteral) {
 ///           type-name : assignment-expression
 ///           default : assignment-expression
 /// \endverbatim
-ExprResult Parser::ParseGenericSelectionExpression() {
-  assert(Tok.is(tok::kw__Generic) && "_Generic keyword expected");
-  if (!getLangOpts().C11)
-    Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+// ExprResult Parser::ParseGenericSelectionExpression() {
+//   assert(Tok.is(tok::kw__Generic) && "_Generic keyword expected");
+//   if (!getLangOpts().C11)
+//     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
 
-  SourceLocation KeyLoc = ConsumeToken();
-  BalancedDelimiterTracker T(*this, tok::l_paren);
-  if (T.expectAndConsume())
-    return ExprError();
+//   SourceLocation KeyLoc = ConsumeToken();
+//   BalancedDelimiterTracker T(*this, tok::l_paren);
+//   if (T.expectAndConsume())
+//     return ExprError();
 
-  ExprResult ControllingExpr;
-  {
-    // C11 6.5.1.1p3 "The controlling expression of a generic selection is
-    // not evaluated."
-    EnterExpressionEvaluationContext Unevaluated(
-        Actions, Sema::ExpressionEvaluationContext::Unevaluated);
-    ControllingExpr =
-        Actions.CorrectDelayedTyposInExpr(ParseAssignmentExpression());
-    if (ControllingExpr.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
-  }
+//   ExprResult ControllingExpr;
+//   {
+//     // C11 6.5.1.1p3 "The controlling expression of a generic selection is
+//     // not evaluated."
+//     EnterExpressionEvaluationContext Unevaluated(
+//         Actions, Sema::ExpressionEvaluationContext::Unevaluated);
+//     ControllingExpr =
+//         Actions.CorrectDelayedTyposInExpr(ParseAssignmentExpression());
+//     if (ControllingExpr.isInvalid()) {
+//       SkipUntil(tok::r_paren, StopAtSemi);
+//       return ExprError();
+//     }
+//   }
 
-  if (ExpectAndConsume(tok::comma)) {
-    SkipUntil(tok::r_paren, StopAtSemi);
-    return ExprError();
-  }
+//   if (ExpectAndConsume(tok::comma)) {
+//     SkipUntil(tok::r_paren, StopAtSemi);
+//     return ExprError();
+//   }
 
-  SourceLocation DefaultLoc;
-  TypeVector Types;
-  ExprVector Exprs;
-  do {
-    ParsedType Ty;
-    if (Tok.is(tok::kw_otro)) {
-      // C11 6.5.1.1p2 "A generic selection shall have no more than one default
-      // generic association."
-      if (!DefaultLoc.isInvalid()) {
-        Diag(Tok, diag::err_duplicate_default_assoc);
-        Diag(DefaultLoc, diag::note_previous_default_assoc);
-        SkipUntil(tok::r_paren, StopAtSemi);
-        return ExprError();
-      }
-      DefaultLoc = ConsumeToken();
-      Ty = nullptr;
-    } else {
-      ColonProtectionRAIIObject X(*this);
-      TypeResult TR = ParseTypeName();
-      if (TR.isInvalid()) {
-        SkipUntil(tok::r_paren, StopAtSemi);
-        return ExprError();
-      }
-      Ty = TR.get();
-    }
-    Types.push_back(Ty);
+//   SourceLocation DefaultLoc;
+//   TypeVector Types;
+//   ExprVector Exprs;
+//   do {
+//     ParsedType Ty;
+//     if (Tok.is(tok::kw_otro)) {
+//       // C11 6.5.1.1p2 "A generic selection shall have no more than one default
+//       // generic association."
+//       if (!DefaultLoc.isInvalid()) {
+//         Diag(Tok, diag::err_duplicate_default_assoc);
+//         Diag(DefaultLoc, diag::note_previous_default_assoc);
+//         SkipUntil(tok::r_paren, StopAtSemi);
+//         return ExprError();
+//       }
+//       DefaultLoc = ConsumeToken();
+//       Ty = nullptr;
+//     } else {
+//       ColonProtectionRAIIObject X(*this);
+//       TypeResult TR = ParseTypeName();
+//       if (TR.isInvalid()) {
+//         SkipUntil(tok::r_paren, StopAtSemi);
+//         return ExprError();
+//       }
+//       Ty = TR.get();
+//     }
+//     Types.push_back(Ty);
 
-    if (ExpectAndConsume(tok::colon)) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
+//     if (ExpectAndConsume(tok::colon)) {
+//       SkipUntil(tok::r_paren, StopAtSemi);
+//       return ExprError();
+//     }
 
-    // FIXME: These expressions should be parsed in a potentially potentially
-    // evaluated context.
-    ExprResult ER(
-        Actions.CorrectDelayedTyposInExpr(ParseAssignmentExpression()));
-    if (ER.isInvalid()) {
-      SkipUntil(tok::r_paren, StopAtSemi);
-      return ExprError();
-    }
-    Exprs.push_back(ER.get());
-  } while (TryConsumeToken(tok::comma));
+//     // FIXME: These expressions should be parsed in a potentially potentially
+//     // evaluated context.
+//     ExprResult ER(
+//         Actions.CorrectDelayedTyposInExpr(ParseAssignmentExpression()));
+//     if (ER.isInvalid()) {
+//       SkipUntil(tok::r_paren, StopAtSemi);
+//       return ExprError();
+//     }
+//     Exprs.push_back(ER.get());
+//   } while (TryConsumeToken(tok::comma));
 
-  T.consumeClose();
-  if (T.getCloseLocation().isInvalid())
-    return ExprError();
+//   T.consumeClose();
+//   if (T.getCloseLocation().isInvalid())
+//     return ExprError();
 
-  return Actions.ActOnGenericSelectionExpr(KeyLoc, DefaultLoc,
-                                           T.getCloseLocation(),
-                                           ControllingExpr.get(),
-                                           Types, Exprs);
-}
+//   return Actions.ActOnGenericSelectionExpr(KeyLoc, DefaultLoc,
+//                                            T.getCloseLocation(),
+//                                            ControllingExpr.get(),
+//                                            Types, Exprs);
+// }
 
 /// Parse A C++1z fold-expression after the opening paren and optional
 /// left-hand-side expression.

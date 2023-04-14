@@ -115,7 +115,7 @@ public:
   /// \c true if this line starts a namespace definition.
   bool startsWithNamespace() const {
     return startsWith(tok::kw_contexto) || startsWith(TT_NamespaceMacro) ||
-           startsWith(tok::kw_inline, tok::kw_contexto) ||
+           startsWith(tok::kw_en_linea, tok::kw_contexto) ||
            startsWith(tok::kw_exportar, tok::kw_contexto);
   }
 

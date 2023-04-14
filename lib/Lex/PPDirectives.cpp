@@ -2505,7 +2505,7 @@ static bool isConfigurationPattern(Token &MacroName, MacroInfo *MI,
   }
 
   // #define inline
-  return MacroName.isOneOf(tok::kw_extern, tok::kw_inline, tok::kw_static,
+  return MacroName.isOneOf(tok::kw_extern, tok::kw_en_linea, tok::kw_estatica,
                            tok::kw_const) &&
          MI->getNumTokens() == 0;
 }

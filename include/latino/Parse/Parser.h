@@ -1843,7 +1843,7 @@ private:
                                                   SourceLocation LParenLoc,
                                                   SourceLocation RParenLoc);
 
-  ExprResult ParseGenericSelectionExpression();
+  // ExprResult ParseGenericSelectionExpression();
 
   // ExprResult ParseObjCBoolLiteral();
 
@@ -2800,7 +2800,7 @@ private:
                                          SourceLocation StartLoc,
                                          SourceLocation EndLoc);
   void ParseUnderlyingTypeSpecifier(DeclSpec &DS);
-  void ParseAtomicSpecifier(DeclSpec &DS);
+  // void ParseAtomicSpecifier(DeclSpec &DS);
 
   ExprResult ParseAlignArgument(SourceLocation Start,
                                 SourceLocation &EllipsisLoc);

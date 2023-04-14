@@ -858,17 +858,17 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     LLVM_FALLTHROUGH;
   case tok::kw_usar:
   case tok::kw_contexto:
-  case tok::kw_typedef:
+  case tok::kw_alias:
   case tok::kw_plantilla:
   case tok::kw_static_assert:
-  case tok::kw__Static_assert:
+  // case tok::kw__Static_assert:
     // A function definition cannot start with any of these keywords.
     {
       SourceLocation DeclEnd;
       return ParseDeclaration(DeclaratorContext::FileContext, DeclEnd, attrs);
     }
 
-  case tok::kw_static:
+  case tok::kw_estatica:
     // Parse (then ignore) 'static' prior to a template instantiation. This is
     // a GCC extension that we intentionally do not support.
     if (getLangOpts().CPlusPlus && NextToken().is(tok::kw_plantilla)) {
@@ -879,7 +879,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     }
     goto dont_know;
 
-  case tok::kw_inline:
+  case tok::kw_en_linea:
     if (getLangOpts().CPlusPlus) {
       tok::TokenKind NextKind = NextToken().getKind();
 
@@ -1814,7 +1814,7 @@ bool Parser::TryAnnotateTypeOrScopeToken() {
     // We will consume the typedef token here and put it back after we have
     // parsed the first identifier, transforming it into something more like:
     //   typename T_::D typedef D;
-    if (getLangOpts().MSVCCompat && NextToken().is(tok::kw_typedef)) {
+    if (getLangOpts().MSVCCompat && NextToken().is(tok::kw_alias)) {
       Token TypedefToken;
       PP.Lex(TypedefToken);
       bool Result = TryAnnotateTypeOrScopeToken();

@@ -144,8 +144,8 @@ def err_duplicate_default_assoc : Error<
 def note_previous_default_assoc : Note<
   "previous default generic association is here">;
 
-def ext_c99_feature : Extension<
-  "'%0' is a C99 extension">, InGroup<C99>;
+// def ext_c99_feature : Extension<
+//   "'%0' is a C99 extension">, InGroup<C99>;
 def ext_c11_feature : Extension<
   "'%0' is a C11 extension">, InGroup<C11>;
 
@@ -1210,8 +1210,8 @@ def warn_pragma_extension_is_core : Warning<
 // OpenCL errors.
 def err_opencl_taking_function_address_parser : Error<
   "taking address of function is not allowed">;
-def err_opencl_logical_exclusive_or : Error<
-  "^^ is a reserved operator in OpenCL">;
+// def err_opencl_logical_exclusive_or : Error<
+//   "^^ is a reserved operator in OpenCL">;
 
 // C++ for OpenCL.
 def err_openclcxx_virtual_function : Error<

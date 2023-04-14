@@ -1231,12 +1231,12 @@ bool Parser::ConsumeAndStoreInitializer(CachedTokens &Toks,
         return false;
       break;
 
-    case tok::greatergreatergreater:
-      if (!getLangOpts().CPlusPlus11)
-        goto consume_token;
-      if (AngleCount) --AngleCount;
-      if (KnownTemplateCount) --KnownTemplateCount;
-      LLVM_FALLTHROUGH;
+    // case tok::greatergreatergreater:
+    //   if (!getLangOpts().CPlusPlus11)
+    //     goto consume_token;
+    //   if (AngleCount) --AngleCount;
+    //   if (KnownTemplateCount) --KnownTemplateCount;
+    //   LLVM_FALLTHROUGH;
     case tok::greatergreater:
       if (!getLangOpts().CPlusPlus11)
         goto consume_token;
@@ -1273,7 +1273,7 @@ bool Parser::ConsumeAndStoreInitializer(CachedTokens &Toks,
       ConsumeToken();
       switch (Tok.getKind()) {
       case tok::comma:
-      case tok::greatergreatergreater:
+      // case tok::greatergreatergreater:
       case tok::greatergreater:
       case tok::greater:
       case tok::less:

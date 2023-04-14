@@ -89,13 +89,13 @@ Parser::DeclGroupPtrTy Parser::ParseNamespace(DeclaratorContext Context,
     IdentLoc = ConsumeToken();  // eat the identifier.
     while (Tok.is(tok::coloncolon) &&
            (NextToken().is(tok::identifier) ||
-            (NextToken().is(tok::kw_inline) &&
+            (NextToken().is(tok::kw_en_linea) &&
              GetLookAheadToken(2).is(tok::identifier)))) {
 
       InnerNamespaceInfo Info;
       Info.NamespaceLoc = ConsumeToken();
 
-      if (Tok.is(tok::kw_inline)) {
+      if (Tok.is(tok::kw_en_linea)) {
         Info.InlineLoc = ConsumeToken();
         if (FirstNestedInlineLoc.isInvalid())
           FirstNestedInlineLoc = Info.InlineLoc;
@@ -867,11 +867,11 @@ Decl *Parser::ParseAliasDeclarationAfterDeclarator(
 ///           _Static_assert ( constant-expression  ,  string-literal  ) ;
 ///
 Decl *Parser::ParseStaticAssertDeclaration(SourceLocation &DeclEnd){
-  assert(Tok.isOneOf(tok::kw_static_assert, tok::kw__Static_assert) &&
+  assert(Tok.is(tok::kw_static_assert/*, tok::kw__Static_assert*/) &&
          "Not a static_assert declaration");
 
-  if (Tok.is(tok::kw__Static_assert) && !getLangOpts().C11)
-    Diag(Tok, diag::ext_c11_feature) << Tok.getName();
+  // if (Tok.is(tok::kw__Static_assert) && !getLangOpts().C11)
+  //   Diag(Tok, diag::ext_c11_feature) << Tok.getName();
   if (Tok.is(tok::kw_static_assert))
     Diag(Tok, diag::warn_cxx98_compat_static_assert);
 
@@ -1298,18 +1298,18 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   case tok::kw_const:           // struct foo {...} const     x;
   // case tok::kw_volatile:        // struct foo {...} volatile  x;
   // case tok::kw_restrict:        // struct foo {...} restrict  x;
-  case tok::kw__Atomic:         // struct foo {...} _Atomic   x;
+  // case tok::kw__Atomic:         // struct foo {...} _Atomic   x;
   // case tok::kw___unaligned:     // struct foo {...} __unaligned *x;
   // Function specifiers
   // Note, no 'explicit'. An explicit function must be either a conversion
   // operator or a constructor. Either way, it can't have a return type.
-  case tok::kw_inline:          // struct foo       inline    f();
+  case tok::kw_en_linea:          // struct foo       inline    f();
   case tok::kw_virtual:         // struct foo       virtual   f();
   case tok::kw_friend:          // struct foo       friend    f();
   // Storage-class specifiers
-  case tok::kw_static:          // struct foo {...} static    x;
+  case tok::kw_estatica:          // struct foo {...} static    x;
   case tok::kw_extern:          // struct foo {...} extern    x;
-  case tok::kw_typedef:         // struct foo {...} typedef   x;
+  case tok::kw_alias:         // struct foo {...} typedef   x;
   // case tok::kw_register:        // struct foo {...} register  x;
   case tok::kw_auto:            // struct foo {...} auto      x;
   case tok::kw_mutable:         // struct foo {...} mutable   x;
@@ -1394,7 +1394,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
                                  bool EnteringContext, DeclSpecContext DSC,
                                  ParsedAttributesWithRange &Attributes) {
   DeclSpec::TST TagType;
-  if (TagTokKind == tok::kw_struct)
+  if (TagTokKind == tok::kw_estructura)
     TagType = DeclSpec::TST_struct;
   // else if (TagTokKind == tok::kw___interface)
   //   TagType = DeclSpec::TST_interface;
@@ -1508,34 +1508,34 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
     // allow libstdc++ 4.2 and libc++ to work properly.
     TryKeywordIdentFallback(true);
 
-  struct PreserveAtomicIdentifierInfoRAII {
-    PreserveAtomicIdentifierInfoRAII(Token &Tok, bool Enabled)
-        : AtomicII(nullptr) {
-      if (!Enabled)
-        return;
-      assert(Tok.is(tok::kw__Atomic));
-      AtomicII = Tok.getIdentifierInfo();
-      AtomicII->revertTokenIDToIdentifier();
-      Tok.setKind(tok::identifier);
-    }
-    ~PreserveAtomicIdentifierInfoRAII() {
-      if (!AtomicII)
-        return;
-      AtomicII->revertIdentifierToTokenID(tok::kw__Atomic);
-    }
-    IdentifierInfo *AtomicII;
-  };
+  // struct PreserveAtomicIdentifierInfoRAII {
+  //   PreserveAtomicIdentifierInfoRAII(Token &Tok, bool Enabled)
+  //       : AtomicII(nullptr) {
+  //     if (!Enabled)
+  //       return;
+  //     assert(Tok.is(tok::kw__Atomic));
+  //     AtomicII = Tok.getIdentifierInfo();
+  //     AtomicII->revertTokenIDToIdentifier();
+  //     Tok.setKind(tok::identifier);
+  //   }
+  //   ~PreserveAtomicIdentifierInfoRAII() {
+  //     if (!AtomicII)
+  //       return;
+  //     AtomicII->revertIdentifierToTokenID(tok::kw__Atomic);
+  //   }
+  //   IdentifierInfo *AtomicII;
+  // };
 
   // HACK: MSVC doesn't consider _Atomic to be a keyword and its STL
   // implementation for VS2013 uses _Atomic as an identifier for one of the
   // classes in <atomic>.  When we are parsing 'struct _Atomic', don't consider
   // '_Atomic' to be a keyword.  We are careful to undo this so that clang can
   // use '_Atomic' in its own header files.
-  bool ShouldChangeAtomicToIdentifier = getLangOpts().MSVCCompat &&
-                                        Tok.is(tok::kw__Atomic) &&
-                                        TagType == DeclSpec::TST_struct;
-  PreserveAtomicIdentifierInfoRAII AtomicTokenGuard(
-      Tok, ShouldChangeAtomicToIdentifier);
+  // bool ShouldChangeAtomicToIdentifier = getLangOpts().MSVCCompat &&
+  //                                       Tok.is(tok::kw__Atomic) &&
+  //                                       TagType == DeclSpec::TST_struct;
+  // PreserveAtomicIdentifierInfoRAII AtomicTokenGuard(
+  //     Tok, ShouldChangeAtomicToIdentifier);
 
   // Parse the (optional) nested-name-specifier.
   CXXScopeSpec &SS = DS.getTypeSpecScope();
@@ -2115,9 +2115,9 @@ BaseResult Parser::ParseBaseSpecifier(Decl *ClassDecl) {
   // implementation for VS2013 uses _Atomic as an identifier for one of the
   // classes in <atomic>.  Treat '_Atomic' to be an identifier when we are
   // parsing the class-name for a base specifier.
-  if (getLangOpts().MSVCCompat && Tok.is(tok::kw__Atomic) &&
-      NextToken().is(tok::less))
-    Tok.setKind(tok::identifier);
+  // if (getLangOpts().MSVCCompat && Tok.is(tok::kw__Atomic) &&
+  //     NextToken().is(tok::less))
+  //   Tok.setKind(tok::identifier);
 
   SourceLocation EndLocation;
   SourceLocation BaseLoc;
@@ -2541,7 +2541,7 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
   // static_assert-declaration. A templated static_assert declaration is
   // diagnosed in Parser::ParseSingleDeclarationAfterTemplate.
   if (!TemplateInfo.Kind &&
-      Tok.isOneOf(tok::kw_static_assert, tok::kw__Static_assert)) {
+      Tok.is(tok::kw_static_assert/*, tok::kw__Static_assert*/)) {
     SourceLocation DeclEnd;
     return DeclGroupPtrTy::make(
         DeclGroupRef(ParseStaticAssertDeclaration(DeclEnd)));

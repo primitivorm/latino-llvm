@@ -442,7 +442,7 @@ private:
 
     // Limit this to being an access modifier that follows.
     if (AttrTok->isOneOf(tok::kw_pub, tok::kw_pri, tok::kw_pro,
-                         tok::comment, tok::kw_clase, tok::kw_static,
+                         tok::comment, tok::kw_clase, tok::kw_estatica,
                          tok::l_square, Keywords.kw_internal)) {
       return true;
     }
@@ -1257,7 +1257,7 @@ public:
     //     (Info && Info->getPPKeywordID() == tok::pp_import &&
     //      CurrentToken->Next &&
     //      CurrentToken->Next->isOneOf(tok::string_literal, tok::identifier,
-    //                                  tok::kw_static))) {
+    //                                  tok::kw_estatica))) {
     //   next();
     //   parseIncludeDirective();
     //   return LT_ImportStatement;
@@ -2614,7 +2614,7 @@ unsigned TokenAnnotator::splitPenalty(const AnnotatedLine &Line,
     return 160;
   if (Left.is(TT_CastRParen))
     return 100;
-  if (Left.isOneOf(tok::kw_clase, tok::kw_struct))
+  if (Left.isOneOf(tok::kw_clase, tok::kw_estructura))
     return 5000;
   if (Left.is(tok::comment))
     return 1000;
@@ -3217,7 +3217,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
       return true;
     if (Left.is(Keywords.kw_synchronized) && Right.is(tok::l_paren))
       return Style.SpaceBeforeParens != FormatStyle::SBPO_Never;
-    if ((Left.isOneOf(tok::kw_static, tok::kw_pub, tok::kw_pri,
+    if ((Left.isOneOf(tok::kw_estatica, tok::kw_pub, tok::kw_pri,
                       tok::kw_pro) ||
          Left.isOneOf(Keywords.kw_final, Keywords.kw_abstract,
                       Keywords.kw_native)) &&
@@ -3565,10 +3565,10 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
 
   if (isAllmanBrace(Left) || isAllmanBrace(Right))
     return (Line.startsWith(tok::kw_enum) && Style.BraceWrapping.AfterEnum) ||
-           (Line.startsWith(tok::kw_typedef, tok::kw_enum) &&
+           (Line.startsWith(tok::kw_alias, tok::kw_enum) &&
             Style.BraceWrapping.AfterEnum) ||
            (Line.startsWith(tok::kw_clase) && Style.BraceWrapping.AfterClass) ||
-           (Line.startsWith(tok::kw_struct) && Style.BraceWrapping.AfterStruct);
+           (Line.startsWith(tok::kw_estructura) && Style.BraceWrapping.AfterStruct);
   if (Left.is(TT_ObjCBlockLBrace) &&
       Style.AllowShortBlocksOnASingleLine == FormatStyle::SBS_Never)
     return true;
@@ -3732,7 +3732,7 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
         NonComment->isOneOf(
             tok::kw_ret, Keywords.kw_yield, tok::kw_continuar, tok::kw_romper,
             tok::kw_lanzar, Keywords.kw_interface, Keywords.kw_type,
-            tok::kw_static, tok::kw_pub, tok::kw_pri, tok::kw_pro,
+            tok::kw_estatica, tok::kw_pub, tok::kw_pri, tok::kw_pro,
             Keywords.kw_readonly, Keywords.kw_abstract, Keywords.kw_get,
             Keywords.kw_set, Keywords.kw_async, Keywords.kw_await))
       return false; // Otherwise automatic semicolon insertion would trigger.
@@ -3988,7 +3988,7 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
   }
 
   return Left.isOneOf(tok::comma, tok::coloncolon, tok::semi, tok::l_brace,
-                      tok::kw_clase, tok::kw_struct, tok::comment) ||
+                      tok::kw_clase, tok::kw_estructura, tok::comment) ||
          Right.isMemberAccess() ||
          Right.isOneOf(TT_TrailingReturnArrow, TT_LambdaArrow, tok::lessless,
                        tok::colon, tok::l_square, tok::at) ||
