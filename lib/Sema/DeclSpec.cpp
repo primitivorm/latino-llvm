@@ -357,7 +357,7 @@ bool Declarator::isDeclarationOfFunction() const {
     case TST_enum:
     case TST_error:
     case TST_float:
-    case TST_half:
+    // case TST_half:
     case TST_int:
     case TST_int128:
     case TST_extint:
@@ -369,8 +369,8 @@ bool Declarator::isDeclarationOfFunction() const {
     case TST_void:
     case TST_wchar:
     case TST_BFloat16:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case TST_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case TST_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
       return false;
 
     case TST_decltype_auto:
@@ -541,7 +541,7 @@ const char *DeclSpec::getSpecifierName(DeclSpec::TST T,
   case DeclSpec::TST_int:         return "int";
   case DeclSpec::TST_int128:      return "__int128";
   case DeclSpec::TST_extint:      return "_ExtInt";
-  case DeclSpec::TST_half:        return "half";
+  // case DeclSpec::TST_half:        return "half";
   case DeclSpec::TST_float:       return "float";
   case DeclSpec::TST_double:      return "double";
   case DeclSpec::TST_accum:       return "_Accum";
@@ -568,10 +568,10 @@ const char *DeclSpec::getSpecifierName(DeclSpec::TST T,
   case DeclSpec::TST_unknown_anytype: return "__unknown_anytype";
   case DeclSpec::TST_atomic: return "_Atomic";
   case DeclSpec::TST_BFloat16: return "__bf16";
-#define GENERIC_IMAGE_TYPE(ImgType, Id) \
-  case DeclSpec::TST_##ImgType##_t: \
-    return #ImgType "_t";
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) \
+//   case DeclSpec::TST_##ImgType##_t: \
+//     return #ImgType "_t";
+// #include "latino/Basic/OpenCLImageTypes.def"
   case DeclSpec::TST_error:       return "(error)";
   }
   llvm_unreachable("Unknown typespec!");
@@ -843,20 +843,20 @@ bool DeclSpec::SetTypeSpecSat(SourceLocation Loc, const char *&PrevSpec,
   return false;
 }
 
-bool DeclSpec::SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
-                          const char *&PrevSpec, unsigned &DiagID,
-                          const PrintingPolicy &Policy) {
-  if (TypeSpecType == TST_error)
-    return false;
-  if (TypeSpecType != TST_unspecified) {
-    PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
-    DiagID = diag::err_invalid_vector_decl_spec_combination;
-    return true;
-  }
-  TypeAltiVecVector = isAltiVecVector;
-  AltiVecLoc = Loc;
-  return false;
-}
+// bool DeclSpec::SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
+//                           const char *&PrevSpec, unsigned &DiagID,
+//                           const PrintingPolicy &Policy) {
+//   if (TypeSpecType == TST_error)
+//     return false;
+//   if (TypeSpecType != TST_unspecified) {
+//     PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
+//     DiagID = diag::err_invalid_vector_decl_spec_combination;
+//     return true;
+//   }
+//   TypeAltiVecVector = isAltiVecVector;
+//   AltiVecLoc = Loc;
+//   return false;
+// }
 
 bool DeclSpec::SetTypePipe(bool isPipe, SourceLocation Loc,
                            const char *&PrevSpec, unsigned &DiagID,
@@ -875,39 +875,39 @@ bool DeclSpec::SetTypePipe(bool isPipe, SourceLocation Loc,
   return false;
 }
 
-bool DeclSpec::SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
-                          const char *&PrevSpec, unsigned &DiagID,
-                          const PrintingPolicy &Policy) {
-  if (TypeSpecType == TST_error)
-    return false;
-  if (!TypeAltiVecVector || TypeAltiVecPixel ||
-      (TypeSpecType != TST_unspecified)) {
-    PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
-    DiagID = diag::err_invalid_pixel_decl_spec_combination;
-    return true;
-  }
-  TypeAltiVecPixel = isAltiVecPixel;
-  TSTLoc = Loc;
-  TSTNameLoc = Loc;
-  return false;
-}
+// bool DeclSpec::SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
+//                           const char *&PrevSpec, unsigned &DiagID,
+//                           const PrintingPolicy &Policy) {
+//   if (TypeSpecType == TST_error)
+//     return false;
+//   if (!TypeAltiVecVector || TypeAltiVecPixel ||
+//       (TypeSpecType != TST_unspecified)) {
+//     PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
+//     DiagID = diag::err_invalid_pixel_decl_spec_combination;
+//     return true;
+//   }
+//   TypeAltiVecPixel = isAltiVecPixel;
+//   TSTLoc = Loc;
+//   TSTNameLoc = Loc;
+//   return false;
+// }
 
-bool DeclSpec::SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
-                                  const char *&PrevSpec, unsigned &DiagID,
-                                  const PrintingPolicy &Policy) {
-  if (TypeSpecType == TST_error)
-    return false;
-  if (!TypeAltiVecVector || TypeAltiVecBool ||
-      (TypeSpecType != TST_unspecified)) {
-    PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
-    DiagID = diag::err_invalid_vector_bool_decl_spec;
-    return true;
-  }
-  TypeAltiVecBool = isAltiVecBool;
-  TSTLoc = Loc;
-  TSTNameLoc = Loc;
-  return false;
-}
+// bool DeclSpec::SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
+//                                   const char *&PrevSpec, unsigned &DiagID,
+//                                   const PrintingPolicy &Policy) {
+//   if (TypeSpecType == TST_error)
+//     return false;
+//   if (!TypeAltiVecVector || TypeAltiVecBool ||
+//       (TypeSpecType != TST_unspecified)) {
+//     PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
+//     DiagID = diag::err_invalid_vector_bool_decl_spec;
+//     return true;
+//   }
+//   TypeAltiVecBool = isAltiVecBool;
+//   TSTLoc = Loc;
+//   TSTNameLoc = Loc;
+//   return false;
+// }
 
 bool DeclSpec::SetTypeSpecError() {
   TypeSpecType = TST_error;

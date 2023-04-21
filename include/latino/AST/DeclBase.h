@@ -52,14 +52,14 @@ enum Linkage : unsigned char;
 class LinkageSpecDecl;
 class Module;
 class NamedDecl;
-class ObjCCategoryDecl;
-class ObjCCategoryImplDecl;
-class ObjCContainerDecl;
-class ObjCImplDecl;
-class ObjCImplementationDecl;
-class ObjCInterfaceDecl;
-class ObjCMethodDecl;
-class ObjCProtocolDecl;
+// class ObjCCategoryDecl;
+// class ObjCCategoryImplDecl;
+// class ObjCContainerDecl;
+// class ObjCImplDecl;
+// class ObjCImplementationDecl;
+// class ObjCInterfaceDecl;
+// class ObjCMethodDecl;
+// class ObjCProtocolDecl;
 struct PrintingPolicy;
 class RecordDecl;
 class SourceManager;
@@ -1606,82 +1606,82 @@ class DeclContext {
   /// Stores the bits used by ObjCMethodDecl.
   /// If modified NumObjCMethodDeclBits and the accessor
   /// methods in ObjCMethodDecl should be updated appropriately.
-  class ObjCMethodDeclBitfields {
-    friend class ObjCMethodDecl;
+  // class ObjCMethodDeclBitfields {
+  //   friend class ObjCMethodDecl;
 
-    /// For the bits in DeclContextBitfields.
-    uint64_t : NumDeclContextBits;
+  //   /// For the bits in DeclContextBitfields.
+  //   uint64_t : NumDeclContextBits;
 
-    /// The conventional meaning of this method; an ObjCMethodFamily.
-    /// This is not serialized; instead, it is computed on demand and
-    /// cached.
-    mutable uint64_t Family : ObjCMethodFamilyBitWidth;
+  //   /// The conventional meaning of this method; an ObjCMethodFamily.
+  //   /// This is not serialized; instead, it is computed on demand and
+  //   /// cached.
+  //   mutable uint64_t Family : ObjCMethodFamilyBitWidth;
 
-    /// instance (true) or class (false) method.
-    uint64_t IsInstance : 1;
-    uint64_t IsVariadic : 1;
+  //   /// instance (true) or class (false) method.
+  //   uint64_t IsInstance : 1;
+  //   uint64_t IsVariadic : 1;
 
-    /// True if this method is the getter or setter for an explicit property.
-    uint64_t IsPropertyAccessor : 1;
+  //   /// True if this method is the getter or setter for an explicit property.
+  //   uint64_t IsPropertyAccessor : 1;
 
-    /// True if this method is a synthesized property accessor stub.
-    uint64_t IsSynthesizedAccessorStub : 1;
+  //   /// True if this method is a synthesized property accessor stub.
+  //   uint64_t IsSynthesizedAccessorStub : 1;
 
-    /// Method has a definition.
-    uint64_t IsDefined : 1;
+  //   /// Method has a definition.
+  //   uint64_t IsDefined : 1;
 
-    /// Method redeclaration in the same interface.
-    uint64_t IsRedeclaration : 1;
+  //   /// Method redeclaration in the same interface.
+  //   uint64_t IsRedeclaration : 1;
 
-    /// Is redeclared in the same interface.
-    mutable uint64_t HasRedeclaration : 1;
+  //   /// Is redeclared in the same interface.
+  //   mutable uint64_t HasRedeclaration : 1;
 
-    /// \@required/\@optional
-    uint64_t DeclImplementation : 2;
+  //   /// \@required/\@optional
+  //   uint64_t DeclImplementation : 2;
 
-    /// in, inout, etc.
-    uint64_t objcDeclQualifier : 7;
+  //   /// in, inout, etc.
+  //   uint64_t objcDeclQualifier : 7;
 
-    /// Indicates whether this method has a related result type.
-    uint64_t RelatedResultType : 1;
+  //   /// Indicates whether this method has a related result type.
+  //   uint64_t RelatedResultType : 1;
 
-    /// Whether the locations of the selector identifiers are in a
-    /// "standard" position, a enum SelectorLocationsKind.
-    uint64_t SelLocsKind : 2;
+  //   /// Whether the locations of the selector identifiers are in a
+  //   /// "standard" position, a enum SelectorLocationsKind.
+  //   uint64_t SelLocsKind : 2;
 
-    /// Whether this method overrides any other in the class hierarchy.
-    ///
-    /// A method is said to override any method in the class's
-    /// base classes, its protocols, or its categories' protocols, that has
-    /// the same selector and is of the same kind (class or instance).
-    /// A method in an implementation is not considered as overriding the same
-    /// method in the interface or its categories.
-    uint64_t IsOverriding : 1;
+  //   /// Whether this method overrides any other in the class hierarchy.
+  //   ///
+  //   /// A method is said to override any method in the class's
+  //   /// base classes, its protocols, or its categories' protocols, that has
+  //   /// the same selector and is of the same kind (class or instance).
+  //   /// A method in an implementation is not considered as overriding the same
+  //   /// method in the interface or its categories.
+  //   uint64_t IsOverriding : 1;
 
-    /// Indicates if the method was a definition but its body was skipped.
-    uint64_t HasSkippedBody : 1;
-  };
+  //   /// Indicates if the method was a definition but its body was skipped.
+  //   uint64_t HasSkippedBody : 1;
+  // };
 
   /// Number of non-inherited bits in ObjCMethodDeclBitfields.
-  enum { NumObjCMethodDeclBits = 24 };
+  // enum { NumObjCMethodDeclBits = 24 };
 
   /// Stores the bits used by ObjCContainerDecl.
   /// If modified NumObjCContainerDeclBits and the accessor
   /// methods in ObjCContainerDecl should be updated appropriately.
-  class ObjCContainerDeclBitfields {
-    friend class ObjCContainerDecl;
-    /// For the bits in DeclContextBitfields
-    uint32_t : NumDeclContextBits;
+  // class ObjCContainerDeclBitfields {
+  //   friend class ObjCContainerDecl;
+  //   /// For the bits in DeclContextBitfields
+  //   uint32_t : NumDeclContextBits;
 
-    // Not a bitfield but this saves space.
-    // Note that ObjCContainerDeclBitfields is full.
-    SourceLocation AtStart;
-  };
+  //   // Not a bitfield but this saves space.
+  //   // Note that ObjCContainerDeclBitfields is full.
+  //   SourceLocation AtStart;
+  // };
 
   /// Number of non-inherited bits in ObjCContainerDeclBitfields.
   /// Note that here we rely on the fact that SourceLocation is 32 bits
   /// wide. We check this with the static_assert in the ctor of DeclContext.
-  enum { NumObjCContainerDeclBits = 64 - NumDeclContextBits };
+  // enum { NumObjCContainerDeclBits = 64 - NumDeclContextBits };
 
   /// Stores the bits used by LinkageSpecDecl.
   /// If modified NumLinkageSpecDeclBits and the accessor
@@ -1852,24 +1852,24 @@ public:
   /// innermost enclosing BlockDecl or null if there are no enclosing blocks.
   const BlockDecl *getInnermostBlockDecl() const;
 
-  bool isObjCContainer() const {
-    switch (getDeclKind()) {
-    case Decl::ObjCCategory:
-    case Decl::ObjCCategoryImpl:
-    case Decl::ObjCImplementation:
-    case Decl::ObjCInterface:
-    case Decl::ObjCProtocol:
-      return true;
-    default:
-      return false;
-    }
-  }
+  // bool isObjCContainer() const {
+  //   switch (getDeclKind()) {
+  //   case Decl::ObjCCategory:
+  //   case Decl::ObjCCategoryImpl:
+  //   case Decl::ObjCImplementation:
+  //   case Decl::ObjCInterface:
+  //   case Decl::ObjCProtocol:
+  //     return true;
+  //   default:
+  //     return false;
+  //   }
+  // }
 
   bool isFunctionOrMethod() const {
     switch (getDeclKind()) {
     case Decl::Block:
     case Decl::Captured:
-    case Decl::ObjCMethod:
+    // case Decl::ObjCMethod:
       return true;
     default:
       return getDeclKind() >= Decl::firstFunction &&

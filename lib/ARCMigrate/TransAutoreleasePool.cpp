@@ -47,18 +47,18 @@ public:
   ReleaseCollector(Decl *D, SmallVectorImpl<ObjCMessageExpr *> &releases)
     : Dcl(D), Releases(releases) { }
 
-  bool VisitObjCMessageExpr(ObjCMessageExpr *E) {
-    if (!E->isInstanceMessage())
-      return true;
-    if (E->getMethodFamily() != OMF_release)
-      return true;
-    Expr *instance = E->getInstanceReceiver()->IgnoreParenCasts();
-    if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(instance)) {
-      if (DE->getDecl() == Dcl)
-        Releases.push_back(E);
-    }
-    return true;
-  }
+  // bool VisitObjCMessageExpr(ObjCMessageExpr *E) {
+  //   if (!E->isInstanceMessage())
+  //     return true;
+  //   if (E->getMethodFamily() != OMF_release)
+  //     return true;
+  //   Expr *instance = E->getInstanceReceiver()->IgnoreParenCasts();
+  //   if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(instance)) {
+  //     if (DE->getDecl() == Dcl)
+  //       Releases.push_back(E);
+  //   }
+  //   return true;
+  // }
 };
 
 }
@@ -349,22 +349,22 @@ private:
   bool isPoolCreation(Expr *E) {
     if (!E) return false;
     E = getEssential(E);
-    ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(E);
-    if (!ME) return false;
-    if (ME->getMethodFamily() == OMF_new &&
-        ME->getReceiverKind() == ObjCMessageExpr::Class &&
-        isNSAutoreleasePool(ME->getReceiverInterface()))
-      return true;
-    if (ME->getReceiverKind() == ObjCMessageExpr::Instance &&
-        ME->getMethodFamily() == OMF_init) {
-      Expr *rec = getEssential(ME->getInstanceReceiver());
-      if (ObjCMessageExpr *recME = dyn_cast_or_null<ObjCMessageExpr>(rec)) {
-        if (recME->getMethodFamily() == OMF_alloc &&
-            recME->getReceiverKind() == ObjCMessageExpr::Class &&
-            isNSAutoreleasePool(recME->getReceiverInterface()))
-          return true;
-      }
-    }
+    // ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(E);
+    // if (!ME) return false;
+    // if (ME->getMethodFamily() == OMF_new &&
+    //     ME->getReceiverKind() == ObjCMessageExpr::Class &&
+    //     isNSAutoreleasePool(ME->getReceiverInterface()))
+    //   return true;
+    // if (ME->getReceiverKind() == ObjCMessageExpr::Instance &&
+    //     ME->getMethodFamily() == OMF_init) {
+    //   Expr *rec = getEssential(ME->getInstanceReceiver());
+    //   if (ObjCMessageExpr *recME = dyn_cast_or_null<ObjCMessageExpr>(rec)) {
+    //     if (recME->getMethodFamily() == OMF_alloc &&
+    //         recME->getReceiverKind() == ObjCMessageExpr::Class &&
+    //         isNSAutoreleasePool(recME->getReceiverInterface()))
+    //       return true;
+    //   }
+    // }
 
     return false;
   }
@@ -385,16 +385,16 @@ private:
     return false;
   }
 
-  bool isNSAutoreleasePool(ObjCInterfaceDecl *IDecl) {
-    return IDecl && IDecl->getIdentifier() == PoolII;
-  }
+  // bool isNSAutoreleasePool(ObjCInterfaceDecl *IDecl) {
+  //   return IDecl && IDecl->getIdentifier() == PoolII;
+  // }
 
   bool isNSAutoreleasePool(QualType Ty) {
     QualType pointee = Ty->getPointeeType();
     if (pointee.isNull())
       return false;
-    if (const ObjCInterfaceType *interT = pointee->getAs<ObjCInterfaceType>())
-      return isNSAutoreleasePool(interT->getDecl());
+    // if (const ObjCInterfaceType *interT = pointee->getAs<ObjCInterfaceType>())
+    //   return isNSAutoreleasePool(interT->getDecl());
     return false;
   }
 

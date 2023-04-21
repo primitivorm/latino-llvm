@@ -6,21 +6,21 @@ add_latino_library(latinoARCMigrate
   ARCMT.cpp
   ARCMTActions.cpp
   FileRemapper.cpp
-  ObjCMT.cpp
+  # ObjCMT.cpp
   PlistReporter.cpp
   TransAPIUses.cpp
   TransARCAssign.cpp
   TransAutoreleasePool.cpp
-  TransBlockObjCVariable.cpp
+  # TransBlockObjCVariable.cpp
   TransEmptyStatementsAndDealloc.cpp
   TransGCAttrs.cpp
   TransGCCalls.cpp
   TransProperties.cpp
   TransProtectedScope.cpp
   TransRetainReleaseDealloc.cpp
-  TransUnbridgedCasts.cpp
+  # TransUnbridgedCasts.cpp
   TransUnusedInitDelegate.cpp
-  TransZeroOutPropsInDealloc.cpp
+  # TransZeroOutPropsInDealloc.cpp
   TransformActions.cpp
   Transforms.cpp
 

@@ -192,75 +192,75 @@ void CheckerManager::runCheckersForStmt(bool isPreVisit,
   expandGraphWithCheckers(C, Dst, Src);
 }
 
-namespace {
+// namespace {
 
-  struct CheckObjCMessageContext {
-    using CheckersTy = std::vector<CheckerManager::CheckObjCMessageFunc>;
+//   struct CheckObjCMessageContext {
+//     using CheckersTy = std::vector<CheckerManager::CheckObjCMessageFunc>;
 
-    ObjCMessageVisitKind Kind;
-    bool WasInlined;
-    const CheckersTy &Checkers;
-    const ObjCMethodCall &Msg;
-    ExprEngine &Eng;
+//     ObjCMessageVisitKind Kind;
+//     bool WasInlined;
+//     const CheckersTy &Checkers;
+//     const ObjCMethodCall &Msg;
+//     ExprEngine &Eng;
 
-    CheckObjCMessageContext(ObjCMessageVisitKind visitKind,
-                            const CheckersTy &checkers,
-                            const ObjCMethodCall &msg, ExprEngine &eng,
-                            bool wasInlined)
-        : Kind(visitKind), WasInlined(wasInlined), Checkers(checkers), Msg(msg),
-          Eng(eng) {}
+//     CheckObjCMessageContext(ObjCMessageVisitKind visitKind,
+//                             const CheckersTy &checkers,
+//                             const ObjCMethodCall &msg, ExprEngine &eng,
+//                             bool wasInlined)
+//         : Kind(visitKind), WasInlined(wasInlined), Checkers(checkers), Msg(msg),
+//           Eng(eng) {}
 
-    CheckersTy::const_iterator checkers_begin() { return Checkers.begin(); }
-    CheckersTy::const_iterator checkers_end() { return Checkers.end(); }
+//     CheckersTy::const_iterator checkers_begin() { return Checkers.begin(); }
+//     CheckersTy::const_iterator checkers_end() { return Checkers.end(); }
 
-    void runChecker(CheckerManager::CheckObjCMessageFunc checkFn,
-                    NodeBuilder &Bldr, ExplodedNode *Pred) {
-      bool IsPreVisit;
+//     void runChecker(CheckerManager::CheckObjCMessageFunc checkFn,
+//                     NodeBuilder &Bldr, ExplodedNode *Pred) {
+//       bool IsPreVisit;
 
-      switch (Kind) {
-        case ObjCMessageVisitKind::Pre:
-          IsPreVisit = true;
-          break;
-        case ObjCMessageVisitKind::MessageNil:
-        case ObjCMessageVisitKind::Post:
-          IsPreVisit = false;
-          break;
-      }
+//       switch (Kind) {
+//         case ObjCMessageVisitKind::Pre:
+//           IsPreVisit = true;
+//           break;
+//         case ObjCMessageVisitKind::MessageNil:
+//         case ObjCMessageVisitKind::Post:
+//           IsPreVisit = false;
+//           break;
+//       }
 
-      const ProgramPoint &L = Msg.getProgramPoint(IsPreVisit,checkFn.Checker);
-      CheckerContext C(Bldr, Eng, Pred, L, WasInlined);
+//       const ProgramPoint &L = Msg.getProgramPoint(IsPreVisit,checkFn.Checker);
+//       CheckerContext C(Bldr, Eng, Pred, L, WasInlined);
 
-      checkFn(*Msg.cloneWithState<ObjCMethodCall>(Pred->getState()), C);
-    }
-  };
+//       checkFn(*Msg.cloneWithState<ObjCMethodCall>(Pred->getState()), C);
+//     }
+//   };
 
-} // namespace
+// } // namespace
 
 /// Run checkers for visiting obj-c messages.
-void CheckerManager::runCheckersForObjCMessage(ObjCMessageVisitKind visitKind,
-                                               ExplodedNodeSet &Dst,
-                                               const ExplodedNodeSet &Src,
-                                               const ObjCMethodCall &msg,
-                                               ExprEngine &Eng,
-                                               bool WasInlined) {
-  const auto &checkers = getObjCMessageCheckers(visitKind);
-  CheckObjCMessageContext C(visitKind, checkers, msg, Eng, WasInlined);
-  expandGraphWithCheckers(C, Dst, Src);
-}
+// void CheckerManager::runCheckersForObjCMessage(ObjCMessageVisitKind visitKind,
+//                                                ExplodedNodeSet &Dst,
+//                                                const ExplodedNodeSet &Src,
+//                                                const ObjCMethodCall &msg,
+//                                                ExprEngine &Eng,
+//                                                bool WasInlined) {
+//   const auto &checkers = getObjCMessageCheckers(visitKind);
+//   CheckObjCMessageContext C(visitKind, checkers, msg, Eng, WasInlined);
+//   expandGraphWithCheckers(C, Dst, Src);
+// }
 
-const std::vector<CheckerManager::CheckObjCMessageFunc> &
-CheckerManager::getObjCMessageCheckers(ObjCMessageVisitKind Kind) const {
-  switch (Kind) {
-  case ObjCMessageVisitKind::Pre:
-    return PreObjCMessageCheckers;
-    break;
-  case ObjCMessageVisitKind::Post:
-    return PostObjCMessageCheckers;
-  case ObjCMessageVisitKind::MessageNil:
-    return ObjCMessageNilCheckers;
-  }
-  llvm_unreachable("Unknown Kind");
-}
+// const std::vector<CheckerManager::CheckObjCMessageFunc> &
+// CheckerManager::getObjCMessageCheckers(ObjCMessageVisitKind Kind) const {
+//   switch (Kind) {
+//   case ObjCMessageVisitKind::Pre:
+//     return PreObjCMessageCheckers;
+//     break;
+//   case ObjCMessageVisitKind::Post:
+//     return PostObjCMessageCheckers;
+//   case ObjCMessageVisitKind::MessageNil:
+//     return ObjCMessageNilCheckers;
+//   }
+//   llvm_unreachable("Unknown Kind");
+// }
 
 namespace {
 

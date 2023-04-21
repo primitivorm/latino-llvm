@@ -413,8 +413,8 @@ static void InitializeStandardPredefinedMacros(const TargetInfo &TI,
   Builder.defineMacro("__STDC_UTF_16__", "1");
   Builder.defineMacro("__STDC_UTF_32__", "1");
 
-  if (LangOpts.ObjC)
-    Builder.defineMacro("__OBJC__");
+  // if (LangOpts.ObjC)
+  //   Builder.defineMacro("__OBJC__");
 
   // OpenCL v1.0/1.1 s6.9, v1.2/2.0 s6.10: Preprocessor Directives and Macros.
   if (LangOpts.OpenCL) {
@@ -660,56 +660,56 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   if (LangOpts.GNUCVersion && LangOpts.CPlusPlus11)
     Builder.defineMacro("__GXX_EXPERIMENTAL_CXX0X__");
 
-  if (LangOpts.ObjC) {
-    if (LangOpts.ObjCRuntime.isNonFragile()) {
-      Builder.defineMacro("__OBJC2__");
+  // if (LangOpts.ObjC) {
+  //   if (LangOpts.ObjCRuntime.isNonFragile()) {
+  //     Builder.defineMacro("__OBJC2__");
 
-      if (LangOpts.ObjCExceptions)
-        Builder.defineMacro("OBJC_ZEROCOST_EXCEPTIONS");
-    }
+  //     if (LangOpts.ObjCExceptions)
+  //       Builder.defineMacro("OBJC_ZEROCOST_EXCEPTIONS");
+  //   }
 
-    if (LangOpts.getGC() != LangOptions::NonGC)
-      Builder.defineMacro("__OBJC_GC__");
+  //   if (LangOpts.getGC() != LangOptions::NonGC)
+  //     Builder.defineMacro("__OBJC_GC__");
 
-    if (LangOpts.ObjCRuntime.isNeXTFamily())
-      Builder.defineMacro("__NEXT_RUNTIME__");
+  //   if (LangOpts.ObjCRuntime.isNeXTFamily())
+  //     Builder.defineMacro("__NEXT_RUNTIME__");
 
-    if (LangOpts.ObjCRuntime.getKind() == ObjCRuntime::GNUstep) {
-      auto version = LangOpts.ObjCRuntime.getVersion();
-      std::string versionString = "1";
-      // Don't rely on the tuple argument, because we can be asked to target
-      // later ABIs than we actually support, so clamp these values to those
-      // currently supported
-      if (version >= VersionTuple(2, 0))
-        Builder.defineMacro("__OBJC_GNUSTEP_RUNTIME_ABI__", "20");
-      else
-        Builder.defineMacro("__OBJC_GNUSTEP_RUNTIME_ABI__",
-            "1" + Twine(std::min(8U, version.getMinor().getValueOr(0))));
-    }
+  //   if (LangOpts.ObjCRuntime.getKind() == ObjCRuntime::GNUstep) {
+  //     auto version = LangOpts.ObjCRuntime.getVersion();
+  //     std::string versionString = "1";
+  //     // Don't rely on the tuple argument, because we can be asked to target
+  //     // later ABIs than we actually support, so clamp these values to those
+  //     // currently supported
+  //     if (version >= VersionTuple(2, 0))
+  //       Builder.defineMacro("__OBJC_GNUSTEP_RUNTIME_ABI__", "20");
+  //     else
+  //       Builder.defineMacro("__OBJC_GNUSTEP_RUNTIME_ABI__",
+  //           "1" + Twine(std::min(8U, version.getMinor().getValueOr(0))));
+  //   }
 
-    if (LangOpts.ObjCRuntime.getKind() == ObjCRuntime::ObjFW) {
-      VersionTuple tuple = LangOpts.ObjCRuntime.getVersion();
+  //   if (LangOpts.ObjCRuntime.getKind() == ObjCRuntime::ObjFW) {
+  //     VersionTuple tuple = LangOpts.ObjCRuntime.getVersion();
 
-      unsigned minor = 0;
-      if (tuple.getMinor().hasValue())
-        minor = tuple.getMinor().getValue();
+  //     unsigned minor = 0;
+  //     if (tuple.getMinor().hasValue())
+  //       minor = tuple.getMinor().getValue();
 
-      unsigned subminor = 0;
-      if (tuple.getSubminor().hasValue())
-        subminor = tuple.getSubminor().getValue();
+  //     unsigned subminor = 0;
+  //     if (tuple.getSubminor().hasValue())
+  //       subminor = tuple.getSubminor().getValue();
 
-      Builder.defineMacro("__OBJFW_RUNTIME_ABI__",
-                          Twine(tuple.getMajor() * 10000 + minor * 100 +
-                                subminor));
-    }
+  //     Builder.defineMacro("__OBJFW_RUNTIME_ABI__",
+  //                         Twine(tuple.getMajor() * 10000 + minor * 100 +
+  //                               subminor));
+  //   }
 
-    Builder.defineMacro("IBOutlet", "__attribute__((iboutlet))");
-    Builder.defineMacro("IBOutletCollection(ClassName)",
-                        "__attribute__((iboutletcollection(ClassName)))");
-    Builder.defineMacro("IBAction", "void)__attribute__((ibaction)");
-    Builder.defineMacro("IBInspectable", "");
-    Builder.defineMacro("IB_DESIGNABLE", "");
-  }
+  //   Builder.defineMacro("IBOutlet", "__attribute__((iboutlet))");
+  //   Builder.defineMacro("IBOutletCollection(ClassName)",
+  //                       "__attribute__((iboutletcollection(ClassName)))");
+  //   Builder.defineMacro("IBAction", "void)__attribute__((ibaction)");
+  //   Builder.defineMacro("IBInspectable", "");
+  //   Builder.defineMacro("IB_DESIGNABLE", "");
+  // }
 
   // Define a macro that describes the Objective-C boolean type even for C
   // and C++ since BOOL can be used from non Objective-C code.
@@ -724,8 +724,8 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   if (!LangOpts.NoConstantCFStrings)
       Builder.defineMacro("__CONSTANT_CFSTRINGS__");
 
-  if (LangOpts.ObjC)
-    Builder.defineMacro("OBJC_NEW_PROPERTIES");
+  // if (LangOpts.ObjC)
+  //   Builder.defineMacro("OBJC_NEW_PROPERTIES");
 
   if (LangOpts.PascalStrings)
     Builder.defineMacro("__PASCAL_STRINGS__");
@@ -1038,14 +1038,14 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
     Builder.defineMacro("__strong", "__attribute__((objc_gc(strong)))");
     Builder.defineMacro("__autoreleasing", "");
     Builder.defineMacro("__unsafe_unretained", "");
-  } else if (LangOpts.ObjC) {
+  } /*else if (LangOpts.ObjC) {
     Builder.defineMacro("__weak", "__attribute__((objc_ownership(weak)))");
     Builder.defineMacro("__strong", "__attribute__((objc_ownership(strong)))");
     Builder.defineMacro("__autoreleasing",
                         "__attribute__((objc_ownership(autoreleasing)))");
     Builder.defineMacro("__unsafe_unretained",
                         "__attribute__((objc_ownership(none)))");
-  }
+  }*/
 
   // On Darwin, there are __double_underscored variants of the type
   // nullability qualifiers.
@@ -1161,18 +1161,18 @@ void latino::InitializePreprocessor(
 
     // Install definitions to make Objective-C++ ARC work well with various
     // C++ Standard Library implementations.
-    if (LangOpts.ObjC && LangOpts.CPlusPlus &&
-        (LangOpts.ObjCAutoRefCount || LangOpts.ObjCWeak)) {
-      switch (InitOpts.ObjCXXARCStandardLibrary) {
-      case ARCXX_nolib:
-      case ARCXX_libcxx:
-        break;
+    // if (LangOpts.ObjC && LangOpts.CPlusPlus &&
+    //     (LangOpts.ObjCAutoRefCount || LangOpts.ObjCWeak)) {
+    //   switch (InitOpts.ObjCXXARCStandardLibrary) {
+    //   case ARCXX_nolib:
+    //   case ARCXX_libcxx:
+    //     break;
 
-      case ARCXX_libstdcxx:
-        AddObjCXXARCLibstdcxxDefines(LangOpts, Builder);
-        break;
-      }
-    }
+    //   case ARCXX_libstdcxx:
+    //     AddObjCXXARCLibstdcxxDefines(LangOpts, Builder);
+    //     break;
+    //   }
+    // }
   }
 
   // Even with predefines off, some macros are still predefined.

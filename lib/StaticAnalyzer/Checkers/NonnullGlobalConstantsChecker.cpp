@@ -133,10 +133,10 @@ bool NonnullGlobalConstantsChecker::isNonnullType(QualType Ty) const {
   if (Ty->isPointerType() && Ty->getPointeeType()->isCharType())
     return true;
 
-  if (auto *T = dyn_cast<ObjCObjectPointerType>(Ty)) {
+  /*if (auto *T = dyn_cast<ObjCObjectPointerType>(Ty)) {
     return T->getInterfaceDecl() &&
       T->getInterfaceDecl()->getIdentifier() == NSStringII;
-  } else if (auto *T = dyn_cast<TypedefType>(Ty)) {
+  } else*/ if (auto *T = dyn_cast<TypedefType>(Ty)) {
     IdentifierInfo* II = T->getDecl()->getIdentifier();
     return II == CFStringRefII || II == CFBooleanRefII || II == CFNullRefII;
   }

@@ -405,7 +405,7 @@ public:
     case CXXDynamicCastExprClass:
     case CXXReinterpretCastExprClass:
     case CXXConstCastExprClass:
-    case CXXAddrspaceCastExprClass:
+    // case CXXAddrspaceCastExprClass:
       return true;
     default:
       return false;

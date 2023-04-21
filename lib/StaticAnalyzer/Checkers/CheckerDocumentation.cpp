@@ -88,13 +88,13 @@ public:
   /// including explicit message syntax and property access.
   ///
   /// check::PreObjCMessage
-  void checkPreObjCMessage(const ObjCMethodCall &M, CheckerContext &C) const {}
+  // void checkPreObjCMessage(const ObjCMethodCall &M, CheckerContext &C) const {}
 
   /// Post-visit the Objective C message.
   /// \sa checkPreObjCMessage()
   ///
   /// check::PostObjCMessage
-  void checkPostObjCMessage(const ObjCMethodCall &M, CheckerContext &C) const {}
+  // void checkPostObjCMessage(const ObjCMethodCall &M, CheckerContext &C) const {}
 
   /// Visit an Objective-C message whose receiver is nil.
   ///
@@ -103,7 +103,7 @@ public:
   /// check{Pre/Post}Call will not be called.
   ///
   /// check::ObjCMessageNil
-  void checkObjCMessageNil(const ObjCMethodCall &M, CheckerContext &C) const {}
+  // void checkObjCMessageNil(const ObjCMethodCall &M, CheckerContext &C) const {}
 
   /// Pre-visit an abstract "call" event.
   ///

@@ -20,7 +20,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclContextInternals.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependentDiagnostic.h"
@@ -30,7 +30,7 @@
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/PartialDiagnostic.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/TargetInfo.h"
@@ -479,11 +479,11 @@ bool Decl::isReferenced() const {
 
 ExternalSourceSymbolAttr *Decl::getExternalSourceSymbolAttr() const {
   const Decl *Definition = nullptr;
-  if (auto *ID = dyn_cast<ObjCInterfaceDecl>(this)) {
+  /*if (auto *ID = dyn_cast<ObjCInterfaceDecl>(this)) {
     Definition = ID->getDefinition();
   } else if (auto *PD = dyn_cast<ObjCProtocolDecl>(this)) {
     Definition = PD->getDefinition();
-  } else if (auto *TD = dyn_cast<TagDecl>(this)) {
+  } else*/ if (auto *TD = dyn_cast<TagDecl>(this)) {
     Definition = TD->getDefinition();
   }
   if (!Definition)
@@ -705,12 +705,12 @@ bool Decl::canBeWeakImported(bool &IsDefinition) const {
     return true;
 
   // Objective-C classes, if this is the non-fragile runtime.
-  } else if (isa<ObjCInterfaceDecl>(this) &&
+  } /*else if (isa<ObjCInterfaceDecl>(this) &&
              getASTContext().getLangOpts().ObjCRuntime.hasWeakClassImport()) {
     return true;
 
   // Nothing else.
-  } else {
+  } */else {
     return false;
   }
 }
@@ -747,8 +747,8 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
     case Var:
     case ImplicitParam:
     case ParmVar:
-    case ObjCMethod:
-    case ObjCProperty:
+    // case ObjCMethod:
+    // case ObjCProperty:
     case MSProperty:
       return IDNS_Ordinary;
     case Label:
@@ -764,14 +764,14 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
       // tag types, so we include them in the tag namespace.
       return IDNS_Ordinary | IDNS_Tag;
 
-    case ObjCCompatibleAlias:
-    case ObjCInterface:
-      return IDNS_Ordinary | IDNS_Type;
+    // case ObjCCompatibleAlias:
+    // case ObjCInterface:
+    //   return IDNS_Ordinary | IDNS_Type;
 
     case Typedef:
     case TypeAlias:
     case TemplateTypeParm:
-    case ObjCTypeParam:
+    // case ObjCTypeParam:
       return IDNS_Ordinary | IDNS_Type;
 
     case UnresolvedUsingTypename:
@@ -787,12 +787,12 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
     case UsingPack:
       return IDNS_Using;
 
-    case ObjCProtocol:
-      return IDNS_ObjCProtocol;
+    // case ObjCProtocol:
+    //   return IDNS_ObjCProtocol;
 
     case Field:
-    case ObjCAtDefsField:
-    case ObjCIvar:
+    // case ObjCAtDefsField:
+    // case ObjCIvar:
       return IDNS_Member;
 
     case Record:
@@ -826,7 +826,7 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
     case Export:
     case FileScopeAsm:
     case StaticAssert:
-    case ObjCPropertyImpl:
+    // case ObjCPropertyImpl:
     case PragmaComment:
     case PragmaDetectMismatch:
     case Block:
@@ -843,9 +843,9 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
     case ClassScopeFunctionSpecialization:
     case VarTemplateSpecialization:
     case VarTemplatePartialSpecialization:
-    case ObjCImplementation:
-    case ObjCCategory:
-    case ObjCCategoryImpl:
+    // case ObjCImplementation:
+    // case ObjCCategory:
+    // case ObjCCategoryImpl:
     case Import:
     case OMPThreadPrivate:
     case OMPAllocate:
@@ -1030,8 +1030,8 @@ template <class T> static Decl *getNonClosureContext(T *D) {
     return MD;
   } else if (auto *FD = dyn_cast<FunctionDecl>(D))
     return FD;
-  else if (auto *MD = dyn_cast<ObjCMethodDecl>(D))
-    return MD;
+  // else if (auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //   return MD;
   else if (auto *BD = dyn_cast<BlockDecl>(D))
     return getNonClosureContext(BD->getParent());
   else if (auto *CD = dyn_cast<CapturedDecl>(D))
@@ -1235,27 +1235,27 @@ DeclContext *DeclContext::getPrimaryContext() {
     // The original namespace is our primary context.
     return static_cast<NamespaceDecl *>(this)->getOriginalNamespace();
 
-  case Decl::ObjCMethod:
-    return this;
+  // case Decl::ObjCMethod:
+  //   return this;
 
-  case Decl::ObjCInterface:
-    if (auto *OID = dyn_cast<ObjCInterfaceDecl>(this))
-      if (auto *Def = OID->getDefinition())
-        return Def;
-    return this;
+  // case Decl::ObjCInterface:
+  //   if (auto *OID = dyn_cast<ObjCInterfaceDecl>(this))
+  //     if (auto *Def = OID->getDefinition())
+  //       return Def;
+  //   return this;
 
-  case Decl::ObjCProtocol:
-    if (auto *OPD = dyn_cast<ObjCProtocolDecl>(this))
-      if (auto *Def = OPD->getDefinition())
-        return Def;
-    return this;
+  // case Decl::ObjCProtocol:
+  //   if (auto *OPD = dyn_cast<ObjCProtocolDecl>(this))
+  //     if (auto *Def = OPD->getDefinition())
+  //       return Def;
+  //   return this;
 
-  case Decl::ObjCCategory:
-    return this;
+  // case Decl::ObjCCategory:
+  //   return this;
 
-  case Decl::ObjCImplementation:
-  case Decl::ObjCCategoryImpl:
-    return this;
+  // case Decl::ObjCImplementation:
+  // case Decl::ObjCCategoryImpl:
+  //   return this;
 
   default:
     if (getDeclKind() >= Decl::firstTag && getDeclKind() <= Decl::lastTag) {

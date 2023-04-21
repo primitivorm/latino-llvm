@@ -22,7 +22,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclContextInternals.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
@@ -43,7 +43,7 @@
 #include "latino/Basic/Lambda.h"
 #include "latino/Basic/LangOptions.h"
 #include "latino/Basic/Module.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/OpenCLOptions.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/SourceManager.h"
@@ -61,7 +61,7 @@
 #include "latino/Lex/PreprocessorOptions.h"
 #include "latino/Lex/Token.h"
 #include "latino/Sema/IdentifierResolver.h"
-#include "latino/Sema/ObjCMethodList.h"
+// #include "latino/Sema/ObjCMethodList.h"
 #include "latino/Sema/Sema.h"
 #include "latino/Sema/Weak.h"
 #include "latino/Serialization/ASTBitCodes.h"
@@ -466,25 +466,25 @@ void TypeLocWriter::VisitPackExpansionTypeLoc(PackExpansionTypeLoc TL) {
   Record.AddSourceLocation(TL.getEllipsisLoc());
 }
 
-void TypeLocWriter::VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
-  Record.AddSourceLocation(TL.getNameLoc());
-}
+// void TypeLocWriter::VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
+//   Record.AddSourceLocation(TL.getNameLoc());
+// }
 
-void TypeLocWriter::VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
-  Record.push_back(TL.hasBaseTypeAsWritten());
-  Record.AddSourceLocation(TL.getTypeArgsLAngleLoc());
-  Record.AddSourceLocation(TL.getTypeArgsRAngleLoc());
-  for (unsigned i = 0, e = TL.getNumTypeArgs(); i != e; ++i)
-    Record.AddTypeSourceInfo(TL.getTypeArgTInfo(i));
-  Record.AddSourceLocation(TL.getProtocolLAngleLoc());
-  Record.AddSourceLocation(TL.getProtocolRAngleLoc());
-  for (unsigned i = 0, e = TL.getNumProtocols(); i != e; ++i)
-    Record.AddSourceLocation(TL.getProtocolLoc(i));
-}
+// void TypeLocWriter::VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
+//   Record.push_back(TL.hasBaseTypeAsWritten());
+//   Record.AddSourceLocation(TL.getTypeArgsLAngleLoc());
+//   Record.AddSourceLocation(TL.getTypeArgsRAngleLoc());
+//   for (unsigned i = 0, e = TL.getNumTypeArgs(); i != e; ++i)
+//     Record.AddTypeSourceInfo(TL.getTypeArgTInfo(i));
+//   Record.AddSourceLocation(TL.getProtocolLAngleLoc());
+//   Record.AddSourceLocation(TL.getProtocolRAngleLoc());
+//   for (unsigned i = 0, e = TL.getNumProtocols(); i != e; ++i)
+//     Record.AddSourceLocation(TL.getProtocolLoc(i));
+// }
 
-void TypeLocWriter::VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
-  Record.AddSourceLocation(TL.getStarLoc());
-}
+// void TypeLocWriter::VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
+//   Record.AddSourceLocation(TL.getStarLoc());
+// }
 
 void TypeLocWriter::VisitAtomicTypeLoc(AtomicTypeLoc TL) {
   Record.AddSourceLocation(TL.getKWLoc());
@@ -882,17 +882,17 @@ void ASTWriter::WriteBlockInfoBlock() {
   RECORD(DECL_RECORD);
   RECORD(DECL_ENUM_CONSTANT);
   RECORD(DECL_FUNCTION);
-  RECORD(DECL_OBJC_METHOD);
-  RECORD(DECL_OBJC_INTERFACE);
-  RECORD(DECL_OBJC_PROTOCOL);
-  RECORD(DECL_OBJC_IVAR);
-  RECORD(DECL_OBJC_AT_DEFS_FIELD);
-  RECORD(DECL_OBJC_CATEGORY);
-  RECORD(DECL_OBJC_CATEGORY_IMPL);
-  RECORD(DECL_OBJC_IMPLEMENTATION);
-  RECORD(DECL_OBJC_COMPATIBLE_ALIAS);
-  RECORD(DECL_OBJC_PROPERTY);
-  RECORD(DECL_OBJC_PROPERTY_IMPL);
+  // RECORD(DECL_OBJC_METHOD);
+  // RECORD(DECL_OBJC_INTERFACE);
+  // RECORD(DECL_OBJC_PROTOCOL);
+  // RECORD(DECL_OBJC_IVAR);
+  // RECORD(DECL_OBJC_AT_DEFS_FIELD);
+  // RECORD(DECL_OBJC_CATEGORY);
+  // RECORD(DECL_OBJC_CATEGORY_IMPL);
+  // RECORD(DECL_OBJC_IMPLEMENTATION);
+  // RECORD(DECL_OBJC_COMPATIBLE_ALIAS);
+  // RECORD(DECL_OBJC_PROPERTY);
+  // RECORD(DECL_OBJC_PROPERTY_IMPL);
   RECORD(DECL_FIELD);
   RECORD(DECL_MS_PROPERTY);
   RECORD(DECL_VAR);
@@ -4053,57 +4053,57 @@ void ASTWriter::WriteCUDAPragmas(Sema &SemaRef) {
   }
 }
 
-void ASTWriter::WriteObjCCategories() {
-  SmallVector<ObjCCategoriesInfo, 2> CategoriesMap;
-  RecordData Categories;
+// void ASTWriter::WriteObjCCategories() {
+//   SmallVector<ObjCCategoriesInfo, 2> CategoriesMap;
+//   RecordData Categories;
 
-  for (unsigned I = 0, N = ObjCClassesWithCategories.size(); I != N; ++I) {
-    unsigned Size = 0;
-    unsigned StartIndex = Categories.size();
+//   for (unsigned I = 0, N = ObjCClassesWithCategories.size(); I != N; ++I) {
+//     unsigned Size = 0;
+//     unsigned StartIndex = Categories.size();
 
-    ObjCInterfaceDecl *Class = ObjCClassesWithCategories[I];
+//     ObjCInterfaceDecl *Class = ObjCClassesWithCategories[I];
 
-    // Allocate space for the size.
-    Categories.push_back(0);
+//     // Allocate space for the size.
+//     Categories.push_back(0);
 
-    // Add the categories.
-    for (ObjCInterfaceDecl::known_categories_iterator
-           Cat = Class->known_categories_begin(),
-           CatEnd = Class->known_categories_end();
-         Cat != CatEnd; ++Cat, ++Size) {
-      assert(getDeclID(*Cat) != 0 && "Bogus category");
-      AddDeclRef(*Cat, Categories);
-    }
+//     // Add the categories.
+//     for (ObjCInterfaceDecl::known_categories_iterator
+//            Cat = Class->known_categories_begin(),
+//            CatEnd = Class->known_categories_end();
+//          Cat != CatEnd; ++Cat, ++Size) {
+//       assert(getDeclID(*Cat) != 0 && "Bogus category");
+//       AddDeclRef(*Cat, Categories);
+//     }
 
-    // Update the size.
-    Categories[StartIndex] = Size;
+//     // Update the size.
+//     Categories[StartIndex] = Size;
 
-    // Record this interface -> category map.
-    ObjCCategoriesInfo CatInfo = { getDeclID(Class), StartIndex };
-    CategoriesMap.push_back(CatInfo);
-  }
+//     // Record this interface -> category map.
+//     ObjCCategoriesInfo CatInfo = { getDeclID(Class), StartIndex };
+//     CategoriesMap.push_back(CatInfo);
+//   }
 
-  // Sort the categories map by the definition ID, since the reader will be
-  // performing binary searches on this information.
-  llvm::array_pod_sort(CategoriesMap.begin(), CategoriesMap.end());
+//   // Sort the categories map by the definition ID, since the reader will be
+//   // performing binary searches on this information.
+//   llvm::array_pod_sort(CategoriesMap.begin(), CategoriesMap.end());
 
-  // Emit the categories map.
-  using namespace llvm;
+//   // Emit the categories map.
+//   using namespace llvm;
 
-  auto Abbrev = std::make_shared<BitCodeAbbrev>();
-  Abbrev->Add(BitCodeAbbrevOp(OBJC_CATEGORIES_MAP));
-  Abbrev->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::VBR, 6)); // # of entries
-  Abbrev->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::Blob));
-  unsigned AbbrevID = Stream.EmitAbbrev(std::move(Abbrev));
+//   auto Abbrev = std::make_shared<BitCodeAbbrev>();
+//   Abbrev->Add(BitCodeAbbrevOp(OBJC_CATEGORIES_MAP));
+//   Abbrev->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::VBR, 6)); // # of entries
+//   Abbrev->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::Blob));
+//   unsigned AbbrevID = Stream.EmitAbbrev(std::move(Abbrev));
 
-  RecordData::value_type Record[] = {OBJC_CATEGORIES_MAP, CategoriesMap.size()};
-  Stream.EmitRecordWithBlob(AbbrevID, Record,
-                            reinterpret_cast<char *>(CategoriesMap.data()),
-                            CategoriesMap.size() * sizeof(ObjCCategoriesInfo));
+//   RecordData::value_type Record[] = {OBJC_CATEGORIES_MAP, CategoriesMap.size()};
+//   Stream.EmitRecordWithBlob(AbbrevID, Record,
+//                             reinterpret_cast<char *>(CategoriesMap.data()),
+//                             CategoriesMap.size() * sizeof(ObjCCategoriesInfo));
 
-  // Emit the category lists.
-  Stream.EmitRecord(OBJC_CATEGORIES, Categories);
-}
+//   // Emit the category lists.
+//   Stream.EmitRecord(OBJC_CATEGORIES, Categories);
+// }
 
 void ASTWriter::WriteLateParsedTemplates(Sema &SemaRef) {
   Sema::LateParsedTemplateMapT &LPTMap = SemaRef.LateParsedTemplateMap;
@@ -4430,11 +4430,11 @@ ASTFileSignature ASTWriter::WriteASTCore(Sema &SemaRef, StringRef isysroot,
   };
   RegisterPredefDecl(Context.getTranslationUnitDecl(),
                      PREDEF_DECL_TRANSLATION_UNIT_ID);
-  RegisterPredefDecl(Context.ObjCIdDecl, PREDEF_DECL_OBJC_ID_ID);
-  RegisterPredefDecl(Context.ObjCSelDecl, PREDEF_DECL_OBJC_SEL_ID);
-  RegisterPredefDecl(Context.ObjCClassDecl, PREDEF_DECL_OBJC_CLASS_ID);
-  RegisterPredefDecl(Context.ObjCProtocolClassDecl,
-                     PREDEF_DECL_OBJC_PROTOCOL_ID);
+  // RegisterPredefDecl(Context.ObjCIdDecl, PREDEF_DECL_OBJC_ID_ID);
+  // RegisterPredefDecl(Context.ObjCSelDecl, PREDEF_DECL_OBJC_SEL_ID);
+  // RegisterPredefDecl(Context.ObjCClassDecl, PREDEF_DECL_OBJC_CLASS_ID);
+  // RegisterPredefDecl(Context.ObjCProtocolClassDecl,
+  //                    PREDEF_DECL_OBJC_PROTOCOL_ID);
   RegisterPredefDecl(Context.Int128Decl, PREDEF_DECL_INT_128_ID);
   RegisterPredefDecl(Context.UInt128Decl, PREDEF_DECL_UNSIGNED_INT_128_ID);
   RegisterPredefDecl(Context.ObjCInstanceTypeDecl,
@@ -4912,7 +4912,7 @@ ASTFileSignature ASTWriter::WriteASTCore(Sema &SemaRef, StringRef isysroot,
     }
   }
 
-  WriteObjCCategories();
+  // WriteObjCCategories();
   if(!WritingModule) {
     WriteOptimizePragmaOptions(SemaRef);
     WriteMSStructPragmaOptions(SemaRef);
@@ -5997,17 +5997,17 @@ void ASTWriter::DefaultMemberInitializerInstantiated(const FieldDecl *D) {
       DeclUpdate(UPD_CXX_INSTANTIATED_DEFAULT_MEMBER_INITIALIZER, D));
 }
 
-void ASTWriter::AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
-                                             const ObjCInterfaceDecl *IFD) {
-  if (Chain && Chain->isProcessingUpdateRecords()) return;
-  assert(!WritingAST && "Already writing the AST!");
-  if (!IFD->isFromASTFile())
-    return; // Declaration not imported from PCH.
+// void ASTWriter::AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
+//                                              const ObjCInterfaceDecl *IFD) {
+//   if (Chain && Chain->isProcessingUpdateRecords()) return;
+//   assert(!WritingAST && "Already writing the AST!");
+//   if (!IFD->isFromASTFile())
+//     return; // Declaration not imported from PCH.
 
-  assert(IFD->getDefinition() && "Category on a class without a definition?");
-  ObjCClassesWithCategories.insert(
-    const_cast<ObjCInterfaceDecl *>(IFD->getDefinition()));
-}
+//   assert(IFD->getDefinition() && "Category on a class without a definition?");
+//   ObjCClassesWithCategories.insert(
+//     const_cast<ObjCInterfaceDecl *>(IFD->getDefinition()));
+// }
 
 void ASTWriter::DeclarationMarkedUsed(const Decl *D) {
   if (Chain && Chain->isProcessingUpdateRecords()) return;

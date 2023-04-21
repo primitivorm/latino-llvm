@@ -24,7 +24,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/CurrentSourceLocExprScope.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/Type.h"
@@ -64,19 +64,19 @@ class EnumConstantDecl;
 class FunctionDecl;
 class FunctionProtoType;
 class LabelStmt;
-class ObjCContainerDecl;
-class ObjCInterfaceDecl;
-class ObjCIvarDecl;
-class ObjCMethodDecl;
-class ObjCImplementationDecl;
-class ObjCPropertyImplDecl;
+// class ObjCContainerDecl;
+// class ObjCInterfaceDecl;
+// class ObjCIvarDecl;
+// class ObjCMethodDecl;
+// class ObjCImplementationDecl;
+// class ObjCPropertyImplDecl;
 class TargetInfo;
 class VarDecl;
-class ObjCForCollectionStmt;
-class ObjCAtTryStmt;
-class ObjCAtThrowStmt;
-class ObjCAtSynchronizedStmt;
-class ObjCAutoreleasePoolStmt;
+// class ObjCForCollectionStmt;
+// class ObjCAtTryStmt;
+// class ObjCAtThrowStmt;
+// class ObjCAtSynchronizedStmt;
+// class ObjCAutoreleasePoolStmt;
 class OMPUseDevicePtrClause;
 class OMPUseDeviceAddrClause;
 class ReturnsNonNullAttr;
@@ -447,7 +447,7 @@ public:
   public:
     AbstractCallee() : CalleeDecl(nullptr) {}
     AbstractCallee(const FunctionDecl *FD) : CalleeDecl(FD) {}
-    AbstractCallee(const ObjCMethodDecl *OMD) : CalleeDecl(OMD) {}
+    // AbstractCallee(const ObjCMethodDecl *OMD) : CalleeDecl(OMD) {}
     bool hasFunctionDecl() const {
       return dyn_cast_or_null<FunctionDecl>(CalleeDecl);
     }
@@ -455,12 +455,12 @@ public:
     unsigned getNumParams() const {
       if (const auto *FD = dyn_cast<FunctionDecl>(CalleeDecl))
         return FD->getNumParams();
-      return cast<ObjCMethodDecl>(CalleeDecl)->param_size();
+      // return cast<ObjCMethodDecl>(CalleeDecl)->param_size();
     }
     const ParmVarDecl *getParamDecl(unsigned I) const {
       if (const auto *FD = dyn_cast<FunctionDecl>(CalleeDecl))
         return FD->getParamDecl(I);
-      return *(cast<ObjCMethodDecl>(CalleeDecl)->param_begin() + I);
+      // return *(cast<ObjCMethodDecl>(CalleeDecl)->param_begin() + I);
     }
   };
 
@@ -1955,28 +1955,28 @@ public:
   //                                  Objective-C
   //===--------------------------------------------------------------------===//
 
-  void GenerateObjCMethod(const ObjCMethodDecl *OMD);
+  // void GenerateObjCMethod(const ObjCMethodDecl *OMD);
 
-  void StartObjCMethod(const ObjCMethodDecl *MD, const ObjCContainerDecl *CD);
+  // void StartObjCMethod(const ObjCMethodDecl *MD, const ObjCContainerDecl *CD);
 
   /// GenerateObjCGetter - Synthesize an Objective-C property getter function.
-  void GenerateObjCGetter(ObjCImplementationDecl *IMP,
-                          const ObjCPropertyImplDecl *PID);
-  void generateObjCGetterBody(const ObjCImplementationDecl *classImpl,
-                              const ObjCPropertyImplDecl *propImpl,
-                              const ObjCMethodDecl *GetterMothodDecl,
-                              llvm::Constant *AtomicHelperFn);
+  // void GenerateObjCGetter(ObjCImplementationDecl *IMP,
+  //                         const ObjCPropertyImplDecl *PID);
+  // void generateObjCGetterBody(const ObjCImplementationDecl *classImpl,
+  //                             const ObjCPropertyImplDecl *propImpl,
+  //                             const ObjCMethodDecl *GetterMothodDecl,
+  //                             llvm::Constant *AtomicHelperFn);
 
-  void GenerateObjCCtorDtorMethod(ObjCImplementationDecl *IMP,
-                                  ObjCMethodDecl *MD, bool ctor);
+  // void GenerateObjCCtorDtorMethod(ObjCImplementationDecl *IMP,
+  //                                 ObjCMethodDecl *MD, bool ctor);
 
   /// GenerateObjCSetter - Synthesize an Objective-C property setter function
   /// for the given property.
-  void GenerateObjCSetter(ObjCImplementationDecl *IMP,
-                          const ObjCPropertyImplDecl *PID);
-  void generateObjCSetterBody(const ObjCImplementationDecl *classImpl,
-                              const ObjCPropertyImplDecl *propImpl,
-                              llvm::Constant *AtomicHelperFn);
+  // void GenerateObjCSetter(ObjCImplementationDecl *IMP,
+  //                         const ObjCPropertyImplDecl *PID);
+  // void generateObjCSetterBody(const ObjCImplementationDecl *classImpl,
+  //                             const ObjCPropertyImplDecl *propImpl,
+  //                             llvm::Constant *AtomicHelperFn);
 
   //===--------------------------------------------------------------------===//
   //                                  Block Bits
@@ -1999,10 +1999,10 @@ public:
 
   llvm::Constant *GenerateCopyHelperFunction(const CGBlockInfo &blockInfo);
   llvm::Constant *GenerateDestroyHelperFunction(const CGBlockInfo &blockInfo);
-  llvm::Constant *GenerateObjCAtomicSetterCopyHelperFunction(
-                                             const ObjCPropertyImplDecl *PID);
-  llvm::Constant *GenerateObjCAtomicGetterCopyHelperFunction(
-                                             const ObjCPropertyImplDecl *PID);
+  // llvm::Constant *GenerateObjCAtomicSetterCopyHelperFunction(
+  //                                            const ObjCPropertyImplDecl *PID);
+  // llvm::Constant *GenerateObjCAtomicGetterCopyHelperFunction(
+  //                                            const ObjCPropertyImplDecl *PID);
   llvm::Value *EmitBlockCopyAndAutorelease(llvm::Value *Block, QualType Ty);
 
   void BuildBlockRelease(llvm::Value *DeclPtr, BlockFieldFlags flags,
@@ -3108,11 +3108,11 @@ public:
   void EmitCaseStmtRange(const CaseStmt &S);
   void EmitAsmStmt(const AsmStmt &S);
 
-  void EmitObjCForCollectionStmt(const ObjCForCollectionStmt &S);
+  // void EmitObjCForCollectionStmt(const ObjCForCollectionStmt &S);
   void EmitObjCAtTryStmt(const ObjCAtTryStmt &S);
   void EmitObjCAtThrowStmt(const ObjCAtThrowStmt &S);
   void EmitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt &S);
-  void EmitObjCAutoreleasePoolStmt(const ObjCAutoreleasePoolStmt &S);
+  // void EmitObjCAutoreleasePoolStmt(const ObjCAutoreleasePoolStmt &S);
 
   void EmitCoroutineBody(const CoroutineBodyStmt &S);
   void EmitCoreturnStmt(const CoreturnStmt &S);
@@ -3729,7 +3729,7 @@ public:
   LValue EmitVAArgExprLValue(const VAArgExpr *E);
   LValue EmitDeclRefLValue(const DeclRefExpr *E);
   LValue EmitStringLiteralLValue(const StringLiteral *E);
-  LValue EmitObjCEncodeExprLValue(const ObjCEncodeExpr *E);
+  // LValue EmitObjCEncodeExprLValue(const ObjCEncodeExpr *E);
   LValue EmitPredefinedLValue(const PredefinedExpr *E);
   LValue EmitUnaryOpLValue(const UnaryOperator *E);
   LValue EmitArraySubscriptExpr(const ArraySubscriptExpr *E,
@@ -3793,8 +3793,8 @@ public:
                                 AggValueSlot slot = AggValueSlot::ignored());
   LValue EmitPseudoObjectLValue(const PseudoObjectExpr *e);
 
-  llvm::Value *EmitIvarOffset(const ObjCInterfaceDecl *Interface,
-                              const ObjCIvarDecl *Ivar);
+  // llvm::Value *EmitIvarOffset(const ObjCInterfaceDecl *Interface,
+  //                             const ObjCIvarDecl *Ivar);
   LValue EmitLValueForField(LValue Base, const FieldDecl* Field);
   LValue EmitLValueForLambdaField(const FieldDecl *Field);
 
@@ -3804,20 +3804,20 @@ public:
   LValue EmitLValueForFieldInitialization(LValue Base,
                                           const FieldDecl* Field);
 
-  LValue EmitLValueForIvar(QualType ObjectTy,
-                           llvm::Value* Base, const ObjCIvarDecl *Ivar,
-                           unsigned CVRQualifiers);
+  // LValue EmitLValueForIvar(QualType ObjectTy,
+  //                          llvm::Value* Base, const ObjCIvarDecl *Ivar,
+  //                          unsigned CVRQualifiers);
 
   LValue EmitCXXConstructLValue(const CXXConstructExpr *E);
   LValue EmitCXXBindTemporaryLValue(const CXXBindTemporaryExpr *E);
   LValue EmitCXXTypeidLValue(const CXXTypeidExpr *E);
   LValue EmitCXXUuidofLValue(const CXXUuidofExpr *E);
 
-  LValue EmitObjCMessageExprLValue(const ObjCMessageExpr *E);
-  LValue EmitObjCIvarRefLValue(const ObjCIvarRefExpr *E);
+  // LValue EmitObjCMessageExprLValue(const ObjCMessageExpr *E);
+  // LValue EmitObjCIvarRefLValue(const ObjCIvarRefExpr *E);
   LValue EmitStmtExprLValue(const StmtExpr *E);
   LValue EmitPointerToDataMemberBinaryExpr(const BinaryOperator *E);
-  LValue EmitObjCSelectorLValue(const ObjCSelectorExpr *E);
+  // LValue EmitObjCSelectorLValue(const ObjCSelectorExpr *E);
   void   EmitDeclRefExprDbgValue(const DeclRefExpr *E, const APValue &Init);
 
   //===--------------------------------------------------------------------===//
@@ -4083,16 +4083,16 @@ public:
 
   llvm::Value *EmitBuiltinAvailable(ArrayRef<llvm::Value *> Args);
 
-  llvm::Value *EmitObjCProtocolExpr(const ObjCProtocolExpr *E);
-  llvm::Value *EmitObjCStringLiteral(const ObjCStringLiteral *E);
-  llvm::Value *EmitObjCBoxedExpr(const ObjCBoxedExpr *E);
-  llvm::Value *EmitObjCArrayLiteral(const ObjCArrayLiteral *E);
-  llvm::Value *EmitObjCDictionaryLiteral(const ObjCDictionaryLiteral *E);
-  llvm::Value *EmitObjCCollectionLiteral(const Expr *E,
-                                const ObjCMethodDecl *MethodWithObjects);
-  llvm::Value *EmitObjCSelectorExpr(const ObjCSelectorExpr *E);
-  RValue EmitObjCMessageExpr(const ObjCMessageExpr *E,
-                             ReturnValueSlot Return = ReturnValueSlot());
+  // llvm::Value *EmitObjCProtocolExpr(const ObjCProtocolExpr *E);
+  // llvm::Value *EmitObjCStringLiteral(const ObjCStringLiteral *E);
+  // llvm::Value *EmitObjCBoxedExpr(const ObjCBoxedExpr *E);
+  // llvm::Value *EmitObjCArrayLiteral(const ObjCArrayLiteral *E);
+  // llvm::Value *EmitObjCDictionaryLiteral(const ObjCDictionaryLiteral *E);
+  // llvm::Value *EmitObjCCollectionLiteral(const Expr *E,
+  //                               const ObjCMethodDecl *MethodWithObjects);
+  // llvm::Value *EmitObjCSelectorExpr(const ObjCSelectorExpr *E);
+  // RValue EmitObjCMessageExpr(const ObjCMessageExpr *E,
+  //                            ReturnValueSlot Return = ReturnValueSlot());
 
   /// Retrieves the default cleanup kind for an ARC cleanup.
   /// Except under -fobjc-arc-eh, ARC cleanups are normal-only.
@@ -4167,9 +4167,9 @@ public:
 
   void EmitObjCAutoreleasePoolPop(llvm::Value *Ptr);
   llvm::Value *EmitObjCAutoreleasePoolPush();
-  llvm::Value *EmitObjCMRRAutoreleasePoolPush();
+  // llvm::Value *EmitObjCMRRAutoreleasePoolPush();
   void EmitObjCAutoreleasePoolCleanup(llvm::Value *Ptr);
-  void EmitObjCMRRAutoreleasePoolPop(llvm::Value *Ptr);
+  // void EmitObjCMRRAutoreleasePoolPop(llvm::Value *Ptr);
 
   /// Emits a reference binding to the passed in expression.
   RValue EmitReferenceBindingToExpr(const Expr *E);
@@ -4516,25 +4516,25 @@ private:
                                        Address Loc);
 
 public:
-#ifndef NDEBUG
+// #ifndef NDEBUG
   // Determine whether the given argument is an Objective-C method
   // that may have type parameters in its signature.
-  static bool isObjCMethodWithTypeParams(const ObjCMethodDecl *method) {
-    const DeclContext *dc = method->getDeclContext();
-    if (const ObjCInterfaceDecl *classDecl= dyn_cast<ObjCInterfaceDecl>(dc)) {
-      return classDecl->getTypeParamListAsWritten();
-    }
+  // static bool isObjCMethodWithTypeParams(const ObjCMethodDecl *method) {
+  //   const DeclContext *dc = method->getDeclContext();
+  //   if (const ObjCInterfaceDecl *classDecl= dyn_cast<ObjCInterfaceDecl>(dc)) {
+  //     return classDecl->getTypeParamListAsWritten();
+  //   }
 
-    if (const ObjCCategoryDecl *catDecl = dyn_cast<ObjCCategoryDecl>(dc)) {
-      return catDecl->getTypeParamList();
-    }
+  //   if (const ObjCCategoryDecl *catDecl = dyn_cast<ObjCCategoryDecl>(dc)) {
+  //     return catDecl->getTypeParamList();
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
-  template<typename T>
-  static bool isObjCMethodWithTypeParams(const T *) { return false; }
-#endif
+  // template<typename T>
+  // static bool isObjCMethodWithTypeParams(const T *) { return false; }
+// #endif
 
   enum class EvaluationOrder {
     ///! No language constraints on evaluation order.
@@ -4558,9 +4558,9 @@ public:
     assert((ParamsToSkip == 0 || CallArgTypeInfo) &&
            "Can't skip parameters if type info is not provided");
     if (CallArgTypeInfo) {
-#ifndef NDEBUG
-      bool isGenericMethod = isObjCMethodWithTypeParams(CallArgTypeInfo);
-#endif
+// #ifndef NDEBUG
+//       bool isGenericMethod = isObjCMethodWithTypeParams(CallArgTypeInfo);
+// #endif
 
       // First, use the argument types that the type info knows about
       for (auto I = CallArgTypeInfo->param_type_begin() + ParamsToSkip,
@@ -4569,7 +4569,7 @@ public:
         assert(Arg != ArgRange.end() && "Running over edge of argument list!");
         assert((isGenericMethod ||
                 ((*I)->isVariablyModifiedType() ||
-                 (*I).getNonReferenceType()->isObjCRetainableType() ||
+                //  (*I).getNonReferenceType()->isObjCRetainableType() ||
                  getContext()
                          .getCanonicalType((*I).getNonReferenceType())
                          .getTypePtr() ==

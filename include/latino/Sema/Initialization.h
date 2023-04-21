@@ -41,7 +41,7 @@ namespace latino {
 class APValue;
 class CXXBaseSpecifier;
 class CXXConstructorDecl;
-class ObjCMethodDecl;
+// class ObjCMethodDecl;
 class Sema;
 
 /// Describes an entity that is being initialized.
@@ -180,7 +180,7 @@ private:
 
     /// When Kind == EK_RelatedResult, the ObjectiveC method where
     /// result type was implicitly changed to accommodate ARC semantics.
-    ObjCMethodDecl *MethodDecl;
+    // ObjCMethodDecl *MethodDecl;
 
     /// When Kind == EK_Parameter, the ParmVarDecl, with the
     /// low bit indicating whether the parameter is "consumed".
@@ -333,12 +333,12 @@ public:
   }
 
   /// Create the initialization entity for a related result.
-  static InitializedEntity InitializeRelatedResult(ObjCMethodDecl *MD,
-                                                   QualType Type) {
-    InitializedEntity Result(EK_RelatedResult, SourceLocation(), Type);
-    Result.MethodDecl = MD;
-    return Result;
-  }
+  // static InitializedEntity InitializeRelatedResult(ObjCMethodDecl *MD,
+  //                                                  QualType Type) {
+  //   InitializedEntity Result(EK_RelatedResult, SourceLocation(), Type);
+  //   Result.MethodDecl = MD;
+  //   return Result;
+  // }
 
   /// Create the initialization entity for a base class subobject.
   static InitializedEntity
@@ -430,7 +430,7 @@ public:
   ValueDecl *getDecl() const;
 
   /// Retrieve the ObjectiveC method being initialized.
-  ObjCMethodDecl *getMethodDecl() const { return MethodDecl; }
+  // ObjCMethodDecl *getMethodDecl() const { return MethodDecl; }
 
   /// Determine whether this initialization allows the named return
   /// value optimization, which also applies to thrown objects.
@@ -857,7 +857,7 @@ public:
 
     /// An initialization that "converts" an Objective-C object
     /// (not a point to an object) to another Objective-C object type.
-    SK_ObjCObjectConversion,
+    // SK_ObjCObjectConversion,
 
     /// Array indexing for initialization by elementwise copy.
     SK_ArrayLoopIndex,
@@ -1306,7 +1306,7 @@ public:
 
   /// Add an Objective-C object conversion step, which is
   /// always a no-op.
-  void AddObjCObjectConversionStep(QualType T);
+  // void AddObjCObjectConversionStep(QualType T);
 
   /// Add an array initialization loop step.
   void AddArrayInitLoopStep(QualType T, QualType EltTy);

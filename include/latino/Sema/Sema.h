@@ -24,7 +24,7 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/ExprConcepts.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/ExternalASTSource.h"
 #include "latino/AST/LocInfoType.h"
@@ -48,7 +48,7 @@
 #include "latino/Sema/DeclSpec.h"
 #include "latino/Sema/ExternalSemaSource.h"
 #include "latino/Sema/IdentifierResolver.h"
-#include "latino/Sema/ObjCMethodList.h"
+// #include "latino/Sema/ObjCMethodList.h"
 #include "latino/Sema/Ownership.h"
 #include "latino/Sema/Scope.h"
 #include "latino/Sema/SemaConcept.h"
@@ -148,19 +148,19 @@ namespace latino {
   class ModuleLoader;
   class MultiLevelTemplateArgumentList;
   class NamedDecl;
-  class ObjCCategoryDecl;
-  class ObjCCategoryImplDecl;
-  class ObjCCompatibleAliasDecl;
-  class ObjCContainerDecl;
-  class ObjCImplDecl;
-  class ObjCImplementationDecl;
-  class ObjCInterfaceDecl;
-  class ObjCIvarDecl;
-  template <class T> class ObjCList;
-  class ObjCMessageExpr;
-  class ObjCMethodDecl;
-  class ObjCPropertyDecl;
-  class ObjCProtocolDecl;
+  // class ObjCCategoryDecl;
+  // class ObjCCategoryImplDecl;
+  // class ObjCCompatibleAliasDecl;
+  // class ObjCContainerDecl;
+  // class ObjCImplDecl;
+  // class ObjCImplementationDecl;
+  // class ObjCInterfaceDecl;
+  // class ObjCIvarDecl;
+  // template <class T> class ObjCList;
+  // class ObjCMessageExpr;
+  // class ObjCMethodDecl;
+  // class ObjCPropertyDecl;
+  // class ObjCProtocolDecl;
   class OMPThreadPrivateDecl;
   class OMPRequiresDecl;
   class OMPDeclareReductionDecl;
@@ -940,8 +940,8 @@ public:
           Sema::ExpressionEvaluationContext::PotentiallyEvaluated);
       if (auto *FD = dyn_cast<FunctionDecl>(DC))
         FD->setWillHaveBody(true);
-      else
-        assert(isa<ObjCMethodDecl>(DC));
+      // else
+      //   assert(isa<ObjCMethodDecl>(DC));
     }
 
     void addContextNote(SourceLocation UseLoc) {
@@ -1028,10 +1028,10 @@ public:
   std::unique_ptr<NSAPI> NSAPIObj;
 
   /// The declaration of the Objective-C NSNumber class.
-  ObjCInterfaceDecl *NSNumberDecl;
+  // ObjCInterfaceDecl *NSNumberDecl;
 
   /// The declaration of the Objective-C NSValue class.
-  ObjCInterfaceDecl *NSValueDecl;
+  // ObjCInterfaceDecl *NSValueDecl;
 
   /// Pointer to NSNumber type (NSNumber *).
   QualType NSNumberPointer;
@@ -1040,31 +1040,31 @@ public:
   QualType NSValuePointer;
 
   /// The Objective-C NSNumber methods used to create NSNumber literals.
-  ObjCMethodDecl *NSNumberLiteralMethods[NSAPI::NumNSNumberLiteralMethods];
+  // ObjCMethodDecl *NSNumberLiteralMethods[NSAPI::NumNSNumberLiteralMethods];
 
   /// The declaration of the Objective-C NSString class.
-  ObjCInterfaceDecl *NSStringDecl;
+  // ObjCInterfaceDecl *NSStringDecl;
 
   /// Pointer to NSString type (NSString *).
   QualType NSStringPointer;
 
   /// The declaration of the stringWithUTF8String: method.
-  ObjCMethodDecl *StringWithUTF8StringMethod;
+  // ObjCMethodDecl *StringWithUTF8StringMethod;
 
   /// The declaration of the valueWithBytes:objCType: method.
-  ObjCMethodDecl *ValueWithBytesObjCTypeMethod;
+  // ObjCMethodDecl *ValueWithBytesObjCTypeMethod;
 
   /// The declaration of the Objective-C NSArray class.
-  ObjCInterfaceDecl *NSArrayDecl;
+  // ObjCInterfaceDecl *NSArrayDecl;
 
   /// The declaration of the arrayWithObjects:count: method.
-  ObjCMethodDecl *ArrayWithObjectsMethod;
+  // ObjCMethodDecl *ArrayWithObjectsMethod;
 
   /// The declaration of the Objective-C NSDictionary class.
-  ObjCInterfaceDecl *NSDictionaryDecl;
+  // ObjCInterfaceDecl *NSDictionaryDecl;
 
   /// The declaration of the dictionaryWithObjects:forKeys:count: method.
-  ObjCMethodDecl *DictionaryWithObjectsMethod;
+  // ObjCMethodDecl *DictionaryWithObjectsMethod;
 
   /// id<NSCopying> type.
   QualType QIDNSCopying;
@@ -1387,7 +1387,7 @@ public:
 
   /// Private Helper predicate to check for 'self'.
   bool isSelfExpr(Expr *RExpr);
-  bool isSelfExpr(Expr *RExpr, const ObjCMethodDecl *Method);
+  // bool isSelfExpr(Expr *RExpr, const ObjCMethodDecl *Method);
 
   /// Cause the active diagnostic on the DiagosticsEngine to be
   /// emitted. This is closely coupled to the SemaDiagnosticBuilder class and
@@ -2520,9 +2520,9 @@ public:
   void ActOnStartTrailingRequiresClause(Scope *S, Declarator &D);
   ExprResult ActOnFinishTrailingRequiresClause(ExprResult ConstraintExpr);
   void ActOnStartOfObjCMethodDef(Scope *S, Decl *D);
-  bool isObjCMethodDecl(Decl *D) {
-    return D && isa<ObjCMethodDecl>(D);
-  }
+  // bool isObjCMethodDecl(Decl *D) {
+  //   return D && isa<ObjCMethodDecl>(D);
+  // }
 
   /// Determine whether we can delay parsing the body of a function or
   /// function template until it is used, assuming we don't care about emitting
@@ -2941,7 +2941,7 @@ public:
   /// getCurMethodDecl - If inside of a method body, this returns a pointer to
   /// the method decl for the method being parsed.  If we're currently
   /// in a 'block', this returns the containing context.
-  ObjCMethodDecl *getCurMethodDecl();
+  // ObjCMethodDecl *getCurMethodDecl();
 
   /// getCurFunctionOrMethodDecl - Return the Decl for the current ObjC method
   /// or C function we're in, otherwise return null.  If we're currently
@@ -3069,7 +3069,7 @@ public:
                          bool MergeTypeWithOld);
   bool MergeCompatibleFunctionDecls(FunctionDecl *New, FunctionDecl *Old,
                                     Scope *S, bool MergeTypeWithOld);
-  void mergeObjCMethodDecls(ObjCMethodDecl *New, ObjCMethodDecl *Old);
+  // void mergeObjCMethodDecls(ObjCMethodDecl *New, ObjCMethodDecl *Old);
   void MergeVarDecl(VarDecl *New, LookupResult &Previous);
   void MergeVarDeclTypes(VarDecl *New, VarDecl *Old, bool MergeTypeWithOld);
   void MergeVarDeclExceptionSpecs(VarDecl *New, VarDecl *Old);
@@ -3136,10 +3136,10 @@ public:
   bool IsPointerConversion(Expr *From, QualType FromType, QualType ToType,
                            bool InOverloadResolution,
                            QualType& ConvertedType, bool &IncompatibleObjC);
-  bool isObjCPointerConversion(QualType FromType, QualType ToType,
-                               QualType& ConvertedType, bool &IncompatibleObjC);
-  bool isObjCWritebackConversion(QualType FromType, QualType ToType,
-                                 QualType &ConvertedType);
+  // bool isObjCPointerConversion(QualType FromType, QualType ToType,
+  //                              QualType& ConvertedType, bool &IncompatibleObjC);
+  // bool isObjCWritebackConversion(QualType FromType, QualType ToType,
+  //                                QualType &ConvertedType);
   bool IsBlockPointerConversion(QualType FromType, QualType ToType,
                                 QualType& ConvertedType);
   bool FunctionParamTypesAreEqual(const FunctionProtoType *OldType,
@@ -3149,7 +3149,7 @@ public:
                                   QualType FromType, QualType ToType);
 
   void maybeExtendBlockObject(ExprResult &E);
-  CastKind PrepareCastToObjCObjectPointer(ExprResult &E);
+  // CastKind PrepareCastToObjCObjectPointer(ExprResult &E);
   bool CheckPointerConversion(Expr *From, QualType ToType,
                               CastKind &Kind,
                               CXXCastPath& BasePath,
@@ -3806,9 +3806,9 @@ public:
   bool LookupParsedName(LookupResult &R, Scope *S, CXXScopeSpec *SS,
                         bool AllowBuiltinCreation = false,
                         bool EnteringContext = false);
-  ObjCProtocolDecl *LookupProtocol(IdentifierInfo *II, SourceLocation IdLoc,
-                                   RedeclarationKind Redecl
-                                     = NotForRedeclaration);
+  // ObjCProtocolDecl *LookupProtocol(IdentifierInfo *II, SourceLocation IdLoc,
+  //                                  RedeclarationKind Redecl
+  //                                    = NotForRedeclaration);
   bool LookupInSuper(LookupResult &R, CXXRecordDecl *Class);
 
   void LookupOverloadedOperatorName(OverloadedOperatorKind Op, Scope *S,
@@ -3954,9 +3954,9 @@ public:
                                 ArrayRef<Expr *> SubExprs,
                                 QualType T = QualType());
 
-  ObjCInterfaceDecl *getObjCInterfaceDecl(IdentifierInfo *&Id,
-                                          SourceLocation IdLoc,
-                                          bool TypoCorrection = false);
+  // ObjCInterfaceDecl *getObjCInterfaceDecl(IdentifierInfo *&Id,
+  //                                         SourceLocation IdLoc,
+  //                                         bool TypoCorrection = false);
   FunctionDecl *CreateBuiltin(IdentifierInfo *II, QualType Type, unsigned ID,
                               SourceLocation Loc);
   NamedDecl *LazilyCreateBuiltin(IdentifierInfo *II, unsigned ID,
@@ -4025,116 +4025,116 @@ public:
                                    const ParsedAttributesView &Attrs,
                                    SourceRange Range);
 
-  void WarnConflictingTypedMethods(ObjCMethodDecl *Method,
-                                   ObjCMethodDecl *MethodDecl,
-                                   bool IsProtocolMethodDecl);
+  // void WarnConflictingTypedMethods(ObjCMethodDecl *Method,
+  //                                  ObjCMethodDecl *MethodDecl,
+  //                                  bool IsProtocolMethodDecl);
 
-  void CheckConflictingOverridingMethod(ObjCMethodDecl *Method,
-                                   ObjCMethodDecl *Overridden,
-                                   bool IsProtocolMethodDecl);
+  // void CheckConflictingOverridingMethod(ObjCMethodDecl *Method,
+  //                                  ObjCMethodDecl *Overridden,
+  //                                  bool IsProtocolMethodDecl);
 
   /// WarnExactTypedMethods - This routine issues a warning if method
   /// implementation declaration matches exactly that of its declaration.
-  void WarnExactTypedMethods(ObjCMethodDecl *Method,
-                             ObjCMethodDecl *MethodDecl,
-                             bool IsProtocolMethodDecl);
+  // void WarnExactTypedMethods(ObjCMethodDecl *Method,
+  //                            ObjCMethodDecl *MethodDecl,
+  //                            bool IsProtocolMethodDecl);
 
   typedef llvm::SmallPtrSet<Selector, 8> SelectorSet;
 
   /// CheckImplementationIvars - This routine checks if the instance variables
   /// listed in the implelementation match those listed in the interface.
-  void CheckImplementationIvars(ObjCImplementationDecl *ImpDecl,
-                                ObjCIvarDecl **Fields, unsigned nIvars,
-                                SourceLocation Loc);
+  // void CheckImplementationIvars(ObjCImplementationDecl *ImpDecl,
+  //                               ObjCIvarDecl **Fields, unsigned nIvars,
+  //                               SourceLocation Loc);
 
   /// ImplMethodsVsClassMethods - This is main routine to warn if any method
   /// remains unimplemented in the class or category \@implementation.
-  void ImplMethodsVsClassMethods(Scope *S, ObjCImplDecl* IMPDecl,
-                                 ObjCContainerDecl* IDecl,
-                                 bool IncompleteImpl = false);
+  // void ImplMethodsVsClassMethods(Scope *S, ObjCImplDecl* IMPDecl,
+  //                                ObjCContainerDecl* IDecl,
+  //                                bool IncompleteImpl = false);
 
   /// DiagnoseUnimplementedProperties - This routine warns on those properties
   /// which must be implemented by this implementation.
-  void DiagnoseUnimplementedProperties(Scope *S, ObjCImplDecl* IMPDecl,
-                                       ObjCContainerDecl *CDecl,
-                                       bool SynthesizeProperties);
+  // void DiagnoseUnimplementedProperties(Scope *S, ObjCImplDecl* IMPDecl,
+  //                                      ObjCContainerDecl *CDecl,
+  //                                      bool SynthesizeProperties);
 
   /// Diagnose any null-resettable synthesized setters.
-  void diagnoseNullResettableSynthesizedSetters(const ObjCImplDecl *impDecl);
+  // void diagnoseNullResettableSynthesizedSetters(const ObjCImplDecl *impDecl);
 
   /// DefaultSynthesizeProperties - This routine default synthesizes all
   /// properties which must be synthesized in the class's \@implementation.
-  void DefaultSynthesizeProperties(Scope *S, ObjCImplDecl *IMPDecl,
-                                   ObjCInterfaceDecl *IDecl,
-                                   SourceLocation AtEnd);
-  void DefaultSynthesizeProperties(Scope *S, Decl *D, SourceLocation AtEnd);
+  // void DefaultSynthesizeProperties(Scope *S, ObjCImplDecl *IMPDecl,
+  //                                  ObjCInterfaceDecl *IDecl,
+  //                                  SourceLocation AtEnd);
+  // void DefaultSynthesizeProperties(Scope *S, Decl *D, SourceLocation AtEnd);
 
   /// IvarBacksCurrentMethodAccessor - This routine returns 'true' if 'IV' is
   /// an ivar synthesized for 'Method' and 'Method' is a property accessor
   /// declared in class 'IFace'.
-  bool IvarBacksCurrentMethodAccessor(ObjCInterfaceDecl *IFace,
-                                      ObjCMethodDecl *Method, ObjCIvarDecl *IV);
+  // bool IvarBacksCurrentMethodAccessor(ObjCInterfaceDecl *IFace,
+  //                                     ObjCMethodDecl *Method, ObjCIvarDecl *IV);
 
   /// DiagnoseUnusedBackingIvarInAccessor - Issue an 'unused' warning if ivar which
   /// backs the property is not used in the property's accessor.
-  void DiagnoseUnusedBackingIvarInAccessor(Scope *S,
-                                           const ObjCImplementationDecl *ImplD);
+  // void DiagnoseUnusedBackingIvarInAccessor(Scope *S,
+  //                                          const ObjCImplementationDecl *ImplD);
 
   /// GetIvarBackingPropertyAccessor - If method is a property setter/getter and
   /// it property has a backing ivar, returns this ivar; otherwise, returns NULL.
   /// It also returns ivar's property on success.
-  ObjCIvarDecl *GetIvarBackingPropertyAccessor(const ObjCMethodDecl *Method,
-                                               const ObjCPropertyDecl *&PDecl) const;
+  // ObjCIvarDecl *GetIvarBackingPropertyAccessor(const ObjCMethodDecl *Method,
+  //                                              const ObjCPropertyDecl *&PDecl) const;
 
   /// Called by ActOnProperty to handle \@property declarations in
   /// class extensions.
-  ObjCPropertyDecl *HandlePropertyInClassExtension(Scope *S,
-                      SourceLocation AtLoc,
-                      SourceLocation LParenLoc,
-                      FieldDeclarator &FD,
-                      Selector GetterSel,
-                      SourceLocation GetterNameLoc,
-                      Selector SetterSel,
-                      SourceLocation SetterNameLoc,
-                      const bool isReadWrite,
-                      unsigned &Attributes,
-                      const unsigned AttributesAsWritten,
-                      QualType T,
-                      TypeSourceInfo *TSI,
-                      tok::ObjCKeywordKind MethodImplKind);
+  // ObjCPropertyDecl *HandlePropertyInClassExtension(Scope *S,
+  //                     SourceLocation AtLoc,
+  //                     SourceLocation LParenLoc,
+  //                     FieldDeclarator &FD,
+  //                     Selector GetterSel,
+  //                     SourceLocation GetterNameLoc,
+  //                     Selector SetterSel,
+  //                     SourceLocation SetterNameLoc,
+  //                     const bool isReadWrite,
+  //                     unsigned &Attributes,
+  //                     const unsigned AttributesAsWritten,
+  //                     QualType T,
+  //                     TypeSourceInfo *TSI,
+  //                     tok::ObjCKeywordKind MethodImplKind);
 
   /// Called by ActOnProperty and HandlePropertyInClassExtension to
   /// handle creating the ObjcPropertyDecl for a category or \@interface.
-  ObjCPropertyDecl *CreatePropertyDecl(Scope *S,
-                                       ObjCContainerDecl *CDecl,
-                                       SourceLocation AtLoc,
-                                       SourceLocation LParenLoc,
-                                       FieldDeclarator &FD,
-                                       Selector GetterSel,
-                                       SourceLocation GetterNameLoc,
-                                       Selector SetterSel,
-                                       SourceLocation SetterNameLoc,
-                                       const bool isReadWrite,
-                                       const unsigned Attributes,
-                                       const unsigned AttributesAsWritten,
-                                       QualType T,
-                                       TypeSourceInfo *TSI,
-                                       tok::ObjCKeywordKind MethodImplKind,
-                                       DeclContext *lexicalDC = nullptr);
+  // ObjCPropertyDecl *CreatePropertyDecl(Scope *S,
+  //                                      ObjCContainerDecl *CDecl,
+  //                                      SourceLocation AtLoc,
+  //                                      SourceLocation LParenLoc,
+  //                                      FieldDeclarator &FD,
+  //                                      Selector GetterSel,
+  //                                      SourceLocation GetterNameLoc,
+  //                                      Selector SetterSel,
+  //                                      SourceLocation SetterNameLoc,
+  //                                      const bool isReadWrite,
+  //                                      const unsigned Attributes,
+  //                                      const unsigned AttributesAsWritten,
+  //                                      QualType T,
+  //                                      TypeSourceInfo *TSI,
+  //                                      tok::ObjCKeywordKind MethodImplKind,
+  //                                      DeclContext *lexicalDC = nullptr);
 
   /// AtomicPropertySetterGetterRules - This routine enforces the rule (via
   /// warning) when atomic property has one but not the other user-declared
   /// setter or getter.
-  void AtomicPropertySetterGetterRules(ObjCImplDecl* IMPDecl,
-                                       ObjCInterfaceDecl* IDecl);
+  // void AtomicPropertySetterGetterRules(ObjCImplDecl* IMPDecl,
+  //                                      ObjCInterfaceDecl* IDecl);
 
-  void DiagnoseOwningPropertyGetterSynthesis(const ObjCImplementationDecl *D);
+  // void DiagnoseOwningPropertyGetterSynthesis(const ObjCImplementationDecl *D);
 
-  void DiagnoseMissingDesignatedInitOverrides(
-                                          const ObjCImplementationDecl *ImplD,
-                                          const ObjCInterfaceDecl *IFD);
+  // void DiagnoseMissingDesignatedInitOverrides(
+  //                                         const ObjCImplementationDecl *ImplD,
+  //                                         const ObjCInterfaceDecl *IFD);
 
-  void DiagnoseDuplicateIvars(ObjCInterfaceDecl *ID, ObjCInterfaceDecl *SID);
+  // void DiagnoseDuplicateIvars(ObjCInterfaceDecl *ID, ObjCInterfaceDecl *SID);
 
   enum MethodMatchStrategy {
     MMS_loose,
@@ -4143,72 +4143,72 @@ public:
 
   /// MatchTwoMethodDeclarations - Checks if two methods' type match and returns
   /// true, or false, accordingly.
-  bool MatchTwoMethodDeclarations(const ObjCMethodDecl *Method,
-                                  const ObjCMethodDecl *PrevMethod,
-                                  MethodMatchStrategy strategy = MMS_strict);
+  // bool MatchTwoMethodDeclarations(const ObjCMethodDecl *Method,
+  //                                 const ObjCMethodDecl *PrevMethod,
+  //                                 MethodMatchStrategy strategy = MMS_strict);
 
   /// MatchAllMethodDeclarations - Check methods declaraed in interface or
   /// or protocol against those declared in their implementations.
-  void MatchAllMethodDeclarations(const SelectorSet &InsMap,
-                                  const SelectorSet &ClsMap,
-                                  SelectorSet &InsMapSeen,
-                                  SelectorSet &ClsMapSeen,
-                                  ObjCImplDecl* IMPDecl,
-                                  ObjCContainerDecl* IDecl,
-                                  bool &IncompleteImpl,
-                                  bool ImmediateClass,
-                                  bool WarnCategoryMethodImpl=false);
+  // void MatchAllMethodDeclarations(const SelectorSet &InsMap,
+  //                                 const SelectorSet &ClsMap,
+  //                                 SelectorSet &InsMapSeen,
+  //                                 SelectorSet &ClsMapSeen,
+  //                                 ObjCImplDecl* IMPDecl,
+  //                                 ObjCContainerDecl* IDecl,
+  //                                 bool &IncompleteImpl,
+  //                                 bool ImmediateClass,
+  //                                 bool WarnCategoryMethodImpl=false);
 
   /// CheckCategoryVsClassMethodMatches - Checks that methods implemented in
   /// category matches with those implemented in its primary class and
   /// warns each time an exact match is found.
-  void CheckCategoryVsClassMethodMatches(ObjCCategoryImplDecl *CatIMP);
+  // void CheckCategoryVsClassMethodMatches(ObjCCategoryImplDecl *CatIMP);
 
   /// Add the given method to the list of globally-known methods.
-  void addMethodToGlobalList(ObjCMethodList *List, ObjCMethodDecl *Method);
+  // void addMethodToGlobalList(ObjCMethodList *List, ObjCMethodDecl *Method);
 
   /// Returns default addr space for method qualifiers.
   LangAS getDefaultCXXMethodAddrSpace() const;
 
-private:
+// private:
   /// AddMethodToGlobalPool - Add an instance or factory method to the global
   /// pool. See descriptoin of AddInstanceMethodToGlobalPool.
-  void AddMethodToGlobalPool(ObjCMethodDecl *Method, bool impl, bool instance);
+  // void AddMethodToGlobalPool(ObjCMethodDecl *Method, bool impl, bool instance);
 
   /// LookupMethodInGlobalPool - Returns the instance or factory method and
   /// optionally warns if there are multiple signatures.
-  ObjCMethodDecl *LookupMethodInGlobalPool(Selector Sel, SourceRange R,
+  // ObjCMethodDecl *LookupMethodInGlobalPool(Selector Sel, SourceRange R,
                                            bool receiverIdOrClass,
                                            bool instance);
 
-public:
+// public:
   /// - Returns instance or factory methods in global method pool for
   /// given selector. It checks the desired kind first, if none is found, and
   /// parameter checkTheOther is set, it then checks the other kind. If no such
   /// method or only one method is found, function returns false; otherwise, it
   /// returns true.
-  bool
-  CollectMultipleMethodsInGlobalPool(Selector Sel,
-                                     SmallVectorImpl<ObjCMethodDecl*>& Methods,
-                                     bool InstanceFirst, bool CheckTheOther,
-                                     const ObjCObjectType *TypeBound = nullptr);
+  // bool
+  // CollectMultipleMethodsInGlobalPool(Selector Sel,
+  //                                    SmallVectorImpl<ObjCMethodDecl*>& Methods,
+  //                                    bool InstanceFirst, bool CheckTheOther,
+  //                                    const ObjCObjectType *TypeBound = nullptr);
 
-  bool
-  AreMultipleMethodsInGlobalPool(Selector Sel, ObjCMethodDecl *BestMethod,
-                                 SourceRange R, bool receiverIdOrClass,
-                                 SmallVectorImpl<ObjCMethodDecl*>& Methods);
+  // bool
+  // AreMultipleMethodsInGlobalPool(Selector Sel, ObjCMethodDecl *BestMethod,
+  //                                SourceRange R, bool receiverIdOrClass,
+  //                                SmallVectorImpl<ObjCMethodDecl*>& Methods);
 
-  void
-  DiagnoseMultipleMethodInGlobalPool(SmallVectorImpl<ObjCMethodDecl*> &Methods,
-                                     Selector Sel, SourceRange R,
-                                     bool receiverIdOrClass);
+  // void
+  // DiagnoseMultipleMethodInGlobalPool(SmallVectorImpl<ObjCMethodDecl*> &Methods,
+  //                                    Selector Sel, SourceRange R,
+  //                                    bool receiverIdOrClass);
 
 private:
   /// - Returns a selector which best matches given argument list or
   /// nullptr if none could be found
-  ObjCMethodDecl *SelectBestMethod(Selector Sel, MultiExprArg Args,
-                                   bool IsInstance,
-                                   SmallVectorImpl<ObjCMethodDecl*>& Methods);
+  // ObjCMethodDecl *SelectBestMethod(Selector Sel, MultiExprArg Args,
+  //                                  bool IsInstance,
+  //                                  SmallVectorImpl<ObjCMethodDecl*>& Methods);
 
 
   /// Record the typo correction failure and return an empty correction.
@@ -4224,14 +4224,14 @@ public:
   /// unit are added to a global pool. This allows us to efficiently associate
   /// a selector with a method declaraation for purposes of typechecking
   /// messages sent to "id" (where the class of the object is unknown).
-  void AddInstanceMethodToGlobalPool(ObjCMethodDecl *Method, bool impl=false) {
-    AddMethodToGlobalPool(Method, impl, /*instance*/true);
-  }
+  // void AddInstanceMethodToGlobalPool(ObjCMethodDecl *Method, bool impl=false) {
+  //   AddMethodToGlobalPool(Method, impl, /*instance*/true);
+  // }
 
   /// AddFactoryMethodToGlobalPool - Same as above, but for factory methods.
-  void AddFactoryMethodToGlobalPool(ObjCMethodDecl *Method, bool impl=false) {
-    AddMethodToGlobalPool(Method, impl, /*instance*/false);
-  }
+  // void AddFactoryMethodToGlobalPool(ObjCMethodDecl *Method, bool impl=false) {
+  //   AddMethodToGlobalPool(Method, impl, /*instance*/false);
+  // }
 
   /// AddAnyMethodToGlobalPool - Add any method, instance or factory to global
   /// pool.
@@ -4239,30 +4239,30 @@ public:
 
   /// LookupInstanceMethodInGlobalPool - Returns the method and warns if
   /// there are multiple signatures.
-  ObjCMethodDecl *LookupInstanceMethodInGlobalPool(Selector Sel, SourceRange R,
-                                                   bool receiverIdOrClass=false) {
-    return LookupMethodInGlobalPool(Sel, R, receiverIdOrClass,
-                                    /*instance*/true);
-  }
+  // ObjCMethodDecl *LookupInstanceMethodInGlobalPool(Selector Sel, SourceRange R,
+  //                                                  bool receiverIdOrClass=false) {
+  //   return LookupMethodInGlobalPool(Sel, R, receiverIdOrClass,
+  //                                   /*instance*/true);
+  // }
 
   /// LookupFactoryMethodInGlobalPool - Returns the method and warns if
   /// there are multiple signatures.
-  ObjCMethodDecl *LookupFactoryMethodInGlobalPool(Selector Sel, SourceRange R,
-                                                  bool receiverIdOrClass=false) {
-    return LookupMethodInGlobalPool(Sel, R, receiverIdOrClass,
-                                    /*instance*/false);
-  }
+  // ObjCMethodDecl *LookupFactoryMethodInGlobalPool(Selector Sel, SourceRange R,
+  //                                                 bool receiverIdOrClass=false) {
+  //   return LookupMethodInGlobalPool(Sel, R, receiverIdOrClass,
+  //                                   /*instance*/false);
+  // }
 
-  const ObjCMethodDecl *SelectorsForTypoCorrection(Selector Sel,
-                              QualType ObjectType=QualType());
+  // const ObjCMethodDecl *SelectorsForTypoCorrection(Selector Sel,
+  //                             QualType ObjectType=QualType());
   /// LookupImplementedMethodInGlobalPool - Returns the method which has an
   /// implementation.
-  ObjCMethodDecl *LookupImplementedMethodInGlobalPool(Selector Sel);
+  // ObjCMethodDecl *LookupImplementedMethodInGlobalPool(Selector Sel);
 
   /// CollectIvarsToConstructOrDestruct - Collect those ivars which require
   /// initialization.
-  void CollectIvarsToConstructOrDestruct(ObjCInterfaceDecl *OI,
-                                  SmallVectorImpl<ObjCIvarDecl*> &Ivars);
+  // void CollectIvarsToConstructOrDestruct(ObjCInterfaceDecl *OI,
+  //                                 SmallVectorImpl<ObjCIvarDecl*> &Ivars);
 
   //===--------------------------------------------------------------------===//
   // Statement Parsing Callbacks: SemaStmt.cpp.
@@ -4393,12 +4393,12 @@ public:
                           FullExprArg Third,
                           SourceLocation RParenLoc,
                           Stmt *Body);
-  ExprResult CheckObjCForCollectionOperand(SourceLocation forLoc,
-                                           Expr *collection);
-  StmtResult ActOnObjCForCollectionStmt(SourceLocation ForColLoc,
-                                        Stmt *First, Expr *collection,
-                                        SourceLocation RParenLoc);
-  StmtResult FinishObjCForCollectionStmt(Stmt *ForCollection, Stmt *Body);
+  // ExprResult CheckObjCForCollectionOperand(SourceLocation forLoc,
+  //                                          Expr *collection);
+  // StmtResult ActOnObjCForCollectionStmt(SourceLocation ForColLoc,
+  //                                       Stmt *First, Expr *collection,
+  //                                       SourceLocation RParenLoc);
+  // StmtResult FinishObjCForCollectionStmt(Stmt *ForCollection, Stmt *Body);
 
   enum BuildForRangeKind {
     /// Initial building of a for-range statement.
@@ -4502,31 +4502,31 @@ public:
                                    SourceLocation Location,
                                    bool AlwaysCreate);
 
-  VarDecl *BuildObjCExceptionDecl(TypeSourceInfo *TInfo, QualType ExceptionType,
-                                  SourceLocation StartLoc,
-                                  SourceLocation IdLoc, IdentifierInfo *Id,
-                                  bool Invalid = false);
+  // VarDecl *BuildObjCExceptionDecl(TypeSourceInfo *TInfo, QualType ExceptionType,
+  //                                 SourceLocation StartLoc,
+  //                                 SourceLocation IdLoc, IdentifierInfo *Id,
+  //                                 bool Invalid = false);
 
-  Decl *ActOnObjCExceptionDecl(Scope *S, Declarator &D);
+  // Decl *ActOnObjCExceptionDecl(Scope *S, Declarator &D);
 
-  StmtResult ActOnObjCAtCatchStmt(SourceLocation AtLoc, SourceLocation RParen,
-                                  Decl *Parm, Stmt *Body);
+  // StmtResult ActOnObjCAtCatchStmt(SourceLocation AtLoc, SourceLocation RParen,
+  //                                 Decl *Parm, Stmt *Body);
 
-  StmtResult ActOnObjCAtFinallyStmt(SourceLocation AtLoc, Stmt *Body);
+  // StmtResult ActOnObjCAtFinallyStmt(SourceLocation AtLoc, Stmt *Body);
 
-  StmtResult ActOnObjCAtTryStmt(SourceLocation AtLoc, Stmt *Try,
-                                MultiStmtArg Catch, Stmt *Finally);
+  // StmtResult ActOnObjCAtTryStmt(SourceLocation AtLoc, Stmt *Try,
+  //                               MultiStmtArg Catch, Stmt *Finally);
 
-  StmtResult BuildObjCAtThrowStmt(SourceLocation AtLoc, Expr *Throw);
-  StmtResult ActOnObjCAtThrowStmt(SourceLocation AtLoc, Expr *Throw,
-                                  Scope *CurScope);
-  ExprResult ActOnObjCAtSynchronizedOperand(SourceLocation atLoc,
-                                            Expr *operand);
-  StmtResult ActOnObjCAtSynchronizedStmt(SourceLocation AtLoc,
-                                         Expr *SynchExpr,
-                                         Stmt *SynchBody);
+  // StmtResult BuildObjCAtThrowStmt(SourceLocation AtLoc, Expr *Throw);
+  // StmtResult ActOnObjCAtThrowStmt(SourceLocation AtLoc, Expr *Throw,
+  //                                 Scope *CurScope);
+  // ExprResult ActOnObjCAtSynchronizedOperand(SourceLocation atLoc,
+  //                                           Expr *operand);
+  // StmtResult ActOnObjCAtSynchronizedStmt(SourceLocation AtLoc,
+  //                                        Expr *SynchExpr,
+  //                                        Stmt *SynchBody);
 
-  StmtResult ActOnObjCAutoreleasePoolStmt(SourceLocation AtLoc, Stmt *Body);
+  // StmtResult ActOnObjCAutoreleasePoolStmt(SourceLocation AtLoc, Stmt *Body);
 
   VarDecl *BuildExceptionDeclaration(Scope *S, TypeSourceInfo *TInfo,
                                      SourceLocation StartLoc,
@@ -4609,11 +4609,11 @@ public:
 
   void redelayDiagnostics(sema::DelayedDiagnosticPool &pool);
 
-  void DiagnoseAvailabilityOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
-                                  const ObjCInterfaceDecl *UnknownObjCClass,
-                                  bool ObjCPropertyAccess,
-                                  bool AvoidPartialAvailabilityChecks = false,
-                                  ObjCInterfaceDecl *ClassReceiver = nullptr);
+  // void DiagnoseAvailabilityOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
+  //                                 const ObjCInterfaceDecl *UnknownObjCClass,
+  //                                 bool ObjCPropertyAccess,
+  //                                 bool AvoidPartialAvailabilityChecks = false,
+  //                                 ObjCInterfaceDecl *ClassReceiver = nullptr);
 
   bool makeUnavailableInSystemHeader(SourceLocation loc,
                                      UnavailableAttr::ImplicitReason reason);
@@ -4627,16 +4627,16 @@ public:
   // Expression Parsing Callbacks: SemaExpr.cpp.
 
   bool CanUseDecl(NamedDecl *D, bool TreatUnavailableAsInvalid);
-  bool DiagnoseUseOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
-                         const ObjCInterfaceDecl *UnknownObjCClass = nullptr,
-                         bool ObjCPropertyAccess = false,
-                         bool AvoidPartialAvailabilityChecks = false,
-                         ObjCInterfaceDecl *ClassReciever = nullptr);
+  // bool DiagnoseUseOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
+  //                        const ObjCInterfaceDecl *UnknownObjCClass = nullptr,
+  //                        bool ObjCPropertyAccess = false,
+  //                        bool AvoidPartialAvailabilityChecks = false,
+  //                        ObjCInterfaceDecl *ClassReciever = nullptr);
   void NoteDeletedFunction(FunctionDecl *FD);
   void NoteDeletedInheritingConstructor(CXXConstructorDecl *CD);
-  bool DiagnosePropertyAccessorMismatch(ObjCPropertyDecl *PD,
-                                        ObjCMethodDecl *Getter,
-                                        SourceLocation Loc);
+  // bool DiagnosePropertyAccessorMismatch(ObjCPropertyDecl *PD,
+  //                                       ObjCMethodDecl *Getter,
+  //                                       SourceLocation Loc);
   void DiagnoseSentinelCalls(NamedDecl *D, SourceLocation Loc,
                              ArrayRef<Expr *> Args);
 
@@ -4797,13 +4797,13 @@ public:
                       TemplateArgumentListInfo *ExplicitTemplateArgs = nullptr,
                       ArrayRef<Expr *> Args = None, TypoExpr **Out = nullptr);
 
-  DeclResult LookupIvarInObjCMethod(LookupResult &Lookup, Scope *S,
-                                    IdentifierInfo *II);
-  ExprResult BuildIvarRefExpr(Scope *S, SourceLocation Loc, ObjCIvarDecl *IV);
+  // DeclResult LookupIvarInObjCMethod(LookupResult &Lookup, Scope *S,
+  //                                   IdentifierInfo *II);
+  // ExprResult BuildIvarRefExpr(Scope *S, SourceLocation Loc, ObjCIvarDecl *IV);
 
-  ExprResult LookupInObjCMethod(LookupResult &LookUp, Scope *S,
-                                IdentifierInfo *II,
-                                bool AllowBuiltinCreation=false);
+  // ExprResult LookupInObjCMethod(LookupResult &LookUp, Scope *S,
+  //                               IdentifierInfo *II,
+  //                               bool AllowBuiltinCreation=false);
 
   ExprResult ActOnDependentIdExpression(const CXXScopeSpec &SS,
                                         SourceLocation TemplateKWLoc,
@@ -4950,7 +4950,7 @@ public:
                                   SourceRange ArgRange);
 
   ExprResult CheckPlaceholderExpr(Expr *E);
-  bool CheckVecStepExpr(Expr *E);
+  // bool CheckVecStepExpr(Expr *E);
 
   bool CheckUnaryExprOrTypeTraitOperand(Expr *E, UnaryExprOrTypeTrait ExprKind);
   bool CheckUnaryExprOrTypeTraitOperand(QualType ExprType, SourceLocation OpLoc,
@@ -6591,8 +6591,8 @@ public:
                                                SourceLocation New);
 
   // ParseObjCStringLiteral - Parse Objective-C string literals.
-  ExprResult ParseObjCStringLiteral(SourceLocation *AtLocs,
-                                    ArrayRef<Expr *> Strings);
+  // ExprResult ParseObjCStringLiteral(SourceLocation *AtLocs,
+  //                                   ArrayRef<Expr *> Strings);
 
   ExprResult BuildObjCStringLiteral(SourceLocation AtLoc, StringLiteral *S);
 
@@ -6611,42 +6611,42 @@ public:
   /// "const char *" or C structure with attribute 'objc_boxable'.
   ExprResult BuildObjCBoxedExpr(SourceRange SR, Expr *ValueExpr);
 
-  ExprResult BuildObjCSubscriptExpression(SourceLocation RB, Expr *BaseExpr,
-                                          Expr *IndexExpr,
-                                          ObjCMethodDecl *getterMethod,
-                                          ObjCMethodDecl *setterMethod);
+  // ExprResult BuildObjCSubscriptExpression(SourceLocation RB, Expr *BaseExpr,
+  //                                         Expr *IndexExpr,
+  //                                         ObjCMethodDecl *getterMethod,
+  //                                         ObjCMethodDecl *setterMethod);
 
   ExprResult BuildObjCDictionaryLiteral(SourceRange SR,
                                MutableArrayRef<ObjCDictionaryElement> Elements);
 
-  ExprResult BuildObjCEncodeExpression(SourceLocation AtLoc,
-                                  TypeSourceInfo *EncodedTypeInfo,
-                                  SourceLocation RParenLoc);
+  // ExprResult BuildObjCEncodeExpression(SourceLocation AtLoc,
+  //                                 TypeSourceInfo *EncodedTypeInfo,
+  //                                 SourceLocation RParenLoc);
   ExprResult BuildCXXMemberCallExpr(Expr *Exp, NamedDecl *FoundDecl,
                                     CXXConversionDecl *Method,
                                     bool HadMultipleCandidates);
 
-  ExprResult ParseObjCEncodeExpression(SourceLocation AtLoc,
-                                       SourceLocation EncodeLoc,
-                                       SourceLocation LParenLoc,
-                                       ParsedType Ty,
-                                       SourceLocation RParenLoc);
+  // ExprResult ParseObjCEncodeExpression(SourceLocation AtLoc,
+  //                                      SourceLocation EncodeLoc,
+  //                                      SourceLocation LParenLoc,
+  //                                      ParsedType Ty,
+  //                                      SourceLocation RParenLoc);
 
   /// ParseObjCSelectorExpression - Build selector expression for \@selector
-  ExprResult ParseObjCSelectorExpression(Selector Sel,
-                                         SourceLocation AtLoc,
-                                         SourceLocation SelLoc,
-                                         SourceLocation LParenLoc,
-                                         SourceLocation RParenLoc,
-                                         bool WarnMultipleSelectors);
+  // ExprResult ParseObjCSelectorExpression(Selector Sel,
+  //                                        SourceLocation AtLoc,
+  //                                        SourceLocation SelLoc,
+  //                                        SourceLocation LParenLoc,
+  //                                        SourceLocation RParenLoc,
+  //                                        bool WarnMultipleSelectors);
 
   /// ParseObjCProtocolExpression - Build protocol expression for \@protocol
-  ExprResult ParseObjCProtocolExpression(IdentifierInfo * ProtocolName,
-                                         SourceLocation AtLoc,
-                                         SourceLocation ProtoLoc,
-                                         SourceLocation LParenLoc,
-                                         SourceLocation ProtoIdLoc,
-                                         SourceLocation RParenLoc);
+  // ExprResult ParseObjCProtocolExpression(IdentifierInfo * ProtocolName,
+  //                                        SourceLocation AtLoc,
+  //                                        SourceLocation ProtoLoc,
+  //                                        SourceLocation LParenLoc,
+  //                                        SourceLocation ProtoIdLoc,
+  //                                        SourceLocation RParenLoc);
 
   //===--------------------------------------------------------------------===//
   // C++ Declarations
@@ -6735,7 +6735,7 @@ public:
   bool SetCtorInitializers(CXXConstructorDecl *Constructor, bool AnyErrors,
                            ArrayRef<CXXCtorInitializer *> Initializers = None);
 
-  void SetIvarInitializers(ObjCImplementationDecl *ObjCImplementation);
+  // void SetIvarInitializers(ObjCImplementationDecl *ObjCImplementation);
 
 
   /// MarkBaseAndMemberDestructorsReferenced - Given a record decl,
@@ -9163,30 +9163,30 @@ public:
                           const MultiLevelTemplateArgumentList &TemplateArgs);
 
   // Objective-C declarations.
-  enum ObjCContainerKind {
-    OCK_None = -1,
-    OCK_Interface = 0,
-    OCK_Protocol,
-    OCK_Category,
-    OCK_ClassExtension,
-    OCK_Implementation,
-    OCK_CategoryImplementation
-  };
-  ObjCContainerKind getObjCContainerKind() const;
+  // enum ObjCContainerKind {
+  //   OCK_None = -1,
+  //   OCK_Interface = 0,
+  //   OCK_Protocol,
+  //   OCK_Category,
+  //   OCK_ClassExtension,
+  //   OCK_Implementation,
+  //   OCK_CategoryImplementation
+  // };
+  // ObjCContainerKind getObjCContainerKind() const;
 
-  DeclResult actOnObjCTypeParam(Scope *S,
-                                ObjCTypeParamVariance variance,
-                                SourceLocation varianceLoc,
-                                unsigned index,
-                                IdentifierInfo *paramName,
-                                SourceLocation paramLoc,
-                                SourceLocation colonLoc,
-                                ParsedType typeBound);
+  // DeclResult actOnObjCTypeParam(Scope *S,
+  //                               ObjCTypeParamVariance variance,
+  //                               SourceLocation varianceLoc,
+  //                               unsigned index,
+  //                               IdentifierInfo *paramName,
+  //                               SourceLocation paramLoc,
+  //                               SourceLocation colonLoc,
+  //                               ParsedType typeBound);
 
-  ObjCTypeParamList *actOnObjCTypeParamList(Scope *S, SourceLocation lAngleLoc,
-                                            ArrayRef<Decl *> typeParams,
-                                            SourceLocation rAngleLoc);
-  void popObjCTypeParamList(Scope *S, ObjCTypeParamList *typeParamList);
+  // ObjCTypeParamList *actOnObjCTypeParamList(Scope *S, SourceLocation lAngleLoc,
+  //                                           ArrayRef<Decl *> typeParams,
+  //                                           SourceLocation rAngleLoc);
+  // void popObjCTypeParamList(Scope *S, ObjCTypeParamList *typeParamList);
 
   Decl *ActOnStartClassInterface(
       Scope *S, SourceLocation AtInterfaceLoc, IdentifierInfo *ClassName,
@@ -9212,15 +9212,15 @@ public:
                                IdentifierInfo *SuperName,
                                SourceLocation SuperLoc);
 
-  Decl *ActOnCompatibilityAlias(
-                    SourceLocation AtCompatibilityAliasLoc,
-                    IdentifierInfo *AliasName,  SourceLocation AliasLocation,
-                    IdentifierInfo *ClassName, SourceLocation ClassLocation);
+  // Decl *ActOnCompatibilityAlias(
+  //                   SourceLocation AtCompatibilityAliasLoc,
+  //                   IdentifierInfo *AliasName,  SourceLocation AliasLocation,
+  //                   IdentifierInfo *ClassName, SourceLocation ClassLocation);
 
-  bool CheckForwardProtocolDeclarationForCircularDependency(
-    IdentifierInfo *PName,
-    SourceLocation &PLoc, SourceLocation PrevLoc,
-    const ObjCList<ObjCProtocolDecl> &PList);
+  // bool CheckForwardProtocolDeclarationForCircularDependency(
+  //   IdentifierInfo *PName,
+  //   SourceLocation &PLoc, SourceLocation PrevLoc,
+  //   const ObjCList<ObjCProtocolDecl> &PList);
 
   Decl *ActOnStartProtocolInterface(
       SourceLocation AtProtoInterfaceLoc, IdentifierInfo *ProtocolName,
@@ -9314,24 +9314,24 @@ public:
                SourceLocation ProtocolRAngleLoc);
 
   /// Build an Objective-C type parameter type.
-  QualType BuildObjCTypeParamType(const ObjCTypeParamDecl *Decl,
-                                  SourceLocation ProtocolLAngleLoc,
-                                  ArrayRef<ObjCProtocolDecl *> Protocols,
-                                  ArrayRef<SourceLocation> ProtocolLocs,
-                                  SourceLocation ProtocolRAngleLoc,
-                                  bool FailOnError = false);
+  // QualType BuildObjCTypeParamType(const ObjCTypeParamDecl *Decl,
+  //                                 SourceLocation ProtocolLAngleLoc,
+  //                                 ArrayRef<ObjCProtocolDecl *> Protocols,
+  //                                 ArrayRef<SourceLocation> ProtocolLocs,
+  //                                 SourceLocation ProtocolRAngleLoc,
+  //                                 bool FailOnError = false);
 
   /// Build an Objective-C object pointer type.
-  QualType BuildObjCObjectType(QualType BaseType,
-                               SourceLocation Loc,
-                               SourceLocation TypeArgsLAngleLoc,
-                               ArrayRef<TypeSourceInfo *> TypeArgs,
-                               SourceLocation TypeArgsRAngleLoc,
-                               SourceLocation ProtocolLAngleLoc,
-                               ArrayRef<ObjCProtocolDecl *> Protocols,
-                               ArrayRef<SourceLocation> ProtocolLocs,
-                               SourceLocation ProtocolRAngleLoc,
-                               bool FailOnError = false);
+  // QualType BuildObjCObjectType(QualType BaseType,
+  //                              SourceLocation Loc,
+  //                              SourceLocation TypeArgsLAngleLoc,
+  //                              ArrayRef<TypeSourceInfo *> TypeArgs,
+  //                              SourceLocation TypeArgsRAngleLoc,
+  //                              SourceLocation ProtocolLAngleLoc,
+  //                              ArrayRef<ObjCProtocolDecl *> Protocols,
+  //                              ArrayRef<SourceLocation> ProtocolLocs,
+  //                              SourceLocation ProtocolRAngleLoc,
+  //                              bool FailOnError = false);
 
   /// Ensure attributes are consistent with type.
   /// \param [in, out] Attributes The attributes to check; they will
@@ -9344,16 +9344,16 @@ public:
   /// Process the specified property declaration and create decls for the
   /// setters and getters as needed.
   /// \param property The property declaration being processed
-  void ProcessPropertyDecl(ObjCPropertyDecl *property);
+  // void ProcessPropertyDecl(ObjCPropertyDecl *property);
 
 
-  void DiagnosePropertyMismatch(ObjCPropertyDecl *Property,
-                                ObjCPropertyDecl *SuperProperty,
-                                const IdentifierInfo *Name,
-                                bool OverridingProtocolProperty);
+  // void DiagnosePropertyMismatch(ObjCPropertyDecl *Property,
+  //                               ObjCPropertyDecl *SuperProperty,
+  //                               const IdentifierInfo *Name,
+  //                               bool OverridingProtocolProperty);
 
-  void DiagnoseClassExtensionDupMethods(ObjCCategoryDecl *CAT,
-                                        ObjCInterfaceDecl *ID);
+  // void DiagnoseClassExtensionDupMethods(ObjCCategoryDecl *CAT,
+  //                                       ObjCInterfaceDecl *ID);
 
   Decl *ActOnAtEnd(Scope *S, SourceRange AtEnd,
                    ArrayRef<Decl *> allMethods = None,
@@ -9396,38 +9396,38 @@ public:
     ParsedAttributesView ArgAttrs;
   };
 
-  Decl *ActOnMethodDeclaration(
-      Scope *S,
-      SourceLocation BeginLoc, // location of the + or -.
-      SourceLocation EndLoc,   // location of the ; or {.
-      tok::TokenKind MethodType, ObjCDeclSpec &ReturnQT, ParsedType ReturnType,
-      ArrayRef<SourceLocation> SelectorLocs, Selector Sel,
-      // optional arguments. The number of types/arguments is obtained
-      // from the Sel.getNumArgs().
-      ObjCArgInfo *ArgInfo, DeclaratorChunk::ParamInfo *CParamInfo,
-      unsigned CNumArgs, // c-style args
-      const ParsedAttributesView &AttrList, tok::ObjCKeywordKind MethodImplKind,
-      bool isVariadic, bool MethodDefinition);
+  // Decl *ActOnMethodDeclaration(
+  //     Scope *S,
+  //     SourceLocation BeginLoc, // location of the + or -.
+  //     SourceLocation EndLoc,   // location of the ; or {.
+  //     tok::TokenKind MethodType, ObjCDeclSpec &ReturnQT, ParsedType ReturnType,
+  //     ArrayRef<SourceLocation> SelectorLocs, Selector Sel,
+  //     // optional arguments. The number of types/arguments is obtained
+  //     // from the Sel.getNumArgs().
+  //     ObjCArgInfo *ArgInfo, DeclaratorChunk::ParamInfo *CParamInfo,
+  //     unsigned CNumArgs, // c-style args
+  //     const ParsedAttributesView &AttrList, tok::ObjCKeywordKind MethodImplKind,
+  //     bool isVariadic, bool MethodDefinition);
 
-  ObjCMethodDecl *LookupMethodInQualifiedType(Selector Sel,
-                                              const ObjCObjectPointerType *OPT,
-                                              bool IsInstance);
-  ObjCMethodDecl *LookupMethodInObjectType(Selector Sel, QualType Ty,
-                                           bool IsInstance);
+  // ObjCMethodDecl *LookupMethodInQualifiedType(Selector Sel,
+  //                                             const ObjCObjectPointerType *OPT,
+  //                                             bool IsInstance);
+  // ObjCMethodDecl *LookupMethodInObjectType(Selector Sel, QualType Ty,
+  //                                          bool IsInstance);
 
-  bool CheckARCMethodDecl(ObjCMethodDecl *method);
-  bool inferObjCARCLifetime(ValueDecl *decl);
+  // bool CheckARCMethodDecl(ObjCMethodDecl *method);
+  // bool inferObjCARCLifetime(ValueDecl *decl);
 
-  void deduceOpenCLAddressSpace(ValueDecl *decl);
+  // void deduceOpenCLAddressSpace(ValueDecl *decl);
 
-  ExprResult
-  HandleExprPropertyRefExpr(const ObjCObjectPointerType *OPT,
-                            Expr *BaseExpr,
-                            SourceLocation OpLoc,
-                            DeclarationName MemberName,
-                            SourceLocation MemberLoc,
-                            SourceLocation SuperLoc, QualType SuperType,
-                            bool Super);
+  // ExprResult
+  // HandleExprPropertyRefExpr(const ObjCObjectPointerType *OPT,
+  //                           Expr *BaseExpr,
+  //                           SourceLocation OpLoc,
+  //                           DeclarationName MemberName,
+  //                           SourceLocation MemberLoc,
+  //                           SourceLocation SuperLoc, QualType SuperType,
+  //                           bool Super);
 
   ExprResult
   ActOnClassPropertyRefExpr(IdentifierInfo &receiverName,
@@ -9435,26 +9435,26 @@ public:
                             SourceLocation receiverNameLoc,
                             SourceLocation propertyNameLoc);
 
-  ObjCMethodDecl *tryCaptureObjCSelf(SourceLocation Loc);
+  // ObjCMethodDecl *tryCaptureObjCSelf(SourceLocation Loc);
 
   /// Describes the kind of message expression indicated by a message
   /// send that starts with an identifier.
-  enum ObjCMessageKind {
-    /// The message is sent to 'super'.
-    ObjCSuperMessage,
-    /// The message is an instance message.
-    ObjCInstanceMessage,
-    /// The message is a class message, and the identifier is a type
-    /// name.
-    ObjCClassMessage
-  };
+  // enum ObjCMessageKind {
+  //   /// The message is sent to 'super'.
+  //   ObjCSuperMessage,
+  //   /// The message is an instance message.
+  //   ObjCInstanceMessage,
+  //   /// The message is a class message, and the identifier is a type
+  //   /// name.
+  //   ObjCClassMessage
+  // };
 
-  ObjCMessageKind getObjCMessageKind(Scope *S,
-                                     IdentifierInfo *Name,
-                                     SourceLocation NameLoc,
-                                     bool IsSuper,
-                                     bool HasTrailingDot,
-                                     ParsedType &ReceiverType);
+  // ObjCMessageKind getObjCMessageKind(Scope *S,
+  //                                    IdentifierInfo *Name,
+  //                                    SourceLocation NameLoc,
+  //                                    bool IsSuper,
+  //                                    bool HasTrailingDot,
+  //                                    ParsedType &ReceiverType);
 
   ExprResult ActOnSuperMessage(Scope *S, SourceLocation SuperLoc,
                                Selector Sel,
@@ -9463,23 +9463,23 @@ public:
                                SourceLocation RBracLoc,
                                MultiExprArg Args);
 
-  ExprResult BuildClassMessage(TypeSourceInfo *ReceiverTypeInfo,
-                               QualType ReceiverType,
-                               SourceLocation SuperLoc,
-                               Selector Sel,
-                               ObjCMethodDecl *Method,
-                               SourceLocation LBracLoc,
-                               ArrayRef<SourceLocation> SelectorLocs,
-                               SourceLocation RBracLoc,
-                               MultiExprArg Args,
-                               bool isImplicit = false);
+  // ExprResult BuildClassMessage(TypeSourceInfo *ReceiverTypeInfo,
+  //                              QualType ReceiverType,
+  //                              SourceLocation SuperLoc,
+  //                              Selector Sel,
+  //                              ObjCMethodDecl *Method,
+  //                              SourceLocation LBracLoc,
+  //                              ArrayRef<SourceLocation> SelectorLocs,
+  //                              SourceLocation RBracLoc,
+  //                              MultiExprArg Args,
+  //                              bool isImplicit = false);
 
-  ExprResult BuildClassMessageImplicit(QualType ReceiverType,
-                                       bool isSuperReceiver,
-                                       SourceLocation Loc,
-                                       Selector Sel,
-                                       ObjCMethodDecl *Method,
-                                       MultiExprArg Args);
+  // ExprResult BuildClassMessageImplicit(QualType ReceiverType,
+  //                                      bool isSuperReceiver,
+  //                                      SourceLocation Loc,
+  //                                      Selector Sel,
+  //                                      ObjCMethodDecl *Method,
+  //                                      MultiExprArg Args);
 
   ExprResult ActOnClassMessage(Scope *S,
                                ParsedType Receiver,
@@ -9489,23 +9489,23 @@ public:
                                SourceLocation RBracLoc,
                                MultiExprArg Args);
 
-  ExprResult BuildInstanceMessage(Expr *Receiver,
-                                  QualType ReceiverType,
-                                  SourceLocation SuperLoc,
-                                  Selector Sel,
-                                  ObjCMethodDecl *Method,
-                                  SourceLocation LBracLoc,
-                                  ArrayRef<SourceLocation> SelectorLocs,
-                                  SourceLocation RBracLoc,
-                                  MultiExprArg Args,
-                                  bool isImplicit = false);
+  // ExprResult BuildInstanceMessage(Expr *Receiver,
+  //                                 QualType ReceiverType,
+  //                                 SourceLocation SuperLoc,
+  //                                 Selector Sel,
+  //                                 ObjCMethodDecl *Method,
+  //                                 SourceLocation LBracLoc,
+  //                                 ArrayRef<SourceLocation> SelectorLocs,
+  //                                 SourceLocation RBracLoc,
+  //                                 MultiExprArg Args,
+  //                                 bool isImplicit = false);
 
-  ExprResult BuildInstanceMessageImplicit(Expr *Receiver,
-                                          QualType ReceiverType,
-                                          SourceLocation Loc,
-                                          Selector Sel,
-                                          ObjCMethodDecl *Method,
-                                          MultiExprArg Args);
+  // ExprResult BuildInstanceMessageImplicit(Expr *Receiver,
+  //                                         QualType ReceiverType,
+  //                                         SourceLocation Loc,
+  //                                         Selector Sel,
+  //                                         ObjCMethodDecl *Method,
+  //                                         MultiExprArg Args);
 
   ExprResult ActOnInstanceMessage(Scope *S,
                                   Expr *Receiver,
@@ -9515,48 +9515,48 @@ public:
                                   SourceLocation RBracLoc,
                                   MultiExprArg Args);
 
-  ExprResult BuildObjCBridgedCast(SourceLocation LParenLoc,
-                                  ObjCBridgeCastKind Kind,
-                                  SourceLocation BridgeKeywordLoc,
-                                  TypeSourceInfo *TSInfo,
-                                  Expr *SubExpr);
+  // ExprResult BuildObjCBridgedCast(SourceLocation LParenLoc,
+  //                                 ObjCBridgeCastKind Kind,
+  //                                 SourceLocation BridgeKeywordLoc,
+  //                                 TypeSourceInfo *TSInfo,
+  //                                 Expr *SubExpr);
 
-  ExprResult ActOnObjCBridgedCast(Scope *S,
-                                  SourceLocation LParenLoc,
-                                  ObjCBridgeCastKind Kind,
-                                  SourceLocation BridgeKeywordLoc,
-                                  ParsedType Type,
-                                  SourceLocation RParenLoc,
-                                  Expr *SubExpr);
+  // ExprResult ActOnObjCBridgedCast(Scope *S,
+  //                                 SourceLocation LParenLoc,
+  //                                 ObjCBridgeCastKind Kind,
+  //                                 SourceLocation BridgeKeywordLoc,
+  //                                 ParsedType Type,
+  //                                 SourceLocation RParenLoc,
+  //                                 Expr *SubExpr);
 
   void CheckTollFreeBridgeCast(QualType castType, Expr *castExpr);
 
-  void CheckObjCBridgeRelatedCast(QualType castType, Expr *castExpr);
+  // void CheckObjCBridgeRelatedCast(QualType castType, Expr *castExpr);
 
   bool CheckTollFreeBridgeStaticCast(QualType castType, Expr *castExpr,
                                      CastKind &Kind);
 
-  bool checkObjCBridgeRelatedComponents(SourceLocation Loc,
-                                        QualType DestType, QualType SrcType,
-                                        ObjCInterfaceDecl *&RelatedClass,
-                                        ObjCMethodDecl *&ClassMethod,
-                                        ObjCMethodDecl *&InstanceMethod,
-                                        TypedefNameDecl *&TDNDecl,
-                                        bool CfToNs, bool Diagnose = true);
+  // bool checkObjCBridgeRelatedComponents(SourceLocation Loc,
+  //                                       QualType DestType, QualType SrcType,
+  //                                       ObjCInterfaceDecl *&RelatedClass,
+  //                                       ObjCMethodDecl *&ClassMethod,
+  //                                       ObjCMethodDecl *&InstanceMethod,
+  //                                       TypedefNameDecl *&TDNDecl,
+  //                                       bool CfToNs, bool Diagnose = true);
 
-  bool CheckObjCBridgeRelatedConversions(SourceLocation Loc,
-                                         QualType DestType, QualType SrcType,
-                                         Expr *&SrcExpr, bool Diagnose = true);
+  // bool CheckObjCBridgeRelatedConversions(SourceLocation Loc,
+  //                                        QualType DestType, QualType SrcType,
+  //                                        Expr *&SrcExpr, bool Diagnose = true);
 
-  bool CheckConversionToObjCLiteral(QualType DstType, Expr *&SrcExpr,
-                                    bool Diagnose = true);
+  // bool CheckConversionToObjCLiteral(QualType DstType, Expr *&SrcExpr,
+  //                                   bool Diagnose = true);
 
-  bool checkInitMethod(ObjCMethodDecl *method, QualType receiverTypeIfCall);
+  // bool checkInitMethod(ObjCMethodDecl *method, QualType receiverTypeIfCall);
 
   /// Check whether the given new method is a valid override of the
   /// given overridden method, and set any properties that should be inherited.
-  void CheckObjCMethodOverride(ObjCMethodDecl *NewMethod,
-                               const ObjCMethodDecl *Overridden);
+  // void CheckObjCMethodOverride(ObjCMethodDecl *NewMethod,
+  //                              const ObjCMethodDecl *Overridden);
 
   /// Describes the compatibility of a result type with its method.
   enum ResultTypeCompatibilityKind {
@@ -9565,12 +9565,12 @@ public:
     RTC_Unknown
   };
 
-  void CheckObjCMethodDirectOverrides(ObjCMethodDecl *method,
-                                      ObjCMethodDecl *overridden);
+  // void CheckObjCMethodDirectOverrides(ObjCMethodDecl *method,
+  //                                     ObjCMethodDecl *overridden);
 
-  void CheckObjCMethodOverrides(ObjCMethodDecl *ObjCMethod,
-                                ObjCInterfaceDecl *CurrentClass,
-                                ResultTypeCompatibilityKind RTC);
+  // void CheckObjCMethodOverrides(ObjCMethodDecl *ObjCMethod,
+  //                               ObjCInterfaceDecl *CurrentClass,
+  //                               ResultTypeCompatibilityKind RTC);
 
   enum PragmaOptionsAlignKind {
     POAK_Native,  // #pragma options align=native
@@ -11246,12 +11246,12 @@ public:
   QualType CheckAssignmentOperands( // C99 6.5.16.[1,2]
     Expr *LHSExpr, ExprResult &RHS, SourceLocation Loc, QualType CompoundType);
 
-  ExprResult checkPseudoObjectIncDec(Scope *S, SourceLocation OpLoc,
-                                     UnaryOperatorKind Opcode, Expr *Op);
-  ExprResult checkPseudoObjectAssignment(Scope *S, SourceLocation OpLoc,
-                                         BinaryOperatorKind Opcode,
-                                         Expr *LHS, Expr *RHS);
-  ExprResult checkPseudoObjectRValue(Expr *E);
+  // ExprResult checkPseudoObjectIncDec(Scope *S, SourceLocation OpLoc,
+  //                                    UnaryOperatorKind Opcode, Expr *Op);
+  // ExprResult checkPseudoObjectAssignment(Scope *S, SourceLocation OpLoc,
+  //                                        BinaryOperatorKind Opcode,
+  //                                        Expr *LHS, Expr *RHS);
+  // ExprResult checkPseudoObjectRValue(Expr *E);
   Expr *recreateSyntacticForm(PseudoObjectExpr *E);
 
   QualType CheckConditionalOperands( // C99 6.5.15
@@ -11276,8 +11276,8 @@ public:
     return Composite;
   }
 
-  QualType FindCompositeObjCPointerType(ExprResult &LHS, ExprResult &RHS,
-                                        SourceLocation QuestionLoc);
+  // QualType FindCompositeObjCPointerType(ExprResult &LHS, ExprResult &RHS,
+  //                                       SourceLocation QuestionLoc);
 
   bool DiagnoseConditionalForNull(Expr *LHSExpr, Expr *RHSExpr,
                                   SourceLocation QuestionLoc);
@@ -11422,20 +11422,20 @@ public:
   /// \param Method - May be null.
   /// \param [out] ReturnType - The return type of the send.
   /// \return true iff there were any incompatible types.
-  bool CheckMessageArgumentTypes(const Expr *Receiver, QualType ReceiverType,
-                                 MultiExprArg Args, Selector Sel,
-                                 ArrayRef<SourceLocation> SelectorLocs,
-                                 ObjCMethodDecl *Method, bool isClassMessage,
-                                 bool isSuperMessage, SourceLocation lbrac,
-                                 SourceLocation rbrac, SourceRange RecRange,
-                                 QualType &ReturnType, ExprValueKind &VK);
+  // bool CheckMessageArgumentTypes(const Expr *Receiver, QualType ReceiverType,
+  //                                MultiExprArg Args, Selector Sel,
+  //                                ArrayRef<SourceLocation> SelectorLocs,
+  //                                ObjCMethodDecl *Method, bool isClassMessage,
+  //                                bool isSuperMessage, SourceLocation lbrac,
+  //                                SourceLocation rbrac, SourceRange RecRange,
+  //                                QualType &ReturnType, ExprValueKind &VK);
 
   /// Determine the result of a message send expression based on
   /// the type of the receiver, the method expected to receive the message,
   /// and the form of the message send.
-  QualType getMessageSendResultType(const Expr *Receiver, QualType ReceiverType,
-                                    ObjCMethodDecl *Method, bool isClassMessage,
-                                    bool isSuperMessage);
+  // QualType getMessageSendResultType(const Expr *Receiver, QualType ReceiverType,
+  //                                   ObjCMethodDecl *Method, bool isClassMessage,
+  //                                   bool isSuperMessage);
 
   /// If the given expression involves a message send to a method
   /// with a related result type, emit a note describing what happened.
@@ -12007,58 +12007,58 @@ public:
                                     bool AfterAmpersand);
   void CodeCompleteAfterFunctionEquals(Declarator &D);
 
-  void CodeCompleteObjCAtDirective(Scope *S);
-  void CodeCompleteObjCAtVisibility(Scope *S);
-  void CodeCompleteObjCAtStatement(Scope *S);
-  void CodeCompleteObjCAtExpression(Scope *S);
-  void CodeCompleteObjCPropertyFlags(Scope *S, ObjCDeclSpec &ODS);
-  void CodeCompleteObjCPropertyGetter(Scope *S);
-  void CodeCompleteObjCPropertySetter(Scope *S);
-  void CodeCompleteObjCPassingType(Scope *S, ObjCDeclSpec &DS,
-                                   bool IsParameter);
-  void CodeCompleteObjCMessageReceiver(Scope *S);
-  void CodeCompleteObjCSuperMessage(Scope *S, SourceLocation SuperLoc,
-                                    ArrayRef<IdentifierInfo *> SelIdents,
-                                    bool AtArgumentExpression);
-  void CodeCompleteObjCClassMessage(Scope *S, ParsedType Receiver,
-                                    ArrayRef<IdentifierInfo *> SelIdents,
-                                    bool AtArgumentExpression,
-                                    bool IsSuper = false);
-  void CodeCompleteObjCInstanceMessage(Scope *S, Expr *Receiver,
-                                       ArrayRef<IdentifierInfo *> SelIdents,
-                                       bool AtArgumentExpression,
-                                       ObjCInterfaceDecl *Super = nullptr);
-  void CodeCompleteObjCForCollection(Scope *S,
-                                     DeclGroupPtrTy IterationVar);
-  void CodeCompleteObjCSelector(Scope *S,
-                                ArrayRef<IdentifierInfo *> SelIdents);
-  void CodeCompleteObjCProtocolReferences(
-                                         ArrayRef<IdentifierLocPair> Protocols);
-  void CodeCompleteObjCProtocolDecl(Scope *S);
-  void CodeCompleteObjCInterfaceDecl(Scope *S);
-  void CodeCompleteObjCSuperclass(Scope *S,
-                                  IdentifierInfo *ClassName,
-                                  SourceLocation ClassNameLoc);
-  void CodeCompleteObjCImplementationDecl(Scope *S);
-  void CodeCompleteObjCInterfaceCategory(Scope *S,
-                                         IdentifierInfo *ClassName,
-                                         SourceLocation ClassNameLoc);
-  void CodeCompleteObjCImplementationCategory(Scope *S,
-                                              IdentifierInfo *ClassName,
-                                              SourceLocation ClassNameLoc);
-  void CodeCompleteObjCPropertyDefinition(Scope *S);
-  void CodeCompleteObjCPropertySynthesizeIvar(Scope *S,
+  // void CodeCompleteObjCAtDirective(Scope *S);
+  // void CodeCompleteObjCAtVisibility(Scope *S);
+  // void CodeCompleteObjCAtStatement(Scope *S);
+  // void CodeCompleteObjCAtExpression(Scope *S);
+  // void CodeCompleteObjCPropertyFlags(Scope *S, ObjCDeclSpec &ODS);
+  // void CodeCompleteObjCPropertyGetter(Scope *S);
+  // void CodeCompleteObjCPropertySetter(Scope *S);
+  // void CodeCompleteObjCPassingType(Scope *S, ObjCDeclSpec &DS,
+  //                                  bool IsParameter);
+  // void CodeCompleteObjCMessageReceiver(Scope *S);
+  // void CodeCompleteObjCSuperMessage(Scope *S, SourceLocation SuperLoc,
+  //                                   ArrayRef<IdentifierInfo *> SelIdents,
+  //                                   bool AtArgumentExpression);
+  // void CodeCompleteObjCClassMessage(Scope *S, ParsedType Receiver,
+  //                                   ArrayRef<IdentifierInfo *> SelIdents,
+  //                                   bool AtArgumentExpression,
+  //                                   bool IsSuper = false);
+  // void CodeCompleteObjCInstanceMessage(Scope *S, Expr *Receiver,
+  //                                      ArrayRef<IdentifierInfo *> SelIdents,
+  //                                      bool AtArgumentExpression,
+  //                                      ObjCInterfaceDecl *Super = nullptr);
+  // void CodeCompleteObjCForCollection(Scope *S,
+  //                                    DeclGroupPtrTy IterationVar);
+  // void CodeCompleteObjCSelector(Scope *S,
+  //                               ArrayRef<IdentifierInfo *> SelIdents);
+  // void CodeCompleteObjCProtocolReferences(
+  //                                        ArrayRef<IdentifierLocPair> Protocols);
+  // void CodeCompleteObjCProtocolDecl(Scope *S);
+  // void CodeCompleteObjCInterfaceDecl(Scope *S);
+  // void CodeCompleteObjCSuperclass(Scope *S,
+  //                                 IdentifierInfo *ClassName,
+  //                                 SourceLocation ClassNameLoc);
+  // void CodeCompleteObjCImplementationDecl(Scope *S);
+  // void CodeCompleteObjCInterfaceCategory(Scope *S,
+  //                                        IdentifierInfo *ClassName,
+  //                                        SourceLocation ClassNameLoc);
+  // void CodeCompleteObjCImplementationCategory(Scope *S,
+  //                                             IdentifierInfo *ClassName,
+  //                                             SourceLocation ClassNameLoc);
+  // void CodeCompleteObjCPropertyDefinition(Scope *S);
+  // void CodeCompleteObjCPropertySynthesizeIvar(Scope *S,
                                               IdentifierInfo *PropertyName);
-  void CodeCompleteObjCMethodDecl(Scope *S, Optional<bool> IsInstanceMethod,
-                                  ParsedType ReturnType);
-  void CodeCompleteObjCMethodDeclSelector(Scope *S,
-                                          bool IsInstanceMethod,
-                                          bool AtParameterName,
-                                          ParsedType ReturnType,
-                                          ArrayRef<IdentifierInfo *> SelIdents);
-  void CodeCompleteObjCClassPropertyRefExpr(Scope *S, IdentifierInfo &ClassName,
-                                            SourceLocation ClassNameLoc,
-                                            bool IsBaseExprStatement);
+  // void CodeCompleteObjCMethodDecl(Scope *S, Optional<bool> IsInstanceMethod,
+  //                                 ParsedType ReturnType);
+  // void CodeCompleteObjCMethodDeclSelector(Scope *S,
+  //                                         bool IsInstanceMethod,
+  //                                         bool AtParameterName,
+  //                                         ParsedType ReturnType,
+  //                                         ArrayRef<IdentifierInfo *> SelIdents);
+  // void CodeCompleteObjCClassPropertyRefExpr(Scope *S, IdentifierInfo &ClassName,
+  //                                           SourceLocation ClassNameLoc,
+  //                                           bool IsBaseExprStatement);
   void CodeCompletePreprocessorDirective(bool InConditional);
   void CodeCompleteInPreprocessorConditionalExclusion(Scope *S);
   void CodeCompletePreprocessorMacroName(bool IsDefinition);
@@ -12099,8 +12099,8 @@ private:
                                   FormatStringInfo *FSI);
   bool CheckFunctionCall(FunctionDecl *FDecl, CallExpr *TheCall,
                          const FunctionProtoType *Proto);
-  bool CheckObjCMethodCall(ObjCMethodDecl *Method, SourceLocation loc,
-                           ArrayRef<const Expr *> Args);
+  // bool CheckObjCMethodCall(ObjCMethodDecl *Method, SourceLocation loc,
+  //                          ArrayRef<const Expr *> Args);
   bool CheckPointerCall(NamedDecl *NDecl, CallExpr *TheCall,
                         const FunctionProtoType *Proto);
   bool CheckOtherCall(CallExpr *TheCall, const FunctionProtoType *Proto);
@@ -12114,7 +12114,7 @@ private:
                  bool IsMemberFunction, SourceLocation Loc, SourceRange Range,
                  VariadicCallType CallType);
 
-  bool CheckObjCString(Expr *Arg);
+  // bool CheckObjCString(Expr *Arg);
   ExprResult CheckOSLogFormatStringArg(Expr *Arg);
 
   ExprResult CheckBuiltinFunctionCall(FunctionDecl *FDecl,
@@ -12298,7 +12298,7 @@ private:
 
   /// Check whether receiver is mutable ObjC container which
   /// attempts to add itself into the container
-  void CheckObjCCircularContainer(ObjCMessageExpr *Message);
+  // void CheckObjCCircularContainer(ObjCMessageExpr *Message);
 
   void AnalyzeDeleteExprMismatch(const CXXDeleteExpr *DE);
   void AnalyzeDeleteExprMismatch(FieldDecl *Field, SourceLocation DeleteLoc,
@@ -12399,19 +12399,19 @@ public:
   IdentifierInfo *getSuperIdentifier() const;
   IdentifierInfo *getFloat128Identifier() const;
 
-  Decl *getObjCDeclContext() const;
+  // Decl *getObjCDeclContext() const;
 
   DeclContext *getCurLexicalContext() const {
     return OriginalLexicalContext ? OriginalLexicalContext : CurContext;
   }
 
-  const DeclContext *getCurObjCLexicalContext() const {
-    const DeclContext *DC = getCurLexicalContext();
-    // A category implicitly has the attribute of the interface.
-    if (const ObjCCategoryDecl *CatD = dyn_cast<ObjCCategoryDecl>(DC))
-      DC = CatD->getClassInterface();
-    return DC;
-  }
+  // const DeclContext *getCurObjCLexicalContext() const {
+  //   const DeclContext *DC = getCurLexicalContext();
+  //   // A category implicitly has the attribute of the interface.
+  //   if (const ObjCCategoryDecl *CatD = dyn_cast<ObjCCategoryDecl>(DC))
+  //     DC = CatD->getClassInterface();
+  //   return DC;
+  // }
 
   /// Determine the number of levels of enclosing template parameters. This is
   /// only usable while parsing. Note that this does not include dependent

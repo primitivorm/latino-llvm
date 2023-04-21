@@ -15,7 +15,7 @@
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -56,7 +56,7 @@ namespace AttributeLangSupport {
 /// type (function or function-typed variable) or an Objective-C
 /// method.
 static bool isFunctionOrMethod(const Decl *D) {
-  return (D->getFunctionType() != nullptr) || isa<ObjCMethodDecl>(D);
+  return (D->getFunctionType() != nullptr) /*|| isa<ObjCMethodDecl>(D)*/;
 }
 
 /// Return true if the given decl has function type (function or
@@ -79,7 +79,7 @@ static bool hasDeclarator(const Decl *D) {
 static bool hasFunctionProto(const Decl *D) {
   if (const FunctionType *FnTy = D->getFunctionType())
     return isa<FunctionProtoType>(FnTy);
-  return isa<ObjCMethodDecl>(D) || isa<BlockDecl>(D);
+  return /*isa<ObjCMethodDecl>(D) ||*/ isa<BlockDecl>(D);
 }
 
 /// getFunctionOrMethodNumParams - Return number of function or method
@@ -90,15 +90,15 @@ static unsigned getFunctionOrMethodNumParams(const Decl *D) {
     return cast<FunctionProtoType>(FnTy)->getNumParams();
   if (const auto *BD = dyn_cast<BlockDecl>(D))
     return BD->getNumParams();
-  return cast<ObjCMethodDecl>(D)->param_size();
+  // return cast<ObjCMethodDecl>(D)->param_size();
 }
 
 static const ParmVarDecl *getFunctionOrMethodParam(const Decl *D,
                                                    unsigned Idx) {
   if (const auto *FD = dyn_cast<FunctionDecl>(D))
     return FD->getParamDecl(Idx);
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-    return MD->getParamDecl(Idx);
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //   return MD->getParamDecl(Idx);
   if (const auto *BD = dyn_cast<BlockDecl>(D))
     return BD->getParamDecl(Idx);
   return nullptr;
@@ -110,7 +110,7 @@ static QualType getFunctionOrMethodParamType(const Decl *D, unsigned Idx) {
   if (const auto *BD = dyn_cast<BlockDecl>(D))
     return BD->getParamDecl(Idx)->getType();
 
-  return cast<ObjCMethodDecl>(D)->parameters()[Idx]->getType();
+  // return cast<ObjCMethodDecl>(D)->parameters()[Idx]->getType();
 }
 
 static SourceRange getFunctionOrMethodParamRange(const Decl *D, unsigned Idx) {
@@ -122,14 +122,14 @@ static SourceRange getFunctionOrMethodParamRange(const Decl *D, unsigned Idx) {
 static QualType getFunctionOrMethodResultType(const Decl *D) {
   if (const FunctionType *FnTy = D->getFunctionType())
     return FnTy->getReturnType();
-  return cast<ObjCMethodDecl>(D)->getReturnType();
+  // return cast<ObjCMethodDecl>(D)->getReturnType();
 }
 
 static SourceRange getFunctionOrMethodResultSourceRange(const Decl *D) {
   if (const auto *FD = dyn_cast<FunctionDecl>(D))
     return FD->getReturnTypeSourceRange();
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-    return MD->getReturnTypeSourceRange();
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //   return MD->getReturnTypeSourceRange();
   return SourceRange();
 }
 
@@ -138,7 +138,7 @@ static bool isFunctionOrMethodVariadic(const Decl *D) {
     return cast<FunctionProtoType>(FnTy)->isVariadic();
   if (const auto *BD = dyn_cast<BlockDecl>(D))
     return BD->isVariadic();
-  return cast<ObjCMethodDecl>(D)->isVariadic();
+  // return cast<ObjCMethodDecl>(D)->isVariadic();
 }
 
 static bool isInstanceMethod(const Decl *D) {
@@ -148,13 +148,13 @@ static bool isInstanceMethod(const Decl *D) {
 }
 
 static inline bool isNSStringType(QualType T, ASTContext &Ctx) {
-  const auto *PT = T->getAs<ObjCObjectPointerType>();
-  if (!PT)
-    return false;
+  // const auto *PT = T->getAs<ObjCObjectPointerType>();
+  // if (!PT)
+  //   return false;
 
-  ObjCInterfaceDecl *Cls = PT->getObjectType()->getInterface();
-  if (!Cls)
-    return false;
+  // ObjCInterfaceDecl *Cls = PT->getObjectType()->getInterface();
+  // if (!Cls)
+  //   return false;
 
   IdentifierInfo* ClsName = Cls->getIdentifier();
 
@@ -1376,35 +1376,35 @@ static void handlePackedAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
     S.Diag(AL.getLoc(), diag::warn_attribute_ignored) << AL;
 }
 
-static bool checkIBOutletCommon(Sema &S, Decl *D, const ParsedAttr &AL) {
-  // The IBOutlet/IBOutletCollection attributes only apply to instance
-  // variables or properties of Objective-C classes.  The outlet must also
-  // have an object reference type.
-  if (const auto *VD = dyn_cast<ObjCIvarDecl>(D)) {
-    if (!VD->getType()->getAs<ObjCObjectPointerType>()) {
-      S.Diag(AL.getLoc(), diag::warn_iboutlet_object_type)
-          << AL << VD->getType() << 0;
-      return false;
-    }
-  }
-  else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(D)) {
-    if (!PD->getType()->getAs<ObjCObjectPointerType>()) {
-      S.Diag(AL.getLoc(), diag::warn_iboutlet_object_type)
-          << AL << PD->getType() << 1;
-      return false;
-    }
-  }
-  else {
-    S.Diag(AL.getLoc(), diag::warn_attribute_iboutlet) << AL;
-    return false;
-  }
+// static bool checkIBOutletCommon(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   // The IBOutlet/IBOutletCollection attributes only apply to instance
+//   // variables or properties of Objective-C classes.  The outlet must also
+//   // have an object reference type.
+//   if (const auto *VD = dyn_cast<ObjCIvarDecl>(D)) {
+//     if (!VD->getType()->getAs<ObjCObjectPointerType>()) {
+//       S.Diag(AL.getLoc(), diag::warn_iboutlet_object_type)
+//           << AL << VD->getType() << 0;
+//       return false;
+//     }
+//   }
+//   else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(D)) {
+//     if (!PD->getType()->getAs<ObjCObjectPointerType>()) {
+//       S.Diag(AL.getLoc(), diag::warn_iboutlet_object_type)
+//           << AL << PD->getType() << 1;
+//       return false;
+//     }
+//   }
+//   else {
+//     S.Diag(AL.getLoc(), diag::warn_attribute_iboutlet) << AL;
+//     return false;
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
 static void handleIBOutlet(Sema &S, Decl *D, const ParsedAttr &AL) {
-  if (!checkIBOutletCommon(S, D, AL))
-    return;
+  // if (!checkIBOutletCommon(S, D, AL))
+  //   return;
 
   D->addAttr(::new (S.Context) IBOutletAttr(S.Context, AL));
 }
@@ -1417,8 +1417,8 @@ static void handleIBOutletCollection(Sema &S, Decl *D, const ParsedAttr &AL) {
     return;
   }
 
-  if (!checkIBOutletCommon(S, D, AL))
-    return;
+  // if (!checkIBOutletCommon(S, D, AL))
+  //   return;
 
   ParsedType PT;
 
@@ -1442,12 +1442,12 @@ static void handleIBOutletCollection(Sema &S, Decl *D, const ParsedAttr &AL) {
   // FIXME. Gnu attribute extension ignores use of builtin types in
   // attributes. So, __attribute__((iboutletcollection(char))) will be
   // treated as __attribute__((iboutletcollection())).
-  if (!QT->isObjCIdType() && !QT->isObjCObjectType()) {
-    S.Diag(AL.getLoc(),
-           QT->isBuiltinType() ? diag::err_iboutletcollection_builtintype
-                               : diag::err_iboutletcollection_type) << QT;
-    return;
-  }
+  // if (!QT->isObjCIdType() && !QT->isObjCObjectType()) {
+  //   S.Diag(AL.getLoc(),
+  //          QT->isBuiltinType() ? diag::err_iboutletcollection_builtintype
+  //                              : diag::err_iboutletcollection_type) << QT;
+  //   return;
+  // }
 
   D->addAttr(::new (S.Context) IBOutletCollectionAttr(S.Context, AL, QTLoc));
 }
@@ -2028,11 +2028,11 @@ static void handleNakedAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
 static void handleNoReturnAttr(Sema &S, Decl *D, const ParsedAttr &Attrs) {
   if (hasDeclarator(D)) return;
 
-  if (!isa<ObjCMethodDecl>(D)) {
-    S.Diag(Attrs.getLoc(), diag::warn_attribute_wrong_decl_type)
-        << Attrs << ExpectedFunctionOrMethod;
-    return;
-  }
+  // if (!isa<ObjCMethodDecl>(D)) {
+  //   S.Diag(Attrs.getLoc(), diag::warn_attribute_wrong_decl_type)
+  //       << Attrs << ExpectedFunctionOrMethod;
+  //   return;
+  // }
 
   D->addAttr(::new (S.Context) NoReturnAttr(S.Context, Attrs));
 }
@@ -2192,16 +2192,16 @@ static void handleAttrWithMessage(Sema &S, Decl *D, const ParsedAttr &AL) {
   D->addAttr(::new (S.Context) AttrTy(S.Context, AL, Str));
 }
 
-static void handleObjCSuppresProtocolAttr(Sema &S, Decl *D,
-                                          const ParsedAttr &AL) {
-  if (!cast<ObjCProtocolDecl>(D)->isThisDeclarationADefinition()) {
-    S.Diag(AL.getLoc(), diag::err_objc_attr_protocol_requires_definition)
-        << AL << AL.getRange();
-    return;
-  }
+// static void handleObjCSuppresProtocolAttr(Sema &S, Decl *D,
+//                                           const ParsedAttr &AL) {
+//   if (!cast<ObjCProtocolDecl>(D)->isThisDeclarationADefinition()) {
+//     S.Diag(AL.getLoc(), diag::err_objc_attr_protocol_requires_definition)
+//         << AL << AL.getRange();
+//     return;
+//   }
 
-  D->addAttr(::new (S.Context) ObjCExplicitProtocolImplAttr(S.Context, AL));
-}
+//   D->addAttr(::new (S.Context) ObjCExplicitProtocolImplAttr(S.Context, AL));
+// }
 
 static bool checkAvailabilityAttr(Sema &S, SourceRange Range,
                                   IdentifierInfo *Platform,
@@ -2579,7 +2579,7 @@ static void handleVisibilityAttr(Sema &S, Decl *D, const ParsedAttr &AL,
   // 'type_visibility' can only go on a type or namespace.
   if (isTypeVisibility &&
       !(isa<TagDecl>(D) ||
-        isa<ObjCInterfaceDecl>(D) ||
+        // isa<ObjCInterfaceDecl>(D) ||
         isa<NamespaceDecl>(D))) {
     S.Diag(AL.getRange().getBegin(), diag::err_attribute_wrong_decl_type)
         << AL << ExpectedTypeOrNamespace;
@@ -2618,95 +2618,95 @@ static void handleVisibilityAttr(Sema &S, Decl *D, const ParsedAttr &AL,
     D->addAttr(newAttr);
 }
 
-static void handleObjCDirectAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-  // objc_direct cannot be set on methods declared in the context of a protocol
-  if (isa<ObjCProtocolDecl>(D->getDeclContext())) {
-    S.Diag(AL.getLoc(), diag::err_objc_direct_on_protocol) << false;
-    return;
-  }
+// static void handleObjCDirectAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   // objc_direct cannot be set on methods declared in the context of a protocol
+//   if (isa<ObjCProtocolDecl>(D->getDeclContext())) {
+//     S.Diag(AL.getLoc(), diag::err_objc_direct_on_protocol) << false;
+//     return;
+//   }
 
-  if (S.getLangOpts().ObjCRuntime.allowsDirectDispatch()) {
-    handleSimpleAttribute<ObjCDirectAttr>(S, D, AL);
-  } else {
-    S.Diag(AL.getLoc(), diag::warn_objc_direct_ignored) << AL;
-  }
-}
+//   if (S.getLangOpts().ObjCRuntime.allowsDirectDispatch()) {
+//     handleSimpleAttribute<ObjCDirectAttr>(S, D, AL);
+//   } else {
+//     S.Diag(AL.getLoc(), diag::warn_objc_direct_ignored) << AL;
+//   }
+// }
 
-static void handleObjCDirectMembersAttr(Sema &S, Decl *D,
-                                        const ParsedAttr &AL) {
-  if (S.getLangOpts().ObjCRuntime.allowsDirectDispatch()) {
-    handleSimpleAttribute<ObjCDirectMembersAttr>(S, D, AL);
-  } else {
-    S.Diag(AL.getLoc(), diag::warn_objc_direct_ignored) << AL;
-  }
-}
+// static void handleObjCDirectMembersAttr(Sema &S, Decl *D,
+//                                         const ParsedAttr &AL) {
+//   if (S.getLangOpts().ObjCRuntime.allowsDirectDispatch()) {
+//     handleSimpleAttribute<ObjCDirectMembersAttr>(S, D, AL);
+//   } else {
+//     S.Diag(AL.getLoc(), diag::warn_objc_direct_ignored) << AL;
+//   }
+// }
 
-static void handleObjCMethodFamilyAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-  const auto *M = cast<ObjCMethodDecl>(D);
-  if (!AL.isArgIdent(0)) {
-    S.Diag(AL.getLoc(), diag::err_attribute_argument_n_type)
-        << AL << 1 << AANT_ArgumentIdentifier;
-    return;
-  }
+// static void handleObjCMethodFamilyAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   const auto *M = cast<ObjCMethodDecl>(D);
+//   if (!AL.isArgIdent(0)) {
+//     S.Diag(AL.getLoc(), diag::err_attribute_argument_n_type)
+//         << AL << 1 << AANT_ArgumentIdentifier;
+//     return;
+//   }
 
-  IdentifierLoc *IL = AL.getArgAsIdent(0);
-  ObjCMethodFamilyAttr::FamilyKind F;
-  if (!ObjCMethodFamilyAttr::ConvertStrToFamilyKind(IL->Ident->getName(), F)) {
-    S.Diag(IL->Loc, diag::warn_attribute_type_not_supported) << AL << IL->Ident;
-    return;
-  }
+//   IdentifierLoc *IL = AL.getArgAsIdent(0);
+//   ObjCMethodFamilyAttr::FamilyKind F;
+//   if (!ObjCMethodFamilyAttr::ConvertStrToFamilyKind(IL->Ident->getName(), F)) {
+//     S.Diag(IL->Loc, diag::warn_attribute_type_not_supported) << AL << IL->Ident;
+//     return;
+//   }
 
-  if (F == ObjCMethodFamilyAttr::OMF_init &&
-      !M->getReturnType()->isObjCObjectPointerType()) {
-    S.Diag(M->getLocation(), diag::err_init_method_bad_return_type)
-        << M->getReturnType();
-    // Ignore the attribute.
-    return;
-  }
+//   if (F == ObjCMethodFamilyAttr::OMF_init &&
+//       !M->getReturnType()->isObjCObjectPointerType()) {
+//     S.Diag(M->getLocation(), diag::err_init_method_bad_return_type)
+//         << M->getReturnType();
+//     // Ignore the attribute.
+//     return;
+//   }
 
-  D->addAttr(new (S.Context) ObjCMethodFamilyAttr(S.Context, AL, F));
-}
+//   D->addAttr(new (S.Context) ObjCMethodFamilyAttr(S.Context, AL, F));
+// }
 
-static void handleObjCNSObject(Sema &S, Decl *D, const ParsedAttr &AL) {
-  if (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
-    QualType T = TD->getUnderlyingType();
-    if (!T->isCARCBridgableType()) {
-      S.Diag(TD->getLocation(), diag::err_nsobject_attribute);
-      return;
-    }
-  }
-  else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(D)) {
-    QualType T = PD->getType();
-    if (!T->isCARCBridgableType()) {
-      S.Diag(PD->getLocation(), diag::err_nsobject_attribute);
-      return;
-    }
-  }
-  else {
-    // It is okay to include this attribute on properties, e.g.:
-    //
-    //  @property (retain, nonatomic) struct Bork *Q __attribute__((NSObject));
-    //
-    // In this case it follows tradition and suppresses an error in the above
-    // case.
-    S.Diag(D->getLocation(), diag::warn_nsobject_attribute);
-  }
-  D->addAttr(::new (S.Context) ObjCNSObjectAttr(S.Context, AL));
-}
+// static void handleObjCNSObject(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   if (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
+//     QualType T = TD->getUnderlyingType();
+//     if (!T->isCARCBridgableType()) {
+//       S.Diag(TD->getLocation(), diag::err_nsobject_attribute);
+//       return;
+//     }
+//   }
+//   else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(D)) {
+//     QualType T = PD->getType();
+//     if (!T->isCARCBridgableType()) {
+//       S.Diag(PD->getLocation(), diag::err_nsobject_attribute);
+//       return;
+//     }
+//   }
+//   else {
+//     // It is okay to include this attribute on properties, e.g.:
+//     //
+//     //  @property (retain, nonatomic) struct Bork *Q __attribute__((NSObject));
+//     //
+//     // In this case it follows tradition and suppresses an error in the above
+//     // case.
+//     S.Diag(D->getLocation(), diag::warn_nsobject_attribute);
+//   }
+//   D->addAttr(::new (S.Context) ObjCNSObjectAttr(S.Context, AL));
+// }
 
-static void handleObjCIndependentClass(Sema &S, Decl *D, const ParsedAttr &AL) {
-  if (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
-    QualType T = TD->getUnderlyingType();
-    if (!T->isObjCObjectPointerType()) {
-      S.Diag(TD->getLocation(), diag::warn_ptr_independentclass_attribute);
-      return;
-    }
-  } else {
-    S.Diag(D->getLocation(), diag::warn_independentclass_attribute);
-    return;
-  }
-  D->addAttr(::new (S.Context) ObjCIndependentClassAttr(S.Context, AL));
-}
+// static void handleObjCIndependentClass(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   if (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
+//     QualType T = TD->getUnderlyingType();
+//     if (!T->isObjCObjectPointerType()) {
+//       S.Diag(TD->getLocation(), diag::warn_ptr_independentclass_attribute);
+//       return;
+//     }
+//   } else {
+//     S.Diag(D->getLocation(), diag::warn_independentclass_attribute);
+//     return;
+//   }
+//   D->addAttr(::new (S.Context) ObjCIndependentClassAttr(S.Context, AL));
+// }
 
 static void handleBlocksAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   if (!AL.isArgIdent(0)) {
@@ -2778,12 +2778,12 @@ static void handleSentinelAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
       S.Diag(AL.getLoc(), diag::warn_attribute_sentinel_not_variadic) << 0;
       return;
     }
-  } else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  } /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
     if (!MD->isVariadic()) {
       S.Diag(AL.getLoc(), diag::warn_attribute_sentinel_not_variadic) << 0;
       return;
     }
-  } else if (const auto *BD = dyn_cast<BlockDecl>(D)) {
+  }*/ else if (const auto *BD = dyn_cast<BlockDecl>(D)) {
     if (!BD->isVariadic()) {
       S.Diag(AL.getLoc(), diag::warn_attribute_sentinel_not_variadic) << 1;
       return;
@@ -2819,11 +2819,11 @@ static void handleWarnUnusedResult(Sema &S, Decl *D, const ParsedAttr &AL) {
     S.Diag(AL.getLoc(), diag::warn_attribute_void_function_method) << AL << 0;
     return;
   }
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-    if (MD->getReturnType()->isVoidType()) {
-      S.Diag(AL.getLoc(), diag::warn_attribute_void_function_method) << AL << 1;
-      return;
-    }
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //   if (MD->getReturnType()->isVoidType()) {
+  //     S.Diag(AL.getLoc(), diag::warn_attribute_void_function_method) << AL << 1;
+  //     return;
+  //   }
 
   StringRef Str;
   if ((AL.isCXX11Attribute() || AL.isC2xAttribute()) && !AL.getScopeName()) {
@@ -2863,11 +2863,11 @@ static void handleWeakImportAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
     if (isDef)
       S.Diag(AL.getLoc(), diag::warn_attribute_invalid_on_definition)
         << "weak_import";
-    else if (isa<ObjCPropertyDecl>(D) || isa<ObjCMethodDecl>(D) ||
+    /*else if (isa<ObjCPropertyDecl>(D) || isa<ObjCMethodDecl>(D) ||
              (S.Context.getTargetInfo().getTriple().isOSDarwin() &&
-              (isa<ObjCInterfaceDecl>(D) || isa<EnumDecl>(D)))) {
+              (/*isa<ObjCInterfaceDecl>(D) ||*/ isa<EnumDecl>(D)))) {
       // Nothing to warn about here.
-    } else
+    }*/ else
       S.Diag(AL.getLoc(), diag::warn_attribute_wrong_decl_type)
           << AL << ExpectedVariableOrFunction;
 
@@ -4403,11 +4403,11 @@ static void handleCallConvAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   if (S.CheckCallingConvAttr(AL, CC, /*FD*/nullptr))
     return;
 
-  if (!isa<ObjCMethodDecl>(D)) {
-    S.Diag(AL.getLoc(), diag::warn_attribute_wrong_decl_type)
-        << AL << ExpectedFunctionOrMethod;
-    return;
-  }
+  // if (!isa<ObjCMethodDecl>(D)) {
+  //   S.Diag(AL.getLoc(), diag::warn_attribute_wrong_decl_type)
+  //       << AL << ExpectedFunctionOrMethod;
+  //   return;
+  // }
 
   switch (AL.getKind()) {
   case ParsedAttr::AT_FastCall:
@@ -5057,12 +5057,12 @@ static void handleArmBuiltinAliasAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
 // Checker-specific attribute handlers.
 //===----------------------------------------------------------------------===//
 static bool isValidSubjectOfNSReturnsRetainedAttribute(QualType QT) {
-  return QT->isDependentType() || QT->isObjCRetainableType();
+  return QT->isDependentType() /*|| QT->isObjCRetainableType()*/;
 }
 
 static bool isValidSubjectOfNSAttribute(QualType QT) {
-  return QT->isDependentType() || QT->isObjCObjectPointerType() ||
-         QT->isObjCNSObjectType();
+  return QT->isDependentType() /*|| QT->isObjCObjectPointerType() ||
+         QT->isObjCNSObjectType()*/;
 }
 
 static bool isValidSubjectOfCFAttribute(QualType QT) {
@@ -5159,9 +5159,9 @@ static void handleXReturnsXRetainedAttr(Sema &S, Decl *D,
   QualType ReturnType;
   Sema::RetainOwnershipKind K = parsedAttrToRetainOwnershipKind(AL);
 
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  /*if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
     ReturnType = MD->getReturnType();
-  } else if (S.getLangOpts().ObjCAutoRefCount && hasDeclarator(D) &&
+  } else*/ if (S.getLangOpts().ObjCAutoRefCount && hasDeclarator(D) &&
              (AL.getKind() == ParsedAttr::AT_NSReturnsRetained)) {
     return; // ignore: was handled as a type attribute
   } else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(D)) {
@@ -5248,8 +5248,8 @@ static void handleXReturnsXRetainedAttr(Sema &S, Decl *D,
         Method,
         Property
       } SubjectKind = Function;
-      if (isa<ObjCMethodDecl>(D))
-        SubjectKind = Method;
+      // if (isa<ObjCMethodDecl>(D))
+      //   SubjectKind = Method;
       else if (isa<ObjCPropertyDecl>(D))
         SubjectKind = Property;
       S.Diag(D->getBeginLoc(), diag::warn_ns_attribute_wrong_return_type)
@@ -5285,132 +5285,132 @@ static void handleXReturnsXRetainedAttr(Sema &S, Decl *D,
   };
 }
 
-static void handleObjCReturnsInnerPointerAttr(Sema &S, Decl *D,
-                                              const ParsedAttr &Attrs) {
-  const int EP_ObjCMethod = 1;
-  const int EP_ObjCProperty = 2;
+// static void handleObjCReturnsInnerPointerAttr(Sema &S, Decl *D,
+//                                               const ParsedAttr &Attrs) {
+//   const int EP_ObjCMethod = 1;
+//   const int EP_ObjCProperty = 2;
 
-  SourceLocation loc = Attrs.getLoc();
-  QualType resultType;
-  if (isa<ObjCMethodDecl>(D))
-    resultType = cast<ObjCMethodDecl>(D)->getReturnType();
-  else
-    resultType = cast<ObjCPropertyDecl>(D)->getType();
+//   SourceLocation loc = Attrs.getLoc();
+//   QualType resultType;
+//   if (isa<ObjCMethodDecl>(D))
+//     resultType = cast<ObjCMethodDecl>(D)->getReturnType();
+//   else
+//     resultType = cast<ObjCPropertyDecl>(D)->getType();
 
-  if (!resultType->isReferenceType() &&
-      (!resultType->isPointerType() || resultType->isObjCRetainableType())) {
-    S.Diag(D->getBeginLoc(), diag::warn_ns_attribute_wrong_return_type)
-        << SourceRange(loc) << Attrs
-        << (isa<ObjCMethodDecl>(D) ? EP_ObjCMethod : EP_ObjCProperty)
-        << /*non-retainable pointer*/ 2;
+//   if (!resultType->isReferenceType() &&
+//       (!resultType->isPointerType() || resultType->isObjCRetainableType())) {
+//     S.Diag(D->getBeginLoc(), diag::warn_ns_attribute_wrong_return_type)
+//         << SourceRange(loc) << Attrs
+//         << (isa<ObjCMethodDecl>(D) ? EP_ObjCMethod : EP_ObjCProperty)
+//         << /*non-retainable pointer*/ 2;
 
-    // Drop the attribute.
-    return;
-  }
+//     // Drop the attribute.
+//     return;
+//   }
 
-  D->addAttr(::new (S.Context) ObjCReturnsInnerPointerAttr(S.Context, Attrs));
-}
+//   D->addAttr(::new (S.Context) ObjCReturnsInnerPointerAttr(S.Context, Attrs));
+// }
 
-static void handleObjCRequiresSuperAttr(Sema &S, Decl *D,
-                                        const ParsedAttr &Attrs) {
-  const auto *Method = cast<ObjCMethodDecl>(D);
+// static void handleObjCRequiresSuperAttr(Sema &S, Decl *D,
+//                                         const ParsedAttr &Attrs) {
+//   const auto *Method = cast<ObjCMethodDecl>(D);
 
-  const DeclContext *DC = Method->getDeclContext();
-  if (const auto *PDecl = dyn_cast_or_null<ObjCProtocolDecl>(DC)) {
-    S.Diag(D->getBeginLoc(), diag::warn_objc_requires_super_protocol) << Attrs
-                                                                      << 0;
-    S.Diag(PDecl->getLocation(), diag::note_protocol_decl);
-    return;
-  }
-  if (Method->getMethodFamily() == OMF_dealloc) {
-    S.Diag(D->getBeginLoc(), diag::warn_objc_requires_super_protocol) << Attrs
-                                                                      << 1;
-    return;
-  }
+//   const DeclContext *DC = Method->getDeclContext();
+//   if (const auto *PDecl = dyn_cast_or_null<ObjCProtocolDecl>(DC)) {
+//     S.Diag(D->getBeginLoc(), diag::warn_objc_requires_super_protocol) << Attrs
+//                                                                       << 0;
+//     S.Diag(PDecl->getLocation(), diag::note_protocol_decl);
+//     return;
+//   }
+//   if (Method->getMethodFamily() == OMF_dealloc) {
+//     S.Diag(D->getBeginLoc(), diag::warn_objc_requires_super_protocol) << Attrs
+//                                                                       << 1;
+//     return;
+//   }
 
-  D->addAttr(::new (S.Context) ObjCRequiresSuperAttr(S.Context, Attrs));
-}
+//   D->addAttr(::new (S.Context) ObjCRequiresSuperAttr(S.Context, Attrs));
+// }
 
-static void handleObjCBridgeAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-  IdentifierLoc *Parm = AL.isArgIdent(0) ? AL.getArgAsIdent(0) : nullptr;
+// static void handleObjCBridgeAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   IdentifierLoc *Parm = AL.isArgIdent(0) ? AL.getArgAsIdent(0) : nullptr;
 
-  if (!Parm) {
-    S.Diag(D->getBeginLoc(), diag::err_objc_attr_not_id) << AL << 0;
-    return;
-  }
+//   if (!Parm) {
+//     S.Diag(D->getBeginLoc(), diag::err_objc_attr_not_id) << AL << 0;
+//     return;
+//   }
 
-  // Typedefs only allow objc_bridge(id) and have some additional checking.
-  if (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
-    if (!Parm->Ident->isStr("id")) {
-      S.Diag(AL.getLoc(), diag::err_objc_attr_typedef_not_id) << AL;
-      return;
-    }
+//   // Typedefs only allow objc_bridge(id) and have some additional checking.
+//   if (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
+//     if (!Parm->Ident->isStr("id")) {
+//       S.Diag(AL.getLoc(), diag::err_objc_attr_typedef_not_id) << AL;
+//       return;
+//     }
 
-    // Only allow 'cv void *'.
-    QualType T = TD->getUnderlyingType();
-    if (!T->isVoidPointerType()) {
-      S.Diag(AL.getLoc(), diag::err_objc_attr_typedef_not_void_pointer);
-      return;
-    }
-  }
+//     // Only allow 'cv void *'.
+//     QualType T = TD->getUnderlyingType();
+//     if (!T->isVoidPointerType()) {
+//       S.Diag(AL.getLoc(), diag::err_objc_attr_typedef_not_void_pointer);
+//       return;
+//     }
+//   }
 
-  D->addAttr(::new (S.Context) ObjCBridgeAttr(S.Context, AL, Parm->Ident));
-}
+//   D->addAttr(::new (S.Context) ObjCBridgeAttr(S.Context, AL, Parm->Ident));
+// }
 
-static void handleObjCBridgeMutableAttr(Sema &S, Decl *D,
-                                        const ParsedAttr &AL) {
-  IdentifierLoc *Parm = AL.isArgIdent(0) ? AL.getArgAsIdent(0) : nullptr;
+// static void handleObjCBridgeMutableAttr(Sema &S, Decl *D,
+//                                         const ParsedAttr &AL) {
+//   IdentifierLoc *Parm = AL.isArgIdent(0) ? AL.getArgAsIdent(0) : nullptr;
 
-  if (!Parm) {
-    S.Diag(D->getBeginLoc(), diag::err_objc_attr_not_id) << AL << 0;
-    return;
-  }
+//   if (!Parm) {
+//     S.Diag(D->getBeginLoc(), diag::err_objc_attr_not_id) << AL << 0;
+//     return;
+//   }
 
-  D->addAttr(::new (S.Context)
-                 ObjCBridgeMutableAttr(S.Context, AL, Parm->Ident));
-}
+//   D->addAttr(::new (S.Context)
+//                  ObjCBridgeMutableAttr(S.Context, AL, Parm->Ident));
+// }
 
-static void handleObjCBridgeRelatedAttr(Sema &S, Decl *D,
-                                        const ParsedAttr &AL) {
-  IdentifierInfo *RelatedClass =
-      AL.isArgIdent(0) ? AL.getArgAsIdent(0)->Ident : nullptr;
-  if (!RelatedClass) {
-    S.Diag(D->getBeginLoc(), diag::err_objc_attr_not_id) << AL << 0;
-    return;
-  }
-  IdentifierInfo *ClassMethod =
-    AL.getArgAsIdent(1) ? AL.getArgAsIdent(1)->Ident : nullptr;
-  IdentifierInfo *InstanceMethod =
-    AL.getArgAsIdent(2) ? AL.getArgAsIdent(2)->Ident : nullptr;
-  D->addAttr(::new (S.Context) ObjCBridgeRelatedAttr(
-      S.Context, AL, RelatedClass, ClassMethod, InstanceMethod));
-}
+// static void handleObjCBridgeRelatedAttr(Sema &S, Decl *D,
+//                                         const ParsedAttr &AL) {
+//   IdentifierInfo *RelatedClass =
+//       AL.isArgIdent(0) ? AL.getArgAsIdent(0)->Ident : nullptr;
+//   if (!RelatedClass) {
+//     S.Diag(D->getBeginLoc(), diag::err_objc_attr_not_id) << AL << 0;
+//     return;
+//   }
+//   IdentifierInfo *ClassMethod =
+//     AL.getArgAsIdent(1) ? AL.getArgAsIdent(1)->Ident : nullptr;
+//   IdentifierInfo *InstanceMethod =
+//     AL.getArgAsIdent(2) ? AL.getArgAsIdent(2)->Ident : nullptr;
+//   D->addAttr(::new (S.Context) ObjCBridgeRelatedAttr(
+//       S.Context, AL, RelatedClass, ClassMethod, InstanceMethod));
+// }
 
-static void handleObjCDesignatedInitializer(Sema &S, Decl *D,
-                                            const ParsedAttr &AL) {
-  DeclContext *Ctx = D->getDeclContext();
+// static void handleObjCDesignatedInitializer(Sema &S, Decl *D,
+//                                             const ParsedAttr &AL) {
+//   DeclContext *Ctx = D->getDeclContext();
 
-  // This attribute can only be applied to methods in interfaces or class
-  // extensions.
-  if (!isa<ObjCInterfaceDecl>(Ctx) &&
-      !(isa<ObjCCategoryDecl>(Ctx) &&
-        cast<ObjCCategoryDecl>(Ctx)->IsClassExtension())) {
-    S.Diag(D->getLocation(), diag::err_designated_init_attr_non_init);
-    return;
-  }
+//   // This attribute can only be applied to methods in interfaces or class
+//   // extensions.
+//   if (!isa<ObjCInterfaceDecl>(Ctx) &&
+//       !(isa<ObjCCategoryDecl>(Ctx) &&
+//         cast<ObjCCategoryDecl>(Ctx)->IsClassExtension())) {
+//     S.Diag(D->getLocation(), diag::err_designated_init_attr_non_init);
+//     return;
+//   }
 
-  ObjCInterfaceDecl *IFace;
-  if (auto *CatDecl = dyn_cast<ObjCCategoryDecl>(Ctx))
-    IFace = CatDecl->getClassInterface();
-  else
-    IFace = cast<ObjCInterfaceDecl>(Ctx);
+//   ObjCInterfaceDecl *IFace;
+//   if (auto *CatDecl = dyn_cast<ObjCCategoryDecl>(Ctx))
+//     IFace = CatDecl->getClassInterface();
+//   else
+//     IFace = cast<ObjCInterfaceDecl>(Ctx);
 
-  if (!IFace)
-    return;
+//   if (!IFace)
+//     return;
 
-  IFace->setHasDesignatedInitializers();
-  D->addAttr(::new (S.Context) ObjCDesignatedInitializerAttr(S.Context, AL));
-}
+//   IFace->setHasDesignatedInitializers();
+//   D->addAttr(::new (S.Context) ObjCDesignatedInitializerAttr(S.Context, AL));
+// }
 
 static void handleObjCRuntimeName(Sema &S, Decl *D, const ParsedAttr &AL) {
   StringRef MetaDataName;
@@ -5446,51 +5446,51 @@ static void handleObjCBoxable(Sema &S, Decl *D, const ParsedAttr &AL) {
   }
 }
 
-static void handleObjCOwnershipAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-  if (hasDeclarator(D)) return;
+// static void handleObjCOwnershipAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   if (hasDeclarator(D)) return;
 
-  S.Diag(D->getBeginLoc(), diag::err_attribute_wrong_decl_type)
-      << AL.getRange() << AL << ExpectedVariable;
-}
+//   S.Diag(D->getBeginLoc(), diag::err_attribute_wrong_decl_type)
+//       << AL.getRange() << AL << ExpectedVariable;
+// }
 
-static void handleObjCPreciseLifetimeAttr(Sema &S, Decl *D,
-                                          const ParsedAttr &AL) {
-  const auto *VD = cast<ValueDecl>(D);
-  QualType QT = VD->getType();
+// static void handleObjCPreciseLifetimeAttr(Sema &S, Decl *D,
+//                                           const ParsedAttr &AL) {
+//   const auto *VD = cast<ValueDecl>(D);
+//   QualType QT = VD->getType();
 
-  if (!QT->isDependentType() &&
-      !QT->isObjCLifetimeType()) {
-    S.Diag(AL.getLoc(), diag::err_objc_precise_lifetime_bad_type)
-      << QT;
-    return;
-  }
+//   if (!QT->isDependentType() &&
+//       !QT->isObjCLifetimeType()) {
+//     S.Diag(AL.getLoc(), diag::err_objc_precise_lifetime_bad_type)
+//       << QT;
+//     return;
+//   }
 
-  Qualifiers::ObjCLifetime Lifetime = QT.getObjCLifetime();
+//   Qualifiers::ObjCLifetime Lifetime = QT.getObjCLifetime();
 
-  // If we have no lifetime yet, check the lifetime we're presumably
-  // going to infer.
-  if (Lifetime == Qualifiers::OCL_None && !QT->isDependentType())
-    Lifetime = QT->getObjCARCImplicitLifetime();
+//   // If we have no lifetime yet, check the lifetime we're presumably
+//   // going to infer.
+//   if (Lifetime == Qualifiers::OCL_None && !QT->isDependentType())
+//     Lifetime = QT->getObjCARCImplicitLifetime();
 
-  switch (Lifetime) {
-  case Qualifiers::OCL_None:
-    assert(QT->isDependentType() &&
-           "didn't infer lifetime for non-dependent type?");
-    break;
+//   switch (Lifetime) {
+//   case Qualifiers::OCL_None:
+//     assert(QT->isDependentType() &&
+//            "didn't infer lifetime for non-dependent type?");
+//     break;
 
-  case Qualifiers::OCL_Weak:   // meaningful
-  case Qualifiers::OCL_Strong: // meaningful
-    break;
+//   case Qualifiers::OCL_Weak:   // meaningful
+//   case Qualifiers::OCL_Strong: // meaningful
+//     break;
 
-  case Qualifiers::OCL_ExplicitNone:
-  case Qualifiers::OCL_Autoreleasing:
-    S.Diag(AL.getLoc(), diag::warn_objc_precise_lifetime_meaningless)
-        << (Lifetime == Qualifiers::OCL_Autoreleasing);
-    break;
-  }
+//   case Qualifiers::OCL_ExplicitNone:
+//   case Qualifiers::OCL_Autoreleasing:
+//     S.Diag(AL.getLoc(), diag::warn_objc_precise_lifetime_meaningless)
+//         << (Lifetime == Qualifiers::OCL_Autoreleasing);
+//     break;
+//   }
 
-  D->addAttr(::new (S.Context) ObjCPreciseLifetimeAttr(S.Context, AL));
-}
+//   D->addAttr(::new (S.Context) ObjCPreciseLifetimeAttr(S.Context, AL));
+// }
 
 //===----------------------------------------------------------------------===//
 // Microsoft specific attribute handlers.
@@ -7072,36 +7072,36 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_VecReturn:
     handleVecReturnAttr(S, D, AL);
     break;
-  case ParsedAttr::AT_ObjCOwnership:
-    handleObjCOwnershipAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCPreciseLifetime:
-    handleObjCPreciseLifetimeAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCReturnsInnerPointer:
-    handleObjCReturnsInnerPointerAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCRequiresSuper:
-    handleObjCRequiresSuperAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCBridge:
-    handleObjCBridgeAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCBridgeMutable:
-    handleObjCBridgeMutableAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCBridgeRelated:
-    handleObjCBridgeRelatedAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCDesignatedInitializer:
-    handleObjCDesignatedInitializer(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCRuntimeName:
-    handleObjCRuntimeName(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCBoxable:
-    handleObjCBoxable(S, D, AL);
-    break;
+  // case ParsedAttr::AT_ObjCOwnership:
+  //   handleObjCOwnershipAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCPreciseLifetime:
+  //   handleObjCPreciseLifetimeAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCReturnsInnerPointer:
+  //   handleObjCReturnsInnerPointerAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCRequiresSuper:
+  //   handleObjCRequiresSuperAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCBridge:
+  //   handleObjCBridgeAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCBridgeMutable:
+  //   handleObjCBridgeMutableAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCBridgeRelated:
+  //   handleObjCBridgeRelatedAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCDesignatedInitializer:
+  //   handleObjCDesignatedInitializer(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCRuntimeName:
+  //   handleObjCRuntimeName(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCBoxable:
+  //   handleObjCBoxable(S, D, AL);
+  //   break;
   case ParsedAttr::AT_CFAuditedTransfer:
     handleSimpleAttributeWithExclusions<CFAuditedTransferAttr,
                                         CFUnknownTransferAttr>(S, D, AL);
@@ -7521,11 +7521,11 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
   // family, and it can be applied after objc_designated_initializer. This is a
   // bit of a hack, but we need it to be compatible with versions of clang that
   // processed the attribute list in the wrong order.
-  if (D->hasAttr<ObjCDesignatedInitializerAttr>() &&
-      cast<ObjCMethodDecl>(D)->getMethodFamily() != OMF_init) {
-    Diag(D->getLocation(), diag::err_designated_init_attr_non_init);
-    D->dropAttr<ObjCDesignatedInitializerAttr>();
-  }
+  // if (D->hasAttr<ObjCDesignatedInitializerAttr>() &&
+  //     cast<ObjCMethodDecl>(D)->getMethodFamily() != OMF_init) {
+  //   Diag(D->getLocation(), diag::err_designated_init_attr_non_init);
+  //   D->dropAttr<ObjCDesignatedInitializerAttr>();
+  // }
 }
 
 // Helper for delayed processing TransparentUnion or BPFPreserveAccessIndexAttr
@@ -7727,13 +7727,13 @@ static bool isForbiddenTypeAllowed(Sema &S, Decl *D,
   // -fno-objc-arc files.  We do have to take some care against attempts
   // to define such things;  for now, we've only done that for ivars
   // and properties.
-  if ((isa<ObjCIvarDecl>(D) || isa<ObjCPropertyDecl>(D))) {
-    if (diag.getForbiddenTypeDiagnostic() == diag::err_arc_weak_disabled ||
-        diag.getForbiddenTypeDiagnostic() == diag::err_arc_weak_no_runtime) {
-      reason = UnavailableAttr::IR_ForbiddenWeak;
-      return true;
-    }
-  }
+  // if ((isa<ObjCIvarDecl>(D) || isa<ObjCPropertyDecl>(D))) {
+  //   if (diag.getForbiddenTypeDiagnostic() == diag::err_arc_weak_disabled ||
+  //       diag.getForbiddenTypeDiagnostic() == diag::err_arc_weak_no_runtime) {
+  //     reason = UnavailableAttr::IR_ForbiddenWeak;
+  //     return true;
+  //   }
+  // }
 
   // Allow all sorts of things in system headers.
   if (S.Context.getSourceManager().isInSystemHeader(D->getLocation())) {

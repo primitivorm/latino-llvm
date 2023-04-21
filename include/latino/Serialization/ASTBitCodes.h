@@ -1070,13 +1070,13 @@ public:
       PREDEF_TYPE_BFLOAT16_ID = 73,
 
       /// OpenCL image types with auto numeration
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-      PREDEF_TYPE_##Id##_ID,
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//       PREDEF_TYPE_##Id##_ID,
+// #include "latino/Basic/OpenCLImageTypes.def"
       /// \brief OpenCL extension types with auto numeration
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-      PREDEF_TYPE_##Id##_ID,
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//       PREDEF_TYPE_##Id##_ID,
+// #include "latino/Basic/OpenCLExtensionTypes.def"
       // \brief SVE types with auto numeration
 #define SVE_TYPE(Name, Id, SingletonId) PREDEF_TYPE_##Id##_ID,
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -1151,17 +1151,17 @@ public:
       /// The translation unit.
       PREDEF_DECL_TRANSLATION_UNIT_ID = 1,
 
-      /// The Objective-C 'id' type.
-      PREDEF_DECL_OBJC_ID_ID = 2,
+      // /// The Objective-C 'id' type.
+      // PREDEF_DECL_OBJC_ID_ID = 2,
 
-      /// The Objective-C 'SEL' type.
-      PREDEF_DECL_OBJC_SEL_ID = 3,
+      // /// The Objective-C 'SEL' type.
+      // PREDEF_DECL_OBJC_SEL_ID = 3,
 
-      /// The Objective-C 'Class' type.
-      PREDEF_DECL_OBJC_CLASS_ID = 4,
+      // /// The Objective-C 'Class' type.
+      // PREDEF_DECL_OBJC_CLASS_ID = 4,
 
-      /// The Objective-C 'Protocol' type.
-      PREDEF_DECL_OBJC_PROTOCOL_ID = 5,
+      // /// The Objective-C 'Protocol' type.
+      // PREDEF_DECL_OBJC_PROTOCOL_ID = 5,
 
       /// The signed 128-bit integer type.
       PREDEF_DECL_INT_128_ID = 6,
@@ -1240,37 +1240,37 @@ public:
       DECL_FUNCTION,
 
       /// A ObjCMethodDecl record.
-      DECL_OBJC_METHOD,
+      // DECL_OBJC_METHOD,
 
       /// A ObjCInterfaceDecl record.
-      DECL_OBJC_INTERFACE,
+      // DECL_OBJC_INTERFACE,
 
       /// A ObjCProtocolDecl record.
-      DECL_OBJC_PROTOCOL,
+      // DECL_OBJC_PROTOCOL,
 
       /// A ObjCIvarDecl record.
-      DECL_OBJC_IVAR,
+      // DECL_OBJC_IVAR,
 
       /// A ObjCAtDefsFieldDecl record.
-      DECL_OBJC_AT_DEFS_FIELD,
+      // DECL_OBJC_AT_DEFS_FIELD,
 
       /// A ObjCCategoryDecl record.
-      DECL_OBJC_CATEGORY,
+      // DECL_OBJC_CATEGORY,
 
       /// A ObjCCategoryImplDecl record.
-      DECL_OBJC_CATEGORY_IMPL,
+      // DECL_OBJC_CATEGORY_IMPL,
 
       /// A ObjCImplementationDecl record.
-      DECL_OBJC_IMPLEMENTATION,
+      // DECL_OBJC_IMPLEMENTATION,
 
       /// A ObjCCompatibleAliasDecl record.
-      DECL_OBJC_COMPATIBLE_ALIAS,
+      // DECL_OBJC_COMPATIBLE_ALIAS,
 
       /// A ObjCPropertyDecl record.
-      DECL_OBJC_PROPERTY,
+      // DECL_OBJC_PROPERTY,
 
       /// A ObjCPropertyImplDecl record.
-      DECL_OBJC_PROPERTY_IMPL,
+      // DECL_OBJC_PROPERTY_IMPL,
 
       /// A FieldDecl record.
       DECL_FIELD,
@@ -1702,68 +1702,68 @@ public:
       // Objective-C
 
       /// An ObjCStringLiteral record.
-      EXPR_OBJC_STRING_LITERAL,
+      // EXPR_OBJC_STRING_LITERAL,
 
-      EXPR_OBJC_BOXED_EXPRESSION,
-      EXPR_OBJC_ARRAY_LITERAL,
-      EXPR_OBJC_DICTIONARY_LITERAL,
+      // EXPR_OBJC_BOXED_EXPRESSION,
+      // EXPR_OBJC_ARRAY_LITERAL,
+      // EXPR_OBJC_DICTIONARY_LITERAL,
 
       /// An ObjCEncodeExpr record.
-      EXPR_OBJC_ENCODE,
+      // EXPR_OBJC_ENCODE,
 
       /// An ObjCSelectorExpr record.
-      EXPR_OBJC_SELECTOR_EXPR,
+      // EXPR_OBJC_SELECTOR_EXPR,
 
       /// An ObjCProtocolExpr record.
-      EXPR_OBJC_PROTOCOL_EXPR,
+      // EXPR_OBJC_PROTOCOL_EXPR,
 
       /// An ObjCIvarRefExpr record.
-      EXPR_OBJC_IVAR_REF_EXPR,
+      // EXPR_OBJC_IVAR_REF_EXPR,
 
       /// An ObjCPropertyRefExpr record.
-      EXPR_OBJC_PROPERTY_REF_EXPR,
+      // EXPR_OBJC_PROPERTY_REF_EXPR,
 
       /// An ObjCSubscriptRefExpr record.
-      EXPR_OBJC_SUBSCRIPT_REF_EXPR,
+      // EXPR_OBJC_SUBSCRIPT_REF_EXPR,
 
       /// UNUSED
-      EXPR_OBJC_KVC_REF_EXPR,
+      // EXPR_OBJC_KVC_REF_EXPR,
 
       /// An ObjCMessageExpr record.
-      EXPR_OBJC_MESSAGE_EXPR,
+      // EXPR_OBJC_MESSAGE_EXPR,
 
       /// An ObjCIsa Expr record.
-      EXPR_OBJC_ISA,
+      // EXPR_OBJC_ISA,
 
       /// An ObjCIndirectCopyRestoreExpr record.
-      EXPR_OBJC_INDIRECT_COPY_RESTORE,
+      // EXPR_OBJC_INDIRECT_COPY_RESTORE,
 
       /// An ObjCForCollectionStmt record.
-      STMT_OBJC_FOR_COLLECTION,
+      // STMT_OBJC_FOR_COLLECTION,
 
       /// An ObjCAtCatchStmt record.
-      STMT_OBJC_CATCH,
+      // STMT_OBJC_CATCH,
 
       /// An ObjCAtFinallyStmt record.
-      STMT_OBJC_FINALLY,
+      // STMT_OBJC_FINALLY,
 
       /// An ObjCAtTryStmt record.
-      STMT_OBJC_AT_TRY,
+      // STMT_OBJC_AT_TRY,
 
       /// An ObjCAtSynchronizedStmt record.
-      STMT_OBJC_AT_SYNCHRONIZED,
+      // STMT_OBJC_AT_SYNCHRONIZED,
 
       /// An ObjCAtThrowStmt record.
-      STMT_OBJC_AT_THROW,
+      // STMT_OBJC_AT_THROW,
 
       /// An ObjCAutoreleasePoolStmt record.
-      STMT_OBJC_AUTORELEASE_POOL,
+      // STMT_OBJC_AUTORELEASE_POOL,
 
       /// An ObjCBoolLiteralExpr record.
-      EXPR_OBJC_BOOL_LITERAL,
+      // EXPR_OBJC_BOOL_LITERAL,
 
       /// An ObjCAvailabilityCheckExpr record.
-      EXPR_OBJC_AVAILABILITY_CHECK,
+      // EXPR_OBJC_AVAILABILITY_CHECK,
 
       // C++
 

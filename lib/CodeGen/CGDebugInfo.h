@@ -39,8 +39,8 @@ namespace latino {
 class ClassTemplateSpecializationDecl;
 class GlobalDecl;
 class ModuleMap;
-class ObjCInterfaceDecl;
-class ObjCIvarDecl;
+// class ObjCInterfaceDecl;
+// class ObjCIvarDecl;
 class UsingDecl;
 class VarDecl;
 enum class DynamicInitKind : unsigned;
@@ -69,18 +69,18 @@ class CGDebugInfo {
   llvm::DIType *ClassTy = nullptr;
   llvm::DICompositeType *ObjTy = nullptr;
   llvm::DIType *SelTy = nullptr;
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
-  llvm::DIType *SingletonId = nullptr;
-#include "latino/Basic/OpenCLImageTypes.def"
-  llvm::DIType *OCLSamplerDITy = nullptr;
-  llvm::DIType *OCLEventDITy = nullptr;
-  llvm::DIType *OCLClkEventDITy = nullptr;
-  llvm::DIType *OCLQueueDITy = nullptr;
-  llvm::DIType *OCLNDRangeDITy = nullptr;
-  llvm::DIType *OCLReserveIDDITy = nullptr;
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  llvm::DIType *Id##Ty = nullptr;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
+//   llvm::DIType *SingletonId = nullptr;
+// #include "latino/Basic/OpenCLImageTypes.def"
+  // llvm::DIType *OCLSamplerDITy = nullptr;
+  // llvm::DIType *OCLEventDITy = nullptr;
+  // llvm::DIType *OCLClkEventDITy = nullptr;
+  // llvm::DIType *OCLQueueDITy = nullptr;
+  // llvm::DIType *OCLNDRangeDITy = nullptr;
+  // llvm::DIType *OCLReserveIDDITy = nullptr;
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   llvm::DIType *Id##Ty = nullptr;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 
   /// Cache of previously constructed Types.
   llvm::DenseMap<const void *, llvm::TrackingMDRef> TypeCache;
@@ -104,24 +104,24 @@ class CGDebugInfo {
   };
   PrintingCallbacks PrintCB = {*this};
 
-  struct ObjCInterfaceCacheEntry {
-    const ObjCInterfaceType *Type;
-    llvm::DIType *Decl;
-    llvm::DIFile *Unit;
-    ObjCInterfaceCacheEntry(const ObjCInterfaceType *Type, llvm::DIType *Decl,
-                            llvm::DIFile *Unit)
-        : Type(Type), Decl(Decl), Unit(Unit) {}
-  };
+  // struct ObjCInterfaceCacheEntry {
+  //   const ObjCInterfaceType *Type;
+  //   llvm::DIType *Decl;
+  //   llvm::DIFile *Unit;
+  //   ObjCInterfaceCacheEntry(const ObjCInterfaceType *Type, llvm::DIType *Decl,
+  //                           llvm::DIFile *Unit)
+  //       : Type(Type), Decl(Decl), Unit(Unit) {}
+  // };
 
   /// Cache of previously constructed interfaces which may change.
-  llvm::SmallVector<ObjCInterfaceCacheEntry, 32> ObjCInterfaceCache;
+  // llvm::SmallVector<ObjCInterfaceCacheEntry, 32> ObjCInterfaceCache;
 
   /// Cache of forward declarations for methods belonging to the interface.
   /// The extra bit on the DISubprogram specifies whether a method is
   /// "objc_direct".
-  llvm::DenseMap<const ObjCInterfaceDecl *,
-                 std::vector<llvm::PointerIntPair<llvm::DISubprogram *, 1>>>
-      ObjCMethodCache;
+  // llvm::DenseMap<const ObjCInterfaceDecl *,
+  //                std::vector<llvm::PointerIntPair<llvm::DISubprogram *, 1>>>
+  //     ObjCMethodCache;
 
   /// Cache of references to clang modules and precompiled headers.
   llvm::DenseMap<const Module *, llvm::TrackingMDRef> ModuleCache;
@@ -173,7 +173,7 @@ class CGDebugInfo {
   llvm::DIType *CreateType(const TypedefType *Ty, llvm::DIFile *Fg);
   llvm::DIType *CreateType(const TemplateSpecializationType *Ty,
                            llvm::DIFile *Fg);
-  llvm::DIType *CreateType(const ObjCObjectPointerType *Ty, llvm::DIFile *F);
+  // llvm::DIType *CreateType(const ObjCObjectPointerType *Ty, llvm::DIFile *F);
   llvm::DIType *CreateType(const PointerType *Ty, llvm::DIFile *F);
   llvm::DIType *CreateType(const BlockPointerType *Ty, llvm::DIFile *F);
   llvm::DIType *CreateType(const FunctionType *Ty, llvm::DIFile *F);
@@ -188,8 +188,8 @@ class CGDebugInfo {
   llvm::DIType *CreateTypeDefinition(const ObjCInterfaceType *Ty,
                                      llvm::DIFile *F);
   /// Get Objective-C object type.
-  llvm::DIType *CreateType(const ObjCObjectType *Ty, llvm::DIFile *F);
-  llvm::DIType *CreateType(const ObjCTypeParamType *Ty, llvm::DIFile *Unit);
+  // llvm::DIType *CreateType(const ObjCObjectType *Ty, llvm::DIFile *F);
+  // llvm::DIType *CreateType(const ObjCTypeParamType *Ty, llvm::DIFile *Unit);
 
   llvm::DIType *CreateType(const VectorType *Ty, llvm::DIFile *F);
   llvm::DIType *CreateType(const ConstantMatrixType *Ty, llvm::DIFile *F);
@@ -624,10 +624,10 @@ private:
   /// \param LineNo    The declaration's line number.
   /// \param Flags     The DIFlags for the method declaration.
   /// \param SPFlags   The subprogram-spcific flags for the method declaration.
-  llvm::DISubprogram *
-  getObjCMethodDeclaration(const Decl *D, llvm::DISubroutineType *FnType,
-                           unsigned LineNo, llvm::DINode::DIFlags Flags,
-                           llvm::DISubprogram::DISPFlags SPFlags);
+  // llvm::DISubprogram *
+  // getObjCMethodDeclaration(const Decl *D, llvm::DISubroutineType *FnType,
+  //                          unsigned LineNo, llvm::DINode::DIFlags Flags,
+  //                          llvm::DISubprogram::DISPFlags SPFlags);
 
   /// \return debug info descriptor to describe in-class static data
   /// member declaration for the given out-of-class definition.  If D
@@ -679,7 +679,7 @@ private:
 
   /// Returns the unmangled name of an Objective-C method.
   /// This is the display name for the debugging info.
-  StringRef getObjCMethodName(const ObjCMethodDecl *FD);
+  // StringRef getObjCMethodName(const ObjCMethodDecl *FD);
 
   /// Return selector name. This is used for debugging
   /// info.

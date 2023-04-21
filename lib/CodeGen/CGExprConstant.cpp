@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "CGCXXABI.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGRecordLayout.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
@@ -1098,8 +1098,8 @@ public:
     case CK_ConstructorConversion:
       return Visit(subExpr, destType);
 
-    case CK_IntToOCLSampler:
-      llvm_unreachable("global sampler variables are not generated");
+    // case CK_IntToOCLSampler:
+    //   llvm_unreachable("global sampler variables are not generated");
 
     case CK_Dependent: llvm_unreachable("saw dependent cast!");
 
@@ -1115,7 +1115,7 @@ public:
     }
 
     // These will never be supported.
-    case CK_ObjCObjectLValueCast:
+    // case CK_ObjCObjectLValueCast:
     case CK_ARCProduceObject:
     case CK_ARCConsumeObject:
     case CK_ARCReclaimReturnedObject:
@@ -1132,8 +1132,8 @@ public:
     case CK_LValueToRValueBitCast:
     case CK_NullToMemberPointer:
     case CK_UserDefinedConversion:
-    case CK_CPointerToObjCPointerCast:
-    case CK_BlockPointerToObjCPointerCast:
+    // case CK_CPointerToObjCPointerCast:
+    // case CK_BlockPointerToObjCPointerCast:
     case CK_AnyPointerToBlockPointerCast:
     case CK_ArrayToPointerDecay:
     case CK_FunctionToPointerDecay:
@@ -1301,19 +1301,19 @@ public:
     return CGM.GetConstantArrayFromStringLiteral(E);
   }
 
-  llvm::Constant *VisitObjCEncodeExpr(ObjCEncodeExpr *E, QualType T) {
-    // This must be an @encode initializing an array in a static initializer.
-    // Don't emit it as the address of the string, emit the string data itself
-    // as an inline array.
-    std::string Str;
-    CGM.getContext().getObjCEncodingForType(E->getEncodedType(), Str);
-    const ConstantArrayType *CAT = CGM.getContext().getAsConstantArrayType(T);
+  // llvm::Constant *VisitObjCEncodeExpr(ObjCEncodeExpr *E, QualType T) {
+  //   // This must be an @encode initializing an array in a static initializer.
+  //   // Don't emit it as the address of the string, emit the string data itself
+  //   // as an inline array.
+  //   std::string Str;
+  //   CGM.getContext().getObjCEncodingForType(E->getEncodedType(), Str);
+  //   const ConstantArrayType *CAT = CGM.getContext().getAsConstantArrayType(T);
 
-    // Resize the string to the right size, adding zeros at the end, or
-    // truncating as needed.
-    Str.resize(CAT->getSize().getZExtValue(), '\0');
-    return llvm::ConstantDataArray::getString(VMContext, Str, false);
-  }
+  //   // Resize the string to the right size, adding zeros at the end, or
+  //   // truncating as needed.
+  //   Str.resize(CAT->getSize().getZExtValue(), '\0');
+  //   return llvm::ConstantDataArray::getString(VMContext, Str, false);
+  // }
 
   llvm::Constant *VisitUnaryExtension(const UnaryOperator *E, QualType T) {
     return Visit(E->getSubExpr(), T);
@@ -1774,9 +1774,9 @@ private:
   ConstantLValue VisitConstantExpr(const ConstantExpr *E);
   ConstantLValue VisitCompoundLiteralExpr(const CompoundLiteralExpr *E);
   ConstantLValue VisitStringLiteral(const StringLiteral *E);
-  ConstantLValue VisitObjCBoxedExpr(const ObjCBoxedExpr *E);
-  ConstantLValue VisitObjCEncodeExpr(const ObjCEncodeExpr *E);
-  ConstantLValue VisitObjCStringLiteral(const ObjCStringLiteral *E);
+  // ConstantLValue VisitObjCBoxedExpr(const ObjCBoxedExpr *E);
+  // ConstantLValue VisitObjCEncodeExpr(const ObjCEncodeExpr *E);
+  // ConstantLValue VisitObjCStringLiteral(const ObjCStringLiteral *E);
   ConstantLValue VisitPredefinedExpr(const PredefinedExpr *E);
   ConstantLValue VisitAddrLabelExpr(const AddrLabelExpr *E);
   ConstantLValue VisitCallExpr(const CallExpr *E);
@@ -1934,10 +1934,10 @@ ConstantLValueEmitter::VisitStringLiteral(const StringLiteral *E) {
   return CGM.GetAddrOfConstantStringFromLiteral(E);
 }
 
-ConstantLValue
-ConstantLValueEmitter::VisitObjCEncodeExpr(const ObjCEncodeExpr *E) {
-  return CGM.GetAddrOfConstantStringFromObjCEncode(E);
-}
+// ConstantLValue
+// ConstantLValueEmitter::VisitObjCEncodeExpr(const ObjCEncodeExpr *E) {
+//   return CGM.GetAddrOfConstantStringFromObjCEncode(E);
+// }
 
 static ConstantLValue emitConstantObjCStringLiteral(const StringLiteral *S,
                                                     QualType T,
@@ -1946,18 +1946,18 @@ static ConstantLValue emitConstantObjCStringLiteral(const StringLiteral *S,
   return C.getElementBitCast(CGM.getTypes().ConvertTypeForMem(T));
 }
 
-ConstantLValue
-ConstantLValueEmitter::VisitObjCStringLiteral(const ObjCStringLiteral *E) {
-  return emitConstantObjCStringLiteral(E->getString(), E->getType(), CGM);
-}
+// ConstantLValue
+// ConstantLValueEmitter::VisitObjCStringLiteral(const ObjCStringLiteral *E) {
+//   return emitConstantObjCStringLiteral(E->getString(), E->getType(), CGM);
+// }
 
-ConstantLValue
-ConstantLValueEmitter::VisitObjCBoxedExpr(const ObjCBoxedExpr *E) {
-  assert(E->isExpressibleAsConstantInitializer() &&
-         "this boxed expression can't be emitted as a compile-time constant");
-  auto *SL = cast<StringLiteral>(E->getSubExpr()->IgnoreParenCasts());
-  return emitConstantObjCStringLiteral(SL, E->getType(), CGM);
-}
+// ConstantLValue
+// ConstantLValueEmitter::VisitObjCBoxedExpr(const ObjCBoxedExpr *E) {
+//   assert(E->isExpressibleAsConstantInitializer() &&
+//          "this boxed expression can't be emitted as a compile-time constant");
+//   auto *SL = cast<StringLiteral>(E->getSubExpr()->IgnoreParenCasts());
+//   return emitConstantObjCStringLiteral(SL, E->getType(), CGM);
+// }
 
 ConstantLValue
 ConstantLValueEmitter::VisitPredefinedExpr(const PredefinedExpr *E) {

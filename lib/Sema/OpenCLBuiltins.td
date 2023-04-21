@@ -287,11 +287,11 @@ def Image2dArrayMsaa      : Type<"image2d_array_msaa_t", QualType<"OCLImage2dArr
 def Image2dMsaaDepth      : Type<"image2d_msaa_depth_t", QualType<"OCLImage2dMSAADepth", 1>>;
 def Image2dArrayMsaaDepth : Type<"image2d_array_msaa_depth_t", QualType<"OCLImage2dArrayMSAADepth", 1>>;
 
-def Sampler               : Type<"sampler_t", QualType<"OCLSamplerTy">>;
-def ClkEvent              : Type<"clk_event_t", QualType<"OCLClkEventTy">>;
-def Event                 : Type<"event_t", QualType<"OCLEventTy">>;
-def Queue                 : Type<"queue_t", QualType<"OCLQueueTy">>;
-def ReserveId             : Type<"reserve_id_t", QualType<"OCLReserveIDTy">>;
+// def Sampler               : Type<"sampler_t", QualType<"OCLSamplerTy">>;
+// def ClkEvent              : Type<"clk_event_t", QualType<"OCLClkEventTy">>;
+// def Event                 : Type<"event_t", QualType<"OCLEventTy">>;
+// def Queue                 : Type<"queue_t", QualType<"OCLQueueTy">>;
+// def ReserveId             : Type<"reserve_id_t", QualType<"OCLReserveIDTy">>;
 
 // OpenCL v2.0 s6.13.11: Atomic integer and floating-point types.
 def AtomicInt             : Type<"atomic_int", QualType<"getAtomicType(Context.IntTy)">>;

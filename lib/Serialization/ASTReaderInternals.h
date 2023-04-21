@@ -31,7 +31,7 @@ class FileEntry;
 struct HeaderFileInfo;
 class HeaderSearch;
 class IdentifierTable;
-class ObjCMethodDecl;
+// class ObjCMethodDecl;
 
 namespace serialization {
 
@@ -199,8 +199,8 @@ public:
     unsigned FactoryBits;
     bool InstanceHasMoreThanOneDecl;
     bool FactoryHasMoreThanOneDecl;
-    SmallVector<ObjCMethodDecl *, 2> Instance;
-    SmallVector<ObjCMethodDecl *, 2> Factory;
+    // SmallVector<ObjCMethodDecl *, 2> Instance;
+    // SmallVector<ObjCMethodDecl *, 2> Factory;
   };
 
   using external_key_type = Selector;

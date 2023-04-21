@@ -9,7 +9,7 @@
 #include "latino/Index/IndexSymbol.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/Lex/MacroInfo.h"
@@ -18,28 +18,28 @@ using namespace latino;
 using namespace latino::index;
 
 /// \returns true if \c D is a subclass of 'XCTestCase'.
-static bool isUnitTestCase(const ObjCInterfaceDecl *D) {
-  if (!D)
-    return false;
-  while (const ObjCInterfaceDecl *SuperD = D->getSuperClass()) {
-    if (SuperD->getName() == "XCTestCase")
-      return true;
-    D = SuperD;
-  }
-  return false;
-}
+// static bool isUnitTestCase(const ObjCInterfaceDecl *D) {
+//   if (!D)
+//     return false;
+//   while (const ObjCInterfaceDecl *SuperD = D->getSuperClass()) {
+//     if (SuperD->getName() == "XCTestCase")
+//       return true;
+//     D = SuperD;
+//   }
+//   return false;
+// }
 
 /// \returns true if \c D is in a subclass of 'XCTestCase', returns void, has
 /// no parameters, and its name starts with 'test'.
-static bool isUnitTest(const ObjCMethodDecl *D) {
-  if (!D->parameters().empty())
-    return false;
-  if (!D->getReturnType()->isVoidType())
-    return false;
-  if (!D->getSelector().getNameForSlot(0).startswith("test"))
-    return false;
-  return isUnitTestCase(D->getClassInterface());
-}
+// static bool isUnitTest(const ObjCMethodDecl *D) {
+//   if (!D->parameters().empty())
+//     return false;
+//   if (!D->getReturnType()->isVoidType())
+//     return false;
+//   if (!D->getSelector().getNameForSlot(0).startswith("test"))
+//     return false;
+//   return isUnitTestCase(D->getClassInterface());
+// }
 
 static void checkForIBOutlets(const Decl *D, SymbolPropertySet &PropSet) {
   if (D->hasAttr<IBOutletAttr>()) {
@@ -93,9 +93,9 @@ SymbolInfo index::getSymbolInfo(const Decl *D) {
   if (isFunctionLocalSymbol(D)) {
     Info.Properties |= (SymbolPropertySet)SymbolProperty::Local;
   }
-  if (isa<ObjCProtocolDecl>(D->getDeclContext())) {
-    Info.Properties |= (SymbolPropertySet)SymbolProperty::ProtocolInterface;
-  }
+  // if (isa<ObjCProtocolDecl>(D->getDeclContext())) {
+  //   Info.Properties |= (SymbolPropertySet)SymbolProperty::ProtocolInterface;
+  // }
 
   if (auto *VT = dyn_cast<VarTemplateDecl>(D)) {
     Info.Properties |= (SymbolPropertySet)SymbolProperty::Generic;
@@ -186,64 +186,64 @@ SymbolInfo index::getSymbolInfo(const Decl *D) {
       break;
     case Decl::EnumConstant:
       Info.Kind = SymbolKind::EnumConstant; break;
-    case Decl::ObjCInterface:
-    case Decl::ObjCImplementation: {
-      Info.Kind = SymbolKind::Class;
-      Info.Lang = SymbolLanguage::ObjC;
-      const ObjCInterfaceDecl *ClsD = dyn_cast<ObjCInterfaceDecl>(D);
-      if (!ClsD)
-        ClsD = cast<ObjCImplementationDecl>(D)->getClassInterface();
-      if (isUnitTestCase(ClsD))
-        Info.Properties |= (SymbolPropertySet)SymbolProperty::UnitTest;
-      break;
-    }
-    case Decl::ObjCProtocol:
-      Info.Kind = SymbolKind::Protocol;
-      Info.Lang = SymbolLanguage::ObjC;
-      break;
-    case Decl::ObjCCategory:
-    case Decl::ObjCCategoryImpl: {
-      Info.Kind = SymbolKind::Extension;
-      Info.Lang = SymbolLanguage::ObjC;
-      const ObjCInterfaceDecl *ClsD = nullptr;
-      if (auto *CatD = dyn_cast<ObjCCategoryDecl>(D))
-        ClsD = CatD->getClassInterface();
-      else
-        ClsD = cast<ObjCCategoryImplDecl>(D)->getClassInterface();
-      if (isUnitTestCase(ClsD))
-        Info.Properties |= (SymbolPropertySet)SymbolProperty::UnitTest;
-      break;
-    }
-    case Decl::ObjCMethod: {
-      const ObjCMethodDecl *MD = cast<ObjCMethodDecl>(D);
-      Info.Kind = MD->isInstanceMethod() ? SymbolKind::InstanceMethod : SymbolKind::ClassMethod;
-      if (MD->isPropertyAccessor()) {
-        if (MD->param_size())
-          Info.SubKind = SymbolSubKind::AccessorSetter;
-        else
-          Info.SubKind = SymbolSubKind::AccessorGetter;
-      }
-      Info.Lang = SymbolLanguage::ObjC;
-      if (isUnitTest(MD))
-        Info.Properties |= (SymbolPropertySet)SymbolProperty::UnitTest;
-      if (D->hasAttr<IBActionAttr>())
-        Info.Properties |= (SymbolPropertySet)SymbolProperty::IBAnnotated;
-      break;
-    }
-    case Decl::ObjCProperty:
-      Info.Kind = SymbolKind::InstanceProperty;
-      Info.Lang = SymbolLanguage::ObjC;
-      checkForIBOutlets(D, Info.Properties);
-      if (auto *Annot = D->getAttr<AnnotateAttr>()) {
-        if (Annot->getAnnotation() == "gk_inspectable")
-          Info.Properties |= (SymbolPropertySet)SymbolProperty::GKInspectable;
-      }
-      break;
-    case Decl::ObjCIvar:
-      Info.Kind = SymbolKind::Field;
-      Info.Lang = SymbolLanguage::ObjC;
-      checkForIBOutlets(D, Info.Properties);
-      break;
+    // case Decl::ObjCInterface:
+    // case Decl::ObjCImplementation: {
+    //   Info.Kind = SymbolKind::Class;
+    //   Info.Lang = SymbolLanguage::ObjC;
+    //   const ObjCInterfaceDecl *ClsD = dyn_cast<ObjCInterfaceDecl>(D);
+    //   if (!ClsD)
+    //     ClsD = cast<ObjCImplementationDecl>(D)->getClassInterface();
+    //   if (isUnitTestCase(ClsD))
+    //     Info.Properties |= (SymbolPropertySet)SymbolProperty::UnitTest;
+    //   break;
+    // }
+    // case Decl::ObjCProtocol:
+    //   Info.Kind = SymbolKind::Protocol;
+    //   Info.Lang = SymbolLanguage::ObjC;
+    //   break;
+    // case Decl::ObjCCategory:
+    // case Decl::ObjCCategoryImpl: {
+    //   Info.Kind = SymbolKind::Extension;
+    //   Info.Lang = SymbolLanguage::ObjC;
+    //   const ObjCInterfaceDecl *ClsD = nullptr;
+    //   if (auto *CatD = dyn_cast<ObjCCategoryDecl>(D))
+    //     ClsD = CatD->getClassInterface();
+    //   else
+    //     ClsD = cast<ObjCCategoryImplDecl>(D)->getClassInterface();
+    //   if (isUnitTestCase(ClsD))
+    //     Info.Properties |= (SymbolPropertySet)SymbolProperty::UnitTest;
+    //   break;
+    // }
+    // case Decl::ObjCMethod: {
+    //   const ObjCMethodDecl *MD = cast<ObjCMethodDecl>(D);
+    //   Info.Kind = MD->isInstanceMethod() ? SymbolKind::InstanceMethod : SymbolKind::ClassMethod;
+    //   if (MD->isPropertyAccessor()) {
+    //     if (MD->param_size())
+    //       Info.SubKind = SymbolSubKind::AccessorSetter;
+    //     else
+    //       Info.SubKind = SymbolSubKind::AccessorGetter;
+    //   }
+    //   Info.Lang = SymbolLanguage::ObjC;
+    //   if (isUnitTest(MD))
+    //     Info.Properties |= (SymbolPropertySet)SymbolProperty::UnitTest;
+    //   if (D->hasAttr<IBActionAttr>())
+    //     Info.Properties |= (SymbolPropertySet)SymbolProperty::IBAnnotated;
+    //   break;
+    // }
+    // case Decl::ObjCProperty:
+    //   Info.Kind = SymbolKind::InstanceProperty;
+    //   Info.Lang = SymbolLanguage::ObjC;
+    //   checkForIBOutlets(D, Info.Properties);
+    //   if (auto *Annot = D->getAttr<AnnotateAttr>()) {
+    //     if (Annot->getAnnotation() == "gk_inspectable")
+    //       Info.Properties |= (SymbolPropertySet)SymbolProperty::GKInspectable;
+    //   }
+    //   break;
+    // case Decl::ObjCIvar:
+    //   Info.Kind = SymbolKind::Field;
+    //   Info.Lang = SymbolLanguage::ObjC;
+    //   checkForIBOutlets(D, Info.Properties);
+    //   break;
     case Decl::Namespace:
       Info.Kind = SymbolKind::Namespace;
       Info.Lang = SymbolLanguage::CXX;

@@ -165,21 +165,21 @@ class AddrLabelExpr {
 }
 
 //--- Objective-C --------------------------------------------------------//
-class ObjCIndirectCopyRestoreExpr {
-  code Code = [{
-    addData(S->shouldCopy());
-  }];
-}
-class ObjCPropertyRefExpr {
-  code Code = [{
-    addData(S->isSuperReceiver()); addData(S->isImplicitProperty());
-  }];
-}
-class ObjCAtCatchStmt {
-  code Code = [{
-    addData(S->hasEllipsis());
-  }];
-}
+// class ObjCIndirectCopyRestoreExpr {
+//   code Code = [{
+//     addData(S->shouldCopy());
+//   }];
+// }
+// class ObjCPropertyRefExpr {
+//   code Code = [{
+//     addData(S->isSuperReceiver()); addData(S->isImplicitProperty());
+//   }];
+// }
+// class ObjCAtCatchStmt {
+//   code Code = [{
+//     addData(S->hasEllipsis());
+//   }];
+// }
 
 //--- Miscellaneous Stmts ------------------------------------------------//
 class CXXFoldExpr {

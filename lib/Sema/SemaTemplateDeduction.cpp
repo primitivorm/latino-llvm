@@ -1513,9 +1513,9 @@ DeduceTemplateArgumentsByTypeMatch(Sema &S,
     case Type::FunctionNoProto:
     case Type::Record:
     case Type::Enum:
-    case Type::ObjCObject:
-    case Type::ObjCInterface:
-    case Type::ObjCObjectPointer:
+    // case Type::ObjCObject:
+    // case Type::ObjCInterface:
+    // case Type::ObjCObjectPointer:
     case Type::ExtInt:
       if (TDF & TDF_SkipNonDependent)
         return Sema::TDK_Success;
@@ -1552,10 +1552,10 @@ DeduceTemplateArgumentsByTypeMatch(Sema &S,
       QualType PointeeType;
       if (const PointerType *PointerArg = Arg->getAs<PointerType>()) {
         PointeeType = PointerArg->getPointeeType();
-      } else if (const ObjCObjectPointerType *PointerArg
+      } /*else if (const ObjCObjectPointerType *PointerArg
                    = Arg->getAs<ObjCObjectPointerType>()) {
         PointeeType = PointerArg->getPointeeType();
-      } else {
+      } */else {
         return Sema::TDK_NonDeducedMismatch;
       }
 
@@ -3852,8 +3852,8 @@ static bool AdjustFunctionParmAndArgTypesForDeduction(
   //     - The transformed A can be another pointer or pointer to member
   //       type that can be converted to the deduced A via a qualification
   //       conversion (4.4).
-  if (ArgType->isPointerType() || ArgType->isMemberPointerType() ||
-      ArgType->isObjCObjectPointerType())
+  if (ArgType->isPointerType() || ArgType->isMemberPointerType() /*||
+      ArgType->isObjCObjectPointerType()*/)
     TDF |= TDF_IgnoreQualifiers;
   //     - If P is a class and P has the form simple-template-id, then the
   //       transformed A can be a derived class of the deduced A. Likewise,
@@ -6027,9 +6027,9 @@ MarkUsedTemplateParameters(ASTContext &Ctx, QualType T,
   case Type::FunctionNoProto:
   case Type::Record:
   case Type::Enum:
-  case Type::ObjCInterface:
-  case Type::ObjCObject:
-  case Type::ObjCObjectPointer:
+  // case Type::ObjCInterface:
+  // case Type::ObjCObject:
+  // case Type::ObjCObjectPointer:
   case Type::UnresolvedUsing:
   case Type::Pipe:
   case Type::ExtInt:

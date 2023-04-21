@@ -15,7 +15,7 @@ set(LLVM_LINK_COMPONENTS
   LTO
   Linker
   MC
-  ObjCARCOpts
+  # ObjCARCOpts
   Object
   Passes
   ProfileData
@@ -65,10 +65,10 @@ add_latino_library(latinoCodeGen
   CGGPUBuiltin.cpp
   CGLoopInfo.cpp
   CGNonTrivialStruct.cpp
-  CGObjC.cpp
-  CGObjCGNU.cpp
-  CGObjCMac.cpp
-  CGObjCRuntime.cpp
+  # CGObjC.cpp
+  # CGObjCGNU.cpp
+  # CGObjCMac.cpp
+  # CGObjCRuntime.cpp
   CGOpenCLRuntime.cpp
   CGOpenMPRuntime.cpp
   CGOpenMPRuntimeNVPTX.cpp

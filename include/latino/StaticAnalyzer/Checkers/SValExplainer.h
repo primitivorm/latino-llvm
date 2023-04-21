@@ -145,9 +145,9 @@ public:
       return "'this' object";
     // Objective-C objects are not normal symbolic regions. At least,
     // they're always on the heap.
-    if (R->getSymbol()->getType()
-            .getCanonicalType()->getAs<ObjCObjectPointerType>())
-      return "object at " + Visit(R->getSymbol());
+    // if (R->getSymbol()->getType()
+    //         .getCanonicalType()->getAs<ObjCObjectPointerType>())
+    //   return "object at " + Visit(R->getSymbol());
     // Other heap-based symbolic regions are also special.
     if (isa<HeapSpaceRegion>(R->getMemorySpace()))
       return "heap segment that starts at " + Visit(R->getSymbol());
@@ -235,12 +235,12 @@ public:
       OS << "function '" << FD->getQualifiedNameAsString() << "()'";
     else if (const auto *CD = dyn_cast<CXXConstructorDecl>(Parent))
       OS << "C++ constructor '" << CD->getQualifiedNameAsString() << "()'";
-    else if (const auto *MD = dyn_cast<ObjCMethodDecl>(Parent)) {
+    /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(Parent)) {
       if (MD->isClassMethod())
         OS << "Objective-C method '+" << MD->getQualifiedNameAsString() << "'";
       else
         OS << "Objective-C method '-" << MD->getQualifiedNameAsString() << "'";
-    } else if (isa<BlockDecl>(Parent)) {
+    }*/ else if (isa<BlockDecl>(Parent)) {
       if (cast<BlockDecl>(Parent)->isConversionFromLambda())
         OS << "lambda";
       else

@@ -19,12 +19,12 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/FormatString.h"
 #include "latino/AST/NSAPI.h"
@@ -802,124 +802,124 @@ static inline bool isBlockPointer(Expr *Arg) {
 
 /// OpenCL C v2.0, s6.13.17.2 - Checks that the block parameters are all local
 /// void*, which is a requirement of device side enqueue.
-static bool checkOpenCLBlockArgs(Sema &S, Expr *BlockArg) {
-  const BlockPointerType *BPT =
-      cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
-  ArrayRef<QualType> Params =
-      BPT->getPointeeType()->castAs<FunctionProtoType>()->getParamTypes();
-  unsigned ArgCounter = 0;
-  bool IllegalParams = false;
-  // Iterate through the block parameters until either one is found that is not
-  // a local void*, or the block is valid.
-  for (ArrayRef<QualType>::iterator I = Params.begin(), E = Params.end();
-       I != E; ++I, ++ArgCounter) {
-    if (!(*I)->isPointerType() || !(*I)->getPointeeType()->isVoidType() ||
-        (*I)->getPointeeType().getQualifiers().getAddressSpace() !=
-            LangAS::opencl_local) {
-      // Get the location of the error. If a block literal has been passed
-      // (BlockExpr) then we can point straight to the offending argument,
-      // else we just point to the variable reference.
-      SourceLocation ErrorLoc;
-      if (isa<BlockExpr>(BlockArg)) {
-        BlockDecl *BD = cast<BlockExpr>(BlockArg)->getBlockDecl();
-        ErrorLoc = BD->getParamDecl(ArgCounter)->getBeginLoc();
-      } else if (isa<DeclRefExpr>(BlockArg)) {
-        ErrorLoc = cast<DeclRefExpr>(BlockArg)->getBeginLoc();
-      }
-      S.Diag(ErrorLoc,
-             diag::err_opencl_enqueue_kernel_blocks_non_local_void_args);
-      IllegalParams = true;
-    }
-  }
+// static bool checkOpenCLBlockArgs(Sema &S, Expr *BlockArg) {
+//   const BlockPointerType *BPT =
+//       cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
+//   ArrayRef<QualType> Params =
+//       BPT->getPointeeType()->castAs<FunctionProtoType>()->getParamTypes();
+//   unsigned ArgCounter = 0;
+//   bool IllegalParams = false;
+//   // Iterate through the block parameters until either one is found that is not
+//   // a local void*, or the block is valid.
+//   for (ArrayRef<QualType>::iterator I = Params.begin(), E = Params.end();
+//        I != E; ++I, ++ArgCounter) {
+//     if (!(*I)->isPointerType() || !(*I)->getPointeeType()->isVoidType() ||
+//         (*I)->getPointeeType().getQualifiers().getAddressSpace() !=
+//             LangAS::opencl_local) {
+//       // Get the location of the error. If a block literal has been passed
+//       // (BlockExpr) then we can point straight to the offending argument,
+//       // else we just point to the variable reference.
+//       SourceLocation ErrorLoc;
+//       if (isa<BlockExpr>(BlockArg)) {
+//         BlockDecl *BD = cast<BlockExpr>(BlockArg)->getBlockDecl();
+//         ErrorLoc = BD->getParamDecl(ArgCounter)->getBeginLoc();
+//       } else if (isa<DeclRefExpr>(BlockArg)) {
+//         ErrorLoc = cast<DeclRefExpr>(BlockArg)->getBeginLoc();
+//       }
+//       S.Diag(ErrorLoc,
+//              diag::err_opencl_enqueue_kernel_blocks_non_local_void_args);
+//       IllegalParams = true;
+//     }
+//   }
 
-  return IllegalParams;
-}
+//   return IllegalParams;
+// }
 
-static bool checkOpenCLSubgroupExt(Sema &S, CallExpr *Call) {
-  if (!S.getOpenCLOptions().isEnabled("cl_khr_subgroups")) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_requires_extension)
-        << 1 << Call->getDirectCallee() << "cl_khr_subgroups";
-    return true;
-  }
-  return false;
-}
+// static bool checkOpenCLSubgroupExt(Sema &S, CallExpr *Call) {
+//   if (!S.getOpenCLOptions().isEnabled("cl_khr_subgroups")) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_requires_extension)
+//         << 1 << Call->getDirectCallee() << "cl_khr_subgroups";
+//     return true;
+//   }
+//   return false;
+// }
 
-static bool SemaOpenCLBuiltinNDRangeAndBlock(Sema &S, CallExpr *TheCall) {
-  if (checkArgCount(S, TheCall, 2))
-    return true;
+// static bool SemaOpenCLBuiltinNDRangeAndBlock(Sema &S, CallExpr *TheCall) {
+//   if (checkArgCount(S, TheCall, 2))
+//     return true;
 
-  if (checkOpenCLSubgroupExt(S, TheCall))
-    return true;
+//   if (checkOpenCLSubgroupExt(S, TheCall))
+//     return true;
 
-  // First argument is an ndrange_t type.
-  Expr *NDRangeArg = TheCall->getArg(0);
-  if (NDRangeArg->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
-    S.Diag(NDRangeArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-        << TheCall->getDirectCallee() << "'ndrange_t'";
-    return true;
-  }
+//   // First argument is an ndrange_t type.
+//   Expr *NDRangeArg = TheCall->getArg(0);
+//   if (NDRangeArg->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
+//     S.Diag(NDRangeArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+//         << TheCall->getDirectCallee() << "'ndrange_t'";
+//     return true;
+//   }
 
-  Expr *BlockArg = TheCall->getArg(1);
-  if (!isBlockPointer(BlockArg)) {
-    S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-        << TheCall->getDirectCallee() << "block";
-    return true;
-  }
-  return checkOpenCLBlockArgs(S, BlockArg);
-}
+//   Expr *BlockArg = TheCall->getArg(1);
+//   if (!isBlockPointer(BlockArg)) {
+//     S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+//         << TheCall->getDirectCallee() << "block";
+//     return true;
+//   }
+//   return checkOpenCLBlockArgs(S, BlockArg);
+// }
 
 /// OpenCL C v2.0, s6.13.17.6 - Check the argument to the
 /// get_kernel_work_group_size
 /// and get_kernel_preferred_work_group_size_multiple builtin functions.
-static bool SemaOpenCLBuiltinKernelWorkGroupSize(Sema &S, CallExpr *TheCall) {
-  if (checkArgCount(S, TheCall, 1))
-    return true;
+// static bool SemaOpenCLBuiltinKernelWorkGroupSize(Sema &S, CallExpr *TheCall) {
+//   if (checkArgCount(S, TheCall, 1))
+//     return true;
 
-  Expr *BlockArg = TheCall->getArg(0);
-  if (!isBlockPointer(BlockArg)) {
-    S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-        << TheCall->getDirectCallee() << "block";
-    return true;
-  }
-  return checkOpenCLBlockArgs(S, BlockArg);
-}
+//   Expr *BlockArg = TheCall->getArg(0);
+//   if (!isBlockPointer(BlockArg)) {
+//     S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+//         << TheCall->getDirectCallee() << "block";
+//     return true;
+//   }
+//   return checkOpenCLBlockArgs(S, BlockArg);
+// }
 
 /// Diagnose integer type and any valid implicit conversion to it.
-static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E,
-                                      const QualType &IntType);
+// static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E,
+//                                       const QualType &IntType);
 
-static bool checkOpenCLEnqueueLocalSizeArgs(Sema &S, CallExpr *TheCall,
-                                            unsigned Start, unsigned End) {
-  bool IllegalParams = false;
-  for (unsigned I = Start; I <= End; ++I)
-    IllegalParams |= checkOpenCLEnqueueIntType(S, TheCall->getArg(I),
-                                              S.Context.getSizeType());
-  return IllegalParams;
-}
+// static bool checkOpenCLEnqueueLocalSizeArgs(Sema &S, CallExpr *TheCall,
+//                                             unsigned Start, unsigned End) {
+//   bool IllegalParams = false;
+//   for (unsigned I = Start; I <= End; ++I)
+//     IllegalParams |= checkOpenCLEnqueueIntType(S, TheCall->getArg(I),
+//                                               S.Context.getSizeType());
+//   return IllegalParams;
+// }
 
 /// OpenCL v2.0, s6.13.17.1 - Check that sizes are provided for all
 /// 'local void*' parameter of passed block.
-static bool checkOpenCLEnqueueVariadicArgs(Sema &S, CallExpr *TheCall,
-                                           Expr *BlockArg,
-                                           unsigned NumNonVarArgs) {
-  const BlockPointerType *BPT =
-      cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
-  unsigned NumBlockParams =
-      BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams();
-  unsigned TotalNumArgs = TheCall->getNumArgs();
+// static bool checkOpenCLEnqueueVariadicArgs(Sema &S, CallExpr *TheCall,
+//                                            Expr *BlockArg,
+//                                            unsigned NumNonVarArgs) {
+//   const BlockPointerType *BPT =
+//       cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
+//   unsigned NumBlockParams =
+//       BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams();
+//   unsigned TotalNumArgs = TheCall->getNumArgs();
 
-  // For each argument passed to the block, a corresponding uint needs to
-  // be passed to describe the size of the local memory.
-  if (TotalNumArgs != NumBlockParams + NumNonVarArgs) {
-    S.Diag(TheCall->getBeginLoc(),
-           diag::err_opencl_enqueue_kernel_local_size_args);
-    return true;
-  }
+//   // For each argument passed to the block, a corresponding uint needs to
+//   // be passed to describe the size of the local memory.
+//   if (TotalNumArgs != NumBlockParams + NumNonVarArgs) {
+//     S.Diag(TheCall->getBeginLoc(),
+//            diag::err_opencl_enqueue_kernel_local_size_args);
+//     return true;
+//   }
 
-  // Check that the sizes of the local memory are specified by integers.
-  return checkOpenCLEnqueueLocalSizeArgs(S, TheCall, NumNonVarArgs,
-                                         TotalNumArgs - 1);
-}
+//   // Check that the sizes of the local memory are specified by integers.
+//   return checkOpenCLEnqueueLocalSizeArgs(S, TheCall, NumNonVarArgs,
+//                                          TotalNumArgs - 1);
+// }
 
 /// OpenCL C v2.0, s6.13.17 - Enqueue kernel function contains four different
 /// overload formats specified in Table 6.13.17.1.
@@ -947,306 +947,306 @@ static bool checkOpenCLEnqueueVariadicArgs(Sema &S, CallExpr *TheCall,
 ///                    clk_event_t *event_ret,
 ///                    void (^block)(local void*, ...),
 ///                    uint size0, ...)
-static bool SemaOpenCLBuiltinEnqueueKernel(Sema &S, CallExpr *TheCall) {
-  unsigned NumArgs = TheCall->getNumArgs();
+// static bool SemaOpenCLBuiltinEnqueueKernel(Sema &S, CallExpr *TheCall) {
+//   unsigned NumArgs = TheCall->getNumArgs();
 
-  if (NumArgs < 4) {
-    S.Diag(TheCall->getBeginLoc(),
-           diag::err_typecheck_call_too_few_args_at_least)
-        << 0 << 4 << NumArgs;
-    return true;
-  }
+//   if (NumArgs < 4) {
+//     S.Diag(TheCall->getBeginLoc(),
+//            diag::err_typecheck_call_too_few_args_at_least)
+//         << 0 << 4 << NumArgs;
+//     return true;
+//   }
 
-  Expr *Arg0 = TheCall->getArg(0);
-  Expr *Arg1 = TheCall->getArg(1);
-  Expr *Arg2 = TheCall->getArg(2);
-  Expr *Arg3 = TheCall->getArg(3);
+//   Expr *Arg0 = TheCall->getArg(0);
+//   Expr *Arg1 = TheCall->getArg(1);
+//   Expr *Arg2 = TheCall->getArg(2);
+//   Expr *Arg3 = TheCall->getArg(3);
 
-  // First argument always needs to be a queue_t type.
-  if (!Arg0->getType()->isQueueT()) {
-    S.Diag(TheCall->getArg(0)->getBeginLoc(),
-           diag::err_opencl_builtin_expected_type)
-        << TheCall->getDirectCallee() << S.Context.OCLQueueTy;
-    return true;
-  }
+//   // First argument always needs to be a queue_t type.
+//   if (!Arg0->getType()->isQueueT()) {
+//     S.Diag(TheCall->getArg(0)->getBeginLoc(),
+//            diag::err_opencl_builtin_expected_type)
+//         << TheCall->getDirectCallee() << S.Context.OCLQueueTy;
+//     return true;
+//   }
 
-  // Second argument always needs to be a kernel_enqueue_flags_t enum value.
-  if (!Arg1->getType()->isIntegerType()) {
-    S.Diag(TheCall->getArg(1)->getBeginLoc(),
-           diag::err_opencl_builtin_expected_type)
-        << TheCall->getDirectCallee() << "'kernel_enqueue_flags_t' (i.e. uint)";
-    return true;
-  }
+//   // Second argument always needs to be a kernel_enqueue_flags_t enum value.
+//   if (!Arg1->getType()->isIntegerType()) {
+//     S.Diag(TheCall->getArg(1)->getBeginLoc(),
+//            diag::err_opencl_builtin_expected_type)
+//         << TheCall->getDirectCallee() << "'kernel_enqueue_flags_t' (i.e. uint)";
+//     return true;
+//   }
 
-  // Third argument is always an ndrange_t type.
-  if (Arg2->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
-    S.Diag(TheCall->getArg(2)->getBeginLoc(),
-           diag::err_opencl_builtin_expected_type)
-        << TheCall->getDirectCallee() << "'ndrange_t'";
-    return true;
-  }
+//   // Third argument is always an ndrange_t type.
+//   if (Arg2->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
+//     S.Diag(TheCall->getArg(2)->getBeginLoc(),
+//            diag::err_opencl_builtin_expected_type)
+//         << TheCall->getDirectCallee() << "'ndrange_t'";
+//     return true;
+//   }
 
-  // With four arguments, there is only one form that the function could be
-  // called in: no events and no variable arguments.
-  if (NumArgs == 4) {
-    // check that the last argument is the right block type.
-    if (!isBlockPointer(Arg3)) {
-      S.Diag(Arg3->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-          << TheCall->getDirectCallee() << "block";
-      return true;
-    }
-    // we have a block type, check the prototype
-    const BlockPointerType *BPT =
-        cast<BlockPointerType>(Arg3->getType().getCanonicalType());
-    if (BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams() > 0) {
-      S.Diag(Arg3->getBeginLoc(),
-             diag::err_opencl_enqueue_kernel_blocks_no_args);
-      return true;
-    }
-    return false;
-  }
-  // we can have block + varargs.
-  if (isBlockPointer(Arg3))
-    return (checkOpenCLBlockArgs(S, Arg3) ||
-            checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg3, 4));
-  // last two cases with either exactly 7 args or 7 args and varargs.
-  if (NumArgs >= 7) {
-    // check common block argument.
-    Expr *Arg6 = TheCall->getArg(6);
-    if (!isBlockPointer(Arg6)) {
-      S.Diag(Arg6->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-          << TheCall->getDirectCallee() << "block";
-      return true;
-    }
-    if (checkOpenCLBlockArgs(S, Arg6))
-      return true;
+//   // With four arguments, there is only one form that the function could be
+//   // called in: no events and no variable arguments.
+//   if (NumArgs == 4) {
+//     // check that the last argument is the right block type.
+//     if (!isBlockPointer(Arg3)) {
+//       S.Diag(Arg3->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+//           << TheCall->getDirectCallee() << "block";
+//       return true;
+//     }
+//     // we have a block type, check the prototype
+//     const BlockPointerType *BPT =
+//         cast<BlockPointerType>(Arg3->getType().getCanonicalType());
+//     if (BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams() > 0) {
+//       S.Diag(Arg3->getBeginLoc(),
+//              diag::err_opencl_enqueue_kernel_blocks_no_args);
+//       return true;
+//     }
+//     return false;
+//   }
+//   // we can have block + varargs.
+//   if (isBlockPointer(Arg3))
+//     return (checkOpenCLBlockArgs(S, Arg3) ||
+//             checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg3, 4));
+//   // last two cases with either exactly 7 args or 7 args and varargs.
+//   if (NumArgs >= 7) {
+//     // check common block argument.
+//     Expr *Arg6 = TheCall->getArg(6);
+//     if (!isBlockPointer(Arg6)) {
+//       S.Diag(Arg6->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+//           << TheCall->getDirectCallee() << "block";
+//       return true;
+//     }
+//     if (checkOpenCLBlockArgs(S, Arg6))
+//       return true;
 
-    // Forth argument has to be any integer type.
-    if (!Arg3->getType()->isIntegerType()) {
-      S.Diag(TheCall->getArg(3)->getBeginLoc(),
-             diag::err_opencl_builtin_expected_type)
-          << TheCall->getDirectCallee() << "integer";
-      return true;
-    }
-    // check remaining common arguments.
-    Expr *Arg4 = TheCall->getArg(4);
-    Expr *Arg5 = TheCall->getArg(5);
+//     // Forth argument has to be any integer type.
+//     if (!Arg3->getType()->isIntegerType()) {
+//       S.Diag(TheCall->getArg(3)->getBeginLoc(),
+//              diag::err_opencl_builtin_expected_type)
+//           << TheCall->getDirectCallee() << "integer";
+//       return true;
+//     }
+//     // check remaining common arguments.
+//     Expr *Arg4 = TheCall->getArg(4);
+//     Expr *Arg5 = TheCall->getArg(5);
 
-    // Fifth argument is always passed as a pointer to clk_event_t.
-    if (!Arg4->isNullPointerConstant(S.Context,
-                                     Expr::NPC_ValueDependentIsNotNull) &&
-        !Arg4->getType()->getPointeeOrArrayElementType()->isClkEventT()) {
-      S.Diag(TheCall->getArg(4)->getBeginLoc(),
-             diag::err_opencl_builtin_expected_type)
-          << TheCall->getDirectCallee()
-          << S.Context.getPointerType(S.Context.OCLClkEventTy);
-      return true;
-    }
+//     // Fifth argument is always passed as a pointer to clk_event_t.
+//     if (!Arg4->isNullPointerConstant(S.Context,
+//                                      Expr::NPC_ValueDependentIsNotNull) &&
+//         !Arg4->getType()->getPointeeOrArrayElementType()->isClkEventT()) {
+//       S.Diag(TheCall->getArg(4)->getBeginLoc(),
+//              diag::err_opencl_builtin_expected_type)
+//           << TheCall->getDirectCallee()
+//           << S.Context.getPointerType(S.Context.OCLClkEventTy);
+//       return true;
+//     }
 
-    // Sixth argument is always passed as a pointer to clk_event_t.
-    if (!Arg5->isNullPointerConstant(S.Context,
-                                     Expr::NPC_ValueDependentIsNotNull) &&
-        !(Arg5->getType()->isPointerType() &&
-          Arg5->getType()->getPointeeType()->isClkEventT())) {
-      S.Diag(TheCall->getArg(5)->getBeginLoc(),
-             diag::err_opencl_builtin_expected_type)
-          << TheCall->getDirectCallee()
-          << S.Context.getPointerType(S.Context.OCLClkEventTy);
-      return true;
-    }
+//     // Sixth argument is always passed as a pointer to clk_event_t.
+//     if (!Arg5->isNullPointerConstant(S.Context,
+//                                      Expr::NPC_ValueDependentIsNotNull) &&
+//         !(Arg5->getType()->isPointerType() &&
+//           Arg5->getType()->getPointeeType()->isClkEventT())) {
+//       S.Diag(TheCall->getArg(5)->getBeginLoc(),
+//              diag::err_opencl_builtin_expected_type)
+//           << TheCall->getDirectCallee()
+//           << S.Context.getPointerType(S.Context.OCLClkEventTy);
+//       return true;
+//     }
 
-    if (NumArgs == 7)
-      return false;
+//     if (NumArgs == 7)
+//       return false;
 
-    return checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg6, 7);
-  }
+//     return checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg6, 7);
+//   }
 
-  // None of the specific case has been detected, give generic error
-  S.Diag(TheCall->getBeginLoc(),
-         diag::err_opencl_enqueue_kernel_incorrect_args);
-  return true;
-}
+//   // None of the specific case has been detected, give generic error
+//   S.Diag(TheCall->getBeginLoc(),
+//          diag::err_opencl_enqueue_kernel_incorrect_args);
+//   return true;
+// }
 
 /// Returns OpenCL access qual.
-static OpenCLAccessAttr *getOpenCLArgAccess(const Decl *D) {
-    return D->getAttr<OpenCLAccessAttr>();
-}
+// static OpenCLAccessAttr *getOpenCLArgAccess(const Decl *D) {
+//     return D->getAttr<OpenCLAccessAttr>();
+// }
 
 /// Returns true if pipe element type is different from the pointer.
-static bool checkOpenCLPipeArg(Sema &S, CallExpr *Call) {
-  const Expr *Arg0 = Call->getArg(0);
-  // First argument type should always be pipe.
-  if (!Arg0->getType()->isPipeType()) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
-        << Call->getDirectCallee() << Arg0->getSourceRange();
-    return true;
-  }
-  OpenCLAccessAttr *AccessQual =
-      getOpenCLArgAccess(cast<DeclRefExpr>(Arg0)->getDecl());
-  // Validates the access qualifier is compatible with the call.
-  // OpenCL v2.0 s6.13.16 - The access qualifiers for pipe should only be
-  // read_only and write_only, and assumed to be read_only if no qualifier is
-  // specified.
-  switch (Call->getDirectCallee()->getBuiltinID()) {
-  case Builtin::BIread_pipe:
-  case Builtin::BIreserve_read_pipe:
-  case Builtin::BIcommit_read_pipe:
-  case Builtin::BIwork_group_reserve_read_pipe:
-  case Builtin::BIsub_group_reserve_read_pipe:
-  case Builtin::BIwork_group_commit_read_pipe:
-  case Builtin::BIsub_group_commit_read_pipe:
-    if (!(!AccessQual || AccessQual->isReadOnly())) {
-      S.Diag(Arg0->getBeginLoc(),
-             diag::err_opencl_builtin_pipe_invalid_access_modifier)
-          << "read_only" << Arg0->getSourceRange();
-      return true;
-    }
-    break;
-  case Builtin::BIwrite_pipe:
-  case Builtin::BIreserve_write_pipe:
-  case Builtin::BIcommit_write_pipe:
-  case Builtin::BIwork_group_reserve_write_pipe:
-  case Builtin::BIsub_group_reserve_write_pipe:
-  case Builtin::BIwork_group_commit_write_pipe:
-  case Builtin::BIsub_group_commit_write_pipe:
-    if (!(AccessQual && AccessQual->isWriteOnly())) {
-      S.Diag(Arg0->getBeginLoc(),
-             diag::err_opencl_builtin_pipe_invalid_access_modifier)
-          << "write_only" << Arg0->getSourceRange();
-      return true;
-    }
-    break;
-  default:
-    break;
-  }
-  return false;
-}
+// static bool checkOpenCLPipeArg(Sema &S, CallExpr *Call) {
+//   const Expr *Arg0 = Call->getArg(0);
+//   // First argument type should always be pipe.
+//   if (!Arg0->getType()->isPipeType()) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
+//         << Call->getDirectCallee() << Arg0->getSourceRange();
+//     return true;
+//   }
+//   OpenCLAccessAttr *AccessQual =
+//       getOpenCLArgAccess(cast<DeclRefExpr>(Arg0)->getDecl());
+//   // Validates the access qualifier is compatible with the call.
+//   // OpenCL v2.0 s6.13.16 - The access qualifiers for pipe should only be
+//   // read_only and write_only, and assumed to be read_only if no qualifier is
+//   // specified.
+//   switch (Call->getDirectCallee()->getBuiltinID()) {
+//   case Builtin::BIread_pipe:
+//   case Builtin::BIreserve_read_pipe:
+//   case Builtin::BIcommit_read_pipe:
+//   case Builtin::BIwork_group_reserve_read_pipe:
+//   case Builtin::BIsub_group_reserve_read_pipe:
+//   case Builtin::BIwork_group_commit_read_pipe:
+//   case Builtin::BIsub_group_commit_read_pipe:
+//     if (!(!AccessQual || AccessQual->isReadOnly())) {
+//       S.Diag(Arg0->getBeginLoc(),
+//              diag::err_opencl_builtin_pipe_invalid_access_modifier)
+//           << "read_only" << Arg0->getSourceRange();
+//       return true;
+//     }
+//     break;
+//   case Builtin::BIwrite_pipe:
+//   case Builtin::BIreserve_write_pipe:
+//   case Builtin::BIcommit_write_pipe:
+//   case Builtin::BIwork_group_reserve_write_pipe:
+//   case Builtin::BIsub_group_reserve_write_pipe:
+//   case Builtin::BIwork_group_commit_write_pipe:
+//   case Builtin::BIsub_group_commit_write_pipe:
+//     if (!(AccessQual && AccessQual->isWriteOnly())) {
+//       S.Diag(Arg0->getBeginLoc(),
+//              diag::err_opencl_builtin_pipe_invalid_access_modifier)
+//           << "write_only" << Arg0->getSourceRange();
+//       return true;
+//     }
+//     break;
+//   default:
+//     break;
+//   }
+//   return false;
+// }
 
 /// Returns true if pipe element type is different from the pointer.
-static bool checkOpenCLPipePacketType(Sema &S, CallExpr *Call, unsigned Idx) {
-  const Expr *Arg0 = Call->getArg(0);
-  const Expr *ArgIdx = Call->getArg(Idx);
-  const PipeType *PipeTy = cast<PipeType>(Arg0->getType());
-  const QualType EltTy = PipeTy->getElementType();
-  const PointerType *ArgTy = ArgIdx->getType()->getAs<PointerType>();
-  // The Idx argument should be a pointer and the type of the pointer and
-  // the type of pipe element should also be the same.
-  if (!ArgTy ||
-      !S.Context.hasSameType(
-          EltTy, ArgTy->getPointeeType()->getCanonicalTypeInternal())) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-        << Call->getDirectCallee() << S.Context.getPointerType(EltTy)
-        << ArgIdx->getType() << ArgIdx->getSourceRange();
-    return true;
-  }
-  return false;
-}
+// static bool checkOpenCLPipePacketType(Sema &S, CallExpr *Call, unsigned Idx) {
+//   const Expr *Arg0 = Call->getArg(0);
+//   const Expr *ArgIdx = Call->getArg(Idx);
+//   const PipeType *PipeTy = cast<PipeType>(Arg0->getType());
+//   const QualType EltTy = PipeTy->getElementType();
+//   const PointerType *ArgTy = ArgIdx->getType()->getAs<PointerType>();
+//   // The Idx argument should be a pointer and the type of the pointer and
+//   // the type of pipe element should also be the same.
+//   if (!ArgTy ||
+//       !S.Context.hasSameType(
+//           EltTy, ArgTy->getPointeeType()->getCanonicalTypeInternal())) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+//         << Call->getDirectCallee() << S.Context.getPointerType(EltTy)
+//         << ArgIdx->getType() << ArgIdx->getSourceRange();
+//     return true;
+//   }
+//   return false;
+// }
 
 // Performs semantic analysis for the read/write_pipe call.
 // \param S Reference to the semantic analyzer.
 // \param Call A pointer to the builtin call.
 // \return True if a semantic error has been found, false otherwise.
-static bool SemaBuiltinRWPipe(Sema &S, CallExpr *Call) {
-  // OpenCL v2.0 s6.13.16.2 - The built-in read/write
-  // functions have two forms.
-  switch (Call->getNumArgs()) {
-  case 2:
-    if (checkOpenCLPipeArg(S, Call))
-      return true;
-    // The call with 2 arguments should be
-    // read/write_pipe(pipe T, T*).
-    // Check packet type T.
-    if (checkOpenCLPipePacketType(S, Call, 1))
-      return true;
-    break;
+// static bool SemaBuiltinRWPipe(Sema &S, CallExpr *Call) {
+//   // OpenCL v2.0 s6.13.16.2 - The built-in read/write
+//   // functions have two forms.
+//   switch (Call->getNumArgs()) {
+//   case 2:
+//     if (checkOpenCLPipeArg(S, Call))
+//       return true;
+//     // The call with 2 arguments should be
+//     // read/write_pipe(pipe T, T*).
+//     // Check packet type T.
+//     if (checkOpenCLPipePacketType(S, Call, 1))
+//       return true;
+//     break;
 
-  case 4: {
-    if (checkOpenCLPipeArg(S, Call))
-      return true;
-    // The call with 4 arguments should be
-    // read/write_pipe(pipe T, reserve_id_t, uint, T*).
-    // Check reserve_id_t.
-    if (!Call->getArg(1)->getType()->isReserveIDT()) {
-      S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-          << Call->getDirectCallee() << S.Context.OCLReserveIDTy
-          << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
-      return true;
-    }
+//   case 4: {
+//     if (checkOpenCLPipeArg(S, Call))
+//       return true;
+//     // The call with 4 arguments should be
+//     // read/write_pipe(pipe T, reserve_id_t, uint, T*).
+//     // Check reserve_id_t.
+//     if (!Call->getArg(1)->getType()->isReserveIDT()) {
+//       S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+//           << Call->getDirectCallee() << S.Context.OCLReserveIDTy
+//           << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
+//       return true;
+//     }
 
-    // Check the index.
-    const Expr *Arg2 = Call->getArg(2);
-    if (!Arg2->getType()->isIntegerType() &&
-        !Arg2->getType()->isUnsignedIntegerType()) {
-      S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-          << Call->getDirectCallee() << S.Context.UnsignedIntTy
-          << Arg2->getType() << Arg2->getSourceRange();
-      return true;
-    }
+//     // Check the index.
+//     const Expr *Arg2 = Call->getArg(2);
+//     if (!Arg2->getType()->isIntegerType() &&
+//         !Arg2->getType()->isUnsignedIntegerType()) {
+//       S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+//           << Call->getDirectCallee() << S.Context.UnsignedIntTy
+//           << Arg2->getType() << Arg2->getSourceRange();
+//       return true;
+//     }
 
-    // Check packet type T.
-    if (checkOpenCLPipePacketType(S, Call, 3))
-      return true;
-  } break;
-  default:
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_arg_num)
-        << Call->getDirectCallee() << Call->getSourceRange();
-    return true;
-  }
+//     // Check packet type T.
+//     if (checkOpenCLPipePacketType(S, Call, 3))
+//       return true;
+//   } break;
+//   default:
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_arg_num)
+//         << Call->getDirectCallee() << Call->getSourceRange();
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 // Performs a semantic analysis on the {work_group_/sub_group_
 //        /_}reserve_{read/write}_pipe
 // \param S Reference to the semantic analyzer.
 // \param Call The call to the builtin function to be analyzed.
 // \return True if a semantic error was found, false otherwise.
-static bool SemaBuiltinReserveRWPipe(Sema &S, CallExpr *Call) {
-  if (checkArgCount(S, Call, 2))
-    return true;
+// static bool SemaBuiltinReserveRWPipe(Sema &S, CallExpr *Call) {
+//   if (checkArgCount(S, Call, 2))
+//     return true;
 
-  if (checkOpenCLPipeArg(S, Call))
-    return true;
+//   if (checkOpenCLPipeArg(S, Call))
+//     return true;
 
-  // Check the reserve size.
-  if (!Call->getArg(1)->getType()->isIntegerType() &&
-      !Call->getArg(1)->getType()->isUnsignedIntegerType()) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-        << Call->getDirectCallee() << S.Context.UnsignedIntTy
-        << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
-    return true;
-  }
+//   // Check the reserve size.
+//   if (!Call->getArg(1)->getType()->isIntegerType() &&
+//       !Call->getArg(1)->getType()->isUnsignedIntegerType()) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+//         << Call->getDirectCallee() << S.Context.UnsignedIntTy
+//         << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
+//     return true;
+//   }
 
-  // Since return type of reserve_read/write_pipe built-in function is
-  // reserve_id_t, which is not defined in the builtin def file , we used int
-  // as return type and need to override the return type of these functions.
-  Call->setType(S.Context.OCLReserveIDTy);
+//   // Since return type of reserve_read/write_pipe built-in function is
+//   // reserve_id_t, which is not defined in the builtin def file , we used int
+//   // as return type and need to override the return type of these functions.
+//   Call->setType(S.Context.OCLReserveIDTy);
 
-  return false;
-}
+//   return false;
+// }
 
 // Performs a semantic analysis on {work_group_/sub_group_
 //        /_}commit_{read/write}_pipe
 // \param S Reference to the semantic analyzer.
 // \param Call The call to the builtin function to be analyzed.
 // \return True if a semantic error was found, false otherwise.
-static bool SemaBuiltinCommitRWPipe(Sema &S, CallExpr *Call) {
-  if (checkArgCount(S, Call, 2))
-    return true;
+// static bool SemaBuiltinCommitRWPipe(Sema &S, CallExpr *Call) {
+//   if (checkArgCount(S, Call, 2))
+//     return true;
 
-  if (checkOpenCLPipeArg(S, Call))
-    return true;
+//   if (checkOpenCLPipeArg(S, Call))
+//     return true;
 
-  // Check reserve_id_t.
-  if (!Call->getArg(1)->getType()->isReserveIDT()) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-        << Call->getDirectCallee() << S.Context.OCLReserveIDTy
-        << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
-    return true;
-  }
+//   // Check reserve_id_t.
+//   if (!Call->getArg(1)->getType()->isReserveIDT()) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+//         << Call->getDirectCallee() << S.Context.OCLReserveIDTy
+//         << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 // Performs a semantic analysis on the call to built-in Pipe
 //        Query Functions.
@@ -1867,39 +1867,39 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
     TheCall->setType(Context.VoidPtrTy);
     break;
   // OpenCL v2.0, s6.13.16 - Pipe functions
-  case Builtin::BIread_pipe:
-  case Builtin::BIwrite_pipe:
-    // Since those two functions are declared with var args, we need a semantic
-    // check for the argument.
-    if (SemaBuiltinRWPipe(*this, TheCall))
-      return ExprError();
-    break;
-  case Builtin::BIreserve_read_pipe:
-  case Builtin::BIreserve_write_pipe:
-  case Builtin::BIwork_group_reserve_read_pipe:
-  case Builtin::BIwork_group_reserve_write_pipe:
-    if (SemaBuiltinReserveRWPipe(*this, TheCall))
-      return ExprError();
-    break;
-  case Builtin::BIsub_group_reserve_read_pipe:
-  case Builtin::BIsub_group_reserve_write_pipe:
-    if (checkOpenCLSubgroupExt(*this, TheCall) ||
-        SemaBuiltinReserveRWPipe(*this, TheCall))
-      return ExprError();
-    break;
-  case Builtin::BIcommit_read_pipe:
-  case Builtin::BIcommit_write_pipe:
-  case Builtin::BIwork_group_commit_read_pipe:
-  case Builtin::BIwork_group_commit_write_pipe:
-    if (SemaBuiltinCommitRWPipe(*this, TheCall))
-      return ExprError();
-    break;
-  case Builtin::BIsub_group_commit_read_pipe:
-  case Builtin::BIsub_group_commit_write_pipe:
-    if (checkOpenCLSubgroupExt(*this, TheCall) ||
-        SemaBuiltinCommitRWPipe(*this, TheCall))
-      return ExprError();
-    break;
+  // case Builtin::BIread_pipe:
+  // case Builtin::BIwrite_pipe:
+  //   // Since those two functions are declared with var args, we need a semantic
+  //   // check for the argument.
+  //   if (SemaBuiltinRWPipe(*this, TheCall))
+  //     return ExprError();
+  //   break;
+  // case Builtin::BIreserve_read_pipe:
+  // case Builtin::BIreserve_write_pipe:
+  // case Builtin::BIwork_group_reserve_read_pipe:
+  // case Builtin::BIwork_group_reserve_write_pipe:
+  //   if (SemaBuiltinReserveRWPipe(*this, TheCall))
+  //     return ExprError();
+  //   break;
+  // case Builtin::BIsub_group_reserve_read_pipe:
+  // case Builtin::BIsub_group_reserve_write_pipe:
+  //   if (checkOpenCLSubgroupExt(*this, TheCall) ||
+  //       SemaBuiltinReserveRWPipe(*this, TheCall))
+  //     return ExprError();
+  //   break;
+  // case Builtin::BIcommit_read_pipe:
+  // case Builtin::BIcommit_write_pipe:
+  // case Builtin::BIwork_group_commit_read_pipe:
+  // case Builtin::BIwork_group_commit_write_pipe:
+  //   if (SemaBuiltinCommitRWPipe(*this, TheCall))
+  //     return ExprError();
+  //   break;
+  // case Builtin::BIsub_group_commit_read_pipe:
+  // case Builtin::BIsub_group_commit_write_pipe:
+  //   if (checkOpenCLSubgroupExt(*this, TheCall) ||
+  //       SemaBuiltinCommitRWPipe(*this, TheCall))
+  //     return ExprError();
+  //   break;
   case Builtin::BIget_pipe_num_packets:
   case Builtin::BIget_pipe_max_packets:
     if (SemaBuiltinPipePackets(*this, TheCall))
@@ -1912,15 +1912,15 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
       return ExprError();
     break;
   // OpenCL v2.0, s6.13.17 - Enqueue kernel functions.
-  case Builtin::BIenqueue_kernel:
-    if (SemaOpenCLBuiltinEnqueueKernel(*this, TheCall))
-      return ExprError();
-    break;
-  case Builtin::BIget_kernel_work_group_size:
-  case Builtin::BIget_kernel_preferred_work_group_size_multiple:
-    if (SemaOpenCLBuiltinKernelWorkGroupSize(*this, TheCall))
-      return ExprError();
-    break;
+  // case Builtin::BIenqueue_kernel:
+  //   if (SemaOpenCLBuiltinEnqueueKernel(*this, TheCall))
+  //     return ExprError();
+  //   break;
+  // case Builtin::BIget_kernel_work_group_size:
+  // case Builtin::BIget_kernel_preferred_work_group_size_multiple:
+  //   if (SemaOpenCLBuiltinKernelWorkGroupSize(*this, TheCall))
+  //     return ExprError();
+  //   break;
   case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
   case Builtin::BIget_kernel_sub_group_count_for_ndrange:
     if (SemaOpenCLBuiltinNDRangeAndBlock(*this, TheCall))
@@ -4191,14 +4191,14 @@ static void CheckNonNullArguments(Sema &S,
     }
   }
 
-  if (FDecl && (isa<FunctionDecl>(FDecl) || isa<ObjCMethodDecl>(FDecl))) {
+  if (FDecl && (isa<FunctionDecl>(FDecl) /*|| isa<ObjCMethodDecl>(FDecl))*/) {
     // Handle the nonnull attribute on the parameters of the
     // function/method.
     ArrayRef<ParmVarDecl*> parms;
     if (const FunctionDecl *FD = dyn_cast<FunctionDecl>(FDecl))
       parms = FD->parameters();
-    else
-      parms = cast<ObjCMethodDecl>(FDecl)->parameters();
+    // else
+    //   parms = cast<ObjCMethodDecl>(FDecl)->parameters();
 
     unsigned ParamIndex = 0;
     for (ArrayRef<ParmVarDecl*>::iterator I = parms.begin(), E = parms.end();
@@ -4285,9 +4285,9 @@ void Sema::checkCall(NamedDecl *FDecl, const FunctionProtoType *Proto,
     unsigned NumParams = Proto ? Proto->getNumParams()
                        : FDecl && isa<FunctionDecl>(FDecl)
                            ? cast<FunctionDecl>(FDecl)->getNumParams()
-                       : FDecl && isa<ObjCMethodDecl>(FDecl)
+                       : /*FDecl && isa<ObjCMethodDecl>(FDecl)
                            ? cast<ObjCMethodDecl>(FDecl)->param_size()
-                       : 0;
+                       :*/ 0;
 
     for (unsigned ArgIdx = NumParams; ArgIdx < Args.size(); ++ArgIdx) {
       // Args[ArgIdx] can be null in malformed code.
@@ -4398,17 +4398,17 @@ bool Sema::CheckFunctionCall(FunctionDecl *FDecl, CallExpr *TheCall,
   return false;
 }
 
-bool Sema::CheckObjCMethodCall(ObjCMethodDecl *Method, SourceLocation lbrac,
-                               ArrayRef<const Expr *> Args) {
-  VariadicCallType CallType =
-      Method->isVariadic() ? VariadicMethod : VariadicDoesNotApply;
+// bool Sema::CheckObjCMethodCall(ObjCMethodDecl *Method, SourceLocation lbrac,
+//                                ArrayRef<const Expr *> Args) {
+//   VariadicCallType CallType =
+//       Method->isVariadic() ? VariadicMethod : VariadicDoesNotApply;
 
-  checkCall(Method, nullptr, /*ThisArg=*/nullptr, Args,
-            /*IsMemberFunction=*/false, lbrac, Method->getSourceRange(),
-            CallType);
+//   checkCall(Method, nullptr, /*ThisArg=*/nullptr, Args,
+//             /*IsMemberFunction=*/false, lbrac, Method->getSourceRange(),
+//             CallType);
 
-  return false;
-}
+//   return false;
+// }
 
 bool Sema::CheckPointerCall(NamedDecl *NDecl, CallExpr *TheCall,
                             const FunctionProtoType *Proto) {
@@ -5540,11 +5540,11 @@ static bool checkVAStartIsInVariadicFunction(Sema &S, Expr *Fn,
   } else if (auto *FD = dyn_cast<FunctionDecl>(Caller)) {
     IsVariadic = FD->isVariadic();
     Params = FD->parameters();
-  } else if (auto *MD = dyn_cast<ObjCMethodDecl>(Caller)) {
+  } /*else if (auto *MD = dyn_cast<ObjCMethodDecl>(Caller)) {
     IsVariadic = MD->isVariadic();
     // FIXME: This isn't correct for methods (results in bogus warning).
     Params = MD->parameters();
-  } else if (isa<CapturedDecl>(Caller)) {
+  }*/ else if (isa<CapturedDecl>(Caller)) {
     // We don't support va_start in a CapturedDecl.
     S.Diag(Fn->getBeginLoc(), diag::err_va_start_captured_stmt);
     return true;
@@ -6889,11 +6889,11 @@ checkFormatStringExpr(Sema &S, const Expr *E, ArrayRef<const Expr *> Args,
       } else if (const PointerType *PT = T->getAs<PointerType>()) {
         isConstant = T.isConstant(S.Context) &&
                      PT->getPointeeType().isConstant(S.Context);
-      } else if (T->isObjCObjectPointerType()) {
+      } /*else if (T->isObjCObjectPointerType()) {
         // In ObjC, there is usually no "const ObjectPointer" type,
         // so don't check if the pointee type is constant.
         isConstant = T.isConstant(S.Context);
-      }
+      }*/
 
       if (isConstant) {
         if (const Expr *Init = VD->getAnyInitializer()) {
@@ -6984,35 +6984,35 @@ checkFormatStringExpr(Sema &S, const Expr *E, ArrayRef<const Expr *> Args,
 
     return SLCT_NotALiteral;
   }
-  case Stmt::ObjCMessageExprClass: {
-    const auto *ME = cast<ObjCMessageExpr>(E);
-    if (const auto *MD = ME->getMethodDecl()) {
-      if (const auto *FA = MD->getAttr<FormatArgAttr>()) {
-        // As a special case heuristic, if we're using the method -[NSBundle
-        // localizedStringForKey:value:table:], ignore any key strings that lack
-        // format specifiers. The idea is that if the key doesn't have any
-        // format specifiers then its probably just a key to map to the
-        // localized strings. If it does have format specifiers though, then its
-        // likely that the text of the key is the format string in the
-        // programmer's language, and should be checked.
-        const ObjCInterfaceDecl *IFace;
-        if (MD->isInstanceMethod() && (IFace = MD->getClassInterface()) &&
-            IFace->getIdentifier()->isStr("NSBundle") &&
-            MD->getSelector().isKeywordSelector(
-                {"localizedStringForKey", "value", "table"})) {
-          IgnoreStringsWithoutSpecifiers = true;
-        }
+  // case Stmt::ObjCMessageExprClass: {
+  //   const auto *ME = cast<ObjCMessageExpr>(E);
+  //   if (const auto *MD = ME->getMethodDecl()) {
+  //     if (const auto *FA = MD->getAttr<FormatArgAttr>()) {
+  //       // As a special case heuristic, if we're using the method -[NSBundle
+  //       // localizedStringForKey:value:table:], ignore any key strings that lack
+  //       // format specifiers. The idea is that if the key doesn't have any
+  //       // format specifiers then its probably just a key to map to the
+  //       // localized strings. If it does have format specifiers though, then its
+  //       // likely that the text of the key is the format string in the
+  //       // programmer's language, and should be checked.
+  //       const ObjCInterfaceDecl *IFace;
+  //       if (MD->isInstanceMethod() && (IFace = MD->getClassInterface()) &&
+  //           IFace->getIdentifier()->isStr("NSBundle") &&
+  //           MD->getSelector().isKeywordSelector(
+  //               {"localizedStringForKey", "value", "table"})) {
+  //         IgnoreStringsWithoutSpecifiers = true;
+  //       }
 
-        const Expr *Arg = ME->getArg(FA->getFormatIdx().getASTIndex());
-        return checkFormatStringExpr(
-            S, Arg, Args, HasVAListArg, format_idx, firstDataArg, Type,
-            CallType, InFunctionCall, CheckedVarArgs, UncoveredArg, Offset,
-            IgnoreStringsWithoutSpecifiers);
-      }
-    }
+  //       const Expr *Arg = ME->getArg(FA->getFormatIdx().getASTIndex());
+  //       return checkFormatStringExpr(
+  //           S, Arg, Args, HasVAListArg, format_idx, firstDataArg, Type,
+  //           CallType, InFunctionCall, CheckedVarArgs, UncoveredArg, Offset,
+  //           IgnoreStringsWithoutSpecifiers);
+  //     }
+  //   }
 
-    return SLCT_NotALiteral;
-  }
+  //   return SLCT_NotALiteral;
+  // }
   case Stmt::ObjCStringLiteralClass:
   case Stmt::StringLiteralClass: {
     const StringLiteral *StrE = nullptr;
@@ -8188,7 +8188,7 @@ static bool requiresParensToAddCast(const Expr *E) {
   case Stmt::ObjCDictionaryLiteralClass:
   case Stmt::ObjCEncodeExprClass:
   case Stmt::ObjCIvarRefExprClass:
-  case Stmt::ObjCMessageExprClass:
+  // case Stmt::ObjCMessageExprClass:
   case Stmt::ObjCPropertyRefExprClass:
   case Stmt::ObjCStringLiteralClass:
   case Stmt::ObjCSubscriptRefExprClass:
@@ -8552,14 +8552,14 @@ CheckPrintfHandler::checkFormatExpr(const analyze_printf::PrintfSpecifier &FS,
       break;
 
     case Sema::VAK_Invalid:
-      if (ExprTy->isObjCObjectType())
-        EmitFormatDiagnostic(
-            S.PDiag(diag::err_cannot_pass_objc_interface_to_vararg_format)
-                << S.getLangOpts().CPlusPlus11 << ExprTy << CallType
-                << AT.getRepresentativeTypeName(S.Context) << CSR
-                << E->getSourceRange(),
-            E->getBeginLoc(), /*IsStringLocation*/ false, CSR);
-      else
+      // if (ExprTy->isObjCObjectType())
+      //   EmitFormatDiagnostic(
+      //       S.PDiag(diag::err_cannot_pass_objc_interface_to_vararg_format)
+      //           << S.getLangOpts().CPlusPlus11 << ExprTy << CallType
+      //           << AT.getRepresentativeTypeName(S.Context) << CSR
+      //           << E->getSourceRange(),
+      //       E->getBeginLoc(), /*IsStringLocation*/ false, CSR);
+      // else
         // FIXME: If this is an initializer list, suggest removing the braces
         // or inserting a cast to the target type.
         S.Diag(E->getBeginLoc(), diag::err_cannot_pass_to_vararg_format)
@@ -10686,15 +10686,15 @@ static bool CheckTautologicalComparison(Sema &S, BinaryOperator *E,
 
   // Special case for ObjC BOOL on targets where its a typedef for a signed char
   // (Namely, macOS).
-  bool IsObjCSignedCharBool = S.getLangOpts().ObjC &&
-                              S.NSAPIObj->isObjCBOOLType(OtherT) &&
-                              OtherT->isSpecificBuiltinType(BuiltinType::SChar);
+  // bool IsObjCSignedCharBool = S.getLangOpts().ObjC &&
+  //                             S.NSAPIObj->isObjCBOOLType(OtherT) &&
+  //                             OtherT->isSpecificBuiltinType(BuiltinType::SChar);
 
   // Whether we're treating Other as being a bool because of the form of
   // expression despite it having another type (typically 'int' in C).
   bool OtherIsBooleanDespiteType =
       !OtherT->isBooleanType() && Other->isKnownToHaveBooleanValue();
-  if (OtherIsBooleanDespiteType || IsObjCSignedCharBool)
+  if (OtherIsBooleanDespiteType /*|| IsObjCSignedCharBool*/)
     OtherRange = IntRange::forBoolType();
 
   // Determine the promoted range of the other type and see if a comparison of
@@ -11071,25 +11071,25 @@ static void DiagnoseImpCast(Sema &S, Expr *E, QualType T,
   DiagnoseImpCast(S, E, E->getType(), T, CContext, diag, pruneControlFlow);
 }
 
-static bool isObjCSignedCharBool(Sema &S, QualType Ty) {
-  return Ty->isSpecificBuiltinType(BuiltinType::SChar) &&
-      S.getLangOpts().ObjC && S.NSAPIObj->isObjCBOOLType(Ty);
-}
+// static bool isObjCSignedCharBool(Sema &S, QualType Ty) {
+//   return Ty->isSpecificBuiltinType(BuiltinType::SChar) &&
+//       S.getLangOpts().ObjC && S.NSAPIObj->isObjCBOOLType(Ty);
+// }
 
-static void adornObjCBoolConversionDiagWithTernaryFixit(
-    Sema &S, Expr *SourceExpr, const Sema::SemaDiagnosticBuilder &Builder) {
-  Expr *Ignored = SourceExpr->IgnoreImplicit();
-  if (const auto *OVE = dyn_cast<OpaqueValueExpr>(Ignored))
-    Ignored = OVE->getSourceExpr();
-  bool NeedsParens = isa<AbstractConditionalOperator>(Ignored) ||
-                     isa<BinaryOperator>(Ignored) ||
-                     isa<CXXOperatorCallExpr>(Ignored);
-  SourceLocation EndLoc = S.getLocForEndOfToken(SourceExpr->getEndLoc());
-  if (NeedsParens)
-    Builder << FixItHint::CreateInsertion(SourceExpr->getBeginLoc(), "(")
-            << FixItHint::CreateInsertion(EndLoc, ")");
-  Builder << FixItHint::CreateInsertion(EndLoc, " ? YES : NO");
-}
+// static void adornObjCBoolConversionDiagWithTernaryFixit(
+//     Sema &S, Expr *SourceExpr, const Sema::SemaDiagnosticBuilder &Builder) {
+//   Expr *Ignored = SourceExpr->IgnoreImplicit();
+//   if (const auto *OVE = dyn_cast<OpaqueValueExpr>(Ignored))
+//     Ignored = OVE->getSourceExpr();
+//   bool NeedsParens = isa<AbstractConditionalOperator>(Ignored) ||
+//                      isa<BinaryOperator>(Ignored) ||
+//                      isa<CXXOperatorCallExpr>(Ignored);
+//   SourceLocation EndLoc = S.getLocForEndOfToken(SourceExpr->getEndLoc());
+//   if (NeedsParens)
+//     Builder << FixItHint::CreateInsertion(SourceExpr->getBeginLoc(), "(")
+//             << FixItHint::CreateInsertion(EndLoc, ")");
+//   Builder << FixItHint::CreateInsertion(EndLoc, " ? YES : NO");
+// }
 
 /// Diagnose an implicit cast from a floating point value to an integer value.
 static void DiagnoseFloatingImpCast(Sema &S, Expr *E, QualType T,
@@ -11110,12 +11110,12 @@ static void DiagnoseFloatingImpCast(Sema &S, Expr *E, QualType T,
   bool IsConstant =
     E->EvaluateAsFloat(Value, S.Context, Expr::SE_AllowSideEffects);
   if (!IsConstant) {
-    if (isObjCSignedCharBool(S, T)) {
-      return adornObjCBoolConversionDiagWithTernaryFixit(
-          S, E,
-          S.Diag(CContext, diag::warn_impcast_float_to_objc_signed_char_bool)
-              << E->getType());
-    }
+    // if (isObjCSignedCharBool(S, T)) {
+    //   return adornObjCBoolConversionDiagWithTernaryFixit(
+    //       S, E,
+    //       S.Diag(CContext, diag::warn_impcast_float_to_objc_signed_char_bool)
+    //           << E->getType());
+    // }
 
     return DiagnoseImpCast(S, E, T, CContext,
                            diag::warn_impcast_float_integer, PruneWarnings);
@@ -11138,12 +11138,12 @@ static void DiagnoseFloatingImpCast(Sema &S, Expr *E, QualType T,
   precision = (precision * 59 + 195) / 196;
   Value.toString(PrettySourceValue, precision);
 
-  if (isObjCSignedCharBool(S, T) && IntegerValue != 0 && IntegerValue != 1) {
-    return adornObjCBoolConversionDiagWithTernaryFixit(
-        S, E,
-        S.Diag(CContext, diag::warn_impcast_constant_value_to_objc_bool)
-            << PrettySourceValue);
-  }
+  // if (isObjCSignedCharBool(S, T) && IntegerValue != 0 && IntegerValue != 1) {
+  //   return adornObjCBoolConversionDiagWithTernaryFixit(
+  //       S, E,
+  //       S.Diag(CContext, diag::warn_impcast_constant_value_to_objc_bool)
+  //           << PrettySourceValue);
+  // }
 
   if (Result == llvm::APFloat::opOK && isExact) {
     if (IsLiteral) return;
@@ -11342,101 +11342,101 @@ static void DiagnoseNullConversion(Sema &S, Expr *E, QualType T,
                                       S.getFixItZeroLiteralForType(T, Loc));
 }
 
-static void checkObjCArrayLiteral(Sema &S, QualType TargetType,
-                                  ObjCArrayLiteral *ArrayLiteral);
+// static void checkObjCArrayLiteral(Sema &S, QualType TargetType,
+//                                   ObjCArrayLiteral *ArrayLiteral);
 
-static void
-checkObjCDictionaryLiteral(Sema &S, QualType TargetType,
-                           ObjCDictionaryLiteral *DictionaryLiteral);
+// static void
+// checkObjCDictionaryLiteral(Sema &S, QualType TargetType,
+//                            ObjCDictionaryLiteral *DictionaryLiteral);
 
 /// Check a single element within a collection literal against the
 /// target element type.
-static void checkObjCCollectionLiteralElement(Sema &S,
-                                              QualType TargetElementType,
-                                              Expr *Element,
-                                              unsigned ElementKind) {
-  // Skip a bitcast to 'id' or qualified 'id'.
-  if (auto ICE = dyn_cast<ImplicitCastExpr>(Element)) {
-    if (ICE->getCastKind() == CK_BitCast &&
-        ICE->getSubExpr()->getType()->getAs<ObjCObjectPointerType>())
-      Element = ICE->getSubExpr();
-  }
+// static void checkObjCCollectionLiteralElement(Sema &S,
+//                                               QualType TargetElementType,
+//                                               Expr *Element,
+//                                               unsigned ElementKind) {
+//   // Skip a bitcast to 'id' or qualified 'id'.
+//   if (auto ICE = dyn_cast<ImplicitCastExpr>(Element)) {
+//     if (ICE->getCastKind() == CK_BitCast &&
+//         ICE->getSubExpr()->getType()->getAs<ObjCObjectPointerType>())
+//       Element = ICE->getSubExpr();
+//   }
 
-  QualType ElementType = Element->getType();
-  ExprResult ElementResult(Element);
-  if (ElementType->getAs<ObjCObjectPointerType>() &&
-      S.CheckSingleAssignmentConstraints(TargetElementType,
-                                         ElementResult,
-                                         false, false)
-        != Sema::Compatible) {
-    S.Diag(Element->getBeginLoc(), diag::warn_objc_collection_literal_element)
-        << ElementType << ElementKind << TargetElementType
-        << Element->getSourceRange();
-  }
+//   QualType ElementType = Element->getType();
+//   ExprResult ElementResult(Element);
+//   if (ElementType->getAs<ObjCObjectPointerType>() &&
+//       S.CheckSingleAssignmentConstraints(TargetElementType,
+//                                          ElementResult,
+//                                          false, false)
+//         != Sema::Compatible) {
+//     S.Diag(Element->getBeginLoc(), diag::warn_objc_collection_literal_element)
+//         << ElementType << ElementKind << TargetElementType
+//         << Element->getSourceRange();
+//   }
 
-  if (auto ArrayLiteral = dyn_cast<ObjCArrayLiteral>(Element))
-    checkObjCArrayLiteral(S, TargetElementType, ArrayLiteral);
-  else if (auto DictionaryLiteral = dyn_cast<ObjCDictionaryLiteral>(Element))
-    checkObjCDictionaryLiteral(S, TargetElementType, DictionaryLiteral);
-}
+//   if (auto ArrayLiteral = dyn_cast<ObjCArrayLiteral>(Element))
+//     checkObjCArrayLiteral(S, TargetElementType, ArrayLiteral);
+//   else if (auto DictionaryLiteral = dyn_cast<ObjCDictionaryLiteral>(Element))
+//     checkObjCDictionaryLiteral(S, TargetElementType, DictionaryLiteral);
+// }
 
 /// Check an Objective-C array literal being converted to the given
 /// target type.
-static void checkObjCArrayLiteral(Sema &S, QualType TargetType,
-                                  ObjCArrayLiteral *ArrayLiteral) {
-  if (!S.NSArrayDecl)
-    return;
+// static void checkObjCArrayLiteral(Sema &S, QualType TargetType,
+//                                   ObjCArrayLiteral *ArrayLiteral) {
+//   if (!S.NSArrayDecl)
+//     return;
 
-  const auto *TargetObjCPtr = TargetType->getAs<ObjCObjectPointerType>();
-  if (!TargetObjCPtr)
-    return;
+//   const auto *TargetObjCPtr = TargetType->getAs<ObjCObjectPointerType>();
+//   if (!TargetObjCPtr)
+//     return;
 
-  if (TargetObjCPtr->isUnspecialized() ||
-      TargetObjCPtr->getInterfaceDecl()->getCanonicalDecl()
-        != S.NSArrayDecl->getCanonicalDecl())
-    return;
+//   if (TargetObjCPtr->isUnspecialized() ||
+//       TargetObjCPtr->getInterfaceDecl()->getCanonicalDecl()
+//         != S.NSArrayDecl->getCanonicalDecl())
+//     return;
 
-  auto TypeArgs = TargetObjCPtr->getTypeArgs();
-  if (TypeArgs.size() != 1)
-    return;
+//   auto TypeArgs = TargetObjCPtr->getTypeArgs();
+//   if (TypeArgs.size() != 1)
+//     return;
 
-  QualType TargetElementType = TypeArgs[0];
-  for (unsigned I = 0, N = ArrayLiteral->getNumElements(); I != N; ++I) {
-    checkObjCCollectionLiteralElement(S, TargetElementType,
-                                      ArrayLiteral->getElement(I),
-                                      0);
-  }
-}
+//   QualType TargetElementType = TypeArgs[0];
+//   for (unsigned I = 0, N = ArrayLiteral->getNumElements(); I != N; ++I) {
+//     checkObjCCollectionLiteralElement(S, TargetElementType,
+//                                       ArrayLiteral->getElement(I),
+//                                       0);
+//   }
+// }
 
 /// Check an Objective-C dictionary literal being converted to the given
 /// target type.
-static void
-checkObjCDictionaryLiteral(Sema &S, QualType TargetType,
-                           ObjCDictionaryLiteral *DictionaryLiteral) {
-  if (!S.NSDictionaryDecl)
-    return;
+// static void
+// checkObjCDictionaryLiteral(Sema &S, QualType TargetType,
+//                            ObjCDictionaryLiteral *DictionaryLiteral) {
+//   if (!S.NSDictionaryDecl)
+//     return;
 
-  const auto *TargetObjCPtr = TargetType->getAs<ObjCObjectPointerType>();
-  if (!TargetObjCPtr)
-    return;
+//   const auto *TargetObjCPtr = TargetType->getAs<ObjCObjectPointerType>();
+//   if (!TargetObjCPtr)
+//     return;
 
-  if (TargetObjCPtr->isUnspecialized() ||
-      TargetObjCPtr->getInterfaceDecl()->getCanonicalDecl()
-        != S.NSDictionaryDecl->getCanonicalDecl())
-    return;
+//   if (TargetObjCPtr->isUnspecialized() ||
+//       TargetObjCPtr->getInterfaceDecl()->getCanonicalDecl()
+//         != S.NSDictionaryDecl->getCanonicalDecl())
+//     return;
 
-  auto TypeArgs = TargetObjCPtr->getTypeArgs();
-  if (TypeArgs.size() != 2)
-    return;
+//   auto TypeArgs = TargetObjCPtr->getTypeArgs();
+//   if (TypeArgs.size() != 2)
+//     return;
 
-  QualType TargetKeyType = TypeArgs[0];
-  QualType TargetObjectType = TypeArgs[1];
-  for (unsigned I = 0, N = DictionaryLiteral->getNumElements(); I != N; ++I) {
-    auto Element = DictionaryLiteral->getKeyValueElement(I);
-    checkObjCCollectionLiteralElement(S, TargetKeyType, Element.Key, 1);
-    checkObjCCollectionLiteralElement(S, TargetObjectType, Element.Value, 2);
-  }
-}
+//   QualType TargetKeyType = TypeArgs[0];
+//   QualType TargetObjectType = TypeArgs[1];
+//   for (unsigned I = 0, N = DictionaryLiteral->getNumElements(); I != N; ++I) {
+//     auto Element = DictionaryLiteral->getKeyValueElement(I);
+//     checkObjCCollectionLiteralElement(S, TargetKeyType, Element.Key, 1);
+//     checkObjCCollectionLiteralElement(S, TargetObjectType, Element.Value, 2);
+//   }
+// }
 
 // Helper function to filter out cases for constant width constant conversion.
 // Don't warn on char array initialization or for non-decimal values.
@@ -11560,26 +11560,26 @@ static void CheckImplicitConversion(Sema &S, Expr *E, QualType T,
   // If the we're converting a constant to an ObjC BOOL on a platform where BOOL
   // is a typedef for signed char (macOS), then that constant value has to be 1
   // or 0.
-  if (isObjCSignedCharBool(S, T) && Source->isIntegralType(S.Context)) {
-    Expr::EvalResult Result;
-    if (E->EvaluateAsInt(Result, S.getASTContext(),
-                         Expr::SE_AllowSideEffects)) {
-      if (Result.Val.getInt() != 1 && Result.Val.getInt() != 0) {
-        adornObjCBoolConversionDiagWithTernaryFixit(
-            S, E,
-            S.Diag(CC, diag::warn_impcast_constant_value_to_objc_bool)
-                << Result.Val.getInt().toString(10));
-      }
-      return;
-    }
-  }
+  // if (isObjCSignedCharBool(S, T) && Source->isIntegralType(S.Context)) {
+  //   Expr::EvalResult Result;
+  //   if (E->EvaluateAsInt(Result, S.getASTContext(),
+  //                        Expr::SE_AllowSideEffects)) {
+  //     if (Result.Val.getInt() != 1 && Result.Val.getInt() != 0) {
+  //       adornObjCBoolConversionDiagWithTernaryFixit(
+  //           S, E,
+  //           S.Diag(CC, diag::warn_impcast_constant_value_to_objc_bool)
+  //               << Result.Val.getInt().toString(10));
+  //     }
+  //     return;
+  //   }
+  // }
 
   // Check implicit casts from Objective-C collection literals to specialized
   // collection types, e.g., NSArray<NSString *> *.
-  if (auto *ArrayLiteral = dyn_cast<ObjCArrayLiteral>(E))
-    checkObjCArrayLiteral(S, QualType(Target, 0), ArrayLiteral);
-  else if (auto *DictionaryLiteral = dyn_cast<ObjCDictionaryLiteral>(E))
-    checkObjCDictionaryLiteral(S, QualType(Target, 0), DictionaryLiteral);
+  // if (auto *ArrayLiteral = dyn_cast<ObjCArrayLiteral>(E))
+  //   checkObjCArrayLiteral(S, QualType(Target, 0), ArrayLiteral);
+  // else if (auto *DictionaryLiteral = dyn_cast<ObjCDictionaryLiteral>(E))
+  //   checkObjCDictionaryLiteral(S, QualType(Target, 0), DictionaryLiteral);
 
   // Strip vector types.
   if (isa<VectorType>(Source)) {
@@ -11815,13 +11815,13 @@ static void CheckImplicitConversion(Sema &S, Expr *E, QualType T,
   if (Target->isSpecificBuiltinType(BuiltinType::Bool))
     return;
 
-  if (isObjCSignedCharBool(S, T) && !Source->isCharType() &&
-      !E->isKnownToHaveBooleanValue(/*Semantic=*/false)) {
-    return adornObjCBoolConversionDiagWithTernaryFixit(
-        S, E,
-        S.Diag(CC, diag::warn_impcast_int_to_objc_signed_char_bool)
-            << E->getType());
-  }
+  // if (isObjCSignedCharBool(S, T) && !Source->isCharType() &&
+  //     !E->isKnownToHaveBooleanValue(/*Semantic=*/false)) {
+  //   return adornObjCBoolConversionDiagWithTernaryFixit(
+  //       S, E,
+  //       S.Diag(CC, diag::warn_impcast_int_to_objc_signed_char_bool)
+  //           << E->getType());
+  // }
 
   IntRange SourceRange = GetExprRange(S.Context, E, S.isConstantEvaluated());
   IntRange TargetRange = IntRange::forTargetOfCanonicalType(S.Context, Target);
@@ -12158,19 +12158,19 @@ static void AnalyzeImplicitConversions(Sema &S, Expr *OrigE, SourceLocation CC,
 }
 
 /// Diagnose integer type and any valid implicit conversion to it.
-static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E, const QualType &IntT) {
-  // Taking into account implicit conversions,
-  // allow any integer.
-  if (!E->getType()->isIntegerType()) {
-    S.Diag(E->getBeginLoc(),
-           diag::err_opencl_enqueue_kernel_invalid_local_size_type);
-    return true;
-  }
-  // Potentially emit standard warnings for implicit conversions if enabled
-  // using -Wconversion.
-  CheckImplicitConversion(S, E, IntT, E->getBeginLoc());
-  return false;
-}
+// static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E, const QualType &IntT) {
+//   // Taking into account implicit conversions,
+//   // allow any integer.
+//   if (!E->getType()->isIntegerType()) {
+//     S.Diag(E->getBeginLoc(),
+//            diag::err_opencl_enqueue_kernel_invalid_local_size_type);
+//     return true;
+//   }
+//   // Potentially emit standard warnings for implicit conversions if enabled
+//   // using -Wconversion.
+//   CheckImplicitConversion(S, E, IntT, E->getBeginLoc());
+//   return false;
+// }
 
 // Helper function for Sema::DiagnoseAlwaysNonNullPointer.
 // Returns true when emitting a warning about taking the address of a reference.
@@ -14026,19 +14026,19 @@ static bool findRetainCycleOwner(Sema &S, Expr *e, RetainCycleOwner &owner) {
       }
     }
 
-    if (ObjCIvarRefExpr *ref = dyn_cast<ObjCIvarRefExpr>(e)) {
-      ObjCIvarDecl *ivar = ref->getDecl();
-      if (ivar->getType().getObjCLifetime() != Qualifiers::OCL_Strong)
-        return false;
+    // if (ObjCIvarRefExpr *ref = dyn_cast<ObjCIvarRefExpr>(e)) {
+    //   ObjCIvarDecl *ivar = ref->getDecl();
+    //   if (ivar->getType().getObjCLifetime() != Qualifiers::OCL_Strong)
+    //     return false;
 
-      // Try to find a retain cycle in the base.
-      if (!findRetainCycleOwner(S, ref->getBase(), owner))
-        return false;
+    //   // Try to find a retain cycle in the base.
+    //   if (!findRetainCycleOwner(S, ref->getBase(), owner))
+    //     return false;
 
-      if (ref->isFreeIvar()) owner.setLocsFrom(ref);
-      owner.Indirect = true;
-      return true;
-    }
+    //   if (ref->isFreeIvar()) owner.setLocsFrom(ref);
+    //   owner.Indirect = true;
+    //   return true;
+    // }
 
     if (DeclRefExpr *ref = dyn_cast<DeclRefExpr>(e)) {
       VarDecl *var = dyn_cast<VarDecl>(ref->getDecl());
@@ -14054,33 +14054,33 @@ static bool findRetainCycleOwner(Sema &S, Expr *e, RetainCycleOwner &owner) {
       continue;
     }
 
-    if (PseudoObjectExpr *pseudo = dyn_cast<PseudoObjectExpr>(e)) {
-      // Only pay attention to pseudo-objects on property references.
-      ObjCPropertyRefExpr *pre
-        = dyn_cast<ObjCPropertyRefExpr>(pseudo->getSyntacticForm()
-                                              ->IgnoreParens());
-      if (!pre) return false;
-      if (pre->isImplicitProperty()) return false;
-      ObjCPropertyDecl *property = pre->getExplicitProperty();
-      if (!property->isRetaining() &&
-          !(property->getPropertyIvarDecl() &&
-            property->getPropertyIvarDecl()->getType()
-              .getObjCLifetime() == Qualifiers::OCL_Strong))
-          return false;
+    // if (PseudoObjectExpr *pseudo = dyn_cast<PseudoObjectExpr>(e)) {
+    //   // Only pay attention to pseudo-objects on property references.
+    //   ObjCPropertyRefExpr *pre
+    //     = dyn_cast<ObjCPropertyRefExpr>(pseudo->getSyntacticForm()
+    //                                           ->IgnoreParens());
+    //   if (!pre) return false;
+    //   if (pre->isImplicitProperty()) return false;
+    //   ObjCPropertyDecl *property = pre->getExplicitProperty();
+    //   if (!property->isRetaining() &&
+    //       !(property->getPropertyIvarDecl() &&
+    //         property->getPropertyIvarDecl()->getType()
+    //           .getObjCLifetime() == Qualifiers::OCL_Strong))
+    //       return false;
 
-      owner.Indirect = true;
-      if (pre->isSuperReceiver()) {
-        owner.Variable = S.getCurMethodDecl()->getSelfDecl();
-        if (!owner.Variable)
-          return false;
-        owner.Loc = pre->getLocation();
-        owner.Range = pre->getSourceRange();
-        return true;
-      }
-      e = const_cast<Expr*>(cast<OpaqueValueExpr>(pre->getBase())
-                              ->getSourceExpr());
-      continue;
-    }
+    //   owner.Indirect = true;
+    //   if (pre->isSuperReceiver()) {
+    //     owner.Variable = S.getCurMethodDecl()->getSelfDecl();
+    //     if (!owner.Variable)
+    //       return false;
+    //     owner.Loc = pre->getLocation();
+    //     owner.Range = pre->getSourceRange();
+    //     return true;
+    //   }
+    //   e = const_cast<Expr*>(cast<OpaqueValueExpr>(pre->getBase())
+    //                           ->getSourceExpr());
+    //   continue;
+    // }
 
     // Array ivars?
 
@@ -14105,12 +14105,12 @@ namespace {
         Capturer = ref;
     }
 
-    void VisitObjCIvarRefExpr(ObjCIvarRefExpr *ref) {
-      if (Capturer) return;
-      Visit(ref->getBase());
-      if (Capturer && ref->isFreeIvar())
-        Capturer = ref;
-    }
+    // void VisitObjCIvarRefExpr(ObjCIvarRefExpr *ref) {
+    //   if (Capturer) return;
+    //   Visit(ref->getBase());
+    //   if (Capturer && ref->isFreeIvar())
+    //     Capturer = ref;
+    // }
 
     void VisitBlockExpr(BlockExpr *block) {
       // Look inside nested blocks
@@ -14213,201 +14213,201 @@ static bool isSetterLikeSelector(Selector sel) {
   return !isLowercase(str.front());
 }
 
-static Optional<int> GetNSMutableArrayArgumentIndex(Sema &S,
-                                                    ObjCMessageExpr *Message) {
-  bool IsMutableArray = S.NSAPIObj->isSubclassOfNSClass(
-                                                Message->getReceiverInterface(),
-                                                NSAPI::ClassId_NSMutableArray);
-  if (!IsMutableArray) {
-    return None;
-  }
+// static Optional<int> GetNSMutableArrayArgumentIndex(Sema &S,
+//                                                     ObjCMessageExpr *Message) {
+//   bool IsMutableArray = S.NSAPIObj->isSubclassOfNSClass(
+//                                                 Message->getReceiverInterface(),
+//                                                 NSAPI::ClassId_NSMutableArray);
+//   if (!IsMutableArray) {
+//     return None;
+//   }
 
-  Selector Sel = Message->getSelector();
+//   Selector Sel = Message->getSelector();
 
-  Optional<NSAPI::NSArrayMethodKind> MKOpt =
-    S.NSAPIObj->getNSArrayMethodKind(Sel);
-  if (!MKOpt) {
-    return None;
-  }
+//   Optional<NSAPI::NSArrayMethodKind> MKOpt =
+//     S.NSAPIObj->getNSArrayMethodKind(Sel);
+//   if (!MKOpt) {
+//     return None;
+//   }
 
-  NSAPI::NSArrayMethodKind MK = *MKOpt;
+//   NSAPI::NSArrayMethodKind MK = *MKOpt;
 
-  switch (MK) {
-    case NSAPI::NSMutableArr_addObject:
-    case NSAPI::NSMutableArr_insertObjectAtIndex:
-    case NSAPI::NSMutableArr_setObjectAtIndexedSubscript:
-      return 0;
-    case NSAPI::NSMutableArr_replaceObjectAtIndex:
-      return 1;
+//   switch (MK) {
+//     case NSAPI::NSMutableArr_addObject:
+//     case NSAPI::NSMutableArr_insertObjectAtIndex:
+//     case NSAPI::NSMutableArr_setObjectAtIndexedSubscript:
+//       return 0;
+//     case NSAPI::NSMutableArr_replaceObjectAtIndex:
+//       return 1;
 
-    default:
-      return None;
-  }
+//     default:
+//       return None;
+//   }
 
-  return None;
-}
+//   return None;
+// }
 
-static
-Optional<int> GetNSMutableDictionaryArgumentIndex(Sema &S,
-                                                  ObjCMessageExpr *Message) {
-  bool IsMutableDictionary = S.NSAPIObj->isSubclassOfNSClass(
-                                            Message->getReceiverInterface(),
-                                            NSAPI::ClassId_NSMutableDictionary);
-  if (!IsMutableDictionary) {
-    return None;
-  }
+// static
+// Optional<int> GetNSMutableDictionaryArgumentIndex(Sema &S,
+//                                                   ObjCMessageExpr *Message) {
+//   bool IsMutableDictionary = S.NSAPIObj->isSubclassOfNSClass(
+//                                             Message->getReceiverInterface(),
+//                                             NSAPI::ClassId_NSMutableDictionary);
+//   if (!IsMutableDictionary) {
+//     return None;
+//   }
 
-  Selector Sel = Message->getSelector();
+//   Selector Sel = Message->getSelector();
 
-  Optional<NSAPI::NSDictionaryMethodKind> MKOpt =
-    S.NSAPIObj->getNSDictionaryMethodKind(Sel);
-  if (!MKOpt) {
-    return None;
-  }
+//   Optional<NSAPI::NSDictionaryMethodKind> MKOpt =
+//     S.NSAPIObj->getNSDictionaryMethodKind(Sel);
+//   if (!MKOpt) {
+//     return None;
+//   }
 
-  NSAPI::NSDictionaryMethodKind MK = *MKOpt;
+//   NSAPI::NSDictionaryMethodKind MK = *MKOpt;
 
-  switch (MK) {
-    case NSAPI::NSMutableDict_setObjectForKey:
-    case NSAPI::NSMutableDict_setValueForKey:
-    case NSAPI::NSMutableDict_setObjectForKeyedSubscript:
-      return 0;
+//   switch (MK) {
+//     case NSAPI::NSMutableDict_setObjectForKey:
+//     case NSAPI::NSMutableDict_setValueForKey:
+//     case NSAPI::NSMutableDict_setObjectForKeyedSubscript:
+//       return 0;
 
-    default:
-      return None;
-  }
+//     default:
+//       return None;
+//   }
 
-  return None;
-}
+//   return None;
+// }
 
-static Optional<int> GetNSSetArgumentIndex(Sema &S, ObjCMessageExpr *Message) {
-  bool IsMutableSet = S.NSAPIObj->isSubclassOfNSClass(
-                                                Message->getReceiverInterface(),
-                                                NSAPI::ClassId_NSMutableSet);
+// static Optional<int> GetNSSetArgumentIndex(Sema &S, ObjCMessageExpr *Message) {
+//   bool IsMutableSet = S.NSAPIObj->isSubclassOfNSClass(
+//                                                 Message->getReceiverInterface(),
+//                                                 NSAPI::ClassId_NSMutableSet);
 
-  bool IsMutableOrderedSet = S.NSAPIObj->isSubclassOfNSClass(
-                                            Message->getReceiverInterface(),
-                                            NSAPI::ClassId_NSMutableOrderedSet);
-  if (!IsMutableSet && !IsMutableOrderedSet) {
-    return None;
-  }
+//   bool IsMutableOrderedSet = S.NSAPIObj->isSubclassOfNSClass(
+//                                             Message->getReceiverInterface(),
+//                                             NSAPI::ClassId_NSMutableOrderedSet);
+//   if (!IsMutableSet && !IsMutableOrderedSet) {
+//     return None;
+//   }
 
-  Selector Sel = Message->getSelector();
+//   Selector Sel = Message->getSelector();
 
-  Optional<NSAPI::NSSetMethodKind> MKOpt = S.NSAPIObj->getNSSetMethodKind(Sel);
-  if (!MKOpt) {
-    return None;
-  }
+//   Optional<NSAPI::NSSetMethodKind> MKOpt = S.NSAPIObj->getNSSetMethodKind(Sel);
+//   if (!MKOpt) {
+//     return None;
+//   }
 
-  NSAPI::NSSetMethodKind MK = *MKOpt;
+//   NSAPI::NSSetMethodKind MK = *MKOpt;
 
-  switch (MK) {
-    case NSAPI::NSMutableSet_addObject:
-    case NSAPI::NSOrderedSet_setObjectAtIndex:
-    case NSAPI::NSOrderedSet_setObjectAtIndexedSubscript:
-    case NSAPI::NSOrderedSet_insertObjectAtIndex:
-      return 0;
-    case NSAPI::NSOrderedSet_replaceObjectAtIndexWithObject:
-      return 1;
-  }
+//   switch (MK) {
+//     case NSAPI::NSMutableSet_addObject:
+//     case NSAPI::NSOrderedSet_setObjectAtIndex:
+//     case NSAPI::NSOrderedSet_setObjectAtIndexedSubscript:
+//     case NSAPI::NSOrderedSet_insertObjectAtIndex:
+//       return 0;
+//     case NSAPI::NSOrderedSet_replaceObjectAtIndexWithObject:
+//       return 1;
+//   }
 
-  return None;
-}
+//   return None;
+// }
 
-void Sema::CheckObjCCircularContainer(ObjCMessageExpr *Message) {
-  if (!Message->isInstanceMessage()) {
-    return;
-  }
+// void Sema::CheckObjCCircularContainer(ObjCMessageExpr *Message) {
+//   if (!Message->isInstanceMessage()) {
+//     return;
+//   }
 
-  Optional<int> ArgOpt;
+//   Optional<int> ArgOpt;
 
-  if (!(ArgOpt = GetNSMutableArrayArgumentIndex(*this, Message)) &&
-      !(ArgOpt = GetNSMutableDictionaryArgumentIndex(*this, Message)) &&
-      !(ArgOpt = GetNSSetArgumentIndex(*this, Message))) {
-    return;
-  }
+//   if (!(ArgOpt = GetNSMutableArrayArgumentIndex(*this, Message)) &&
+//       !(ArgOpt = GetNSMutableDictionaryArgumentIndex(*this, Message)) &&
+//       !(ArgOpt = GetNSSetArgumentIndex(*this, Message))) {
+//     return;
+//   }
 
-  int ArgIndex = *ArgOpt;
+//   int ArgIndex = *ArgOpt;
 
-  Expr *Arg = Message->getArg(ArgIndex)->IgnoreImpCasts();
-  if (OpaqueValueExpr *OE = dyn_cast<OpaqueValueExpr>(Arg)) {
-    Arg = OE->getSourceExpr()->IgnoreImpCasts();
-  }
+//   Expr *Arg = Message->getArg(ArgIndex)->IgnoreImpCasts();
+//   if (OpaqueValueExpr *OE = dyn_cast<OpaqueValueExpr>(Arg)) {
+//     Arg = OE->getSourceExpr()->IgnoreImpCasts();
+//   }
 
-  if (Message->getReceiverKind() == ObjCMessageExpr::SuperInstance) {
-    if (DeclRefExpr *ArgRE = dyn_cast<DeclRefExpr>(Arg)) {
-      if (ArgRE->isObjCSelfExpr()) {
-        Diag(Message->getSourceRange().getBegin(),
-             diag::warn_objc_circular_container)
-          << ArgRE->getDecl() << StringRef("'super'");
-      }
-    }
-  } else {
-    Expr *Receiver = Message->getInstanceReceiver()->IgnoreImpCasts();
+//   if (Message->getReceiverKind() == ObjCMessageExpr::SuperInstance) {
+//     if (DeclRefExpr *ArgRE = dyn_cast<DeclRefExpr>(Arg)) {
+//       if (ArgRE->isObjCSelfExpr()) {
+//         Diag(Message->getSourceRange().getBegin(),
+//              diag::warn_objc_circular_container)
+//           << ArgRE->getDecl() << StringRef("'super'");
+//       }
+//     }
+//   } else {
+//     Expr *Receiver = Message->getInstanceReceiver()->IgnoreImpCasts();
 
-    if (OpaqueValueExpr *OE = dyn_cast<OpaqueValueExpr>(Receiver)) {
-      Receiver = OE->getSourceExpr()->IgnoreImpCasts();
-    }
+//     if (OpaqueValueExpr *OE = dyn_cast<OpaqueValueExpr>(Receiver)) {
+//       Receiver = OE->getSourceExpr()->IgnoreImpCasts();
+//     }
 
-    if (DeclRefExpr *ReceiverRE = dyn_cast<DeclRefExpr>(Receiver)) {
-      if (DeclRefExpr *ArgRE = dyn_cast<DeclRefExpr>(Arg)) {
-        if (ReceiverRE->getDecl() == ArgRE->getDecl()) {
-          ValueDecl *Decl = ReceiverRE->getDecl();
-          Diag(Message->getSourceRange().getBegin(),
-               diag::warn_objc_circular_container)
-            << Decl << Decl;
-          if (!ArgRE->isObjCSelfExpr()) {
-            Diag(Decl->getLocation(),
-                 diag::note_objc_circular_container_declared_here)
-              << Decl;
-          }
-        }
-      }
-    } else if (ObjCIvarRefExpr *IvarRE = dyn_cast<ObjCIvarRefExpr>(Receiver)) {
-      if (ObjCIvarRefExpr *IvarArgRE = dyn_cast<ObjCIvarRefExpr>(Arg)) {
-        if (IvarRE->getDecl() == IvarArgRE->getDecl()) {
-          ObjCIvarDecl *Decl = IvarRE->getDecl();
-          Diag(Message->getSourceRange().getBegin(),
-               diag::warn_objc_circular_container)
-            << Decl << Decl;
-          Diag(Decl->getLocation(),
-               diag::note_objc_circular_container_declared_here)
-            << Decl;
-        }
-      }
-    }
-  }
-}
+//     if (DeclRefExpr *ReceiverRE = dyn_cast<DeclRefExpr>(Receiver)) {
+//       if (DeclRefExpr *ArgRE = dyn_cast<DeclRefExpr>(Arg)) {
+//         if (ReceiverRE->getDecl() == ArgRE->getDecl()) {
+//           ValueDecl *Decl = ReceiverRE->getDecl();
+//           Diag(Message->getSourceRange().getBegin(),
+//                diag::warn_objc_circular_container)
+//             << Decl << Decl;
+//           if (!ArgRE->isObjCSelfExpr()) {
+//             Diag(Decl->getLocation(),
+//                  diag::note_objc_circular_container_declared_here)
+//               << Decl;
+//           }
+//         }
+//       }
+//     } else if (ObjCIvarRefExpr *IvarRE = dyn_cast<ObjCIvarRefExpr>(Receiver)) {
+//       if (ObjCIvarRefExpr *IvarArgRE = dyn_cast<ObjCIvarRefExpr>(Arg)) {
+//         if (IvarRE->getDecl() == IvarArgRE->getDecl()) {
+//           ObjCIvarDecl *Decl = IvarRE->getDecl();
+//           Diag(Message->getSourceRange().getBegin(),
+//                diag::warn_objc_circular_container)
+//             << Decl << Decl;
+//           Diag(Decl->getLocation(),
+//                diag::note_objc_circular_container_declared_here)
+//             << Decl;
+//         }
+//       }
+//     }
+//   }
+// }
 
 /// Check a message send to see if it's likely to cause a retain cycle.
-void Sema::checkRetainCycles(ObjCMessageExpr *msg) {
-  // Only check instance methods whose selector looks like a setter.
-  if (!msg->isInstanceMessage() || !isSetterLikeSelector(msg->getSelector()))
-    return;
+// void Sema::checkRetainCycles(ObjCMessageExpr *msg) {
+//   // Only check instance methods whose selector looks like a setter.
+//   if (!msg->isInstanceMessage() || !isSetterLikeSelector(msg->getSelector()))
+//     return;
 
-  // Try to find a variable that the receiver is strongly owned by.
-  RetainCycleOwner owner;
-  if (msg->getReceiverKind() == ObjCMessageExpr::Instance) {
-    if (!findRetainCycleOwner(*this, msg->getInstanceReceiver(), owner))
-      return;
-  } else {
-    assert(msg->getReceiverKind() == ObjCMessageExpr::SuperInstance);
-    owner.Variable = getCurMethodDecl()->getSelfDecl();
-    owner.Loc = msg->getSuperLoc();
-    owner.Range = msg->getSuperLoc();
-  }
+//   // Try to find a variable that the receiver is strongly owned by.
+//   RetainCycleOwner owner;
+//   if (msg->getReceiverKind() == ObjCMessageExpr::Instance) {
+//     if (!findRetainCycleOwner(*this, msg->getInstanceReceiver(), owner))
+//       return;
+//   } else {
+//     assert(msg->getReceiverKind() == ObjCMessageExpr::SuperInstance);
+//     owner.Variable = getCurMethodDecl()->getSelfDecl();
+//     owner.Loc = msg->getSuperLoc();
+//     owner.Range = msg->getSuperLoc();
+//   }
 
-  // Check whether the receiver is captured by any of the arguments.
-  const ObjCMethodDecl *MD = msg->getMethodDecl();
-  for (unsigned i = 0, e = msg->getNumArgs(); i != e; ++i) {
-    if (Expr *capturer = findCapturingExpr(*this, msg->getArg(i), owner)) {
-      // noescape blocks should not be retained by the method.
-      if (MD && MD->parameters()[i]->hasAttr<NoEscapeAttr>())
-        continue;
-      return diagnoseRetainCycle(*this, capturer, owner);
-    }
-  }
-}
+//   // Check whether the receiver is captured by any of the arguments.
+//   const ObjCMethodDecl *MD = msg->getMethodDecl();
+//   for (unsigned i = 0, e = msg->getNumArgs(); i != e; ++i) {
+//     if (Expr *capturer = findCapturingExpr(*this, msg->getArg(i), owner)) {
+//       // noescape blocks should not be retained by the method.
+//       if (MD && MD->parameters()[i]->hasAttr<NoEscapeAttr>())
+//         continue;
+//       return diagnoseRetainCycle(*this, capturer, owner);
+//     }
+//   }
+// }
 
 /// Check a property assign to see if it's likely to cause a retain cycle.
 void Sema::checkRetainCycles(Expr *receiver, Expr *argument) {
@@ -14489,67 +14489,67 @@ bool Sema::checkUnsafeAssigns(SourceLocation Loc,
   return false;
 }
 
-void Sema::checkUnsafeExprAssigns(SourceLocation Loc,
-                              Expr *LHS, Expr *RHS) {
-  QualType LHSType;
-  // PropertyRef on LHS type need be directly obtained from
-  // its declaration as it has a PseudoType.
-  ObjCPropertyRefExpr *PRE
-    = dyn_cast<ObjCPropertyRefExpr>(LHS->IgnoreParens());
-  if (PRE && !PRE->isImplicitProperty()) {
-    const ObjCPropertyDecl *PD = PRE->getExplicitProperty();
-    if (PD)
-      LHSType = PD->getType();
-  }
+// void Sema::checkUnsafeExprAssigns(SourceLocation Loc,
+//                               Expr *LHS, Expr *RHS) {
+//   QualType LHSType;
+//   // PropertyRef on LHS type need be directly obtained from
+//   // its declaration as it has a PseudoType.
+//   ObjCPropertyRefExpr *PRE
+//     = dyn_cast<ObjCPropertyRefExpr>(LHS->IgnoreParens());
+//   if (PRE && !PRE->isImplicitProperty()) {
+//     const ObjCPropertyDecl *PD = PRE->getExplicitProperty();
+//     if (PD)
+//       LHSType = PD->getType();
+//   }
 
-  if (LHSType.isNull())
-    LHSType = LHS->getType();
+//   if (LHSType.isNull())
+//     LHSType = LHS->getType();
 
-  Qualifiers::ObjCLifetime LT = LHSType.getObjCLifetime();
+//   Qualifiers::ObjCLifetime LT = LHSType.getObjCLifetime();
 
-  if (LT == Qualifiers::OCL_Weak) {
-    if (!Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, Loc))
-      getCurFunction()->markSafeWeakUse(LHS);
-  }
+//   if (LT == Qualifiers::OCL_Weak) {
+//     if (!Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, Loc))
+//       getCurFunction()->markSafeWeakUse(LHS);
+//   }
 
-  if (checkUnsafeAssigns(Loc, LHSType, RHS))
-    return;
+//   if (checkUnsafeAssigns(Loc, LHSType, RHS))
+//     return;
 
-  // FIXME. Check for other life times.
-  if (LT != Qualifiers::OCL_None)
-    return;
+//   // FIXME. Check for other life times.
+//   if (LT != Qualifiers::OCL_None)
+//     return;
 
-  if (PRE) {
-    if (PRE->isImplicitProperty())
-      return;
-    const ObjCPropertyDecl *PD = PRE->getExplicitProperty();
-    if (!PD)
-      return;
+//   if (PRE) {
+//     if (PRE->isImplicitProperty())
+//       return;
+//     const ObjCPropertyDecl *PD = PRE->getExplicitProperty();
+//     if (!PD)
+//       return;
 
-    unsigned Attributes = PD->getPropertyAttributes();
-    if (Attributes & ObjCPropertyAttribute::kind_assign) {
-      // when 'assign' attribute was not explicitly specified
-      // by user, ignore it and rely on property type itself
-      // for lifetime info.
-      unsigned AsWrittenAttr = PD->getPropertyAttributesAsWritten();
-      if (!(AsWrittenAttr & ObjCPropertyAttribute::kind_assign) &&
-          LHSType->isObjCRetainableType())
-        return;
+//     unsigned Attributes = PD->getPropertyAttributes();
+//     if (Attributes & ObjCPropertyAttribute::kind_assign) {
+//       // when 'assign' attribute was not explicitly specified
+//       // by user, ignore it and rely on property type itself
+//       // for lifetime info.
+//       unsigned AsWrittenAttr = PD->getPropertyAttributesAsWritten();
+//       if (!(AsWrittenAttr & ObjCPropertyAttribute::kind_assign) &&
+//           LHSType->isObjCRetainableType())
+//         return;
 
-      while (ImplicitCastExpr *cast = dyn_cast<ImplicitCastExpr>(RHS)) {
-        if (cast->getCastKind() == CK_ARCConsumeObject) {
-          Diag(Loc, diag::warn_arc_retained_property_assign)
-          << RHS->getSourceRange();
-          return;
-        }
-        RHS = cast->getSubExpr();
-      }
-    } else if (Attributes & ObjCPropertyAttribute::kind_weak) {
-      if (checkUnsafeAssignObject(*this, Loc, Qualifiers::OCL_Weak, RHS, true))
-        return;
-    }
-  }
-}
+//       while (ImplicitCastExpr *cast = dyn_cast<ImplicitCastExpr>(RHS)) {
+//         if (cast->getCastKind() == CK_ARCConsumeObject) {
+//           Diag(Loc, diag::warn_arc_retained_property_assign)
+//           << RHS->getSourceRange();
+//           return;
+//         }
+//         RHS = cast->getSubExpr();
+//       }
+//     } else if (Attributes & ObjCPropertyAttribute::kind_weak) {
+//       if (checkUnsafeAssignObject(*this, Loc, Qualifiers::OCL_Weak, RHS, true))
+//         return;
+//     }
+//   }
+// }
 
 //===--- CHECK: Empty statement body (-Wempty-body) ---------------------===//
 

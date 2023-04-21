@@ -25,7 +25,7 @@
 #include "latino/Basic/CharInfo.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/LangOptions.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/Version.h"
 #include "latino/Driver/Distro.h"
 #include "latino/Driver/DriverDiagnostic.h"

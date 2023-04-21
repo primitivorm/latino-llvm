@@ -55,20 +55,20 @@ public:
 };
 
 /// Migrates to modern ObjC syntax.
-class ObjCMigrateAction : public WrapperFrontendAction {
-  std::string MigrateDir;
-  unsigned    ObjCMigAction;
-  FileRemapper Remapper;
-  CompilerInstance *CompInst;
-public:
-  ObjCMigrateAction(std::unique_ptr<FrontendAction> WrappedAction,
-                    StringRef migrateDir, unsigned migrateAction);
+// class ObjCMigrateAction : public WrapperFrontendAction {
+//   std::string MigrateDir;
+//   unsigned    ObjCMigAction;
+//   FileRemapper Remapper;
+//   CompilerInstance *CompInst;
+// public:
+//   ObjCMigrateAction(std::unique_ptr<FrontendAction> WrappedAction,
+//                     StringRef migrateDir, unsigned migrateAction);
 
-protected:
-  std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
-                                                 StringRef InFile) override;
-  bool BeginInvocation(CompilerInstance &CI) override;
-};
+// protected:
+//   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
+//                                                  StringRef InFile) override;
+//   bool BeginInvocation(CompilerInstance &CI) override;
+// };
 
 }
 }

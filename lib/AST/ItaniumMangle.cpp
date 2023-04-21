@@ -19,13 +19,13 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprConcepts.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/TypeLoc.h"
 #include "latino/Basic/ABI.h"
 #include "latino/Basic/Module.h"
@@ -84,7 +84,7 @@ static const DeclContext *getEffectiveParentContext(const DeclContext *DC) {
 }
 
 static bool isLocalContainerContext(const DeclContext *DC) {
-  return isa<FunctionDecl>(DC) || isa<ObjCMethodDecl>(DC) || isa<BlockDecl>(DC);
+  return isa<FunctionDecl>(DC) || /*isa<ObjCMethodDecl>(DC) ||*/ isa<BlockDecl>(DC);
 }
 
 static const RecordDecl *GetLocalClassDecl(const Decl *D) {
@@ -512,7 +512,7 @@ private:
   void mangleQualifiers(Qualifiers Quals, const DependentAddressSpaceType *DAST = nullptr);
   void mangleRefQualifier(RefQualifierKind RefQualifier);
 
-  void mangleObjCMethodName(const ObjCMethodDecl *MD);
+  // void mangleObjCMethodName(const ObjCMethodDecl *MD);
 
   // Declare manglers for every type class.
 #define ABSTRACT_TYPE(CLASS, PARENT)
@@ -1385,8 +1385,8 @@ void CXXNameMangler::mangleUnqualifiedName(GlobalDecl GD,
     // declarations will always have internal linkage, so the name
     // doesn't really matter, but we shouldn't crash on them.  For
     // safety, just handle all ObjC containers here.
-    if (isa<ObjCContainerDecl>(ND))
-      break;
+    // if (isa<ObjCContainerDecl>(ND))
+    //   break;
 
     // We must have an anonymous struct.
     const TagDecl *TD = cast<TagDecl>(ND);
@@ -1614,9 +1614,9 @@ void CXXNameMangler::mangleLocalName(GlobalDecl GD,
   {
     AbiTagState LocalAbiTags(AbiTags);
 
-    if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(DC))
+    /*if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(DC))
       mangleObjCMethodName(MD);
-    else if (const BlockDecl *BD = dyn_cast<BlockDecl>(DC))
+    else*/ if (const BlockDecl *BD = dyn_cast<BlockDecl>(DC))
       mangleBlockForPrefix(BD);
     else
       mangleFunctionEncoding(getParentOfLocalEntity(DC));
@@ -2089,10 +2089,10 @@ bool CXXNameMangler::mangleUnresolvedTypeOrSimpleId(QualType Ty,
   case Type::Auto:
   case Type::DeducedTemplateSpecialization:
   case Type::PackExpansion:
-  case Type::ObjCObject:
-  case Type::ObjCInterface:
-  case Type::ObjCObjectPointer:
-  case Type::ObjCTypeParam:
+  // case Type::ObjCObject:
+  // case Type::ObjCInterface:
+  // case Type::ObjCObjectPointer:
+  // case Type::ObjCTypeParam:
   case Type::Atomic:
   case Type::Pipe:
   case Type::MacroQualified:
@@ -2488,16 +2488,16 @@ void CXXNameMangler::mangleRefQualifier(RefQualifierKind RefQualifier) {
   }
 }
 
-void CXXNameMangler::mangleObjCMethodName(const ObjCMethodDecl *MD) {
-  Context.mangleObjCMethodName(MD, Out);
-}
+// void CXXNameMangler::mangleObjCMethodName(const ObjCMethodDecl *MD) {
+//   Context.mangleObjCMethodName(MD, Out);
+// }
 
 static bool isTypeSubstitutable(Qualifiers Quals, const Type *Ty,
                                 ASTContext &Ctx) {
   if (Quals)
     return true;
-  if (Ty->isSpecificBuiltinType(BuiltinType::ObjCSel))
-    return true;
+  // if (Ty->isSpecificBuiltinType(BuiltinType::ObjCSel))
+  //   return true;
   if (Ty->isOpenCLSpecificType())
     return true;
   if (Ty->isBuiltinType())
@@ -2782,42 +2782,42 @@ void CXXNameMangler::mangleType(const BuiltinType *T) {
     if (!NullOut)
       llvm_unreachable("mangling a placeholder type");
     break;
-  case BuiltinType::ObjCId:
-    Out << "11objc_object";
-    break;
-  case BuiltinType::ObjCClass:
-    Out << "10objc_class";
-    break;
-  case BuiltinType::ObjCSel:
-    Out << "13objc_selector";
-    break;
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id: \
-    type_name = "ocl_" #ImgType "_" #Suffix; \
-    Out << type_name.size() << type_name; \
-    break;
-#include "latino/Basic/OpenCLImageTypes.def"
-  case BuiltinType::OCLSampler:
-    Out << "11ocl_sampler";
-    break;
-  case BuiltinType::OCLEvent:
-    Out << "9ocl_event";
-    break;
-  case BuiltinType::OCLClkEvent:
-    Out << "12ocl_clkevent";
-    break;
-  case BuiltinType::OCLQueue:
-    Out << "9ocl_queue";
-    break;
-  case BuiltinType::OCLReserveID:
-    Out << "13ocl_reserveid";
-    break;
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id: \
-    type_name = "ocl_" #ExtType; \
-    Out << type_name.size() << type_name; \
-    break;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+  // case BuiltinType::ObjCId:
+  //   Out << "11objc_object";
+  //   break;
+  // case BuiltinType::ObjCClass:
+  //   Out << "10objc_class";
+  //   break;
+  // case BuiltinType::ObjCSel:
+  //   Out << "13objc_selector";
+  //   break;
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id: \
+//     type_name = "ocl_" #ImgType "_" #Suffix; \
+//     Out << type_name.size() << type_name; \
+//     break;
+// #include "latino/Basic/OpenCLImageTypes.def"
+  // case BuiltinType::OCLSampler:
+  //   Out << "11ocl_sampler";
+  //   break;
+  // case BuiltinType::OCLEvent:
+  //   Out << "9ocl_event";
+  //   break;
+  // case BuiltinType::OCLClkEvent:
+  //   Out << "12ocl_clkevent";
+  //   break;
+  // case BuiltinType::OCLQueue:
+  //   Out << "9ocl_queue";
+  //   break;
+  // case BuiltinType::OCLReserveID:
+  //   Out << "13ocl_reserveid";
+  //   break;
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id: \
+//     type_name = "ocl_" #ExtType; \
+//     Out << type_name.size() << type_name; \
+//     break;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
   // The SVE types are effectively target-specific.  The mangling scheme
   // is defined in the appendices to the Procedure Call Standard for the
   // Arm Architecture.
@@ -3136,10 +3136,10 @@ void CXXNameMangler::mangleType(const PointerType *T) {
   Out << 'P';
   mangleType(T->getPointeeType());
 }
-void CXXNameMangler::mangleType(const ObjCObjectPointerType *T) {
-  Out << 'P';
-  mangleType(T->getPointeeType());
-}
+// void CXXNameMangler::mangleType(const ObjCObjectPointerType *T) {
+//   Out << 'P';
+//   mangleType(T->getPointeeType());
+// }
 
 // <type> ::= R <type>   # reference-to
 void CXXNameMangler::mangleType(const LValueReferenceType *T) {
@@ -3404,33 +3404,33 @@ void CXXNameMangler::mangleType(const ObjCInterfaceType *T) {
   mangleSourceName(T->getDecl()->getIdentifier());
 }
 
-void CXXNameMangler::mangleType(const ObjCObjectType *T) {
-  // Treat __kindof as a vendor extended type qualifier.
-  if (T->isKindOfType())
-    Out << "U8__kindof";
+// void CXXNameMangler::mangleType(const ObjCObjectType *T) {
+//   // Treat __kindof as a vendor extended type qualifier.
+//   if (T->isKindOfType())
+//     Out << "U8__kindof";
 
-  if (!T->qual_empty()) {
-    // Mangle protocol qualifiers.
-    SmallString<64> QualStr;
-    llvm::raw_svector_ostream QualOS(QualStr);
-    QualOS << "objcproto";
-    for (const auto *I : T->quals()) {
-      StringRef name = I->getName();
-      QualOS << name.size() << name;
-    }
-    Out << 'U' << QualStr.size() << QualStr;
-  }
+//   if (!T->qual_empty()) {
+//     // Mangle protocol qualifiers.
+//     SmallString<64> QualStr;
+//     llvm::raw_svector_ostream QualOS(QualStr);
+//     QualOS << "objcproto";
+//     for (const auto *I : T->quals()) {
+//       StringRef name = I->getName();
+//       QualOS << name.size() << name;
+//     }
+//     Out << 'U' << QualStr.size() << QualStr;
+//   }
 
-  mangleType(T->getBaseType());
+//   mangleType(T->getBaseType());
 
-  if (T->isSpecialized()) {
-    // Mangle type arguments as I <type>+ E
-    Out << 'I';
-    for (auto typeArg : T->getTypeArgs())
-      mangleType(typeArg);
-    Out << 'E';
-  }
-}
+//   if (T->isSpecialized()) {
+//     // Mangle type arguments as I <type>+ E
+//     Out << 'I';
+//     for (auto typeArg : T->getTypeArgs())
+//       mangleType(typeArg);
+//     Out << 'E';
+//   }
+// }
 
 void CXXNameMangler::mangleType(const BlockPointerType *T) {
   Out << "U13block_pointer";
@@ -3815,7 +3815,7 @@ recurse:
   case Expr::ObjCEncodeExprClass:
   case Expr::ObjCIsaExprClass:
   case Expr::ObjCIvarRefExprClass:
-  case Expr::ObjCMessageExprClass:
+  // case Expr::ObjCMessageExprClass:
   case Expr::ObjCPropertyRefExprClass:
   case Expr::ObjCProtocolExprClass:
   case Expr::ObjCSelectorExprClass:
@@ -4170,21 +4170,21 @@ recurse:
     case UETT_AlignOf:
       Out << 'a';
       break;
-    case UETT_VecStep: {
-      DiagnosticsEngine &Diags = Context.getDiags();
-      unsigned DiagID = Diags.getCustomDiagID(DiagnosticsEngine::Error,
-                                     "cannot yet mangle vec_step expression");
-      Diags.Report(DiagID);
-      return;
-    }
-    case UETT_OpenMPRequiredSimdAlign: {
-      DiagnosticsEngine &Diags = Context.getDiags();
-      unsigned DiagID = Diags.getCustomDiagID(
-          DiagnosticsEngine::Error,
-          "cannot yet mangle __builtin_omp_required_simd_align expression");
-      Diags.Report(DiagID);
-      return;
-    }
+    // case UETT_VecStep: {
+    //   DiagnosticsEngine &Diags = Context.getDiags();
+    //   unsigned DiagID = Diags.getCustomDiagID(DiagnosticsEngine::Error,
+    //                                  "cannot yet mangle vec_step expression");
+    //   Diags.Report(DiagID);
+    //   return;
+    // }
+    // case UETT_OpenMPRequiredSimdAlign: {
+    //   DiagnosticsEngine &Diags = Context.getDiags();
+    //   unsigned DiagID = Diags.getCustomDiagID(
+    //       DiagnosticsEngine::Error,
+    //       "cannot yet mangle __builtin_omp_required_simd_align expression");
+    //   Diags.Report(DiagID);
+    //   return;
+    // }
     }
     if (SAE->isArgumentType()) {
       Out << 't';
@@ -4344,9 +4344,9 @@ recurse:
   case Expr::CXXConstCastExprClass:
     mangleCastExpression(E, "cc");
     break;
-  case Expr::CXXAddrspaceCastExprClass:
-    mangleCastExpression(E, "ac");
-    break;
+  // case Expr::CXXAddrspaceCastExprClass:
+  //   mangleCastExpression(E, "ac");
+  //   break;
 
   case Expr::CXXOperatorCallExprClass: {
     const CXXOperatorCallExpr *CE = cast<CXXOperatorCallExpr>(E);

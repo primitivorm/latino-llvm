@@ -12,11 +12,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "latino/Analysis/DomainSpecific/CocoaConventions.h"
+// #include "latino/Analysis/DomainSpecific/CocoaConventions.h"
 #include "latino/Analysis/RetainSummaryManager.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ParentMap.h"
 #include "latino/ASTMatchers/ASTMatchFinder.h"
 
@@ -674,17 +674,17 @@ RetainSummaryManager::getSummary(AnyCall C,
   case AnyCall::Destructor:
     // FIXME: These calls are currently unsupported.
     return getPersistentStopSummary();
-  case AnyCall::ObjCMethod: {
-    const auto *ME = cast_or_null<ObjCMessageExpr>(C.getExpr());
-    if (!ME) {
-      Summ = getMethodSummary(cast<ObjCMethodDecl>(C.getDecl()));
-    } else if (ME->isInstanceMessage()) {
-      Summ = getInstanceMethodSummary(ME, ReceiverType);
-    } else {
-      Summ = getClassMethodSummary(ME);
-    }
-    break;
-  }
+  // case AnyCall::ObjCMethod: {
+  //   const auto *ME = cast_or_null<ObjCMessageExpr>(C.getExpr());
+  //   if (!ME) {
+  //     Summ = getMethodSummary(cast<ObjCMethodDecl>(C.getDecl()));
+  //   } else if (ME->isInstanceMessage()) {
+  //     Summ = getInstanceMethodSummary(ME, ReceiverType);
+  //   } else {
+  //     Summ = getClassMethodSummary(ME);
+  //   }
+  //   break;
+  // }
   }
 
   if (HasNonZeroCallbackArg)
@@ -899,9 +899,9 @@ static bool hasTypedefNamed(QualType QT,
 static QualType getCallableReturnType(const NamedDecl *ND) {
   if (const auto *FD = dyn_cast<FunctionDecl>(ND)) {
     return FD->getReturnType();
-  } else if (const auto *MD = dyn_cast<ObjCMethodDecl>(ND)) {
+  } /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(ND)) {
     return MD->getReturnType();
-  } else {
+  }*/ else {
     llvm_unreachable("Unexpected decl");
   }
 }
@@ -992,300 +992,300 @@ RetainSummaryManager::updateSummaryFromAnnotations(const RetainSummary *&Summ,
     Template->setThisEffect(ArgEffect(DecRef, ObjKind::OS));
 }
 
-void
-RetainSummaryManager::updateSummaryFromAnnotations(const RetainSummary *&Summ,
-                                                   const ObjCMethodDecl *MD) {
-  if (!MD)
-    return;
+// void
+// RetainSummaryManager::updateSummaryFromAnnotations(const RetainSummary *&Summ,
+//                                                    const ObjCMethodDecl *MD) {
+//   if (!MD)
+//     return;
 
-  assert(Summ && "Must have a valid summary to add annotations to");
-  RetainSummaryTemplate Template(Summ, *this);
+//   assert(Summ && "Must have a valid summary to add annotations to");
+//   RetainSummaryTemplate Template(Summ, *this);
 
-  // Effects on the receiver.
-  if (hasAnyEnabledAttrOf<NSConsumesSelfAttr>(MD, MD->getReturnType()))
-    Template->setReceiverEffect(ArgEffect(DecRef, ObjKind::ObjC));
+//   // Effects on the receiver.
+//   if (hasAnyEnabledAttrOf<NSConsumesSelfAttr>(MD, MD->getReturnType()))
+//     Template->setReceiverEffect(ArgEffect(DecRef, ObjKind::ObjC));
 
-  // Effects on the parameters.
-  unsigned parm_idx = 0;
-  for (auto pi = MD->param_begin(), pe = MD->param_end(); pi != pe;
-       ++pi, ++parm_idx)
-    applyParamAnnotationEffect(*pi, parm_idx, MD, Template);
+//   // Effects on the parameters.
+//   unsigned parm_idx = 0;
+//   for (auto pi = MD->param_begin(), pe = MD->param_end(); pi != pe;
+//        ++pi, ++parm_idx)
+//     applyParamAnnotationEffect(*pi, parm_idx, MD, Template);
 
-  QualType RetTy = MD->getReturnType();
-  if (Optional<RetEffect> RetE = getRetEffectFromAnnotations(RetTy, MD))
-    Template->setRetEffect(*RetE);
-}
+//   QualType RetTy = MD->getReturnType();
+//   if (Optional<RetEffect> RetE = getRetEffectFromAnnotations(RetTy, MD))
+//     Template->setRetEffect(*RetE);
+// }
 
-const RetainSummary *
-RetainSummaryManager::getStandardMethodSummary(const ObjCMethodDecl *MD,
-                                               Selector S, QualType RetTy) {
-  // Any special effects?
-  ArgEffect ReceiverEff = ArgEffect(DoNothing, ObjKind::ObjC);
-  RetEffect ResultEff = RetEffect::MakeNoRet();
+// const RetainSummary *
+// RetainSummaryManager::getStandardMethodSummary(const ObjCMethodDecl *MD,
+//                                                Selector S, QualType RetTy) {
+//   // Any special effects?
+//   ArgEffect ReceiverEff = ArgEffect(DoNothing, ObjKind::ObjC);
+//   RetEffect ResultEff = RetEffect::MakeNoRet();
 
-  // Check the method family, and apply any default annotations.
-  switch (MD ? MD->getMethodFamily() : S.getMethodFamily()) {
-    case OMF_None:
-    case OMF_initialize:
-    case OMF_performSelector:
-      // Assume all Objective-C methods follow Cocoa Memory Management rules.
-      // FIXME: Does the non-threaded performSelector family really belong here?
-      // The selector could be, say, @selector(copy).
-      if (cocoa::isCocoaObjectRef(RetTy))
-        ResultEff = RetEffect::MakeNotOwned(ObjKind::ObjC);
-      else if (coreFoundation::isCFObjectRef(RetTy)) {
-        // ObjCMethodDecl currently doesn't consider CF objects as valid return
-        // values for alloc, new, copy, or mutableCopy, so we have to
-        // double-check with the selector. This is ugly, but there aren't that
-        // many Objective-C methods that return CF objects, right?
-        if (MD) {
-          switch (S.getMethodFamily()) {
-          case OMF_alloc:
-          case OMF_new:
-          case OMF_copy:
-          case OMF_mutableCopy:
-            ResultEff = RetEffect::MakeOwned(ObjKind::CF);
-            break;
-          default:
-            ResultEff = RetEffect::MakeNotOwned(ObjKind::CF);
-            break;
-          }
-        } else {
-          ResultEff = RetEffect::MakeNotOwned(ObjKind::CF);
-        }
-      }
-      break;
-    case OMF_init:
-      ResultEff = ObjCInitRetE;
-      ReceiverEff = ArgEffect(DecRef, ObjKind::ObjC);
-      break;
-    case OMF_alloc:
-    case OMF_new:
-    case OMF_copy:
-    case OMF_mutableCopy:
-      if (cocoa::isCocoaObjectRef(RetTy))
-        ResultEff = ObjCAllocRetE;
-      else if (coreFoundation::isCFObjectRef(RetTy))
-        ResultEff = RetEffect::MakeOwned(ObjKind::CF);
-      break;
-    case OMF_autorelease:
-      ReceiverEff = ArgEffect(Autorelease, ObjKind::ObjC);
-      break;
-    case OMF_retain:
-      ReceiverEff = ArgEffect(IncRef, ObjKind::ObjC);
-      break;
-    case OMF_release:
-      ReceiverEff = ArgEffect(DecRef, ObjKind::ObjC);
-      break;
-    case OMF_dealloc:
-      ReceiverEff = ArgEffect(Dealloc, ObjKind::ObjC);
-      break;
-    case OMF_self:
-      // -self is handled specially by the ExprEngine to propagate the receiver.
-      break;
-    case OMF_retainCount:
-    case OMF_finalize:
-      // These methods don't return objects.
-      break;
-  }
+//   // Check the method family, and apply any default annotations.
+//   switch (MD ? MD->getMethodFamily() : S.getMethodFamily()) {
+//     case OMF_None:
+//     case OMF_initialize:
+//     case OMF_performSelector:
+//       // Assume all Objective-C methods follow Cocoa Memory Management rules.
+//       // FIXME: Does the non-threaded performSelector family really belong here?
+//       // The selector could be, say, @selector(copy).
+//       if (cocoa::isCocoaObjectRef(RetTy))
+//         ResultEff = RetEffect::MakeNotOwned(ObjKind::ObjC);
+//       else if (coreFoundation::isCFObjectRef(RetTy)) {
+//         // ObjCMethodDecl currently doesn't consider CF objects as valid return
+//         // values for alloc, new, copy, or mutableCopy, so we have to
+//         // double-check with the selector. This is ugly, but there aren't that
+//         // many Objective-C methods that return CF objects, right?
+//         if (MD) {
+//           switch (S.getMethodFamily()) {
+//           case OMF_alloc:
+//           case OMF_new:
+//           case OMF_copy:
+//           case OMF_mutableCopy:
+//             ResultEff = RetEffect::MakeOwned(ObjKind::CF);
+//             break;
+//           default:
+//             ResultEff = RetEffect::MakeNotOwned(ObjKind::CF);
+//             break;
+//           }
+//         } else {
+//           ResultEff = RetEffect::MakeNotOwned(ObjKind::CF);
+//         }
+//       }
+//       break;
+//     case OMF_init:
+//       ResultEff = ObjCInitRetE;
+//       ReceiverEff = ArgEffect(DecRef, ObjKind::ObjC);
+//       break;
+//     case OMF_alloc:
+//     case OMF_new:
+//     case OMF_copy:
+//     case OMF_mutableCopy:
+//       if (cocoa::isCocoaObjectRef(RetTy))
+//         ResultEff = ObjCAllocRetE;
+//       else if (coreFoundation::isCFObjectRef(RetTy))
+//         ResultEff = RetEffect::MakeOwned(ObjKind::CF);
+//       break;
+//     case OMF_autorelease:
+//       ReceiverEff = ArgEffect(Autorelease, ObjKind::ObjC);
+//       break;
+//     case OMF_retain:
+//       ReceiverEff = ArgEffect(IncRef, ObjKind::ObjC);
+//       break;
+//     case OMF_release:
+//       ReceiverEff = ArgEffect(DecRef, ObjKind::ObjC);
+//       break;
+//     case OMF_dealloc:
+//       ReceiverEff = ArgEffect(Dealloc, ObjKind::ObjC);
+//       break;
+//     case OMF_self:
+//       // -self is handled specially by the ExprEngine to propagate the receiver.
+//       break;
+//     case OMF_retainCount:
+//     case OMF_finalize:
+//       // These methods don't return objects.
+//       break;
+//   }
 
-  // If one of the arguments in the selector has the keyword 'delegate' we
-  // should stop tracking the reference count for the receiver.  This is
-  // because the reference count is quite possibly handled by a delegate
-  // method.
-  if (S.isKeywordSelector()) {
-    for (unsigned i = 0, e = S.getNumArgs(); i != e; ++i) {
-      StringRef Slot = S.getNameForSlot(i);
-      if (Slot.substr(Slot.size() - 8).equals_lower("delegate")) {
-        if (ResultEff == ObjCInitRetE)
-          ResultEff = RetEffect::MakeNoRetHard();
-        else
-          ReceiverEff = ArgEffect(StopTrackingHard, ObjKind::ObjC);
-      }
-    }
-  }
+//   // If one of the arguments in the selector has the keyword 'delegate' we
+//   // should stop tracking the reference count for the receiver.  This is
+//   // because the reference count is quite possibly handled by a delegate
+//   // method.
+//   if (S.isKeywordSelector()) {
+//     for (unsigned i = 0, e = S.getNumArgs(); i != e; ++i) {
+//       StringRef Slot = S.getNameForSlot(i);
+//       if (Slot.substr(Slot.size() - 8).equals_lower("delegate")) {
+//         if (ResultEff == ObjCInitRetE)
+//           ResultEff = RetEffect::MakeNoRetHard();
+//         else
+//           ReceiverEff = ArgEffect(StopTrackingHard, ObjKind::ObjC);
+//       }
+//     }
+//   }
 
-  if (ReceiverEff.getKind() == DoNothing &&
-      ResultEff.getKind() == RetEffect::NoRet)
-    return getDefaultSummary();
+//   if (ReceiverEff.getKind() == DoNothing &&
+//       ResultEff.getKind() == RetEffect::NoRet)
+//     return getDefaultSummary();
 
-  return getPersistentSummary(ResultEff, ArgEffects(AF.getEmptyMap()),
-                              ArgEffect(ReceiverEff), ArgEffect(MayEscape));
-}
+//   return getPersistentSummary(ResultEff, ArgEffects(AF.getEmptyMap()),
+//                               ArgEffect(ReceiverEff), ArgEffect(MayEscape));
+// }
 
-const RetainSummary *
-RetainSummaryManager::getClassMethodSummary(const ObjCMessageExpr *ME) {
-  assert(!ME->isInstanceMessage());
-  const ObjCInterfaceDecl *Class = ME->getReceiverInterface();
+// const RetainSummary *
+// RetainSummaryManager::getClassMethodSummary(const ObjCMessageExpr *ME) {
+//   assert(!ME->isInstanceMessage());
+//   const ObjCInterfaceDecl *Class = ME->getReceiverInterface();
 
-  return getMethodSummary(ME->getSelector(), Class, ME->getMethodDecl(),
-                          ME->getType(), ObjCClassMethodSummaries);
-}
+//   return getMethodSummary(ME->getSelector(), Class, ME->getMethodDecl(),
+//                           ME->getType(), ObjCClassMethodSummaries);
+// }
 
-const RetainSummary *RetainSummaryManager::getInstanceMethodSummary(
-    const ObjCMessageExpr *ME,
-    QualType ReceiverType) {
-  const ObjCInterfaceDecl *ReceiverClass = nullptr;
+// const RetainSummary *RetainSummaryManager::getInstanceMethodSummary(
+//     const ObjCMessageExpr *ME,
+//     QualType ReceiverType) {
+//   const ObjCInterfaceDecl *ReceiverClass = nullptr;
 
-  // We do better tracking of the type of the object than the core ExprEngine.
-  // See if we have its type in our private state.
-  if (!ReceiverType.isNull())
-    if (const auto *PT = ReceiverType->getAs<ObjCObjectPointerType>())
-      ReceiverClass = PT->getInterfaceDecl();
+//   // We do better tracking of the type of the object than the core ExprEngine.
+//   // See if we have its type in our private state.
+//   if (!ReceiverType.isNull())
+//     if (const auto *PT = ReceiverType->getAs<ObjCObjectPointerType>())
+//       ReceiverClass = PT->getInterfaceDecl();
 
-  // If we don't know what kind of object this is, fall back to its static type.
-  if (!ReceiverClass)
-    ReceiverClass = ME->getReceiverInterface();
+//   // If we don't know what kind of object this is, fall back to its static type.
+//   if (!ReceiverClass)
+//     ReceiverClass = ME->getReceiverInterface();
 
-  // FIXME: The receiver could be a reference to a class, meaning that
-  //  we should use the class method.
-  // id x = [NSObject class];
-  // [x performSelector:... withObject:... afterDelay:...];
-  Selector S = ME->getSelector();
-  const ObjCMethodDecl *Method = ME->getMethodDecl();
-  if (!Method && ReceiverClass)
-    Method = ReceiverClass->getInstanceMethod(S);
+//   // FIXME: The receiver could be a reference to a class, meaning that
+//   //  we should use the class method.
+//   // id x = [NSObject class];
+//   // [x performSelector:... withObject:... afterDelay:...];
+//   Selector S = ME->getSelector();
+//   const ObjCMethodDecl *Method = ME->getMethodDecl();
+//   if (!Method && ReceiverClass)
+//     Method = ReceiverClass->getInstanceMethod(S);
 
-  return getMethodSummary(S, ReceiverClass, Method, ME->getType(),
-                          ObjCMethodSummaries);
-}
+//   return getMethodSummary(S, ReceiverClass, Method, ME->getType(),
+//                           ObjCMethodSummaries);
+// }
 
-const RetainSummary *
-RetainSummaryManager::getMethodSummary(Selector S,
-                                       const ObjCInterfaceDecl *ID,
-                                       const ObjCMethodDecl *MD, QualType RetTy,
-                                       ObjCMethodSummariesTy &CachedSummaries) {
+// const RetainSummary *
+// RetainSummaryManager::getMethodSummary(Selector S,
+//                                        const ObjCInterfaceDecl *ID,
+//                                        const ObjCMethodDecl *MD, QualType RetTy,
+//                                        ObjCMethodSummariesTy &CachedSummaries) {
 
-  // Objective-C method summaries are only applicable to ObjC and CF objects.
-  if (!TrackObjCAndCFObjects)
-    return getDefaultSummary();
+//   // Objective-C method summaries are only applicable to ObjC and CF objects.
+//   if (!TrackObjCAndCFObjects)
+//     return getDefaultSummary();
 
-  // Look up a summary in our summary cache.
-  const RetainSummary *Summ = CachedSummaries.find(ID, S);
+//   // Look up a summary in our summary cache.
+//   const RetainSummary *Summ = CachedSummaries.find(ID, S);
 
-  if (!Summ) {
-    Summ = getStandardMethodSummary(MD, S, RetTy);
+//   if (!Summ) {
+//     Summ = getStandardMethodSummary(MD, S, RetTy);
 
-    // Annotations override defaults.
-    updateSummaryFromAnnotations(Summ, MD);
+//     // Annotations override defaults.
+//     updateSummaryFromAnnotations(Summ, MD);
 
-    // Memoize the summary.
-    CachedSummaries[ObjCSummaryKey(ID, S)] = Summ;
-  }
+//     // Memoize the summary.
+//     CachedSummaries[ObjCSummaryKey(ID, S)] = Summ;
+//   }
 
-  return Summ;
-}
+//   return Summ;
+// }
 
-void RetainSummaryManager::InitializeClassMethodSummaries() {
-  ArgEffects ScratchArgs = AF.getEmptyMap();
+// void RetainSummaryManager::InitializeClassMethodSummaries() {
+//   ArgEffects ScratchArgs = AF.getEmptyMap();
 
-  // Create the [NSAssertionHandler currentHander] summary.
-  addClassMethSummary("NSAssertionHandler", "currentHandler",
-                getPersistentSummary(RetEffect::MakeNotOwned(ObjKind::ObjC),
-                                     ScratchArgs));
+//   // Create the [NSAssertionHandler currentHander] summary.
+//   addClassMethSummary("NSAssertionHandler", "currentHandler",
+//                 getPersistentSummary(RetEffect::MakeNotOwned(ObjKind::ObjC),
+//                                      ScratchArgs));
 
-  // Create the [NSAutoreleasePool addObject:] summary.
-  ScratchArgs = AF.add(ScratchArgs, 0, ArgEffect(Autorelease));
-  addClassMethSummary("NSAutoreleasePool", "addObject",
-                      getPersistentSummary(RetEffect::MakeNoRet(), ScratchArgs,
-                                           ArgEffect(DoNothing),
-                                           ArgEffect(Autorelease)));
-}
+//   // Create the [NSAutoreleasePool addObject:] summary.
+//   ScratchArgs = AF.add(ScratchArgs, 0, ArgEffect(Autorelease));
+//   addClassMethSummary("NSAutoreleasePool", "addObject",
+//                       getPersistentSummary(RetEffect::MakeNoRet(), ScratchArgs,
+//                                            ArgEffect(DoNothing),
+//                                            ArgEffect(Autorelease)));
+// }
 
-void RetainSummaryManager::InitializeMethodSummaries() {
+// void RetainSummaryManager::InitializeMethodSummaries() {
 
-  ArgEffects ScratchArgs = AF.getEmptyMap();
-  // Create the "init" selector.  It just acts as a pass-through for the
-  // receiver.
-  const RetainSummary *InitSumm = getPersistentSummary(
-      ObjCInitRetE, ScratchArgs, ArgEffect(DecRef, ObjKind::ObjC));
-  addNSObjectMethSummary(GetNullarySelector("init", Ctx), InitSumm);
+//   ArgEffects ScratchArgs = AF.getEmptyMap();
+//   // Create the "init" selector.  It just acts as a pass-through for the
+//   // receiver.
+//   const RetainSummary *InitSumm = getPersistentSummary(
+//       ObjCInitRetE, ScratchArgs, ArgEffect(DecRef, ObjKind::ObjC));
+//   addNSObjectMethSummary(GetNullarySelector("init", Ctx), InitSumm);
 
-  // awakeAfterUsingCoder: behaves basically like an 'init' method.  It
-  // claims the receiver and returns a retained object.
-  addNSObjectMethSummary(GetUnarySelector("awakeAfterUsingCoder", Ctx),
-                         InitSumm);
+//   // awakeAfterUsingCoder: behaves basically like an 'init' method.  It
+//   // claims the receiver and returns a retained object.
+//   addNSObjectMethSummary(GetUnarySelector("awakeAfterUsingCoder", Ctx),
+//                          InitSumm);
 
-  // The next methods are allocators.
-  const RetainSummary *AllocSumm = getPersistentSummary(ObjCAllocRetE,
-                                                        ScratchArgs);
-  const RetainSummary *CFAllocSumm =
-    getPersistentSummary(RetEffect::MakeOwned(ObjKind::CF), ScratchArgs);
+//   // The next methods are allocators.
+//   const RetainSummary *AllocSumm = getPersistentSummary(ObjCAllocRetE,
+//                                                         ScratchArgs);
+//   const RetainSummary *CFAllocSumm =
+//     getPersistentSummary(RetEffect::MakeOwned(ObjKind::CF), ScratchArgs);
 
-  // Create the "retain" selector.
-  RetEffect NoRet = RetEffect::MakeNoRet();
-  const RetainSummary *Summ = getPersistentSummary(
-      NoRet, ScratchArgs, ArgEffect(IncRef, ObjKind::ObjC));
-  addNSObjectMethSummary(GetNullarySelector("retain", Ctx), Summ);
+//   // Create the "retain" selector.
+//   RetEffect NoRet = RetEffect::MakeNoRet();
+//   const RetainSummary *Summ = getPersistentSummary(
+//       NoRet, ScratchArgs, ArgEffect(IncRef, ObjKind::ObjC));
+//   addNSObjectMethSummary(GetNullarySelector("retain", Ctx), Summ);
 
-  // Create the "release" selector.
-  Summ = getPersistentSummary(NoRet, ScratchArgs,
-                              ArgEffect(DecRef, ObjKind::ObjC));
-  addNSObjectMethSummary(GetNullarySelector("release", Ctx), Summ);
+//   // Create the "release" selector.
+//   Summ = getPersistentSummary(NoRet, ScratchArgs,
+//                               ArgEffect(DecRef, ObjKind::ObjC));
+//   addNSObjectMethSummary(GetNullarySelector("release", Ctx), Summ);
 
-  // Create the -dealloc summary.
-  Summ = getPersistentSummary(NoRet, ScratchArgs, ArgEffect(Dealloc,
-                                                            ObjKind::ObjC));
-  addNSObjectMethSummary(GetNullarySelector("dealloc", Ctx), Summ);
+//   // Create the -dealloc summary.
+//   Summ = getPersistentSummary(NoRet, ScratchArgs, ArgEffect(Dealloc,
+//                                                             ObjKind::ObjC));
+//   addNSObjectMethSummary(GetNullarySelector("dealloc", Ctx), Summ);
 
-  // Create the "autorelease" selector.
-  Summ = getPersistentSummary(NoRet, ScratchArgs, ArgEffect(Autorelease,
-                                                            ObjKind::ObjC));
-  addNSObjectMethSummary(GetNullarySelector("autorelease", Ctx), Summ);
+//   // Create the "autorelease" selector.
+//   Summ = getPersistentSummary(NoRet, ScratchArgs, ArgEffect(Autorelease,
+//                                                             ObjKind::ObjC));
+//   addNSObjectMethSummary(GetNullarySelector("autorelease", Ctx), Summ);
 
-  // For NSWindow, allocated objects are (initially) self-owned.
-  // FIXME: For now we opt for false negatives with NSWindow, as these objects
-  //  self-own themselves.  However, they only do this once they are displayed.
-  //  Thus, we need to track an NSWindow's display status.
-  //  This is tracked in <rdar://problem/6062711>.
-  //  See also http://llvm.org/bugs/show_bug.cgi?id=3714.
-  const RetainSummary *NoTrackYet =
-      getPersistentSummary(RetEffect::MakeNoRet(), ScratchArgs,
-                           ArgEffect(StopTracking), ArgEffect(StopTracking));
+//   // For NSWindow, allocated objects are (initially) self-owned.
+//   // FIXME: For now we opt for false negatives with NSWindow, as these objects
+//   //  self-own themselves.  However, they only do this once they are displayed.
+//   //  Thus, we need to track an NSWindow's display status.
+//   //  This is tracked in <rdar://problem/6062711>.
+//   //  See also http://llvm.org/bugs/show_bug.cgi?id=3714.
+//   const RetainSummary *NoTrackYet =
+//       getPersistentSummary(RetEffect::MakeNoRet(), ScratchArgs,
+//                            ArgEffect(StopTracking), ArgEffect(StopTracking));
 
-  addClassMethSummary("NSWindow", "alloc", NoTrackYet);
+//   addClassMethSummary("NSWindow", "alloc", NoTrackYet);
 
-  // For NSPanel (which subclasses NSWindow), allocated objects are not
-  //  self-owned.
-  // FIXME: For now we don't track NSPanels. object for the same reason
-  //   as for NSWindow objects.
-  addClassMethSummary("NSPanel", "alloc", NoTrackYet);
+//   // For NSPanel (which subclasses NSWindow), allocated objects are not
+//   //  self-owned.
+//   // FIXME: For now we don't track NSPanels. object for the same reason
+//   //   as for NSWindow objects.
+//   addClassMethSummary("NSPanel", "alloc", NoTrackYet);
 
-  // For NSNull, objects returned by +null are singletons that ignore
-  // retain/release semantics.  Just don't track them.
-  // <rdar://problem/12858915>
-  addClassMethSummary("NSNull", "null", NoTrackYet);
+//   // For NSNull, objects returned by +null are singletons that ignore
+//   // retain/release semantics.  Just don't track them.
+//   // <rdar://problem/12858915>
+//   addClassMethSummary("NSNull", "null", NoTrackYet);
 
-  // Don't track allocated autorelease pools, as it is okay to prematurely
-  // exit a method.
-  addClassMethSummary("NSAutoreleasePool", "alloc", NoTrackYet);
-  addClassMethSummary("NSAutoreleasePool", "allocWithZone", NoTrackYet, false);
-  addClassMethSummary("NSAutoreleasePool", "new", NoTrackYet);
+//   // Don't track allocated autorelease pools, as it is okay to prematurely
+//   // exit a method.
+//   addClassMethSummary("NSAutoreleasePool", "alloc", NoTrackYet);
+//   addClassMethSummary("NSAutoreleasePool", "allocWithZone", NoTrackYet, false);
+//   addClassMethSummary("NSAutoreleasePool", "new", NoTrackYet);
 
-  // Create summaries QCRenderer/QCView -createSnapShotImageOfType:
-  addInstMethSummary("QCRenderer", AllocSumm, "createSnapshotImageOfType");
-  addInstMethSummary("QCView", AllocSumm, "createSnapshotImageOfType");
+//   // Create summaries QCRenderer/QCView -createSnapShotImageOfType:
+//   addInstMethSummary("QCRenderer", AllocSumm, "createSnapshotImageOfType");
+//   addInstMethSummary("QCView", AllocSumm, "createSnapshotImageOfType");
 
-  // Create summaries for CIContext, 'createCGImage' and
-  // 'createCGLayerWithSize'.  These objects are CF objects, and are not
-  // automatically garbage collected.
-  addInstMethSummary("CIContext", CFAllocSumm, "createCGImage", "fromRect");
-  addInstMethSummary("CIContext", CFAllocSumm, "createCGImage", "fromRect",
-                     "format", "colorSpace");
-  addInstMethSummary("CIContext", CFAllocSumm, "createCGLayerWithSize", "info");
-}
+//   // Create summaries for CIContext, 'createCGImage' and
+//   // 'createCGLayerWithSize'.  These objects are CF objects, and are not
+//   // automatically garbage collected.
+//   addInstMethSummary("CIContext", CFAllocSumm, "createCGImage", "fromRect");
+//   addInstMethSummary("CIContext", CFAllocSumm, "createCGImage", "fromRect",
+//                      "format", "colorSpace");
+//   addInstMethSummary("CIContext", CFAllocSumm, "createCGLayerWithSize", "info");
+// }
 
-const RetainSummary *
-RetainSummaryManager::getMethodSummary(const ObjCMethodDecl *MD) {
-  const ObjCInterfaceDecl *ID = MD->getClassInterface();
-  Selector S = MD->getSelector();
-  QualType ResultTy = MD->getReturnType();
+// const RetainSummary *
+// RetainSummaryManager::getMethodSummary(const ObjCMethodDecl *MD) {
+//   const ObjCInterfaceDecl *ID = MD->getClassInterface();
+//   Selector S = MD->getSelector();
+//   QualType ResultTy = MD->getReturnType();
 
-  ObjCMethodSummariesTy *CachedSummaries;
-  if (MD->isInstanceMethod())
-    CachedSummaries = &ObjCMethodSummaries;
-  else
-    CachedSummaries = &ObjCClassMethodSummaries;
+//   ObjCMethodSummariesTy *CachedSummaries;
+//   if (MD->isInstanceMethod())
+//     CachedSummaries = &ObjCMethodSummaries;
+//   else
+//     CachedSummaries = &ObjCClassMethodSummaries;
 
-  return getMethodSummary(S, ID, MD, ResultTy, *CachedSummaries);
-}
+//   return getMethodSummary(S, ID, MD, ResultTy, *CachedSummaries);
+// }

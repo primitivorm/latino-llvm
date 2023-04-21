@@ -748,13 +748,13 @@ let Class = BuiltinType in {
 
   def : Creator<[{
       switch (kind) {
-#define IMAGE_TYPE(IMGTYPE, ID, SINGLETON_ID, ACCESS, SUFFIX) \
-      case BuiltinType::ID: return ctx.SINGLETON_ID;
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define IMAGE_TYPE(IMGTYPE, ID, SINGLETON_ID, ACCESS, SUFFIX) \
+//       case BuiltinType::ID: return ctx.SINGLETON_ID;
+// #include "latino/Basic/OpenCLImageTypes.def"
 
-#define EXT_OPAQUE_TYPE(EXTTYPE, ID, EXT) \
-      case BuiltinType::ID: return ctx.ID##Ty;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define EXT_OPAQUE_TYPE(EXTTYPE, ID, EXT) \
+//       case BuiltinType::ID: return ctx.ID##Ty;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 
 #define SVE_TYPE(NAME, ID, SINGLETON_ID) \
       case BuiltinType::ID: return ctx.SINGLETON_ID;
@@ -794,67 +794,67 @@ let Class = DependentNameType in {
   }]>;
 }
 
-let Class = ObjCObjectType in {
-  def : Property<"baseType", QualType> {
-    let Read = [{ node->getBaseType() }];
-  }
-  def : Property<"typeArgsAsWritten", Array<QualType>> {
-    let Read = [{ node->getTypeArgsAsWritten() }];
-  }
-  def : Property<"qualifiers", Array<ObjCProtocolDeclRef>> {
-    let Read = [{ node->getProtocols() }];
-  }
-  def : Property<"isKindOfTypeAsWritten", Bool> {
-    let Read = [{ node->isKindOfTypeAsWritten() }];
-  }
+// let Class = ObjCObjectType in {
+//   def : Property<"baseType", QualType> {
+//     let Read = [{ node->getBaseType() }];
+//   }
+//   def : Property<"typeArgsAsWritten", Array<QualType>> {
+//     let Read = [{ node->getTypeArgsAsWritten() }];
+//   }
+//   def : Property<"qualifiers", Array<ObjCProtocolDeclRef>> {
+//     let Read = [{ node->getProtocols() }];
+//   }
+//   def : Property<"isKindOfTypeAsWritten", Bool> {
+//     let Read = [{ node->isKindOfTypeAsWritten() }];
+//   }
 
-  def : Creator<[{
-    return ctx.getObjCObjectType(baseType, typeArgsAsWritten, qualifiers,
-                                 isKindOfTypeAsWritten);
-  }]>;
-}
+//   def : Creator<[{
+//     return ctx.getObjCObjectType(baseType, typeArgsAsWritten, qualifiers,
+//                                  isKindOfTypeAsWritten);
+//   }]>;
+// }
 
-let Class = ObjCInterfaceType in {
-  // We don't actually want any of the properties of the superclass.
-  def : Override {
-    let IgnoredProperties = [ "baseType", "typeArgsAsWritten",
-                              "qualifiers", "isKindOfTypeAsWritten" ];
-  }
+// let Class = ObjCInterfaceType in {
+//   // We don't actually want any of the properties of the superclass.
+//   def : Override {
+//     let IgnoredProperties = [ "baseType", "typeArgsAsWritten",
+//                               "qualifiers", "isKindOfTypeAsWritten" ];
+//   }
 
-  def : Property<"declaration", DeclRef> {
-    // FIXME: drilling down to the canonical declaration is what the
-    // existing serialization code was doing, but it's not clear why.
-    let Read = [{ node->getDecl()->getCanonicalDecl() }];
-  }
+//   def : Property<"declaration", DeclRef> {
+//     // FIXME: drilling down to the canonical declaration is what the
+//     // existing serialization code was doing, but it's not clear why.
+//     let Read = [{ node->getDecl()->getCanonicalDecl() }];
+//   }
 
-  def : Creator<[{
-    return ctx.getObjCInterfaceType(
-             cast<ObjCInterfaceDecl>(declaration->getCanonicalDecl()));
-  }]>;
-}
+//   def : Creator<[{
+//     return ctx.getObjCInterfaceType(
+//              cast<ObjCInterfaceDecl>(declaration->getCanonicalDecl()));
+//   }]>;
+// }
 
-let Class = ObjCTypeParamType in {
-  def : Property<"declaration", ObjCTypeParamDeclRef> {
-    let Read = [{ node->getDecl() }];
-  }  
-  def : Property<"qualifiers", Array<ObjCProtocolDeclRef>> {
-    let Read = [{ node->getProtocols() }];
-  }
+// let Class = ObjCTypeParamType in {
+//   def : Property<"declaration", ObjCTypeParamDeclRef> {
+//     let Read = [{ node->getDecl() }];
+//   }  
+//   def : Property<"qualifiers", Array<ObjCProtocolDeclRef>> {
+//     let Read = [{ node->getProtocols() }];
+//   }
 
-  def : Creator<[{
-    return ctx.getObjCTypeParamType(declaration, qualifiers);
-  }]>;
-}
+//   def : Creator<[{
+//     return ctx.getObjCTypeParamType(declaration, qualifiers);
+//   }]>;
+// }
 
-let Class = ObjCObjectPointerType in {
-  def : Property<"pointeeType", QualType> {
-    let Read = [{ node->getPointeeType() }];
-  }
+// let Class = ObjCObjectPointerType in {
+//   def : Property<"pointeeType", QualType> {
+//     let Read = [{ node->getPointeeType() }];
+//   }
 
-  def : Creator<[{
-    return ctx.getObjCObjectPointerType(pointeeType);
-  }]>;
-}
+//   def : Creator<[{
+//     return ctx.getObjCObjectPointerType(pointeeType);
+//   }]>;
+// }
 
 let Class = PipeType in {
   def : Property<"elementType", QualType> {

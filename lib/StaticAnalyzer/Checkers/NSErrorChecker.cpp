@@ -16,7 +16,7 @@
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"
@@ -35,48 +35,48 @@ static bool IsCFError(QualType T, IdentifierInfo *II);
 // NSErrorMethodChecker
 //===----------------------------------------------------------------------===//
 
-namespace {
-class NSErrorMethodChecker
-    : public Checker< check::ASTDecl<ObjCMethodDecl> > {
-  mutable IdentifierInfo *II;
+// namespace {
+// class NSErrorMethodChecker
+//     : public Checker< check::ASTDecl<ObjCMethodDecl> > {
+//   mutable IdentifierInfo *II;
 
-public:
-  NSErrorMethodChecker() : II(nullptr) {}
+// public:
+//   NSErrorMethodChecker() : II(nullptr) {}
 
-  void checkASTDecl(const ObjCMethodDecl *D,
-                    AnalysisManager &mgr, BugReporter &BR) const;
-};
-}
+//   void checkASTDecl(const ObjCMethodDecl *D,
+//                     AnalysisManager &mgr, BugReporter &BR) const;
+// };
+// }
 
-void NSErrorMethodChecker::checkASTDecl(const ObjCMethodDecl *D,
-                                        AnalysisManager &mgr,
-                                        BugReporter &BR) const {
-  if (!D->isThisDeclarationADefinition())
-    return;
-  if (!D->getReturnType()->isVoidType())
-    return;
+// void NSErrorMethodChecker::checkASTDecl(const ObjCMethodDecl *D,
+//                                         AnalysisManager &mgr,
+//                                         BugReporter &BR) const {
+//   if (!D->isThisDeclarationADefinition())
+//     return;
+//   if (!D->getReturnType()->isVoidType())
+//     return;
 
-  if (!II)
-    II = &D->getASTContext().Idents.get("NSError");
+//   if (!II)
+//     II = &D->getASTContext().Idents.get("NSError");
 
-  bool hasNSError = false;
-  for (const auto *I : D->parameters())  {
-    if (IsNSError(I->getType(), II)) {
-      hasNSError = true;
-      break;
-    }
-  }
+//   bool hasNSError = false;
+//   for (const auto *I : D->parameters())  {
+//     if (IsNSError(I->getType(), II)) {
+//       hasNSError = true;
+//       break;
+//     }
+//   }
 
-  if (hasNSError) {
-    const char *err = "Method accepting NSError** "
-        "should have a non-void return value to indicate whether or not an "
-        "error occurred";
-    PathDiagnosticLocation L =
-      PathDiagnosticLocation::create(D, BR.getSourceManager());
-    BR.EmitBasicReport(D, this, "Bad return type when passing NSError**",
-                       "Coding conventions (Apple)", err, L);
-  }
-}
+//   if (hasNSError) {
+//     const char *err = "Method accepting NSError** "
+//         "should have a non-void return value to indicate whether or not an "
+//         "error occurred";
+//     PathDiagnosticLocation L =
+//       PathDiagnosticLocation::create(D, BR.getSourceManager());
+//     BR.EmitBasicReport(D, this, "Bad return type when passing NSError**",
+//                        "Coding conventions (Apple)", err, L);
+//   }
+// }
 
 //===----------------------------------------------------------------------===//
 // CFErrorFunctionChecker
@@ -294,17 +294,17 @@ static bool IsNSError(QualType T, IdentifierInfo *II) {
   if (!PPT)
     return false;
 
-  const ObjCObjectPointerType* PT =
-    PPT->getPointeeType()->getAs<ObjCObjectPointerType>();
+  // const ObjCObjectPointerType* PT =
+  //   PPT->getPointeeType()->getAs<ObjCObjectPointerType>();
 
-  if (!PT)
-    return false;
+  // if (!PT)
+  //   return false;
 
-  const ObjCInterfaceDecl *ID = PT->getInterfaceDecl();
+  // const ObjCInterfaceDecl *ID = PT->getInterfaceDecl();
 
-  // FIXME: Can ID ever be NULL?
-  if (ID)
-    return II == ID->getIdentifier();
+  // // FIXME: Can ID ever be NULL?
+  // if (ID)
+  //   return II == ID->getIdentifier();
 
   return false;
 }

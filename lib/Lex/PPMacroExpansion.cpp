@@ -17,7 +17,7 @@
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/TargetInfo.h"
 #include "latino/Lex/CodeCompletionHandler.h"

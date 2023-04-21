@@ -167,11 +167,11 @@ CreateFrontendAction(CompilerInstance &CI) {
       break;
     }
 
-    if (FEOpts.ObjCMTAction != FrontendOptions::ObjCMT_None) {
-      Act = std::make_unique<arcmt::ObjCMigrateAction>(std::move(Act),
-                                                        FEOpts.MTMigrateDir,
-                                                        FEOpts.ObjCMTAction);
-    }
+    // if (FEOpts.ObjCMTAction != FrontendOptions::ObjCMT_None) {
+    //   Act = std::make_unique<arcmt::ObjCMigrateAction>(std::move(Act),
+    //                                                     FEOpts.MTMigrateDir,
+    //                                                     FEOpts.ObjCMTAction);
+    // }
   }
 #endif
 

@@ -1046,8 +1046,8 @@ static Language getLanguageFromOptions(const LangOptions &LangOpts) {
     return Language::OpenCL;
   if (LangOpts.CUDA)
     return Language::CUDA;
-  if (LangOpts.ObjC)
-    return LangOpts.CPlusPlus ? Language::ObjCXX : Language::ObjC;
+  // if (LangOpts.ObjC)
+  //   return LangOpts.CPlusPlus ? Language::ObjCXX : Language::ObjC;
   return LangOpts.CPlusPlus ? Language::CXX : Language::C;
 }
 

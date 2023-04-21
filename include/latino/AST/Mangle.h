@@ -33,7 +33,7 @@ namespace latino {
   class FunctionDecl;
   struct MethodVFTableLocation;
   class NamedDecl;
-  class ObjCMethodDecl;
+  // class ObjCMethodDecl;
   class StringLiteral;
   struct ThisAdjustment;
   struct ThunkInfo;
@@ -123,8 +123,8 @@ public:
   void mangleBlock(const DeclContext *DC, const BlockDecl *BD,
                    raw_ostream &Out);
 
-  void mangleObjCMethodNameWithoutSize(const ObjCMethodDecl *MD, raw_ostream &);
-  void mangleObjCMethodName(const ObjCMethodDecl *MD, raw_ostream &);
+  // void mangleObjCMethodNameWithoutSize(const ObjCMethodDecl *MD, raw_ostream &);
+  // void mangleObjCMethodName(const ObjCMethodDecl *MD, raw_ostream &);
 
   virtual void mangleStaticGuardVariable(const VarDecl *D, raw_ostream &) = 0;
 

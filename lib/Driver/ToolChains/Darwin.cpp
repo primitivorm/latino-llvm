@@ -10,7 +10,7 @@
 #include "Arch/ARM.h"
 #include "CommonArgs.h"
 #include "latino/Basic/AlignedAllocation.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Config/config.h"
 #include "latino/Driver/Compilation.h"
 #include "latino/Driver/Driver.h"

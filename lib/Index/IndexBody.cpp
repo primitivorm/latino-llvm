@@ -129,8 +129,8 @@ public:
     Roles |= (unsigned)SymbolRole::Call;
     if (auto *FD = dyn_cast<FunctionDecl>(ParentDC))
       Relations.emplace_back((unsigned)SymbolRole::RelationCalledBy, FD);
-    else if (auto *MD = dyn_cast<ObjCMethodDecl>(ParentDC))
-      Relations.emplace_back((unsigned)SymbolRole::RelationCalledBy, MD);
+    // else if (auto *MD = dyn_cast<ObjCMethodDecl>(ParentDC))
+    //   Relations.emplace_back((unsigned)SymbolRole::RelationCalledBy, MD);
   }
 
   bool VisitDeclRefExpr(DeclRefExpr *E) {
@@ -206,152 +206,152 @@ public:
     return true;
   }
 
-  bool VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
-    SmallVector<SymbolRelation, 4> Relations;
-    SymbolRoleSet Roles = getRolesForRef(E, Relations);
-    return IndexCtx.handleReference(E->getDecl(), E->getLocation(),
-                                    Parent, ParentDC, Roles, Relations, E);
-  }
+  // bool VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
+  //   SmallVector<SymbolRelation, 4> Relations;
+  //   SymbolRoleSet Roles = getRolesForRef(E, Relations);
+  //   return IndexCtx.handleReference(E->getDecl(), E->getLocation(),
+  //                                   Parent, ParentDC, Roles, Relations, E);
+  // }
 
-  bool VisitObjCMessageExpr(ObjCMessageExpr *E) {
-    auto isDynamic = [](const ObjCMessageExpr *MsgE)->bool {
-      if (MsgE->getReceiverKind() != ObjCMessageExpr::Instance)
-        return false;
-      if (auto *RecE = dyn_cast<ObjCMessageExpr>(
-              MsgE->getInstanceReceiver()->IgnoreParenCasts())) {
-        if (RecE->getMethodFamily() == OMF_alloc)
-          return false;
-      }
-      return true;
-    };
+  // bool VisitObjCMessageExpr(ObjCMessageExpr *E) {
+  //   auto isDynamic = [](const ObjCMessageExpr *MsgE)->bool {
+  //     if (MsgE->getReceiverKind() != ObjCMessageExpr::Instance)
+  //       return false;
+  //     if (auto *RecE = dyn_cast<ObjCMessageExpr>(
+  //             MsgE->getInstanceReceiver()->IgnoreParenCasts())) {
+  //       if (RecE->getMethodFamily() == OMF_alloc)
+  //         return false;
+  //     }
+  //     return true;
+  //   };
 
-    if (ObjCMethodDecl *MD = E->getMethodDecl()) {
-      SymbolRoleSet Roles{};
-      SmallVector<SymbolRelation, 2> Relations;
-      addCallRole(Roles, Relations);
-      Stmt *Containing = getParentStmt();
+  //   if (ObjCMethodDecl *MD = E->getMethodDecl()) {
+  //     SymbolRoleSet Roles{};
+  //     SmallVector<SymbolRelation, 2> Relations;
+  //     addCallRole(Roles, Relations);
+  //     Stmt *Containing = getParentStmt();
 
-      auto IsImplicitProperty = [](const PseudoObjectExpr *POE) -> bool {
-        const auto *E = POE->getSyntacticForm();
-        if (const auto *BinOp = dyn_cast<BinaryOperator>(E))
-          E = BinOp->getLHS();
-        const auto *PRE = dyn_cast<ObjCPropertyRefExpr>(E);
-        if (!PRE)
-          return false;
-        if (PRE->isExplicitProperty())
-          return false;
-        if (const ObjCMethodDecl *Getter = PRE->getImplicitPropertyGetter()) {
-          // Class properties that are explicitly defined using @property
-          // declarations are represented implicitly as there is no ivar for
-          // class properties.
-          if (Getter->isClassMethod() &&
-              Getter->getCanonicalDecl()->findPropertyDecl())
-            return false;
-        }
-        return true;
-      };
-      bool IsPropCall = Containing && isa<PseudoObjectExpr>(Containing);
-      // Implicit property message sends are not 'implicit'.
-      if ((E->isImplicit() || IsPropCall) &&
-          !(IsPropCall &&
-            IsImplicitProperty(cast<PseudoObjectExpr>(Containing))))
-        Roles |= (unsigned)SymbolRole::Implicit;
+  //     auto IsImplicitProperty = [](const PseudoObjectExpr *POE) -> bool {
+  //       const auto *E = POE->getSyntacticForm();
+  //       if (const auto *BinOp = dyn_cast<BinaryOperator>(E))
+  //         E = BinOp->getLHS();
+  //       const auto *PRE = dyn_cast<ObjCPropertyRefExpr>(E);
+  //       if (!PRE)
+  //         return false;
+  //       if (PRE->isExplicitProperty())
+  //         return false;
+  //       if (const ObjCMethodDecl *Getter = PRE->getImplicitPropertyGetter()) {
+  //         // Class properties that are explicitly defined using @property
+  //         // declarations are represented implicitly as there is no ivar for
+  //         // class properties.
+  //         if (Getter->isClassMethod() &&
+  //             Getter->getCanonicalDecl()->findPropertyDecl())
+  //           return false;
+  //       }
+  //       return true;
+  //     };
+  //     bool IsPropCall = Containing && isa<PseudoObjectExpr>(Containing);
+  //     // Implicit property message sends are not 'implicit'.
+  //     if ((E->isImplicit() || IsPropCall) &&
+  //         !(IsPropCall &&
+  //           IsImplicitProperty(cast<PseudoObjectExpr>(Containing))))
+  //       Roles |= (unsigned)SymbolRole::Implicit;
 
-      if (isDynamic(E)) {
-        Roles |= (unsigned)SymbolRole::Dynamic;
+  //     if (isDynamic(E)) {
+  //       Roles |= (unsigned)SymbolRole::Dynamic;
 
-        auto addReceivers = [&](const ObjCObjectType *Ty) {
-          if (!Ty)
-            return;
-          if (const auto *clsD = Ty->getInterface()) {
-            Relations.emplace_back((unsigned)SymbolRole::RelationReceivedBy,
-                                   clsD);
-          }
-          for (const auto *protD : Ty->quals()) {
-            Relations.emplace_back((unsigned)SymbolRole::RelationReceivedBy,
-                                   protD);
-          }
-        };
-        QualType recT = E->getReceiverType();
-        if (const auto *Ptr = recT->getAs<ObjCObjectPointerType>())
-          addReceivers(Ptr->getObjectType());
-        else
-          addReceivers(recT->getAs<ObjCObjectType>());
-      }
+  //       auto addReceivers = [&](const ObjCObjectType *Ty) {
+  //         if (!Ty)
+  //           return;
+  //         if (const auto *clsD = Ty->getInterface()) {
+  //           Relations.emplace_back((unsigned)SymbolRole::RelationReceivedBy,
+  //                                  clsD);
+  //         }
+  //         for (const auto *protD : Ty->quals()) {
+  //           Relations.emplace_back((unsigned)SymbolRole::RelationReceivedBy,
+  //                                  protD);
+  //         }
+  //       };
+  //       QualType recT = E->getReceiverType();
+  //       if (const auto *Ptr = recT->getAs<ObjCObjectPointerType>())
+  //         addReceivers(Ptr->getObjectType());
+  //       else
+  //         addReceivers(recT->getAs<ObjCObjectType>());
+  //     }
 
-      return IndexCtx.handleReference(MD, E->getSelectorStartLoc(),
-                                      Parent, ParentDC, Roles, Relations, E);
-    }
-    return true;
-  }
+  //     return IndexCtx.handleReference(MD, E->getSelectorStartLoc(),
+  //                                     Parent, ParentDC, Roles, Relations, E);
+  //   }
+  //   return true;
+  // }
 
-  bool VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *E) {
-    if (E->isClassReceiver())
-      IndexCtx.handleReference(E->getClassReceiver(), E->getReceiverLocation(),
-                               Parent, ParentDC);
-    if (E->isExplicitProperty()) {
-      SmallVector<SymbolRelation, 2> Relations;
-      SymbolRoleSet Roles = getRolesForRef(E, Relations);
-      return IndexCtx.handleReference(E->getExplicitProperty(), E->getLocation(),
-                                      Parent, ParentDC, Roles, Relations, E);
-    } else if (const ObjCMethodDecl *Getter = E->getImplicitPropertyGetter()) {
-      // Class properties that are explicitly defined using @property
-      // declarations are represented implicitly as there is no ivar for class
-      // properties.
-      if (Getter->isClassMethod()) {
-        if (const auto *PD = Getter->getCanonicalDecl()->findPropertyDecl()) {
-          SmallVector<SymbolRelation, 2> Relations;
-          SymbolRoleSet Roles = getRolesForRef(E, Relations);
-          return IndexCtx.handleReference(PD, E->getLocation(), Parent,
-                                          ParentDC, Roles, Relations, E);
-        }
-      }
-    }
+  // bool VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *E) {
+  //   if (E->isClassReceiver())
+  //     IndexCtx.handleReference(E->getClassReceiver(), E->getReceiverLocation(),
+  //                              Parent, ParentDC);
+  //   if (E->isExplicitProperty()) {
+  //     SmallVector<SymbolRelation, 2> Relations;
+  //     SymbolRoleSet Roles = getRolesForRef(E, Relations);
+  //     return IndexCtx.handleReference(E->getExplicitProperty(), E->getLocation(),
+  //                                     Parent, ParentDC, Roles, Relations, E);
+  //   } else if (const ObjCMethodDecl *Getter = E->getImplicitPropertyGetter()) {
+  //     // Class properties that are explicitly defined using @property
+  //     // declarations are represented implicitly as there is no ivar for class
+  //     // properties.
+  //     if (Getter->isClassMethod()) {
+  //       if (const auto *PD = Getter->getCanonicalDecl()->findPropertyDecl()) {
+  //         SmallVector<SymbolRelation, 2> Relations;
+  //         SymbolRoleSet Roles = getRolesForRef(E, Relations);
+  //         return IndexCtx.handleReference(PD, E->getLocation(), Parent,
+  //                                         ParentDC, Roles, Relations, E);
+  //       }
+  //     }
+  //   }
 
-    // No need to do a handleReference for the objc method, because there will
-    // be a message expr as part of PseudoObjectExpr.
-    return true;
-  }
+  //   // No need to do a handleReference for the objc method, because there will
+  //   // be a message expr as part of PseudoObjectExpr.
+  //   return true;
+  // }
 
   bool VisitMSPropertyRefExpr(MSPropertyRefExpr *E) {
     return IndexCtx.handleReference(E->getPropertyDecl(), E->getMemberLoc(),
                                     Parent, ParentDC, SymbolRoleSet(), {}, E);
   }
 
-  bool VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
-    return IndexCtx.handleReference(E->getProtocol(), E->getProtocolIdLoc(),
-                                    Parent, ParentDC, SymbolRoleSet(), {}, E);
-  }
+  // bool VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
+  //   return IndexCtx.handleReference(E->getProtocol(), E->getProtocolIdLoc(),
+  //                                   Parent, ParentDC, SymbolRoleSet(), {}, E);
+  // }
 
-  bool passObjCLiteralMethodCall(const ObjCMethodDecl *MD, const Expr *E) {
-    SymbolRoleSet Roles{};
-    SmallVector<SymbolRelation, 2> Relations;
-    addCallRole(Roles, Relations);
-    Roles |= (unsigned)SymbolRole::Implicit;
-    return IndexCtx.handleReference(MD, E->getBeginLoc(), Parent, ParentDC,
-                                    Roles, Relations, E);
-  }
+  // bool passObjCLiteralMethodCall(const ObjCMethodDecl *MD, const Expr *E) {
+  //   SymbolRoleSet Roles{};
+  //   SmallVector<SymbolRelation, 2> Relations;
+  //   addCallRole(Roles, Relations);
+  //   Roles |= (unsigned)SymbolRole::Implicit;
+  //   return IndexCtx.handleReference(MD, E->getBeginLoc(), Parent, ParentDC,
+  //                                   Roles, Relations, E);
+  // }
 
-  bool VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
-    if (ObjCMethodDecl *MD = E->getBoxingMethod()) {
-      return passObjCLiteralMethodCall(MD, E);
-    }
-    return true;
-  }
+  // bool VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
+  //   if (ObjCMethodDecl *MD = E->getBoxingMethod()) {
+  //     return passObjCLiteralMethodCall(MD, E);
+  //   }
+  //   return true;
+  // }
 
-  bool VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
-    if (ObjCMethodDecl *MD = E->getDictWithObjectsMethod()) {
-      return passObjCLiteralMethodCall(MD, E);
-    }
-    return true;
-  }
+  // bool VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
+  //   if (ObjCMethodDecl *MD = E->getDictWithObjectsMethod()) {
+  //     return passObjCLiteralMethodCall(MD, E);
+  //   }
+  //   return true;
+  // }
 
-  bool VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
-    if (ObjCMethodDecl *MD = E->getArrayWithObjectsMethod()) {
-      return passObjCLiteralMethodCall(MD, E);
-    }
-    return true;
-  }
+  // bool VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
+  //   if (ObjCMethodDecl *MD = E->getArrayWithObjectsMethod()) {
+  //     return passObjCLiteralMethodCall(MD, E);
+  //   }
+  //   return true;
+  // }
 
   bool VisitCXXConstructExpr(CXXConstructExpr *E) {
     SymbolRoleSet Roles{};

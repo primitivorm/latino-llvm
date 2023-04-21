@@ -63,18 +63,18 @@ class LexicallyOrderedRecursiveASTVisitor
 public:
   LexicallyOrderedRecursiveASTVisitor(const SourceManager &SM) : SM(SM) {}
 
-  bool TraverseObjCImplementationDecl(ObjCImplementationDecl *D) {
-    // Objective-C @implementation declarations should not trigger early exit
-    // until the additional decls are traversed as their children are not
-    // lexically ordered.
-    bool Result = BaseType::TraverseObjCImplementationDecl(D);
-    return TraverseAdditionalLexicallyNestedDeclarations() ? Result : false;
-  }
+  // bool TraverseObjCImplementationDecl(ObjCImplementationDecl *D) {
+  //   // Objective-C @implementation declarations should not trigger early exit
+  //   // until the additional decls are traversed as their children are not
+  //   // lexically ordered.
+  //   bool Result = BaseType::TraverseObjCImplementationDecl(D);
+  //   return TraverseAdditionalLexicallyNestedDeclarations() ? Result : false;
+  // }
 
-  bool TraverseObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
-    bool Result = BaseType::TraverseObjCCategoryImplDecl(D);
-    return TraverseAdditionalLexicallyNestedDeclarations() ? Result : false;
-  }
+  // bool TraverseObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
+  //   bool Result = BaseType::TraverseObjCCategoryImplDecl(D);
+  //   return TraverseAdditionalLexicallyNestedDeclarations() ? Result : false;
+  // }
 
   bool TraverseDeclContextHelper(DeclContext *DC) {
     if (!DC)
@@ -86,13 +86,13 @@ public:
         ++I;
         continue;
       }
-      if (!isa<ObjCImplementationDecl>(Child) &&
-          !isa<ObjCCategoryImplDecl>(Child)) {
+      // if (!isa<ObjCImplementationDecl>(Child) &&
+      //     !isa<ObjCCategoryImplDecl>(Child)) {
         if (!BaseType::getDerived().TraverseDecl(Child))
           return false;
         ++I;
         continue;
-      }
+      // }
       // Gather declarations that follow the Objective-C implementation
       // declarations but are lexically contained in the implementation.
       LexicallyNestedDeclarations.clear();

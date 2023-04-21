@@ -16,7 +16,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/ComputeDependence.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
@@ -829,27 +829,27 @@ std::string PredefinedExpr::ComputeName(IdentKind IK, const Decl *CurrentDecl) {
       }
     llvm_unreachable("CapturedDecl not inside a function or method");
   }
-  if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(CurrentDecl)) {
-    SmallString<256> Name;
-    llvm::raw_svector_ostream Out(Name);
-    Out << (MD->isInstanceMethod() ? '-' : '+');
-    Out << '[';
+  // if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(CurrentDecl)) {
+  //   SmallString<256> Name;
+  //   llvm::raw_svector_ostream Out(Name);
+  //   Out << (MD->isInstanceMethod() ? '-' : '+');
+  //   Out << '[';
 
-    // For incorrect code, there might not be an ObjCInterfaceDecl.  Do
-    // a null check to avoid a crash.
-    if (const ObjCInterfaceDecl *ID = MD->getClassInterface())
-      Out << *ID;
+  //   // For incorrect code, there might not be an ObjCInterfaceDecl.  Do
+  //   // a null check to avoid a crash.
+  //   if (const ObjCInterfaceDecl *ID = MD->getClassInterface())
+  //     Out << *ID;
 
-    if (const ObjCCategoryImplDecl *CID =
-        dyn_cast<ObjCCategoryImplDecl>(MD->getDeclContext()))
-      Out << '(' << *CID << ')';
+  //   if (const ObjCCategoryImplDecl *CID =
+  //       dyn_cast<ObjCCategoryImplDecl>(MD->getDeclContext()))
+  //     Out << '(' << *CID << ')';
 
-    Out <<  ' ';
-    MD->getSelector().print(Out);
-    Out <<  ']';
+  //   Out <<  ' ';
+  //   MD->getSelector().print(Out);
+  //   Out <<  ']';
 
-    return std::string(Name);
-  }
+  //   return std::string(Name);
+  // }
   if (isa<TranslationUnitDecl>(CurrentDecl) && IK == PrettyFunction) {
     // __PRETTY_FUNCTION__ -> "top level", the others produce an empty string.
     return "top level";
@@ -1669,15 +1669,15 @@ bool CastExpr::CastConsistency() const {
     assert(!path_empty() && "Cast kind should have a base path!");
     break;
 
-  case CK_CPointerToObjCPointerCast:
-    assert(getType()->isObjCObjectPointerType());
-    assert(getSubExpr()->getType()->isPointerType());
-    goto CheckNoBasePath;
+  // case CK_CPointerToObjCPointerCast:
+  //   assert(getType()->isObjCObjectPointerType());
+  //   assert(getSubExpr()->getType()->isPointerType());
+  //   goto CheckNoBasePath;
 
-  case CK_BlockPointerToObjCPointerCast:
-    assert(getType()->isObjCObjectPointerType());
-    assert(getSubExpr()->getType()->isBlockPointerType());
-    goto CheckNoBasePath;
+  // case CK_BlockPointerToObjCPointerCast:
+  //   assert(getType()->isObjCObjectPointerType());
+  //   assert(getSubExpr()->getType()->isBlockPointerType());
+  //   goto CheckNoBasePath;
 
   case CK_ReinterpretMemberPointer:
     assert(getType()->isMemberPointerType());
@@ -1689,8 +1689,8 @@ bool CastExpr::CastConsistency() const {
     // Otherwise, we should only have block and ObjC pointer casts
     // here if they stay within the type kind.
     if (!getType()->isPointerType()) {
-      assert(getType()->isObjCObjectPointerType() ==
-             getSubExpr()->getType()->isObjCObjectPointerType());
+      // assert(getType()->isObjCObjectPointerType() ==
+      //        getSubExpr()->getType()->isObjCObjectPointerType());
       assert(getType()->isBlockPointerType() ==
              getSubExpr()->getType()->isBlockPointerType());
     }
@@ -1741,7 +1741,7 @@ bool CastExpr::CastConsistency() const {
   case CK_IntegralToFloating:
   case CK_FloatingToIntegral:
   case CK_FloatingCast:
-  case CK_ObjCObjectLValueCast:
+  // case CK_ObjCObjectLValueCast:
   case CK_FloatingRealToComplex:
   case CK_FloatingComplexToReal:
   case CK_FloatingComplexCast:
@@ -2552,27 +2552,27 @@ bool Expr::isUnusedResultAWarning(const Expr *&WarnE, SourceLocation &Loc,
     return false;
   }
 
-  case ObjCMessageExprClass: {
-    const ObjCMessageExpr *ME = cast<ObjCMessageExpr>(this);
-    if (Ctx.getLangOpts().ObjCAutoRefCount &&
-        ME->isInstanceMessage() &&
-        !ME->getType()->isVoidType() &&
-        ME->getMethodFamily() == OMF_init) {
-      WarnE = this;
-      Loc = getExprLoc();
-      R1 = ME->getSourceRange();
-      return true;
-    }
+  // case ObjCMessageExprClass: {
+  //   const ObjCMessageExpr *ME = cast<ObjCMessageExpr>(this);
+  //   if (Ctx.getLangOpts().ObjCAutoRefCount &&
+  //       ME->isInstanceMessage() &&
+  //       !ME->getType()->isVoidType() &&
+  //       ME->getMethodFamily() == OMF_init) {
+  //     WarnE = this;
+  //     Loc = getExprLoc();
+  //     R1 = ME->getSourceRange();
+  //     return true;
+  //   }
 
-    if (const ObjCMethodDecl *MD = ME->getMethodDecl())
-      if (MD->hasAttr<WarnUnusedResultAttr>()) {
-        WarnE = this;
-        Loc = getExprLoc();
-        return true;
-      }
+  //   if (const ObjCMethodDecl *MD = ME->getMethodDecl())
+  //     if (MD->hasAttr<WarnUnusedResultAttr>()) {
+  //       WarnE = this;
+  //       Loc = getExprLoc();
+  //       return true;
+  //     }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   case ObjCPropertyRefExprClass:
     WarnE = this;
@@ -3068,7 +3068,7 @@ bool Expr::isTemporaryObject(ASTContext &C, const CXXRecordDecl *TempTy) const {
   // Temporaries are by definition pr-values of class type.
   if (!E->Classify(C).isPRValue()) {
     // In this context, property reference is a message call and is pr-value.
-    if (!isa<ObjCPropertyRefExpr>(E))
+    // if (!isa<ObjCPropertyRefExpr>(E))
       return false;
   }
 
@@ -3294,7 +3294,7 @@ bool Expr::isConstantInitializer(ASTContext &Ctx, bool IsForRef,
   case ObjCBridgedCastExprClass:
   case CXXDynamicCastExprClass:
   case CXXReinterpretCastExprClass:
-  case CXXAddrspaceCastExprClass:
+  // case CXXAddrspaceCastExprClass:
   case CXXConstCastExprClass: {
     const CastExpr *CE = cast<CastExpr>(this);
 
@@ -3587,7 +3587,7 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
   case CXXStaticCastExprClass:
   case CXXReinterpretCastExprClass:
   case CXXConstCastExprClass:
-  case CXXAddrspaceCastExprClass:
+  // case CXXAddrspaceCastExprClass:
   case CXXFunctionalCastExprClass:
   case BuiltinBitCastExprClass: {
     // While volatile reads are side-effecting in both C and C++, we treat them
@@ -3659,7 +3659,7 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
   case ObjCIndirectCopyRestoreExprClass:
   case ObjCSubscriptRefExprClass:
   case ObjCBridgedCastExprClass:
-  case ObjCMessageExprClass:
+  // case ObjCMessageExprClass:
   case ObjCPropertyRefExprClass:
   // FIXME: Classify these cases better.
     if (IncludePossibleEffects)
@@ -3860,43 +3860,43 @@ Expr::isNullPointerConstant(ASTContext &Ctx,
 
 /// If this expression is an l-value for an Objective C
 /// property, find the underlying property reference expression.
-const ObjCPropertyRefExpr *Expr::getObjCProperty() const {
-  const Expr *E = this;
-  while (true) {
-    assert((E->getValueKind() == VK_LValue &&
-            E->getObjectKind() == OK_ObjCProperty) &&
-           "expression is not a property reference");
-    E = E->IgnoreParenCasts();
-    if (const BinaryOperator *BO = dyn_cast<BinaryOperator>(E)) {
-      if (BO->getOpcode() == BO_Comma) {
-        E = BO->getRHS();
-        continue;
-      }
-    }
+// const ObjCPropertyRefExpr *Expr::getObjCProperty() const {
+//   const Expr *E = this;
+//   while (true) {
+//     assert((E->getValueKind() == VK_LValue &&
+//             E->getObjectKind() == OK_ObjCProperty) &&
+//            "expression is not a property reference");
+//     E = E->IgnoreParenCasts();
+//     if (const BinaryOperator *BO = dyn_cast<BinaryOperator>(E)) {
+//       if (BO->getOpcode() == BO_Comma) {
+//         E = BO->getRHS();
+//         continue;
+//       }
+//     }
 
-    break;
-  }
+//     break;
+//   }
 
-  return cast<ObjCPropertyRefExpr>(E);
-}
+//   return cast<ObjCPropertyRefExpr>(E);
+// }
 
-bool Expr::isObjCSelfExpr() const {
-  const Expr *E = IgnoreParenImpCasts();
+// bool Expr::isObjCSelfExpr() const {
+//   const Expr *E = IgnoreParenImpCasts();
 
-  const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(E);
-  if (!DRE)
-    return false;
+//   const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(E);
+//   if (!DRE)
+//     return false;
 
-  const ImplicitParamDecl *Param = dyn_cast<ImplicitParamDecl>(DRE->getDecl());
-  if (!Param)
-    return false;
+//   const ImplicitParamDecl *Param = dyn_cast<ImplicitParamDecl>(DRE->getDecl());
+//   if (!Param)
+//     return false;
 
-  const ObjCMethodDecl *M = dyn_cast<ObjCMethodDecl>(Param->getDeclContext());
-  if (!M)
-    return false;
+//   const ObjCMethodDecl *M = dyn_cast<ObjCMethodDecl>(Param->getDeclContext());
+//   if (!M)
+//     return false;
 
-  return M->getSelfDecl() == Param;
-}
+//   return M->getSelfDecl() == Param;
+// }
 
 FieldDecl *Expr::getSourceBitField() {
   Expr *E = this->IgnoreParens();

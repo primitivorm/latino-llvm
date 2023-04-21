@@ -19,20 +19,20 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprConcepts.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/TemplateBase.h"
 #include "latino/AST/TemplateName.h"
@@ -1039,22 +1039,22 @@ DEF_TRAVERSE_TYPE(DependentTemplateSpecializationType, {
 
 DEF_TRAVERSE_TYPE(PackExpansionType, { TRY_TO(TraverseType(T->getPattern())); })
 
-DEF_TRAVERSE_TYPE(ObjCTypeParamType, {})
+// DEF_TRAVERSE_TYPE(ObjCTypeParamType, {})
 
-DEF_TRAVERSE_TYPE(ObjCInterfaceType, {})
+// DEF_TRAVERSE_TYPE(ObjCInterfaceType, {})
 
-DEF_TRAVERSE_TYPE(ObjCObjectType, {
-  // We have to watch out here because an ObjCInterfaceType's base
-  // type is itself.
-  if (T->getBaseType().getTypePtr() != T)
-    TRY_TO(TraverseType(T->getBaseType()));
-  for (auto typeArg : T->getTypeArgsAsWritten()) {
-    TRY_TO(TraverseType(typeArg));
-  }
-})
+// DEF_TRAVERSE_TYPE(ObjCObjectType, {
+//   // We have to watch out here because an ObjCInterfaceType's base
+//   // type is itself.
+//   if (T->getBaseType().getTypePtr() != T)
+//     TRY_TO(TraverseType(T->getBaseType()));
+//   for (auto typeArg : T->getTypeArgsAsWritten()) {
+//     TRY_TO(TraverseType(typeArg));
+//   }
+// })
 
-DEF_TRAVERSE_TYPE(ObjCObjectPointerType,
-                  { TRY_TO(TraverseType(T->getPointeeType())); })
+// DEF_TRAVERSE_TYPE(ObjCObjectPointerType,
+//                   { TRY_TO(TraverseType(T->getPointeeType())); })
 
 DEF_TRAVERSE_TYPE(AtomicType, { TRY_TO(TraverseType(T->getValueType())); })
 
@@ -1326,21 +1326,21 @@ DEF_TRAVERSE_TYPELOC(DependentTemplateSpecializationType, {
 DEF_TRAVERSE_TYPELOC(PackExpansionType,
                      { TRY_TO(TraverseTypeLoc(TL.getPatternLoc())); })
 
-DEF_TRAVERSE_TYPELOC(ObjCTypeParamType, {})
+// DEF_TRAVERSE_TYPELOC(ObjCTypeParamType, {})
 
-DEF_TRAVERSE_TYPELOC(ObjCInterfaceType, {})
+// DEF_TRAVERSE_TYPELOC(ObjCInterfaceType, {})
 
-DEF_TRAVERSE_TYPELOC(ObjCObjectType, {
-  // We have to watch out here because an ObjCInterfaceType's base
-  // type is itself.
-  if (TL.getTypePtr()->getBaseType().getTypePtr() != TL.getTypePtr())
-    TRY_TO(TraverseTypeLoc(TL.getBaseLoc()));
-  for (unsigned i = 0, n = TL.getNumTypeArgs(); i != n; ++i)
-    TRY_TO(TraverseTypeLoc(TL.getTypeArgTInfo(i)->getTypeLoc()));
-})
+// DEF_TRAVERSE_TYPELOC(ObjCObjectType, {
+//   // We have to watch out here because an ObjCInterfaceType's base
+//   // type is itself.
+//   if (TL.getTypePtr()->getBaseType().getTypePtr() != TL.getTypePtr())
+//     TRY_TO(TraverseTypeLoc(TL.getBaseLoc()));
+//   for (unsigned i = 0, n = TL.getNumTypeArgs(); i != n; ++i)
+//     TRY_TO(TraverseTypeLoc(TL.getTypeArgTInfo(i)->getTypeLoc()));
+// })
 
-DEF_TRAVERSE_TYPELOC(ObjCObjectPointerType,
-                     { TRY_TO(TraverseTypeLoc(TL.getPointeeLoc())); })
+// DEF_TRAVERSE_TYPELOC(ObjCObjectPointerType,
+//                      { TRY_TO(TraverseTypeLoc(TL.getPointeeLoc())); })
 
 DEF_TRAVERSE_TYPELOC(AtomicType, { TRY_TO(TraverseTypeLoc(TL.getValueLoc())); })
 
@@ -1473,8 +1473,8 @@ DEF_TRAVERSE_DECL(LinkageSpecDecl, {})
 
 DEF_TRAVERSE_DECL(ExportDecl, {})
 
-DEF_TRAVERSE_DECL(ObjCPropertyImplDecl, {// FIXME: implement this
-                                        })
+// DEF_TRAVERSE_DECL(ObjCPropertyImplDecl, {// FIXME: implement this
+//                                         })
 
 DEF_TRAVERSE_DECL(StaticAssertDecl, {
   TRY_TO(TraverseStmt(D->getAssertExpr()));
@@ -1512,67 +1512,67 @@ DEF_TRAVERSE_DECL(
      // D->getAnonymousNamespace().
     })
 
-DEF_TRAVERSE_DECL(ObjCCompatibleAliasDecl, {// FIXME: implement
-                                           })
+// DEF_TRAVERSE_DECL(ObjCCompatibleAliasDecl, {// FIXME: implement
+//                                            })
 
-DEF_TRAVERSE_DECL(ObjCCategoryDecl, {// FIXME: implement
-  if (ObjCTypeParamList *typeParamList = D->getTypeParamList()) {
-    for (auto typeParam : *typeParamList) {
-      TRY_TO(TraverseObjCTypeParamDecl(typeParam));
-    }
-  }
-})
+// DEF_TRAVERSE_DECL(ObjCCategoryDecl, {// FIXME: implement
+//   if (ObjCTypeParamList *typeParamList = D->getTypeParamList()) {
+//     for (auto typeParam : *typeParamList) {
+//       TRY_TO(TraverseObjCTypeParamDecl(typeParam));
+//     }
+//   }
+// })
 
-DEF_TRAVERSE_DECL(ObjCCategoryImplDecl, {// FIXME: implement
-                                        })
+// DEF_TRAVERSE_DECL(ObjCCategoryImplDecl, {// FIXME: implement
+//                                         })
 
-DEF_TRAVERSE_DECL(ObjCImplementationDecl, {// FIXME: implement
-                                          })
+// DEF_TRAVERSE_DECL(ObjCImplementationDecl, {// FIXME: implement
+//                                           })
 
-DEF_TRAVERSE_DECL(ObjCInterfaceDecl, {// FIXME: implement
-  if (ObjCTypeParamList *typeParamList = D->getTypeParamListAsWritten()) {
-    for (auto typeParam : *typeParamList) {
-      TRY_TO(TraverseObjCTypeParamDecl(typeParam));
-    }
-  }
+// DEF_TRAVERSE_DECL(ObjCInterfaceDecl, {// FIXME: implement
+//   if (ObjCTypeParamList *typeParamList = D->getTypeParamListAsWritten()) {
+//     for (auto typeParam : *typeParamList) {
+//       TRY_TO(TraverseObjCTypeParamDecl(typeParam));
+//     }
+//   }
 
-  if (TypeSourceInfo *superTInfo = D->getSuperClassTInfo()) {
-    TRY_TO(TraverseTypeLoc(superTInfo->getTypeLoc()));
-  }
-})
+//   if (TypeSourceInfo *superTInfo = D->getSuperClassTInfo()) {
+//     TRY_TO(TraverseTypeLoc(superTInfo->getTypeLoc()));
+//   }
+// })
 
-DEF_TRAVERSE_DECL(ObjCProtocolDecl, {// FIXME: implement
-                                    })
+// DEF_TRAVERSE_DECL(ObjCProtocolDecl, {// FIXME: implement
+//                                     })
 
-DEF_TRAVERSE_DECL(ObjCMethodDecl, {
-  if (D->getReturnTypeSourceInfo()) {
-    TRY_TO(TraverseTypeLoc(D->getReturnTypeSourceInfo()->getTypeLoc()));
-  }
-  for (ParmVarDecl *Parameter : D->parameters()) {
-    TRY_TO(TraverseDecl(Parameter));
-  }
-  if (D->isThisDeclarationADefinition()) {
-    TRY_TO(TraverseStmt(D->getBody()));
-  }
-  ShouldVisitChildren = false;
-})
+// DEF_TRAVERSE_DECL(ObjCMethodDecl, {
+//   if (D->getReturnTypeSourceInfo()) {
+//     TRY_TO(TraverseTypeLoc(D->getReturnTypeSourceInfo()->getTypeLoc()));
+//   }
+//   for (ParmVarDecl *Parameter : D->parameters()) {
+//     TRY_TO(TraverseDecl(Parameter));
+//   }
+//   if (D->isThisDeclarationADefinition()) {
+//     TRY_TO(TraverseStmt(D->getBody()));
+//   }
+//   ShouldVisitChildren = false;
+// })
 
-DEF_TRAVERSE_DECL(ObjCTypeParamDecl, {
-  if (D->hasExplicitBound()) {
-    TRY_TO(TraverseTypeLoc(D->getTypeSourceInfo()->getTypeLoc()));
-    // We shouldn't traverse D->getTypeForDecl(); it's a result of
-    // declaring the type alias, not something that was written in the
-    // source.
-  }
-})
+// DEF_TRAVERSE_DECL(ObjCTypeParamDecl, {
+//   if (D->hasExplicitBound()) {
+//     TRY_TO(TraverseTypeLoc(D->getTypeSourceInfo()->getTypeLoc()));
+//     // We shouldn't traverse D->getTypeForDecl(); it's a result of
+//     // declaring the type alias, not something that was written in the
+//     // source.
+//   }
+// })
 
-DEF_TRAVERSE_DECL(ObjCPropertyDecl, {
-  if (D->getTypeSourceInfo())
-    TRY_TO(TraverseTypeLoc(D->getTypeSourceInfo()->getTypeLoc()));
-  else
-    TRY_TO(TraverseType(D->getType()));
-  ShouldVisitChildren = false;
-})
+// DEF_TRAVERSE_DECL(ObjCPropertyDecl, {
+//   if (D->getTypeSourceInfo())
+//     TRY_TO(TraverseTypeLoc(D->getTypeSourceInfo()->getTypeLoc()));
+//   else
+//     TRY_TO(TraverseType(D->getType()));
+//   ShouldVisitChildren = false;
+// })
 
 DEF_TRAVERSE_DECL(UsingDecl, {
   TRY_TO(TraverseNestedNameSpecifierLoc(D->getQualifierLoc()));
@@ -1969,19 +1969,19 @@ DEF_TRAVERSE_DECL(FieldDecl, {
     TRY_TO(TraverseStmt(D->getInClassInitializer()));
 })
 
-DEF_TRAVERSE_DECL(ObjCAtDefsFieldDecl, {
-  TRY_TO(TraverseDeclaratorHelper(D));
-  if (D->isBitField())
-    TRY_TO(TraverseStmt(D->getBitWidth()));
-  // FIXME: implement the rest.
-})
+// DEF_TRAVERSE_DECL(ObjCAtDefsFieldDecl, {
+//   TRY_TO(TraverseDeclaratorHelper(D));
+//   if (D->isBitField())
+//     TRY_TO(TraverseStmt(D->getBitWidth()));
+//   // FIXME: implement the rest.
+// })
 
-DEF_TRAVERSE_DECL(ObjCIvarDecl, {
-  TRY_TO(TraverseDeclaratorHelper(D));
-  if (D->isBitField())
-    TRY_TO(TraverseStmt(D->getBitWidth()));
-  // FIXME: implement the rest.
-})
+// DEF_TRAVERSE_DECL(ObjCIvarDecl, {
+//   TRY_TO(TraverseDeclaratorHelper(D));
+//   if (D->isBitField())
+//     TRY_TO(TraverseStmt(D->getBitWidth()));
+//   // FIXME: implement the rest.
+// })
 
 template <typename Derived>
 bool RecursiveASTVisitor<Derived>::TraverseFunctionHelper(FunctionDecl *D) {
@@ -2598,17 +2598,17 @@ DEF_TRAVERSE_STMT(ObjCMessageExpr, {
     TRY_TO(TraverseTypeLoc(TInfo->getTypeLoc()));
 })
 
-DEF_TRAVERSE_STMT(ObjCPropertyRefExpr, {})
-DEF_TRAVERSE_STMT(ObjCSubscriptRefExpr, {})
-DEF_TRAVERSE_STMT(ObjCProtocolExpr, {})
-DEF_TRAVERSE_STMT(ObjCSelectorExpr, {})
-DEF_TRAVERSE_STMT(ObjCIndirectCopyRestoreExpr, {})
+// DEF_TRAVERSE_STMT(ObjCPropertyRefExpr, {})
+// DEF_TRAVERSE_STMT(ObjCSubscriptRefExpr, {})
+// DEF_TRAVERSE_STMT(ObjCProtocolExpr, {})
+// DEF_TRAVERSE_STMT(ObjCSelectorExpr, {})
+// DEF_TRAVERSE_STMT(ObjCIndirectCopyRestoreExpr, {})
 
-DEF_TRAVERSE_STMT(ObjCBridgedCastExpr, {
-  TRY_TO(TraverseTypeLoc(S->getTypeInfoAsWritten()->getTypeLoc()));
-})
+// DEF_TRAVERSE_STMT(ObjCBridgedCastExpr, {
+//   TRY_TO(TraverseTypeLoc(S->getTypeInfoAsWritten()->getTypeLoc()));
+// })
 
-DEF_TRAVERSE_STMT(ObjCAvailabilityCheckExpr, {})
+// DEF_TRAVERSE_STMT(ObjCAvailabilityCheckExpr, {})
 DEF_TRAVERSE_STMT(ParenExpr, {})
 DEF_TRAVERSE_STMT(ParenListExpr, {})
 DEF_TRAVERSE_STMT(PredefinedExpr, {})

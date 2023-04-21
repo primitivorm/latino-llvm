@@ -10,10 +10,10 @@
 #define LLVM_LATINO_EDIT_REWRITERS_H
 
 namespace latino {
-  class ObjCMessageExpr;
-  class ObjCMethodDecl;
-  class ObjCInterfaceDecl;
-  class ObjCProtocolDecl;
+  // class ObjCMessageExpr;
+  // class ObjCMethodDecl;
+  // class ObjCInterfaceDecl;
+  // class ObjCProtocolDecl;
   class NSAPI;
   class EnumDecl;
   class TypedefDecl;
@@ -22,17 +22,17 @@ namespace latino {
 namespace edit {
   class Commit;
 
-bool rewriteObjCRedundantCallWithLiteral(const ObjCMessageExpr *Msg,
-                                         const NSAPI &NS, Commit &commit);
+// bool rewriteObjCRedundantCallWithLiteral(const ObjCMessageExpr *Msg,
+//                                          const NSAPI &NS, Commit &commit);
 
-bool rewriteToObjCLiteralSyntax(const ObjCMessageExpr *Msg,
-                                const NSAPI &NS, Commit &commit,
-                                const ParentMap *PMap);
+// bool rewriteToObjCLiteralSyntax(const ObjCMessageExpr *Msg,
+//                                 const NSAPI &NS, Commit &commit,
+//                                 const ParentMap *PMap);
 
-bool rewriteToObjCSubscriptSyntax(const ObjCMessageExpr *Msg,
-                                  const NSAPI &NS, Commit &commit);
+// bool rewriteToObjCSubscriptSyntax(const ObjCMessageExpr *Msg,
+//                                   const NSAPI &NS, Commit &commit);
 
-}
+// }
 
 }  // end namespace latino
 

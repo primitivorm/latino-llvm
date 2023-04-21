@@ -65,7 +65,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/NestedNameSpecifier.h"
@@ -916,55 +916,55 @@ static bool IsStructurallyEquivalent(StructuralEquivalenceContext &Context,
       return false;
     break;
 
-  case Type::ObjCInterface: {
-    const auto *Iface1 = cast<ObjCInterfaceType>(T1);
-    const auto *Iface2 = cast<ObjCInterfaceType>(T2);
-    if (!IsStructurallyEquivalent(Context, Iface1->getDecl(),
-                                  Iface2->getDecl()))
-      return false;
-    break;
-  }
+  // case Type::ObjCInterface: {
+  //   const auto *Iface1 = cast<ObjCInterfaceType>(T1);
+  //   const auto *Iface2 = cast<ObjCInterfaceType>(T2);
+  //   if (!IsStructurallyEquivalent(Context, Iface1->getDecl(),
+  //                                 Iface2->getDecl()))
+  //     return false;
+  //   break;
+  // }
 
-  case Type::ObjCTypeParam: {
-    const auto *Obj1 = cast<ObjCTypeParamType>(T1);
-    const auto *Obj2 = cast<ObjCTypeParamType>(T2);
-    if (!IsStructurallyEquivalent(Context, Obj1->getDecl(), Obj2->getDecl()))
-      return false;
+  // case Type::ObjCTypeParam: {
+  //   const auto *Obj1 = cast<ObjCTypeParamType>(T1);
+  //   const auto *Obj2 = cast<ObjCTypeParamType>(T2);
+  //   if (!IsStructurallyEquivalent(Context, Obj1->getDecl(), Obj2->getDecl()))
+  //     return false;
 
-    if (Obj1->getNumProtocols() != Obj2->getNumProtocols())
-      return false;
-    for (unsigned I = 0, N = Obj1->getNumProtocols(); I != N; ++I) {
-      if (!IsStructurallyEquivalent(Context, Obj1->getProtocol(I),
-                                    Obj2->getProtocol(I)))
-        return false;
-    }
-    break;
-  }
+  //   if (Obj1->getNumProtocols() != Obj2->getNumProtocols())
+  //     return false;
+  //   for (unsigned I = 0, N = Obj1->getNumProtocols(); I != N; ++I) {
+  //     if (!IsStructurallyEquivalent(Context, Obj1->getProtocol(I),
+  //                                   Obj2->getProtocol(I)))
+  //       return false;
+  //   }
+  //   break;
+  // }
 
-  case Type::ObjCObject: {
-    const auto *Obj1 = cast<ObjCObjectType>(T1);
-    const auto *Obj2 = cast<ObjCObjectType>(T2);
-    if (!IsStructurallyEquivalent(Context, Obj1->getBaseType(),
-                                  Obj2->getBaseType()))
-      return false;
-    if (Obj1->getNumProtocols() != Obj2->getNumProtocols())
-      return false;
-    for (unsigned I = 0, N = Obj1->getNumProtocols(); I != N; ++I) {
-      if (!IsStructurallyEquivalent(Context, Obj1->getProtocol(I),
-                                    Obj2->getProtocol(I)))
-        return false;
-    }
-    break;
-  }
+  // case Type::ObjCObject: {
+  //   const auto *Obj1 = cast<ObjCObjectType>(T1);
+  //   const auto *Obj2 = cast<ObjCObjectType>(T2);
+  //   if (!IsStructurallyEquivalent(Context, Obj1->getBaseType(),
+  //                                 Obj2->getBaseType()))
+  //     return false;
+  //   if (Obj1->getNumProtocols() != Obj2->getNumProtocols())
+  //     return false;
+  //   for (unsigned I = 0, N = Obj1->getNumProtocols(); I != N; ++I) {
+  //     if (!IsStructurallyEquivalent(Context, Obj1->getProtocol(I),
+  //                                   Obj2->getProtocol(I)))
+  //       return false;
+  //   }
+  //   break;
+  // }
 
-  case Type::ObjCObjectPointer: {
-    const auto *Ptr1 = cast<ObjCObjectPointerType>(T1);
-    const auto *Ptr2 = cast<ObjCObjectPointerType>(T2);
-    if (!IsStructurallyEquivalent(Context, Ptr1->getPointeeType(),
-                                  Ptr2->getPointeeType()))
-      return false;
-    break;
-  }
+  // case Type::ObjCObjectPointer: {
+  //   const auto *Ptr1 = cast<ObjCObjectPointerType>(T1);
+  //   const auto *Ptr2 = cast<ObjCObjectPointerType>(T2);
+  //   if (!IsStructurallyEquivalent(Context, Ptr1->getPointeeType(),
+  //                                 Ptr2->getPointeeType()))
+  //     return false;
+  //   break;
+  // }
 
   case Type::Atomic:
     if (!IsStructurallyEquivalent(Context, cast<AtomicType>(T1)->getValueType(),

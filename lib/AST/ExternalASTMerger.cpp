@@ -14,7 +14,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExternalASTMerger.h"
 
@@ -235,11 +235,11 @@ public:
     } else if (auto *ToNamespace = dyn_cast<NamespaceDecl>(To)) {
       ToNamespace->setHasExternalVisibleStorage();
       assert(Parent.CanComplete(ToNamespace));
-    } else if (auto *ToContainer = dyn_cast<ObjCContainerDecl>(To)) {
+    } /*else if (auto *ToContainer = dyn_cast<ObjCContainerDecl>(To)) {
       ToContainer->setHasExternalLexicalStorage();
       ToContainer->getPrimaryContext()->setMustBuildLookupTable();
       assert(Parent.CanComplete(ToContainer));
-    }
+    }*/
   }
   ASTImporter &GetReverse() { return Reverse; }
 };
@@ -322,24 +322,24 @@ void ExternalASTMerger::CompleteType(TagDecl *Tag) {
   });
 }
 
-void ExternalASTMerger::CompleteType(ObjCInterfaceDecl *Interface) {
-  assert(Interface->hasExternalLexicalStorage());
-  ForEachMatchingDC(
-      Interface, [&](ASTImporter &Forward, ASTImporter &Reverse,
-                     Source<const DeclContext *> SourceDC) -> bool {
-        auto *SourceInterface = const_cast<ObjCInterfaceDecl *>(
-            cast<ObjCInterfaceDecl>(SourceDC.get()));
-        if (SourceInterface->hasExternalLexicalStorage())
-          SourceInterface->getASTContext().getExternalSource()->CompleteType(
-              SourceInterface);
-        if (!SourceInterface->getDefinition())
-          return false;
-        Forward.MapImported(SourceInterface, Interface);
-        if (llvm::Error Err = Forward.ImportDefinition(SourceInterface))
-          llvm::consumeError(std::move(Err));
-        return true;
-      });
-}
+// void ExternalASTMerger::CompleteType(ObjCInterfaceDecl *Interface) {
+//   assert(Interface->hasExternalLexicalStorage());
+//   ForEachMatchingDC(
+//       Interface, [&](ASTImporter &Forward, ASTImporter &Reverse,
+//                      Source<const DeclContext *> SourceDC) -> bool {
+//         auto *SourceInterface = const_cast<ObjCInterfaceDecl *>(
+//             cast<ObjCInterfaceDecl>(SourceDC.get()));
+//         if (SourceInterface->hasExternalLexicalStorage())
+//           SourceInterface->getASTContext().getExternalSource()->CompleteType(
+//               SourceInterface);
+//         if (!SourceInterface->getDefinition())
+//           return false;
+//         Forward.MapImported(SourceInterface, Interface);
+//         if (llvm::Error Err = Forward.ImportDefinition(SourceInterface))
+//           llvm::consumeError(std::move(Err));
+//         return true;
+//       });
+// }
 
 bool ExternalASTMerger::CanComplete(DeclContext *Interface) {
   assert(Interface->hasExternalLexicalStorage() ||
@@ -356,8 +356,8 @@ bool ExternalASTMerger::CanComplete(DeclContext *Interface) {
 
 namespace {
 bool IsSameDC(const DeclContext *D1, const DeclContext *D2) {
-  if (isa<ObjCContainerDecl>(D1) && isa<ObjCContainerDecl>(D2))
-    return true; // There are many cases where Objective-C is ambiguous.
+  // if (isa<ObjCContainerDecl>(D1) && isa<ObjCContainerDecl>(D2))
+  //   return true; // There are many cases where Objective-C is ambiguous.
   if (auto *T1 = dyn_cast<TagDecl>(D1))
     if (auto *T2 = dyn_cast<TagDecl>(D2))
       if (T1->getFirstDecl() == T2->getFirstDecl())

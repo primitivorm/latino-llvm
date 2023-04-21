@@ -221,7 +221,7 @@ public:
   void VisitAutoType(const AutoType *AT);
   void VisitTemplateSpecializationType(const TemplateSpecializationType *TST);
   void VisitInjectedClassNameType(const InjectedClassNameType *ICNT);
-  void VisitObjCInterfaceType(const ObjCInterfaceType *OIT);
+  // void VisitObjCInterfaceType(const ObjCInterfaceType *OIT);
   void VisitPackExpansionType(const PackExpansionType *PET);
   void VisitElaboratedType(const ElaboratedType *ET);
   void VisitMacroQualifiedType(const MacroQualifiedType *MQT);
@@ -249,17 +249,17 @@ public:
   void VisitAccessSpecDecl(const AccessSpecDecl *ASD);
   void VisitFriendDecl(const FriendDecl *FD);
 
-  void VisitObjCIvarDecl(const ObjCIvarDecl *D);
-  void VisitObjCMethodDecl(const ObjCMethodDecl *D);
-  void VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D);
-  void VisitObjCCategoryDecl(const ObjCCategoryDecl *D);
-  void VisitObjCCategoryImplDecl(const ObjCCategoryImplDecl *D);
-  void VisitObjCProtocolDecl(const ObjCProtocolDecl *D);
-  void VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D);
-  void VisitObjCImplementationDecl(const ObjCImplementationDecl *D);
-  void VisitObjCCompatibleAliasDecl(const ObjCCompatibleAliasDecl *D);
-  void VisitObjCPropertyDecl(const ObjCPropertyDecl *D);
-  void VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D);
+  // void VisitObjCIvarDecl(const ObjCIvarDecl *D);
+  // void VisitObjCMethodDecl(const ObjCMethodDecl *D);
+  // void VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D);
+  // void VisitObjCCategoryDecl(const ObjCCategoryDecl *D);
+  // void VisitObjCCategoryImplDecl(const ObjCCategoryImplDecl *D);
+  // void VisitObjCProtocolDecl(const ObjCProtocolDecl *D);
+  // void VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D);
+  // void VisitObjCImplementationDecl(const ObjCImplementationDecl *D);
+  // void VisitObjCCompatibleAliasDecl(const ObjCCompatibleAliasDecl *D);
+  // void VisitObjCPropertyDecl(const ObjCPropertyDecl *D);
+  // void VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D);
   void VisitBlockDecl(const BlockDecl *D);
 
   void VisitDeclRefExpr(const DeclRefExpr *DRE);
@@ -289,15 +289,15 @@ public:
   void VisitMaterializeTemporaryExpr(const MaterializeTemporaryExpr *MTE);
   void VisitCXXDependentScopeMemberExpr(const CXXDependentScopeMemberExpr *ME);
 
-  void VisitObjCEncodeExpr(const ObjCEncodeExpr *OEE);
-  void VisitObjCMessageExpr(const ObjCMessageExpr *OME);
-  void VisitObjCBoxedExpr(const ObjCBoxedExpr *OBE);
-  void VisitObjCSelectorExpr(const ObjCSelectorExpr *OSE);
-  void VisitObjCProtocolExpr(const ObjCProtocolExpr *OPE);
-  void VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *OPRE);
-  void VisitObjCSubscriptRefExpr(const ObjCSubscriptRefExpr *OSRE);
-  void VisitObjCIvarRefExpr(const ObjCIvarRefExpr *OIRE);
-  void VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *OBLE);
+  // void VisitObjCEncodeExpr(const ObjCEncodeExpr *OEE);
+  // void VisitObjCMessageExpr(const ObjCMessageExpr *OME);
+  // void VisitObjCBoxedExpr(const ObjCBoxedExpr *OBE);
+  // void VisitObjCSelectorExpr(const ObjCSelectorExpr *OSE);
+  // void VisitObjCProtocolExpr(const ObjCProtocolExpr *OPE);
+  // void VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *OPRE);
+  // void VisitObjCSubscriptRefExpr(const ObjCSubscriptRefExpr *OSRE);
+  // void VisitObjCIvarRefExpr(const ObjCIvarRefExpr *OIRE);
+  // void VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *OBLE);
 
   void VisitIntegerLiteral(const IntegerLiteral *IL);
   void VisitCharacterLiteral(const CharacterLiteral *CL);

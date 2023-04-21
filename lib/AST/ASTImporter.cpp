@@ -23,20 +23,20 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
 #include "latino/AST/DeclGroup.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExternalASTSource.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/AST/TemplateBase.h"
 #include "latino/AST/TemplateName.h"
@@ -380,9 +380,9 @@ namespace latino {
     ExpectedType VisitPackExpansionType(const PackExpansionType *T);
     ExpectedType VisitDependentTemplateSpecializationType(
         const DependentTemplateSpecializationType *T);
-    ExpectedType VisitObjCInterfaceType(const ObjCInterfaceType *T);
-    ExpectedType VisitObjCObjectType(const ObjCObjectType *T);
-    ExpectedType VisitObjCObjectPointerType(const ObjCObjectPointerType *T);
+    // ExpectedType VisitObjCInterfaceType(const ObjCInterfaceType *T);
+    // ExpectedType VisitObjCObjectType(const ObjCObjectType *T);
+    // ExpectedType VisitObjCObjectPointerType(const ObjCObjectPointerType *T);
 
     // Importing declarations
     Error ImportDeclParts(
@@ -425,12 +425,12 @@ namespace latino {
     Error ImportDefinition(
         EnumDecl *From, EnumDecl *To,
         ImportDefinitionKind Kind = IDK_Default);
-    Error ImportDefinition(
-        ObjCInterfaceDecl *From, ObjCInterfaceDecl *To,
-        ImportDefinitionKind Kind = IDK_Default);
-    Error ImportDefinition(
-        ObjCProtocolDecl *From, ObjCProtocolDecl *To,
-        ImportDefinitionKind Kind = IDK_Default);
+    // Error ImportDefinition(
+    //     ObjCInterfaceDecl *From, ObjCInterfaceDecl *To,
+    //     ImportDefinitionKind Kind = IDK_Default);
+    // Error ImportDefinition(
+    //     ObjCProtocolDecl *From, ObjCProtocolDecl *To,
+    //     ImportDefinitionKind Kind = IDK_Default);
     Error ImportTemplateArguments(
         const TemplateArgument *FromArgs, unsigned NumFromArgs,
         SmallVectorImpl<TemplateArgument> &ToArgs);
@@ -501,14 +501,14 @@ namespace latino {
     ExpectedDecl VisitFieldDecl(FieldDecl *D);
     ExpectedDecl VisitIndirectFieldDecl(IndirectFieldDecl *D);
     ExpectedDecl VisitFriendDecl(FriendDecl *D);
-    ExpectedDecl VisitObjCIvarDecl(ObjCIvarDecl *D);
+    // ExpectedDecl VisitObjCIvarDecl(ObjCIvarDecl *D);
     ExpectedDecl VisitVarDecl(VarDecl *D);
     ExpectedDecl VisitImplicitParamDecl(ImplicitParamDecl *D);
     ExpectedDecl VisitParmVarDecl(ParmVarDecl *D);
-    ExpectedDecl VisitObjCMethodDecl(ObjCMethodDecl *D);
-    ExpectedDecl VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
-    ExpectedDecl VisitObjCCategoryDecl(ObjCCategoryDecl *D);
-    ExpectedDecl VisitObjCProtocolDecl(ObjCProtocolDecl *D);
+    // ExpectedDecl VisitObjCMethodDecl(ObjCMethodDecl *D);
+    // ExpectedDecl VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
+    // ExpectedDecl VisitObjCCategoryDecl(ObjCCategoryDecl *D);
+    // ExpectedDecl VisitObjCProtocolDecl(ObjCProtocolDecl *D);
     ExpectedDecl VisitLinkageSpecDecl(LinkageSpecDecl *D);
     ExpectedDecl VisitUsingDecl(UsingDecl *D);
     ExpectedDecl VisitUsingShadowDecl(UsingShadowDecl *D);
@@ -519,14 +519,14 @@ namespace latino {
     ExpectedDecl
     VisitLifetimeExtendedTemporaryDecl(LifetimeExtendedTemporaryDecl *D);
 
-    Expected<ObjCTypeParamList *>
-    ImportObjCTypeParamList(ObjCTypeParamList *list);
+    // Expected<ObjCTypeParamList *>
+    // ImportObjCTypeParamList(ObjCTypeParamList *list);
 
-    ExpectedDecl VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
-    ExpectedDecl VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D);
-    ExpectedDecl VisitObjCImplementationDecl(ObjCImplementationDecl *D);
-    ExpectedDecl VisitObjCPropertyDecl(ObjCPropertyDecl *D);
-    ExpectedDecl VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
+    // ExpectedDecl VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
+    // ExpectedDecl VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D);
+    // ExpectedDecl VisitObjCImplementationDecl(ObjCImplementationDecl *D);
+    // ExpectedDecl VisitObjCPropertyDecl(ObjCPropertyDecl *D);
+    // ExpectedDecl VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
     ExpectedDecl VisitTemplateTypeParmDecl(TemplateTypeParmDecl *D);
     ExpectedDecl VisitNonTypeTemplateParmDecl(NonTypeTemplateParmDecl *D);
     ExpectedDecl VisitTemplateTemplateParmDecl(TemplateTemplateParmDecl *D);
@@ -1024,14 +1024,14 @@ ExpectedType ASTNodeImporter::VisitAtomicType(const AtomicType *T){
 
 ExpectedType ASTNodeImporter::VisitBuiltinType(const BuiltinType *T) {
   switch (T->getKind()) {
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id: \
-    return Importer.getToContext().SingletonId;
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id: \
-    return Importer.getToContext().Id##Ty;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id: \
+//     return Importer.getToContext().SingletonId;
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id: \
+//     return Importer.getToContext().Id##Ty;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id: \
     return Importer.getToContext().SingletonId;
@@ -1540,50 +1540,50 @@ ASTNodeImporter::VisitDependentNameType(const DependentNameType *T) {
                                                       Name, Canon);
 }
 
-ExpectedType
-ASTNodeImporter::VisitObjCInterfaceType(const ObjCInterfaceType *T) {
-  Expected<ObjCInterfaceDecl *> ToDeclOrErr = import(T->getDecl());
-  if (!ToDeclOrErr)
-    return ToDeclOrErr.takeError();
+// ExpectedType
+// ASTNodeImporter::VisitObjCInterfaceType(const ObjCInterfaceType *T) {
+//   Expected<ObjCInterfaceDecl *> ToDeclOrErr = import(T->getDecl());
+//   if (!ToDeclOrErr)
+//     return ToDeclOrErr.takeError();
 
-  return Importer.getToContext().getObjCInterfaceType(*ToDeclOrErr);
-}
+//   return Importer.getToContext().getObjCInterfaceType(*ToDeclOrErr);
+// }
 
-ExpectedType ASTNodeImporter::VisitObjCObjectType(const ObjCObjectType *T) {
-  ExpectedType ToBaseTypeOrErr = import(T->getBaseType());
-  if (!ToBaseTypeOrErr)
-    return ToBaseTypeOrErr.takeError();
+// ExpectedType ASTNodeImporter::VisitObjCObjectType(const ObjCObjectType *T) {
+//   ExpectedType ToBaseTypeOrErr = import(T->getBaseType());
+//   if (!ToBaseTypeOrErr)
+//     return ToBaseTypeOrErr.takeError();
 
-  SmallVector<QualType, 4> TypeArgs;
-  for (auto TypeArg : T->getTypeArgsAsWritten()) {
-    if (ExpectedType TyOrErr = import(TypeArg))
-      TypeArgs.push_back(*TyOrErr);
-    else
-      return TyOrErr.takeError();
-  }
+//   SmallVector<QualType, 4> TypeArgs;
+//   for (auto TypeArg : T->getTypeArgsAsWritten()) {
+//     if (ExpectedType TyOrErr = import(TypeArg))
+//       TypeArgs.push_back(*TyOrErr);
+//     else
+//       return TyOrErr.takeError();
+//   }
 
-  SmallVector<ObjCProtocolDecl *, 4> Protocols;
-  for (auto *P : T->quals()) {
-    if (Expected<ObjCProtocolDecl *> ProtocolOrErr = import(P))
-      Protocols.push_back(*ProtocolOrErr);
-    else
-      return ProtocolOrErr.takeError();
+//   // SmallVector<ObjCProtocolDecl *, 4> Protocols;
+//   // for (auto *P : T->quals()) {
+//   //   if (Expected<ObjCProtocolDecl *> ProtocolOrErr = import(P))
+//   //     Protocols.push_back(*ProtocolOrErr);
+//   //   else
+//   //     return ProtocolOrErr.takeError();
 
-  }
+//   // }
 
-  return Importer.getToContext().getObjCObjectType(*ToBaseTypeOrErr, TypeArgs,
-                                                   Protocols,
-                                                   T->isKindOfTypeAsWritten());
-}
+//   // return Importer.getToContext().getObjCObjectType(*ToBaseTypeOrErr, TypeArgs,
+//   //                                                  Protocols,
+//   //                                                  T->isKindOfTypeAsWritten());
+// }
 
-ExpectedType
-ASTNodeImporter::VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
-  ExpectedType ToPointeeTypeOrErr = import(T->getPointeeType());
-  if (!ToPointeeTypeOrErr)
-    return ToPointeeTypeOrErr.takeError();
+// ExpectedType
+// ASTNodeImporter::VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
+//   ExpectedType ToPointeeTypeOrErr = import(T->getPointeeType());
+//   if (!ToPointeeTypeOrErr)
+//     return ToPointeeTypeOrErr.takeError();
 
-  return Importer.getToContext().getObjCObjectPointerType(*ToPointeeTypeOrErr);
-}
+//   return Importer.getToContext().getObjCObjectPointerType(*ToPointeeTypeOrErr);
+// }
 
 //----------------------------------------------------------------------------
 // Import Declarations
@@ -3779,56 +3779,56 @@ ExpectedDecl ASTNodeImporter::VisitFriendDecl(FriendDecl *D) {
   return FrD;
 }
 
-ExpectedDecl ASTNodeImporter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
-  // Import the major distinguishing characteristics of an ivar.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
+// ExpectedDecl ASTNodeImporter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
+//   // Import the major distinguishing characteristics of an ivar.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
 
-  // Determine whether we've already imported this ivar
-  auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
-  for (auto *FoundDecl : FoundDecls) {
-    if (ObjCIvarDecl *FoundIvar = dyn_cast<ObjCIvarDecl>(FoundDecl)) {
-      if (Importer.IsStructurallyEquivalent(D->getType(),
-                                            FoundIvar->getType())) {
-        Importer.MapImported(D, FoundIvar);
-        return FoundIvar;
-      }
+//   // Determine whether we've already imported this ivar
+//   auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
+//   for (auto *FoundDecl : FoundDecls) {
+//     if (ObjCIvarDecl *FoundIvar = dyn_cast<ObjCIvarDecl>(FoundDecl)) {
+//       if (Importer.IsStructurallyEquivalent(D->getType(),
+//                                             FoundIvar->getType())) {
+//         Importer.MapImported(D, FoundIvar);
+//         return FoundIvar;
+//       }
 
-      Importer.ToDiag(Loc, diag::warn_odr_ivar_type_inconsistent)
-        << Name << D->getType() << FoundIvar->getType();
-      Importer.ToDiag(FoundIvar->getLocation(), diag::note_odr_value_here)
-        << FoundIvar->getType();
+//       Importer.ToDiag(Loc, diag::warn_odr_ivar_type_inconsistent)
+//         << Name << D->getType() << FoundIvar->getType();
+//       Importer.ToDiag(FoundIvar->getLocation(), diag::note_odr_value_here)
+//         << FoundIvar->getType();
 
-      return make_error<ImportError>(ImportError::NameConflict);
-    }
-  }
+//       return make_error<ImportError>(ImportError::NameConflict);
+//     }
+//   }
 
-  Error Err = Error::success();
-  auto ToType = importChecked(Err, D->getType());
-  auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
-  auto ToBitWidth = importChecked(Err, D->getBitWidth());
-  auto ToInnerLocStart = importChecked(Err, D->getInnerLocStart());
-  if (Err)
-    return std::move(Err);
+//   Error Err = Error::success();
+//   auto ToType = importChecked(Err, D->getType());
+//   auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
+//   auto ToBitWidth = importChecked(Err, D->getBitWidth());
+//   auto ToInnerLocStart = importChecked(Err, D->getInnerLocStart());
+//   if (Err)
+//     return std::move(Err);
 
-  ObjCIvarDecl *ToIvar;
-  if (GetImportedOrCreateDecl(
-          ToIvar, D, Importer.getToContext(), cast<ObjCContainerDecl>(DC),
-          ToInnerLocStart, Loc, Name.getAsIdentifierInfo(),
-          ToType, ToTypeSourceInfo,
-          D->getAccessControl(),ToBitWidth, D->getSynthesize()))
-    return ToIvar;
+//   // ObjCIvarDecl *ToIvar;
+//   // if (GetImportedOrCreateDecl(
+//   //         ToIvar, D, Importer.getToContext(), cast<ObjCContainerDecl>(DC),
+//   //         ToInnerLocStart, Loc, Name.getAsIdentifierInfo(),
+//   //         ToType, ToTypeSourceInfo,
+//   //         D->getAccessControl(),ToBitWidth, D->getSynthesize()))
+//   //   return ToIvar;
 
-  ToIvar->setLexicalDeclContext(LexicalDC);
-  LexicalDC->addDeclInternal(ToIvar);
-  return ToIvar;
-}
+//   // ToIvar->setLexicalDeclContext(LexicalDC);
+//   // LexicalDC->addDeclInternal(ToIvar);
+//   // return ToIvar;
+// }
 
 ExpectedDecl ASTNodeImporter::VisitVarDecl(VarDecl *D) {
 
@@ -4062,360 +4062,360 @@ ExpectedDecl ASTNodeImporter::VisitParmVarDecl(ParmVarDecl *D) {
   return ToParm;
 }
 
-ExpectedDecl ASTNodeImporter::VisitObjCMethodDecl(ObjCMethodDecl *D) {
-  // Import the major distinguishing characteristics of a method.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
+// ExpectedDecl ASTNodeImporter::VisitObjCMethodDecl(ObjCMethodDecl *D) {
+//   // Import the major distinguishing characteristics of a method.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
 
-  auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
-  for (auto *FoundDecl : FoundDecls) {
-    if (auto *FoundMethod = dyn_cast<ObjCMethodDecl>(FoundDecl)) {
-      if (FoundMethod->isInstanceMethod() != D->isInstanceMethod())
-        continue;
+//   auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
+//   for (auto *FoundDecl : FoundDecls) {
+//     if (auto *FoundMethod = dyn_cast<ObjCMethodDecl>(FoundDecl)) {
+//       if (FoundMethod->isInstanceMethod() != D->isInstanceMethod())
+//         continue;
 
-      // Check return types.
-      if (!Importer.IsStructurallyEquivalent(D->getReturnType(),
-                                             FoundMethod->getReturnType())) {
-        Importer.ToDiag(Loc, diag::warn_odr_objc_method_result_type_inconsistent)
-            << D->isInstanceMethod() << Name << D->getReturnType()
-            << FoundMethod->getReturnType();
-        Importer.ToDiag(FoundMethod->getLocation(),
-                        diag::note_odr_objc_method_here)
-          << D->isInstanceMethod() << Name;
+//       // Check return types.
+//       if (!Importer.IsStructurallyEquivalent(D->getReturnType(),
+//                                              FoundMethod->getReturnType())) {
+//         Importer.ToDiag(Loc, diag::warn_odr_objc_method_result_type_inconsistent)
+//             << D->isInstanceMethod() << Name << D->getReturnType()
+//             << FoundMethod->getReturnType();
+//         Importer.ToDiag(FoundMethod->getLocation(),
+//                         diag::note_odr_objc_method_here)
+//           << D->isInstanceMethod() << Name;
 
-        return make_error<ImportError>(ImportError::NameConflict);
-      }
+//         return make_error<ImportError>(ImportError::NameConflict);
+//       }
 
-      // Check the number of parameters.
-      if (D->param_size() != FoundMethod->param_size()) {
-        Importer.ToDiag(Loc, diag::warn_odr_objc_method_num_params_inconsistent)
-          << D->isInstanceMethod() << Name
-          << D->param_size() << FoundMethod->param_size();
-        Importer.ToDiag(FoundMethod->getLocation(),
-                        diag::note_odr_objc_method_here)
-          << D->isInstanceMethod() << Name;
+//       // Check the number of parameters.
+//       if (D->param_size() != FoundMethod->param_size()) {
+//         Importer.ToDiag(Loc, diag::warn_odr_objc_method_num_params_inconsistent)
+//           << D->isInstanceMethod() << Name
+//           << D->param_size() << FoundMethod->param_size();
+//         Importer.ToDiag(FoundMethod->getLocation(),
+//                         diag::note_odr_objc_method_here)
+//           << D->isInstanceMethod() << Name;
 
-        return make_error<ImportError>(ImportError::NameConflict);
-      }
+//         return make_error<ImportError>(ImportError::NameConflict);
+//       }
 
-      // Check parameter types.
-      for (ObjCMethodDecl::param_iterator P = D->param_begin(),
-             PEnd = D->param_end(), FoundP = FoundMethod->param_begin();
-           P != PEnd; ++P, ++FoundP) {
-        if (!Importer.IsStructurallyEquivalent((*P)->getType(),
-                                               (*FoundP)->getType())) {
-          Importer.FromDiag((*P)->getLocation(),
-                            diag::warn_odr_objc_method_param_type_inconsistent)
-            << D->isInstanceMethod() << Name
-            << (*P)->getType() << (*FoundP)->getType();
-          Importer.ToDiag((*FoundP)->getLocation(), diag::note_odr_value_here)
-            << (*FoundP)->getType();
+//       // Check parameter types.
+//       for (ObjCMethodDecl::param_iterator P = D->param_begin(),
+//              PEnd = D->param_end(), FoundP = FoundMethod->param_begin();
+//            P != PEnd; ++P, ++FoundP) {
+//         if (!Importer.IsStructurallyEquivalent((*P)->getType(),
+//                                                (*FoundP)->getType())) {
+//           Importer.FromDiag((*P)->getLocation(),
+//                             diag::warn_odr_objc_method_param_type_inconsistent)
+//             << D->isInstanceMethod() << Name
+//             << (*P)->getType() << (*FoundP)->getType();
+//           Importer.ToDiag((*FoundP)->getLocation(), diag::note_odr_value_here)
+//             << (*FoundP)->getType();
 
-          return make_error<ImportError>(ImportError::NameConflict);
-        }
-      }
+//           return make_error<ImportError>(ImportError::NameConflict);
+//         }
+//       }
 
-      // Check variadic/non-variadic.
-      // Check the number of parameters.
-      if (D->isVariadic() != FoundMethod->isVariadic()) {
-        Importer.ToDiag(Loc, diag::warn_odr_objc_method_variadic_inconsistent)
-          << D->isInstanceMethod() << Name;
-        Importer.ToDiag(FoundMethod->getLocation(),
-                        diag::note_odr_objc_method_here)
-          << D->isInstanceMethod() << Name;
+//       // Check variadic/non-variadic.
+//       // Check the number of parameters.
+//       if (D->isVariadic() != FoundMethod->isVariadic()) {
+//         Importer.ToDiag(Loc, diag::warn_odr_objc_method_variadic_inconsistent)
+//           << D->isInstanceMethod() << Name;
+//         Importer.ToDiag(FoundMethod->getLocation(),
+//                         diag::note_odr_objc_method_here)
+//           << D->isInstanceMethod() << Name;
 
-        return make_error<ImportError>(ImportError::NameConflict);
-      }
+//         return make_error<ImportError>(ImportError::NameConflict);
+//       }
 
-      // FIXME: Any other bits we need to merge?
-      return Importer.MapImported(D, FoundMethod);
-    }
-  }
+//       // FIXME: Any other bits we need to merge?
+//       return Importer.MapImported(D, FoundMethod);
+//     }
+//   }
 
-  Error Err = Error::success();
-  auto ToEndLoc = importChecked(Err, D->getEndLoc());
-  auto ToReturnType = importChecked(Err, D->getReturnType());
-  auto ToReturnTypeSourceInfo =
-      importChecked(Err, D->getReturnTypeSourceInfo());
-  if (Err)
-    return std::move(Err);
+//   Error Err = Error::success();
+//   auto ToEndLoc = importChecked(Err, D->getEndLoc());
+//   auto ToReturnType = importChecked(Err, D->getReturnType());
+//   auto ToReturnTypeSourceInfo =
+//       importChecked(Err, D->getReturnTypeSourceInfo());
+//   if (Err)
+//     return std::move(Err);
 
-  ObjCMethodDecl *ToMethod;
-  if (GetImportedOrCreateDecl(
-          ToMethod, D, Importer.getToContext(), Loc, ToEndLoc,
-          Name.getObjCSelector(), ToReturnType, ToReturnTypeSourceInfo, DC,
-          D->isInstanceMethod(), D->isVariadic(), D->isPropertyAccessor(),
-          D->isSynthesizedAccessorStub(), D->isImplicit(), D->isDefined(),
-          D->getImplementationControl(), D->hasRelatedResultType()))
-    return ToMethod;
+//   ObjCMethodDecl *ToMethod;
+//   if (GetImportedOrCreateDecl(
+//           ToMethod, D, Importer.getToContext(), Loc, ToEndLoc,
+//           Name.getObjCSelector(), ToReturnType, ToReturnTypeSourceInfo, DC,
+//           D->isInstanceMethod(), D->isVariadic(), D->isPropertyAccessor(),
+//           D->isSynthesizedAccessorStub(), D->isImplicit(), D->isDefined(),
+//           D->getImplementationControl(), D->hasRelatedResultType()))
+//     return ToMethod;
 
-  // FIXME: When we decide to merge method definitions, we'll need to
-  // deal with implicit parameters.
+//   // FIXME: When we decide to merge method definitions, we'll need to
+//   // deal with implicit parameters.
 
-  // Import the parameters
-  SmallVector<ParmVarDecl *, 5> ToParams;
-  for (auto *FromP : D->parameters()) {
-    if (Expected<ParmVarDecl *> ToPOrErr = import(FromP))
-      ToParams.push_back(*ToPOrErr);
-    else
-      return ToPOrErr.takeError();
-  }
+//   // Import the parameters
+//   SmallVector<ParmVarDecl *, 5> ToParams;
+//   for (auto *FromP : D->parameters()) {
+//     if (Expected<ParmVarDecl *> ToPOrErr = import(FromP))
+//       ToParams.push_back(*ToPOrErr);
+//     else
+//       return ToPOrErr.takeError();
+//   }
 
-  // Set the parameters.
-  for (auto *ToParam : ToParams) {
-    ToParam->setOwningFunction(ToMethod);
-    ToMethod->addDeclInternal(ToParam);
-  }
+//   // Set the parameters.
+//   for (auto *ToParam : ToParams) {
+//     ToParam->setOwningFunction(ToMethod);
+//     ToMethod->addDeclInternal(ToParam);
+//   }
 
-  SmallVector<SourceLocation, 12> FromSelLocs;
-  D->getSelectorLocs(FromSelLocs);
-  SmallVector<SourceLocation, 12> ToSelLocs(FromSelLocs.size());
-  if (Error Err = ImportContainerChecked(FromSelLocs, ToSelLocs))
-    return std::move(Err);
+//   SmallVector<SourceLocation, 12> FromSelLocs;
+//   D->getSelectorLocs(FromSelLocs);
+//   SmallVector<SourceLocation, 12> ToSelLocs(FromSelLocs.size());
+//   if (Error Err = ImportContainerChecked(FromSelLocs, ToSelLocs))
+//     return std::move(Err);
 
-  ToMethod->setMethodParams(Importer.getToContext(), ToParams, ToSelLocs);
+//   ToMethod->setMethodParams(Importer.getToContext(), ToParams, ToSelLocs);
 
-  ToMethod->setLexicalDeclContext(LexicalDC);
-  LexicalDC->addDeclInternal(ToMethod);
+//   ToMethod->setLexicalDeclContext(LexicalDC);
+//   LexicalDC->addDeclInternal(ToMethod);
 
-  // Implicit params are declared when Sema encounters the definition but this
-  // never happens when the method is imported. Manually declare the implicit
-  // params now that the MethodDecl knows its class interface.
-  if (D->getSelfDecl())
-    ToMethod->createImplicitParams(Importer.getToContext(),
-                                   ToMethod->getClassInterface());
+//   // Implicit params are declared when Sema encounters the definition but this
+//   // never happens when the method is imported. Manually declare the implicit
+//   // params now that the MethodDecl knows its class interface.
+//   if (D->getSelfDecl())
+//     ToMethod->createImplicitParams(Importer.getToContext(),
+//                                    ToMethod->getClassInterface());
 
-  return ToMethod;
-}
+//   return ToMethod;
+// }
 
-ExpectedDecl ASTNodeImporter::VisitObjCTypeParamDecl(ObjCTypeParamDecl *D) {
-  // Import the major distinguishing characteristics of a category.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
+// ExpectedDecl ASTNodeImporter::VisitObjCTypeParamDecl(ObjCTypeParamDecl *D) {
+//   // Import the major distinguishing characteristics of a category.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
 
-  Error Err = Error::success();
-  auto ToVarianceLoc = importChecked(Err, D->getVarianceLoc());
-  auto ToLocation = importChecked(Err, D->getLocation());
-  auto ToColonLoc = importChecked(Err, D->getColonLoc());
-  auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
-  if (Err)
-    return std::move(Err);
+//   Error Err = Error::success();
+//   auto ToVarianceLoc = importChecked(Err, D->getVarianceLoc());
+//   auto ToLocation = importChecked(Err, D->getLocation());
+//   auto ToColonLoc = importChecked(Err, D->getColonLoc());
+//   auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
+//   if (Err)
+//     return std::move(Err);
 
-  ObjCTypeParamDecl *Result;
-  if (GetImportedOrCreateDecl(
-          Result, D, Importer.getToContext(), DC, D->getVariance(),
-          ToVarianceLoc, D->getIndex(),
-          ToLocation, Name.getAsIdentifierInfo(),
-          ToColonLoc, ToTypeSourceInfo))
-    return Result;
+//   ObjCTypeParamDecl *Result;
+//   if (GetImportedOrCreateDecl(
+//           Result, D, Importer.getToContext(), DC, D->getVariance(),
+//           ToVarianceLoc, D->getIndex(),
+//           ToLocation, Name.getAsIdentifierInfo(),
+//           ToColonLoc, ToTypeSourceInfo))
+//     return Result;
 
-  Result->setLexicalDeclContext(LexicalDC);
-  return Result;
-}
+//   Result->setLexicalDeclContext(LexicalDC);
+//   return Result;
+// }
 
-ExpectedDecl ASTNodeImporter::VisitObjCCategoryDecl(ObjCCategoryDecl *D) {
-  // Import the major distinguishing characteristics of a category.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
+// ExpectedDecl ASTNodeImporter::VisitObjCCategoryDecl(ObjCCategoryDecl *D) {
+//   // Import the major distinguishing characteristics of a category.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
 
-  ObjCInterfaceDecl *ToInterface;
-  if (Error Err = importInto(ToInterface, D->getClassInterface()))
-    return std::move(Err);
+//   ObjCInterfaceDecl *ToInterface;
+//   if (Error Err = importInto(ToInterface, D->getClassInterface()))
+//     return std::move(Err);
 
-  // Determine if we've already encountered this category.
-  ObjCCategoryDecl *MergeWithCategory
-    = ToInterface->FindCategoryDeclaration(Name.getAsIdentifierInfo());
-  ObjCCategoryDecl *ToCategory = MergeWithCategory;
-  if (!ToCategory) {
+//   // Determine if we've already encountered this category.
+//   ObjCCategoryDecl *MergeWithCategory
+//     = ToInterface->FindCategoryDeclaration(Name.getAsIdentifierInfo());
+//   ObjCCategoryDecl *ToCategory = MergeWithCategory;
+//   if (!ToCategory) {
 
-    Error Err = Error::success();
-    auto ToAtStartLoc = importChecked(Err, D->getAtStartLoc());
-    auto ToCategoryNameLoc = importChecked(Err, D->getCategoryNameLoc());
-    auto ToIvarLBraceLoc = importChecked(Err, D->getIvarLBraceLoc());
-    auto ToIvarRBraceLoc = importChecked(Err, D->getIvarRBraceLoc());
-    if (Err)
-      return std::move(Err);
+//     Error Err = Error::success();
+//     auto ToAtStartLoc = importChecked(Err, D->getAtStartLoc());
+//     auto ToCategoryNameLoc = importChecked(Err, D->getCategoryNameLoc());
+//     auto ToIvarLBraceLoc = importChecked(Err, D->getIvarLBraceLoc());
+//     auto ToIvarRBraceLoc = importChecked(Err, D->getIvarRBraceLoc());
+//     if (Err)
+//       return std::move(Err);
 
-    if (GetImportedOrCreateDecl(ToCategory, D, Importer.getToContext(), DC,
-                                ToAtStartLoc, Loc,
-                                ToCategoryNameLoc,
-                                Name.getAsIdentifierInfo(), ToInterface,
-                                /*TypeParamList=*/nullptr,
-                                ToIvarLBraceLoc,
-                                ToIvarRBraceLoc))
-      return ToCategory;
+//     if (GetImportedOrCreateDecl(ToCategory, D, Importer.getToContext(), DC,
+//                                 ToAtStartLoc, Loc,
+//                                 ToCategoryNameLoc,
+//                                 Name.getAsIdentifierInfo(), ToInterface,
+//                                 /*TypeParamList=*/nullptr,
+//                                 ToIvarLBraceLoc,
+//                                 ToIvarRBraceLoc))
+//       return ToCategory;
 
-    ToCategory->setLexicalDeclContext(LexicalDC);
-    LexicalDC->addDeclInternal(ToCategory);
-    // Import the type parameter list after MapImported, to avoid
-    // loops when bringing in their DeclContext.
-    if (auto PListOrErr = ImportObjCTypeParamList(D->getTypeParamList()))
-      ToCategory->setTypeParamList(*PListOrErr);
-    else
-      return PListOrErr.takeError();
+//     ToCategory->setLexicalDeclContext(LexicalDC);
+//     LexicalDC->addDeclInternal(ToCategory);
+//     // Import the type parameter list after MapImported, to avoid
+//     // loops when bringing in their DeclContext.
+//     if (auto PListOrErr = ImportObjCTypeParamList(D->getTypeParamList()))
+//       ToCategory->setTypeParamList(*PListOrErr);
+//     else
+//       return PListOrErr.takeError();
 
-    // Import protocols
-    SmallVector<ObjCProtocolDecl *, 4> Protocols;
-    SmallVector<SourceLocation, 4> ProtocolLocs;
-    ObjCCategoryDecl::protocol_loc_iterator FromProtoLoc
-      = D->protocol_loc_begin();
-    for (ObjCCategoryDecl::protocol_iterator FromProto = D->protocol_begin(),
-                                          FromProtoEnd = D->protocol_end();
-         FromProto != FromProtoEnd;
-         ++FromProto, ++FromProtoLoc) {
-      if (Expected<ObjCProtocolDecl *> ToProtoOrErr = import(*FromProto))
-        Protocols.push_back(*ToProtoOrErr);
-      else
-        return ToProtoOrErr.takeError();
+//     // Import protocols
+//     SmallVector<ObjCProtocolDecl *, 4> Protocols;
+//     SmallVector<SourceLocation, 4> ProtocolLocs;
+//     ObjCCategoryDecl::protocol_loc_iterator FromProtoLoc
+//       = D->protocol_loc_begin();
+//     for (ObjCCategoryDecl::protocol_iterator FromProto = D->protocol_begin(),
+//                                           FromProtoEnd = D->protocol_end();
+//          FromProto != FromProtoEnd;
+//          ++FromProto, ++FromProtoLoc) {
+//       if (Expected<ObjCProtocolDecl *> ToProtoOrErr = import(*FromProto))
+//         Protocols.push_back(*ToProtoOrErr);
+//       else
+//         return ToProtoOrErr.takeError();
 
-      if (ExpectedSLoc ToProtoLocOrErr = import(*FromProtoLoc))
-        ProtocolLocs.push_back(*ToProtoLocOrErr);
-      else
-        return ToProtoLocOrErr.takeError();
-    }
+//       if (ExpectedSLoc ToProtoLocOrErr = import(*FromProtoLoc))
+//         ProtocolLocs.push_back(*ToProtoLocOrErr);
+//       else
+//         return ToProtoLocOrErr.takeError();
+//     }
 
-    // FIXME: If we're merging, make sure that the protocol list is the same.
-    ToCategory->setProtocolList(Protocols.data(), Protocols.size(),
-                                ProtocolLocs.data(), Importer.getToContext());
+//     // FIXME: If we're merging, make sure that the protocol list is the same.
+//     ToCategory->setProtocolList(Protocols.data(), Protocols.size(),
+//                                 ProtocolLocs.data(), Importer.getToContext());
 
-  } else {
-    Importer.MapImported(D, ToCategory);
-  }
+//   } else {
+//     Importer.MapImported(D, ToCategory);
+//   }
 
-  // Import all of the members of this category.
-  if (Error Err = ImportDeclContext(D))
-    return std::move(Err);
+//   // Import all of the members of this category.
+//   if (Error Err = ImportDeclContext(D))
+//     return std::move(Err);
 
-  // If we have an implementation, import it as well.
-  if (D->getImplementation()) {
-    if (Expected<ObjCCategoryImplDecl *> ToImplOrErr =
-        import(D->getImplementation()))
-      ToCategory->setImplementation(*ToImplOrErr);
-    else
-      return ToImplOrErr.takeError();
-  }
+//   // If we have an implementation, import it as well.
+//   if (D->getImplementation()) {
+//     if (Expected<ObjCCategoryImplDecl *> ToImplOrErr =
+//         import(D->getImplementation()))
+//       ToCategory->setImplementation(*ToImplOrErr);
+//     else
+//       return ToImplOrErr.takeError();
+//   }
 
-  return ToCategory;
-}
+//   return ToCategory;
+// }
 
-Error ASTNodeImporter::ImportDefinition(
-    ObjCProtocolDecl *From, ObjCProtocolDecl *To, ImportDefinitionKind Kind) {
-  if (To->getDefinition()) {
-    if (shouldForceImportDeclContext(Kind))
-      if (Error Err = ImportDeclContext(From))
-        return Err;
-    return Error::success();
-  }
+// Error ASTNodeImporter::ImportDefinition(
+//     ObjCProtocolDecl *From, ObjCProtocolDecl *To, ImportDefinitionKind Kind) {
+//   if (To->getDefinition()) {
+//     if (shouldForceImportDeclContext(Kind))
+//       if (Error Err = ImportDeclContext(From))
+//         return Err;
+//     return Error::success();
+//   }
 
-  // Start the protocol definition
-  To->startDefinition();
+//   // Start the protocol definition
+//   To->startDefinition();
 
-  // Import protocols
-  SmallVector<ObjCProtocolDecl *, 4> Protocols;
-  SmallVector<SourceLocation, 4> ProtocolLocs;
-  ObjCProtocolDecl::protocol_loc_iterator FromProtoLoc =
-      From->protocol_loc_begin();
-  for (ObjCProtocolDecl::protocol_iterator FromProto = From->protocol_begin(),
-                                        FromProtoEnd = From->protocol_end();
-       FromProto != FromProtoEnd;
-       ++FromProto, ++FromProtoLoc) {
-    if (Expected<ObjCProtocolDecl *> ToProtoOrErr = import(*FromProto))
-      Protocols.push_back(*ToProtoOrErr);
-    else
-      return ToProtoOrErr.takeError();
+//   // Import protocols
+//   SmallVector<ObjCProtocolDecl *, 4> Protocols;
+//   SmallVector<SourceLocation, 4> ProtocolLocs;
+//   ObjCProtocolDecl::protocol_loc_iterator FromProtoLoc =
+//       From->protocol_loc_begin();
+//   for (ObjCProtocolDecl::protocol_iterator FromProto = From->protocol_begin(),
+//                                         FromProtoEnd = From->protocol_end();
+//        FromProto != FromProtoEnd;
+//        ++FromProto, ++FromProtoLoc) {
+//     if (Expected<ObjCProtocolDecl *> ToProtoOrErr = import(*FromProto))
+//       Protocols.push_back(*ToProtoOrErr);
+//     else
+//       return ToProtoOrErr.takeError();
 
-    if (ExpectedSLoc ToProtoLocOrErr = import(*FromProtoLoc))
-      ProtocolLocs.push_back(*ToProtoLocOrErr);
-    else
-      return ToProtoLocOrErr.takeError();
+//     if (ExpectedSLoc ToProtoLocOrErr = import(*FromProtoLoc))
+//       ProtocolLocs.push_back(*ToProtoLocOrErr);
+//     else
+//       return ToProtoLocOrErr.takeError();
 
-  }
+//   }
 
-  // FIXME: If we're merging, make sure that the protocol list is the same.
-  To->setProtocolList(Protocols.data(), Protocols.size(),
-                      ProtocolLocs.data(), Importer.getToContext());
+//   // FIXME: If we're merging, make sure that the protocol list is the same.
+//   To->setProtocolList(Protocols.data(), Protocols.size(),
+//                       ProtocolLocs.data(), Importer.getToContext());
 
-  if (shouldForceImportDeclContext(Kind)) {
-    // Import all of the members of this protocol.
-    if (Error Err = ImportDeclContext(From, /*ForceImport=*/true))
-      return Err;
-  }
-  return Error::success();
-}
+//   if (shouldForceImportDeclContext(Kind)) {
+//     // Import all of the members of this protocol.
+//     if (Error Err = ImportDeclContext(From, /*ForceImport=*/true))
+//       return Err;
+//   }
+//   return Error::success();
+// }
 
-ExpectedDecl ASTNodeImporter::VisitObjCProtocolDecl(ObjCProtocolDecl *D) {
-  // If this protocol has a definition in the translation unit we're coming
-  // from, but this particular declaration is not that definition, import the
-  // definition and map to that.
-  ObjCProtocolDecl *Definition = D->getDefinition();
-  if (Definition && Definition != D) {
-    if (ExpectedDecl ImportedDefOrErr = import(Definition))
-      return Importer.MapImported(D, *ImportedDefOrErr);
-    else
-      return ImportedDefOrErr.takeError();
-  }
+// ExpectedDecl ASTNodeImporter::VisitObjCProtocolDecl(ObjCProtocolDecl *D) {
+//   // If this protocol has a definition in the translation unit we're coming
+//   // from, but this particular declaration is not that definition, import the
+//   // definition and map to that.
+//   ObjCProtocolDecl *Definition = D->getDefinition();
+//   if (Definition && Definition != D) {
+//     if (ExpectedDecl ImportedDefOrErr = import(Definition))
+//       return Importer.MapImported(D, *ImportedDefOrErr);
+//     else
+//       return ImportedDefOrErr.takeError();
+//   }
 
-  // Import the major distinguishing characteristics of a protocol.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
+//   // Import the major distinguishing characteristics of a protocol.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
 
-  ObjCProtocolDecl *MergeWithProtocol = nullptr;
-  auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
-  for (auto *FoundDecl : FoundDecls) {
-    if (!FoundDecl->isInIdentifierNamespace(Decl::IDNS_ObjCProtocol))
-      continue;
+//   ObjCProtocolDecl *MergeWithProtocol = nullptr;
+//   auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
+//   for (auto *FoundDecl : FoundDecls) {
+//     if (!FoundDecl->isInIdentifierNamespace(Decl::IDNS_ObjCProtocol))
+//       continue;
 
-    if ((MergeWithProtocol = dyn_cast<ObjCProtocolDecl>(FoundDecl)))
-      break;
-  }
+//     if ((MergeWithProtocol = dyn_cast<ObjCProtocolDecl>(FoundDecl)))
+//       break;
+//   }
 
-  ObjCProtocolDecl *ToProto = MergeWithProtocol;
-  if (!ToProto) {
-    auto ToAtBeginLocOrErr = import(D->getAtStartLoc());
-    if (!ToAtBeginLocOrErr)
-      return ToAtBeginLocOrErr.takeError();
+//   ObjCProtocolDecl *ToProto = MergeWithProtocol;
+//   if (!ToProto) {
+//     auto ToAtBeginLocOrErr = import(D->getAtStartLoc());
+//     if (!ToAtBeginLocOrErr)
+//       return ToAtBeginLocOrErr.takeError();
 
-    if (GetImportedOrCreateDecl(ToProto, D, Importer.getToContext(), DC,
-                                Name.getAsIdentifierInfo(), Loc,
-                                *ToAtBeginLocOrErr,
-                                /*PrevDecl=*/nullptr))
-      return ToProto;
-    ToProto->setLexicalDeclContext(LexicalDC);
-    LexicalDC->addDeclInternal(ToProto);
-  }
+//     if (GetImportedOrCreateDecl(ToProto, D, Importer.getToContext(), DC,
+//                                 Name.getAsIdentifierInfo(), Loc,
+//                                 *ToAtBeginLocOrErr,
+//                                 /*PrevDecl=*/nullptr))
+//       return ToProto;
+//     ToProto->setLexicalDeclContext(LexicalDC);
+//     LexicalDC->addDeclInternal(ToProto);
+//   }
 
-  Importer.MapImported(D, ToProto);
+//   Importer.MapImported(D, ToProto);
 
-  if (D->isThisDeclarationADefinition())
-    if (Error Err = ImportDefinition(D, ToProto))
-      return std::move(Err);
+//   if (D->isThisDeclarationADefinition())
+//     if (Error Err = ImportDefinition(D, ToProto))
+//       return std::move(Err);
 
-  return ToProto;
-}
+//   return ToProto;
+// }
 
 ExpectedDecl ASTNodeImporter::VisitLinkageSpecDecl(LinkageSpecDecl *D) {
   DeclContext *DC, *LexicalDC;
@@ -4665,471 +4665,471 @@ ExpectedDecl ASTNodeImporter::VisitBuiltinTemplateDecl(BuiltinTemplateDecl *D) {
   return ToD;
 }
 
-Error ASTNodeImporter::ImportDefinition(
-    ObjCInterfaceDecl *From, ObjCInterfaceDecl *To, ImportDefinitionKind Kind) {
-  if (To->getDefinition()) {
-    // Check consistency of superclass.
-    ObjCInterfaceDecl *FromSuper = From->getSuperClass();
-    if (FromSuper) {
-      if (auto FromSuperOrErr = import(FromSuper))
-        FromSuper = *FromSuperOrErr;
-      else
-        return FromSuperOrErr.takeError();
-    }
-
-    ObjCInterfaceDecl *ToSuper = To->getSuperClass();
-    if ((bool)FromSuper != (bool)ToSuper ||
-        (FromSuper && !declaresSameEntity(FromSuper, ToSuper))) {
-      Importer.ToDiag(To->getLocation(),
-                      diag::warn_odr_objc_superclass_inconsistent)
-        << To->getDeclName();
-      if (ToSuper)
-        Importer.ToDiag(To->getSuperClassLoc(), diag::note_odr_objc_superclass)
-          << To->getSuperClass()->getDeclName();
-      else
-        Importer.ToDiag(To->getLocation(),
-                        diag::note_odr_objc_missing_superclass);
-      if (From->getSuperClass())
-        Importer.FromDiag(From->getSuperClassLoc(),
-                          diag::note_odr_objc_superclass)
-        << From->getSuperClass()->getDeclName();
-      else
-        Importer.FromDiag(From->getLocation(),
-                          diag::note_odr_objc_missing_superclass);
-    }
-
-    if (shouldForceImportDeclContext(Kind))
-      if (Error Err = ImportDeclContext(From))
-        return Err;
-    return Error::success();
-  }
-
-  // Start the definition.
-  To->startDefinition();
-
-  // If this class has a superclass, import it.
-  if (From->getSuperClass()) {
-    if (auto SuperTInfoOrErr = import(From->getSuperClassTInfo()))
-      To->setSuperClass(*SuperTInfoOrErr);
-    else
-      return SuperTInfoOrErr.takeError();
-  }
-
-  // Import protocols
-  SmallVector<ObjCProtocolDecl *, 4> Protocols;
-  SmallVector<SourceLocation, 4> ProtocolLocs;
-  ObjCInterfaceDecl::protocol_loc_iterator FromProtoLoc =
-      From->protocol_loc_begin();
-
-  for (ObjCInterfaceDecl::protocol_iterator FromProto = From->protocol_begin(),
-                                         FromProtoEnd = From->protocol_end();
-       FromProto != FromProtoEnd;
-       ++FromProto, ++FromProtoLoc) {
-    if (Expected<ObjCProtocolDecl *> ToProtoOrErr = import(*FromProto))
-      Protocols.push_back(*ToProtoOrErr);
-    else
-      return ToProtoOrErr.takeError();
-
-    if (ExpectedSLoc ToProtoLocOrErr = import(*FromProtoLoc))
-      ProtocolLocs.push_back(*ToProtoLocOrErr);
-    else
-      return ToProtoLocOrErr.takeError();
-
-  }
-
-  // FIXME: If we're merging, make sure that the protocol list is the same.
-  To->setProtocolList(Protocols.data(), Protocols.size(),
-                      ProtocolLocs.data(), Importer.getToContext());
-
-  // Import categories. When the categories themselves are imported, they'll
-  // hook themselves into this interface.
-  for (auto *Cat : From->known_categories()) {
-    auto ToCatOrErr = import(Cat);
-    if (!ToCatOrErr)
-      return ToCatOrErr.takeError();
-  }
-
-  // If we have an @implementation, import it as well.
-  if (From->getImplementation()) {
-    if (Expected<ObjCImplementationDecl *> ToImplOrErr =
-        import(From->getImplementation()))
-      To->setImplementation(*ToImplOrErr);
-    else
-      return ToImplOrErr.takeError();
-  }
-
-  if (shouldForceImportDeclContext(Kind)) {
-    // Import all of the members of this class.
-    if (Error Err = ImportDeclContext(From, /*ForceImport=*/true))
-      return Err;
-  }
-  return Error::success();
-}
-
-Expected<ObjCTypeParamList *>
-ASTNodeImporter::ImportObjCTypeParamList(ObjCTypeParamList *list) {
-  if (!list)
-    return nullptr;
-
-  SmallVector<ObjCTypeParamDecl *, 4> toTypeParams;
-  for (auto *fromTypeParam : *list) {
-    if (auto toTypeParamOrErr = import(fromTypeParam))
-      toTypeParams.push_back(*toTypeParamOrErr);
-    else
-      return toTypeParamOrErr.takeError();
-  }
-
-  auto LAngleLocOrErr = import(list->getLAngleLoc());
-  if (!LAngleLocOrErr)
-    return LAngleLocOrErr.takeError();
-
-  auto RAngleLocOrErr = import(list->getRAngleLoc());
-  if (!RAngleLocOrErr)
-    return RAngleLocOrErr.takeError();
-
-  return ObjCTypeParamList::create(Importer.getToContext(),
-                                   *LAngleLocOrErr,
-                                   toTypeParams,
-                                   *RAngleLocOrErr);
-}
-
-ExpectedDecl ASTNodeImporter::VisitObjCInterfaceDecl(ObjCInterfaceDecl *D) {
-  // If this class has a definition in the translation unit we're coming from,
-  // but this particular declaration is not that definition, import the
-  // definition and map to that.
-  ObjCInterfaceDecl *Definition = D->getDefinition();
-  if (Definition && Definition != D) {
-    if (ExpectedDecl ImportedDefOrErr = import(Definition))
-      return Importer.MapImported(D, *ImportedDefOrErr);
-    else
-      return ImportedDefOrErr.takeError();
-  }
-
-  // Import the major distinguishing characteristics of an @interface.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
-
-  // Look for an existing interface with the same name.
-  ObjCInterfaceDecl *MergeWithIface = nullptr;
-  auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
-  for (auto *FoundDecl : FoundDecls) {
-    if (!FoundDecl->isInIdentifierNamespace(Decl::IDNS_Ordinary))
-      continue;
-
-    if ((MergeWithIface = dyn_cast<ObjCInterfaceDecl>(FoundDecl)))
-      break;
-  }
-
-  // Create an interface declaration, if one does not already exist.
-  ObjCInterfaceDecl *ToIface = MergeWithIface;
-  if (!ToIface) {
-    ExpectedSLoc AtBeginLocOrErr = import(D->getAtStartLoc());
-    if (!AtBeginLocOrErr)
-      return AtBeginLocOrErr.takeError();
-
-    if (GetImportedOrCreateDecl(
-            ToIface, D, Importer.getToContext(), DC,
-            *AtBeginLocOrErr, Name.getAsIdentifierInfo(),
-            /*TypeParamList=*/nullptr,
-            /*PrevDecl=*/nullptr, Loc, D->isImplicitInterfaceDecl()))
-      return ToIface;
-    ToIface->setLexicalDeclContext(LexicalDC);
-    LexicalDC->addDeclInternal(ToIface);
-  }
-  Importer.MapImported(D, ToIface);
-  // Import the type parameter list after MapImported, to avoid
-  // loops when bringing in their DeclContext.
-  if (auto ToPListOrErr =
-      ImportObjCTypeParamList(D->getTypeParamListAsWritten()))
-    ToIface->setTypeParamList(*ToPListOrErr);
-  else
-    return ToPListOrErr.takeError();
-
-  if (D->isThisDeclarationADefinition())
-    if (Error Err = ImportDefinition(D, ToIface))
-      return std::move(Err);
-
-  return ToIface;
-}
-
-ExpectedDecl
-ASTNodeImporter::VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
-  ObjCCategoryDecl *Category;
-  if (Error Err = importInto(Category, D->getCategoryDecl()))
-    return std::move(Err);
-
-  ObjCCategoryImplDecl *ToImpl = Category->getImplementation();
-  if (!ToImpl) {
-    DeclContext *DC, *LexicalDC;
-    if (Error Err = ImportDeclContext(D, DC, LexicalDC))
-      return std::move(Err);
-
-    Error Err = Error::success();
-    auto ToLocation = importChecked(Err, D->getLocation());
-    auto ToAtStartLoc = importChecked(Err, D->getAtStartLoc());
-    auto ToCategoryNameLoc = importChecked(Err, D->getCategoryNameLoc());
-    if (Err)
-      return std::move(Err);
-
-    if (GetImportedOrCreateDecl(
-            ToImpl, D, Importer.getToContext(), DC,
-            Importer.Import(D->getIdentifier()), Category->getClassInterface(),
-            ToLocation, ToAtStartLoc, ToCategoryNameLoc))
-      return ToImpl;
-
-    ToImpl->setLexicalDeclContext(LexicalDC);
-    LexicalDC->addDeclInternal(ToImpl);
-    Category->setImplementation(ToImpl);
-  }
-
-  Importer.MapImported(D, ToImpl);
-  if (Error Err = ImportDeclContext(D))
-    return std::move(Err);
-
-  return ToImpl;
-}
-
-ExpectedDecl
-ASTNodeImporter::VisitObjCImplementationDecl(ObjCImplementationDecl *D) {
-  // Find the corresponding interface.
-  ObjCInterfaceDecl *Iface;
-  if (Error Err = importInto(Iface, D->getClassInterface()))
-    return std::move(Err);
-
-  // Import the superclass, if any.
-  ObjCInterfaceDecl *Super;
-  if (Error Err = importInto(Super, D->getSuperClass()))
-    return std::move(Err);
-
-  ObjCImplementationDecl *Impl = Iface->getImplementation();
-  if (!Impl) {
-    // We haven't imported an implementation yet. Create a new @implementation
-    // now.
-    DeclContext *DC, *LexicalDC;
-    if (Error Err = ImportDeclContext(D, DC, LexicalDC))
-      return std::move(Err);
-
-    Error Err = Error::success();
-    auto ToLocation = importChecked(Err, D->getLocation());
-    auto ToAtStartLoc = importChecked(Err, D->getAtStartLoc());
-    auto ToSuperClassLoc = importChecked(Err, D->getSuperClassLoc());
-    auto ToIvarLBraceLoc = importChecked(Err, D->getIvarLBraceLoc());
-    auto ToIvarRBraceLoc = importChecked(Err, D->getIvarRBraceLoc());
-    if (Err)
-      return std::move(Err);
-
-    if (GetImportedOrCreateDecl(Impl, D, Importer.getToContext(),
-                                DC, Iface, Super,
-                                ToLocation,
-                                ToAtStartLoc,
-                                ToSuperClassLoc,
-                                ToIvarLBraceLoc,
-                                ToIvarRBraceLoc))
-      return Impl;
-
-    Impl->setLexicalDeclContext(LexicalDC);
-
-    // Associate the implementation with the class it implements.
-    Iface->setImplementation(Impl);
-    Importer.MapImported(D, Iface->getImplementation());
-  } else {
-    Importer.MapImported(D, Iface->getImplementation());
-
-    // Verify that the existing @implementation has the same superclass.
-    if ((Super && !Impl->getSuperClass()) ||
-        (!Super && Impl->getSuperClass()) ||
-        (Super && Impl->getSuperClass() &&
-         !declaresSameEntity(Super->getCanonicalDecl(),
-                             Impl->getSuperClass()))) {
-      Importer.ToDiag(Impl->getLocation(),
-                      diag::warn_odr_objc_superclass_inconsistent)
-        << Iface->getDeclName();
-      // FIXME: It would be nice to have the location of the superclass
-      // below.
-      if (Impl->getSuperClass())
-        Importer.ToDiag(Impl->getLocation(),
-                        diag::note_odr_objc_superclass)
-        << Impl->getSuperClass()->getDeclName();
-      else
-        Importer.ToDiag(Impl->getLocation(),
-                        diag::note_odr_objc_missing_superclass);
-      if (D->getSuperClass())
-        Importer.FromDiag(D->getLocation(),
-                          diag::note_odr_objc_superclass)
-        << D->getSuperClass()->getDeclName();
-      else
-        Importer.FromDiag(D->getLocation(),
-                          diag::note_odr_objc_missing_superclass);
-
-      return make_error<ImportError>(ImportError::NameConflict);
-    }
-  }
-
-  // Import all of the members of this @implementation.
-  if (Error Err = ImportDeclContext(D))
-    return std::move(Err);
-
-  return Impl;
-}
-
-ExpectedDecl ASTNodeImporter::VisitObjCPropertyDecl(ObjCPropertyDecl *D) {
-  // Import the major distinguishing characteristics of an @property.
-  DeclContext *DC, *LexicalDC;
-  DeclarationName Name;
-  SourceLocation Loc;
-  NamedDecl *ToD;
-  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-    return std::move(Err);
-  if (ToD)
-    return ToD;
-
-  // Check whether we have already imported this property.
-  auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
-  for (auto *FoundDecl : FoundDecls) {
-    if (auto *FoundProp = dyn_cast<ObjCPropertyDecl>(FoundDecl)) {
-      // Check property types.
-      if (!Importer.IsStructurallyEquivalent(D->getType(),
-                                             FoundProp->getType())) {
-        Importer.ToDiag(Loc, diag::warn_odr_objc_property_type_inconsistent)
-          << Name << D->getType() << FoundProp->getType();
-        Importer.ToDiag(FoundProp->getLocation(), diag::note_odr_value_here)
-          << FoundProp->getType();
-
-        return make_error<ImportError>(ImportError::NameConflict);
-      }
-
-      // FIXME: Check property attributes, getters, setters, etc.?
-
-      // Consider these properties to be equivalent.
-      Importer.MapImported(D, FoundProp);
-      return FoundProp;
-    }
-  }
-
-  Error Err = Error::success();
-  auto ToType = importChecked(Err, D->getType());
-  auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
-  auto ToAtLoc = importChecked(Err, D->getAtLoc());
-  auto ToLParenLoc = importChecked(Err, D->getLParenLoc());
-  if (Err)
-    return std::move(Err);
-
-  // Create the new property.
-  ObjCPropertyDecl *ToProperty;
-  if (GetImportedOrCreateDecl(
-          ToProperty, D, Importer.getToContext(), DC, Loc,
-          Name.getAsIdentifierInfo(), ToAtLoc,
-          ToLParenLoc, ToType,
-          ToTypeSourceInfo, D->getPropertyImplementation()))
-    return ToProperty;
-
-  auto ToGetterName = importChecked(Err, D->getGetterName());
-  auto ToSetterName = importChecked(Err, D->getSetterName());
-  auto ToGetterNameLoc = importChecked(Err, D->getGetterNameLoc());
-  auto ToSetterNameLoc = importChecked(Err, D->getSetterNameLoc());
-  auto ToGetterMethodDecl = importChecked(Err, D->getGetterMethodDecl());
-  auto ToSetterMethodDecl = importChecked(Err, D->getSetterMethodDecl());
-  auto ToPropertyIvarDecl = importChecked(Err, D->getPropertyIvarDecl());
-  if (Err)
-    return std::move(Err);
-
-  ToProperty->setLexicalDeclContext(LexicalDC);
-  LexicalDC->addDeclInternal(ToProperty);
-
-  ToProperty->setPropertyAttributes(D->getPropertyAttributes());
-  ToProperty->setPropertyAttributesAsWritten(
-                                      D->getPropertyAttributesAsWritten());
-  ToProperty->setGetterName(ToGetterName, ToGetterNameLoc);
-  ToProperty->setSetterName(ToSetterName, ToSetterNameLoc);
-  ToProperty->setGetterMethodDecl(ToGetterMethodDecl);
-  ToProperty->setSetterMethodDecl(ToSetterMethodDecl);
-  ToProperty->setPropertyIvarDecl(ToPropertyIvarDecl);
-  return ToProperty;
-}
-
-ExpectedDecl
-ASTNodeImporter::VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D) {
-  ObjCPropertyDecl *Property;
-  if (Error Err = importInto(Property, D->getPropertyDecl()))
-    return std::move(Err);
-
-  DeclContext *DC, *LexicalDC;
-  if (Error Err = ImportDeclContext(D, DC, LexicalDC))
-    return std::move(Err);
-
-  auto *InImpl = cast<ObjCImplDecl>(LexicalDC);
-
-  // Import the ivar (for an @synthesize).
-  ObjCIvarDecl *Ivar = nullptr;
-  if (Error Err = importInto(Ivar, D->getPropertyIvarDecl()))
-    return std::move(Err);
-
-  ObjCPropertyImplDecl *ToImpl
-    = InImpl->FindPropertyImplDecl(Property->getIdentifier(),
-                                   Property->getQueryKind());
-  if (!ToImpl) {
-
-    Error Err = Error::success();
-    auto ToBeginLoc = importChecked(Err, D->getBeginLoc());
-    auto ToLocation = importChecked(Err, D->getLocation());
-    auto ToPropertyIvarDeclLoc =
-        importChecked(Err, D->getPropertyIvarDeclLoc());
-    if (Err)
-      return std::move(Err);
-
-    if (GetImportedOrCreateDecl(ToImpl, D, Importer.getToContext(), DC,
-                                ToBeginLoc,
-                                ToLocation, Property,
-                                D->getPropertyImplementation(), Ivar,
-                                ToPropertyIvarDeclLoc))
-      return ToImpl;
-
-    ToImpl->setLexicalDeclContext(LexicalDC);
-    LexicalDC->addDeclInternal(ToImpl);
-  } else {
-    // Check that we have the same kind of property implementation (@synthesize
-    // vs. @dynamic).
-    if (D->getPropertyImplementation() != ToImpl->getPropertyImplementation()) {
-      Importer.ToDiag(ToImpl->getLocation(),
-                      diag::warn_odr_objc_property_impl_kind_inconsistent)
-        << Property->getDeclName()
-        << (ToImpl->getPropertyImplementation()
-                                              == ObjCPropertyImplDecl::Dynamic);
-      Importer.FromDiag(D->getLocation(),
-                        diag::note_odr_objc_property_impl_kind)
-        << D->getPropertyDecl()->getDeclName()
-        << (D->getPropertyImplementation() == ObjCPropertyImplDecl::Dynamic);
-
-      return make_error<ImportError>(ImportError::NameConflict);
-    }
-
-    // For @synthesize, check that we have the same
-    if (D->getPropertyImplementation() == ObjCPropertyImplDecl::Synthesize &&
-        Ivar != ToImpl->getPropertyIvarDecl()) {
-      Importer.ToDiag(ToImpl->getPropertyIvarDeclLoc(),
-                      diag::warn_odr_objc_synthesize_ivar_inconsistent)
-        << Property->getDeclName()
-        << ToImpl->getPropertyIvarDecl()->getDeclName()
-        << Ivar->getDeclName();
-      Importer.FromDiag(D->getPropertyIvarDeclLoc(),
-                        diag::note_odr_objc_synthesize_ivar_here)
-        << D->getPropertyIvarDecl()->getDeclName();
-
-      return make_error<ImportError>(ImportError::NameConflict);
-    }
-
-    // Merge the existing implementation with the new implementation.
-    Importer.MapImported(D, ToImpl);
-  }
-
-  return ToImpl;
-}
+// Error ASTNodeImporter::ImportDefinition(
+//     ObjCInterfaceDecl *From, ObjCInterfaceDecl *To, ImportDefinitionKind Kind) {
+//   if (To->getDefinition()) {
+//     // Check consistency of superclass.
+//     ObjCInterfaceDecl *FromSuper = From->getSuperClass();
+//     if (FromSuper) {
+//       if (auto FromSuperOrErr = import(FromSuper))
+//         FromSuper = *FromSuperOrErr;
+//       else
+//         return FromSuperOrErr.takeError();
+//     }
+
+//     ObjCInterfaceDecl *ToSuper = To->getSuperClass();
+//     if ((bool)FromSuper != (bool)ToSuper ||
+//         (FromSuper && !declaresSameEntity(FromSuper, ToSuper))) {
+//       Importer.ToDiag(To->getLocation(),
+//                       diag::warn_odr_objc_superclass_inconsistent)
+//         << To->getDeclName();
+//       if (ToSuper)
+//         Importer.ToDiag(To->getSuperClassLoc(), diag::note_odr_objc_superclass)
+//           << To->getSuperClass()->getDeclName();
+//       else
+//         Importer.ToDiag(To->getLocation(),
+//                         diag::note_odr_objc_missing_superclass);
+//       if (From->getSuperClass())
+//         Importer.FromDiag(From->getSuperClassLoc(),
+//                           diag::note_odr_objc_superclass)
+//         << From->getSuperClass()->getDeclName();
+//       else
+//         Importer.FromDiag(From->getLocation(),
+//                           diag::note_odr_objc_missing_superclass);
+//     }
+
+//     if (shouldForceImportDeclContext(Kind))
+//       if (Error Err = ImportDeclContext(From))
+//         return Err;
+//     return Error::success();
+//   }
+
+//   // Start the definition.
+//   To->startDefinition();
+
+//   // If this class has a superclass, import it.
+//   if (From->getSuperClass()) {
+//     if (auto SuperTInfoOrErr = import(From->getSuperClassTInfo()))
+//       To->setSuperClass(*SuperTInfoOrErr);
+//     else
+//       return SuperTInfoOrErr.takeError();
+//   }
+
+//   // Import protocols
+//   // SmallVector<ObjCProtocolDecl *, 4> Protocols;
+//   // SmallVector<SourceLocation, 4> ProtocolLocs;
+//   // ObjCInterfaceDecl::protocol_loc_iterator FromProtoLoc =
+//   //     From->protocol_loc_begin();
+
+//   // for (ObjCInterfaceDecl::protocol_iterator FromProto = From->protocol_begin(),
+//   //                                        FromProtoEnd = From->protocol_end();
+//   //      FromProto != FromProtoEnd;
+//   //      ++FromProto, ++FromProtoLoc) {
+//   //   if (Expected<ObjCProtocolDecl *> ToProtoOrErr = import(*FromProto))
+//   //     Protocols.push_back(*ToProtoOrErr);
+//   //   else
+//   //     return ToProtoOrErr.takeError();
+
+//   //   if (ExpectedSLoc ToProtoLocOrErr = import(*FromProtoLoc))
+//   //     ProtocolLocs.push_back(*ToProtoLocOrErr);
+//   //   else
+//   //     return ToProtoLocOrErr.takeError();
+
+//   // }
+
+//   // FIXME: If we're merging, make sure that the protocol list is the same.
+//   To->setProtocolList(Protocols.data(), Protocols.size(),
+//                       ProtocolLocs.data(), Importer.getToContext());
+
+//   // Import categories. When the categories themselves are imported, they'll
+//   // hook themselves into this interface.
+//   for (auto *Cat : From->known_categories()) {
+//     auto ToCatOrErr = import(Cat);
+//     if (!ToCatOrErr)
+//       return ToCatOrErr.takeError();
+//   }
+
+//   // If we have an @implementation, import it as well.
+//   if (From->getImplementation()) {
+//     if (Expected<ObjCImplementationDecl *> ToImplOrErr =
+//         import(From->getImplementation()))
+//       To->setImplementation(*ToImplOrErr);
+//     else
+//       return ToImplOrErr.takeError();
+//   }
+
+//   if (shouldForceImportDeclContext(Kind)) {
+//     // Import all of the members of this class.
+//     if (Error Err = ImportDeclContext(From, /*ForceImport=*/true))
+//       return Err;
+//   }
+//   return Error::success();
+// }
+
+// Expected<ObjCTypeParamList *>
+// ASTNodeImporter::ImportObjCTypeParamList(ObjCTypeParamList *list) {
+//   if (!list)
+//     return nullptr;
+
+//   SmallVector<ObjCTypeParamDecl *, 4> toTypeParams;
+//   for (auto *fromTypeParam : *list) {
+//     if (auto toTypeParamOrErr = import(fromTypeParam))
+//       toTypeParams.push_back(*toTypeParamOrErr);
+//     else
+//       return toTypeParamOrErr.takeError();
+//   }
+
+//   auto LAngleLocOrErr = import(list->getLAngleLoc());
+//   if (!LAngleLocOrErr)
+//     return LAngleLocOrErr.takeError();
+
+//   auto RAngleLocOrErr = import(list->getRAngleLoc());
+//   if (!RAngleLocOrErr)
+//     return RAngleLocOrErr.takeError();
+
+//   return ObjCTypeParamList::create(Importer.getToContext(),
+//                                    *LAngleLocOrErr,
+//                                    toTypeParams,
+//                                    *RAngleLocOrErr);
+// }
+
+// ExpectedDecl ASTNodeImporter::VisitObjCInterfaceDecl(ObjCInterfaceDecl *D) {
+//   // If this class has a definition in the translation unit we're coming from,
+//   // but this particular declaration is not that definition, import the
+//   // definition and map to that.
+//   ObjCInterfaceDecl *Definition = D->getDefinition();
+//   if (Definition && Definition != D) {
+//     if (ExpectedDecl ImportedDefOrErr = import(Definition))
+//       return Importer.MapImported(D, *ImportedDefOrErr);
+//     else
+//       return ImportedDefOrErr.takeError();
+//   }
+
+//   // Import the major distinguishing characteristics of an @interface.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
+
+//   // Look for an existing interface with the same name.
+//   ObjCInterfaceDecl *MergeWithIface = nullptr;
+//   auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
+//   for (auto *FoundDecl : FoundDecls) {
+//     if (!FoundDecl->isInIdentifierNamespace(Decl::IDNS_Ordinary))
+//       continue;
+
+//     if ((MergeWithIface = dyn_cast<ObjCInterfaceDecl>(FoundDecl)))
+//       break;
+//   }
+
+//   // Create an interface declaration, if one does not already exist.
+//   ObjCInterfaceDecl *ToIface = MergeWithIface;
+//   if (!ToIface) {
+//     ExpectedSLoc AtBeginLocOrErr = import(D->getAtStartLoc());
+//     if (!AtBeginLocOrErr)
+//       return AtBeginLocOrErr.takeError();
+
+//     if (GetImportedOrCreateDecl(
+//             ToIface, D, Importer.getToContext(), DC,
+//             *AtBeginLocOrErr, Name.getAsIdentifierInfo(),
+//             /*TypeParamList=*/nullptr,
+//             /*PrevDecl=*/nullptr, Loc, D->isImplicitInterfaceDecl()))
+//       return ToIface;
+//     ToIface->setLexicalDeclContext(LexicalDC);
+//     LexicalDC->addDeclInternal(ToIface);
+//   }
+//   Importer.MapImported(D, ToIface);
+//   // Import the type parameter list after MapImported, to avoid
+//   // loops when bringing in their DeclContext.
+//   if (auto ToPListOrErr =
+//       ImportObjCTypeParamList(D->getTypeParamListAsWritten()))
+//     ToIface->setTypeParamList(*ToPListOrErr);
+//   else
+//     return ToPListOrErr.takeError();
+
+//   if (D->isThisDeclarationADefinition())
+//     if (Error Err = ImportDefinition(D, ToIface))
+//       return std::move(Err);
+
+//   return ToIface;
+// }
+
+// ExpectedDecl
+// ASTNodeImporter::VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
+//   ObjCCategoryDecl *Category;
+//   if (Error Err = importInto(Category, D->getCategoryDecl()))
+//     return std::move(Err);
+
+//   ObjCCategoryImplDecl *ToImpl = Category->getImplementation();
+//   if (!ToImpl) {
+//     DeclContext *DC, *LexicalDC;
+//     if (Error Err = ImportDeclContext(D, DC, LexicalDC))
+//       return std::move(Err);
+
+//     Error Err = Error::success();
+//     auto ToLocation = importChecked(Err, D->getLocation());
+//     auto ToAtStartLoc = importChecked(Err, D->getAtStartLoc());
+//     auto ToCategoryNameLoc = importChecked(Err, D->getCategoryNameLoc());
+//     if (Err)
+//       return std::move(Err);
+
+//     if (GetImportedOrCreateDecl(
+//             ToImpl, D, Importer.getToContext(), DC,
+//             Importer.Import(D->getIdentifier()), Category->getClassInterface(),
+//             ToLocation, ToAtStartLoc, ToCategoryNameLoc))
+//       return ToImpl;
+
+//     ToImpl->setLexicalDeclContext(LexicalDC);
+//     LexicalDC->addDeclInternal(ToImpl);
+//     Category->setImplementation(ToImpl);
+//   }
+
+//   Importer.MapImported(D, ToImpl);
+//   if (Error Err = ImportDeclContext(D))
+//     return std::move(Err);
+
+//   return ToImpl;
+// }
+
+// ExpectedDecl
+// ASTNodeImporter::VisitObjCImplementationDecl(ObjCImplementationDecl *D) {
+//   // Find the corresponding interface.
+//   ObjCInterfaceDecl *Iface;
+//   if (Error Err = importInto(Iface, D->getClassInterface()))
+//     return std::move(Err);
+
+//   // Import the superclass, if any.
+//   ObjCInterfaceDecl *Super;
+//   if (Error Err = importInto(Super, D->getSuperClass()))
+//     return std::move(Err);
+
+//   ObjCImplementationDecl *Impl = Iface->getImplementation();
+//   if (!Impl) {
+//     // We haven't imported an implementation yet. Create a new @implementation
+//     // now.
+//     DeclContext *DC, *LexicalDC;
+//     if (Error Err = ImportDeclContext(D, DC, LexicalDC))
+//       return std::move(Err);
+
+//     Error Err = Error::success();
+//     auto ToLocation = importChecked(Err, D->getLocation());
+//     auto ToAtStartLoc = importChecked(Err, D->getAtStartLoc());
+//     auto ToSuperClassLoc = importChecked(Err, D->getSuperClassLoc());
+//     auto ToIvarLBraceLoc = importChecked(Err, D->getIvarLBraceLoc());
+//     auto ToIvarRBraceLoc = importChecked(Err, D->getIvarRBraceLoc());
+//     if (Err)
+//       return std::move(Err);
+
+//     if (GetImportedOrCreateDecl(Impl, D, Importer.getToContext(),
+//                                 DC, Iface, Super,
+//                                 ToLocation,
+//                                 ToAtStartLoc,
+//                                 ToSuperClassLoc,
+//                                 ToIvarLBraceLoc,
+//                                 ToIvarRBraceLoc))
+//       return Impl;
+
+//     Impl->setLexicalDeclContext(LexicalDC);
+
+//     // Associate the implementation with the class it implements.
+//     Iface->setImplementation(Impl);
+//     Importer.MapImported(D, Iface->getImplementation());
+//   } else {
+//     Importer.MapImported(D, Iface->getImplementation());
+
+//     // Verify that the existing @implementation has the same superclass.
+//     if ((Super && !Impl->getSuperClass()) ||
+//         (!Super && Impl->getSuperClass()) ||
+//         (Super && Impl->getSuperClass() &&
+//          !declaresSameEntity(Super->getCanonicalDecl(),
+//                              Impl->getSuperClass()))) {
+//       Importer.ToDiag(Impl->getLocation(),
+//                       diag::warn_odr_objc_superclass_inconsistent)
+//         << Iface->getDeclName();
+//       // FIXME: It would be nice to have the location of the superclass
+//       // below.
+//       if (Impl->getSuperClass())
+//         Importer.ToDiag(Impl->getLocation(),
+//                         diag::note_odr_objc_superclass)
+//         << Impl->getSuperClass()->getDeclName();
+//       else
+//         Importer.ToDiag(Impl->getLocation(),
+//                         diag::note_odr_objc_missing_superclass);
+//       if (D->getSuperClass())
+//         Importer.FromDiag(D->getLocation(),
+//                           diag::note_odr_objc_superclass)
+//         << D->getSuperClass()->getDeclName();
+//       else
+//         Importer.FromDiag(D->getLocation(),
+//                           diag::note_odr_objc_missing_superclass);
+
+//       return make_error<ImportError>(ImportError::NameConflict);
+//     }
+//   }
+
+//   // Import all of the members of this @implementation.
+//   if (Error Err = ImportDeclContext(D))
+//     return std::move(Err);
+
+//   return Impl;
+// }
+
+// ExpectedDecl ASTNodeImporter::VisitObjCPropertyDecl(ObjCPropertyDecl *D) {
+//   // Import the major distinguishing characteristics of an @property.
+//   DeclContext *DC, *LexicalDC;
+//   DeclarationName Name;
+//   SourceLocation Loc;
+//   NamedDecl *ToD;
+//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//     return std::move(Err);
+//   if (ToD)
+//     return ToD;
+
+//   // Check whether we have already imported this property.
+//   auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
+//   for (auto *FoundDecl : FoundDecls) {
+//     if (auto *FoundProp = dyn_cast<ObjCPropertyDecl>(FoundDecl)) {
+//       // Check property types.
+//       if (!Importer.IsStructurallyEquivalent(D->getType(),
+//                                              FoundProp->getType())) {
+//         Importer.ToDiag(Loc, diag::warn_odr_objc_property_type_inconsistent)
+//           << Name << D->getType() << FoundProp->getType();
+//         Importer.ToDiag(FoundProp->getLocation(), diag::note_odr_value_here)
+//           << FoundProp->getType();
+
+//         return make_error<ImportError>(ImportError::NameConflict);
+//       }
+
+//       // FIXME: Check property attributes, getters, setters, etc.?
+
+//       // Consider these properties to be equivalent.
+//       Importer.MapImported(D, FoundProp);
+//       return FoundProp;
+//     }
+//   }
+
+//   Error Err = Error::success();
+//   auto ToType = importChecked(Err, D->getType());
+//   auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
+//   auto ToAtLoc = importChecked(Err, D->getAtLoc());
+//   auto ToLParenLoc = importChecked(Err, D->getLParenLoc());
+//   if (Err)
+//     return std::move(Err);
+
+//   // Create the new property.
+//   ObjCPropertyDecl *ToProperty;
+//   if (GetImportedOrCreateDecl(
+//           ToProperty, D, Importer.getToContext(), DC, Loc,
+//           Name.getAsIdentifierInfo(), ToAtLoc,
+//           ToLParenLoc, ToType,
+//           ToTypeSourceInfo, D->getPropertyImplementation()))
+//     return ToProperty;
+
+//   auto ToGetterName = importChecked(Err, D->getGetterName());
+//   auto ToSetterName = importChecked(Err, D->getSetterName());
+//   auto ToGetterNameLoc = importChecked(Err, D->getGetterNameLoc());
+//   auto ToSetterNameLoc = importChecked(Err, D->getSetterNameLoc());
+//   auto ToGetterMethodDecl = importChecked(Err, D->getGetterMethodDecl());
+//   auto ToSetterMethodDecl = importChecked(Err, D->getSetterMethodDecl());
+//   auto ToPropertyIvarDecl = importChecked(Err, D->getPropertyIvarDecl());
+//   if (Err)
+//     return std::move(Err);
+
+//   ToProperty->setLexicalDeclContext(LexicalDC);
+//   LexicalDC->addDeclInternal(ToProperty);
+
+//   ToProperty->setPropertyAttributes(D->getPropertyAttributes());
+//   ToProperty->setPropertyAttributesAsWritten(
+//                                       D->getPropertyAttributesAsWritten());
+//   ToProperty->setGetterName(ToGetterName, ToGetterNameLoc);
+//   ToProperty->setSetterName(ToSetterName, ToSetterNameLoc);
+//   ToProperty->setGetterMethodDecl(ToGetterMethodDecl);
+//   ToProperty->setSetterMethodDecl(ToSetterMethodDecl);
+//   ToProperty->setPropertyIvarDecl(ToPropertyIvarDecl);
+//   return ToProperty;
+// }
+
+// ExpectedDecl
+// ASTNodeImporter::VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D) {
+//   ObjCPropertyDecl *Property;
+//   if (Error Err = importInto(Property, D->getPropertyDecl()))
+//     return std::move(Err);
+
+//   DeclContext *DC, *LexicalDC;
+//   if (Error Err = ImportDeclContext(D, DC, LexicalDC))
+//     return std::move(Err);
+
+//   auto *InImpl = cast<ObjCImplDecl>(LexicalDC);
+
+//   // Import the ivar (for an @synthesize).
+//   ObjCIvarDecl *Ivar = nullptr;
+//   if (Error Err = importInto(Ivar, D->getPropertyIvarDecl()))
+//     return std::move(Err);
+
+//   ObjCPropertyImplDecl *ToImpl
+//     = InImpl->FindPropertyImplDecl(Property->getIdentifier(),
+//                                    Property->getQueryKind());
+//   if (!ToImpl) {
+
+//     Error Err = Error::success();
+//     auto ToBeginLoc = importChecked(Err, D->getBeginLoc());
+//     auto ToLocation = importChecked(Err, D->getLocation());
+//     auto ToPropertyIvarDeclLoc =
+//         importChecked(Err, D->getPropertyIvarDeclLoc());
+//     if (Err)
+//       return std::move(Err);
+
+//     if (GetImportedOrCreateDecl(ToImpl, D, Importer.getToContext(), DC,
+//                                 ToBeginLoc,
+//                                 ToLocation, Property,
+//                                 D->getPropertyImplementation(), Ivar,
+//                                 ToPropertyIvarDeclLoc))
+//       return ToImpl;
+
+//     ToImpl->setLexicalDeclContext(LexicalDC);
+//     LexicalDC->addDeclInternal(ToImpl);
+//   } else {
+//     // Check that we have the same kind of property implementation (@synthesize
+//     // vs. @dynamic).
+//     if (D->getPropertyImplementation() != ToImpl->getPropertyImplementation()) {
+//       Importer.ToDiag(ToImpl->getLocation(),
+//                       diag::warn_odr_objc_property_impl_kind_inconsistent)
+//         << Property->getDeclName()
+//         << (ToImpl->getPropertyImplementation()
+//                                               == ObjCPropertyImplDecl::Dynamic);
+//       Importer.FromDiag(D->getLocation(),
+//                         diag::note_odr_objc_property_impl_kind)
+//         << D->getPropertyDecl()->getDeclName()
+//         << (D->getPropertyImplementation() == ObjCPropertyImplDecl::Dynamic);
+
+//       return make_error<ImportError>(ImportError::NameConflict);
+//     }
+
+//     // For @synthesize, check that we have the same
+//     if (D->getPropertyImplementation() == ObjCPropertyImplDecl::Synthesize &&
+//         Ivar != ToImpl->getPropertyIvarDecl()) {
+//       Importer.ToDiag(ToImpl->getPropertyIvarDeclLoc(),
+//                       diag::warn_odr_objc_synthesize_ivar_inconsistent)
+//         << Property->getDeclName()
+//         << ToImpl->getPropertyIvarDecl()->getDeclName()
+//         << Ivar->getDeclName();
+//       Importer.FromDiag(D->getPropertyIvarDeclLoc(),
+//                         diag::note_odr_objc_synthesize_ivar_here)
+//         << D->getPropertyIvarDecl()->getDeclName();
+
+//       return make_error<ImportError>(ImportError::NameConflict);
+//     }
+
+//     // Merge the existing implementation with the new implementation.
+//     Importer.MapImported(D, ToImpl);
+//   }
+
+//   return ToImpl;
+// }
 
 ExpectedDecl
 ASTNodeImporter::VisitTemplateTypeParmDecl(TemplateTypeParmDecl *D) {
@@ -8270,7 +8270,7 @@ Expected<DeclContext *> ASTImporter::ImportContext(DeclContext *FromDC) {
     } else {
       CompleteDecl(ToEnum);
     }
-  } else if (auto *ToClass = dyn_cast<ObjCInterfaceDecl>(ToDC)) {
+  } /*else if (auto *ToClass = dyn_cast<ObjCInterfaceDecl>(ToDC)) {
     auto *FromClass = cast<ObjCInterfaceDecl>(FromDC);
     if (ToClass->getDefinition()) {
       // Do nothing.
@@ -8292,7 +8292,7 @@ Expected<DeclContext *> ASTImporter::ImportContext(DeclContext *FromDC) {
     } else {
       CompleteDecl(ToProto);
     }
-  }
+  }*/
 
   return ToDC;
 }
@@ -8796,21 +8796,21 @@ Error ASTImporter::ImportDefinition(Decl *From) {
     }
   }
 
-  if (auto *ToIFace = dyn_cast<ObjCInterfaceDecl>(To)) {
-    if (!ToIFace->getDefinition()) {
-      return Importer.ImportDefinition(
-          cast<ObjCInterfaceDecl>(FromDC), ToIFace,
-          ASTNodeImporter::IDK_Everything);
-    }
-  }
+  // if (auto *ToIFace = dyn_cast<ObjCInterfaceDecl>(To)) {
+  //   if (!ToIFace->getDefinition()) {
+  //     return Importer.ImportDefinition(
+  //         cast<ObjCInterfaceDecl>(FromDC), ToIFace,
+  //         ASTNodeImporter::IDK_Everything);
+  //   }
+  // }
 
-  if (auto *ToProto = dyn_cast<ObjCProtocolDecl>(To)) {
-    if (!ToProto->getDefinition()) {
-      return Importer.ImportDefinition(
-          cast<ObjCProtocolDecl>(FromDC), ToProto,
-          ASTNodeImporter::IDK_Everything);
-    }
-  }
+  // if (auto *ToProto = dyn_cast<ObjCProtocolDecl>(To)) {
+  //   if (!ToProto->getDefinition()) {
+  //     return Importer.ImportDefinition(
+  //         cast<ObjCProtocolDecl>(FromDC), ToProto,
+  //         ASTNodeImporter::IDK_Everything);
+  //   }
+  // }
 
   return Importer.ImportDeclContext(FromDC, true);
 }
@@ -8932,15 +8932,16 @@ DiagnosticBuilder ASTImporter::FromDiag(SourceLocation Loc, unsigned DiagID) {
 }
 
 void ASTImporter::CompleteDecl (Decl *D) {
-  if (auto *ID = dyn_cast<ObjCInterfaceDecl>(D)) {
-    if (!ID->getDefinition())
-      ID->startDefinition();
-  }
-  else if (auto *PD = dyn_cast<ObjCProtocolDecl>(D)) {
-    if (!PD->getDefinition())
-      PD->startDefinition();
-  }
-  else if (auto *TD = dyn_cast<TagDecl>(D)) {
+  // if (auto *ID = dyn_cast<ObjCInterfaceDecl>(D)) {
+  //   if (!ID->getDefinition())
+  //     ID->startDefinition();
+  // }
+  // else if (auto *PD = dyn_cast<ObjCProtocolDecl>(D)) {
+  //   if (!PD->getDefinition())
+  //     PD->startDefinition();
+  // }
+  // else 
+  if (auto *TD = dyn_cast<TagDecl>(D)) {
     if (!TD->getDefinition() && !TD->isBeingDefined()) {
       TD->startDefinition();
       TD->setCompleteDefinition(true);

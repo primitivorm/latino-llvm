@@ -99,10 +99,10 @@ public:
         Visit(Comment, Comment);
 
       // Decls within functions are visited by the body.
-      if (!isa<FunctionDecl>(*D) && !isa<ObjCMethodDecl>(*D)) {
-        if (const auto *DC = dyn_cast<DeclContext>(D))
-          dumpDeclContext(DC);
-      }
+      // if (!isa<FunctionDecl>(*D) && !isa<ObjCMethodDecl>(*D)) {
+      //   if (const auto *DC = dyn_cast<DeclContext>(D))
+      //     dumpDeclContext(DC);
+      // }
     });
   }
 
@@ -361,9 +361,9 @@ public:
     for (const auto &Arg : *T)
       Visit(Arg);
   }
-  void VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
-    Visit(T->getPointeeType());
-  }
+  // void VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
+  //   Visit(T->getPointeeType());
+  // }
   void VisitAtomicType(const AtomicType *T) { Visit(T->getValueType()); }
   void VisitPipeType(const PipeType *T) { Visit(T->getElementType()); }
   void VisitAdjustedType(const AdjustedType *T) { Visit(T->getOriginalType()); }
@@ -584,29 +584,29 @@ public:
       Visit(D->getFriendDecl());
   }
 
-  void VisitObjCMethodDecl(const ObjCMethodDecl *D) {
-    if (D->isThisDeclarationADefinition())
-      dumpDeclContext(D);
-    else
-      for (const ParmVarDecl *Parameter : D->parameters())
-        Visit(Parameter);
+  // void VisitObjCMethodDecl(const ObjCMethodDecl *D) {
+  //   if (D->isThisDeclarationADefinition())
+  //     dumpDeclContext(D);
+  //   else
+  //     for (const ParmVarDecl *Parameter : D->parameters())
+  //       Visit(Parameter);
 
-    if (D->hasBody())
-      Visit(D->getBody());
-  }
+  //   if (D->hasBody())
+  //     Visit(D->getBody());
+  // }
 
-  void VisitObjCCategoryDecl(const ObjCCategoryDecl *D) {
-    dumpObjCTypeParamList(D->getTypeParamList());
-  }
+  // void VisitObjCCategoryDecl(const ObjCCategoryDecl *D) {
+  //   dumpObjCTypeParamList(D->getTypeParamList());
+  // }
 
-  void VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D) {
-    dumpObjCTypeParamList(D->getTypeParamListAsWritten());
-  }
+  // void VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D) {
+  //   dumpObjCTypeParamList(D->getTypeParamListAsWritten());
+  // }
 
-  void VisitObjCImplementationDecl(const ObjCImplementationDecl *D) {
-    for (const auto &I : D->inits())
-      Visit(I);
-  }
+  // void VisitObjCImplementationDecl(const ObjCImplementationDecl *D) {
+  //   for (const auto &I : D->inits())
+  //     Visit(I);
+  // }
 
   void VisitBlockDecl(const BlockDecl *D) {
     for (const auto &I : D->parameters())

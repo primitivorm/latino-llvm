@@ -16,7 +16,7 @@
 #include "CGCXXABI.h"
 #include "CGCall.h"
 #include "CGDebugInfo.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGOpenCLRuntime.h"
 #include "CGOpenMPRuntime.h"
 #include "CGOpenMPRuntimeNVPTX.h"
@@ -28,7 +28,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Mangle.h"
 #include "latino/AST/RecordLayout.h"
@@ -133,8 +133,8 @@ CodeGenModule::CodeGenModule(ASTContext &C, const HeaderSearchOptions &HSO,
 
   RuntimeCC = getTargetCodeGenInfo().getABIInfo().getRuntimeCC();
 
-  if (LangOpts.ObjC)
-    createObjCRuntime();
+  // if (LangOpts.ObjC)
+  //   createObjCRuntime();
   if (LangOpts.OpenCL)
     createOpenCLRuntime();
   if (LangOpts.OpenMP)
@@ -406,9 +406,9 @@ void CodeGenModule::Release() {
   EmitCXXGlobalCleanUpFunc();
   registerGlobalDtorsWithAtExit();
   EmitCXXThreadLocalInitFunc();
-  if (ObjCRuntime)
-    if (llvm::Function *ObjCInitFunction = ObjCRuntime->ModuleInitFunction())
-      AddGlobalCtor(ObjCInitFunction);
+  // if (ObjCRuntime)
+  //   if (llvm::Function *ObjCInitFunction = ObjCRuntime->ModuleInitFunction())
+  //     AddGlobalCtor(ObjCInitFunction);
   if (Context.getLangOpts().CUDA && !Context.getLangOpts().CUDAIsDevice &&
       CUDARuntime) {
     if (llvm::Function *CudaCtorFunction =
@@ -5062,13 +5062,13 @@ CodeGenModule::GetAddrOfConstantStringFromLiteral(const StringLiteral *S,
 
 /// GetAddrOfConstantStringFromObjCEncode - Return a pointer to a constant
 /// array for the given ObjCEncodeExpr node.
-ConstantAddress
-CodeGenModule::GetAddrOfConstantStringFromObjCEncode(const ObjCEncodeExpr *E) {
-  std::string Str;
-  getContext().getObjCEncodingForType(E->getEncodedType(), Str);
+// ConstantAddress
+// CodeGenModule::GetAddrOfConstantStringFromObjCEncode(const ObjCEncodeExpr *E) {
+//   std::string Str;
+//   getContext().getObjCEncodingForType(E->getEncodedType(), Str);
 
-  return GetAddrOfConstantCString(Str);
-}
+//   return GetAddrOfConstantCString(Str);
+// }
 
 /// GetAddrOfConstantCString - Returns a pointer to a character array containing
 /// the literal and a terminating '\0' character.
@@ -5207,92 +5207,92 @@ ConstantAddress CodeGenModule::GetAddrOfGlobalTemporary(
 
 /// EmitObjCPropertyImplementations - Emit information for synthesized
 /// properties for an implementation.
-void CodeGenModule::EmitObjCPropertyImplementations(const
-                                                    ObjCImplementationDecl *D) {
-  for (const auto *PID : D->property_impls()) {
-    // Dynamic is just for type-checking.
-    if (PID->getPropertyImplementation() == ObjCPropertyImplDecl::Synthesize) {
-      ObjCPropertyDecl *PD = PID->getPropertyDecl();
+// void CodeGenModule::EmitObjCPropertyImplementations(const
+//                                                     ObjCImplementationDecl *D) {
+//   for (const auto *PID : D->property_impls()) {
+//     // Dynamic is just for type-checking.
+//     if (PID->getPropertyImplementation() == ObjCPropertyImplDecl::Synthesize) {
+//       ObjCPropertyDecl *PD = PID->getPropertyDecl();
 
-      // Determine which methods need to be implemented, some may have
-      // been overridden. Note that ::isPropertyAccessor is not the method
-      // we want, that just indicates if the decl came from a
-      // property. What we want to know is if the method is defined in
-      // this implementation.
-      auto *Getter = PID->getGetterMethodDecl();
-      if (!Getter || Getter->isSynthesizedAccessorStub())
-        CodeGenFunction(*this).GenerateObjCGetter(
-            const_cast<ObjCImplementationDecl *>(D), PID);
-      auto *Setter = PID->getSetterMethodDecl();
-      if (!PD->isReadOnly() && (!Setter || Setter->isSynthesizedAccessorStub()))
-        CodeGenFunction(*this).GenerateObjCSetter(
-                                 const_cast<ObjCImplementationDecl *>(D), PID);
-    }
-  }
-}
+//       // Determine which methods need to be implemented, some may have
+//       // been overridden. Note that ::isPropertyAccessor is not the method
+//       // we want, that just indicates if the decl came from a
+//       // property. What we want to know is if the method is defined in
+//       // this implementation.
+//       auto *Getter = PID->getGetterMethodDecl();
+//       if (!Getter || Getter->isSynthesizedAccessorStub())
+//         CodeGenFunction(*this).GenerateObjCGetter(
+//             const_cast<ObjCImplementationDecl *>(D), PID);
+//       auto *Setter = PID->getSetterMethodDecl();
+//       if (!PD->isReadOnly() && (!Setter || Setter->isSynthesizedAccessorStub()))
+//         CodeGenFunction(*this).GenerateObjCSetter(
+//                                  const_cast<ObjCImplementationDecl *>(D), PID);
+//     }
+//   }
+// }
 
-static bool needsDestructMethod(ObjCImplementationDecl *impl) {
-  const ObjCInterfaceDecl *iface = impl->getClassInterface();
-  for (const ObjCIvarDecl *ivar = iface->all_declared_ivar_begin();
-       ivar; ivar = ivar->getNextIvar())
-    if (ivar->getType().isDestructedType())
-      return true;
+// static bool needsDestructMethod(ObjCImplementationDecl *impl) {
+//   const ObjCInterfaceDecl *iface = impl->getClassInterface();
+//   for (const ObjCIvarDecl *ivar = iface->all_declared_ivar_begin();
+//        ivar; ivar = ivar->getNextIvar())
+//     if (ivar->getType().isDestructedType())
+//       return true;
 
-  return false;
-}
+//   return false;
+// }
 
-static bool AllTrivialInitializers(CodeGenModule &CGM,
-                                   ObjCImplementationDecl *D) {
-  CodeGenFunction CGF(CGM);
-  for (ObjCImplementationDecl::init_iterator B = D->init_begin(),
-       E = D->init_end(); B != E; ++B) {
-    CXXCtorInitializer *CtorInitExp = *B;
-    Expr *Init = CtorInitExp->getInit();
-    if (!CGF.isTrivialInitializer(Init))
-      return false;
-  }
-  return true;
-}
+// static bool AllTrivialInitializers(CodeGenModule &CGM,
+//                                    ObjCImplementationDecl *D) {
+//   CodeGenFunction CGF(CGM);
+//   for (ObjCImplementationDecl::init_iterator B = D->init_begin(),
+//        E = D->init_end(); B != E; ++B) {
+//     CXXCtorInitializer *CtorInitExp = *B;
+//     Expr *Init = CtorInitExp->getInit();
+//     if (!CGF.isTrivialInitializer(Init))
+//       return false;
+//   }
+//   return true;
+// }
 
 /// EmitObjCIvarInitializations - Emit information for ivar initialization
 /// for an implementation.
-void CodeGenModule::EmitObjCIvarInitializations(ObjCImplementationDecl *D) {
-  // We might need a .cxx_destruct even if we don't have any ivar initializers.
-  if (needsDestructMethod(D)) {
-    IdentifierInfo *II = &getContext().Idents.get(".cxx_destruct");
-    Selector cxxSelector = getContext().Selectors.getSelector(0, &II);
-    ObjCMethodDecl *DTORMethod = ObjCMethodDecl::Create(
-        getContext(), D->getLocation(), D->getLocation(), cxxSelector,
-        getContext().VoidTy, nullptr, D,
-        /*isInstance=*/true, /*isVariadic=*/false,
-        /*isPropertyAccessor=*/true, /*isSynthesizedAccessorStub=*/false,
-        /*isImplicitlyDeclared=*/true,
-        /*isDefined=*/false, ObjCMethodDecl::Required);
-    D->addInstanceMethod(DTORMethod);
-    CodeGenFunction(*this).GenerateObjCCtorDtorMethod(D, DTORMethod, false);
-    D->setHasDestructors(true);
-  }
+// void CodeGenModule::EmitObjCIvarInitializations(ObjCImplementationDecl *D) {
+//   // We might need a .cxx_destruct even if we don't have any ivar initializers.
+//   if (needsDestructMethod(D)) {
+//     IdentifierInfo *II = &getContext().Idents.get(".cxx_destruct");
+//     Selector cxxSelector = getContext().Selectors.getSelector(0, &II);
+//     ObjCMethodDecl *DTORMethod = ObjCMethodDecl::Create(
+//         getContext(), D->getLocation(), D->getLocation(), cxxSelector,
+//         getContext().VoidTy, nullptr, D,
+//         /*isInstance=*/true, /*isVariadic=*/false,
+//         /*isPropertyAccessor=*/true, /*isSynthesizedAccessorStub=*/false,
+//         /*isImplicitlyDeclared=*/true,
+//         /*isDefined=*/false, ObjCMethodDecl::Required);
+//     D->addInstanceMethod(DTORMethod);
+//     CodeGenFunction(*this).GenerateObjCCtorDtorMethod(D, DTORMethod, false);
+//     D->setHasDestructors(true);
+//   }
 
-  // If the implementation doesn't have any ivar initializers, we don't need
-  // a .cxx_construct.
-  if (D->getNumIvarInitializers() == 0 ||
-      AllTrivialInitializers(*this, D))
-    return;
+//   // If the implementation doesn't have any ivar initializers, we don't need
+//   // a .cxx_construct.
+//   if (D->getNumIvarInitializers() == 0 ||
+//       AllTrivialInitializers(*this, D))
+//     return;
 
-  IdentifierInfo *II = &getContext().Idents.get(".cxx_construct");
-  Selector cxxSelector = getContext().Selectors.getSelector(0, &II);
-  // The constructor returns 'self'.
-  ObjCMethodDecl *CTORMethod = ObjCMethodDecl::Create(
-      getContext(), D->getLocation(), D->getLocation(), cxxSelector,
-      getContext().getObjCIdType(), nullptr, D, /*isInstance=*/true,
-      /*isVariadic=*/false,
-      /*isPropertyAccessor=*/true, /*isSynthesizedAccessorStub=*/false,
-      /*isImplicitlyDeclared=*/true,
-      /*isDefined=*/false, ObjCMethodDecl::Required);
-  D->addInstanceMethod(CTORMethod);
-  CodeGenFunction(*this).GenerateObjCCtorDtorMethod(D, CTORMethod, true);
-  D->setHasNonZeroConstructors(true);
-}
+//   IdentifierInfo *II = &getContext().Idents.get(".cxx_construct");
+//   Selector cxxSelector = getContext().Selectors.getSelector(0, &II);
+//   // The constructor returns 'self'.
+//   ObjCMethodDecl *CTORMethod = ObjCMethodDecl::Create(
+//       getContext(), D->getLocation(), D->getLocation(), cxxSelector,
+//       getContext().getObjCIdType(), nullptr, D, /*isInstance=*/true,
+//       /*isVariadic=*/false,
+//       /*isPropertyAccessor=*/true, /*isSynthesizedAccessorStub=*/false,
+//       /*isImplicitlyDeclared=*/true,
+//       /*isDefined=*/false, ObjCMethodDecl::Required);
+//   D->addInstanceMethod(CTORMethod);
+//   CodeGenFunction(*this).GenerateObjCCtorDtorMethod(D, CTORMethod, true);
+//   D->setHasNonZeroConstructors(true);
+// }
 
 // EmitLinkageSpec - Emit all declarations in a linkage spec.
 void CodeGenModule::EmitLinkageSpec(const LinkageSpecDecl *LSD) {
@@ -5421,45 +5421,45 @@ void CodeGenModule::EmitTopLevelDecl(Decl *D) {
   // Objective-C Decls
 
   // Forward declarations, no (immediate) code generation.
-  case Decl::ObjCInterface:
-  case Decl::ObjCCategory:
-    break;
+  // case Decl::ObjCInterface:
+  // case Decl::ObjCCategory:
+  //   break;
 
-  case Decl::ObjCProtocol: {
-    auto *Proto = cast<ObjCProtocolDecl>(D);
-    if (Proto->isThisDeclarationADefinition())
-      ObjCRuntime->GenerateProtocol(Proto);
-    break;
-  }
+  // case Decl::ObjCProtocol: {
+  //   auto *Proto = cast<ObjCProtocolDecl>(D);
+  //   if (Proto->isThisDeclarationADefinition())
+  //     ObjCRuntime->GenerateProtocol(Proto);
+  //   break;
+  // }
 
-  case Decl::ObjCCategoryImpl:
-    // Categories have properties but don't support synthesize so we
-    // can ignore them here.
-    ObjCRuntime->GenerateCategory(cast<ObjCCategoryImplDecl>(D));
-    break;
+  // case Decl::ObjCCategoryImpl:
+  //   // Categories have properties but don't support synthesize so we
+  //   // can ignore them here.
+  //   ObjCRuntime->GenerateCategory(cast<ObjCCategoryImplDecl>(D));
+  //   break;
 
-  case Decl::ObjCImplementation: {
-    auto *OMD = cast<ObjCImplementationDecl>(D);
-    EmitObjCPropertyImplementations(OMD);
-    EmitObjCIvarInitializations(OMD);
-    ObjCRuntime->GenerateClass(OMD);
-    // Emit global variable debug information.
-    if (CGDebugInfo *DI = getModuleDebugInfo())
-      if (getCodeGenOpts().hasReducedDebugInfo())
-        DI->getOrCreateInterfaceType(getContext().getObjCInterfaceType(
-            OMD->getClassInterface()), OMD->getLocation());
-    break;
-  }
-  case Decl::ObjCMethod: {
-    auto *OMD = cast<ObjCMethodDecl>(D);
-    // If this is not a prototype, emit the body.
-    if (OMD->getBody())
-      CodeGenFunction(*this).GenerateObjCMethod(OMD);
-    break;
-  }
-  case Decl::ObjCCompatibleAlias:
-    ObjCRuntime->RegisterAlias(cast<ObjCCompatibleAliasDecl>(D));
-    break;
+  // case Decl::ObjCImplementation: {
+  //   auto *OMD = cast<ObjCImplementationDecl>(D);
+  //   EmitObjCPropertyImplementations(OMD);
+  //   EmitObjCIvarInitializations(OMD);
+  //   ObjCRuntime->GenerateClass(OMD);
+  //   // Emit global variable debug information.
+  //   if (CGDebugInfo *DI = getModuleDebugInfo())
+  //     if (getCodeGenOpts().hasReducedDebugInfo())
+  //       DI->getOrCreateInterfaceType(getContext().getObjCInterfaceType(
+  //           OMD->getClassInterface()), OMD->getLocation());
+  //   break;
+  // }
+  // case Decl::ObjCMethod: {
+  //   auto *OMD = cast<ObjCMethodDecl>(D);
+  //   // If this is not a prototype, emit the body.
+  //   if (OMD->getBody())
+  //     CodeGenFunction(*this).GenerateObjCMethod(OMD);
+  //   break;
+  // }
+  // case Decl::ObjCCompatibleAlias:
+  //   ObjCRuntime->RegisterAlias(cast<ObjCCompatibleAliasDecl>(D));
+  //   break;
 
   case Decl::PragmaComment: {
     const auto *PCD = cast<PragmaCommentDecl>(D);
@@ -5585,7 +5585,7 @@ void CodeGenModule::AddDeferredUnusedCoverageMapping(Decl *D) {
   case Decl::CXXConversion:
   case Decl::CXXMethod:
   case Decl::Function:
-  case Decl::ObjCMethod:
+  // case Decl::ObjCMethod:
   case Decl::CXXConstructor:
   case Decl::CXXDestructor: {
     if (!cast<FunctionDecl>(D)->doesThisDeclarationHaveABody())
@@ -5631,13 +5631,13 @@ void CodeGenModule::EmitDeferredUnusedCoverageMappings() {
     case Decl::CXXConversion:
     case Decl::CXXMethod:
     case Decl::Function:
-    case Decl::ObjCMethod: {
-      CodeGenPGO PGO(*this);
-      GlobalDecl GD(cast<FunctionDecl>(D));
-      PGO.emitEmptyCounterMapping(D, getMangledName(GD),
-                                  getFunctionLinkage(GD));
-      break;
-    }
+    // case Decl::ObjCMethod: {
+    //   CodeGenPGO PGO(*this);
+    //   GlobalDecl GD(cast<FunctionDecl>(D));
+    //   PGO.emitEmptyCounterMapping(D, getMangledName(GD),
+    //                               getFunctionLinkage(GD));
+    //   break;
+    // }
     case Decl::CXXConstructor: {
       CodeGenPGO PGO(*this);
       GlobalDecl GD(cast<CXXConstructorDecl>(D), Ctor_Base);
@@ -5815,9 +5815,9 @@ llvm::Constant *CodeGenModule::GetAddrOfRTTIDescriptor(QualType Ty,
        getTriple().isNVPTX()))
     return llvm::Constant::getNullValue(Int8PtrTy);
 
-  if (ForEH && Ty->isObjCObjectPointerType() &&
-      LangOpts.ObjCRuntime.isGNUFamily())
-    return ObjCRuntime->GetEHType(Ty);
+  // if (ForEH && Ty->isObjCObjectPointerType() &&
+  //     LangOpts.ObjCRuntime.isGNUFamily())
+  //   return ObjCRuntime->GetEHType(Ty);
 
   return getCXXABI().getAddrOfRTTIDescriptor(Ty);
 }

@@ -9,7 +9,7 @@
 #include "IndexingContext.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/SourceManager.h"
@@ -63,9 +63,9 @@ bool IndexingContext::handleDecl(const Decl *D, SourceLocation Loc,
     DC = D->getDeclContext();
 
   const Decl *OrigD = D;
-  if (isa<ObjCPropertyImplDecl>(D)) {
-    D = cast<ObjCPropertyImplDecl>(D)->getPropertyDecl();
-  }
+  // if (isa<ObjCPropertyImplDecl>(D)) {
+  //   D = cast<ObjCPropertyImplDecl>(D)->getPropertyDecl();
+  // }
   return handleDeclOccurrence(D, Loc, /*IsRef=*/false, cast<Decl>(DC),
                               Roles, Relations,
                               nullptr, OrigD, DC);
@@ -184,14 +184,14 @@ bool IndexingContext::isTemplateImplicitInstantiation(const Decl *D) {
 }
 
 bool IndexingContext::shouldIgnoreIfImplicit(const Decl *D) {
-  if (isa<ObjCInterfaceDecl>(D))
-    return false;
-  if (isa<ObjCCategoryDecl>(D))
-    return false;
-  if (isa<ObjCIvarDecl>(D))
-    return false;
-  if (isa<ObjCMethodDecl>(D))
-    return false;
+  // if (isa<ObjCInterfaceDecl>(D))
+  //   return false;
+  // if (isa<ObjCCategoryDecl>(D))
+  //   return false;
+  // if (isa<ObjCIvarDecl>(D))
+  //   return false;
+  // if (isa<ObjCMethodDecl>(D))
+  //   return false;
   if (isa<ImportDecl>(D))
     return false;
   return true;
@@ -256,15 +256,15 @@ static bool isDeclADefinition(const Decl *D, const DeclContext *ContainerDC, AST
   if (auto TD = dyn_cast<TagDecl>(D))
     return TD->isThisDeclarationADefinition();
 
-  if (auto MD = dyn_cast<ObjCMethodDecl>(D))
-    return MD->isThisDeclarationADefinition() || isa<ObjCImplDecl>(ContainerDC);
+  // if (auto MD = dyn_cast<ObjCMethodDecl>(D))
+  //   return MD->isThisDeclarationADefinition() || isa<ObjCImplDecl>(ContainerDC);
 
   if (isa<TypedefNameDecl>(D) ||
       isa<EnumConstantDecl>(D) ||
       isa<FieldDecl>(D) ||
       isa<MSPropertyDecl>(D) ||
-      isa<ObjCImplDecl>(D) ||
-      isa<ObjCPropertyImplDecl>(D))
+      /*isa<ObjCImplDecl>(D) ||
+      isa<ObjCPropertyImplDecl>(D)*/)
     return true;
 
   return false;
@@ -273,7 +273,7 @@ static bool isDeclADefinition(const Decl *D, const DeclContext *ContainerDC, AST
 /// Whether the given NamedDecl should be skipped because it has no name.
 static bool shouldSkipNamelessDecl(const NamedDecl *ND) {
   return (ND->getDeclName().isEmpty() && !isa<TagDecl>(ND) &&
-          !isa<ObjCCategoryDecl>(ND)) || isa<CXXDeductionGuideDecl>(ND);
+          /*!isa<ObjCCategoryDecl>(ND)) ||*/ isa<CXXDeductionGuideDecl>(ND);
 }
 
 static const Decl *adjustParent(const Decl *Parent) {
@@ -364,8 +364,8 @@ bool IndexingContext::handleDeclOccurrence(const Decl *D, SourceLocation Loc,
                                            const Expr *OrigE,
                                            const Decl *OrigD,
                                            const DeclContext *ContainerDC) {
-  if (D->isImplicit() && !isa<ObjCMethodDecl>(D))
-    return true;
+  // if (D->isImplicit() && !isa<ObjCMethodDecl>(D))
+  //   return true;
   if (!isa<NamedDecl>(D) || shouldSkipNamelessDecl(cast<NamedDecl>(D)))
     return true;
 

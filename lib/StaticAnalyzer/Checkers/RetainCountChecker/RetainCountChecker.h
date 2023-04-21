@@ -18,9 +18,9 @@
 #include "RetainCountDiagnostics.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ParentMap.h"
-#include "latino/Analysis/DomainSpecific/CocoaConventions.h"
+// #include "latino/Analysis/DomainSpecific/CocoaConventions.h"
 #include "latino/Analysis/PathDiagnostic.h"
 #include "latino/Analysis/RetainSummaryManager.h"
 #include "latino/Basic/LangOptions.h"
@@ -382,9 +382,9 @@ const RefVal *getRefBinding(ProgramStateRef State, SymbolRef Sym);
 /// Returns true if this stack frame is for an Objective-C method that is a
 /// property getter or setter whose body has been synthesized by the analyzer.
 inline bool isSynthesizedAccessor(const StackFrameContext *SFC) {
-  auto Method = dyn_cast_or_null<ObjCMethodDecl>(SFC->getDecl());
-  if (!Method || !Method->isPropertyAccessor())
-    return false;
+  // auto Method = dyn_cast_or_null<ObjCMethodDecl>(SFC->getDecl());
+  // if (!Method || !Method->isPropertyAccessor())
+  //   return false;
 
   return SFC->getAnalysisDeclContext()->isBodyAutosynthesized();
 }

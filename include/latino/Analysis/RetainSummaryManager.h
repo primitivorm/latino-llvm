@@ -20,7 +20,7 @@
 #include "llvm/ADT/ImmutableMap.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ParentMap.h"
 #include "latino/Analysis/AnyCall.h"
 #include "latino/Analysis/SelectorExtras.h"
@@ -204,22 +204,22 @@ public:
 };
 
 /// A key identifying a summary.
-class ObjCSummaryKey {
-  IdentifierInfo* II;
-  Selector S;
-public:
-  ObjCSummaryKey(IdentifierInfo* ii, Selector s)
-    : II(ii), S(s) {}
+// class ObjCSummaryKey {
+//   IdentifierInfo* II;
+//   Selector S;
+// public:
+//   ObjCSummaryKey(IdentifierInfo* ii, Selector s)
+//     : II(ii), S(s) {}
 
-  ObjCSummaryKey(const ObjCInterfaceDecl *d, Selector s)
-    : II(d ? d->getIdentifier() : nullptr), S(s) {}
+//   ObjCSummaryKey(const ObjCInterfaceDecl *d, Selector s)
+//     : II(d ? d->getIdentifier() : nullptr), S(s) {}
 
-  ObjCSummaryKey(Selector s)
-    : II(nullptr), S(s) {}
+//   ObjCSummaryKey(Selector s)
+//     : II(nullptr), S(s) {}
 
-  IdentifierInfo *getIdentifier() const { return II; }
-  Selector getSelector() const { return S; }
-};
+//   IdentifierInfo *getIdentifier() const { return II; }
+//   Selector getSelector() const { return S; }
+// };
 
 } // end namespace ento
 } // end namespace latino
@@ -386,63 +386,63 @@ private:
   friend class RetainSummaryManager;
 };
 
-class ObjCSummaryCache {
-  typedef llvm::DenseMap<ObjCSummaryKey, const RetainSummary *> MapTy;
-  MapTy M;
-public:
-  ObjCSummaryCache() {}
+// class ObjCSummaryCache {
+//   typedef llvm::DenseMap<ObjCSummaryKey, const RetainSummary *> MapTy;
+//   MapTy M;
+// public:
+//   ObjCSummaryCache() {}
 
-  const RetainSummary * find(const ObjCInterfaceDecl *D, Selector S) {
-    // Do a lookup with the (D,S) pair.  If we find a match return
-    // the iterator.
-    ObjCSummaryKey K(D, S);
-    MapTy::iterator I = M.find(K);
+//   const RetainSummary * find(const ObjCInterfaceDecl *D, Selector S) {
+//     // Do a lookup with the (D,S) pair.  If we find a match return
+//     // the iterator.
+//     ObjCSummaryKey K(D, S);
+//     MapTy::iterator I = M.find(K);
 
-    if (I != M.end())
-      return I->second;
-    if (!D)
-      return nullptr;
+//     if (I != M.end())
+//       return I->second;
+//     if (!D)
+//       return nullptr;
 
-    // Walk the super chain.  If we find a hit with a parent, we'll end
-    // up returning that summary.  We actually allow that key (null,S), as
-    // we cache summaries for the null ObjCInterfaceDecl* to allow us to
-    // generate initial summaries without having to worry about NSObject
-    // being declared.
-    // FIXME: We may change this at some point.
-    for (ObjCInterfaceDecl *C=D->getSuperClass() ;; C=C->getSuperClass()) {
-      if ((I = M.find(ObjCSummaryKey(C, S))) != M.end())
-        break;
+//     // Walk the super chain.  If we find a hit with a parent, we'll end
+//     // up returning that summary.  We actually allow that key (null,S), as
+//     // we cache summaries for the null ObjCInterfaceDecl* to allow us to
+//     // generate initial summaries without having to worry about NSObject
+//     // being declared.
+//     // FIXME: We may change this at some point.
+//     for (ObjCInterfaceDecl *C=D->getSuperClass() ;; C=C->getSuperClass()) {
+//       if ((I = M.find(ObjCSummaryKey(C, S))) != M.end())
+//         break;
 
-      if (!C)
-        return nullptr;
-    }
+//       if (!C)
+//         return nullptr;
+//     }
 
-    // Cache the summary with original key to make the next lookup faster
-    // and return the iterator.
-    const RetainSummary *Summ = I->second;
-    M[K] = Summ;
-    return Summ;
-  }
+//     // Cache the summary with original key to make the next lookup faster
+//     // and return the iterator.
+//     const RetainSummary *Summ = I->second;
+//     M[K] = Summ;
+//     return Summ;
+//   }
 
-  const RetainSummary *find(IdentifierInfo* II, Selector S) {
-    // FIXME: Class method lookup.  Right now we don't have a good way
-    // of going between IdentifierInfo* and the class hierarchy.
-    MapTy::iterator I = M.find(ObjCSummaryKey(II, S));
+//   const RetainSummary *find(IdentifierInfo* II, Selector S) {
+//     // FIXME: Class method lookup.  Right now we don't have a good way
+//     // of going between IdentifierInfo* and the class hierarchy.
+//     MapTy::iterator I = M.find(ObjCSummaryKey(II, S));
 
-    if (I == M.end())
-      I = M.find(ObjCSummaryKey(S));
+//     if (I == M.end())
+//       I = M.find(ObjCSummaryKey(S));
 
-    return I == M.end() ? nullptr : I->second;
-  }
+//     return I == M.end() ? nullptr : I->second;
+//   }
 
-  const RetainSummary *& operator[](ObjCSummaryKey K) {
-    return M[K];
-  }
+//   const RetainSummary *& operator[](ObjCSummaryKey K) {
+//     return M[K];
+//   }
 
-  const RetainSummary *& operator[](Selector S) {
-    return M[ ObjCSummaryKey(S) ];
-  }
-};
+//   const RetainSummary *& operator[](Selector S) {
+//     return M[ ObjCSummaryKey(S) ];
+//   }
+// };
 
 class RetainSummaryTemplate;
 
@@ -668,29 +668,29 @@ private:
 
   /// getMethodSummary - This version of getMethodSummary is used to query
   ///  the summary for the current method being analyzed.
-  const RetainSummary *getMethodSummary(const ObjCMethodDecl *MD);
+  // const RetainSummary *getMethodSummary(const ObjCMethodDecl *MD);
 
   const RetainSummary *getFunctionSummary(const FunctionDecl *FD);
 
-  const RetainSummary *getMethodSummary(Selector S, const ObjCInterfaceDecl *ID,
-                                        const ObjCMethodDecl *MD,
-                                        QualType RetTy,
-                                        ObjCMethodSummariesTy &CachedSummaries);
+  // const RetainSummary *getMethodSummary(Selector S, const ObjCInterfaceDecl *ID,
+  //                                       const ObjCMethodDecl *MD,
+  //                                       QualType RetTy,
+  //                                       ObjCMethodSummariesTy &CachedSummaries);
 
-  const RetainSummary *
-  getInstanceMethodSummary(const ObjCMessageExpr *ME, QualType ReceiverType);
+  // const RetainSummary *
+  // getInstanceMethodSummary(const ObjCMessageExpr *ME, QualType ReceiverType);
 
-  const RetainSummary *getClassMethodSummary(const ObjCMessageExpr *ME);
+  // const RetainSummary *getClassMethodSummary(const ObjCMessageExpr *ME);
 
-  const RetainSummary *getStandardMethodSummary(const ObjCMethodDecl *MD,
-                                                Selector S, QualType RetTy);
+  // const RetainSummary *getStandardMethodSummary(const ObjCMethodDecl *MD,
+  //                                               Selector S, QualType RetTy);
 
   /// Determine if there is a special return effect for this function or method.
   Optional<RetEffect> getRetEffectFromAnnotations(QualType RetTy,
                                                   const Decl *D);
 
-  void updateSummaryFromAnnotations(const RetainSummary *&Summ,
-                                    const ObjCMethodDecl *MD);
+  // void updateSummaryFromAnnotations(const RetainSummary *&Summ,
+  //                                   const ObjCMethodDecl *MD);
 
   void updateSummaryFromAnnotations(const RetainSummary *&Summ,
                                     const FunctionDecl *FD);

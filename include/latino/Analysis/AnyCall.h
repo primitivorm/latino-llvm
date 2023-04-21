@@ -15,7 +15,7 @@
 
 #include "latino/AST/Decl.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 
 namespace latino {
 
@@ -29,7 +29,7 @@ public:
     Function,
 
     /// A call to an Objective-C method
-    ObjCMethod,
+    // ObjCMethod,
 
     /// A call to an Objective-C block
     Block,
@@ -75,8 +75,8 @@ public:
       D = nullptr;
   }
 
-  AnyCall(const ObjCMessageExpr *ME)
-      : E(ME), D(ME->getMethodDecl()), K(ObjCMethod) {}
+  // AnyCall(const ObjCMessageExpr *ME)
+  //     : E(ME), D(ME->getMethodDecl()), K(ObjCMethod) {}
 
   AnyCall(const CXXNewExpr *NE)
       : E(NE), D(NE->getOperatorNew()), K(Allocator) {}
@@ -94,7 +94,7 @@ public:
 
   AnyCall(const CXXConstructorDecl *D) : E(nullptr), D(D), K(Constructor) {}
 
-  AnyCall(const ObjCMethodDecl *D) : E(nullptr), D(D), K(ObjCMethod) {}
+  // AnyCall(const ObjCMethodDecl *D) : E(nullptr), D(D), K(ObjCMethod) {}
 
   AnyCall(const FunctionDecl *D) : E(nullptr), D(D) {
     if (isa<CXXConstructorDecl>(D)) {
@@ -133,9 +133,9 @@ public:
   static Optional<AnyCall> forDecl(const Decl *D) {
     if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
       return AnyCall(FD);
-    } else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+    } /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
       return AnyCall(MD);
-    }
+    }*/
     return None;
   }
 
@@ -146,9 +146,9 @@ public:
 
     if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
       return FD->parameters();
-    } else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+    } /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
       return MD->parameters();
-    } else if (const auto *BD = dyn_cast<BlockDecl>(D)) {
+    }*/ else if (const auto *BD = dyn_cast<BlockDecl>(D)) {
       return BD->parameters();
     } else {
       return None;
@@ -167,10 +167,10 @@ public:
       if (E)
         return cast<CallExpr>(E)->getCallReturnType(Ctx);
       return cast<FunctionDecl>(D)->getReturnType();
-    case ObjCMethod:
-      if (E)
-        return cast<ObjCMessageExpr>(E)->getCallReturnType(Ctx);
-      return cast<ObjCMethodDecl>(D)->getReturnType();
+    // case ObjCMethod:
+    //   if (E)
+    //     return cast<ObjCMessageExpr>(E)->getCallReturnType(Ctx);
+    //   return cast<ObjCMethodDecl>(D)->getReturnType();
     case Block:
       // FIXME: BlockDecl does not know its return type,
       // hence the asymmetry with the function and method cases above.

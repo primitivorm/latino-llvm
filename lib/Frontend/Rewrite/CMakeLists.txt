@@ -8,8 +8,8 @@ add_latino_library(latinoRewriteFrontend
   HTMLPrint.cpp
   InclusionRewriter.cpp
   RewriteMacros.cpp
-  RewriteModernObjC.cpp
-  RewriteObjC.cpp
+  # RewriteModernObjC.cpp
+  # RewriteObjC.cpp
   RewriteTest.cpp
 
   LINK_LIBS

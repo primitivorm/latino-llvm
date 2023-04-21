@@ -18,10 +18,10 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Type.h"
 #include "latino/Analysis/AnalysisDeclContext.h"
 #include "latino/Basic/LLVM.h"
@@ -534,8 +534,8 @@ public:
     // FIXME: We can possibly optimize this later to cache this value.
     QualType T = getValueType();
     ASTContext &ctx = getContext();
-    if (T->getAs<ObjCObjectType>())
-      return ctx.getObjCObjectPointerType(T);
+    // if (T->getAs<ObjCObjectType>())
+    //   return ctx.getObjCObjectPointerType(T);
     return ctx.getPointerType(getValueType());
   }
 
@@ -575,7 +575,7 @@ class FunctionCodeRegion : public CodeTextRegion {
 
   FunctionCodeRegion(const NamedDecl *fd, const CodeSpaceRegion* sreg)
       : CodeTextRegion(sreg, FunctionCodeRegionKind), FD(fd) {
-    assert(isa<ObjCMethodDecl>(fd) || isa<FunctionDecl>(fd));
+    assert(/*isa<ObjCMethodDecl>(fd) ||*/ isa<FunctionDecl>(fd));
   }
 
   static void ProfileRegion(llvm::FoldingSetNodeID& ID, const NamedDecl *FD,
@@ -588,8 +588,8 @@ public:
       return Ctx.getPointerType(D->getType());
     }
 
-    assert(isa<ObjCMethodDecl>(FD));
-    assert(false && "Getting the type of ObjCMethod is not supported yet");
+    // assert(isa<ObjCMethodDecl>(FD));
+    // assert(false && "Getting the type of ObjCMethod is not supported yet");
 
     // TODO: We might want to return a different type here (ex: id (*ty)(...))
     //       depending on how it is used.
@@ -1088,32 +1088,32 @@ public:
   }
 };
 
-class ObjCIvarRegion : public DeclRegion {
-  friend class MemRegionManager;
+// class ObjCIvarRegion : public DeclRegion {
+//   friend class MemRegionManager;
 
-  const ObjCIvarDecl *IVD;
+//   const ObjCIvarDecl *IVD;
 
-  ObjCIvarRegion(const ObjCIvarDecl *ivd, const SubRegion *sReg);
+//   ObjCIvarRegion(const ObjCIvarDecl *ivd, const SubRegion *sReg);
 
-  static void ProfileRegion(llvm::FoldingSetNodeID& ID, const ObjCIvarDecl *ivd,
-                            const MemRegion* superRegion);
+//   static void ProfileRegion(llvm::FoldingSetNodeID& ID, const ObjCIvarDecl *ivd,
+//                             const MemRegion* superRegion);
 
-public:
-  const ObjCIvarDecl *getDecl() const override;
+// public:
+//   const ObjCIvarDecl *getDecl() const override;
 
-  void Profile(llvm::FoldingSetNodeID& ID) const override;
+//   void Profile(llvm::FoldingSetNodeID& ID) const override;
 
-  QualType getValueType() const override;
+//   QualType getValueType() const override;
 
-  bool canPrintPrettyAsExpr() const override;
-  void printPrettyAsExpr(raw_ostream &os) const override;
+//   bool canPrintPrettyAsExpr() const override;
+//   void printPrettyAsExpr(raw_ostream &os) const override;
 
-  void dumpToStream(raw_ostream &os) const override;
+//   void dumpToStream(raw_ostream &os) const override;
 
-  static bool classof(const MemRegion* R) {
-    return R->getKind() == ObjCIvarRegionKind;
-  }
-};
+//   static bool classof(const MemRegion* R) {
+//     return R->getKind() == ObjCIvarRegionKind;
+//   }
+// };
 
 //===----------------------------------------------------------------------===//
 // Auxiliary data classes for use with MemRegions.
@@ -1427,8 +1427,8 @@ public:
   ///   a specified Objective-c instance variable.  'superRegion' corresponds
   ///   to the containing region (which typically represents the Objective-C
   ///   object).
-  const ObjCIvarRegion *getObjCIvarRegion(const ObjCIvarDecl *ivd,
-                                          const SubRegion* superRegion);
+  // const ObjCIvarRegion *getObjCIvarRegion(const ObjCIvarDecl *ivd,
+  //                                         const SubRegion* superRegion);
 
   const CXXTempObjectRegion *getCXXTempObjectRegion(Expr const *Ex,
                                                     LocationContext const *LC);

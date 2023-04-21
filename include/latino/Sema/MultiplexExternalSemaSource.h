@@ -128,7 +128,7 @@ public:
   /// This routine will only be invoked if the "externally completed" bit is
   /// set on the ObjCInterfaceDecl via the function
   /// \c ObjCInterfaceDecl::setExternallyCompleted().
-  void CompleteType(ObjCInterfaceDecl *Class) override;
+  // void CompleteType(ObjCInterfaceDecl *Class) override;
 
   /// Loads comment ranges.
   void ReadComments() override;

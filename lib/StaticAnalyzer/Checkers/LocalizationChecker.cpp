@@ -17,7 +17,7 @@
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Lex/Lexer.h"
@@ -94,9 +94,9 @@ public:
   // positives will be reported.
   DefaultBool IsAggressive;
 
-  void checkPreObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
-  void checkPostObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
-  void checkPostStmt(const ObjCStringLiteral *SL, CheckerContext &C) const;
+  // void checkPreObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
+  // void checkPostObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
+  // void checkPostStmt(const ObjCStringLiteral *SL, CheckerContext &C) const;
   void checkPreCall(const CallEvent &Call, CheckerContext &C) const;
   void checkPostCall(const CallEvent &Call, CheckerContext &C) const;
 };
@@ -796,89 +796,89 @@ int NonLocalizedStringChecker::getLocalizedArgumentForSelector(
 }
 
 /// Check if the string being passed in has NonLocalized state
-void NonLocalizedStringChecker::checkPreObjCMessage(const ObjCMethodCall &msg,
-                                                    CheckerContext &C) const {
-  initUIMethods(C.getASTContext());
+// void NonLocalizedStringChecker::checkPreObjCMessage(const ObjCMethodCall &msg,
+//                                                     CheckerContext &C) const {
+//   initUIMethods(C.getASTContext());
 
-  const ObjCInterfaceDecl *OD = msg.getReceiverInterface();
-  if (!OD)
-    return;
-  const IdentifierInfo *odInfo = OD->getIdentifier();
+//   const ObjCInterfaceDecl *OD = msg.getReceiverInterface();
+//   if (!OD)
+//     return;
+//   const IdentifierInfo *odInfo = OD->getIdentifier();
 
-  Selector S = msg.getSelector();
+//   Selector S = msg.getSelector();
 
-  std::string SelectorString = S.getAsString();
-  StringRef SelectorName = SelectorString;
-  assert(!SelectorName.empty());
+//   std::string SelectorString = S.getAsString();
+//   StringRef SelectorName = SelectorString;
+//   assert(!SelectorName.empty());
 
-  if (odInfo->isStr("NSString")) {
-    // Handle the case where the receiver is an NSString
-    // These special NSString methods draw to the screen
+//   if (odInfo->isStr("NSString")) {
+//     // Handle the case where the receiver is an NSString
+//     // These special NSString methods draw to the screen
 
-    if (!(SelectorName.startswith("drawAtPoint") ||
-          SelectorName.startswith("drawInRect") ||
-          SelectorName.startswith("drawWithRect")))
-      return;
+//     if (!(SelectorName.startswith("drawAtPoint") ||
+//           SelectorName.startswith("drawInRect") ||
+//           SelectorName.startswith("drawWithRect")))
+//       return;
 
-    SVal svTitle = msg.getReceiverSVal();
+//     SVal svTitle = msg.getReceiverSVal();
 
-    bool isNonLocalized = hasNonLocalizedState(svTitle, C);
+//     bool isNonLocalized = hasNonLocalizedState(svTitle, C);
 
-    if (isNonLocalized) {
-      reportLocalizationError(svTitle, msg, C);
-    }
-  }
+//     if (isNonLocalized) {
+//       reportLocalizationError(svTitle, msg, C);
+//     }
+//   }
 
-  int argumentNumber = getLocalizedArgumentForSelector(odInfo, S);
-  // Go up each hierarchy of superclasses and their protocols
-  while (argumentNumber < 0 && OD->getSuperClass() != nullptr) {
-    for (const auto *P : OD->all_referenced_protocols()) {
-      argumentNumber = getLocalizedArgumentForSelector(P->getIdentifier(), S);
-      if (argumentNumber >= 0)
-        break;
-    }
-    if (argumentNumber < 0) {
-      OD = OD->getSuperClass();
-      argumentNumber = getLocalizedArgumentForSelector(OD->getIdentifier(), S);
-    }
-  }
+//   int argumentNumber = getLocalizedArgumentForSelector(odInfo, S);
+//   // Go up each hierarchy of superclasses and their protocols
+//   while (argumentNumber < 0 && OD->getSuperClass() != nullptr) {
+//     for (const auto *P : OD->all_referenced_protocols()) {
+//       argumentNumber = getLocalizedArgumentForSelector(P->getIdentifier(), S);
+//       if (argumentNumber >= 0)
+//         break;
+//     }
+//     if (argumentNumber < 0) {
+//       OD = OD->getSuperClass();
+//       argumentNumber = getLocalizedArgumentForSelector(OD->getIdentifier(), S);
+//     }
+//   }
 
-  if (argumentNumber < 0) { // There was no match in UIMethods
-    if (const Decl *D = msg.getDecl()) {
-      if (const ObjCMethodDecl *OMD = dyn_cast_or_null<ObjCMethodDecl>(D)) {
-        auto formals = OMD->parameters();
-        for (unsigned i = 0, ei = formals.size(); i != ei; ++i) {
-          if (isAnnotatedAsTakingLocalized(formals[i])) {
-            argumentNumber = i;
-            break;
-          }
-        }
-      }
-    }
-  }
+//   if (argumentNumber < 0) { // There was no match in UIMethods
+//     if (const Decl *D = msg.getDecl()) {
+//       if (const ObjCMethodDecl *OMD = dyn_cast_or_null<ObjCMethodDecl>(D)) {
+//         auto formals = OMD->parameters();
+//         for (unsigned i = 0, ei = formals.size(); i != ei; ++i) {
+//           if (isAnnotatedAsTakingLocalized(formals[i])) {
+//             argumentNumber = i;
+//             break;
+//           }
+//         }
+//       }
+//     }
+//   }
 
-  if (argumentNumber < 0) // Still no match
-    return;
+//   if (argumentNumber < 0) // Still no match
+//     return;
 
-  SVal svTitle = msg.getArgSVal(argumentNumber);
+//   SVal svTitle = msg.getArgSVal(argumentNumber);
 
-  if (const ObjCStringRegion *SR =
-          dyn_cast_or_null<ObjCStringRegion>(svTitle.getAsRegion())) {
-    StringRef stringValue =
-        SR->getObjCStringLiteral()->getString()->getString();
-    if ((stringValue.trim().size() == 0 && stringValue.size() > 0) ||
-        stringValue.empty())
-      return;
-    if (!IsAggressive && llvm::sys::unicode::columnWidthUTF8(stringValue) < 2)
-      return;
-  }
+//   if (const ObjCStringRegion *SR =
+//           dyn_cast_or_null<ObjCStringRegion>(svTitle.getAsRegion())) {
+//     StringRef stringValue =
+//         SR->getObjCStringLiteral()->getString()->getString();
+//     if ((stringValue.trim().size() == 0 && stringValue.size() > 0) ||
+//         stringValue.empty())
+//       return;
+//     if (!IsAggressive && llvm::sys::unicode::columnWidthUTF8(stringValue) < 2)
+//       return;
+//   }
 
-  bool isNonLocalized = hasNonLocalizedState(svTitle, C);
+//   bool isNonLocalized = hasNonLocalizedState(svTitle, C);
 
-  if (isNonLocalized) {
-    reportLocalizationError(svTitle, msg, C, argumentNumber + 1);
-  }
-}
+//   if (isNonLocalized) {
+//     reportLocalizationError(svTitle, msg, C, argumentNumber + 1);
+//   }
+// }
 
 void NonLocalizedStringChecker::checkPreCall(const CallEvent &Call,
                                              CheckerContext &C) const {
@@ -900,13 +900,13 @@ void NonLocalizedStringChecker::checkPreCall(const CallEvent &Call,
 
 static inline bool isNSStringType(QualType T, ASTContext &Ctx) {
 
-  const ObjCObjectPointerType *PT = T->getAs<ObjCObjectPointerType>();
-  if (!PT)
-    return false;
+  // const ObjCObjectPointerType *PT = T->getAs<ObjCObjectPointerType>();
+  // if (!PT)
+  //   return false;
 
-  ObjCInterfaceDecl *Cls = PT->getObjectType()->getInterface();
-  if (!Cls)
-    return false;
+  // ObjCInterfaceDecl *Cls = PT->getObjectType()->getInterface();
+  // if (!Cls)
+  //   return false;
 
   IdentifierInfo *ClsName = Cls->getIdentifier();
 
@@ -966,29 +966,29 @@ void NonLocalizedStringChecker::checkPostCall(const CallEvent &Call,
 
 /// Marks a string being returned by an ObjC method as localized
 /// if it is in LocStringMethods or the method is annotated
-void NonLocalizedStringChecker::checkPostObjCMessage(const ObjCMethodCall &msg,
-                                                     CheckerContext &C) const {
-  initLocStringsMethods(C.getASTContext());
+// void NonLocalizedStringChecker::checkPostObjCMessage(const ObjCMethodCall &msg,
+//                                                      CheckerContext &C) const {
+//   initLocStringsMethods(C.getASTContext());
 
-  if (!msg.isInstanceMessage())
-    return;
+//   if (!msg.isInstanceMessage())
+//     return;
 
-  const ObjCInterfaceDecl *OD = msg.getReceiverInterface();
-  if (!OD)
-    return;
-  const IdentifierInfo *odInfo = OD->getIdentifier();
+//   const ObjCInterfaceDecl *OD = msg.getReceiverInterface();
+//   if (!OD)
+//     return;
+//   const IdentifierInfo *odInfo = OD->getIdentifier();
 
-  Selector S = msg.getSelector();
-  std::string SelectorName = S.getAsString();
+//   Selector S = msg.getSelector();
+//   std::string SelectorName = S.getAsString();
 
-  std::pair<const IdentifierInfo *, Selector> MethodDescription = {odInfo, S};
+//   std::pair<const IdentifierInfo *, Selector> MethodDescription = {odInfo, S};
 
-  if (LSM.count(MethodDescription) ||
-      isAnnotatedAsReturningLocalized(msg.getDecl())) {
-    SVal sv = msg.getReturnValue();
-    setLocalizedState(sv, C);
-  }
-}
+//   if (LSM.count(MethodDescription) ||
+//       isAnnotatedAsReturningLocalized(msg.getDecl())) {
+//     SVal sv = msg.getReturnValue();
+//     setLocalizedState(sv, C);
+//   }
+// }
 
 /// Marks all empty string literals as localized
 void NonLocalizedStringChecker::checkPostStmt(const ObjCStringLiteral *SL,
@@ -1031,61 +1031,61 @@ NonLocalizedStringBRVisitor::VisitNode(const ExplodedNode *Succ,
   return std::move(Piece);
 }
 
-namespace {
-class EmptyLocalizationContextChecker
-    : public Checker<check::ASTDecl<ObjCImplementationDecl>> {
+// namespace {
+// class EmptyLocalizationContextChecker
+//     : public Checker<check::ASTDecl<ObjCImplementationDecl>> {
 
-  // A helper class, which walks the AST
-  class MethodCrawler : public ConstStmtVisitor<MethodCrawler> {
-    const ObjCMethodDecl *MD;
-    BugReporter &BR;
-    AnalysisManager &Mgr;
-    const CheckerBase *Checker;
-    LocationOrAnalysisDeclContext DCtx;
+//   // A helper class, which walks the AST
+//   class MethodCrawler : public ConstStmtVisitor<MethodCrawler> {
+//     const ObjCMethodDecl *MD;
+//     BugReporter &BR;
+//     AnalysisManager &Mgr;
+//     const CheckerBase *Checker;
+//     LocationOrAnalysisDeclContext DCtx;
 
-  public:
-    MethodCrawler(const ObjCMethodDecl *InMD, BugReporter &InBR,
-                  const CheckerBase *Checker, AnalysisManager &InMgr,
-                  AnalysisDeclContext *InDCtx)
-        : MD(InMD), BR(InBR), Mgr(InMgr), Checker(Checker), DCtx(InDCtx) {}
+//   public:
+//     MethodCrawler(const ObjCMethodDecl *InMD, BugReporter &InBR,
+//                   const CheckerBase *Checker, AnalysisManager &InMgr,
+//                   AnalysisDeclContext *InDCtx)
+//         : MD(InMD), BR(InBR), Mgr(InMgr), Checker(Checker), DCtx(InDCtx) {}
 
-    void VisitStmt(const Stmt *S) { VisitChildren(S); }
+//     void VisitStmt(const Stmt *S) { VisitChildren(S); }
 
-    void VisitObjCMessageExpr(const ObjCMessageExpr *ME);
+//     // void VisitObjCMessageExpr(const ObjCMessageExpr *ME);
 
-    void reportEmptyContextError(const ObjCMessageExpr *M) const;
+//     void reportEmptyContextError(const ObjCMessageExpr *M) const;
 
-    void VisitChildren(const Stmt *S) {
-      for (const Stmt *Child : S->children()) {
-        if (Child)
-          this->Visit(Child);
-      }
-    }
-  };
+//     void VisitChildren(const Stmt *S) {
+//       for (const Stmt *Child : S->children()) {
+//         if (Child)
+//           this->Visit(Child);
+//       }
+//     }
+//   };
 
-public:
-  void checkASTDecl(const ObjCImplementationDecl *D, AnalysisManager &Mgr,
-                    BugReporter &BR) const;
-};
-} // end anonymous namespace
+// public:
+//   // void checkASTDecl(const ObjCImplementationDecl *D, AnalysisManager &Mgr,
+//   //                   BugReporter &BR) const;
+// };
+// } // end anonymous namespace
 
-void EmptyLocalizationContextChecker::checkASTDecl(
-    const ObjCImplementationDecl *D, AnalysisManager &Mgr,
-    BugReporter &BR) const {
+// void EmptyLocalizationContextChecker::checkASTDecl(
+//     const ObjCImplementationDecl *D, AnalysisManager &Mgr,
+//     BugReporter &BR) const {
 
-  for (const ObjCMethodDecl *M : D->methods()) {
-    AnalysisDeclContext *DCtx = Mgr.getAnalysisDeclContext(M);
+//   for (const ObjCMethodDecl *M : D->methods()) {
+//     AnalysisDeclContext *DCtx = Mgr.getAnalysisDeclContext(M);
 
-    const Stmt *Body = M->getBody();
-    if (!Body) {
-      assert(M->isSynthesizedAccessorStub());
-      continue;
-    }
+//     const Stmt *Body = M->getBody();
+//     if (!Body) {
+//       assert(M->isSynthesizedAccessorStub());
+//       continue;
+//     }
 
-    MethodCrawler MC(M->getCanonicalDecl(), BR, this, Mgr, DCtx);
-    MC.VisitStmt(Body);
-  }
-}
+//     MethodCrawler MC(M->getCanonicalDecl(), BR, this, Mgr, DCtx);
+//     MC.VisitStmt(Body);
+//   }
+// }
 
 /// This check attempts to match these macros, assuming they are defined as
 /// follows:
@@ -1102,96 +1102,96 @@ void EmptyLocalizationContextChecker::checkASTDecl(
 /// checking for (comment) is not used and thus not present in the AST,
 /// so we use Lexer on the original macro call and retrieve the value of
 /// the comment. If it's empty or nil, we raise a warning.
-void EmptyLocalizationContextChecker::MethodCrawler::VisitObjCMessageExpr(
-    const ObjCMessageExpr *ME) {
+// void EmptyLocalizationContextChecker::MethodCrawler::VisitObjCMessageExpr(
+//     const ObjCMessageExpr *ME) {
 
-  // FIXME: We may be able to use PPCallbacks to check for empty context
-  // comments as part of preprocessing and avoid this re-lexing hack.
-  const ObjCInterfaceDecl *OD = ME->getReceiverInterface();
-  if (!OD)
-    return;
+//   // FIXME: We may be able to use PPCallbacks to check for empty context
+//   // comments as part of preprocessing and avoid this re-lexing hack.
+//   const ObjCInterfaceDecl *OD = ME->getReceiverInterface();
+//   if (!OD)
+//     return;
 
-  const IdentifierInfo *odInfo = OD->getIdentifier();
+//   const IdentifierInfo *odInfo = OD->getIdentifier();
 
-  if (!(odInfo->isStr("NSBundle") &&
-        ME->getSelector().getAsString() ==
-            "localizedStringForKey:value:table:")) {
-    return;
-  }
+//   if (!(odInfo->isStr("NSBundle") &&
+//         ME->getSelector().getAsString() ==
+//             "localizedStringForKey:value:table:")) {
+//     return;
+//   }
 
-  SourceRange R = ME->getSourceRange();
-  if (!R.getBegin().isMacroID())
-    return;
+//   SourceRange R = ME->getSourceRange();
+//   if (!R.getBegin().isMacroID())
+//     return;
 
-  // getImmediateMacroCallerLoc gets the location of the immediate macro
-  // caller, one level up the stack toward the initial macro typed into the
-  // source, so SL should point to the NSLocalizedString macro.
-  SourceLocation SL =
-      Mgr.getSourceManager().getImmediateMacroCallerLoc(R.getBegin());
-  std::pair<FileID, unsigned> SLInfo =
-      Mgr.getSourceManager().getDecomposedLoc(SL);
+//   // getImmediateMacroCallerLoc gets the location of the immediate macro
+//   // caller, one level up the stack toward the initial macro typed into the
+//   // source, so SL should point to the NSLocalizedString macro.
+//   SourceLocation SL =
+//       Mgr.getSourceManager().getImmediateMacroCallerLoc(R.getBegin());
+//   std::pair<FileID, unsigned> SLInfo =
+//       Mgr.getSourceManager().getDecomposedLoc(SL);
 
-  SrcMgr::SLocEntry SE = Mgr.getSourceManager().getSLocEntry(SLInfo.first);
+//   SrcMgr::SLocEntry SE = Mgr.getSourceManager().getSLocEntry(SLInfo.first);
 
-  // If NSLocalizedString macro is wrapped in another macro, we need to
-  // unwrap the expansion until we get to the NSLocalizedStringMacro.
-  while (SE.isExpansion()) {
-    SL = SE.getExpansion().getSpellingLoc();
-    SLInfo = Mgr.getSourceManager().getDecomposedLoc(SL);
-    SE = Mgr.getSourceManager().getSLocEntry(SLInfo.first);
-  }
+//   // If NSLocalizedString macro is wrapped in another macro, we need to
+//   // unwrap the expansion until we get to the NSLocalizedStringMacro.
+//   while (SE.isExpansion()) {
+//     SL = SE.getExpansion().getSpellingLoc();
+//     SLInfo = Mgr.getSourceManager().getDecomposedLoc(SL);
+//     SE = Mgr.getSourceManager().getSLocEntry(SLInfo.first);
+//   }
 
-  bool Invalid = false;
-  const llvm::MemoryBuffer *BF =
-      Mgr.getSourceManager().getBuffer(SLInfo.first, SL, &Invalid);
-  if (Invalid)
-    return;
+//   bool Invalid = false;
+//   const llvm::MemoryBuffer *BF =
+//       Mgr.getSourceManager().getBuffer(SLInfo.first, SL, &Invalid);
+//   if (Invalid)
+//     return;
 
-  Lexer TheLexer(SL, LangOptions(), BF->getBufferStart(),
-                 BF->getBufferStart() + SLInfo.second, BF->getBufferEnd());
+//   Lexer TheLexer(SL, LangOptions(), BF->getBufferStart(),
+//                  BF->getBufferStart() + SLInfo.second, BF->getBufferEnd());
 
-  Token I;
-  Token Result;    // This will hold the token just before the last ')'
-  int p_count = 0; // This is for parenthesis matching
-  while (!TheLexer.LexFromRawLexer(I)) {
-    if (I.getKind() == tok::l_paren)
-      ++p_count;
-    if (I.getKind() == tok::r_paren) {
-      if (p_count == 1)
-        break;
-      --p_count;
-    }
-    Result = I;
-  }
+//   Token I;
+//   Token Result;    // This will hold the token just before the last ')'
+//   int p_count = 0; // This is for parenthesis matching
+//   while (!TheLexer.LexFromRawLexer(I)) {
+//     if (I.getKind() == tok::l_paren)
+//       ++p_count;
+//     if (I.getKind() == tok::r_paren) {
+//       if (p_count == 1)
+//         break;
+//       --p_count;
+//     }
+//     Result = I;
+//   }
 
-  if (isAnyIdentifier(Result.getKind())) {
-    if (Result.getRawIdentifier().equals("nil")) {
-      reportEmptyContextError(ME);
-      return;
-    }
-  }
+//   if (isAnyIdentifier(Result.getKind())) {
+//     if (Result.getRawIdentifier().equals("nil")) {
+//       reportEmptyContextError(ME);
+//       return;
+//     }
+//   }
 
-  if (!isStringLiteral(Result.getKind()))
-    return;
+//   if (!isStringLiteral(Result.getKind()))
+//     return;
 
-  StringRef Comment =
-      StringRef(Result.getLiteralData(), Result.getLength()).trim('"');
+//   StringRef Comment =
+//       StringRef(Result.getLiteralData(), Result.getLength()).trim('"');
 
-  if ((Comment.trim().size() == 0 && Comment.size() > 0) || // Is Whitespace
-      Comment.empty()) {
-    reportEmptyContextError(ME);
-  }
-}
+//   if ((Comment.trim().size() == 0 && Comment.size() > 0) || // Is Whitespace
+//       Comment.empty()) {
+//     reportEmptyContextError(ME);
+//   }
+// }
 
-void EmptyLocalizationContextChecker::MethodCrawler::reportEmptyContextError(
-    const ObjCMessageExpr *ME) const {
-  // Generate the bug report.
-  BR.EmitBasicReport(MD, Checker, "Context Missing",
-                     "Localizability Issue (Apple)",
-                     "Localized string macro should include a non-empty "
-                     "comment for translators",
-                     PathDiagnosticLocation(ME, BR.getSourceManager(), DCtx));
-}
+// void EmptyLocalizationContextChecker::MethodCrawler::reportEmptyContextError(
+//     const ObjCMessageExpr *ME) const {
+//   // Generate the bug report.
+//   BR.EmitBasicReport(MD, Checker, "Context Missing",
+//                      "Localizability Issue (Apple)",
+//                      "Localized string macro should include a non-empty "
+//                      "comment for translators",
+//                      PathDiagnosticLocation(ME, BR.getSourceManager(), DCtx));
+// }
 
 namespace {
 class PluralMisuseChecker : public Checker<check::ASTCodeBody> {
@@ -1221,7 +1221,7 @@ class PluralMisuseChecker : public Checker<check::ASTCodeBody> {
     bool VisitConditionalOperator(const ConditionalOperator *C);
     bool TraverseConditionalOperator(ConditionalOperator *C);
     bool VisitCallExpr(const CallExpr *CE);
-    bool VisitObjCMessageExpr(const ObjCMessageExpr *ME);
+    // bool VisitObjCMessageExpr(const ObjCMessageExpr *ME);
 
   private:
     void reportPluralMisuseError(const Stmt *S) const;
@@ -1301,22 +1301,22 @@ bool PluralMisuseChecker::MethodCrawler::VisitCallExpr(const CallExpr *CE) {
 // [NSBundle localizedStringForKey:value:table:] Raise a
 // diagnostic when this is in a statement that matches
 // the condition.
-bool PluralMisuseChecker::MethodCrawler::VisitObjCMessageExpr(
-    const ObjCMessageExpr *ME) {
-  const ObjCInterfaceDecl *OD = ME->getReceiverInterface();
-  if (!OD)
-    return true;
+// bool PluralMisuseChecker::MethodCrawler::VisitObjCMessageExpr(
+//     const ObjCMessageExpr *ME) {
+//   const ObjCInterfaceDecl *OD = ME->getReceiverInterface();
+//   if (!OD)
+//     return true;
 
-  const IdentifierInfo *odInfo = OD->getIdentifier();
+//   const IdentifierInfo *odInfo = OD->getIdentifier();
 
-  if (odInfo->isStr("NSBundle") &&
-      ME->getSelector().getAsString() == "localizedStringForKey:value:table:") {
-    if (InMatchingStatement) {
-      reportPluralMisuseError(ME);
-    }
-  }
-  return true;
-}
+//   if (odInfo->isStr("NSBundle") &&
+//       ME->getSelector().getAsString() == "localizedStringForKey:value:table:") {
+//     if (InMatchingStatement) {
+//       reportPluralMisuseError(ME);
+//     }
+//   }
+//   return true;
+// }
 
 /// Override TraverseIfStmt so we know when we are done traversing an IfStmt
 bool PluralMisuseChecker::MethodCrawler::TraverseIfStmt(IfStmt *I) {
@@ -1407,9 +1407,9 @@ bool ento::shouldRegisterNonLocalizedStringChecker(const CheckerManager &mgr) {
   return true;
 }
 
-void ento::registerEmptyLocalizationContextChecker(CheckerManager &mgr) {
-  mgr.registerChecker<EmptyLocalizationContextChecker>();
-}
+// void ento::registerEmptyLocalizationContextChecker(CheckerManager &mgr) {
+//   mgr.registerChecker<EmptyLocalizationContextChecker>();
+// }
 
 bool ento::shouldRegisterEmptyLocalizationContextChecker(
                                                     const CheckerManager &mgr) {

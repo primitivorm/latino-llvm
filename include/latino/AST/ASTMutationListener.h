@@ -27,10 +27,10 @@ namespace latino {
   class FunctionTemplateDecl;
   class Module;
   class NamedDecl;
-  class ObjCCategoryDecl;
-  class ObjCContainerDecl;
-  class ObjCInterfaceDecl;
-  class ObjCPropertyDecl;
+  // class ObjCCategoryDecl;
+  // class ObjCContainerDecl;
+  // class ObjCInterfaceDecl;
+  // class ObjCPropertyDecl;
   class ParmVarDecl;
   class QualType;
   class RecordDecl;
@@ -105,8 +105,8 @@ public:
   virtual void DefaultMemberInitializerInstantiated(const FieldDecl *D) {}
 
   /// A new objc category class was added for an interface.
-  virtual void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
-                                            const ObjCInterfaceDecl *IFD) {}
+  // virtual void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
+  //                                           const ObjCInterfaceDecl *IFD) {}
 
   /// A declaration is marked used which was not previously marked used.
   ///

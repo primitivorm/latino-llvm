@@ -463,30 +463,30 @@ ArgType::matchesType(ASTContext &C, QualType argTy) const {
     case CPointerTy:
       if (argTy->isVoidPointerType()) {
         return Match;
-      } if (argTy->isPointerType() || argTy->isObjCObjectPointerType() ||
+      } if (argTy->isPointerType() || /*argTy->isObjCObjectPointerType() ||*/
             argTy->isBlockPointerType() || argTy->isNullPtrType()) {
         return NoMatchPedantic;
       } else {
         return NoMatch;
       }
 
-    case ObjCPointerTy: {
-      if (argTy->getAs<ObjCObjectPointerType>() ||
-          argTy->getAs<BlockPointerType>())
-        return Match;
+    // case ObjCPointerTy: {
+    //   if (argTy->getAs<ObjCObjectPointerType>() ||
+    //       argTy->getAs<BlockPointerType>())
+    //     return Match;
 
-      // Handle implicit toll-free bridging.
-      if (const PointerType *PT = argTy->getAs<PointerType>()) {
-        // Things such as CFTypeRef are really just opaque pointers
-        // to C structs representing CF types that can often be bridged
-        // to Objective-C objects.  Since the compiler doesn't know which
-        // structs can be toll-free bridged, we just accept them all.
-        QualType pointee = PT->getPointeeType();
-        if (pointee->getAsStructureType() || pointee->isVoidType())
-          return Match;
-      }
-      return NoMatch;
-    }
+    //   // Handle implicit toll-free bridging.
+    //   if (const PointerType *PT = argTy->getAs<PointerType>()) {
+    //     // Things such as CFTypeRef are really just opaque pointers
+    //     // to C structs representing CF types that can often be bridged
+    //     // to Objective-C objects.  Since the compiler doesn't know which
+    //     // structs can be toll-free bridged, we just accept them all.
+    //     QualType pointee = PT->getPointeeType();
+    //     if (pointee->getAsStructureType() || pointee->isVoidType())
+    //       return Match;
+    //   }
+    //   return NoMatch;
+    // }
   }
 
   llvm_unreachable("Invalid ArgType Kind!");

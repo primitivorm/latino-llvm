@@ -15,11 +15,11 @@
 
 #include "latino/AST/ExprConcepts.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtOpenMP.h"
 #include "latino/Basic/LLVM.h"
 #include "llvm/ADT/STLExtras.h"

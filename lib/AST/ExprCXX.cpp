@@ -676,7 +676,7 @@ const char *CXXNamedCastExpr::getCastName() const {
   case CXXDynamicCastExprClass:     return "dynamic_cast";
   case CXXReinterpretCastExprClass: return "reinterpret_cast";
   case CXXConstCastExprClass:       return "const_cast";
-  case CXXAddrspaceCastExprClass:   return "addrspace_cast";
+  // case CXXAddrspaceCastExprClass:   return "addrspace_cast";
   default:                          return "<invalid cast>";
   }
 }

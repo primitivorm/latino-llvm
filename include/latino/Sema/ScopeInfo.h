@@ -47,10 +47,10 @@ class CXXMethodDecl;
 class CXXRecordDecl;
 class ImplicitParamDecl;
 class NamedDecl;
-class ObjCIvarRefExpr;
-class ObjCMessageExpr;
-class ObjCPropertyDecl;
-class ObjCPropertyRefExpr;
+// class ObjCIvarRefExpr;
+// class ObjCMessageExpr;
+// class ObjCPropertyDecl;
+// class ObjCPropertyRefExpr;
 class ParmVarDecl;
 class RecordDecl;
 class ReturnStmt;
@@ -244,83 +244,83 @@ public:
   ///
   /// Objects are identified with only two Decls to make it reasonably fast to
   /// compare them.
-  class WeakObjectProfileTy {
-    /// The base object decl, as described in the class documentation.
-    ///
-    /// The extra flag is "true" if the Base and Property are enough to uniquely
-    /// identify the object in memory.
-    ///
-    /// \sa isExactProfile()
-    using BaseInfoTy = llvm::PointerIntPair<const NamedDecl *, 1, bool>;
-    BaseInfoTy Base;
+  // class WeakObjectProfileTy {
+  //   /// The base object decl, as described in the class documentation.
+  //   ///
+  //   /// The extra flag is "true" if the Base and Property are enough to uniquely
+  //   /// identify the object in memory.
+  //   ///
+  //   /// \sa isExactProfile()
+  //   using BaseInfoTy = llvm::PointerIntPair<const NamedDecl *, 1, bool>;
+  //   BaseInfoTy Base;
 
-    /// The "property" decl, as described in the class documentation.
-    ///
-    /// Note that this may not actually be an ObjCPropertyDecl, e.g. in the
-    /// case of "implicit" properties (regular methods accessed via dot syntax).
-    const NamedDecl *Property = nullptr;
+  //   /// The "property" decl, as described in the class documentation.
+  //   ///
+  //   /// Note that this may not actually be an ObjCPropertyDecl, e.g. in the
+  //   /// case of "implicit" properties (regular methods accessed via dot syntax).
+  //   const NamedDecl *Property = nullptr;
 
-    /// Used to find the proper base profile for a given base expression.
-    static BaseInfoTy getBaseInfo(const Expr *BaseE);
+  //   /// Used to find the proper base profile for a given base expression.
+  //   static BaseInfoTy getBaseInfo(const Expr *BaseE);
 
-    inline WeakObjectProfileTy();
-    static inline WeakObjectProfileTy getSentinel();
+  //   inline WeakObjectProfileTy();
+  //   static inline WeakObjectProfileTy getSentinel();
 
-  public:
-    WeakObjectProfileTy(const ObjCPropertyRefExpr *RE);
-    WeakObjectProfileTy(const Expr *Base, const ObjCPropertyDecl *Property);
-    WeakObjectProfileTy(const DeclRefExpr *RE);
-    WeakObjectProfileTy(const ObjCIvarRefExpr *RE);
+  // public:
+  //   WeakObjectProfileTy(const ObjCPropertyRefExpr *RE);
+  //   // WeakObjectProfileTy(const Expr *Base, const ObjCPropertyDecl *Property);
+  //   WeakObjectProfileTy(const DeclRefExpr *RE);
+  //   WeakObjectProfileTy(const ObjCIvarRefExpr *RE);
 
-    const NamedDecl *getBase() const { return Base.getPointer(); }
-    const NamedDecl *getProperty() const { return Property; }
+  //   const NamedDecl *getBase() const { return Base.getPointer(); }
+  //   const NamedDecl *getProperty() const { return Property; }
 
-    /// Returns true if the object base specifies a known object in memory,
-    /// rather than, say, an instance variable or property of another object.
-    ///
-    /// Note that this ignores the effects of aliasing; that is, \c foo.bar is
-    /// considered an exact profile if \c foo is a local variable, even if
-    /// another variable \c foo2 refers to the same object as \c foo.
-    ///
-    /// For increased precision, accesses with base variables that are
-    /// properties or ivars of 'self' (e.g. self.prop1.prop2) are considered to
-    /// be exact, though this is not true for arbitrary variables
-    /// (foo.prop1.prop2).
-    bool isExactProfile() const {
-      return Base.getInt();
-    }
+  //   /// Returns true if the object base specifies a known object in memory,
+  //   /// rather than, say, an instance variable or property of another object.
+  //   ///
+  //   /// Note that this ignores the effects of aliasing; that is, \c foo.bar is
+  //   /// considered an exact profile if \c foo is a local variable, even if
+  //   /// another variable \c foo2 refers to the same object as \c foo.
+  //   ///
+  //   /// For increased precision, accesses with base variables that are
+  //   /// properties or ivars of 'self' (e.g. self.prop1.prop2) are considered to
+  //   /// be exact, though this is not true for arbitrary variables
+  //   /// (foo.prop1.prop2).
+  //   bool isExactProfile() const {
+  //     return Base.getInt();
+  //   }
 
-    bool operator==(const WeakObjectProfileTy &Other) const {
-      return Base == Other.Base && Property == Other.Property;
-    }
+  //   bool operator==(const WeakObjectProfileTy &Other) const {
+  //     return Base == Other.Base && Property == Other.Property;
+  //   }
 
-    // For use in DenseMap.
-    // We can't specialize the usual llvm::DenseMapInfo at the end of the file
-    // because by that point the DenseMap in FunctionScopeInfo has already been
-    // instantiated.
-    class DenseMapInfo {
-    public:
-      static inline WeakObjectProfileTy getEmptyKey() {
-        return WeakObjectProfileTy();
-      }
+  //   // For use in DenseMap.
+  //   // We can't specialize the usual llvm::DenseMapInfo at the end of the file
+  //   // because by that point the DenseMap in FunctionScopeInfo has already been
+  //   // instantiated.
+  //   class DenseMapInfo {
+  //   public:
+  //     static inline WeakObjectProfileTy getEmptyKey() {
+  //       return WeakObjectProfileTy();
+  //     }
 
-      static inline WeakObjectProfileTy getTombstoneKey() {
-        return WeakObjectProfileTy::getSentinel();
-      }
+  //     static inline WeakObjectProfileTy getTombstoneKey() {
+  //       return WeakObjectProfileTy::getSentinel();
+  //     }
 
-      static unsigned getHashValue(const WeakObjectProfileTy &Val) {
-        using Pair = std::pair<BaseInfoTy, const NamedDecl *>;
+  //     static unsigned getHashValue(const WeakObjectProfileTy &Val) {
+  //       using Pair = std::pair<BaseInfoTy, const NamedDecl *>;
 
-        return llvm::DenseMapInfo<Pair>::getHashValue(Pair(Val.Base,
-                                                           Val.Property));
-      }
+  //       return llvm::DenseMapInfo<Pair>::getHashValue(Pair(Val.Base,
+  //                                                          Val.Property));
+  //     }
 
-      static bool isEqual(const WeakObjectProfileTy &LHS,
-                          const WeakObjectProfileTy &RHS) {
-        return LHS == RHS;
-      }
-    };
-  };
+  //     static bool isEqual(const WeakObjectProfileTy &LHS,
+  //                         const WeakObjectProfileTy &RHS) {
+  //       return LHS == RHS;
+  //     }
+  //   };
+  // };
 
   /// Represents a single use of a weak object.
   ///
@@ -351,9 +351,9 @@ public:
   /// Used to collect all uses of weak objects in a function body.
   ///
   /// Part of the implementation of -Wrepeated-use-of-weak.
-  using WeakObjectUseMap =
-      llvm::SmallDenseMap<WeakObjectProfileTy, WeakUseVector, 8,
-                          WeakObjectProfileTy::DenseMapInfo>;
+  // using WeakObjectUseMap =
+  //     llvm::SmallDenseMap<WeakObjectProfileTy, WeakUseVector, 8,
+  //                         WeakObjectProfileTy::DenseMapInfo>;
 
 private:
   /// Used to collect all uses of weak objects in this function body.
@@ -391,21 +391,21 @@ public:
   /// Record that a weak object was accessed.
   ///
   /// Part of the implementation of -Wrepeated-use-of-weak.
-  template <typename ExprT>
-  inline void recordUseOfWeak(const ExprT *E, bool IsRead = true);
+  // template <typename ExprT>
+  // inline void recordUseOfWeak(const ExprT *E, bool IsRead = true);
 
-  void recordUseOfWeak(const ObjCMessageExpr *Msg,
-                       const ObjCPropertyDecl *Prop);
+  // void recordUseOfWeak(const ObjCMessageExpr *Msg,
+  //                      const ObjCPropertyDecl *Prop);
 
   /// Record that a given expression is a "safe" access of a weak object (e.g.
   /// assigning it to a strong variable.)
   ///
   /// Part of the implementation of -Wrepeated-use-of-weak.
-  void markSafeWeakUse(const Expr *E);
+  // void markSafeWeakUse(const Expr *E);
 
-  const WeakObjectUseMap &getWeakObjectUses() const {
-    return WeakObjectUses;
-  }
+  // const WeakObjectUseMap &getWeakObjectUses() const {
+  //   return WeakObjectUses;
+  // }
 
   void setHasBranchIntoScope() {
     HasBranchIntoScope = true;
@@ -1006,22 +1006,22 @@ public:
       llvm::function_ref<void(VarDecl *, Expr *)> Callback) const;
 };
 
-FunctionScopeInfo::WeakObjectProfileTy::WeakObjectProfileTy()
-    : Base(nullptr, false) {}
+// FunctionScopeInfo::WeakObjectProfileTy::WeakObjectProfileTy()
+//     : Base(nullptr, false) {}
 
-FunctionScopeInfo::WeakObjectProfileTy
-FunctionScopeInfo::WeakObjectProfileTy::getSentinel() {
-  FunctionScopeInfo::WeakObjectProfileTy Result;
-  Result.Base.setInt(true);
-  return Result;
-}
+// FunctionScopeInfo::WeakObjectProfileTy
+// FunctionScopeInfo::WeakObjectProfileTy::getSentinel() {
+//   FunctionScopeInfo::WeakObjectProfileTy Result;
+//   Result.Base.setInt(true);
+//   return Result;
+// }
 
-template <typename ExprT>
-void FunctionScopeInfo::recordUseOfWeak(const ExprT *E, bool IsRead) {
-  assert(E);
-  WeakUseVector &Uses = WeakObjectUses[WeakObjectProfileTy(E)];
-  Uses.push_back(WeakUseTy(E, IsRead));
-}
+// template <typename ExprT>
+// void FunctionScopeInfo::recordUseOfWeak(const ExprT *E, bool IsRead) {
+//   assert(E);
+//   WeakUseVector &Uses = WeakObjectUses[WeakObjectProfileTy(E)];
+//   Uses.push_back(WeakUseTy(E, IsRead));
+// }
 
 inline void CapturingScopeInfo::addThisCapture(bool isNested,
                                                SourceLocation Loc,

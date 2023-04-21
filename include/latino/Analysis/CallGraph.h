@@ -124,13 +124,13 @@ public:
   }
 
   /// Part of recursive declaration visitation.
-  bool VisitObjCMethodDecl(ObjCMethodDecl *MD) {
-    if (includeInGraph(MD)) {
-      addNodesForBlocks(MD);
-      addNodeForDecl(MD, true);
-    }
-    return true;
-  }
+  // bool VisitObjCMethodDecl(ObjCMethodDecl *MD) {
+  //   if (includeInGraph(MD)) {
+  //     addNodesForBlocks(MD);
+  //     addNodeForDecl(MD, true);
+  //   }
+  //   return true;
+  // }
 
   // We are only collecting the declarations, so do not step into the bodies.
   bool TraverseStmt(Stmt *S) { return true; }

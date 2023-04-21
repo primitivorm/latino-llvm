@@ -62,7 +62,7 @@ public:
   virtual void EmitWorkGroupLocalVarDecl(CodeGenFunction &CGF,
                                          const VarDecl &D);
 
-  virtual llvm::Type *convertOpenCLSpecificType(const Type *T);
+  // virtual llvm::Type *convertOpenCLSpecificType(const Type *T);
 
   virtual llvm::Type *getPipeType(const PipeType *T);
 

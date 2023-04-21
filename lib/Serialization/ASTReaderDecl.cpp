@@ -20,7 +20,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
@@ -161,12 +161,12 @@ namespace latino {
                                const CXXRecordDecl *D);
     void MergeDefinitionData(CXXRecordDecl *D,
                              struct CXXRecordDecl::DefinitionData &&NewDD);
-    void ReadObjCDefinitionData(struct ObjCInterfaceDecl::DefinitionData &Data);
-    void MergeDefinitionData(ObjCInterfaceDecl *D,
-                             struct ObjCInterfaceDecl::DefinitionData &&NewDD);
-    void ReadObjCDefinitionData(struct ObjCProtocolDecl::DefinitionData &Data);
-    void MergeDefinitionData(ObjCProtocolDecl *D,
-                             struct ObjCProtocolDecl::DefinitionData &&NewDD);
+    // void ReadObjCDefinitionData(struct ObjCInterfaceDecl::DefinitionData &Data);
+    // void MergeDefinitionData(ObjCInterfaceDecl *D,
+    //                          struct ObjCInterfaceDecl::DefinitionData &&NewDD);
+    // void ReadObjCDefinitionData(struct ObjCProtocolDecl::DefinitionData &Data);
+    // void MergeDefinitionData(ObjCProtocolDecl *D,
+    //                          struct ObjCProtocolDecl::DefinitionData &&NewDD);
 
     static DeclContext *getPrimaryDCForAnonymousDecl(DeclContext *LexicalDC);
 
@@ -306,10 +306,10 @@ namespace latino {
 
     void UpdateDecl(Decl *D, SmallVectorImpl<serialization::DeclID> &);
 
-    static void setNextObjCCategory(ObjCCategoryDecl *Cat,
-                                    ObjCCategoryDecl *Next) {
-      Cat->NextClassCategory = Next;
-    }
+    // static void setNextObjCCategory(ObjCCategoryDecl *Cat,
+    //                                 ObjCCategoryDecl *Next) {
+    //   Cat->NextClassCategory = Next;
+    // }
 
     void VisitDecl(Decl *D);
     void VisitPragmaCommentDecl(PragmaCommentDecl *D);
@@ -427,20 +427,20 @@ namespace latino {
     ObjCTypeParamList *ReadObjCTypeParamList();
 
     // FIXME: Reorder according to DeclNodes.td?
-    void VisitObjCMethodDecl(ObjCMethodDecl *D);
-    void VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
-    void VisitObjCContainerDecl(ObjCContainerDecl *D);
-    void VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
-    void VisitObjCIvarDecl(ObjCIvarDecl *D);
-    void VisitObjCProtocolDecl(ObjCProtocolDecl *D);
-    void VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D);
-    void VisitObjCCategoryDecl(ObjCCategoryDecl *D);
-    void VisitObjCImplDecl(ObjCImplDecl *D);
-    void VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D);
-    void VisitObjCImplementationDecl(ObjCImplementationDecl *D);
-    void VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D);
-    void VisitObjCPropertyDecl(ObjCPropertyDecl *D);
-    void VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
+    // void VisitObjCMethodDecl(ObjCMethodDecl *D);
+    // void VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
+    // void VisitObjCContainerDecl(ObjCContainerDecl *D);
+    // void VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
+    // void VisitObjCIvarDecl(ObjCIvarDecl *D);
+    // void VisitObjCProtocolDecl(ObjCProtocolDecl *D);
+    // void VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D);
+    // void VisitObjCCategoryDecl(ObjCCategoryDecl *D);
+    // void VisitObjCImplDecl(ObjCImplDecl *D);
+    // void VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D);
+    // void VisitObjCImplementationDecl(ObjCImplementationDecl *D);
+    // void VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D);
+    // void VisitObjCPropertyDecl(ObjCPropertyDecl *D);
+    // void VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
     void VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D);
     void VisitOMPAllocateDecl(OMPAllocateDecl *D);
     void VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D);
@@ -541,10 +541,10 @@ void ASTDeclReader::Visit(Decl *D) {
     if (NamedDeclForTagDecl)
       cast<TagDecl>(D)->TypedefNameDeclOrQualifier =
           cast<TypedefNameDecl>(Reader.GetDecl(NamedDeclForTagDecl));
-  } else if (auto *ID = dyn_cast<ObjCInterfaceDecl>(D)) {
+  } /*else if (auto *ID = dyn_cast<ObjCInterfaceDecl>(D)) {
     // if we have a fully initialized TypeDecl, we can safely read its type now.
     ID->TypeForDecl = Reader.GetType(DeferredTypeID).getTypePtrOrNull();
-  } else if (auto *FD = dyn_cast<FunctionDecl>(D)) {
+  }*/ else if (auto *FD = dyn_cast<FunctionDecl>(D)) {
     // FunctionDecl's body was written last after all other Stmts/Exprs.
     // We only read it if FD doesn't already have a body (e.g., from another
     // module).
@@ -1022,318 +1022,318 @@ void ASTDeclReader::VisitFunctionDecl(FunctionDecl *FD) {
   FD->setParams(Reader.getContext(), Params);
 }
 
-void ASTDeclReader::VisitObjCMethodDecl(ObjCMethodDecl *MD) {
-  VisitNamedDecl(MD);
-  if (Record.readInt()) {
-    // Load the body on-demand. Most clients won't care, because method
-    // definitions rarely show up in headers.
-    Reader.PendingBodies[MD] = GetCurrentCursorOffset();
-    HasPendingBody = true;
-  }
-  MD->setSelfDecl(readDeclAs<ImplicitParamDecl>());
-  MD->setCmdDecl(readDeclAs<ImplicitParamDecl>());
-  MD->setInstanceMethod(Record.readInt());
-  MD->setVariadic(Record.readInt());
-  MD->setPropertyAccessor(Record.readInt());
-  MD->setSynthesizedAccessorStub(Record.readInt());
-  MD->setDefined(Record.readInt());
-  MD->setOverriding(Record.readInt());
-  MD->setHasSkippedBody(Record.readInt());
+// void ASTDeclReader::VisitObjCMethodDecl(ObjCMethodDecl *MD) {
+//   VisitNamedDecl(MD);
+//   if (Record.readInt()) {
+//     // Load the body on-demand. Most clients won't care, because method
+//     // definitions rarely show up in headers.
+//     Reader.PendingBodies[MD] = GetCurrentCursorOffset();
+//     HasPendingBody = true;
+//   }
+//   MD->setSelfDecl(readDeclAs<ImplicitParamDecl>());
+//   MD->setCmdDecl(readDeclAs<ImplicitParamDecl>());
+//   MD->setInstanceMethod(Record.readInt());
+//   MD->setVariadic(Record.readInt());
+//   MD->setPropertyAccessor(Record.readInt());
+//   MD->setSynthesizedAccessorStub(Record.readInt());
+//   MD->setDefined(Record.readInt());
+//   MD->setOverriding(Record.readInt());
+//   MD->setHasSkippedBody(Record.readInt());
 
-  MD->setIsRedeclaration(Record.readInt());
-  MD->setHasRedeclaration(Record.readInt());
-  if (MD->hasRedeclaration())
-    Reader.getContext().setObjCMethodRedeclaration(MD,
-                                       readDeclAs<ObjCMethodDecl>());
+//   MD->setIsRedeclaration(Record.readInt());
+//   MD->setHasRedeclaration(Record.readInt());
+//   if (MD->hasRedeclaration())
+//     Reader.getContext().setObjCMethodRedeclaration(MD,
+//                                        readDeclAs<ObjCMethodDecl>());
 
-  MD->setDeclImplementation((ObjCMethodDecl::ImplementationControl)Record.readInt());
-  MD->setObjCDeclQualifier((Decl::ObjCDeclQualifier)Record.readInt());
-  MD->setRelatedResultType(Record.readInt());
-  MD->setReturnType(Record.readType());
-  MD->setReturnTypeSourceInfo(readTypeSourceInfo());
-  MD->DeclEndLoc = readSourceLocation();
-  unsigned NumParams = Record.readInt();
-  SmallVector<ParmVarDecl *, 16> Params;
-  Params.reserve(NumParams);
-  for (unsigned I = 0; I != NumParams; ++I)
-    Params.push_back(readDeclAs<ParmVarDecl>());
+//   MD->setDeclImplementation((ObjCMethodDecl::ImplementationControl)Record.readInt());
+//   MD->setObjCDeclQualifier((Decl::ObjCDeclQualifier)Record.readInt());
+//   MD->setRelatedResultType(Record.readInt());
+//   MD->setReturnType(Record.readType());
+//   MD->setReturnTypeSourceInfo(readTypeSourceInfo());
+//   MD->DeclEndLoc = readSourceLocation();
+//   unsigned NumParams = Record.readInt();
+//   SmallVector<ParmVarDecl *, 16> Params;
+//   Params.reserve(NumParams);
+//   for (unsigned I = 0; I != NumParams; ++I)
+//     Params.push_back(readDeclAs<ParmVarDecl>());
 
-  MD->setSelLocsKind((SelectorLocationsKind)Record.readInt());
-  unsigned NumStoredSelLocs = Record.readInt();
-  SmallVector<SourceLocation, 16> SelLocs;
-  SelLocs.reserve(NumStoredSelLocs);
-  for (unsigned i = 0; i != NumStoredSelLocs; ++i)
-    SelLocs.push_back(readSourceLocation());
+//   MD->setSelLocsKind((SelectorLocationsKind)Record.readInt());
+//   unsigned NumStoredSelLocs = Record.readInt();
+//   SmallVector<SourceLocation, 16> SelLocs;
+//   SelLocs.reserve(NumStoredSelLocs);
+//   for (unsigned i = 0; i != NumStoredSelLocs; ++i)
+//     SelLocs.push_back(readSourceLocation());
 
-  MD->setParamsAndSelLocs(Reader.getContext(), Params, SelLocs);
-}
+//   MD->setParamsAndSelLocs(Reader.getContext(), Params, SelLocs);
+// }
 
-void ASTDeclReader::VisitObjCTypeParamDecl(ObjCTypeParamDecl *D) {
-  VisitTypedefNameDecl(D);
+// void ASTDeclReader::VisitObjCTypeParamDecl(ObjCTypeParamDecl *D) {
+//   VisitTypedefNameDecl(D);
 
-  D->Variance = Record.readInt();
-  D->Index = Record.readInt();
-  D->VarianceLoc = readSourceLocation();
-  D->ColonLoc = readSourceLocation();
-}
+//   D->Variance = Record.readInt();
+//   D->Index = Record.readInt();
+//   D->VarianceLoc = readSourceLocation();
+//   D->ColonLoc = readSourceLocation();
+// }
 
-void ASTDeclReader::VisitObjCContainerDecl(ObjCContainerDecl *CD) {
-  VisitNamedDecl(CD);
-  CD->setAtStartLoc(readSourceLocation());
-  CD->setAtEndRange(readSourceRange());
-}
+// void ASTDeclReader::VisitObjCContainerDecl(ObjCContainerDecl *CD) {
+//   VisitNamedDecl(CD);
+//   CD->setAtStartLoc(readSourceLocation());
+//   CD->setAtEndRange(readSourceRange());
+// }
 
-ObjCTypeParamList *ASTDeclReader::ReadObjCTypeParamList() {
-  unsigned numParams = Record.readInt();
-  if (numParams == 0)
-    return nullptr;
+// ObjCTypeParamList *ASTDeclReader::ReadObjCTypeParamList() {
+//   unsigned numParams = Record.readInt();
+//   if (numParams == 0)
+//     return nullptr;
 
-  SmallVector<ObjCTypeParamDecl *, 4> typeParams;
-  typeParams.reserve(numParams);
-  for (unsigned i = 0; i != numParams; ++i) {
-    auto *typeParam = readDeclAs<ObjCTypeParamDecl>();
-    if (!typeParam)
-      return nullptr;
+//   SmallVector<ObjCTypeParamDecl *, 4> typeParams;
+//   typeParams.reserve(numParams);
+//   for (unsigned i = 0; i != numParams; ++i) {
+//     auto *typeParam = readDeclAs<ObjCTypeParamDecl>();
+//     if (!typeParam)
+//       return nullptr;
 
-    typeParams.push_back(typeParam);
-  }
+//     typeParams.push_back(typeParam);
+//   }
 
-  SourceLocation lAngleLoc = readSourceLocation();
-  SourceLocation rAngleLoc = readSourceLocation();
+//   SourceLocation lAngleLoc = readSourceLocation();
+//   SourceLocation rAngleLoc = readSourceLocation();
 
-  return ObjCTypeParamList::create(Reader.getContext(), lAngleLoc,
-                                   typeParams, rAngleLoc);
-}
+//   return ObjCTypeParamList::create(Reader.getContext(), lAngleLoc,
+//                                    typeParams, rAngleLoc);
+// }
 
-void ASTDeclReader::ReadObjCDefinitionData(
-         struct ObjCInterfaceDecl::DefinitionData &Data) {
-  // Read the superclass.
-  Data.SuperClassTInfo = readTypeSourceInfo();
+// void ASTDeclReader::ReadObjCDefinitionData(
+//          struct ObjCInterfaceDecl::DefinitionData &Data) {
+//   // Read the superclass.
+//   Data.SuperClassTInfo = readTypeSourceInfo();
 
-  Data.EndLoc = readSourceLocation();
-  Data.HasDesignatedInitializers = Record.readInt();
+//   Data.EndLoc = readSourceLocation();
+//   Data.HasDesignatedInitializers = Record.readInt();
 
-  // Read the directly referenced protocols and their SourceLocations.
-  unsigned NumProtocols = Record.readInt();
-  SmallVector<ObjCProtocolDecl *, 16> Protocols;
-  Protocols.reserve(NumProtocols);
-  for (unsigned I = 0; I != NumProtocols; ++I)
-    Protocols.push_back(readDeclAs<ObjCProtocolDecl>());
-  SmallVector<SourceLocation, 16> ProtoLocs;
-  ProtoLocs.reserve(NumProtocols);
-  for (unsigned I = 0; I != NumProtocols; ++I)
-    ProtoLocs.push_back(readSourceLocation());
-  Data.ReferencedProtocols.set(Protocols.data(), NumProtocols, ProtoLocs.data(),
-                               Reader.getContext());
+//   // Read the directly referenced protocols and their SourceLocations.
+//   unsigned NumProtocols = Record.readInt();
+//   SmallVector<ObjCProtocolDecl *, 16> Protocols;
+//   Protocols.reserve(NumProtocols);
+//   for (unsigned I = 0; I != NumProtocols; ++I)
+//     Protocols.push_back(readDeclAs<ObjCProtocolDecl>());
+//   SmallVector<SourceLocation, 16> ProtoLocs;
+//   ProtoLocs.reserve(NumProtocols);
+//   for (unsigned I = 0; I != NumProtocols; ++I)
+//     ProtoLocs.push_back(readSourceLocation());
+//   Data.ReferencedProtocols.set(Protocols.data(), NumProtocols, ProtoLocs.data(),
+//                                Reader.getContext());
 
-  // Read the transitive closure of protocols referenced by this class.
-  NumProtocols = Record.readInt();
-  Protocols.clear();
-  Protocols.reserve(NumProtocols);
-  for (unsigned I = 0; I != NumProtocols; ++I)
-    Protocols.push_back(readDeclAs<ObjCProtocolDecl>());
-  Data.AllReferencedProtocols.set(Protocols.data(), NumProtocols,
-                                  Reader.getContext());
-}
+//   // Read the transitive closure of protocols referenced by this class.
+//   NumProtocols = Record.readInt();
+//   Protocols.clear();
+//   Protocols.reserve(NumProtocols);
+//   for (unsigned I = 0; I != NumProtocols; ++I)
+//     Protocols.push_back(readDeclAs<ObjCProtocolDecl>());
+//   Data.AllReferencedProtocols.set(Protocols.data(), NumProtocols,
+//                                   Reader.getContext());
+// }
 
-void ASTDeclReader::MergeDefinitionData(ObjCInterfaceDecl *D,
-         struct ObjCInterfaceDecl::DefinitionData &&NewDD) {
-  // FIXME: odr checking?
-}
+// void ASTDeclReader::MergeDefinitionData(ObjCInterfaceDecl *D,
+//          struct ObjCInterfaceDecl::DefinitionData &&NewDD) {
+//   // FIXME: odr checking?
+// }
 
-void ASTDeclReader::VisitObjCInterfaceDecl(ObjCInterfaceDecl *ID) {
-  RedeclarableResult Redecl = VisitRedeclarable(ID);
-  VisitObjCContainerDecl(ID);
-  DeferredTypeID = Record.getGlobalTypeID(Record.readInt());
-  mergeRedeclarable(ID, Redecl);
+// void ASTDeclReader::VisitObjCInterfaceDecl(ObjCInterfaceDecl *ID) {
+//   RedeclarableResult Redecl = VisitRedeclarable(ID);
+//   VisitObjCContainerDecl(ID);
+//   DeferredTypeID = Record.getGlobalTypeID(Record.readInt());
+//   mergeRedeclarable(ID, Redecl);
 
-  ID->TypeParamList = ReadObjCTypeParamList();
-  if (Record.readInt()) {
-    // Read the definition.
-    ID->allocateDefinitionData();
+//   ID->TypeParamList = ReadObjCTypeParamList();
+//   if (Record.readInt()) {
+//     // Read the definition.
+//     ID->allocateDefinitionData();
 
-    ReadObjCDefinitionData(ID->data());
-    ObjCInterfaceDecl *Canon = ID->getCanonicalDecl();
-    if (Canon->Data.getPointer()) {
-      // If we already have a definition, keep the definition invariant and
-      // merge the data.
-      MergeDefinitionData(Canon, std::move(ID->data()));
-      ID->Data = Canon->Data;
-    } else {
-      // Set the definition data of the canonical declaration, so other
-      // redeclarations will see it.
-      ID->getCanonicalDecl()->Data = ID->Data;
+//     ReadObjCDefinitionData(ID->data());
+//     ObjCInterfaceDecl *Canon = ID->getCanonicalDecl();
+//     if (Canon->Data.getPointer()) {
+//       // If we already have a definition, keep the definition invariant and
+//       // merge the data.
+//       MergeDefinitionData(Canon, std::move(ID->data()));
+//       ID->Data = Canon->Data;
+//     } else {
+//       // Set the definition data of the canonical declaration, so other
+//       // redeclarations will see it.
+//       ID->getCanonicalDecl()->Data = ID->Data;
 
-      // We will rebuild this list lazily.
-      ID->setIvarList(nullptr);
-    }
+//       // We will rebuild this list lazily.
+//       ID->setIvarList(nullptr);
+//     }
 
-    // Note that we have deserialized a definition.
-    Reader.PendingDefinitions.insert(ID);
+//     // Note that we have deserialized a definition.
+//     Reader.PendingDefinitions.insert(ID);
 
-    // Note that we've loaded this Objective-C class.
-    Reader.ObjCClassesLoaded.push_back(ID);
-  } else {
-    ID->Data = ID->getCanonicalDecl()->Data;
-  }
-}
+//     // Note that we've loaded this Objective-C class.
+//     Reader.ObjCClassesLoaded.push_back(ID);
+//   } else {
+//     ID->Data = ID->getCanonicalDecl()->Data;
+//   }
+// }
 
-void ASTDeclReader::VisitObjCIvarDecl(ObjCIvarDecl *IVD) {
-  VisitFieldDecl(IVD);
-  IVD->setAccessControl((ObjCIvarDecl::AccessControl)Record.readInt());
-  // This field will be built lazily.
-  IVD->setNextIvar(nullptr);
-  bool synth = Record.readInt();
-  IVD->setSynthesize(synth);
-}
+// void ASTDeclReader::VisitObjCIvarDecl(ObjCIvarDecl *IVD) {
+//   VisitFieldDecl(IVD);
+//   IVD->setAccessControl((ObjCIvarDecl::AccessControl)Record.readInt());
+//   // This field will be built lazily.
+//   IVD->setNextIvar(nullptr);
+//   bool synth = Record.readInt();
+//   IVD->setSynthesize(synth);
+// }
 
-void ASTDeclReader::ReadObjCDefinitionData(
-         struct ObjCProtocolDecl::DefinitionData &Data) {
-    unsigned NumProtoRefs = Record.readInt();
-    SmallVector<ObjCProtocolDecl *, 16> ProtoRefs;
-    ProtoRefs.reserve(NumProtoRefs);
-    for (unsigned I = 0; I != NumProtoRefs; ++I)
-      ProtoRefs.push_back(readDeclAs<ObjCProtocolDecl>());
-    SmallVector<SourceLocation, 16> ProtoLocs;
-    ProtoLocs.reserve(NumProtoRefs);
-    for (unsigned I = 0; I != NumProtoRefs; ++I)
-      ProtoLocs.push_back(readSourceLocation());
-    Data.ReferencedProtocols.set(ProtoRefs.data(), NumProtoRefs,
-                                 ProtoLocs.data(), Reader.getContext());
-}
+// void ASTDeclReader::ReadObjCDefinitionData(
+//          struct ObjCProtocolDecl::DefinitionData &Data) {
+//     unsigned NumProtoRefs = Record.readInt();
+//     SmallVector<ObjCProtocolDecl *, 16> ProtoRefs;
+//     ProtoRefs.reserve(NumProtoRefs);
+//     for (unsigned I = 0; I != NumProtoRefs; ++I)
+//       ProtoRefs.push_back(readDeclAs<ObjCProtocolDecl>());
+//     SmallVector<SourceLocation, 16> ProtoLocs;
+//     ProtoLocs.reserve(NumProtoRefs);
+//     for (unsigned I = 0; I != NumProtoRefs; ++I)
+//       ProtoLocs.push_back(readSourceLocation());
+//     Data.ReferencedProtocols.set(ProtoRefs.data(), NumProtoRefs,
+//                                  ProtoLocs.data(), Reader.getContext());
+// }
 
-void ASTDeclReader::MergeDefinitionData(ObjCProtocolDecl *D,
-         struct ObjCProtocolDecl::DefinitionData &&NewDD) {
-  // FIXME: odr checking?
-}
+// void ASTDeclReader::MergeDefinitionData(ObjCProtocolDecl *D,
+//          struct ObjCProtocolDecl::DefinitionData &&NewDD) {
+//   // FIXME: odr checking?
+// }
 
-void ASTDeclReader::VisitObjCProtocolDecl(ObjCProtocolDecl *PD) {
-  RedeclarableResult Redecl = VisitRedeclarable(PD);
-  VisitObjCContainerDecl(PD);
-  mergeRedeclarable(PD, Redecl);
+// void ASTDeclReader::VisitObjCProtocolDecl(ObjCProtocolDecl *PD) {
+//   RedeclarableResult Redecl = VisitRedeclarable(PD);
+//   VisitObjCContainerDecl(PD);
+//   mergeRedeclarable(PD, Redecl);
 
-  if (Record.readInt()) {
-    // Read the definition.
-    PD->allocateDefinitionData();
+//   if (Record.readInt()) {
+//     // Read the definition.
+//     PD->allocateDefinitionData();
 
-    ReadObjCDefinitionData(PD->data());
+//     ReadObjCDefinitionData(PD->data());
 
-    ObjCProtocolDecl *Canon = PD->getCanonicalDecl();
-    if (Canon->Data.getPointer()) {
-      // If we already have a definition, keep the definition invariant and
-      // merge the data.
-      MergeDefinitionData(Canon, std::move(PD->data()));
-      PD->Data = Canon->Data;
-    } else {
-      // Set the definition data of the canonical declaration, so other
-      // redeclarations will see it.
-      PD->getCanonicalDecl()->Data = PD->Data;
-    }
-    // Note that we have deserialized a definition.
-    Reader.PendingDefinitions.insert(PD);
-  } else {
-    PD->Data = PD->getCanonicalDecl()->Data;
-  }
-}
+//     ObjCProtocolDecl *Canon = PD->getCanonicalDecl();
+//     if (Canon->Data.getPointer()) {
+//       // If we already have a definition, keep the definition invariant and
+//       // merge the data.
+//       MergeDefinitionData(Canon, std::move(PD->data()));
+//       PD->Data = Canon->Data;
+//     } else {
+//       // Set the definition data of the canonical declaration, so other
+//       // redeclarations will see it.
+//       PD->getCanonicalDecl()->Data = PD->Data;
+//     }
+//     // Note that we have deserialized a definition.
+//     Reader.PendingDefinitions.insert(PD);
+//   } else {
+//     PD->Data = PD->getCanonicalDecl()->Data;
+//   }
+// }
 
-void ASTDeclReader::VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *FD) {
-  VisitFieldDecl(FD);
-}
+// void ASTDeclReader::VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *FD) {
+//   VisitFieldDecl(FD);
+// }
 
-void ASTDeclReader::VisitObjCCategoryDecl(ObjCCategoryDecl *CD) {
-  VisitObjCContainerDecl(CD);
-  CD->setCategoryNameLoc(readSourceLocation());
-  CD->setIvarLBraceLoc(readSourceLocation());
-  CD->setIvarRBraceLoc(readSourceLocation());
+// void ASTDeclReader::VisitObjCCategoryDecl(ObjCCategoryDecl *CD) {
+//   VisitObjCContainerDecl(CD);
+//   CD->setCategoryNameLoc(readSourceLocation());
+//   CD->setIvarLBraceLoc(readSourceLocation());
+//   CD->setIvarRBraceLoc(readSourceLocation());
 
-  // Note that this category has been deserialized. We do this before
-  // deserializing the interface declaration, so that it will consider this
-  /// category.
-  Reader.CategoriesDeserialized.insert(CD);
+//   // Note that this category has been deserialized. We do this before
+//   // deserializing the interface declaration, so that it will consider this
+//   /// category.
+//   Reader.CategoriesDeserialized.insert(CD);
 
-  CD->ClassInterface = readDeclAs<ObjCInterfaceDecl>();
-  CD->TypeParamList = ReadObjCTypeParamList();
-  unsigned NumProtoRefs = Record.readInt();
-  SmallVector<ObjCProtocolDecl *, 16> ProtoRefs;
-  ProtoRefs.reserve(NumProtoRefs);
-  for (unsigned I = 0; I != NumProtoRefs; ++I)
-    ProtoRefs.push_back(readDeclAs<ObjCProtocolDecl>());
-  SmallVector<SourceLocation, 16> ProtoLocs;
-  ProtoLocs.reserve(NumProtoRefs);
-  for (unsigned I = 0; I != NumProtoRefs; ++I)
-    ProtoLocs.push_back(readSourceLocation());
-  CD->setProtocolList(ProtoRefs.data(), NumProtoRefs, ProtoLocs.data(),
-                      Reader.getContext());
+//   CD->ClassInterface = readDeclAs<ObjCInterfaceDecl>();
+//   CD->TypeParamList = ReadObjCTypeParamList();
+//   unsigned NumProtoRefs = Record.readInt();
+//   SmallVector<ObjCProtocolDecl *, 16> ProtoRefs;
+//   ProtoRefs.reserve(NumProtoRefs);
+//   for (unsigned I = 0; I != NumProtoRefs; ++I)
+//     ProtoRefs.push_back(readDeclAs<ObjCProtocolDecl>());
+//   SmallVector<SourceLocation, 16> ProtoLocs;
+//   ProtoLocs.reserve(NumProtoRefs);
+//   for (unsigned I = 0; I != NumProtoRefs; ++I)
+//     ProtoLocs.push_back(readSourceLocation());
+//   CD->setProtocolList(ProtoRefs.data(), NumProtoRefs, ProtoLocs.data(),
+//                       Reader.getContext());
 
-  // Protocols in the class extension belong to the class.
-  if (NumProtoRefs > 0 && CD->ClassInterface && CD->IsClassExtension())
-    CD->ClassInterface->mergeClassExtensionProtocolList(
-        (ObjCProtocolDecl *const *)ProtoRefs.data(), NumProtoRefs,
-        Reader.getContext());
-}
+//   // Protocols in the class extension belong to the class.
+//   if (NumProtoRefs > 0 && CD->ClassInterface && CD->IsClassExtension())
+//     CD->ClassInterface->mergeClassExtensionProtocolList(
+//         (ObjCProtocolDecl *const *)ProtoRefs.data(), NumProtoRefs,
+//         Reader.getContext());
+// }
 
-void ASTDeclReader::VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *CAD) {
-  VisitNamedDecl(CAD);
-  CAD->setClassInterface(readDeclAs<ObjCInterfaceDecl>());
-}
+// void ASTDeclReader::VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *CAD) {
+//   VisitNamedDecl(CAD);
+//   CAD->setClassInterface(readDeclAs<ObjCInterfaceDecl>());
+// }
 
-void ASTDeclReader::VisitObjCPropertyDecl(ObjCPropertyDecl *D) {
-  VisitNamedDecl(D);
-  D->setAtLoc(readSourceLocation());
-  D->setLParenLoc(readSourceLocation());
-  QualType T = Record.readType();
-  TypeSourceInfo *TSI = readTypeSourceInfo();
-  D->setType(T, TSI);
-  D->setPropertyAttributes((ObjCPropertyAttribute::Kind)Record.readInt());
-  D->setPropertyAttributesAsWritten(
-      (ObjCPropertyAttribute::Kind)Record.readInt());
-  D->setPropertyImplementation(
-      (ObjCPropertyDecl::PropertyControl)Record.readInt());
-  DeclarationName GetterName = Record.readDeclarationName();
-  SourceLocation GetterLoc = readSourceLocation();
-  D->setGetterName(GetterName.getObjCSelector(), GetterLoc);
-  DeclarationName SetterName = Record.readDeclarationName();
-  SourceLocation SetterLoc = readSourceLocation();
-  D->setSetterName(SetterName.getObjCSelector(), SetterLoc);
-  D->setGetterMethodDecl(readDeclAs<ObjCMethodDecl>());
-  D->setSetterMethodDecl(readDeclAs<ObjCMethodDecl>());
-  D->setPropertyIvarDecl(readDeclAs<ObjCIvarDecl>());
-}
+// void ASTDeclReader::VisitObjCPropertyDecl(ObjCPropertyDecl *D) {
+//   VisitNamedDecl(D);
+//   D->setAtLoc(readSourceLocation());
+//   D->setLParenLoc(readSourceLocation());
+//   QualType T = Record.readType();
+//   TypeSourceInfo *TSI = readTypeSourceInfo();
+//   D->setType(T, TSI);
+//   D->setPropertyAttributes((ObjCPropertyAttribute::Kind)Record.readInt());
+//   D->setPropertyAttributesAsWritten(
+//       (ObjCPropertyAttribute::Kind)Record.readInt());
+//   D->setPropertyImplementation(
+//       (ObjCPropertyDecl::PropertyControl)Record.readInt());
+//   DeclarationName GetterName = Record.readDeclarationName();
+//   SourceLocation GetterLoc = readSourceLocation();
+//   D->setGetterName(GetterName.getObjCSelector(), GetterLoc);
+//   DeclarationName SetterName = Record.readDeclarationName();
+//   SourceLocation SetterLoc = readSourceLocation();
+//   D->setSetterName(SetterName.getObjCSelector(), SetterLoc);
+//   D->setGetterMethodDecl(readDeclAs<ObjCMethodDecl>());
+//   D->setSetterMethodDecl(readDeclAs<ObjCMethodDecl>());
+//   D->setPropertyIvarDecl(readDeclAs<ObjCIvarDecl>());
+// }
 
-void ASTDeclReader::VisitObjCImplDecl(ObjCImplDecl *D) {
-  VisitObjCContainerDecl(D);
-  D->setClassInterface(readDeclAs<ObjCInterfaceDecl>());
-}
+// void ASTDeclReader::VisitObjCImplDecl(ObjCImplDecl *D) {
+//   VisitObjCContainerDecl(D);
+//   D->setClassInterface(readDeclAs<ObjCInterfaceDecl>());
+// }
 
-void ASTDeclReader::VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
-  VisitObjCImplDecl(D);
-  D->CategoryNameLoc = readSourceLocation();
-}
+// void ASTDeclReader::VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
+//   VisitObjCImplDecl(D);
+//   D->CategoryNameLoc = readSourceLocation();
+// }
 
-void ASTDeclReader::VisitObjCImplementationDecl(ObjCImplementationDecl *D) {
-  VisitObjCImplDecl(D);
-  D->setSuperClass(readDeclAs<ObjCInterfaceDecl>());
-  D->SuperLoc = readSourceLocation();
-  D->setIvarLBraceLoc(readSourceLocation());
-  D->setIvarRBraceLoc(readSourceLocation());
-  D->setHasNonZeroConstructors(Record.readInt());
-  D->setHasDestructors(Record.readInt());
-  D->NumIvarInitializers = Record.readInt();
-  if (D->NumIvarInitializers)
-    D->IvarInitializers = ReadGlobalOffset();
-}
+// void ASTDeclReader::VisitObjCImplementationDecl(ObjCImplementationDecl *D) {
+//   VisitObjCImplDecl(D);
+//   D->setSuperClass(readDeclAs<ObjCInterfaceDecl>());
+//   D->SuperLoc = readSourceLocation();
+//   D->setIvarLBraceLoc(readSourceLocation());
+//   D->setIvarRBraceLoc(readSourceLocation());
+//   D->setHasNonZeroConstructors(Record.readInt());
+//   D->setHasDestructors(Record.readInt());
+//   D->NumIvarInitializers = Record.readInt();
+//   if (D->NumIvarInitializers)
+//     D->IvarInitializers = ReadGlobalOffset();
+// }
 
-void ASTDeclReader::VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D) {
-  VisitDecl(D);
-  D->setAtLoc(readSourceLocation());
-  D->setPropertyDecl(readDeclAs<ObjCPropertyDecl>());
-  D->PropertyIvarDecl = readDeclAs<ObjCIvarDecl>();
-  D->IvarLoc = readSourceLocation();
-  D->setGetterMethodDecl(readDeclAs<ObjCMethodDecl>());
-  D->setSetterMethodDecl(readDeclAs<ObjCMethodDecl>());
-  D->setGetterCXXConstructor(Record.readExpr());
-  D->setSetterCXXAssignment(Record.readExpr());
-}
+// void ASTDeclReader::VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D) {
+//   VisitDecl(D);
+//   D->setAtLoc(readSourceLocation());
+//   D->setPropertyDecl(readDeclAs<ObjCPropertyDecl>());
+//   D->PropertyIvarDecl = readDeclAs<ObjCIvarDecl>();
+//   D->IvarLoc = readSourceLocation();
+//   D->setGetterMethodDecl(readDeclAs<ObjCMethodDecl>());
+//   D->setSetterMethodDecl(readDeclAs<ObjCMethodDecl>());
+//   D->setGetterCXXConstructor(Record.readExpr());
+//   D->setSetterCXXAssignment(Record.readExpr());
+// }
 
 void ASTDeclReader::VisitFieldDecl(FieldDecl *FD) {
   VisitDeclaratorDecl(FD);
@@ -2848,8 +2848,8 @@ static bool isConsumerInterestedIn(ASTContext &Ctx, Decl *D, bool HasBody) {
   }
 
   if (isa<FileScopeAsmDecl>(D) ||
-      isa<ObjCProtocolDecl>(D) ||
-      isa<ObjCImplDecl>(D) ||
+      // isa<ObjCProtocolDecl>(D) ||
+      // isa<ObjCImplDecl>(D) ||
       isa<ImportDecl>(D) ||
       isa<PragmaCommentDecl>(D) ||
       isa<PragmaDetectMismatchDecl>(D))
@@ -3087,8 +3087,8 @@ static bool isSameEntity(NamedDecl *X, NamedDecl *Y) {
     return false;
 
   // Objective-C classes and protocols with the same name always match.
-  if (isa<ObjCInterfaceDecl>(X) || isa<ObjCProtocolDecl>(X))
-    return true;
+  // if (isa<ObjCInterfaceDecl>(X) || isa<ObjCProtocolDecl>(X))
+  //   return true;
 
   if (isa<ClassTemplateSpecializationDecl>(X)) {
     // No need to handle these here: we merge them when adding them to the
@@ -3378,9 +3378,9 @@ ASTDeclReader::getPrimaryDCForAnonymousDecl(DeclContext *LexicalDC) {
     if (auto *FD = dyn_cast<FunctionDecl>(D))
       if (FD->isThisDeclarationADefinition())
         return FD;
-    if (auto *MD = dyn_cast<ObjCMethodDecl>(D))
-      if (MD->isThisDeclarationADefinition())
-        return MD;
+    // if (auto *MD = dyn_cast<ObjCMethodDecl>(D))
+    //   if (MD->isThisDeclarationADefinition())
+    //     return MD;
   }
 
   // No merged definition yet.
@@ -3930,39 +3930,39 @@ Decl *ASTReader::ReadDeclRecord(DeclID ID) {
   case DECL_STATIC_ASSERT:
     D = StaticAssertDecl::CreateDeserialized(Context, ID);
     break;
-  case DECL_OBJC_METHOD:
-    D = ObjCMethodDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_INTERFACE:
-    D = ObjCInterfaceDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_IVAR:
-    D = ObjCIvarDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_PROTOCOL:
-    D = ObjCProtocolDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_AT_DEFS_FIELD:
-    D = ObjCAtDefsFieldDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_CATEGORY:
-    D = ObjCCategoryDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_CATEGORY_IMPL:
-    D = ObjCCategoryImplDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_IMPLEMENTATION:
-    D = ObjCImplementationDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_COMPATIBLE_ALIAS:
-    D = ObjCCompatibleAliasDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_PROPERTY:
-    D = ObjCPropertyDecl::CreateDeserialized(Context, ID);
-    break;
-  case DECL_OBJC_PROPERTY_IMPL:
-    D = ObjCPropertyImplDecl::CreateDeserialized(Context, ID);
-    break;
+  // case DECL_OBJC_METHOD:
+  //   D = ObjCMethodDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_INTERFACE:
+  //   D = ObjCInterfaceDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_IVAR:
+  //   D = ObjCIvarDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_PROTOCOL:
+  //   D = ObjCProtocolDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_AT_DEFS_FIELD:
+  //   D = ObjCAtDefsFieldDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_CATEGORY:
+  //   D = ObjCCategoryDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_CATEGORY_IMPL:
+  //   D = ObjCCategoryImplDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_IMPLEMENTATION:
+  //   D = ObjCImplementationDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_COMPATIBLE_ALIAS:
+  //   D = ObjCCompatibleAliasDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_PROPERTY:
+  //   D = ObjCPropertyDecl::CreateDeserialized(Context, ID);
+  //   break;
+  // case DECL_OBJC_PROPERTY_IMPL:
+  //   D = ObjCPropertyImplDecl::CreateDeserialized(Context, ID);
+  //   break;
   case DECL_FIELD:
     D = FieldDecl::CreateDeserialized(Context, ID);
     break;
@@ -4075,12 +4075,12 @@ Decl *ASTReader::ReadDeclRecord(DeclID ID) {
       PendingUpdateRecord(ID, D, /*JustLoaded=*/true));
 
   // Load the categories after recursive loading is finished.
-  if (auto *Class = dyn_cast<ObjCInterfaceDecl>(D))
-    // If we already have a definition when deserializing the ObjCInterfaceDecl,
-    // we put the Decl in PendingDefinitions so we can pull the categories here.
-    if (Class->isThisDeclarationADefinition() ||
-        PendingDefinitions.count(Class))
-      loadObjCCategories(ID, Class);
+  // if (auto *Class = dyn_cast<ObjCInterfaceDecl>(D))
+  //   // If we already have a definition when deserializing the ObjCInterfaceDecl,
+  //   // we put the Decl in PendingDefinitions so we can pull the categories here.
+  //   if (Class->isThisDeclarationADefinition() ||
+  //       PendingDefinitions.count(Class))
+  //     loadObjCCategories(ID, Class);
 
   // If we have deserialized a declaration that has a definition the
   // AST consumer might need to know about, queue it.
@@ -4260,120 +4260,120 @@ namespace {
 
   /// Given an ObjC interface, goes through the modules and links to the
   /// interface all the categories for it.
-  class ObjCCategoriesVisitor {
-    ASTReader &Reader;
-    ObjCInterfaceDecl *Interface;
-    llvm::SmallPtrSetImpl<ObjCCategoryDecl *> &Deserialized;
-    ObjCCategoryDecl *Tail = nullptr;
-    llvm::DenseMap<DeclarationName, ObjCCategoryDecl *> NameCategoryMap;
-    serialization::GlobalDeclID InterfaceID;
-    unsigned PreviousGeneration;
+  // class ObjCCategoriesVisitor {
+  //   ASTReader &Reader;
+  //   ObjCInterfaceDecl *Interface;
+  //   llvm::SmallPtrSetImpl<ObjCCategoryDecl *> &Deserialized;
+  //   ObjCCategoryDecl *Tail = nullptr;
+  //   llvm::DenseMap<DeclarationName, ObjCCategoryDecl *> NameCategoryMap;
+  //   serialization::GlobalDeclID InterfaceID;
+  //   unsigned PreviousGeneration;
 
-    void add(ObjCCategoryDecl *Cat) {
-      // Only process each category once.
-      if (!Deserialized.erase(Cat))
-        return;
+  //   void add(ObjCCategoryDecl *Cat) {
+  //     // Only process each category once.
+  //     if (!Deserialized.erase(Cat))
+  //       return;
 
-      // Check for duplicate categories.
-      if (Cat->getDeclName()) {
-        ObjCCategoryDecl *&Existing = NameCategoryMap[Cat->getDeclName()];
-        if (Existing &&
-            Reader.getOwningModuleFile(Existing)
-                                          != Reader.getOwningModuleFile(Cat)) {
-          // FIXME: We should not warn for duplicates in diamond:
-          //
-          //   MT     //
-          //  /  \    //
-          // ML  MR   //
-          //  \  /    //
-          //   MB     //
-          //
-          // If there are duplicates in ML/MR, there will be warning when
-          // creating MB *and* when importing MB. We should not warn when
-          // importing.
-          Reader.Diag(Cat->getLocation(), diag::warn_dup_category_def)
-            << Interface->getDeclName() << Cat->getDeclName();
-          Reader.Diag(Existing->getLocation(), diag::note_previous_definition);
-        } else if (!Existing) {
-          // Record this category.
-          Existing = Cat;
-        }
-      }
+  //     // Check for duplicate categories.
+  //     if (Cat->getDeclName()) {
+  //       ObjCCategoryDecl *&Existing = NameCategoryMap[Cat->getDeclName()];
+  //       if (Existing &&
+  //           Reader.getOwningModuleFile(Existing)
+  //                                         != Reader.getOwningModuleFile(Cat)) {
+  //         // FIXME: We should not warn for duplicates in diamond:
+  //         //
+  //         //   MT     //
+  //         //  /  \    //
+  //         // ML  MR   //
+  //         //  \  /    //
+  //         //   MB     //
+  //         //
+  //         // If there are duplicates in ML/MR, there will be warning when
+  //         // creating MB *and* when importing MB. We should not warn when
+  //         // importing.
+  //         Reader.Diag(Cat->getLocation(), diag::warn_dup_category_def)
+  //           << Interface->getDeclName() << Cat->getDeclName();
+  //         Reader.Diag(Existing->getLocation(), diag::note_previous_definition);
+  //       } else if (!Existing) {
+  //         // Record this category.
+  //         Existing = Cat;
+  //       }
+  //     }
 
-      // Add this category to the end of the chain.
-      if (Tail)
-        ASTDeclReader::setNextObjCCategory(Tail, Cat);
-      else
-        Interface->setCategoryListRaw(Cat);
-      Tail = Cat;
-    }
+  //     // Add this category to the end of the chain.
+  //     if (Tail)
+  //       ASTDeclReader::setNextObjCCategory(Tail, Cat);
+  //     else
+  //       Interface->setCategoryListRaw(Cat);
+  //     Tail = Cat;
+  //   }
 
-  public:
-    ObjCCategoriesVisitor(ASTReader &Reader,
-                          ObjCInterfaceDecl *Interface,
-                          llvm::SmallPtrSetImpl<ObjCCategoryDecl *> &Deserialized,
-                          serialization::GlobalDeclID InterfaceID,
-                          unsigned PreviousGeneration)
-        : Reader(Reader), Interface(Interface), Deserialized(Deserialized),
-          InterfaceID(InterfaceID), PreviousGeneration(PreviousGeneration) {
-      // Populate the name -> category map with the set of known categories.
-      for (auto *Cat : Interface->known_categories()) {
-        if (Cat->getDeclName())
-          NameCategoryMap[Cat->getDeclName()] = Cat;
+  // public:
+  //   ObjCCategoriesVisitor(ASTReader &Reader,
+  //                         ObjCInterfaceDecl *Interface,
+  //                         llvm::SmallPtrSetImpl<ObjCCategoryDecl *> &Deserialized,
+  //                         serialization::GlobalDeclID InterfaceID,
+  //                         unsigned PreviousGeneration)
+  //       : Reader(Reader), Interface(Interface), Deserialized(Deserialized),
+  //         InterfaceID(InterfaceID), PreviousGeneration(PreviousGeneration) {
+  //     // Populate the name -> category map with the set of known categories.
+  //     for (auto *Cat : Interface->known_categories()) {
+  //       if (Cat->getDeclName())
+  //         NameCategoryMap[Cat->getDeclName()] = Cat;
 
-        // Keep track of the tail of the category list.
-        Tail = Cat;
-      }
-    }
+  //       // Keep track of the tail of the category list.
+  //       Tail = Cat;
+  //     }
+  //   }
 
-    bool operator()(ModuleFile &M) {
-      // If we've loaded all of the category information we care about from
-      // this module file, we're done.
-      if (M.Generation <= PreviousGeneration)
-        return true;
+  //   bool operator()(ModuleFile &M) {
+  //     // If we've loaded all of the category information we care about from
+  //     // this module file, we're done.
+  //     if (M.Generation <= PreviousGeneration)
+  //       return true;
 
-      // Map global ID of the definition down to the local ID used in this
-      // module file. If there is no such mapping, we'll find nothing here
-      // (or in any module it imports).
-      DeclID LocalID = Reader.mapGlobalIDToModuleFileGlobalID(M, InterfaceID);
-      if (!LocalID)
-        return true;
+  //     // Map global ID of the definition down to the local ID used in this
+  //     // module file. If there is no such mapping, we'll find nothing here
+  //     // (or in any module it imports).
+  //     DeclID LocalID = Reader.mapGlobalIDToModuleFileGlobalID(M, InterfaceID);
+  //     if (!LocalID)
+  //       return true;
 
-      // Perform a binary search to find the local redeclarations for this
-      // declaration (if any).
-      const ObjCCategoriesInfo Compare = { LocalID, 0 };
-      const ObjCCategoriesInfo *Result
-        = std::lower_bound(M.ObjCCategoriesMap,
-                           M.ObjCCategoriesMap + M.LocalNumObjCCategoriesInMap,
-                           Compare);
-      if (Result == M.ObjCCategoriesMap + M.LocalNumObjCCategoriesInMap ||
-          Result->DefinitionID != LocalID) {
-        // We didn't find anything. If the class definition is in this module
-        // file, then the module files it depends on cannot have any categories,
-        // so suppress further lookup.
-        return Reader.isDeclIDFromModule(InterfaceID, M);
-      }
+  //     // Perform a binary search to find the local redeclarations for this
+  //     // declaration (if any).
+  //     const ObjCCategoriesInfo Compare = { LocalID, 0 };
+  //     const ObjCCategoriesInfo *Result
+  //       = std::lower_bound(M.ObjCCategoriesMap,
+  //                          M.ObjCCategoriesMap + M.LocalNumObjCCategoriesInMap,
+  //                          Compare);
+  //     if (Result == M.ObjCCategoriesMap + M.LocalNumObjCCategoriesInMap ||
+  //         Result->DefinitionID != LocalID) {
+  //       // We didn't find anything. If the class definition is in this module
+  //       // file, then the module files it depends on cannot have any categories,
+  //       // so suppress further lookup.
+  //       return Reader.isDeclIDFromModule(InterfaceID, M);
+  //     }
 
-      // We found something. Dig out all of the categories.
-      unsigned Offset = Result->Offset;
-      unsigned N = M.ObjCCategories[Offset];
-      M.ObjCCategories[Offset++] = 0; // Don't try to deserialize again
-      for (unsigned I = 0; I != N; ++I)
-        add(cast_or_null<ObjCCategoryDecl>(
-              Reader.GetLocalDecl(M, M.ObjCCategories[Offset++])));
-      return true;
-    }
-  };
+  //     // We found something. Dig out all of the categories.
+  //     unsigned Offset = Result->Offset;
+  //     unsigned N = M.ObjCCategories[Offset];
+  //     M.ObjCCategories[Offset++] = 0; // Don't try to deserialize again
+  //     for (unsigned I = 0; I != N; ++I)
+  //       add(cast_or_null<ObjCCategoryDecl>(
+  //             Reader.GetLocalDecl(M, M.ObjCCategories[Offset++])));
+  //     return true;
+  //   }
+  // };
 
 } // namespace
 
-void ASTReader::loadObjCCategories(serialization::GlobalDeclID ID,
-                                   ObjCInterfaceDecl *D,
-                                   unsigned PreviousGeneration) {
-  ObjCCategoriesVisitor Visitor(*this, D, CategoriesDeserialized, ID,
-                                PreviousGeneration);
-  ModuleMgr.visit(Visitor);
-}
+// void ASTReader::loadObjCCategories(serialization::GlobalDeclID ID,
+//                                    ObjCInterfaceDecl *D,
+//                                    unsigned PreviousGeneration) {
+//   ObjCCategoriesVisitor Visitor(*this, D, CategoriesDeserialized, ID,
+//                                 PreviousGeneration);
+//   ModuleMgr.visit(Visitor);
+// }
 
 template<typename DeclT, typename Fn>
 static void forAllLaterRedecls(DeclT *D, Fn F) {

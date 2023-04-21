@@ -153,7 +153,7 @@ public:
   void CompleteType(TagDecl *Tag) override;
 
   /// Implementation of the ExternalASTSource API.
-  void CompleteType(ObjCInterfaceDecl *Interface) override;
+  // void CompleteType(ObjCInterfaceDecl *Interface) override;
 
   /// Returns true if DC can be found in any source AST context.
   bool CanComplete(DeclContext *DC);

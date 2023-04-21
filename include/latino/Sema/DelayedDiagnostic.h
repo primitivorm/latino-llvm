@@ -40,8 +40,8 @@
 
 namespace latino {
 
-class ObjCInterfaceDecl;
-class ObjCPropertyDecl;
+// class ObjCInterfaceDecl;
+// class ObjCPropertyDecl;
 
 namespace sema {
 
@@ -137,14 +137,14 @@ public:
 
   void Destroy();
 
-  static DelayedDiagnostic makeAvailability(AvailabilityResult AR,
-                                            ArrayRef<SourceLocation> Locs,
-                                            const NamedDecl *ReferringDecl,
-                                            const NamedDecl *OffendingDecl,
-                                            const ObjCInterfaceDecl *UnknownObjCClass,
-                                            const ObjCPropertyDecl  *ObjCProperty,
-                                            StringRef Msg,
-                                            bool ObjCPropertyAccess);
+  // static DelayedDiagnostic makeAvailability(AvailabilityResult AR,
+  //                                           ArrayRef<SourceLocation> Locs,
+  //                                           const NamedDecl *ReferringDecl,
+  //                                           const NamedDecl *OffendingDecl,
+  //                                           const ObjCInterfaceDecl *UnknownObjCClass,
+  //                                           const ObjCPropertyDecl  *ObjCProperty,
+  //                                           StringRef Msg,
+  //                                           bool ObjCPropertyAccess);
 
   static DelayedDiagnostic makeAccess(SourceLocation Loc,
                                       const AccessedEntity &Entity) {
@@ -223,30 +223,30 @@ public:
     return QualType::getFromOpaquePtr(ForbiddenTypeData.OperandType);
   }
 
-  const ObjCInterfaceDecl *getUnknownObjCClass() const {
-    return AvailabilityData.UnknownObjCClass;
-  }
+  // const ObjCInterfaceDecl *getUnknownObjCClass() const {
+  //   return AvailabilityData.UnknownObjCClass;
+  // }
 
-  const ObjCPropertyDecl *getObjCProperty() const {
-    return AvailabilityData.ObjCProperty;
-  }
+  // const ObjCPropertyDecl *getObjCProperty() const {
+  //   return AvailabilityData.ObjCProperty;
+  // }
 
-  bool getObjCPropertyAccess() const {
-    return AvailabilityData.ObjCPropertyAccess;
-  }
+  // bool getObjCPropertyAccess() const {
+  //   return AvailabilityData.ObjCPropertyAccess;
+  // }
 
 private:
   struct AD {
     const NamedDecl *ReferringDecl;
     const NamedDecl *OffendingDecl;
-    const ObjCInterfaceDecl *UnknownObjCClass;
-    const ObjCPropertyDecl  *ObjCProperty;
+    // const ObjCInterfaceDecl *UnknownObjCClass;
+    // const ObjCPropertyDecl  *ObjCProperty;
     const char *Message;
     size_t MessageLen;
     SourceLocation *SelectorLocs;
     size_t NumSelectorLocs;
     AvailabilityResult AR;
-    bool ObjCPropertyAccess;
+    // bool ObjCPropertyAccess;
   };
 
   struct FTD {

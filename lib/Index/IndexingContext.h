@@ -24,7 +24,7 @@ namespace latino {
   class TagDecl;
   class TypeSourceInfo;
   class NamedDecl;
-  class ObjCMethodDecl;
+  // class ObjCMethodDecl;
   class DeclContext;
   class NestedNameSpecifierLoc;
   class Stmt;

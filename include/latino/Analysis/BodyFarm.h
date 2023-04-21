@@ -23,8 +23,8 @@ namespace latino {
 
 class ASTContext;
 class FunctionDecl;
-class ObjCMethodDecl;
-class ObjCPropertyDecl;
+// class ObjCMethodDecl;
+// class ObjCPropertyDecl;
 class Stmt;
 class CodeInjector;
 
@@ -36,7 +36,7 @@ public:
   Stmt *getBody(const FunctionDecl *D);
 
   /// Factory method for creating bodies for Objective-C properties.
-  Stmt *getBody(const ObjCMethodDecl *D);
+  // Stmt *getBody(const ObjCMethodDecl *D);
 
   /// Remove copy constructor to avoid accidental copying.
   BodyFarm(const BodyFarm &other) = delete;

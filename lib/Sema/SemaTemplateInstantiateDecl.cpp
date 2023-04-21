@@ -926,12 +926,12 @@ Decl *TemplateDeclInstantiator::VisitVarDecl(VarDecl *D,
                           DI, D->getStorageClass());
 
   // In ARC, infer 'retaining' for variables of retainable type.
-  if (SemaRef.getLangOpts().ObjCAutoRefCount &&
-      SemaRef.inferObjCARCLifetime(Var))
-    Var->setInvalidDecl();
+  // if (SemaRef.getLangOpts().ObjCAutoRefCount &&
+  //     SemaRef.inferObjCARCLifetime(Var))
+  //   Var->setInvalidDecl();
 
-  if (SemaRef.getLangOpts().OpenCL)
-    SemaRef.deduceOpenCLAddressSpace(Var);
+  // if (SemaRef.getLangOpts().OpenCL)
+  //   SemaRef.deduceOpenCLAddressSpace(Var);
 
   // Substitute the nested name specifier, if any.
   if (SubstQualifier(D, Var))
@@ -3635,8 +3635,8 @@ Decl *TemplateDeclInstantiator::VisitVarTemplateSpecializationDecl(
     VarTemplate->AddSpecialization(Var, InsertPos);
   }
 
-  if (SemaRef.getLangOpts().OpenCL)
-    SemaRef.deduceOpenCLAddressSpace(Var);
+  // if (SemaRef.getLangOpts().OpenCL)
+  //   SemaRef.deduceOpenCLAddressSpace(Var);
 
   // Substitute the nested name specifier, if any.
   if (SubstQualifier(D, Var))
@@ -4908,8 +4908,8 @@ VarTemplateSpecializationDecl *Sema::CompleteVarTemplateSpecializationDecl(
   // Instantiate the initializer.
   InstantiateVariableInitializer(VarSpec, PatternDecl, TemplateArgs);
 
-  if (getLangOpts().OpenCL)
-    deduceOpenCLAddressSpace(VarSpec);
+  // if (getLangOpts().OpenCL)
+  //   deduceOpenCLAddressSpace(VarSpec);
 
   return VarSpec;
 }

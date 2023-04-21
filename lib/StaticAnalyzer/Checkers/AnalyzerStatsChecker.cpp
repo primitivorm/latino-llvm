@@ -8,7 +8,7 @@
 // This file reports various statistics about analyzer visitation.
 //===----------------------------------------------------------------------===//
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporter.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
@@ -93,11 +93,12 @@ void AnalyzerStatsChecker::checkEndAnalysis(ExplodedGraph &G,
   if (!Loc.isValid())
     return;
 
-  if (isa<FunctionDecl>(D) || isa<ObjCMethodDecl>(D)) {
-    const NamedDecl *ND = cast<NamedDecl>(D);
-    output << *ND;
-  }
-  else if (isa<BlockDecl>(D)) {
+  // if (isa<FunctionDecl>(D) || isa<ObjCMethodDecl>(D)) {
+  //   const NamedDecl *ND = cast<NamedDecl>(D);
+  //   output << *ND;
+  // }
+  // else 
+  if (isa<BlockDecl>(D)) {
     output << "block(line:" << Loc.getLine() << ":col:" << Loc.getColumn();
   }
 

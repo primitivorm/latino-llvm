@@ -106,18 +106,18 @@ class MaterializeTemporaryExpr;
 class MemberSpecializationInfo;
 class Module;
 struct MSGuidDeclParts;
-class ObjCCategoryDecl;
-class ObjCCategoryImplDecl;
-class ObjCContainerDecl;
-class ObjCImplDecl;
-class ObjCImplementationDecl;
-class ObjCInterfaceDecl;
-class ObjCIvarDecl;
-class ObjCMethodDecl;
-class ObjCPropertyDecl;
-class ObjCPropertyImplDecl;
-class ObjCProtocolDecl;
-class ObjCTypeParamDecl;
+// class ObjCCategoryDecl;
+// class ObjCCategoryImplDecl;
+// class ObjCContainerDecl;
+// class ObjCImplDecl;
+// class ObjCImplementationDecl;
+// class ObjCInterfaceDecl;
+// class ObjCIvarDecl;
+// class ObjCMethodDecl;
+// class ObjCPropertyDecl;
+// class ObjCPropertyImplDecl;
+// class ObjCProtocolDecl;
+// class ObjCTypeParamDecl;
 class OMPTraitInfo;
 struct ParsedTargetAttr;
 class Preprocessor;
@@ -217,8 +217,8 @@ class ASTContext : public RefCountedBase<ASTContext> {
                                      ASTContext&>
     DependentTemplateSpecializationTypes;
   llvm::FoldingSet<PackExpansionType> PackExpansionTypes;
-  mutable llvm::FoldingSet<ObjCObjectTypeImpl> ObjCObjectTypes;
-  mutable llvm::FoldingSet<ObjCObjectPointerType> ObjCObjectPointerTypes;
+  // mutable llvm::FoldingSet<ObjCObjectTypeImpl> ObjCObjectTypes;
+  // mutable llvm::FoldingSet<ObjCObjectPointerType> ObjCObjectPointerTypes;
   mutable llvm::FoldingSet<DependentUnaryTransformType>
     DependentUnaryTransformTypes;
   mutable llvm::ContextualFoldingSet<AutoType, ASTContext&> AutoTypes;
@@ -249,8 +249,8 @@ class ASTContext : public RefCountedBase<ASTContext> {
   /// This is lazily created.  This is intentionally not serialized.
   mutable llvm::DenseMap<const RecordDecl*, const ASTRecordLayout*>
     ASTRecordLayouts;
-  mutable llvm::DenseMap<const ObjCContainerDecl*, const ASTRecordLayout*>
-    ObjCLayouts;
+  // mutable llvm::DenseMap<const ObjCContainerDecl*, const ASTRecordLayout*>
+  //   ObjCLayouts;
 
   /// A cache from types to size and alignment information.
   using TypeInfoMap = llvm::DenseMap<const Type *, struct TypeInfo>;
@@ -266,11 +266,11 @@ class ASTContext : public RefCountedBase<ASTContext> {
   llvm::DenseMap<const CXXRecordDecl*, LazyDeclPtr> KeyFunctions;
 
   /// Mapping from ObjCContainers to their ObjCImplementations.
-  llvm::DenseMap<ObjCContainerDecl*, ObjCImplDecl*> ObjCImpls;
+  // llvm::DenseMap<ObjCContainerDecl*, ObjCImplDecl*> ObjCImpls;
 
   /// Mapping from ObjCMethod to its duplicate declaration in the same
   /// interface.
-  llvm::DenseMap<const ObjCMethodDecl*,const ObjCMethodDecl*> ObjCMethodRedecls;
+  // llvm::DenseMap<const ObjCMethodDecl*,const ObjCMethodDecl*> ObjCMethodRedecls;
 
   /// Mapping from __block VarDecls to BlockVarCopyInit.
   llvm::DenseMap<const VarDecl *, BlockVarCopyInit> BlockVarCopyInits;
@@ -327,25 +327,25 @@ class ASTContext : public RefCountedBase<ASTContext> {
   mutable TypedefDecl *BuiltinMSVaListDecl = nullptr;
 
   /// The typedef for the predefined \c id type.
-  mutable TypedefDecl *ObjCIdDecl = nullptr;
+  // mutable TypedefDecl *ObjCIdDecl = nullptr;
 
   /// The typedef for the predefined \c SEL type.
-  mutable TypedefDecl *ObjCSelDecl = nullptr;
+  // mutable TypedefDecl *ObjCSelDecl = nullptr;
 
   /// The typedef for the predefined \c Class type.
-  mutable TypedefDecl *ObjCClassDecl = nullptr;
+  // mutable TypedefDecl *ObjCClassDecl = nullptr;
 
   /// The typedef for the predefined \c Protocol class in Objective-C.
-  mutable ObjCInterfaceDecl *ObjCProtocolClassDecl = nullptr;
+  // mutable ObjCInterfaceDecl *ObjCProtocolClassDecl = nullptr;
 
   /// The typedef for the predefined 'BOOL' type.
   mutable TypedefDecl *BOOLDecl = nullptr;
 
   // Typedefs which may be provided defining the structure of Objective-C
   // pseudo-builtins
-  QualType ObjCIdRedefinitionType;
-  QualType ObjCClassRedefinitionType;
-  QualType ObjCSelRedefinitionType;
+  // QualType ObjCIdRedefinitionType;
+  // QualType ObjCClassRedefinitionType;
+  // QualType ObjCSelRedefinitionType;
 
   /// The identifier 'bool'.
   mutable IdentifierInfo *BoolName = nullptr;
@@ -362,16 +362,16 @@ class ASTContext : public RefCountedBase<ASTContext> {
   /// The identifier '__type_pack_element'.
   mutable IdentifierInfo *TypePackElementName = nullptr;
 
-  QualType ObjCConstantStringType;
+  // QualType ObjCConstantStringType;
   mutable RecordDecl *CFConstantStringTagDecl = nullptr;
   mutable TypedefDecl *CFConstantStringTypeDecl = nullptr;
 
-  mutable QualType ObjCSuperType;
+  // mutable QualType ObjCSuperType;
 
-  QualType ObjCNSStringType;
+  // QualType ObjCNSStringType;
 
   /// The typedef declaration for the Objective-C "instancetype" type.
-  TypedefDecl *ObjCInstanceTypeDecl = nullptr;
+  // TypedefDecl *ObjCInstanceTypeDecl = nullptr;
 
   /// The type for the C FILE type.
   TypeDecl *FILEDecl = nullptr;
@@ -973,18 +973,18 @@ public:
   CanQualType DependentTy, OverloadTy, BoundMemberTy, UnknownAnyTy;
   CanQualType BuiltinFnTy;
   CanQualType PseudoObjectTy, ARCUnbridgedCastTy;
-  CanQualType ObjCBuiltinIdTy, ObjCBuiltinClassTy, ObjCBuiltinSelTy;
-  CanQualType ObjCBuiltinBoolTy;
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  CanQualType SingletonId;
-#include "latino/Basic/OpenCLImageTypes.def"
-  CanQualType OCLSamplerTy, OCLEventTy, OCLClkEventTy;
-  CanQualType OCLQueueTy, OCLReserveIDTy;
+  // CanQualType ObjCBuiltinIdTy, ObjCBuiltinClassTy, ObjCBuiltinSelTy;
+  // CanQualType ObjCBuiltinBoolTy;
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   CanQualType SingletonId;
+// #include "latino/Basic/OpenCLImageTypes.def"
+  // CanQualType OCLSamplerTy, OCLEventTy, OCLClkEventTy;
+  // CanQualType OCLQueueTy, OCLReserveIDTy;
   CanQualType IncompleteMatrixIdxTy;
   CanQualType OMPArraySectionTy, OMPArrayShapingTy, OMPIteratorTy;
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  CanQualType Id##Ty;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   CanQualType Id##Ty;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   CanQualType SingletonId;
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -1084,16 +1084,16 @@ public:
   /// \param allowOnPointerType specifies if we can apply protocol
   /// qualifiers on ObjCObjectPointerType. It can be set to true when
   /// constructing the canonical type of a Objective-C type parameter.
-  QualType applyObjCProtocolQualifiers(QualType type,
-      ArrayRef<ObjCProtocolDecl *> protocols, bool &hasError,
-      bool allowOnPointerType = false) const;
+  // QualType applyObjCProtocolQualifiers(QualType type,
+  //     ArrayRef<ObjCProtocolDecl *> protocols, bool &hasError,
+  //     bool allowOnPointerType = false) const;
 
   /// Return the uniqued reference to the type for an Objective-C
   /// gc-qualified type.
   ///
   /// The resulting type has a union of the qualifiers from T and the gc
   /// attribute.
-  QualType getObjCGCQualType(QualType T, Qualifiers::GC gcAttr) const;
+  // QualType getObjCGCQualType(QualType T, Qualifiers::GC gcAttr) const;
 
   /// Remove the existing address space on the type if it is a pointer size
   /// address space and return the type with qualifiers intact.
@@ -1223,10 +1223,10 @@ public:
   QualType getBlockDescriptorExtendedType() const;
 
   /// Map an AST Type to an OpenCLTypeKind enum value.
-  OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;
+  // OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;
 
   /// Get address space for OpenCL type.
-  LangAS getOpenCLTypeAddrSpace(const Type *T) const;
+  // LangAS getOpenCLTypeAddrSpace(const Type *T) const;
 
   void setcudaConfigureCallDecl(FunctionDecl *FD) {
     cudaConfigureCallDecl = FD;
@@ -1242,9 +1242,9 @@ public:
   /// Returns true, if given type has a known lifetime. HasByrefExtendedLayout
   /// is set to false in this case. If HasByrefExtendedLayout returns true,
   /// byref variable has extended lifetime.
-  bool getByrefLifetime(QualType Ty,
-                        Qualifiers::ObjCLifetime &Lifetime,
-                        bool &HasByrefExtendedLayout) const;
+  // bool getByrefLifetime(QualType Ty,
+  //                       Qualifiers::ObjCLifetime &Lifetime,
+  //                       bool &HasByrefExtendedLayout) const;
 
   /// Return the uniqued reference to the type for an lvalue reference
   /// to the specified type.
@@ -1478,34 +1478,34 @@ public:
   QualType getPackExpansionType(QualType Pattern,
                                 Optional<unsigned> NumExpansions);
 
-  QualType getObjCInterfaceType(const ObjCInterfaceDecl *Decl,
-                                ObjCInterfaceDecl *PrevDecl = nullptr) const;
+  // QualType getObjCInterfaceType(const ObjCInterfaceDecl *Decl,
+  //                               ObjCInterfaceDecl *PrevDecl = nullptr) const;
 
-  /// Legacy interface: cannot provide type arguments or __kindof.
-  QualType getObjCObjectType(QualType Base,
-                             ObjCProtocolDecl * const *Protocols,
-                             unsigned NumProtocols) const;
+  // /// Legacy interface: cannot provide type arguments or __kindof.
+  // QualType getObjCObjectType(QualType Base,
+  //                            ObjCProtocolDecl * const *Protocols,
+  //                            unsigned NumProtocols) const;
 
-  QualType getObjCObjectType(QualType Base,
-                             ArrayRef<QualType> typeArgs,
-                             ArrayRef<ObjCProtocolDecl *> protocols,
-                             bool isKindOf) const;
+  // QualType getObjCObjectType(QualType Base,
+  //                            ArrayRef<QualType> typeArgs,
+  //                            ArrayRef<ObjCProtocolDecl *> protocols,
+  //                            bool isKindOf) const;
 
-  QualType getObjCTypeParamType(const ObjCTypeParamDecl *Decl,
-                                ArrayRef<ObjCProtocolDecl *> protocols) const;
-  void adjustObjCTypeParamBoundType(const ObjCTypeParamDecl *Orig,
-                                    ObjCTypeParamDecl *New) const;
+  // QualType getObjCTypeParamType(const ObjCTypeParamDecl *Decl,
+  //                               ArrayRef<ObjCProtocolDecl *> protocols) const;
+  // void adjustObjCTypeParamBoundType(const ObjCTypeParamDecl *Orig,
+  //                                   ObjCTypeParamDecl *New) const;
 
-  bool ObjCObjectAdoptsQTypeProtocols(QualType QT, ObjCInterfaceDecl *Decl);
+  // bool ObjCObjectAdoptsQTypeProtocols(QualType QT, ObjCInterfaceDecl *Decl);
 
   /// QIdProtocolsAdoptObjCObjectProtocols - Checks that protocols in
   /// QT's qualified-id protocol list adopt all protocols in IDecl's list
   /// of protocols.
-  bool QIdProtocolsAdoptObjCObjectProtocols(QualType QT,
-                                            ObjCInterfaceDecl *IDecl);
+  // bool QIdProtocolsAdoptObjCObjectProtocols(QualType QT,
+  //                                           ObjCInterfaceDecl *IDecl);
 
   /// Return a ObjCObjectPointerType type for the given ObjCObjectType.
-  QualType getObjCObjectPointerType(QualType OIT) const;
+  // QualType getObjCObjectPointerType(QualType OIT) const;
 
   /// GCC extension.
   QualType getTypeOfExprType(Expr *e) const;
@@ -1605,8 +1605,8 @@ public:
   QualType getCFConstantStringType() const;
 
   /// Returns the C struct type for objc_super
-  QualType getObjCSuperType() const;
-  void setObjCSuperType(QualType ST) { ObjCSuperType = ST; }
+  // QualType getObjCSuperType() const;
+  // void setObjCSuperType(QualType ST) { ObjCSuperType = ST; }
 
   /// Get the structure type used to representation CFStrings, or NULL
   /// if it hasn't yet been built.
@@ -1620,57 +1620,57 @@ public:
   RecordDecl *getCFConstantStringTagDecl() const;
 
   // This setter/getter represents the ObjC type for an NSConstantString.
-  void setObjCConstantStringInterface(ObjCInterfaceDecl *Decl);
-  QualType getObjCConstantStringInterface() const {
-    return ObjCConstantStringType;
-  }
+  // void setObjCConstantStringInterface(ObjCInterfaceDecl *Decl);
+  // QualType getObjCConstantStringInterface() const {
+  //   return ObjCConstantStringType;
+  // }
 
-  QualType getObjCNSStringType() const {
-    return ObjCNSStringType;
-  }
+  // QualType getObjCNSStringType() const {
+  //   return ObjCNSStringType;
+  // }
 
-  void setObjCNSStringType(QualType T) {
-    ObjCNSStringType = T;
-  }
+  // void setObjCNSStringType(QualType T) {
+  //   ObjCNSStringType = T;
+  // }
 
   /// Retrieve the type that \c id has been defined to, which may be
   /// different from the built-in \c id if \c id has been typedef'd.
-  QualType getObjCIdRedefinitionType() const {
-    if (ObjCIdRedefinitionType.isNull())
-      return getObjCIdType();
-    return ObjCIdRedefinitionType;
-  }
+  // QualType getObjCIdRedefinitionType() const {
+  //   if (ObjCIdRedefinitionType.isNull())
+  //     return getObjCIdType();
+  //   return ObjCIdRedefinitionType;
+  // }
 
   /// Set the user-written type that redefines \c id.
-  void setObjCIdRedefinitionType(QualType RedefType) {
-    ObjCIdRedefinitionType = RedefType;
-  }
+  // void setObjCIdRedefinitionType(QualType RedefType) {
+  //   ObjCIdRedefinitionType = RedefType;
+  // }
 
   /// Retrieve the type that \c Class has been defined to, which may be
   /// different from the built-in \c Class if \c Class has been typedef'd.
-  QualType getObjCClassRedefinitionType() const {
-    if (ObjCClassRedefinitionType.isNull())
-      return getObjCClassType();
-    return ObjCClassRedefinitionType;
-  }
+  // QualType getObjCClassRedefinitionType() const {
+  //   if (ObjCClassRedefinitionType.isNull())
+  //     return getObjCClassType();
+  //   return ObjCClassRedefinitionType;
+  // }
 
   /// Set the user-written type that redefines 'SEL'.
-  void setObjCClassRedefinitionType(QualType RedefType) {
-    ObjCClassRedefinitionType = RedefType;
-  }
+  // void setObjCClassRedefinitionType(QualType RedefType) {
+  //   ObjCClassRedefinitionType = RedefType;
+  // }
 
   /// Retrieve the type that 'SEL' has been defined to, which may be
   /// different from the built-in 'SEL' if 'SEL' has been typedef'd.
-  QualType getObjCSelRedefinitionType() const {
-    if (ObjCSelRedefinitionType.isNull())
-      return getObjCSelType();
-    return ObjCSelRedefinitionType;
-  }
+  // QualType getObjCSelRedefinitionType() const {
+  //   if (ObjCSelRedefinitionType.isNull())
+  //     return getObjCSelType();
+  //   return ObjCSelRedefinitionType;
+  // }
 
   /// Set the user-written type that redefines 'SEL'.
-  void setObjCSelRedefinitionType(QualType RedefType) {
-    ObjCSelRedefinitionType = RedefType;
-  }
+  // void setObjCSelRedefinitionType(QualType RedefType) {
+  //   ObjCSelRedefinitionType = RedefType;
+  // }
 
   /// Retrieve the identifier 'NSObject'.
   IdentifierInfo *getNSObjectName() const {
@@ -1715,13 +1715,13 @@ public:
 
   /// Retrieve the Objective-C "instancetype" type, if already known;
   /// otherwise, returns a NULL type;
-  QualType getObjCInstanceType() {
-    return getTypeDeclType(getObjCInstanceTypeDecl());
-  }
+  // QualType getObjCInstanceType() {
+  //   return getTypeDeclType(getObjCInstanceTypeDecl());
+  // }
 
   /// Retrieve the typedef declaration corresponding to the Objective-C
   /// "instancetype" type.
-  TypedefDecl *getObjCInstanceTypeDecl();
+  // TypedefDecl *getObjCInstanceTypeDecl();
 
   /// Set the type for the C FILE type.
   void setFILEDecl(TypeDecl *FILEDecl) { this->FILEDecl = FILEDecl; }
@@ -1778,19 +1778,19 @@ public:
   /// \p S.
   ///
   /// If \p Field is specified then record field names are also encoded.
-  void getObjCEncodingForType(QualType T, std::string &S,
-                              const FieldDecl *Field=nullptr,
-                              QualType *NotEncodedT=nullptr) const;
+  // void getObjCEncodingForType(QualType T, std::string &S,
+  //                             const FieldDecl *Field=nullptr,
+  //                             QualType *NotEncodedT=nullptr) const;
 
   /// Emit the Objective-C property type encoding for the given
   /// type \p T into \p S.
-  void getObjCEncodingForPropertyType(QualType T, std::string &S) const;
+  // void getObjCEncodingForPropertyType(QualType T, std::string &S) const;
 
   void getLegacyIntegralTypeEncoding(QualType &t) const;
 
   /// Put the string version of the type qualifiers \p QT into \p S.
-  void getObjCEncodingForTypeQualifier(Decl::ObjCDeclQualifier QT,
-                                       std::string &S) const;
+  // void getObjCEncodingForTypeQualifier(Decl::ObjCDeclQualifier QT,
+  //                                      std::string &S) const;
 
   /// Emit the encoded type for the function \p Decl into \p S.
   ///
@@ -1798,71 +1798,71 @@ public:
   ///
   /// \returns true if an error occurred (e.g., because one of the parameter
   /// types is incomplete), false otherwise.
-  std::string getObjCEncodingForFunctionDecl(const FunctionDecl *Decl) const;
+  // std::string getObjCEncodingForFunctionDecl(const FunctionDecl *Decl) const;
 
   /// Emit the encoded type for the method declaration \p Decl into
   /// \p S.
-  std::string getObjCEncodingForMethodDecl(const ObjCMethodDecl *Decl,
-                                           bool Extended = false) const;
+  // std::string getObjCEncodingForMethodDecl(const ObjCMethodDecl *Decl,
+  //                                          bool Extended = false) const;
 
   /// Return the encoded type for this block declaration.
-  std::string getObjCEncodingForBlock(const BlockExpr *blockExpr) const;
+  // std::string getObjCEncodingForBlock(const BlockExpr *blockExpr) const;
 
   /// getObjCEncodingForPropertyDecl - Return the encoded type for
   /// this method declaration. If non-NULL, Container must be either
   /// an ObjCCategoryImplDecl or ObjCImplementationDecl; it should
   /// only be NULL when getting encodings for protocol properties.
-  std::string getObjCEncodingForPropertyDecl(const ObjCPropertyDecl *PD,
-                                             const Decl *Container) const;
+  // std::string getObjCEncodingForPropertyDecl(const ObjCPropertyDecl *PD,
+  //                                            const Decl *Container) const;
 
-  bool ProtocolCompatibleWithProtocol(ObjCProtocolDecl *lProto,
-                                      ObjCProtocolDecl *rProto) const;
+  // bool ProtocolCompatibleWithProtocol(ObjCProtocolDecl *lProto,
+  //                                     ObjCProtocolDecl *rProto) const;
 
-  ObjCPropertyImplDecl *getObjCPropertyImplDeclForPropertyDecl(
-                                                  const ObjCPropertyDecl *PD,
-                                                  const Decl *Container) const;
+  // ObjCPropertyImplDecl *getObjCPropertyImplDeclForPropertyDecl(
+  //                                                 const ObjCPropertyDecl *PD,
+  //                                                 const Decl *Container) const;
 
   /// Return the size of type \p T for Objective-C encoding purpose,
   /// in characters.
-  CharUnits getObjCEncodingTypeSize(QualType T) const;
+  // CharUnits getObjCEncodingTypeSize(QualType T) const;
 
   /// Retrieve the typedef corresponding to the predefined \c id type
   /// in Objective-C.
-  TypedefDecl *getObjCIdDecl() const;
+  // TypedefDecl *getObjCIdDecl() const;
 
   /// Represents the Objective-CC \c id type.
   ///
   /// This is set up lazily, by Sema.  \c id is always a (typedef for a)
   /// pointer type, a pointer to a struct.
-  QualType getObjCIdType() const {
-    return getTypeDeclType(getObjCIdDecl());
-  }
+  // QualType getObjCIdType() const {
+  //   return getTypeDeclType(getObjCIdDecl());
+  // }
 
   /// Retrieve the typedef corresponding to the predefined 'SEL' type
   /// in Objective-C.
-  TypedefDecl *getObjCSelDecl() const;
+  // TypedefDecl *getObjCSelDecl() const;
 
   /// Retrieve the type that corresponds to the predefined Objective-C
   /// 'SEL' type.
-  QualType getObjCSelType() const {
-    return getTypeDeclType(getObjCSelDecl());
-  }
+  // QualType getObjCSelType() const {
+  //   return getTypeDeclType(getObjCSelDecl());
+  // }
 
   /// Retrieve the typedef declaration corresponding to the predefined
   /// Objective-C 'Class' type.
-  TypedefDecl *getObjCClassDecl() const;
+  // TypedefDecl *getObjCClassDecl() const;
 
   /// Represents the Objective-C \c Class type.
   ///
   /// This is set up lazily, by Sema.  \c Class is always a (typedef for a)
   /// pointer type, a pointer to a struct.
-  QualType getObjCClassType() const {
-    return getTypeDeclType(getObjCClassDecl());
-  }
+  // QualType getObjCClassType() const {
+  //   return getTypeDeclType(getObjCClassDecl());
+  // }
 
   /// Retrieve the Objective-C class declaration corresponding to
   /// the predefined \c Protocol class.
-  ObjCInterfaceDecl *getObjCProtocolDecl() const;
+  // ObjCInterfaceDecl *getObjCProtocolDecl() const;
 
   /// Retrieve declaration of 'BOOL' typedef
   TypedefDecl *getBOOLDecl() const {
@@ -1880,9 +1880,9 @@ public:
   }
 
   /// Retrieve the type of the Objective-C \c Protocol class.
-  QualType getObjCProtoType() const {
-    return getObjCInterfaceType(getObjCProtocolDecl());
-  }
+  // QualType getObjCProtoType() const {
+  //   return getObjCInterfaceType(getObjCProtocolDecl());
+  // }
 
   /// Retrieve the C type declaration corresponding to the predefined
   /// \c __builtin_va_list type.
@@ -1950,26 +1950,26 @@ public:
   /// Return a type with the given lifetime qualifier.
   ///
   /// \pre Neither type.ObjCLifetime() nor \p lifetime may be \c OCL_None.
-  QualType getLifetimeQualifiedType(QualType type,
-                                    Qualifiers::ObjCLifetime lifetime) {
-    assert(type.getObjCLifetime() == Qualifiers::OCL_None);
-    assert(lifetime != Qualifiers::OCL_None);
+  // QualType getLifetimeQualifiedType(QualType type,
+  //                                   Qualifiers::ObjCLifetime lifetime) {
+  //   assert(type.getObjCLifetime() == Qualifiers::OCL_None);
+  //   assert(lifetime != Qualifiers::OCL_None);
 
-    Qualifiers qs;
-    qs.addObjCLifetime(lifetime);
-    return getQualifiedType(type, qs);
-  }
+  //   Qualifiers qs;
+  //   qs.addObjCLifetime(lifetime);
+  //   return getQualifiedType(type, qs);
+  // }
 
   /// getUnqualifiedObjCPointerType - Returns version of
   /// Objective-C pointer type with lifetime qualifier removed.
-  QualType getUnqualifiedObjCPointerType(QualType type) const {
-    if (!type.getTypePtr()->isObjCObjectPointerType() ||
-        !type.getQualifiers().hasObjCLifetime())
-      return type;
-    Qualifiers Qs = type.getQualifiers();
-    Qs.removeObjCLifetime();
-    return getQualifiedType(type.getUnqualifiedType(), Qs);
-  }
+  // QualType getUnqualifiedObjCPointerType(QualType type) const {
+  //   if (!type.getTypePtr()->isObjCObjectPointerType() ||
+  //       !type.getQualifiers().hasObjCLifetime())
+  //     return type;
+  //   Qualifiers Qs = type.getQualifiers();
+  //   Qs.removeObjCLifetime();
+  //   return getQualifiedType(type.getUnqualifiedType(), Qs);
+  // }
 
   unsigned char getFixedPointScale(QualType Ty) const;
   unsigned char getFixedPointIBits(QualType Ty) const;
@@ -2037,7 +2037,7 @@ private:
 public:
   /// Return one of the GCNone, Weak or Strong Objective-C garbage
   /// collection attributes.
-  Qualifiers::GC getObjCGCAttrKind(QualType Ty) const;
+  // Qualifiers::GC getObjCGCAttrKind(QualType Ty) const;
 
   /// Return true if the given vector types are of the same unqualified
   /// type or if they are equivalent to the same GCC vector type.
@@ -2053,9 +2053,9 @@ public:
 
   /// Return true if this is an \c NSObject object with its \c NSObject
   /// attribute set.
-  static bool isObjCNSObjectType(QualType Ty) {
-    return Ty->isObjCNSObjectType();
-  }
+  // static bool isObjCNSObjectType(QualType Ty) {
+  //   return Ty->isObjCNSObjectType();
+  // }
 
   //===--------------------------------------------------------------------===//
   //                         Type Sizing and Analysis
@@ -2188,8 +2188,8 @@ public:
 
   /// Get or compute information about the layout of the specified
   /// Objective-C interface.
-  const ASTRecordLayout &getASTObjCInterfaceLayout(const ObjCInterfaceDecl *D)
-    const;
+  // const ASTRecordLayout &getASTObjCInterfaceLayout(const ObjCInterfaceDecl *D)
+  //   const;
 
   void DumpRecordLayout(const RecordDecl *RD, raw_ostream &OS,
                         bool Simple = false) const;
@@ -2198,8 +2198,8 @@ public:
   /// Objective-C implementation.
   ///
   /// This may differ from the interface if synthesized ivars are present.
-  const ASTRecordLayout &
-  getASTObjCImplementationLayout(const ObjCImplementationDecl *D) const;
+  // const ASTRecordLayout &
+  // getASTObjCImplementationLayout(const ObjCImplementationDecl *D) const;
 
   /// Get our current best idea for the key function of the
   /// given record decl, or nullptr if there isn't one.
@@ -2238,9 +2238,9 @@ public:
   uint64_t getFieldOffset(const ValueDecl *FD) const;
 
   /// Get the offset of an ObjCIvarDecl in bits.
-  uint64_t lookupFieldBitOffset(const ObjCInterfaceDecl *OID,
-                                const ObjCImplementationDecl *ID,
-                                const ObjCIvarDecl *Ivar) const;
+  // uint64_t lookupFieldBitOffset(const ObjCInterfaceDecl *OID,
+  //                               const ObjCImplementationDecl *ID,
+  //                               const ObjCIvarDecl *Ivar) const;
 
   bool isNearlyEmpty(const CXXRecordDecl *RD) const;
 
@@ -2249,12 +2249,12 @@ public:
   /// If \p T is null pointer, assume the target in ASTContext.
   MangleContext *createMangleContext(const TargetInfo *T = nullptr);
 
-  void DeepCollectObjCIvars(const ObjCInterfaceDecl *OI, bool leafClass,
-                            SmallVectorImpl<const ObjCIvarDecl*> &Ivars) const;
+  // void DeepCollectObjCIvars(const ObjCInterfaceDecl *OI, bool leafClass,
+  //                           SmallVectorImpl<const ObjCIvarDecl*> &Ivars) const;
 
-  unsigned CountNonClassIvars(const ObjCInterfaceDecl *OI) const;
-  void CollectInheritedProtocols(const Decl *CDecl,
-                          llvm::SmallPtrSet<ObjCProtocolDecl*, 8> &Protocols);
+  // unsigned CountNonClassIvars(const ObjCInterfaceDecl *OI) const;
+  // void CollectInheritedProtocols(const Decl *CDecl,
+  //                         llvm::SmallPtrSet<ObjCProtocolDecl*, 8> &Protocols);
 
   /// Return true if the specified type has unique object representations
   /// according to (C++17 [meta.unary.prop]p9)
@@ -2347,8 +2347,8 @@ public:
     return true;
   }
 
-  bool ObjCMethodsAreEqual(const ObjCMethodDecl *MethodDecl,
-                           const ObjCMethodDecl *MethodImp);
+  // bool ObjCMethodsAreEqual(const ObjCMethodDecl *MethodDecl,
+  //                          const ObjCMethodDecl *MethodImp);
 
   bool UnwrapSimilarTypes(QualType &T1, QualType &T2);
   bool UnwrapSimilarArrayTypes(QualType &T1, QualType &T2);
@@ -2489,7 +2489,7 @@ public:
 
   /// Recurses in pointer/array types until it finds an Objective-C
   /// retainable type and returns its ownership.
-  Qualifiers::ObjCLifetime getInnerObjCOwnership(QualType T) const;
+  // Qualifiers::ObjCLifetime getInnerObjCOwnership(QualType T) const;
 
   /// Whether this is a promotable bitfield reference according
   /// to C99 6.3.1.1p2, bullet 2 (and GCC extensions).
@@ -2560,38 +2560,38 @@ public:
   bool propertyTypesAreCompatible(QualType, QualType);
   bool typesAreBlockPointerCompatible(QualType, QualType);
 
-  bool isObjCIdType(QualType T) const {
-    return T == getObjCIdType();
-  }
+  // bool isObjCIdType(QualType T) const {
+  //   return T == getObjCIdType();
+  // }
 
-  bool isObjCClassType(QualType T) const {
-    return T == getObjCClassType();
-  }
+  // bool isObjCClassType(QualType T) const {
+  //   return T == getObjCClassType();
+  // }
 
-  bool isObjCSelType(QualType T) const {
-    return T == getObjCSelType();
-  }
+  // bool isObjCSelType(QualType T) const {
+  //   return T == getObjCSelType();
+  // }
 
-  bool ObjCQualifiedIdTypesAreCompatible(const ObjCObjectPointerType *LHS,
-                                         const ObjCObjectPointerType *RHS,
-                                         bool ForCompare);
+  // bool ObjCQualifiedIdTypesAreCompatible(const ObjCObjectPointerType *LHS,
+  //                                        const ObjCObjectPointerType *RHS,
+  //                                        bool ForCompare);
 
-  bool ObjCQualifiedClassTypesAreCompatible(const ObjCObjectPointerType *LHS,
-                                            const ObjCObjectPointerType *RHS);
+  // bool ObjCQualifiedClassTypesAreCompatible(const ObjCObjectPointerType *LHS,
+  //                                           const ObjCObjectPointerType *RHS);
 
   // Check the safety of assignment from LHS to RHS
-  bool canAssignObjCInterfaces(const ObjCObjectPointerType *LHSOPT,
-                               const ObjCObjectPointerType *RHSOPT);
-  bool canAssignObjCInterfaces(const ObjCObjectType *LHS,
-                               const ObjCObjectType *RHS);
-  bool canAssignObjCInterfacesInBlockPointer(
-                                          const ObjCObjectPointerType *LHSOPT,
-                                          const ObjCObjectPointerType *RHSOPT,
-                                          bool BlockReturnType);
-  bool areComparableObjCPointerTypes(QualType LHS, QualType RHS);
-  QualType areCommonBaseCompatible(const ObjCObjectPointerType *LHSOPT,
-                                   const ObjCObjectPointerType *RHSOPT);
-  bool canBindObjCObjectType(QualType To, QualType From);
+  // bool canAssignObjCInterfaces(const ObjCObjectPointerType *LHSOPT,
+  //                              const ObjCObjectPointerType *RHSOPT);
+  // bool canAssignObjCInterfaces(const ObjCObjectType *LHS,
+  //                              const ObjCObjectType *RHS);
+  // bool canAssignObjCInterfacesInBlockPointer(
+  //                                         const ObjCObjectPointerType *LHSOPT,
+  //                                         const ObjCObjectPointerType *RHSOPT,
+  //                                         bool BlockReturnType);
+  // bool areComparableObjCPointerTypes(QualType LHS, QualType RHS);
+  // QualType areCommonBaseCompatible(const ObjCObjectPointerType *LHSOPT,
+  //                                  const ObjCObjectPointerType *RHSOPT);
+  // bool canBindObjCObjectType(QualType To, QualType From);
 
   // Functions for calculating composite types
   QualType mergeTypes(QualType, QualType, bool OfBlockPointer=false,
@@ -2605,7 +2605,7 @@ public:
                                      bool OfBlockPointer=false,
                                      bool Unqualified = false);
 
-  QualType mergeObjCGCQualifiers(QualType, QualType);
+  // QualType mergeObjCGCQualifiers(QualType, QualType);
 
   /// This function merges the ExtParameterInfo lists of two functions. It
   /// returns true if the lists are compatible. The merged list is returned in
@@ -2632,7 +2632,7 @@ public:
       bool &CanUseFirst, bool &CanUseSecond,
       SmallVectorImpl<FunctionProtoType::ExtParameterInfo> &NewParamInfos);
 
-  void ResetObjCLayout(const ObjCContainerDecl *CD);
+  // void ResetObjCLayout(const ObjCContainerDecl *CD);
 
   //===--------------------------------------------------------------------===//
   //                    Integer Predicates
@@ -2681,37 +2681,37 @@ public:
 
   /// Get the implementation of the ObjCInterfaceDecl \p D, or nullptr if
   /// none exists.
-  ObjCImplementationDecl *getObjCImplementation(ObjCInterfaceDecl *D);
+  // ObjCImplementationDecl *getObjCImplementation(ObjCInterfaceDecl *D);
 
   /// Get the implementation of the ObjCCategoryDecl \p D, or nullptr if
   /// none exists.
-  ObjCCategoryImplDecl *getObjCImplementation(ObjCCategoryDecl *D);
+  // ObjCCategoryImplDecl *getObjCImplementation(ObjCCategoryDecl *D);
 
   /// Return true if there is at least one \@implementation in the TU.
-  bool AnyObjCImplementation() {
-    return !ObjCImpls.empty();
-  }
+  // bool AnyObjCImplementation() {
+  //   return !ObjCImpls.empty();
+  // }
 
   /// Set the implementation of ObjCInterfaceDecl.
-  void setObjCImplementation(ObjCInterfaceDecl *IFaceD,
-                             ObjCImplementationDecl *ImplD);
+  // void setObjCImplementation(ObjCInterfaceDecl *IFaceD,
+  //                            ObjCImplementationDecl *ImplD);
 
   /// Set the implementation of ObjCCategoryDecl.
-  void setObjCImplementation(ObjCCategoryDecl *CatD,
-                             ObjCCategoryImplDecl *ImplD);
+  // void setObjCImplementation(ObjCCategoryDecl *CatD,
+  //                            ObjCCategoryImplDecl *ImplD);
 
   /// Get the duplicate declaration of a ObjCMethod in the same
   /// interface, or null if none exists.
-  const ObjCMethodDecl *
-  getObjCMethodRedeclaration(const ObjCMethodDecl *MD) const;
+  // const ObjCMethodDecl *
+  // getObjCMethodRedeclaration(const ObjCMethodDecl *MD) const;
 
-  void setObjCMethodRedeclaration(const ObjCMethodDecl *MD,
-                                  const ObjCMethodDecl *Redecl);
+  // void setObjCMethodRedeclaration(const ObjCMethodDecl *MD,
+  //                                 const ObjCMethodDecl *Redecl);
 
   /// Returns the Objective-C interface that \p ND belongs to if it is
   /// an Objective-C method/property/ivar etc. that is part of an interface,
   /// otherwise returns null.
-  const ObjCInterfaceDecl *getObjContainingInterface(const NamedDecl *ND) const;
+  // const ObjCInterfaceDecl *getObjContainingInterface(const NamedDecl *ND) const;
 
   /// Set the copy initialization expression of a block var decl. \p CanThrow
   /// indicates whether the copy expression can throw or not.
@@ -2890,51 +2890,51 @@ public:
 private:
   void InitBuiltinType(CanQualType &R, BuiltinType::Kind K);
 
-  class ObjCEncOptions {
-    unsigned Bits;
+//   class ObjCEncOptions {
+//     unsigned Bits;
 
-    ObjCEncOptions(unsigned Bits) : Bits(Bits) {}
+//     ObjCEncOptions(unsigned Bits) : Bits(Bits) {}
 
-  public:
-    ObjCEncOptions() : Bits(0) {}
-    ObjCEncOptions(const ObjCEncOptions &RHS) : Bits(RHS.Bits) {}
+//   public:
+//     ObjCEncOptions() : Bits(0) {}
+//     ObjCEncOptions(const ObjCEncOptions &RHS) : Bits(RHS.Bits) {}
 
-#define OPT_LIST(V)                                                            \
-  V(ExpandPointedToStructures, 0)                                              \
-  V(ExpandStructures, 1)                                                       \
-  V(IsOutermostType, 2)                                                        \
-  V(EncodingProperty, 3)                                                       \
-  V(IsStructField, 4)                                                          \
-  V(EncodeBlockParameters, 5)                                                  \
-  V(EncodeClassNames, 6)                                                       \
+// #define OPT_LIST(V)                                                            \
+//   V(ExpandPointedToStructures, 0)                                              \
+//   V(ExpandStructures, 1)                                                       \
+//   V(IsOutermostType, 2)                                                        \
+//   V(EncodingProperty, 3)                                                       \
+//   V(IsStructField, 4)                                                          \
+//   V(EncodeBlockParameters, 5)                                                  \
+//   V(EncodeClassNames, 6)                                                       \
 
-#define V(N,I) ObjCEncOptions& set##N() { Bits |= 1 << I; return *this; }
-OPT_LIST(V)
-#undef V
+// #define V(N,I) ObjCEncOptions& set##N() { Bits |= 1 << I; return *this; }
+// OPT_LIST(V)
+// #undef V
 
-#define V(N,I) bool N() const { return Bits & 1 << I; }
-OPT_LIST(V)
-#undef V
+// #define V(N,I) bool N() const { return Bits & 1 << I; }
+// OPT_LIST(V)
+// #undef V
 
-#undef OPT_LIST
+// #undef OPT_LIST
 
-    LLVM_NODISCARD ObjCEncOptions keepingOnly(ObjCEncOptions Mask) const {
-      return Bits & Mask.Bits;
-    }
+//     LLVM_NODISCARD ObjCEncOptions keepingOnly(ObjCEncOptions Mask) const {
+//       return Bits & Mask.Bits;
+//     }
 
-    LLVM_NODISCARD ObjCEncOptions forComponentType() const {
-      ObjCEncOptions Mask = ObjCEncOptions()
-                                .setIsOutermostType()
-                                .setIsStructField();
-      return Bits & ~Mask.Bits;
-    }
-  };
+//     LLVM_NODISCARD ObjCEncOptions forComponentType() const {
+//       ObjCEncOptions Mask = ObjCEncOptions()
+//                                 .setIsOutermostType()
+//                                 .setIsStructField();
+//       return Bits & ~Mask.Bits;
+//     }
+//   };
 
   // Return the Objective-C type encoding for a given type.
-  void getObjCEncodingForTypeImpl(QualType t, std::string &S,
-                                  ObjCEncOptions Options,
-                                  const FieldDecl *Field,
-                                  QualType *NotEncodedT = nullptr) const;
+  // void getObjCEncodingForTypeImpl(QualType t, std::string &S,
+  //                                 ObjCEncOptions Options,
+  //                                 const FieldDecl *Field,
+  //                                 QualType *NotEncodedT = nullptr) const;
 
   // Adds the encoding of the structure's members.
   void getObjCEncodingForStructureImpl(RecordDecl *RD, std::string &S,
@@ -2944,9 +2944,9 @@ OPT_LIST(V)
 
 public:
   // Adds the encoding of a method parameter or return type.
-  void getObjCEncodingForMethodParameter(Decl::ObjCDeclQualifier QT,
-                                         QualType T, std::string& S,
-                                         bool Extended) const;
+  // void getObjCEncodingForMethodParameter(Decl::ObjCDeclQualifier QT,
+  //                                        QualType T, std::string& S,
+  //                                        bool Extended) const;
 
   /// Returns true if this is an inline-initialized static data member
   /// which is treated as a definition for MSVC compatibility.
@@ -2978,9 +2978,9 @@ private:
   friend class DeclarationNameTable;
   friend class DeclContext;
 
-  const ASTRecordLayout &
-  getObjCLayout(const ObjCInterfaceDecl *D,
-                const ObjCImplementationDecl *Impl) const;
+  // const ASTRecordLayout &
+  // getObjCLayout(const ObjCInterfaceDecl *D,
+  //               const ObjCImplementationDecl *Impl) const;
 
   /// A set of deallocations that should be performed when the
   /// ASTContext is destroyed.

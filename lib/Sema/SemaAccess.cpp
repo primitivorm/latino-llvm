@@ -16,7 +16,7 @@
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DependentDiagnostic.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/Sema/DelayedDiagnostic.h"
@@ -1907,43 +1907,43 @@ bool Sema::IsSimplyAccessible(NamedDecl *Target, CXXRecordDecl *NamingClass,
     return ::IsAccessible(*this, EC, Entity) != ::AR_inaccessible;
   }
 
-  if (ObjCIvarDecl *Ivar = dyn_cast<ObjCIvarDecl>(Target)) {
-    // @public and @package ivars are always accessible.
-    if (Ivar->getCanonicalAccessControl() == ObjCIvarDecl::Public ||
-        Ivar->getCanonicalAccessControl() == ObjCIvarDecl::Package)
-      return true;
+  // if (ObjCIvarDecl *Ivar = dyn_cast<ObjCIvarDecl>(Target)) {
+  //   // @public and @package ivars are always accessible.
+  //   if (Ivar->getCanonicalAccessControl() == ObjCIvarDecl::Public ||
+  //       Ivar->getCanonicalAccessControl() == ObjCIvarDecl::Package)
+  //     return true;
 
-    // If we are inside a class or category implementation, determine the
-    // interface we're in.
-    ObjCInterfaceDecl *ClassOfMethodDecl = nullptr;
-    if (ObjCMethodDecl *MD = getCurMethodDecl())
-      ClassOfMethodDecl =  MD->getClassInterface();
-    else if (FunctionDecl *FD = getCurFunctionDecl()) {
-      if (ObjCImplDecl *Impl
-            = dyn_cast<ObjCImplDecl>(FD->getLexicalDeclContext())) {
-        if (ObjCImplementationDecl *IMPD
-              = dyn_cast<ObjCImplementationDecl>(Impl))
-          ClassOfMethodDecl = IMPD->getClassInterface();
-        else if (ObjCCategoryImplDecl* CatImplClass
-                   = dyn_cast<ObjCCategoryImplDecl>(Impl))
-          ClassOfMethodDecl = CatImplClass->getClassInterface();
-      }
-    }
+  //   // If we are inside a class or category implementation, determine the
+  //   // interface we're in.
+  //   // ObjCInterfaceDecl *ClassOfMethodDecl = nullptr;
+  //   // if (ObjCMethodDecl *MD = getCurMethodDecl())
+  //   //   ClassOfMethodDecl =  MD->getClassInterface();
+  //   // else if (FunctionDecl *FD = getCurFunctionDecl()) {
+  //   //   if (ObjCImplDecl *Impl
+  //   //         = dyn_cast<ObjCImplDecl>(FD->getLexicalDeclContext())) {
+  //   //     if (ObjCImplementationDecl *IMPD
+  //   //           = dyn_cast<ObjCImplementationDecl>(Impl))
+  //   //       ClassOfMethodDecl = IMPD->getClassInterface();
+  //   //     else if (ObjCCategoryImplDecl* CatImplClass
+  //   //                = dyn_cast<ObjCCategoryImplDecl>(Impl))
+  //   //       ClassOfMethodDecl = CatImplClass->getClassInterface();
+  //   //   }
+  //   // }
 
-    // If we're not in an interface, this ivar is inaccessible.
-    if (!ClassOfMethodDecl)
-      return false;
+  //   // If we're not in an interface, this ivar is inaccessible.
+  //   if (!ClassOfMethodDecl)
+  //     return false;
 
-    // If we're inside the same interface that owns the ivar, we're fine.
-    if (declaresSameEntity(ClassOfMethodDecl, Ivar->getContainingInterface()))
-      return true;
+  //   // If we're inside the same interface that owns the ivar, we're fine.
+  //   if (declaresSameEntity(ClassOfMethodDecl, Ivar->getContainingInterface()))
+  //     return true;
 
-    // If the ivar is private, it's inaccessible.
-    if (Ivar->getCanonicalAccessControl() == ObjCIvarDecl::Private)
-      return false;
+  //   // If the ivar is private, it's inaccessible.
+  //   if (Ivar->getCanonicalAccessControl() == ObjCIvarDecl::Private)
+  //     return false;
 
-    return Ivar->getContainingInterface()->isSuperClassOf(ClassOfMethodDecl);
-  }
+  //   return Ivar->getContainingInterface()->isSuperClassOf(ClassOfMethodDecl);
+  // }
 
   return true;
 }

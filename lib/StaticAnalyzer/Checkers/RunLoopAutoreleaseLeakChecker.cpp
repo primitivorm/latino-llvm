@@ -24,7 +24,7 @@
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/ASTMatchers/ASTMatchFinder.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporter.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"

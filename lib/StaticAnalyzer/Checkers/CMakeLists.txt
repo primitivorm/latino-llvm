@@ -8,7 +8,7 @@ add_latino_library(latinoStaticAnalyzerCheckers
   AnalyzerStatsChecker.cpp
   ArrayBoundChecker.cpp
   ArrayBoundCheckerV2.cpp
-  BasicObjCFoundationChecks.cpp
+  # BasicObjCFoundationChecks.cpp
   BlockInCriticalSectionChecker.cpp
   BoolAssignmentChecker.cpp
   BuiltinFunctionChecker.cpp
@@ -18,8 +18,8 @@ add_latino_library(latinoStaticAnalyzerCheckers
   CastSizeChecker.cpp
   CastToStructChecker.cpp
   CastValueChecker.cpp
-  CheckObjCDealloc.cpp
-  CheckObjCInstMethSignature.cpp
+  # CheckObjCDealloc.cpp
+  # CheckObjCInstMethSignature.cpp
   CheckPlacementNew.cpp
   CheckSecuritySyntaxOnly.cpp
   CheckSizeofPointer.cpp
@@ -35,7 +35,7 @@ add_latino_library(latinoStaticAnalyzerCheckers
   DebugIteratorModeling.cpp
   DeleteWithNonVirtualDtorChecker.cpp
   DereferenceChecker.cpp
-  DirectIvarAssignment.cpp
+  # DirectIvarAssignment.cpp
   DivZeroChecker.cpp
   DynamicTypePropagation.cpp
   DynamicTypeChecker.cpp
@@ -74,15 +74,15 @@ add_latino_library(latinoStaticAnalyzerCheckers
   NonnullGlobalConstantsChecker.cpp
   NullabilityChecker.cpp
   NumberObjectConversionChecker.cpp
-  ObjCAtSyncChecker.cpp
-  ObjCAutoreleaseWriteChecker.cpp
-  ObjCContainersASTChecker.cpp
-  ObjCContainersChecker.cpp
-  ObjCMissingSuperCallChecker.cpp
-  ObjCPropertyChecker.cpp
-  ObjCSelfInitChecker.cpp
-  ObjCSuperDeallocChecker.cpp
-  ObjCUnusedIVarsChecker.cpp
+  # ObjCAtSyncChecker.cpp
+  # ObjCAutoreleaseWriteChecker.cpp
+  # ObjCContainersASTChecker.cpp
+  # ObjCContainersChecker.cpp
+  # ObjCMissingSuperCallChecker.cpp
+  # ObjCPropertyChecker.cpp
+  # ObjCSelfInitChecker.cpp
+  # ObjCSuperDeallocChecker.cpp
+  # ObjCUnusedIVarsChecker.cpp
   OSObjectCStyleCast.cpp
   PaddingChecker.cpp
   PointerArithChecker.cpp

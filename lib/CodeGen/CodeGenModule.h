@@ -18,7 +18,7 @@
 #include "CodeGenTypes.h"
 #include "SanitizerMetadata.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/GlobalDecl.h"
 #include "latino/AST/Mangle.h"
@@ -54,11 +54,11 @@ class ASTContext;
 class AtomicType;
 class FunctionDecl;
 class IdentifierInfo;
-class ObjCMethodDecl;
-class ObjCImplementationDecl;
-class ObjCCategoryImplDecl;
-class ObjCProtocolDecl;
-class ObjCEncodeExpr;
+// class ObjCMethodDecl;
+// class ObjCImplementationDecl;
+// class ObjCCategoryImplDecl;
+// class ObjCProtocolDecl;
+// class ObjCEncodeExpr;
 class BlockExpr;
 class CharUnits;
 class Decl;
@@ -950,8 +950,8 @@ public:
                                      StringRef Name = ".str");
 
   /// Return a pointer to a constant array for the given ObjCEncodeExpr node.
-  ConstantAddress
-  GetAddrOfConstantStringFromObjCEncode(const ObjCEncodeExpr *);
+  // ConstantAddress
+  // GetAddrOfConstantStringFromObjCEncode(const ObjCEncodeExpr *);
 
   /// Returns a pointer to a character array containing the literal and a
   /// terminating '\0' character. The result has pointer to array type.
@@ -1442,8 +1442,8 @@ private:
   void EmitAliasDefinition(GlobalDecl GD);
   void emitIFuncDefinition(GlobalDecl GD);
   void emitCPUDispatchDefinition(GlobalDecl GD);
-  void EmitObjCPropertyImplementations(const ObjCImplementationDecl *D);
-  void EmitObjCIvarInitializations(ObjCImplementationDecl *D);
+  // void EmitObjCPropertyImplementations(const ObjCImplementationDecl *D);
+  // void EmitObjCIvarInitializations(ObjCImplementationDecl *D);
 
   // C++ related functions.
 

@@ -138,9 +138,9 @@ static SVal adjustReturnValue(SVal V, QualType ExpectedTy, QualType ActualTy,
     return V;
 
   // No adjustment is needed between Objective-C pointer types.
-  if (ExpectedTy->isObjCObjectPointerType() &&
-      ActualTy->isObjCObjectPointerType())
-    return V;
+  // if (ExpectedTy->isObjCObjectPointerType() &&
+  //     ActualTy->isObjCObjectPointerType())
+  //   return V;
 
   // C++ object pointers may need "derived-to-base" casts.
   const CXXRecordDecl *ExpectedClass = ExpectedTy->getPointeeCXXRecordDecl();
@@ -342,11 +342,12 @@ void ExprEngine::processCallExit(ExplodedNode *CEBNode) {
                                                  /*wasInlined=*/true);
     }
     ExplodedNodeSet Dst;
-    if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(Call)) {
-      getCheckerManager().runCheckersForPostObjCMessage(Dst, DstPostCall, *Msg,
-                                                        *this,
-                                                        /*wasInlined=*/true);
-    } else if (CE &&
+    // if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(Call)) {
+    //   getCheckerManager().runCheckersForPostObjCMessage(Dst, DstPostCall, *Msg,
+    //                                                     *this,
+    //                                                     /*wasInlined=*/true);
+    // } else
+    if (CE &&
                !(isa<CXXNewExpr>(CE) && // Called when visiting CXXNewExpr.
                  AMgr.getAnalyzerOptions().MayInlineCXXAllocator)) {
       getCheckerManager().runCheckersForPostStmt(Dst, DstPostCall, CE,
@@ -641,7 +642,7 @@ ProgramStateRef ExprEngine::bindReturnValue(const CallEvent &Call,
     return State;
 
   // Some method families have known return values.
-  if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(&Call)) {
+  /*if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(&Call)) {
     switch (Msg->getMethodFamily()) {
     default:
       break;
@@ -652,7 +653,7 @@ ProgramStateRef ExprEngine::bindReturnValue(const CallEvent &Call,
       return State->BindExpr(E, LCtx, Msg->getReceiverSVal());
     }
     }
-  } else if (const CXXConstructorCall *C = dyn_cast<CXXConstructorCall>(&Call)){
+  } else*/ if (const CXXConstructorCall *C = dyn_cast<CXXConstructorCall>(&Call)){
     SVal ThisV = C->getCXXThisVal();
     ThisV = State->getSVal(ThisV.castAs<Loc>());
     return State->BindExpr(E, LCtx, ThisV);

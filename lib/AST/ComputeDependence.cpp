@@ -14,7 +14,7 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/ExprConcepts.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/Basic/ExceptionSpecificationType.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -343,15 +343,15 @@ ExprDependence latino::computeDependence(ObjCIvarRefExpr *E) {
   return turnTypeToValueDependence(E->getBase()->getDependence());
 }
 
-ExprDependence latino::computeDependence(ObjCPropertyRefExpr *E) {
-  if (E->isObjectReceiver())
-    return E->getBase()->getDependence() & ~ExprDependence::Type;
-  if (E->isSuperReceiver())
-    return toExprDependence(E->getSuperReceiverType()->getDependence()) &
-           ~ExprDependence::TypeValue;
-  assert(E->isClassReceiver());
-  return ExprDependence::None;
-}
+// ExprDependence latino::computeDependence(ObjCPropertyRefExpr *E) {
+//   if (E->isObjectReceiver())
+//     return E->getBase()->getDependence() & ~ExprDependence::Type;
+//   if (E->isSuperReceiver())
+//     return toExprDependence(E->getSuperReceiverType()->getDependence()) &
+//            ~ExprDependence::TypeValue;
+//   assert(E->isClassReceiver());
+//   return ExprDependence::None;
+// }
 
 ExprDependence latino::computeDependence(ObjCSubscriptRefExpr *E) {
   return E->getBaseExpr()->getDependence() | E->getKeyExpr()->getDependence();

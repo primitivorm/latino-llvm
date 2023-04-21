@@ -1262,8 +1262,8 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::identifier: {
     // Check for need to substitute AltiVec __vector keyword
     // for "vector" identifier.
-    if (TryAltiVecVectorToken())
-      return TPResult::True;
+    // if (TryAltiVecVectorToken())
+    //   return TPResult::True;
 
     const Token &Next = NextToken();
     // In 'foo bar', 'foo' is always a type name outside of Objective-C.
@@ -1344,7 +1344,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
       return TPResult::False;
     LLVM_FALLTHROUGH;
   }
-  case tok::kw___super:
+  case tok::kw_base:
   case tok::kw_decltype:
     // Annotate typenames and C++ scope specifiers.  If we get one, just
     // recurse to handle whatever we get.
@@ -1410,17 +1410,17 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     if (!getLangOpts().OpenCL)
       return TPResult::False;
     LLVM_FALLTHROUGH;
-  case tok::kw___private:
-  case tok::kw___local:
-  case tok::kw___global:
-  case tok::kw___constant:
-  case tok::kw___generic:
+  // case tok::kw___private:
+  // case tok::kw___local:
+  // case tok::kw___global:
+  // case tok::kw___constant:
+  // case tok::kw___generic:
     // OpenCL access qualifiers
-  case tok::kw___read_only:
-  case tok::kw___write_only:
-  case tok::kw___read_write:
+  // case tok::kw___read_only:
+  // case tok::kw___write_only:
+  // case tok::kw___read_write:
     // OpenCL pipe
-  case tok::kw_pipe:
+  // case tok::kw_pipe:
 
     // GNU
   // case tok::kw_restrict:
@@ -1638,7 +1638,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
-  case tok::kw_half:
+  // case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
   // case tok::kw___bf16:
@@ -1646,8 +1646,8 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   // case tok::kw___float128:
   case tok::kw_void:
   case tok::annot_decltype:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
     if (NextToken().is(tok::l_paren))
       return TPResult::Ambiguous;
 
@@ -1752,7 +1752,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   // case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
-  case tok::kw_half:
+  // case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
   // case tok::kw___bf16:
@@ -1761,8 +1761,8 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_void:
   case tok::kw___unknown_anytype:
   // case tok::kw___auto_type:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
     return true;
 
   case tok::kw_auto:

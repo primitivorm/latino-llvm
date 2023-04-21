@@ -37,9 +37,9 @@ class ASTContext;
 class CXXRecordDecl;
 class ConceptDecl;
 class Expr;
-class ObjCInterfaceDecl;
-class ObjCProtocolDecl;
-class ObjCTypeParamDecl;
+// class ObjCInterfaceDecl;
+// class ObjCProtocolDecl;
+// class ObjCTypeParamDecl;
 class ParmVarDecl;
 class TemplateTypeParmDecl;
 class UnqualTypeLoc;
@@ -799,10 +799,10 @@ public:
     getProtocolLocArray()[i] = Loc;
   }
 
-  ObjCProtocolDecl *getProtocol(unsigned i) const {
-    assert(i < getNumProtocols() && "Index is out of bounds!");
-    return *(this->getTypePtr()->qual_begin() + i);
-  }
+  // ObjCProtocolDecl *getProtocol(unsigned i) const {
+  //   assert(i < getNumProtocols() && "Index is out of bounds!");
+  //   return *(this->getTypePtr()->qual_begin() + i);
+  // }
 
   ArrayRef<SourceLocation> getProtocolLocs() const {
     return llvm::makeArrayRef(getProtocolLocArray(), getNumProtocols());
@@ -892,185 +892,185 @@ public:
   }
 };
 
-struct ObjCObjectTypeLocInfo {
-  SourceLocation TypeArgsLAngleLoc;
-  SourceLocation TypeArgsRAngleLoc;
-  SourceLocation ProtocolLAngleLoc;
-  SourceLocation ProtocolRAngleLoc;
-  bool HasBaseTypeAsWritten;
-};
+// struct ObjCObjectTypeLocInfo {
+//   SourceLocation TypeArgsLAngleLoc;
+//   SourceLocation TypeArgsRAngleLoc;
+//   SourceLocation ProtocolLAngleLoc;
+//   SourceLocation ProtocolRAngleLoc;
+//   bool HasBaseTypeAsWritten;
+// };
 
 // A helper class for defining ObjC TypeLocs that can qualified with
 // protocols.
 //
 // TypeClass basically has to be either ObjCInterfaceType or
 // ObjCObjectPointerType.
-class ObjCObjectTypeLoc : public ConcreteTypeLoc<UnqualTypeLoc,
-                                                 ObjCObjectTypeLoc,
-                                                 ObjCObjectType,
-                                                 ObjCObjectTypeLocInfo> {
-  // TypeSourceInfo*'s are stored after Info, one for each type argument.
-  TypeSourceInfo **getTypeArgLocArray() const {
-    return (TypeSourceInfo**)this->getExtraLocalData();
-  }
+// class ObjCObjectTypeLoc : public ConcreteTypeLoc<UnqualTypeLoc,
+//                                                  ObjCObjectTypeLoc,
+//                                                  ObjCObjectType,
+//                                                  ObjCObjectTypeLocInfo> {
+//   // TypeSourceInfo*'s are stored after Info, one for each type argument.
+//   TypeSourceInfo **getTypeArgLocArray() const {
+//     return (TypeSourceInfo**)this->getExtraLocalData();
+//   }
 
-  // SourceLocations are stored after the type argument information, one for
-  // each Protocol.
-  SourceLocation *getProtocolLocArray() const {
-    return (SourceLocation*)(getTypeArgLocArray() + getNumTypeArgs());
-  }
+//   // SourceLocations are stored after the type argument information, one for
+//   // each Protocol.
+//   SourceLocation *getProtocolLocArray() const {
+//     return (SourceLocation*)(getTypeArgLocArray() + getNumTypeArgs());
+//   }
 
-public:
-  SourceLocation getTypeArgsLAngleLoc() const {
-    return this->getLocalData()->TypeArgsLAngleLoc;
-  }
+// public:
+//   SourceLocation getTypeArgsLAngleLoc() const {
+//     return this->getLocalData()->TypeArgsLAngleLoc;
+//   }
 
-  void setTypeArgsLAngleLoc(SourceLocation Loc) {
-    this->getLocalData()->TypeArgsLAngleLoc = Loc;
-  }
+//   void setTypeArgsLAngleLoc(SourceLocation Loc) {
+//     this->getLocalData()->TypeArgsLAngleLoc = Loc;
+//   }
 
-  SourceLocation getTypeArgsRAngleLoc() const {
-    return this->getLocalData()->TypeArgsRAngleLoc;
-  }
+//   SourceLocation getTypeArgsRAngleLoc() const {
+//     return this->getLocalData()->TypeArgsRAngleLoc;
+//   }
 
-  void setTypeArgsRAngleLoc(SourceLocation Loc) {
-    this->getLocalData()->TypeArgsRAngleLoc = Loc;
-  }
+//   void setTypeArgsRAngleLoc(SourceLocation Loc) {
+//     this->getLocalData()->TypeArgsRAngleLoc = Loc;
+//   }
 
-  unsigned getNumTypeArgs() const {
-    return this->getTypePtr()->getTypeArgsAsWritten().size();
-  }
+//   unsigned getNumTypeArgs() const {
+//     return this->getTypePtr()->getTypeArgsAsWritten().size();
+//   }
 
-  TypeSourceInfo *getTypeArgTInfo(unsigned i) const {
-    assert(i < getNumTypeArgs() && "Index is out of bounds!");
-    return getTypeArgLocArray()[i];
-  }
+//   TypeSourceInfo *getTypeArgTInfo(unsigned i) const {
+//     assert(i < getNumTypeArgs() && "Index is out of bounds!");
+//     return getTypeArgLocArray()[i];
+//   }
 
-  void setTypeArgTInfo(unsigned i, TypeSourceInfo *TInfo) {
-    assert(i < getNumTypeArgs() && "Index is out of bounds!");
-    getTypeArgLocArray()[i] = TInfo;
-  }
+//   void setTypeArgTInfo(unsigned i, TypeSourceInfo *TInfo) {
+//     assert(i < getNumTypeArgs() && "Index is out of bounds!");
+//     getTypeArgLocArray()[i] = TInfo;
+//   }
 
-  SourceLocation getProtocolLAngleLoc() const {
-    return this->getLocalData()->ProtocolLAngleLoc;
-  }
+//   SourceLocation getProtocolLAngleLoc() const {
+//     return this->getLocalData()->ProtocolLAngleLoc;
+//   }
 
-  void setProtocolLAngleLoc(SourceLocation Loc) {
-    this->getLocalData()->ProtocolLAngleLoc = Loc;
-  }
+//   void setProtocolLAngleLoc(SourceLocation Loc) {
+//     this->getLocalData()->ProtocolLAngleLoc = Loc;
+//   }
 
-  SourceLocation getProtocolRAngleLoc() const {
-    return this->getLocalData()->ProtocolRAngleLoc;
-  }
+//   SourceLocation getProtocolRAngleLoc() const {
+//     return this->getLocalData()->ProtocolRAngleLoc;
+//   }
 
-  void setProtocolRAngleLoc(SourceLocation Loc) {
-    this->getLocalData()->ProtocolRAngleLoc = Loc;
-  }
+//   void setProtocolRAngleLoc(SourceLocation Loc) {
+//     this->getLocalData()->ProtocolRAngleLoc = Loc;
+//   }
 
-  unsigned getNumProtocols() const {
-    return this->getTypePtr()->getNumProtocols();
-  }
+//   unsigned getNumProtocols() const {
+//     return this->getTypePtr()->getNumProtocols();
+//   }
 
-  SourceLocation getProtocolLoc(unsigned i) const {
-    assert(i < getNumProtocols() && "Index is out of bounds!");
-    return getProtocolLocArray()[i];
-  }
+//   SourceLocation getProtocolLoc(unsigned i) const {
+//     assert(i < getNumProtocols() && "Index is out of bounds!");
+//     return getProtocolLocArray()[i];
+//   }
 
-  void setProtocolLoc(unsigned i, SourceLocation Loc) {
-    assert(i < getNumProtocols() && "Index is out of bounds!");
-    getProtocolLocArray()[i] = Loc;
-  }
+//   void setProtocolLoc(unsigned i, SourceLocation Loc) {
+//     assert(i < getNumProtocols() && "Index is out of bounds!");
+//     getProtocolLocArray()[i] = Loc;
+//   }
 
-  ObjCProtocolDecl *getProtocol(unsigned i) const {
-    assert(i < getNumProtocols() && "Index is out of bounds!");
-    return *(this->getTypePtr()->qual_begin() + i);
-  }
+//   // ObjCProtocolDecl *getProtocol(unsigned i) const {
+//   //   assert(i < getNumProtocols() && "Index is out of bounds!");
+//   //   return *(this->getTypePtr()->qual_begin() + i);
+//   // }
 
 
-  ArrayRef<SourceLocation> getProtocolLocs() const {
-    return llvm::makeArrayRef(getProtocolLocArray(), getNumProtocols());
-  }
+//   ArrayRef<SourceLocation> getProtocolLocs() const {
+//     return llvm::makeArrayRef(getProtocolLocArray(), getNumProtocols());
+//   }
 
-  bool hasBaseTypeAsWritten() const {
-    return getLocalData()->HasBaseTypeAsWritten;
-  }
+//   bool hasBaseTypeAsWritten() const {
+//     return getLocalData()->HasBaseTypeAsWritten;
+//   }
 
-  void setHasBaseTypeAsWritten(bool HasBaseType) {
-    getLocalData()->HasBaseTypeAsWritten = HasBaseType;
-  }
+//   void setHasBaseTypeAsWritten(bool HasBaseType) {
+//     getLocalData()->HasBaseTypeAsWritten = HasBaseType;
+//   }
 
-  TypeLoc getBaseLoc() const {
-    return getInnerTypeLoc();
-  }
+//   TypeLoc getBaseLoc() const {
+//     return getInnerTypeLoc();
+//   }
 
-  SourceRange getLocalSourceRange() const {
-    SourceLocation start = getTypeArgsLAngleLoc();
-    if (start.isInvalid())
-      start = getProtocolLAngleLoc();
-    SourceLocation end = getProtocolRAngleLoc();
-    if (end.isInvalid())
-      end = getTypeArgsRAngleLoc();
-    return SourceRange(start, end);
-  }
+//   SourceRange getLocalSourceRange() const {
+//     SourceLocation start = getTypeArgsLAngleLoc();
+//     if (start.isInvalid())
+//       start = getProtocolLAngleLoc();
+//     SourceLocation end = getProtocolRAngleLoc();
+//     if (end.isInvalid())
+//       end = getTypeArgsRAngleLoc();
+//     return SourceRange(start, end);
+//   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+//   void initializeLocal(ASTContext &Context, SourceLocation Loc);
 
-  unsigned getExtraLocalDataSize() const {
-    return this->getNumTypeArgs() * sizeof(TypeSourceInfo *)
-         + this->getNumProtocols() * sizeof(SourceLocation);
-  }
+//   unsigned getExtraLocalDataSize() const {
+//     return this->getNumTypeArgs() * sizeof(TypeSourceInfo *)
+//          + this->getNumProtocols() * sizeof(SourceLocation);
+//   }
 
-  unsigned getExtraLocalDataAlignment() const {
-    static_assert(alignof(ObjCObjectTypeLoc) >= alignof(TypeSourceInfo *),
-                  "not enough alignment for tail-allocated data");
-    return alignof(TypeSourceInfo *);
-  }
+//   unsigned getExtraLocalDataAlignment() const {
+//     static_assert(alignof(ObjCObjectTypeLoc) >= alignof(TypeSourceInfo *),
+//                   "not enough alignment for tail-allocated data");
+//     return alignof(TypeSourceInfo *);
+//   }
 
-  QualType getInnerType() const {
-    return getTypePtr()->getBaseType();
-  }
-};
+//   QualType getInnerType() const {
+//     return getTypePtr()->getBaseType();
+//   }
+// };
 
-struct ObjCInterfaceLocInfo {
-  SourceLocation NameLoc;
-  SourceLocation NameEndLoc;
-};
+// struct ObjCInterfaceLocInfo {
+//   SourceLocation NameLoc;
+//   SourceLocation NameEndLoc;
+// };
 
 /// Wrapper for source info for ObjC interfaces.
-class ObjCInterfaceTypeLoc : public ConcreteTypeLoc<ObjCObjectTypeLoc,
-                                                    ObjCInterfaceTypeLoc,
-                                                    ObjCInterfaceType,
-                                                    ObjCInterfaceLocInfo> {
-public:
-  ObjCInterfaceDecl *getIFaceDecl() const {
-    return getTypePtr()->getDecl();
-  }
+// class ObjCInterfaceTypeLoc : public ConcreteTypeLoc<ObjCObjectTypeLoc,
+//                                                     ObjCInterfaceTypeLoc,
+//                                                     ObjCInterfaceType,
+//                                                     ObjCInterfaceLocInfo> {
+// public:
+//   ObjCInterfaceDecl *getIFaceDecl() const {
+//     return getTypePtr()->getDecl();
+//   }
 
-  SourceLocation getNameLoc() const {
-    return getLocalData()->NameLoc;
-  }
+//   SourceLocation getNameLoc() const {
+//     return getLocalData()->NameLoc;
+//   }
 
-  void setNameLoc(SourceLocation Loc) {
-    getLocalData()->NameLoc = Loc;
-  }
+//   void setNameLoc(SourceLocation Loc) {
+//     getLocalData()->NameLoc = Loc;
+//   }
 
-  SourceRange getLocalSourceRange() const {
-    return SourceRange(getNameLoc(), getNameEndLoc());
-  }
+//   SourceRange getLocalSourceRange() const {
+//     return SourceRange(getNameLoc(), getNameEndLoc());
+//   }
 
-  SourceLocation getNameEndLoc() const {
-    return getLocalData()->NameEndLoc;
-  }
+//   SourceLocation getNameEndLoc() const {
+//     return getLocalData()->NameEndLoc;
+//   }
 
-  void setNameEndLoc(SourceLocation Loc) {
-    getLocalData()->NameEndLoc = Loc;
-  }
+//   void setNameEndLoc(SourceLocation Loc) {
+//     getLocalData()->NameEndLoc = Loc;
+//   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc) {
-    setNameLoc(Loc);
-    setNameEndLoc(Loc);
-  }
-};
+//   void initializeLocal(ASTContext &Context, SourceLocation Loc) {
+//     setNameLoc(Loc);
+//     setNameEndLoc(Loc);
+//   }
+// };
 
 struct MacroQualifiedLocInfo {
   SourceLocation ExpansionLoc;
@@ -1291,18 +1291,18 @@ public:
 };
 
 /// Wraps an ObjCPointerType with source location information.
-class ObjCObjectPointerTypeLoc :
-    public PointerLikeTypeLoc<ObjCObjectPointerTypeLoc,
-                              ObjCObjectPointerType> {
-public:
-  SourceLocation getStarLoc() const {
-    return getSigilLoc();
-  }
+// class ObjCObjectPointerTypeLoc :
+//     public PointerLikeTypeLoc<ObjCObjectPointerTypeLoc,
+//                               ObjCObjectPointerType> {
+// public:
+//   SourceLocation getStarLoc() const {
+//     return getSigilLoc();
+//   }
 
-  void setStarLoc(SourceLocation Loc) {
-    setSigilLoc(Loc);
-  }
-};
+//   void setStarLoc(SourceLocation Loc) {
+//     setSigilLoc(Loc);
+//   }
+// };
 
 class ReferenceTypeLoc : public PointerLikeTypeLoc<ReferenceTypeLoc,
                                                    ReferenceType> {

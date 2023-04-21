@@ -48,7 +48,7 @@ void ExternalASTSource::CompleteRedeclChain(const Decl *D) {}
 
 void ExternalASTSource::CompleteType(TagDecl *Tag) {}
 
-void ExternalASTSource::CompleteType(ObjCInterfaceDecl *Class) {}
+// void ExternalASTSource::CompleteType(ObjCInterfaceDecl *Class) {}
 
 void ExternalASTSource::ReadComments() {}
 

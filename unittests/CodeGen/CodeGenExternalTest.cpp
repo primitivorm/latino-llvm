@@ -69,7 +69,7 @@ struct MyASTConsumer : public ASTConsumer {
   void HandleTagDeclDefinition(TagDecl *D) override;
   void HandleTagDeclRequiredDefinition(const TagDecl *D) override;
   void HandleCXXImplicitFunctionInstantiation(FunctionDecl *D) override;
-  void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override;
+  // void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override;
   void HandleImplicitImportDecl(ImportDecl *D) override;
   void CompleteTentativeDefinition(VarDecl *D) override;
   void AssignInheritanceModel(CXXRecordDecl *RD) override;
@@ -119,9 +119,9 @@ void MyASTConsumer::HandleCXXImplicitFunctionInstantiation(FunctionDecl *D) {
   Builder->HandleCXXImplicitFunctionInstantiation(D);
 }
 
-void MyASTConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef D) {
-  Builder->HandleTopLevelDeclInObjCContainer(D);
-}
+// void MyASTConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef D) {
+//   Builder->HandleTopLevelDeclInObjCContainer(D);
+// }
 
 void MyASTConsumer::HandleImplicitImportDecl(ImportDecl *D) {
   Builder->HandleImplicitImportDecl(D);

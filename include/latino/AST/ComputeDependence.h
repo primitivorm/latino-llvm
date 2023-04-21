@@ -90,16 +90,16 @@ class AtomicExpr;
 class OMPArraySectionExpr;
 class OMPArrayShapingExpr;
 class OMPIteratorExpr;
-class ObjCArrayLiteral;
-class ObjCDictionaryLiteral;
-class ObjCBoxedExpr;
-class ObjCEncodeExpr;
-class ObjCIvarRefExpr;
-class ObjCPropertyRefExpr;
-class ObjCSubscriptRefExpr;
-class ObjCIsaExpr;
-class ObjCIndirectCopyRestoreExpr;
-class ObjCMessageExpr;
+// class ObjCArrayLiteral;
+// class ObjCDictionaryLiteral;
+// class ObjCBoxedExpr;
+// class ObjCEncodeExpr;
+// class ObjCIvarRefExpr;
+// class ObjCPropertyRefExpr;
+// class ObjCSubscriptRefExpr;
+// class ObjCIsaExpr;
+// class ObjCIndirectCopyRestoreExpr;
+// class ObjCMessageExpr;
 
 // The following functions are called from constructors of `Expr`, so they
 // should not access anything beyond basic

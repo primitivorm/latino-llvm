@@ -385,21 +385,21 @@ TypeSpecifierType BuiltinTypeLoc::getWrittenTypeSpec() const {
   case BuiltinType::BoundMember:
   case BuiltinType::UnknownAny:
   case BuiltinType::ARCUnbridgedCast:
-  case BuiltinType::PseudoObject:
-  case BuiltinType::ObjCId:
-  case BuiltinType::ObjCClass:
-  case BuiltinType::ObjCSel:
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-  case BuiltinType::OCLSampler:
-  case BuiltinType::OCLEvent:
-  case BuiltinType::OCLClkEvent:
-  case BuiltinType::OCLQueue:
-  case BuiltinType::OCLReserveID:
+  // case BuiltinType::PseudoObject:
+  // case BuiltinType::ObjCId:
+  // case BuiltinType::ObjCClass:
+  // case BuiltinType::ObjCSel:
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+  // case BuiltinType::OCLSampler:
+  // case BuiltinType::OCLEvent:
+  // case BuiltinType::OCLClkEvent:
+  // case BuiltinType::OCLQueue:
+  // case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -463,21 +463,21 @@ void ObjCTypeParamTypeLoc::initializeLocal(ASTContext &Context,
     setProtocolLoc(i, Loc);
 }
 
-void ObjCObjectTypeLoc::initializeLocal(ASTContext &Context,
-                                        SourceLocation Loc) {
-  setHasBaseTypeAsWritten(true);
-  setTypeArgsLAngleLoc(Loc);
-  setTypeArgsRAngleLoc(Loc);
-  for (unsigned i = 0, e = getNumTypeArgs(); i != e; ++i) {
-    setTypeArgTInfo(i,
-                   Context.getTrivialTypeSourceInfo(
-                     getTypePtr()->getTypeArgsAsWritten()[i], Loc));
-  }
-  setProtocolLAngleLoc(Loc);
-  setProtocolRAngleLoc(Loc);
-  for (unsigned i = 0, e = getNumProtocols(); i != e; ++i)
-    setProtocolLoc(i, Loc);
-}
+// void ObjCObjectTypeLoc::initializeLocal(ASTContext &Context,
+//                                         SourceLocation Loc) {
+//   setHasBaseTypeAsWritten(true);
+//   setTypeArgsLAngleLoc(Loc);
+//   setTypeArgsRAngleLoc(Loc);
+//   for (unsigned i = 0, e = getNumTypeArgs(); i != e; ++i) {
+//     setTypeArgTInfo(i,
+//                    Context.getTrivialTypeSourceInfo(
+//                      getTypePtr()->getTypeArgsAsWritten()[i], Loc));
+//   }
+//   setProtocolLAngleLoc(Loc);
+//   setProtocolRAngleLoc(Loc);
+//   for (unsigned i = 0, e = getNumProtocols(); i != e; ++i)
+//     setProtocolLoc(i, Loc);
+// }
 
 SourceRange AttributedTypeLoc::getLocalSourceRange() const {
   // Note that this does *not* include the range of the attribute

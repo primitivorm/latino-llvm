@@ -17,7 +17,7 @@
 #include "latino/Analysis/Support/BumpVector.h"
 #include "latino/Analysis/ConstructionContext.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/Basic/LLVM.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/GraphTraits.h"

@@ -20,7 +20,7 @@ namespace latino {
 
 class Stmt;
 class FunctionDecl;
-class ObjCMethodDecl;
+// class ObjCMethodDecl;
 
 /// CodeInjector is an interface which is responsible for injecting AST
 /// of function definitions that may not be available in the original source.
@@ -38,7 +38,7 @@ public:
   virtual ~CodeInjector();
 
   virtual Stmt *getBody(const FunctionDecl *D) = 0;
-  virtual Stmt *getBody(const ObjCMethodDecl *D) = 0;
+  // virtual Stmt *getBody(const ObjCMethodDecl *D) = 0;
 };
 }
 

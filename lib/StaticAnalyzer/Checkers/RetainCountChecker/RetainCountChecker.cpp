@@ -179,175 +179,175 @@ void RetainCountChecker::checkPostStmt(const BlockExpr *BE,
   C.addTransition(state);
 }
 
-void RetainCountChecker::checkPostStmt(const CastExpr *CE,
-                                       CheckerContext &C) const {
-  const ObjCBridgedCastExpr *BE = dyn_cast<ObjCBridgedCastExpr>(CE);
-  if (!BE)
-    return;
+// void RetainCountChecker::checkPostStmt(const CastExpr *CE,
+//                                        CheckerContext &C) const {
+//   const ObjCBridgedCastExpr *BE = dyn_cast<ObjCBridgedCastExpr>(CE);
+//   if (!BE)
+//     return;
 
-  QualType QT = CE->getType();
-  ObjKind K;
-  if (QT->isObjCObjectPointerType()) {
-    K = ObjKind::ObjC;
-  } else {
-    K = ObjKind::CF;
-  }
+//   QualType QT = CE->getType();
+//   ObjKind K;
+//   if (QT->isObjCObjectPointerType()) {
+//     K = ObjKind::ObjC;
+//   } else {
+//     K = ObjKind::CF;
+//   }
 
-  ArgEffect AE = ArgEffect(IncRef, K);
+//   ArgEffect AE = ArgEffect(IncRef, K);
 
-  switch (BE->getBridgeKind()) {
-    case OBC_Bridge:
-      // Do nothing.
-      return;
-    case OBC_BridgeRetained:
-      AE = AE.withKind(IncRef);
-      break;
-    case OBC_BridgeTransfer:
-      AE = AE.withKind(DecRefBridgedTransferred);
-      break;
-  }
+//   switch (BE->getBridgeKind()) {
+//     case OBC_Bridge:
+//       // Do nothing.
+//       return;
+//     case OBC_BridgeRetained:
+//       AE = AE.withKind(IncRef);
+//       break;
+//     case OBC_BridgeTransfer:
+//       AE = AE.withKind(DecRefBridgedTransferred);
+//       break;
+//   }
 
-  ProgramStateRef state = C.getState();
-  SymbolRef Sym = C.getSVal(CE).getAsLocSymbol();
-  if (!Sym)
-    return;
-  const RefVal* T = getRefBinding(state, Sym);
-  if (!T)
-    return;
+//   ProgramStateRef state = C.getState();
+//   SymbolRef Sym = C.getSVal(CE).getAsLocSymbol();
+//   if (!Sym)
+//     return;
+//   const RefVal* T = getRefBinding(state, Sym);
+//   if (!T)
+//     return;
 
-  RefVal::Kind hasErr = (RefVal::Kind) 0;
-  state = updateSymbol(state, Sym, *T, AE, hasErr, C);
+//   RefVal::Kind hasErr = (RefVal::Kind) 0;
+//   state = updateSymbol(state, Sym, *T, AE, hasErr, C);
 
-  if (hasErr) {
-    // FIXME: If we get an error during a bridge cast, should we report it?
-    return;
-  }
+//   if (hasErr) {
+//     // FIXME: If we get an error during a bridge cast, should we report it?
+//     return;
+//   }
 
-  C.addTransition(state);
-}
+//   C.addTransition(state);
+// }
 
-void RetainCountChecker::processObjCLiterals(CheckerContext &C,
-                                             const Expr *Ex) const {
-  ProgramStateRef state = C.getState();
-  const ExplodedNode *pred = C.getPredecessor();
-  for (const Stmt *Child : Ex->children()) {
-    SVal V = pred->getSVal(Child);
-    if (SymbolRef sym = V.getAsSymbol())
-      if (const RefVal* T = getRefBinding(state, sym)) {
-        RefVal::Kind hasErr = (RefVal::Kind) 0;
-        state = updateSymbol(state, sym, *T,
-                             ArgEffect(MayEscape, ObjKind::ObjC), hasErr, C);
-        if (hasErr) {
-          processNonLeakError(state, Child->getSourceRange(), hasErr, sym, C);
-          return;
-        }
-      }
-  }
+// void RetainCountChecker::processObjCLiterals(CheckerContext &C,
+//                                              const Expr *Ex) const {
+//   ProgramStateRef state = C.getState();
+//   const ExplodedNode *pred = C.getPredecessor();
+//   for (const Stmt *Child : Ex->children()) {
+//     SVal V = pred->getSVal(Child);
+//     if (SymbolRef sym = V.getAsSymbol())
+//       if (const RefVal* T = getRefBinding(state, sym)) {
+//         RefVal::Kind hasErr = (RefVal::Kind) 0;
+//         state = updateSymbol(state, sym, *T,
+//                              ArgEffect(MayEscape, ObjKind::ObjC), hasErr, C);
+//         if (hasErr) {
+//           processNonLeakError(state, Child->getSourceRange(), hasErr, sym, C);
+//           return;
+//         }
+//       }
+//   }
 
-  // Return the object as autoreleased.
-  //  RetEffect RE = RetEffect::MakeNotOwned(ObjKind::ObjC);
-  if (SymbolRef sym =
-        state->getSVal(Ex, pred->getLocationContext()).getAsSymbol()) {
-    QualType ResultTy = Ex->getType();
-    state = setRefBinding(state, sym,
-                          RefVal::makeNotOwned(ObjKind::ObjC, ResultTy));
-  }
+//   // Return the object as autoreleased.
+//   //  RetEffect RE = RetEffect::MakeNotOwned(ObjKind::ObjC);
+//   if (SymbolRef sym =
+//         state->getSVal(Ex, pred->getLocationContext()).getAsSymbol()) {
+//     QualType ResultTy = Ex->getType();
+//     state = setRefBinding(state, sym,
+//                           RefVal::makeNotOwned(ObjKind::ObjC, ResultTy));
+//   }
 
-  C.addTransition(state);
-}
+//   C.addTransition(state);
+// }
 
-void RetainCountChecker::checkPostStmt(const ObjCArrayLiteral *AL,
-                                       CheckerContext &C) const {
-  // Apply the 'MayEscape' to all values.
-  processObjCLiterals(C, AL);
-}
+// void RetainCountChecker::checkPostStmt(const ObjCArrayLiteral *AL,
+//                                        CheckerContext &C) const {
+//   // Apply the 'MayEscape' to all values.
+//   processObjCLiterals(C, AL);
+// }
 
-void RetainCountChecker::checkPostStmt(const ObjCDictionaryLiteral *DL,
-                                       CheckerContext &C) const {
-  // Apply the 'MayEscape' to all keys and values.
-  processObjCLiterals(C, DL);
-}
+// void RetainCountChecker::checkPostStmt(const ObjCDictionaryLiteral *DL,
+//                                        CheckerContext &C) const {
+//   // Apply the 'MayEscape' to all keys and values.
+//   processObjCLiterals(C, DL);
+// }
 
-void RetainCountChecker::checkPostStmt(const ObjCBoxedExpr *Ex,
-                                       CheckerContext &C) const {
-  const ExplodedNode *Pred = C.getPredecessor();
-  ProgramStateRef State = Pred->getState();
+// void RetainCountChecker::checkPostStmt(const ObjCBoxedExpr *Ex,
+//                                        CheckerContext &C) const {
+//   const ExplodedNode *Pred = C.getPredecessor();
+//   ProgramStateRef State = Pred->getState();
 
-  if (SymbolRef Sym = Pred->getSVal(Ex).getAsSymbol()) {
-    QualType ResultTy = Ex->getType();
-    State = setRefBinding(State, Sym,
-                          RefVal::makeNotOwned(ObjKind::ObjC, ResultTy));
-  }
+//   if (SymbolRef Sym = Pred->getSVal(Ex).getAsSymbol()) {
+//     QualType ResultTy = Ex->getType();
+//     State = setRefBinding(State, Sym,
+//                           RefVal::makeNotOwned(ObjKind::ObjC, ResultTy));
+//   }
 
-  C.addTransition(State);
-}
+//   C.addTransition(State);
+// }
 
-void RetainCountChecker::checkPostStmt(const ObjCIvarRefExpr *IRE,
-                                       CheckerContext &C) const {
-  Optional<Loc> IVarLoc = C.getSVal(IRE).getAs<Loc>();
-  if (!IVarLoc)
-    return;
+// void RetainCountChecker::checkPostStmt(const ObjCIvarRefExpr *IRE,
+//                                        CheckerContext &C) const {
+//   Optional<Loc> IVarLoc = C.getSVal(IRE).getAs<Loc>();
+//   if (!IVarLoc)
+//     return;
 
-  ProgramStateRef State = C.getState();
-  SymbolRef Sym = State->getSVal(*IVarLoc).getAsSymbol();
-  if (!Sym || !dyn_cast_or_null<ObjCIvarRegion>(Sym->getOriginRegion()))
-    return;
+//   ProgramStateRef State = C.getState();
+//   SymbolRef Sym = State->getSVal(*IVarLoc).getAsSymbol();
+//   if (!Sym || !dyn_cast_or_null<ObjCIvarRegion>(Sym->getOriginRegion()))
+//     return;
 
-  // Accessing an ivar directly is unusual. If we've done that, be more
-  // forgiving about what the surrounding code is allowed to do.
+//   // Accessing an ivar directly is unusual. If we've done that, be more
+//   // forgiving about what the surrounding code is allowed to do.
 
-  QualType Ty = Sym->getType();
-  ObjKind Kind;
-  if (Ty->isObjCRetainableType())
-    Kind = ObjKind::ObjC;
-  else if (coreFoundation::isCFObjectRef(Ty))
-    Kind = ObjKind::CF;
-  else
-    return;
+//   QualType Ty = Sym->getType();
+//   ObjKind Kind;
+//   if (Ty->isObjCRetainableType())
+//     Kind = ObjKind::ObjC;
+//   else if (coreFoundation::isCFObjectRef(Ty))
+//     Kind = ObjKind::CF;
+//   else
+//     return;
 
-  // If the value is already known to be nil, don't bother tracking it.
-  ConstraintManager &CMgr = State->getConstraintManager();
-  if (CMgr.isNull(State, Sym).isConstrainedTrue())
-    return;
+//   // If the value is already known to be nil, don't bother tracking it.
+//   ConstraintManager &CMgr = State->getConstraintManager();
+//   if (CMgr.isNull(State, Sym).isConstrainedTrue())
+//     return;
 
-  if (const RefVal *RV = getRefBinding(State, Sym)) {
-    // If we've seen this symbol before, or we're only seeing it now because
-    // of something the analyzer has synthesized, don't do anything.
-    if (RV->getIvarAccessHistory() != RefVal::IvarAccessHistory::None ||
-        isSynthesizedAccessor(C.getStackFrame())) {
-      return;
-    }
+//   if (const RefVal *RV = getRefBinding(State, Sym)) {
+//     // If we've seen this symbol before, or we're only seeing it now because
+//     // of something the analyzer has synthesized, don't do anything.
+//     if (RV->getIvarAccessHistory() != RefVal::IvarAccessHistory::None ||
+//         isSynthesizedAccessor(C.getStackFrame())) {
+//       return;
+//     }
 
-    // Note that this value has been loaded from an ivar.
-    C.addTransition(setRefBinding(State, Sym, RV->withIvarAccess()));
-    return;
-  }
+//     // Note that this value has been loaded from an ivar.
+//     C.addTransition(setRefBinding(State, Sym, RV->withIvarAccess()));
+//     return;
+//   }
 
-  RefVal PlusZero = RefVal::makeNotOwned(Kind, Ty);
+//   RefVal PlusZero = RefVal::makeNotOwned(Kind, Ty);
 
-  // In a synthesized accessor, the effective retain count is +0.
-  if (isSynthesizedAccessor(C.getStackFrame())) {
-    C.addTransition(setRefBinding(State, Sym, PlusZero));
-    return;
-  }
+//   // In a synthesized accessor, the effective retain count is +0.
+//   if (isSynthesizedAccessor(C.getStackFrame())) {
+//     C.addTransition(setRefBinding(State, Sym, PlusZero));
+//     return;
+//   }
 
-  State = setRefBinding(State, Sym, PlusZero.withIvarAccess());
-  C.addTransition(State);
-}
+//   State = setRefBinding(State, Sym, PlusZero.withIvarAccess());
+//   C.addTransition(State);
+// }
 
-static bool isReceiverUnconsumedSelf(const CallEvent &Call) {
-  if (const auto *MC = dyn_cast<ObjCMethodCall>(&Call)) {
+// static bool isReceiverUnconsumedSelf(const CallEvent &Call) {
+//   if (const auto *MC = dyn_cast<ObjCMethodCall>(&Call)) {
 
-    // Check if the message is not consumed, we know it will not be used in
-    // an assignment, ex: "self = [super init]".
-    return MC->getMethodFamily() == OMF_init && MC->isReceiverSelfOrSuper() &&
-           !Call.getLocationContext()
-                ->getAnalysisDeclContext()
-                ->getParentMap()
-                .isConsumedExpr(Call.getOriginExpr());
-  }
-  return false;
-}
+//     // Check if the message is not consumed, we know it will not be used in
+//     // an assignment, ex: "self = [super init]".
+//     return MC->getMethodFamily() == OMF_init && MC->isReceiverSelfOrSuper() &&
+//            !Call.getLocationContext()
+//                 ->getAnalysisDeclContext()
+//                 ->getParentMap()
+//                 .isConsumedExpr(Call.getOriginExpr());
+//   }
+//   return false;
+// }
 
 const static RetainSummary *getSummary(RetainSummaryManager &Summaries,
                                        const CallEvent &Call,
@@ -366,14 +366,14 @@ void RetainCountChecker::checkPostCall(const CallEvent &Call,
 
   // Leave null if no receiver.
   QualType ReceiverType;
-  if (const auto *MC = dyn_cast<ObjCMethodCall>(&Call)) {
-    if (MC->isInstanceMessage()) {
-      SVal ReceiverV = MC->getReceiverSVal();
-      if (SymbolRef Sym = ReceiverV.getAsLocSymbol())
-        if (const RefVal *T = getRefBinding(C.getState(), Sym))
-          ReceiverType = T->getType();
-    }
-  }
+  // if (const auto *MC = dyn_cast<ObjCMethodCall>(&Call)) {
+  //   if (MC->isInstanceMessage()) {
+  //     SVal ReceiverV = MC->getReceiverSVal();
+  //     if (SymbolRef Sym = ReceiverV.getAsLocSymbol())
+  //       if (const RefVal *T = getRefBinding(C.getState(), Sym))
+  //         ReceiverType = T->getType();
+  //   }
+  // }
 
   const RetainSummary *Summ = getSummary(Summaries, Call, ReceiverType);
 
@@ -396,18 +396,18 @@ static QualType GetReturnType(const Expr *RetE, ASTContext &Ctx) {
   // If RetE is not a message expression just return its type.
   // If RetE is a message expression, return its types if it is something
   /// more specific than id.
-  if (const ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(RetE))
-    if (const ObjCObjectPointerType *PT = RetTy->getAs<ObjCObjectPointerType>())
-      if (PT->isObjCQualifiedIdType() || PT->isObjCIdType() ||
-          PT->isObjCClassType()) {
-        // At this point we know the return type of the message expression is
-        // id, id<...>, or Class. If we have an ObjCInterfaceDecl, we know this
-        // is a call to a class method whose type we can resolve.  In such
-        // cases, promote the return type to XXX* (where XXX is the class).
-        const ObjCInterfaceDecl *D = ME->getReceiverInterface();
-        return !D ? RetTy :
-                    Ctx.getObjCObjectPointerType(Ctx.getObjCInterfaceType(D));
-      }
+  // if (const ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(RetE))
+  //   if (const ObjCObjectPointerType *PT = RetTy->getAs<ObjCObjectPointerType>())
+  //     if (PT->isObjCQualifiedIdType() || PT->isObjCIdType() ||
+  //         PT->isObjCClassType()) {
+  //       // At this point we know the return type of the message expression is
+  //       // id, id<...>, or Class. If we have an ObjCInterfaceDecl, we know this
+  //       // is a call to a class method whose type we can resolve.  In such
+  //       // cases, promote the return type to XXX* (where XXX is the class).
+  //       const ObjCInterfaceDecl *D = ME->getReceiverInterface();
+  //       return !D ? RetTy :
+  //                   Ctx.getObjCObjectPointerType(Ctx.getObjCInterfaceType(D));
+  //     }
 
   return RetTy;
 }
@@ -466,13 +466,13 @@ void RetainCountChecker::processSummaryOfInlined(const RetainSummary &Summ,
   }
 
   // Evaluate the effect on the message receiver.
-  if (const auto *MsgInvocation = dyn_cast<ObjCMethodCall>(&CallOrMsg)) {
-    if (SymbolRef Sym = MsgInvocation->getReceiverSVal().getAsLocSymbol()) {
-      if (Summ.getReceiverEffect().getKind() == StopTrackingHard) {
-        state = removeRefBinding(state, Sym);
-      }
-    }
-  }
+  // if (const auto *MsgInvocation = dyn_cast<ObjCMethodCall>(&CallOrMsg)) {
+  //   if (SymbolRef Sym = MsgInvocation->getReceiverSVal().getAsLocSymbol()) {
+  //     if (Summ.getReceiverEffect().getKind() == StopTrackingHard) {
+  //       state = removeRefBinding(state, Sym);
+  //     }
+  //   }
+  // }
 
   // Consult the summary for the return value.
   RetEffect RE = Summ.getRetEffect();
@@ -641,7 +641,7 @@ void RetainCountChecker::checkSummary(const RetainSummary &Summ,
   // Evaluate the effect on the message receiver / `this` argument.
   bool ReceiverIsTracked = false;
   if (!hasErr) {
-    if (const auto *MsgInvocation = dyn_cast<ObjCMethodCall>(&CallOrMsg)) {
+    /*if (const auto *MsgInvocation = dyn_cast<ObjCMethodCall>(&CallOrMsg)) {
       if (SymbolRef Sym = MsgInvocation->getReceiverSVal().getAsLocSymbol()) {
         if (const RefVal *T = getRefBinding(state, Sym)) {
           ReceiverIsTracked = true;
@@ -655,7 +655,7 @@ void RetainCountChecker::checkSummary(const RetainSummary &Summ,
           }
         }
       }
-    } else if (const auto *MCall = dyn_cast<CXXMemberCall>(&CallOrMsg)) {
+    } else*/ if (const auto *MCall = dyn_cast<CXXMemberCall>(&CallOrMsg)) {
       if (SymbolRef Sym = MCall->getCXXThisVal().getAsLocSymbol()) {
         if (const RefVal *T = getRefBinding(state, Sym)) {
           state = updateSymbol(state, Sym, *T, Summ.getThisEffect(),
@@ -1050,10 +1050,11 @@ ExplodedNode * RetainCountChecker::processReturn(const ReturnStmt *S,
   RetEffect RE = RetEffect::MakeNoRet();
 
   // FIXME: What is the convention for blocks? Is there one?
-  if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(CD)) {
-    const RetainSummary *Summ = Summaries.getSummary(AnyCall(MD));
-    RE = Summ->getRetEffect();
-  } else if (const FunctionDecl *FD = dyn_cast<FunctionDecl>(CD)) {
+  // if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(CD)) {
+  //   const RetainSummary *Summ = Summaries.getSummary(AnyCall(MD));
+  //   RE = Summ->getRetEffect();
+  // } else 
+  if (const FunctionDecl *FD = dyn_cast<FunctionDecl>(CD)) {
     if (!isa<CXXMethodDecl>(FD)) {
       const RetainSummary *Summ = Summaries.getSummary(AnyCall(FD));
       RE = Summ->getRetEffect();

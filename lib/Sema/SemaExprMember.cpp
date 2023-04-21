@@ -12,10 +12,10 @@
 #include "latino/Sema/Overload.h"
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/Lex/Preprocessor.h"
 #include "latino/Sema/Lookup.h"
 #include "latino/Sema/Scope.h"
@@ -427,54 +427,54 @@ CheckExtVectorComponent(Sema &S, QualType baseType, ExprValueKind &VK,
   return VT; // should never get here (a typedef type should always be found).
 }
 
-static Decl *FindGetterSetterNameDeclFromProtocolList(const ObjCProtocolDecl*PDecl,
-                                                IdentifierInfo *Member,
-                                                const Selector &Sel,
-                                                ASTContext &Context) {
-  if (Member)
-    if (ObjCPropertyDecl *PD = PDecl->FindPropertyDeclaration(
-            Member, ObjCPropertyQueryKind::OBJC_PR_query_instance))
-      return PD;
-  if (ObjCMethodDecl *OMD = PDecl->getInstanceMethod(Sel))
-    return OMD;
+// static Decl *FindGetterSetterNameDeclFromProtocolList(const ObjCProtocolDecl*PDecl,
+//                                                 IdentifierInfo *Member,
+//                                                 const Selector &Sel,
+//                                                 ASTContext &Context) {
+//   if (Member)
+//     if (ObjCPropertyDecl *PD = PDecl->FindPropertyDeclaration(
+//             Member, ObjCPropertyQueryKind::OBJC_PR_query_instance))
+//       return PD;
+//   if (ObjCMethodDecl *OMD = PDecl->getInstanceMethod(Sel))
+//     return OMD;
 
-  for (const auto *I : PDecl->protocols()) {
-    if (Decl *D = FindGetterSetterNameDeclFromProtocolList(I, Member, Sel,
-                                                           Context))
-      return D;
-  }
-  return nullptr;
-}
+//   for (const auto *I : PDecl->protocols()) {
+//     if (Decl *D = FindGetterSetterNameDeclFromProtocolList(I, Member, Sel,
+//                                                            Context))
+//       return D;
+//   }
+//   return nullptr;
+// }
 
-static Decl *FindGetterSetterNameDecl(const ObjCObjectPointerType *QIdTy,
-                                      IdentifierInfo *Member,
-                                      const Selector &Sel,
-                                      ASTContext &Context) {
-  // Check protocols on qualified interfaces.
-  Decl *GDecl = nullptr;
-  for (const auto *I : QIdTy->quals()) {
-    if (Member)
-      if (ObjCPropertyDecl *PD = I->FindPropertyDeclaration(
-              Member, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
-        GDecl = PD;
-        break;
-      }
-    // Also must look for a getter or setter name which uses property syntax.
-    if (ObjCMethodDecl *OMD = I->getInstanceMethod(Sel)) {
-      GDecl = OMD;
-      break;
-    }
-  }
-  if (!GDecl) {
-    for (const auto *I : QIdTy->quals()) {
-      // Search in the protocol-qualifier list of current protocol.
-      GDecl = FindGetterSetterNameDeclFromProtocolList(I, Member, Sel, Context);
-      if (GDecl)
-        return GDecl;
-    }
-  }
-  return GDecl;
-}
+// static Decl *FindGetterSetterNameDecl(const ObjCObjectPointerType *QIdTy,
+//                                       IdentifierInfo *Member,
+//                                       const Selector &Sel,
+//                                       ASTContext &Context) {
+//   // Check protocols on qualified interfaces.
+//   Decl *GDecl = nullptr;
+//   for (const auto *I : QIdTy->quals()) {
+//     if (Member)
+//       if (ObjCPropertyDecl *PD = I->FindPropertyDeclaration(
+//               Member, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
+//         GDecl = PD;
+//         break;
+//       }
+//     // Also must look for a getter or setter name which uses property syntax.
+//     if (ObjCMethodDecl *OMD = I->getInstanceMethod(Sel)) {
+//       GDecl = OMD;
+//       break;
+//     }
+//   }
+//   if (!GDecl) {
+//     for (const auto *I : QIdTy->quals()) {
+//       // Search in the protocol-qualifier list of current protocol.
+//       GDecl = FindGetterSetterNameDeclFromProtocolList(I, Member, Sel, Context);
+//       if (GDecl)
+//         return GDecl;
+//     }
+//   }
+//   return GDecl;
+// }
 
 ExprResult
 Sema::ActOnDependentMemberExpr(Expr *BaseExpr, QualType BaseType,
@@ -1200,31 +1200,31 @@ Sema::BuildMemberReferenceExpr(Expr *BaseExpr, QualType BaseExprType,
 /// types would be profitable.  The redefinition type is whatever
 /// this translation unit tried to typedef to id/Class;  we store
 /// it to the side and then re-use it in places like this.
-static bool ShouldTryAgainWithRedefinitionType(Sema &S, ExprResult &base) {
-  const ObjCObjectPointerType *opty
-    = base.get()->getType()->getAs<ObjCObjectPointerType>();
-  if (!opty) return false;
+// static bool ShouldTryAgainWithRedefinitionType(Sema &S, ExprResult &base) {
+//   const ObjCObjectPointerType *opty
+//     = base.get()->getType()->getAs<ObjCObjectPointerType>();
+//   if (!opty) return false;
 
-  const ObjCObjectType *ty = opty->getObjectType();
+//   // const ObjCObjectType *ty = opty->getObjectType();
 
-  QualType redef;
-  if (ty->isObjCId()) {
-    redef = S.Context.getObjCIdRedefinitionType();
-  } else if (ty->isObjCClass()) {
-    redef = S.Context.getObjCClassRedefinitionType();
-  } else {
-    return false;
-  }
+//   // QualType redef;
+//   // if (ty->isObjCId()) {
+//   //   redef = S.Context.getObjCIdRedefinitionType();
+//   // } else if (ty->isObjCClass()) {
+//   //   redef = S.Context.getObjCClassRedefinitionType();
+//   // } else {
+//   //   return false;
+//   // }
 
-  // Do the substitution as long as the redefinition type isn't just a
-  // possibly-qualified pointer to builtin-id or builtin-Class again.
-  opty = redef->getAs<ObjCObjectPointerType>();
-  if (opty && !opty->getObjectType()->getInterface())
-    return false;
+//   // Do the substitution as long as the redefinition type isn't just a
+//   // possibly-qualified pointer to builtin-id or builtin-Class again.
+//   opty = redef->getAs<ObjCObjectPointerType>();
+//   if (opty && !opty->getObjectType()->getInterface())
+//     return false;
 
-  base = S.ImpCastExprToType(base.get(), redef, CK_BitCast);
-  return true;
-}
+//   base = S.ImpCastExprToType(base.get(), redef, CK_BitCast);
+//   return true;
+// }
 
 static bool isRecordType(QualType T) {
   return T->isRecordType();
@@ -1279,9 +1279,9 @@ static ExprResult LookupMemberExpr(Sema &S, LookupResult &R,
   if (IsArrow) {
     if (const PointerType *Ptr = BaseType->getAs<PointerType>())
       BaseType = Ptr->getPointeeType();
-    else if (const ObjCObjectPointerType *Ptr
-               = BaseType->getAs<ObjCObjectPointerType>())
-      BaseType = Ptr->getPointeeType();
+    // else if (const ObjCObjectPointerType *Ptr
+    //            = BaseType->getAs<ObjCObjectPointerType>())
+    //   BaseType = Ptr->getPointeeType();
     else if (BaseType->isRecordType()) {
       // Recover from arrow accesses to records, e.g.:
       //   struct MyRecord foo;
@@ -1320,290 +1320,290 @@ static ExprResult LookupMemberExpr(Sema &S, LookupResult &R,
   }
 
   // Handle ivar access to Objective-C objects.
-  if (const ObjCObjectType *OTy = BaseType->getAs<ObjCObjectType>()) {
-    if (!SS.isEmpty() && !SS.isInvalid()) {
-      S.Diag(SS.getRange().getBegin(), diag::err_qualified_objc_access)
-        << 1 << SS.getScopeRep()
-        << FixItHint::CreateRemoval(SS.getRange());
-      SS.clear();
-    }
+  // if (const ObjCObjectType *OTy = BaseType->getAs<ObjCObjectType>()) {
+  //   if (!SS.isEmpty() && !SS.isInvalid()) {
+  //     S.Diag(SS.getRange().getBegin(), diag::err_qualified_objc_access)
+  //       << 1 << SS.getScopeRep()
+  //       << FixItHint::CreateRemoval(SS.getRange());
+  //     SS.clear();
+  //   }
 
-    IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
+  //   IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
 
-    // There are three cases for the base type:
-    //   - builtin id (qualified or unqualified)
-    //   - builtin Class (qualified or unqualified)
-    //   - an interface
-    ObjCInterfaceDecl *IDecl = OTy->getInterface();
-    if (!IDecl) {
-      if (S.getLangOpts().ObjCAutoRefCount &&
-          (OTy->isObjCId() || OTy->isObjCClass()))
-        goto fail;
-      // There's an implicit 'isa' ivar on all objects.
-      // But we only actually find it this way on objects of type 'id',
-      // apparently.
-      if (OTy->isObjCId() && Member->isStr("isa"))
-        return new (S.Context) ObjCIsaExpr(BaseExpr.get(), IsArrow, MemberLoc,
-                                           OpLoc, S.Context.getObjCClassType());
-      if (ShouldTryAgainWithRedefinitionType(S, BaseExpr))
-        return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
-                                ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
-      goto fail;
-    }
+  //   // There are three cases for the base type:
+  //   //   - builtin id (qualified or unqualified)
+  //   //   - builtin Class (qualified or unqualified)
+  //   //   - an interface
+  //   ObjCInterfaceDecl *IDecl = OTy->getInterface();
+  //   if (!IDecl) {
+  //     if (S.getLangOpts().ObjCAutoRefCount &&
+  //         (OTy->isObjCId() || OTy->isObjCClass()))
+  //       goto fail;
+  //     // There's an implicit 'isa' ivar on all objects.
+  //     // But we only actually find it this way on objects of type 'id',
+  //     // apparently.
+  //     if (OTy->isObjCId() && Member->isStr("isa"))
+  //       return new (S.Context) ObjCIsaExpr(BaseExpr.get(), IsArrow, MemberLoc,
+  //                                          OpLoc, S.Context.getObjCClassType());
+  //     if (ShouldTryAgainWithRedefinitionType(S, BaseExpr))
+  //       return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
+  //                               ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
+  //     goto fail;
+  //   }
 
-    if (S.RequireCompleteType(OpLoc, BaseType,
-                              diag::err_typecheck_incomplete_tag,
-                              BaseExpr.get()))
-      return ExprError();
+  //   if (S.RequireCompleteType(OpLoc, BaseType,
+  //                             diag::err_typecheck_incomplete_tag,
+  //                             BaseExpr.get()))
+  //     return ExprError();
 
-    ObjCInterfaceDecl *ClassDeclared = nullptr;
-    ObjCIvarDecl *IV = IDecl->lookupInstanceVariable(Member, ClassDeclared);
+  //   ObjCInterfaceDecl *ClassDeclared = nullptr;
+  //   ObjCIvarDecl *IV = IDecl->lookupInstanceVariable(Member, ClassDeclared);
 
-    if (!IV) {
-      // Attempt to correct for typos in ivar names.
-      DeclFilterCCC<ObjCIvarDecl> Validator{};
-      Validator.IsObjCIvarLookup = IsArrow;
-      if (TypoCorrection Corrected = S.CorrectTypo(
-              R.getLookupNameInfo(), Sema::LookupMemberName, nullptr, nullptr,
-              Validator, Sema::CTK_ErrorRecovery, IDecl)) {
-        IV = Corrected.getCorrectionDeclAs<ObjCIvarDecl>();
-        S.diagnoseTypo(
-            Corrected,
-            S.PDiag(diag::err_typecheck_member_reference_ivar_suggest)
-                << IDecl->getDeclName() << MemberName);
+  //   if (!IV) {
+  //     // Attempt to correct for typos in ivar names.
+  //     DeclFilterCCC<ObjCIvarDecl> Validator{};
+  //     Validator.IsObjCIvarLookup = IsArrow;
+  //     if (TypoCorrection Corrected = S.CorrectTypo(
+  //             R.getLookupNameInfo(), Sema::LookupMemberName, nullptr, nullptr,
+  //             Validator, Sema::CTK_ErrorRecovery, IDecl)) {
+  //       IV = Corrected.getCorrectionDeclAs<ObjCIvarDecl>();
+  //       S.diagnoseTypo(
+  //           Corrected,
+  //           S.PDiag(diag::err_typecheck_member_reference_ivar_suggest)
+  //               << IDecl->getDeclName() << MemberName);
 
-        // Figure out the class that declares the ivar.
-        assert(!ClassDeclared);
+  //       // Figure out the class that declares the ivar.
+  //       assert(!ClassDeclared);
 
-        Decl *D = cast<Decl>(IV->getDeclContext());
-        if (auto *Category = dyn_cast<ObjCCategoryDecl>(D))
-          D = Category->getClassInterface();
+  //       Decl *D = cast<Decl>(IV->getDeclContext());
+  //       if (auto *Category = dyn_cast<ObjCCategoryDecl>(D))
+  //         D = Category->getClassInterface();
 
-        if (auto *Implementation = dyn_cast<ObjCImplementationDecl>(D))
-          ClassDeclared = Implementation->getClassInterface();
-        else if (auto *Interface = dyn_cast<ObjCInterfaceDecl>(D))
-          ClassDeclared = Interface;
+  //       if (auto *Implementation = dyn_cast<ObjCImplementationDecl>(D))
+  //         ClassDeclared = Implementation->getClassInterface();
+  //       else if (auto *Interface = dyn_cast<ObjCInterfaceDecl>(D))
+  //         ClassDeclared = Interface;
 
-        assert(ClassDeclared && "cannot query interface");
-      } else {
-        if (IsArrow &&
-            IDecl->FindPropertyDeclaration(
-                Member, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
-          S.Diag(MemberLoc, diag::err_property_found_suggest)
-              << Member << BaseExpr.get()->getType()
-              << FixItHint::CreateReplacement(OpLoc, ".");
-          return ExprError();
-        }
+  //       assert(ClassDeclared && "cannot query interface");
+  //     } else {
+  //       if (IsArrow &&
+  //           IDecl->FindPropertyDeclaration(
+  //               Member, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
+  //         S.Diag(MemberLoc, diag::err_property_found_suggest)
+  //             << Member << BaseExpr.get()->getType()
+  //             << FixItHint::CreateReplacement(OpLoc, ".");
+  //         return ExprError();
+  //       }
 
-        S.Diag(MemberLoc, diag::err_typecheck_member_reference_ivar)
-            << IDecl->getDeclName() << MemberName
-            << BaseExpr.get()->getSourceRange();
-        return ExprError();
-      }
-    }
+  //       S.Diag(MemberLoc, diag::err_typecheck_member_reference_ivar)
+  //           << IDecl->getDeclName() << MemberName
+  //           << BaseExpr.get()->getSourceRange();
+  //       return ExprError();
+  //     }
+  //   }
 
-    assert(ClassDeclared);
+  //   assert(ClassDeclared);
 
-    // If the decl being referenced had an error, return an error for this
-    // sub-expr without emitting another error, in order to avoid cascading
-    // error cases.
-    if (IV->isInvalidDecl())
-      return ExprError();
+  //   // If the decl being referenced had an error, return an error for this
+  //   // sub-expr without emitting another error, in order to avoid cascading
+  //   // error cases.
+  //   if (IV->isInvalidDecl())
+  //     return ExprError();
 
-    // Check whether we can reference this field.
-    if (S.DiagnoseUseOfDecl(IV, MemberLoc))
-      return ExprError();
-    if (IV->getAccessControl() != ObjCIvarDecl::Public &&
-        IV->getAccessControl() != ObjCIvarDecl::Package) {
-      ObjCInterfaceDecl *ClassOfMethodDecl = nullptr;
-      if (ObjCMethodDecl *MD = S.getCurMethodDecl())
-        ClassOfMethodDecl =  MD->getClassInterface();
-      else if (ObjCImpDecl && S.getCurFunctionDecl()) {
-        // Case of a c-function declared inside an objc implementation.
-        // FIXME: For a c-style function nested inside an objc implementation
-        // class, there is no implementation context available, so we pass
-        // down the context as argument to this routine. Ideally, this context
-        // need be passed down in the AST node and somehow calculated from the
-        // AST for a function decl.
-        if (ObjCImplementationDecl *IMPD =
-              dyn_cast<ObjCImplementationDecl>(ObjCImpDecl))
-          ClassOfMethodDecl = IMPD->getClassInterface();
-        else if (ObjCCategoryImplDecl* CatImplClass =
-                   dyn_cast<ObjCCategoryImplDecl>(ObjCImpDecl))
-          ClassOfMethodDecl = CatImplClass->getClassInterface();
-      }
-      if (!S.getLangOpts().DebuggerSupport) {
-        if (IV->getAccessControl() == ObjCIvarDecl::Private) {
-          if (!declaresSameEntity(ClassDeclared, IDecl) ||
-              !declaresSameEntity(ClassOfMethodDecl, ClassDeclared))
-            S.Diag(MemberLoc, diag::err_private_ivar_access)
-              << IV->getDeclName();
-        } else if (!IDecl->isSuperClassOf(ClassOfMethodDecl))
-          // @protected
-          S.Diag(MemberLoc, diag::err_protected_ivar_access)
-              << IV->getDeclName();
-      }
-    }
-    bool warn = true;
-    if (S.getLangOpts().ObjCWeak) {
-      Expr *BaseExp = BaseExpr.get()->IgnoreParenImpCasts();
-      if (UnaryOperator *UO = dyn_cast<UnaryOperator>(BaseExp))
-        if (UO->getOpcode() == UO_Deref)
-          BaseExp = UO->getSubExpr()->IgnoreParenCasts();
+  //   // Check whether we can reference this field.
+  //   if (S.DiagnoseUseOfDecl(IV, MemberLoc))
+  //     return ExprError();
+  //   if (IV->getAccessControl() != ObjCIvarDecl::Public &&
+  //       IV->getAccessControl() != ObjCIvarDecl::Package) {
+  //     ObjCInterfaceDecl *ClassOfMethodDecl = nullptr;
+  //     if (ObjCMethodDecl *MD = S.getCurMethodDecl())
+  //       ClassOfMethodDecl =  MD->getClassInterface();
+  //     else if (ObjCImpDecl && S.getCurFunctionDecl()) {
+  //       // Case of a c-function declared inside an objc implementation.
+  //       // FIXME: For a c-style function nested inside an objc implementation
+  //       // class, there is no implementation context available, so we pass
+  //       // down the context as argument to this routine. Ideally, this context
+  //       // need be passed down in the AST node and somehow calculated from the
+  //       // AST for a function decl.
+  //       if (ObjCImplementationDecl *IMPD =
+  //             dyn_cast<ObjCImplementationDecl>(ObjCImpDecl))
+  //         ClassOfMethodDecl = IMPD->getClassInterface();
+  //       else if (ObjCCategoryImplDecl* CatImplClass =
+  //                  dyn_cast<ObjCCategoryImplDecl>(ObjCImpDecl))
+  //         ClassOfMethodDecl = CatImplClass->getClassInterface();
+  //     }
+  //     if (!S.getLangOpts().DebuggerSupport) {
+  //       if (IV->getAccessControl() == ObjCIvarDecl::Private) {
+  //         if (!declaresSameEntity(ClassDeclared, IDecl) ||
+  //             !declaresSameEntity(ClassOfMethodDecl, ClassDeclared))
+  //           S.Diag(MemberLoc, diag::err_private_ivar_access)
+  //             << IV->getDeclName();
+  //       } else if (!IDecl->isSuperClassOf(ClassOfMethodDecl))
+  //         // @protected
+  //         S.Diag(MemberLoc, diag::err_protected_ivar_access)
+  //             << IV->getDeclName();
+  //     }
+  //   }
+  //   bool warn = true;
+  //   if (S.getLangOpts().ObjCWeak) {
+  //     Expr *BaseExp = BaseExpr.get()->IgnoreParenImpCasts();
+  //     if (UnaryOperator *UO = dyn_cast<UnaryOperator>(BaseExp))
+  //       if (UO->getOpcode() == UO_Deref)
+  //         BaseExp = UO->getSubExpr()->IgnoreParenCasts();
 
-      if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(BaseExp))
-        if (DE->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
-          S.Diag(DE->getLocation(), diag::err_arc_weak_ivar_access);
-          warn = false;
-        }
-    }
-    if (warn) {
-      if (ObjCMethodDecl *MD = S.getCurMethodDecl()) {
-        ObjCMethodFamily MF = MD->getMethodFamily();
-        warn = (MF != OMF_init && MF != OMF_dealloc &&
-                MF != OMF_finalize &&
-                !S.IvarBacksCurrentMethodAccessor(IDecl, MD, IV));
-      }
-      if (warn)
-        S.Diag(MemberLoc, diag::warn_direct_ivar_access) << IV->getDeclName();
-    }
+  //     if (DeclRefExpr *DE = dyn_cast<DeclRefExpr>(BaseExp))
+  //       if (DE->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
+  //         S.Diag(DE->getLocation(), diag::err_arc_weak_ivar_access);
+  //         warn = false;
+  //       }
+  //   }
+  //   if (warn) {
+  //     if (ObjCMethodDecl *MD = S.getCurMethodDecl()) {
+  //       ObjCMethodFamily MF = MD->getMethodFamily();
+  //       warn = (MF != OMF_init && MF != OMF_dealloc &&
+  //               MF != OMF_finalize &&
+  //               !S.IvarBacksCurrentMethodAccessor(IDecl, MD, IV));
+  //     }
+  //     if (warn)
+  //       S.Diag(MemberLoc, diag::warn_direct_ivar_access) << IV->getDeclName();
+  //   }
 
-    ObjCIvarRefExpr *Result = new (S.Context) ObjCIvarRefExpr(
-        IV, IV->getUsageType(BaseType), MemberLoc, OpLoc, BaseExpr.get(),
-        IsArrow);
+  //   ObjCIvarRefExpr *Result = new (S.Context) ObjCIvarRefExpr(
+  //       IV, IV->getUsageType(BaseType), MemberLoc, OpLoc, BaseExpr.get(),
+  //       IsArrow);
 
-    if (IV->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
-      if (!S.isUnevaluatedContext() &&
-          !S.Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, MemberLoc))
-        S.getCurFunction()->recordUseOfWeak(Result);
-    }
+  //   if (IV->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
+  //     if (!S.isUnevaluatedContext() &&
+  //         !S.Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, MemberLoc))
+  //       S.getCurFunction()->recordUseOfWeak(Result);
+  //   }
 
-    return Result;
-  }
+  //   return Result;
+  // }
 
   // Objective-C property access.
-  const ObjCObjectPointerType *OPT;
-  if (!IsArrow && (OPT = BaseType->getAs<ObjCObjectPointerType>())) {
-    if (!SS.isEmpty() && !SS.isInvalid()) {
-      S.Diag(SS.getRange().getBegin(), diag::err_qualified_objc_access)
-          << 0 << SS.getScopeRep() << FixItHint::CreateRemoval(SS.getRange());
-      SS.clear();
-    }
+  // const ObjCObjectPointerType *OPT;
+  // if (!IsArrow && (OPT = BaseType->getAs<ObjCObjectPointerType>())) {
+  //   if (!SS.isEmpty() && !SS.isInvalid()) {
+  //     S.Diag(SS.getRange().getBegin(), diag::err_qualified_objc_access)
+  //         << 0 << SS.getScopeRep() << FixItHint::CreateRemoval(SS.getRange());
+  //     SS.clear();
+  //   }
 
-    // This actually uses the base as an r-value.
-    BaseExpr = S.DefaultLvalueConversion(BaseExpr.get());
-    if (BaseExpr.isInvalid())
-      return ExprError();
+  //   // This actually uses the base as an r-value.
+  //   BaseExpr = S.DefaultLvalueConversion(BaseExpr.get());
+  //   if (BaseExpr.isInvalid())
+  //     return ExprError();
 
-    assert(S.Context.hasSameUnqualifiedType(BaseType,
-                                            BaseExpr.get()->getType()));
+  //   assert(S.Context.hasSameUnqualifiedType(BaseType,
+  //                                           BaseExpr.get()->getType()));
 
-    IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
+  //   IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
 
-    const ObjCObjectType *OT = OPT->getObjectType();
+  //   const ObjCObjectType *OT = OPT->getObjectType();
 
-    // id, with and without qualifiers.
-    if (OT->isObjCId()) {
-      // Check protocols on qualified interfaces.
-      Selector Sel = S.PP.getSelectorTable().getNullarySelector(Member);
-      if (Decl *PMDecl =
-              FindGetterSetterNameDecl(OPT, Member, Sel, S.Context)) {
-        if (ObjCPropertyDecl *PD = dyn_cast<ObjCPropertyDecl>(PMDecl)) {
-          // Check the use of this declaration
-          if (S.DiagnoseUseOfDecl(PD, MemberLoc))
-            return ExprError();
+  //   // id, with and without qualifiers.
+  //   if (OT->isObjCId()) {
+  //     // Check protocols on qualified interfaces.
+  //     Selector Sel = S.PP.getSelectorTable().getNullarySelector(Member);
+  //     if (Decl *PMDecl =
+  //             FindGetterSetterNameDecl(OPT, Member, Sel, S.Context)) {
+  //       if (ObjCPropertyDecl *PD = dyn_cast<ObjCPropertyDecl>(PMDecl)) {
+  //         // Check the use of this declaration
+  //         if (S.DiagnoseUseOfDecl(PD, MemberLoc))
+  //           return ExprError();
 
-          return new (S.Context)
-              ObjCPropertyRefExpr(PD, S.Context.PseudoObjectTy, VK_LValue,
-                                  OK_ObjCProperty, MemberLoc, BaseExpr.get());
-        }
+  //         return new (S.Context)
+  //             ObjCPropertyRefExpr(PD, S.Context.PseudoObjectTy, VK_LValue,
+  //                                 OK_ObjCProperty, MemberLoc, BaseExpr.get());
+  //       }
 
-        if (ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(PMDecl)) {
-          Selector SetterSel =
-            SelectorTable::constructSetterSelector(S.PP.getIdentifierTable(),
-                                                   S.PP.getSelectorTable(),
-                                                   Member);
-          ObjCMethodDecl *SMD = nullptr;
-          if (Decl *SDecl = FindGetterSetterNameDecl(OPT,
-                                                     /*Property id*/ nullptr,
-                                                     SetterSel, S.Context))
-            SMD = dyn_cast<ObjCMethodDecl>(SDecl);
+  //       if (ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(PMDecl)) {
+  //         Selector SetterSel =
+  //           SelectorTable::constructSetterSelector(S.PP.getIdentifierTable(),
+  //                                                  S.PP.getSelectorTable(),
+  //                                                  Member);
+  //         ObjCMethodDecl *SMD = nullptr;
+  //         if (Decl *SDecl = FindGetterSetterNameDecl(OPT,
+  //                                                    /*Property id*/ nullptr,
+  //                                                    SetterSel, S.Context))
+  //           SMD = dyn_cast<ObjCMethodDecl>(SDecl);
 
-          return new (S.Context)
-              ObjCPropertyRefExpr(OMD, SMD, S.Context.PseudoObjectTy, VK_LValue,
-                                  OK_ObjCProperty, MemberLoc, BaseExpr.get());
-        }
-      }
-      // Use of id.member can only be for a property reference. Do not
-      // use the 'id' redefinition in this case.
-      if (IsArrow && ShouldTryAgainWithRedefinitionType(S, BaseExpr))
-        return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
-                                ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
+  //         return new (S.Context)
+  //             ObjCPropertyRefExpr(OMD, SMD, S.Context.PseudoObjectTy, VK_LValue,
+  //                                 OK_ObjCProperty, MemberLoc, BaseExpr.get());
+  //       }
+  //     }
+  //     // Use of id.member can only be for a property reference. Do not
+  //     // use the 'id' redefinition in this case.
+  //     if (IsArrow && ShouldTryAgainWithRedefinitionType(S, BaseExpr))
+  //       return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
+  //                               ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
 
-      return ExprError(S.Diag(MemberLoc, diag::err_property_not_found)
-                         << MemberName << BaseType);
-    }
+  //     return ExprError(S.Diag(MemberLoc, diag::err_property_not_found)
+  //                        << MemberName << BaseType);
+  //   }
 
-    // 'Class', unqualified only.
-    if (OT->isObjCClass()) {
-      // Only works in a method declaration (??!).
-      ObjCMethodDecl *MD = S.getCurMethodDecl();
-      if (!MD) {
-        if (ShouldTryAgainWithRedefinitionType(S, BaseExpr))
-          return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
-                                  ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
+  //   // 'Class', unqualified only.
+  //   if (OT->isObjCClass()) {
+  //     // Only works in a method declaration (??!).
+  //     ObjCMethodDecl *MD = S.getCurMethodDecl();
+  //     if (!MD) {
+  //       if (ShouldTryAgainWithRedefinitionType(S, BaseExpr))
+  //         return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
+  //                                 ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
 
-        goto fail;
-      }
+  //       goto fail;
+  //     }
 
-      // Also must look for a getter name which uses property syntax.
-      Selector Sel = S.PP.getSelectorTable().getNullarySelector(Member);
-      ObjCInterfaceDecl *IFace = MD->getClassInterface();
-      if (!IFace)
-        goto fail;
+  //     // Also must look for a getter name which uses property syntax.
+  //     Selector Sel = S.PP.getSelectorTable().getNullarySelector(Member);
+  //     ObjCInterfaceDecl *IFace = MD->getClassInterface();
+  //     if (!IFace)
+  //       goto fail;
 
-      ObjCMethodDecl *Getter;
-      if ((Getter = IFace->lookupClassMethod(Sel))) {
-        // Check the use of this method.
-        if (S.DiagnoseUseOfDecl(Getter, MemberLoc))
-          return ExprError();
-      } else
-        Getter = IFace->lookupPrivateMethod(Sel, false);
-      // If we found a getter then this may be a valid dot-reference, we
-      // will look for the matching setter, in case it is needed.
-      Selector SetterSel =
-        SelectorTable::constructSetterSelector(S.PP.getIdentifierTable(),
-                                               S.PP.getSelectorTable(),
-                                               Member);
-      ObjCMethodDecl *Setter = IFace->lookupClassMethod(SetterSel);
-      if (!Setter) {
-        // If this reference is in an @implementation, also check for 'private'
-        // methods.
-        Setter = IFace->lookupPrivateMethod(SetterSel, false);
-      }
+  //     ObjCMethodDecl *Getter;
+  //     if ((Getter = IFace->lookupClassMethod(Sel))) {
+  //       // Check the use of this method.
+  //       if (S.DiagnoseUseOfDecl(Getter, MemberLoc))
+  //         return ExprError();
+  //     } else
+  //       Getter = IFace->lookupPrivateMethod(Sel, false);
+  //     // If we found a getter then this may be a valid dot-reference, we
+  //     // will look for the matching setter, in case it is needed.
+  //     Selector SetterSel =
+  //       SelectorTable::constructSetterSelector(S.PP.getIdentifierTable(),
+  //                                              S.PP.getSelectorTable(),
+  //                                              Member);
+  //     ObjCMethodDecl *Setter = IFace->lookupClassMethod(SetterSel);
+  //     if (!Setter) {
+  //       // If this reference is in an @implementation, also check for 'private'
+  //       // methods.
+  //       Setter = IFace->lookupPrivateMethod(SetterSel, false);
+  //     }
 
-      if (Setter && S.DiagnoseUseOfDecl(Setter, MemberLoc))
-        return ExprError();
+  //     if (Setter && S.DiagnoseUseOfDecl(Setter, MemberLoc))
+  //       return ExprError();
 
-      if (Getter || Setter) {
-        return new (S.Context) ObjCPropertyRefExpr(
-            Getter, Setter, S.Context.PseudoObjectTy, VK_LValue,
-            OK_ObjCProperty, MemberLoc, BaseExpr.get());
-      }
+  //     if (Getter || Setter) {
+  //       return new (S.Context) ObjCPropertyRefExpr(
+  //           Getter, Setter, S.Context.PseudoObjectTy, VK_LValue,
+  //           OK_ObjCProperty, MemberLoc, BaseExpr.get());
+  //     }
 
-      if (ShouldTryAgainWithRedefinitionType(S, BaseExpr))
-        return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
-                                ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
+  //     if (ShouldTryAgainWithRedefinitionType(S, BaseExpr))
+  //       return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
+  //                               ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
 
-      return ExprError(S.Diag(MemberLoc, diag::err_property_not_found)
-                         << MemberName << BaseType);
-    }
+  //     return ExprError(S.Diag(MemberLoc, diag::err_property_not_found)
+  //                        << MemberName << BaseType);
+  //   }
 
-    // Normal property access.
-    return S.HandleExprPropertyRefExpr(OPT, BaseExpr.get(), OpLoc, MemberName,
-                                       MemberLoc, SourceLocation(), QualType(),
-                                       false);
-  }
+  //   // Normal property access.
+  //   return S.HandleExprPropertyRefExpr(OPT, BaseExpr.get(), OpLoc, MemberName,
+  //                                      MemberLoc, SourceLocation(), QualType(),
+  //                                      false);
+  // }
 
   // Handle 'field access' to vectors, such as 'V.xx'.
   if (BaseType->isExtVectorType()) {
@@ -1633,13 +1633,13 @@ static ExprResult LookupMemberExpr(Sema &S, LookupResult &R,
 
   // Adjust builtin-sel to the appropriate redefinition type if that's
   // not just a pointer to builtin-sel again.
-  if (IsArrow && BaseType->isSpecificBuiltinType(BuiltinType::ObjCSel) &&
-      !S.Context.getObjCSelRedefinitionType()->isObjCSelType()) {
-    BaseExpr = S.ImpCastExprToType(
-        BaseExpr.get(), S.Context.getObjCSelRedefinitionType(), CK_BitCast);
-    return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
-                            ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
-  }
+  // if (IsArrow && BaseType->isSpecificBuiltinType(BuiltinType::ObjCSel) &&
+  //     !S.Context.getObjCSelRedefinitionType()->isObjCSelType()) {
+  //   BaseExpr = S.ImpCastExprToType(
+  //       BaseExpr.get(), S.Context.getObjCSelRedefinitionType(), CK_BitCast);
+  //   return LookupMemberExpr(S, R, BaseExpr, IsArrow, OpLoc, SS,
+  //                           ObjCImpDecl, HasTemplateArgs, TemplateKWLoc);
+  // }
 
   // Failure cases.
  fail:

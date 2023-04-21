@@ -1022,8 +1022,8 @@ bool Sema::ShouldEnterDeclaratorScope(Scope *S, const CXXScopeSpec &SS) {
 
   // Don't enter a declarator context when the current context is an Objective-C
   // declaration.
-  if (isa<ObjCContainerDecl>(CurContext) || isa<ObjCMethodDecl>(CurContext))
-    return false;
+  // if (isa<ObjCContainerDecl>(CurContext) || isa<ObjCMethodDecl>(CurContext))
+  //   return false;
 
   NestedNameSpecifier *Qualifier = SS.getScopeRep();
 

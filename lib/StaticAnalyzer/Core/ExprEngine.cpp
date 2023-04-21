@@ -18,15 +18,15 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ParentMap.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/Type.h"
 #include "latino/Analysis/AnalysisDeclContext.h"
 #include "latino/Analysis/CFG.h"
@@ -272,19 +272,19 @@ ProgramStateRef ExprEngine::getInitialState(const LocationContext *InitLoc) {
   }
   while (false);
 
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
-    // Precondition: 'self' is always non-null upon entry to an Objective-C
-    // method.
-    const ImplicitParamDecl *SelfD = MD->getSelfDecl();
-    const MemRegion *R = state->getRegion(SelfD, InitLoc);
-    SVal V = state->getSVal(loc::MemRegionVal(R));
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  //   // Precondition: 'self' is always non-null upon entry to an Objective-C
+  //   // method.
+  //   const ImplicitParamDecl *SelfD = MD->getSelfDecl();
+  //   const MemRegion *R = state->getRegion(SelfD, InitLoc);
+  //   SVal V = state->getSVal(loc::MemRegionVal(R));
 
-    if (Optional<Loc> LV = V.getAs<Loc>()) {
-      // Assume that the pointer value in 'self' is non-null.
-      state = state->assume(*LV, true);
-      assert(state && "'self' cannot be null");
-    }
-  }
+  //   if (Optional<Loc> LV = V.getAs<Loc>()) {
+  //     // Assume that the pointer value in 'self' is non-null.
+  //     state = state->assume(*LV, true);
+  //     assert(state && "'self' cannot be null");
+  //   }
+  // }
 
   if (const auto *MD = dyn_cast<CXXMethodDecl>(D)) {
     if (!MD->isStatic()) {
@@ -1722,7 +1722,8 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     case Stmt::CXXFunctionalCastExprClass:
     case Stmt::BuiltinBitCastExprClass:
     case Stmt::ObjCBridgedCastExprClass:
-    case Stmt::CXXAddrspaceCastExprClass: {
+    // case Stmt::CXXAddrspaceCastExprClass: 
+    {
       Bldr.takeNodes(Pred);
       const auto *C = cast<CastExpr>(S);
       ExplodedNodeSet dstExpr;
@@ -1777,11 +1778,11 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
       Bldr.addNodes(Dst);
       break;
 
-    case Stmt::ObjCMessageExprClass:
-      Bldr.takeNodes(Pred);
-      VisitObjCMessage(cast<ObjCMessageExpr>(S), Pred, Dst);
-      Bldr.addNodes(Dst);
-      break;
+    // case Stmt::ObjCMessageExprClass:
+    //   Bldr.takeNodes(Pred);
+    //   VisitObjCMessage(cast<ObjCMessageExpr>(S), Pred, Dst);
+    //   Bldr.addNodes(Dst);
+    //   break;
 
     case Stmt::ObjCAtThrowStmtClass:
     case Stmt::CXXThrowExprClass:

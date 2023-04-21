@@ -13,9 +13,9 @@
 #include "latino/Analysis/CallGraph.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Basic/IdentifierTable.h"
@@ -111,22 +111,22 @@ public:
   }
 
   // Adds may-call edges for the ObjC message sends.
-  void VisitObjCMessageExpr(ObjCMessageExpr *ME) {
-    if (ObjCInterfaceDecl *IDecl = ME->getReceiverInterface()) {
-      Selector Sel = ME->getSelector();
+  // void VisitObjCMessageExpr(ObjCMessageExpr *ME) {
+  //   if (ObjCInterfaceDecl *IDecl = ME->getReceiverInterface()) {
+  //     Selector Sel = ME->getSelector();
 
-      // Find the callee definition within the same translation unit.
-      Decl *D = nullptr;
-      if (ME->isInstanceMessage())
-        D = IDecl->lookupPrivateMethod(Sel);
-      else
-        D = IDecl->lookupPrivateClassMethod(Sel);
-      if (D) {
-        addCalledDecl(D, ME);
-        NumObjCCallEdges++;
-      }
-    }
-  }
+  //     // Find the callee definition within the same translation unit.
+  //     Decl *D = nullptr;
+  //     if (ME->isInstanceMessage())
+  //       D = IDecl->lookupPrivateMethod(Sel);
+  //     else
+  //       D = IDecl->lookupPrivateClassMethod(Sel);
+  //     if (D) {
+  //       addCalledDecl(D, ME);
+  //       NumObjCCallEdges++;
+  //     }
+  //   }
+  // }
 
   void VisitChildren(Stmt *S) {
     for (Stmt *SubStmt : S->children())
@@ -201,8 +201,8 @@ CallGraphNode *CallGraph::getNode(const Decl *F) const {
 }
 
 CallGraphNode *CallGraph::getOrInsertNode(Decl *F) {
-  if (F && !isa<ObjCMethodDecl>(F))
-    F = F->getCanonicalDecl();
+  // if (F && !isa<ObjCMethodDecl>(F))
+  //   F = F->getCanonicalDecl();
 
   std::unique_ptr<CallGraphNode> &Node = FunctionMap[F];
   if (Node)

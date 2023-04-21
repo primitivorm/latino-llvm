@@ -221,7 +221,7 @@ public:
   /// declares either struct, class or tag typedef.
   bool isClassOrStructOrTagTypedefDecl();
   bool isUnionDecl();
-  bool isObjCInterfaceDecl();
+  // bool isObjCInterfaceDecl();
   bool isObjCProtocolDecl();
   bool isClassTemplateDecl();
   bool isFunctionTemplateDecl();

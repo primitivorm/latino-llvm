@@ -16,7 +16,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/Expr.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/Rewrite/Core/Rewriter.h"
 #include "latino/Tooling/Refactoring/Extract/SourceExtraction.h"
 
@@ -83,11 +83,11 @@ ExtractFunction::initiate(RefactoringRuleContext &Context,
           diag::err_refactor_extract_simple_expression);
 
     // Property setters can't be extracted.
-    if (const auto *PRE = dyn_cast<ObjCPropertyRefExpr>(Code[0])) {
-      if (!PRE->isMessagingGetter())
-        return Context.createDiagnosticError(
-            diag::err_refactor_extract_prohibited_expression);
-    }
+    // if (const auto *PRE = dyn_cast<ObjCPropertyRefExpr>(Code[0])) {
+    //   if (!PRE->isMessagingGetter())
+    //     return Context.createDiagnosticError(
+    //         diag::err_refactor_extract_prohibited_expression);
+    // }
   }
 
   return ExtractFunction(std::move(Code), DeclName);

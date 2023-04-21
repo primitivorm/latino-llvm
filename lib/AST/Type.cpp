@@ -18,7 +18,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/Expr.h"
@@ -627,8 +627,8 @@ const ComplexType *Type::getAsComplexIntegerType() const {
 QualType Type::getPointeeType() const {
   if (const auto *PT = getAs<PointerType>())
     return PT->getPointeeType();
-  if (const auto *OPT = getAs<ObjCObjectPointerType>())
-    return OPT->getPointeeType();
+  // if (const auto *OPT = getAs<ObjCObjectPointerType>())
+  //   return OPT->getPointeeType();
   if (const auto *BPT = getAs<BlockPointerType>())
     return BPT->getPointeeType();
   if (const auto *RT = getAs<ReferenceType>())
@@ -679,158 +679,158 @@ const RecordType *Type::getAsUnionType() const {
   return nullptr;
 }
 
-bool Type::isObjCIdOrObjectKindOfType(const ASTContext &ctx,
-                                      const ObjCObjectType *&bound) const {
-  bound = nullptr;
+// bool Type::isObjCIdOrObjectKindOfType(const ASTContext &ctx,
+//                                       const ObjCObjectType *&bound) const {
+//   bound = nullptr;
 
-  const auto *OPT = getAs<ObjCObjectPointerType>();
-  if (!OPT)
-    return false;
+//   const auto *OPT = getAs<ObjCObjectPointerType>();
+//   if (!OPT)
+//     return false;
 
-  // Easy case: id.
-  if (OPT->isObjCIdType())
-    return true;
+//   // Easy case: id.
+//   if (OPT->isObjCIdType())
+//     return true;
 
-  // If it's not a __kindof type, reject it now.
-  if (!OPT->isKindOfType())
-    return false;
+//   // If it's not a __kindof type, reject it now.
+//   if (!OPT->isKindOfType())
+//     return false;
 
-  // If it's Class or qualified Class, it's not an object type.
-  if (OPT->isObjCClassType() || OPT->isObjCQualifiedClassType())
-    return false;
+//   // If it's Class or qualified Class, it's not an object type.
+//   if (OPT->isObjCClassType() || OPT->isObjCQualifiedClassType())
+//     return false;
 
-  // Figure out the type bound for the __kindof type.
-  bound = OPT->getObjectType()->stripObjCKindOfTypeAndQuals(ctx)
-            ->getAs<ObjCObjectType>();
-  return true;
-}
+//   // Figure out the type bound for the __kindof type.
+//   bound = OPT->getObjectType()->stripObjCKindOfTypeAndQuals(ctx)
+//             ->getAs<ObjCObjectType>();
+//   return true;
+// }
 
-bool Type::isObjCClassOrClassKindOfType() const {
-  const auto *OPT = getAs<ObjCObjectPointerType>();
-  if (!OPT)
-    return false;
+// bool Type::isObjCClassOrClassKindOfType() const {
+//   const auto *OPT = getAs<ObjCObjectPointerType>();
+//   if (!OPT)
+//     return false;
 
-  // Easy case: Class.
-  if (OPT->isObjCClassType())
-    return true;
+//   // Easy case: Class.
+//   if (OPT->isObjCClassType())
+//     return true;
 
-  // If it's not a __kindof type, reject it now.
-  if (!OPT->isKindOfType())
-    return false;
+//   // If it's not a __kindof type, reject it now.
+//   if (!OPT->isKindOfType())
+//     return false;
 
-  // If it's Class or qualified Class, it's a class __kindof type.
-  return OPT->isObjCClassType() || OPT->isObjCQualifiedClassType();
-}
+//   // If it's Class or qualified Class, it's a class __kindof type.
+//   return OPT->isObjCClassType() || OPT->isObjCQualifiedClassType();
+// }
 
-ObjCTypeParamType::ObjCTypeParamType(const ObjCTypeParamDecl *D, QualType can,
-                                     ArrayRef<ObjCProtocolDecl *> protocols)
-    : Type(ObjCTypeParam, can,
-           can->getDependence() & ~TypeDependence::UnexpandedPack),
-      OTPDecl(const_cast<ObjCTypeParamDecl *>(D)) {
-  initialize(protocols);
-}
+// ObjCTypeParamType::ObjCTypeParamType(const ObjCTypeParamDecl *D, QualType can,
+//                                      ArrayRef<ObjCProtocolDecl *> protocols)
+//     : Type(ObjCTypeParam, can,
+//            can->getDependence() & ~TypeDependence::UnexpandedPack),
+//       OTPDecl(const_cast<ObjCTypeParamDecl *>(D)) {
+//   initialize(protocols);
+// }
 
-ObjCObjectType::ObjCObjectType(QualType Canonical, QualType Base,
-                               ArrayRef<QualType> typeArgs,
-                               ArrayRef<ObjCProtocolDecl *> protocols,
-                               bool isKindOf)
-    : Type(ObjCObject, Canonical, Base->getDependence()), BaseType(Base) {
-  ObjCObjectTypeBits.IsKindOf = isKindOf;
+// ObjCObjectType::ObjCObjectType(QualType Canonical, QualType Base,
+//                                ArrayRef<QualType> typeArgs,
+//                                ArrayRef<ObjCProtocolDecl *> protocols,
+//                                bool isKindOf)
+//     : Type(ObjCObject, Canonical, Base->getDependence()), BaseType(Base) {
+//   ObjCObjectTypeBits.IsKindOf = isKindOf;
 
-  ObjCObjectTypeBits.NumTypeArgs = typeArgs.size();
-  assert(getTypeArgsAsWritten().size() == typeArgs.size() &&
-         "bitfield overflow in type argument count");
-  if (!typeArgs.empty())
-    memcpy(getTypeArgStorage(), typeArgs.data(),
-           typeArgs.size() * sizeof(QualType));
+//   ObjCObjectTypeBits.NumTypeArgs = typeArgs.size();
+//   assert(getTypeArgsAsWritten().size() == typeArgs.size() &&
+//          "bitfield overflow in type argument count");
+//   if (!typeArgs.empty())
+//     memcpy(getTypeArgStorage(), typeArgs.data(),
+//            typeArgs.size() * sizeof(QualType));
 
-  for (auto typeArg : typeArgs) {
-    addDependence(typeArg->getDependence() & ~TypeDependence::VariablyModified);
-  }
-  // Initialize the protocol qualifiers. The protocol storage is known
-  // after we set number of type arguments.
-  initialize(protocols);
-}
+//   for (auto typeArg : typeArgs) {
+//     addDependence(typeArg->getDependence() & ~TypeDependence::VariablyModified);
+//   }
+//   // Initialize the protocol qualifiers. The protocol storage is known
+//   // after we set number of type arguments.
+//   initialize(protocols);
+// }
 
-bool ObjCObjectType::isSpecialized() const {
-  // If we have type arguments written here, the type is specialized.
-  if (ObjCObjectTypeBits.NumTypeArgs > 0)
-    return true;
+// bool ObjCObjectType::isSpecialized() const {
+//   // If we have type arguments written here, the type is specialized.
+//   if (ObjCObjectTypeBits.NumTypeArgs > 0)
+//     return true;
 
-  // Otherwise, check whether the base type is specialized.
-  if (const auto objcObject = getBaseType()->getAs<ObjCObjectType>()) {
-    // Terminate when we reach an interface type.
-    if (isa<ObjCInterfaceType>(objcObject))
-      return false;
+//   // Otherwise, check whether the base type is specialized.
+//   if (const auto objcObject = getBaseType()->getAs<ObjCObjectType>()) {
+//     // Terminate when we reach an interface type.
+//     if (isa<ObjCInterfaceType>(objcObject))
+//       return false;
 
-    return objcObject->isSpecialized();
-  }
+//     return objcObject->isSpecialized();
+//   }
 
-  // Not specialized.
-  return false;
-}
+//   // Not specialized.
+//   return false;
+// }
 
-ArrayRef<QualType> ObjCObjectType::getTypeArgs() const {
-  // We have type arguments written on this type.
-  if (isSpecializedAsWritten())
-    return getTypeArgsAsWritten();
+// ArrayRef<QualType> ObjCObjectType::getTypeArgs() const {
+//   // We have type arguments written on this type.
+//   if (isSpecializedAsWritten())
+//     return getTypeArgsAsWritten();
 
-  // Look at the base type, which might have type arguments.
-  if (const auto objcObject = getBaseType()->getAs<ObjCObjectType>()) {
-    // Terminate when we reach an interface type.
-    if (isa<ObjCInterfaceType>(objcObject))
-      return {};
+//   // Look at the base type, which might have type arguments.
+//   if (const auto objcObject = getBaseType()->getAs<ObjCObjectType>()) {
+//     // Terminate when we reach an interface type.
+//     if (isa<ObjCInterfaceType>(objcObject))
+//       return {};
 
-    return objcObject->getTypeArgs();
-  }
+//     return objcObject->getTypeArgs();
+//   }
 
-  // No type arguments.
-  return {};
-}
+//   // No type arguments.
+//   return {};
+// }
 
-bool ObjCObjectType::isKindOfType() const {
-  if (isKindOfTypeAsWritten())
-    return true;
+// bool ObjCObjectType::isKindOfType() const {
+//   if (isKindOfTypeAsWritten())
+//     return true;
 
-  // Look at the base type, which might have type arguments.
-  if (const auto objcObject = getBaseType()->getAs<ObjCObjectType>()) {
-    // Terminate when we reach an interface type.
-    if (isa<ObjCInterfaceType>(objcObject))
-      return false;
+//   // Look at the base type, which might have type arguments.
+//   if (const auto objcObject = getBaseType()->getAs<ObjCObjectType>()) {
+//     // Terminate when we reach an interface type.
+//     if (isa<ObjCInterfaceType>(objcObject))
+//       return false;
 
-    return objcObject->isKindOfType();
-  }
+//     return objcObject->isKindOfType();
+//   }
 
-  // Not a "__kindof" type.
-  return false;
-}
+//   // Not a "__kindof" type.
+//   return false;
+// }
 
-QualType ObjCObjectType::stripObjCKindOfTypeAndQuals(
-           const ASTContext &ctx) const {
-  if (!isKindOfType() && qual_empty())
-    return QualType(this, 0);
+// QualType ObjCObjectType::stripObjCKindOfTypeAndQuals(
+//            const ASTContext &ctx) const {
+//   if (!isKindOfType() && qual_empty())
+//     return QualType(this, 0);
 
-  // Recursively strip __kindof.
-  SplitQualType splitBaseType = getBaseType().split();
-  QualType baseType(splitBaseType.Ty, 0);
-  if (const auto *baseObj = splitBaseType.Ty->getAs<ObjCObjectType>())
-    baseType = baseObj->stripObjCKindOfTypeAndQuals(ctx);
+//   // Recursively strip __kindof.
+//   SplitQualType splitBaseType = getBaseType().split();
+//   QualType baseType(splitBaseType.Ty, 0);
+//   if (const auto *baseObj = splitBaseType.Ty->getAs<ObjCObjectType>())
+//     baseType = baseObj->stripObjCKindOfTypeAndQuals(ctx);
 
-  return ctx.getObjCObjectType(ctx.getQualifiedType(baseType,
-                                                    splitBaseType.Quals),
-                               getTypeArgsAsWritten(),
-                               /*protocols=*/{},
-                               /*isKindOf=*/false);
-}
+//   return ctx.getObjCObjectType(ctx.getQualifiedType(baseType,
+//                                                     splitBaseType.Quals),
+//                                getTypeArgsAsWritten(),
+//                                /*protocols=*/{},
+//                                /*isKindOf=*/false);
+// }
 
-const ObjCObjectPointerType *ObjCObjectPointerType::stripObjCKindOfTypeAndQuals(
-                               const ASTContext &ctx) const {
-  if (!isKindOfType() && qual_empty())
-    return this;
+// const ObjCObjectPointerType *ObjCObjectPointerType::stripObjCKindOfTypeAndQuals(
+//                                const ASTContext &ctx) const {
+//   if (!isKindOfType() && qual_empty())
+//     return this;
 
-  QualType obj = getObjectType()->stripObjCKindOfTypeAndQuals(ctx);
-  return ctx.getObjCObjectPointerType(obj)->castAs<ObjCObjectPointerType>();
-}
+//   QualType obj = getObjectType()->stripObjCKindOfTypeAndQuals(ctx);
+//   return ctx.getObjCObjectPointerType(obj)->castAs<ObjCObjectPointerType>();
+// }
 
 namespace {
 
@@ -1190,48 +1190,48 @@ public:
   // FIXME: Non-trivial to implement, but important for C++
   SUGARED_TYPE_CLASS(PackExpansion)
 
-  QualType VisitObjCObjectType(const ObjCObjectType *T) {
-    QualType baseType = recurse(T->getBaseType());
-    if (baseType.isNull())
-      return {};
+  // QualType VisitObjCObjectType(const ObjCObjectType *T) {
+  //   QualType baseType = recurse(T->getBaseType());
+  //   if (baseType.isNull())
+  //     return {};
 
-    // Transform type arguments.
-    bool typeArgChanged = false;
-    SmallVector<QualType, 4> typeArgs;
-    for (auto typeArg : T->getTypeArgsAsWritten()) {
-      QualType newTypeArg = recurse(typeArg);
-      if (newTypeArg.isNull())
-        return {};
+  //   // Transform type arguments.
+  //   bool typeArgChanged = false;
+  //   SmallVector<QualType, 4> typeArgs;
+  //   for (auto typeArg : T->getTypeArgsAsWritten()) {
+  //     QualType newTypeArg = recurse(typeArg);
+  //     if (newTypeArg.isNull())
+  //       return {};
 
-      if (newTypeArg.getAsOpaquePtr() != typeArg.getAsOpaquePtr())
-        typeArgChanged = true;
+  //     if (newTypeArg.getAsOpaquePtr() != typeArg.getAsOpaquePtr())
+  //       typeArgChanged = true;
 
-      typeArgs.push_back(newTypeArg);
-    }
+  //     typeArgs.push_back(newTypeArg);
+  //   }
 
-    if (baseType.getAsOpaquePtr() == T->getBaseType().getAsOpaquePtr() &&
-        !typeArgChanged)
-      return QualType(T, 0);
+  //   if (baseType.getAsOpaquePtr() == T->getBaseType().getAsOpaquePtr() &&
+  //       !typeArgChanged)
+  //     return QualType(T, 0);
 
-    return Ctx.getObjCObjectType(baseType, typeArgs,
-                                 llvm::makeArrayRef(T->qual_begin(),
-                                                    T->getNumProtocols()),
-                                 T->isKindOfTypeAsWritten());
-  }
+  //   return Ctx.getObjCObjectType(baseType, typeArgs,
+  //                                llvm::makeArrayRef(T->qual_begin(),
+  //                                                   T->getNumProtocols()),
+  //                                T->isKindOfTypeAsWritten());
+  // }
 
-  TRIVIAL_TYPE_CLASS(ObjCInterface)
+  // TRIVIAL_TYPE_CLASS(ObjCInterface)
 
-  QualType VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
-    QualType pointeeType = recurse(T->getPointeeType());
-    if (pointeeType.isNull())
-      return {};
+  // QualType VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
+  //   QualType pointeeType = recurse(T->getPointeeType());
+  //   if (pointeeType.isNull())
+  //     return {};
 
-    if (pointeeType.getAsOpaquePtr()
-          == T->getPointeeType().getAsOpaquePtr())
-      return QualType(T, 0);
+  //   if (pointeeType.getAsOpaquePtr()
+  //         == T->getPointeeType().getAsOpaquePtr())
+  //     return QualType(T, 0);
 
-    return Ctx.getObjCObjectPointerType(pointeeType);
-  }
+  //   return Ctx.getObjCObjectPointerType(pointeeType);
+  // }
 
   QualType VisitAtomicType(const AtomicType *T) {
     QualType valueType = recurse(T->getValueType());
@@ -1249,232 +1249,232 @@ public:
 #undef SUGARED_TYPE_CLASS
 };
 
-struct SubstObjCTypeArgsVisitor
-    : public SimpleTransformVisitor<SubstObjCTypeArgsVisitor> {
-  using BaseType = SimpleTransformVisitor<SubstObjCTypeArgsVisitor>;
+// struct SubstObjCTypeArgsVisitor
+//     : public SimpleTransformVisitor<SubstObjCTypeArgsVisitor> {
+//   using BaseType = SimpleTransformVisitor<SubstObjCTypeArgsVisitor>;
 
-  ArrayRef<QualType> TypeArgs;
-  ObjCSubstitutionContext SubstContext;
+//   ArrayRef<QualType> TypeArgs;
+//   ObjCSubstitutionContext SubstContext;
 
-  SubstObjCTypeArgsVisitor(ASTContext &ctx, ArrayRef<QualType> typeArgs,
-                           ObjCSubstitutionContext context)
-      : BaseType(ctx), TypeArgs(typeArgs), SubstContext(context) {}
+//   SubstObjCTypeArgsVisitor(ASTContext &ctx, ArrayRef<QualType> typeArgs,
+//                            ObjCSubstitutionContext context)
+//       : BaseType(ctx), TypeArgs(typeArgs), SubstContext(context) {}
 
-  QualType VisitObjCTypeParamType(const ObjCTypeParamType *OTPTy) {
-    // Replace an Objective-C type parameter reference with the corresponding
-    // type argument.
-    ObjCTypeParamDecl *typeParam = OTPTy->getDecl();
-    // If we have type arguments, use them.
-    if (!TypeArgs.empty()) {
-      QualType argType = TypeArgs[typeParam->getIndex()];
-      if (OTPTy->qual_empty())
-        return argType;
+//   // QualType VisitObjCTypeParamType(const ObjCTypeParamType *OTPTy) {
+//   //   // Replace an Objective-C type parameter reference with the corresponding
+//   //   // type argument.
+//   //   ObjCTypeParamDecl *typeParam = OTPTy->getDecl();
+//   //   // If we have type arguments, use them.
+//   //   if (!TypeArgs.empty()) {
+//   //     QualType argType = TypeArgs[typeParam->getIndex()];
+//   //     if (OTPTy->qual_empty())
+//   //       return argType;
 
-      // Apply protocol lists if exists.
-      bool hasError;
-      SmallVector<ObjCProtocolDecl *, 8> protocolsVec;
-      protocolsVec.append(OTPTy->qual_begin(), OTPTy->qual_end());
-      ArrayRef<ObjCProtocolDecl *> protocolsToApply = protocolsVec;
-      return Ctx.applyObjCProtocolQualifiers(
-          argType, protocolsToApply, hasError, true/*allowOnPointerType*/);
-    }
+//   //     // Apply protocol lists if exists.
+//   //     bool hasError;
+//   //     SmallVector<ObjCProtocolDecl *, 8> protocolsVec;
+//   //     protocolsVec.append(OTPTy->qual_begin(), OTPTy->qual_end());
+//   //     ArrayRef<ObjCProtocolDecl *> protocolsToApply = protocolsVec;
+//   //     return Ctx.applyObjCProtocolQualifiers(
+//   //         argType, protocolsToApply, hasError, true/*allowOnPointerType*/);
+//   //   }
 
-    switch (SubstContext) {
-    case ObjCSubstitutionContext::Ordinary:
-    case ObjCSubstitutionContext::Parameter:
-    case ObjCSubstitutionContext::Superclass:
-      // Substitute the bound.
-      return typeParam->getUnderlyingType();
+//   //   switch (SubstContext) {
+//   //   case ObjCSubstitutionContext::Ordinary:
+//   //   case ObjCSubstitutionContext::Parameter:
+//   //   case ObjCSubstitutionContext::Superclass:
+//   //     // Substitute the bound.
+//   //     return typeParam->getUnderlyingType();
 
-    case ObjCSubstitutionContext::Result:
-    case ObjCSubstitutionContext::Property: {
-      // Substitute the __kindof form of the underlying type.
-      const auto *objPtr =
-          typeParam->getUnderlyingType()->castAs<ObjCObjectPointerType>();
+//   //   case ObjCSubstitutionContext::Result:
+//   //   case ObjCSubstitutionContext::Property: {
+//   //     // Substitute the __kindof form of the underlying type.
+//   //     const auto *objPtr =
+//   //         typeParam->getUnderlyingType()->castAs<ObjCObjectPointerType>();
 
-      // __kindof types, id, and Class don't need an additional
-      // __kindof.
-      if (objPtr->isKindOfType() || objPtr->isObjCIdOrClassType())
-        return typeParam->getUnderlyingType();
+//   //     // __kindof types, id, and Class don't need an additional
+//   //     // __kindof.
+//   //     if (objPtr->isKindOfType() || objPtr->isObjCIdOrClassType())
+//   //       return typeParam->getUnderlyingType();
 
-      // Add __kindof.
-      const auto *obj = objPtr->getObjectType();
-      QualType resultTy = Ctx.getObjCObjectType(
-          obj->getBaseType(), obj->getTypeArgsAsWritten(), obj->getProtocols(),
-          /*isKindOf=*/true);
+//   //     // Add __kindof.
+//   //     const auto *obj = objPtr->getObjectType();
+//   //     QualType resultTy = Ctx.getObjCObjectType(
+//   //         obj->getBaseType(), obj->getTypeArgsAsWritten(), obj->getProtocols(),
+//   //         /*isKindOf=*/true);
 
-      // Rebuild object pointer type.
-      return Ctx.getObjCObjectPointerType(resultTy);
-    }
-    }
-    llvm_unreachable("Unexpected ObjCSubstitutionContext!");
-  }
+//   //     // Rebuild object pointer type.
+//   //     return Ctx.getObjCObjectPointerType(resultTy);
+//   //   }
+//   //   }
+//   //   llvm_unreachable("Unexpected ObjCSubstitutionContext!");
+//   // }
 
-  QualType VisitFunctionType(const FunctionType *funcType) {
-    // If we have a function type, update the substitution context
-    // appropriately.
+//   QualType VisitFunctionType(const FunctionType *funcType) {
+//     // If we have a function type, update the substitution context
+//     // appropriately.
 
-    //Substitute result type.
-    QualType returnType = funcType->getReturnType().substObjCTypeArgs(
-        Ctx, TypeArgs, ObjCSubstitutionContext::Result);
-    if (returnType.isNull())
-      return {};
+//     //Substitute result type.
+//     QualType returnType = funcType->getReturnType().substObjCTypeArgs(
+//         Ctx, TypeArgs, ObjCSubstitutionContext::Result);
+//     if (returnType.isNull())
+//       return {};
 
-    // Handle non-prototyped functions, which only substitute into the result
-    // type.
-    if (isa<FunctionNoProtoType>(funcType)) {
-      // If the return type was unchanged, do nothing.
-      if (returnType.getAsOpaquePtr() ==
-          funcType->getReturnType().getAsOpaquePtr())
-        return BaseType::VisitFunctionType(funcType);
+//     // Handle non-prototyped functions, which only substitute into the result
+//     // type.
+//     if (isa<FunctionNoProtoType>(funcType)) {
+//       // If the return type was unchanged, do nothing.
+//       if (returnType.getAsOpaquePtr() ==
+//           funcType->getReturnType().getAsOpaquePtr())
+//         return BaseType::VisitFunctionType(funcType);
 
-      // Otherwise, build a new type.
-      return Ctx.getFunctionNoProtoType(returnType, funcType->getExtInfo());
-    }
+//       // Otherwise, build a new type.
+//       return Ctx.getFunctionNoProtoType(returnType, funcType->getExtInfo());
+//     }
 
-    const auto *funcProtoType = cast<FunctionProtoType>(funcType);
+//     const auto *funcProtoType = cast<FunctionProtoType>(funcType);
 
-    // Transform parameter types.
-    SmallVector<QualType, 4> paramTypes;
-    bool paramChanged = false;
-    for (auto paramType : funcProtoType->getParamTypes()) {
-      QualType newParamType = paramType.substObjCTypeArgs(
-          Ctx, TypeArgs, ObjCSubstitutionContext::Parameter);
-      if (newParamType.isNull())
-        return {};
+//     // Transform parameter types.
+//     SmallVector<QualType, 4> paramTypes;
+//     bool paramChanged = false;
+//     for (auto paramType : funcProtoType->getParamTypes()) {
+//       QualType newParamType = paramType.substObjCTypeArgs(
+//           Ctx, TypeArgs, ObjCSubstitutionContext::Parameter);
+//       if (newParamType.isNull())
+//         return {};
 
-      if (newParamType.getAsOpaquePtr() != paramType.getAsOpaquePtr())
-        paramChanged = true;
+//       if (newParamType.getAsOpaquePtr() != paramType.getAsOpaquePtr())
+//         paramChanged = true;
 
-      paramTypes.push_back(newParamType);
-    }
+//       paramTypes.push_back(newParamType);
+//     }
 
-    // Transform extended info.
-    FunctionProtoType::ExtProtoInfo info = funcProtoType->getExtProtoInfo();
-    bool exceptionChanged = false;
-    if (info.ExceptionSpec.Type == EST_Dynamic) {
-      SmallVector<QualType, 4> exceptionTypes;
-      for (auto exceptionType : info.ExceptionSpec.Exceptions) {
-        QualType newExceptionType = exceptionType.substObjCTypeArgs(
-            Ctx, TypeArgs, ObjCSubstitutionContext::Ordinary);
-        if (newExceptionType.isNull())
-          return {};
+//     // Transform extended info.
+//     FunctionProtoType::ExtProtoInfo info = funcProtoType->getExtProtoInfo();
+//     bool exceptionChanged = false;
+//     if (info.ExceptionSpec.Type == EST_Dynamic) {
+//       SmallVector<QualType, 4> exceptionTypes;
+//       for (auto exceptionType : info.ExceptionSpec.Exceptions) {
+//         QualType newExceptionType = exceptionType.substObjCTypeArgs(
+//             Ctx, TypeArgs, ObjCSubstitutionContext::Ordinary);
+//         if (newExceptionType.isNull())
+//           return {};
 
-        if (newExceptionType.getAsOpaquePtr() != exceptionType.getAsOpaquePtr())
-          exceptionChanged = true;
+//         if (newExceptionType.getAsOpaquePtr() != exceptionType.getAsOpaquePtr())
+//           exceptionChanged = true;
 
-        exceptionTypes.push_back(newExceptionType);
-      }
+//         exceptionTypes.push_back(newExceptionType);
+//       }
 
-      if (exceptionChanged) {
-        info.ExceptionSpec.Exceptions =
-            llvm::makeArrayRef(exceptionTypes).copy(Ctx);
-      }
-    }
+//       if (exceptionChanged) {
+//         info.ExceptionSpec.Exceptions =
+//             llvm::makeArrayRef(exceptionTypes).copy(Ctx);
+//       }
+//     }
 
-    if (returnType.getAsOpaquePtr() ==
-            funcProtoType->getReturnType().getAsOpaquePtr() &&
-        !paramChanged && !exceptionChanged)
-      return BaseType::VisitFunctionType(funcType);
+//     if (returnType.getAsOpaquePtr() ==
+//             funcProtoType->getReturnType().getAsOpaquePtr() &&
+//         !paramChanged && !exceptionChanged)
+//       return BaseType::VisitFunctionType(funcType);
 
-    return Ctx.getFunctionType(returnType, paramTypes, info);
-  }
+//     return Ctx.getFunctionType(returnType, paramTypes, info);
+//   }
 
-  QualType VisitObjCObjectType(const ObjCObjectType *objcObjectType) {
-    // Substitute into the type arguments of a specialized Objective-C object
-    // type.
-    if (objcObjectType->isSpecializedAsWritten()) {
-      SmallVector<QualType, 4> newTypeArgs;
-      bool anyChanged = false;
-      for (auto typeArg : objcObjectType->getTypeArgsAsWritten()) {
-        QualType newTypeArg = typeArg.substObjCTypeArgs(
-            Ctx, TypeArgs, ObjCSubstitutionContext::Ordinary);
-        if (newTypeArg.isNull())
-          return {};
+//   QualType VisitObjCObjectType(const ObjCObjectType *objcObjectType) {
+//     // Substitute into the type arguments of a specialized Objective-C object
+//     // type.
+//     if (objcObjectType->isSpecializedAsWritten()) {
+//       SmallVector<QualType, 4> newTypeArgs;
+//       bool anyChanged = false;
+//       for (auto typeArg : objcObjectType->getTypeArgsAsWritten()) {
+//         QualType newTypeArg = typeArg.substObjCTypeArgs(
+//             Ctx, TypeArgs, ObjCSubstitutionContext::Ordinary);
+//         if (newTypeArg.isNull())
+//           return {};
 
-        if (newTypeArg.getAsOpaquePtr() != typeArg.getAsOpaquePtr()) {
-          // If we're substituting based on an unspecialized context type,
-          // produce an unspecialized type.
-          ArrayRef<ObjCProtocolDecl *> protocols(
-              objcObjectType->qual_begin(), objcObjectType->getNumProtocols());
-          if (TypeArgs.empty() &&
-              SubstContext != ObjCSubstitutionContext::Superclass) {
-            return Ctx.getObjCObjectType(
-                objcObjectType->getBaseType(), {}, protocols,
-                objcObjectType->isKindOfTypeAsWritten());
-          }
+//         if (newTypeArg.getAsOpaquePtr() != typeArg.getAsOpaquePtr()) {
+//           // If we're substituting based on an unspecialized context type,
+//           // produce an unspecialized type.
+//           ArrayRef<ObjCProtocolDecl *> protocols(
+//               objcObjectType->qual_begin(), objcObjectType->getNumProtocols());
+//           if (TypeArgs.empty() &&
+//               SubstContext != ObjCSubstitutionContext::Superclass) {
+//             return Ctx.getObjCObjectType(
+//                 objcObjectType->getBaseType(), {}, protocols,
+//                 objcObjectType->isKindOfTypeAsWritten());
+//           }
 
-          anyChanged = true;
-        }
+//           anyChanged = true;
+//         }
 
-        newTypeArgs.push_back(newTypeArg);
-      }
+//         newTypeArgs.push_back(newTypeArg);
+//       }
 
-      if (anyChanged) {
-        ArrayRef<ObjCProtocolDecl *> protocols(
-            objcObjectType->qual_begin(), objcObjectType->getNumProtocols());
-        return Ctx.getObjCObjectType(objcObjectType->getBaseType(), newTypeArgs,
-                                     protocols,
-                                     objcObjectType->isKindOfTypeAsWritten());
-      }
-    }
+//       if (anyChanged) {
+//         ArrayRef<ObjCProtocolDecl *> protocols(
+//             objcObjectType->qual_begin(), objcObjectType->getNumProtocols());
+//         return Ctx.getObjCObjectType(objcObjectType->getBaseType(), newTypeArgs,
+//                                      protocols,
+//                                      objcObjectType->isKindOfTypeAsWritten());
+//       }
+//     }
 
-    return BaseType::VisitObjCObjectType(objcObjectType);
-  }
+//     return BaseType::VisitObjCObjectType(objcObjectType);
+//   }
 
-  QualType VisitAttributedType(const AttributedType *attrType) {
-    QualType newType = BaseType::VisitAttributedType(attrType);
-    if (newType.isNull())
-      return {};
+//   QualType VisitAttributedType(const AttributedType *attrType) {
+//     QualType newType = BaseType::VisitAttributedType(attrType);
+//     if (newType.isNull())
+//       return {};
 
-    const auto *newAttrType = dyn_cast<AttributedType>(newType.getTypePtr());
-    if (!newAttrType || newAttrType->getAttrKind() != attr::ObjCKindOf)
-      return newType;
+//     const auto *newAttrType = dyn_cast<AttributedType>(newType.getTypePtr());
+//     if (!newAttrType || newAttrType->getAttrKind() != attr::ObjCKindOf)
+//       return newType;
 
-    // Find out if it's an Objective-C object or object pointer type;
-    QualType newEquivType = newAttrType->getEquivalentType();
-    const ObjCObjectPointerType *ptrType =
-        newEquivType->getAs<ObjCObjectPointerType>();
-    const ObjCObjectType *objType = ptrType
-                                        ? ptrType->getObjectType()
-                                        : newEquivType->getAs<ObjCObjectType>();
-    if (!objType)
-      return newType;
+//     // Find out if it's an Objective-C object or object pointer type;
+//     QualType newEquivType = newAttrType->getEquivalentType();
+//     const ObjCObjectPointerType *ptrType =
+//         newEquivType->getAs<ObjCObjectPointerType>();
+//     const ObjCObjectType *objType = ptrType
+//                                         ? ptrType->getObjectType()
+//                                         : newEquivType->getAs<ObjCObjectType>();
+//     if (!objType)
+//       return newType;
 
-    // Rebuild the "equivalent" type, which pushes __kindof down into
-    // the object type.
-    newEquivType = Ctx.getObjCObjectType(
-        objType->getBaseType(), objType->getTypeArgsAsWritten(),
-        objType->getProtocols(),
-        // There is no need to apply kindof on an unqualified id type.
-        /*isKindOf=*/objType->isObjCUnqualifiedId() ? false : true);
+//     // Rebuild the "equivalent" type, which pushes __kindof down into
+//     // the object type.
+//     newEquivType = Ctx.getObjCObjectType(
+//         objType->getBaseType(), objType->getTypeArgsAsWritten(),
+//         objType->getProtocols(),
+//         // There is no need to apply kindof on an unqualified id type.
+//         /*isKindOf=*/objType->isObjCUnqualifiedId() ? false : true);
 
-    // If we started with an object pointer type, rebuild it.
-    if (ptrType)
-      newEquivType = Ctx.getObjCObjectPointerType(newEquivType);
+//     // If we started with an object pointer type, rebuild it.
+//     if (ptrType)
+//       newEquivType = Ctx.getObjCObjectPointerType(newEquivType);
 
-    // Rebuild the attributed type.
-    return Ctx.getAttributedType(newAttrType->getAttrKind(),
-                                 newAttrType->getModifiedType(), newEquivType);
-  }
-};
+//     // Rebuild the attributed type.
+//     return Ctx.getAttributedType(newAttrType->getAttrKind(),
+//                                  newAttrType->getModifiedType(), newEquivType);
+//   }
+// };
 
-struct StripObjCKindOfTypeVisitor
-    : public SimpleTransformVisitor<StripObjCKindOfTypeVisitor> {
-  using BaseType = SimpleTransformVisitor<StripObjCKindOfTypeVisitor>;
+// struct StripObjCKindOfTypeVisitor
+//     : public SimpleTransformVisitor<StripObjCKindOfTypeVisitor> {
+//   using BaseType = SimpleTransformVisitor<StripObjCKindOfTypeVisitor>;
 
-  explicit StripObjCKindOfTypeVisitor(ASTContext &ctx) : BaseType(ctx) {}
+//   explicit StripObjCKindOfTypeVisitor(ASTContext &ctx) : BaseType(ctx) {}
 
-  QualType VisitObjCObjectType(const ObjCObjectType *objType) {
-    if (!objType->isKindOfType())
-      return BaseType::VisitObjCObjectType(objType);
+//   QualType VisitObjCObjectType(const ObjCObjectType *objType) {
+//     if (!objType->isKindOfType())
+//       return BaseType::VisitObjCObjectType(objType);
 
-    QualType baseType = objType->getBaseType().stripObjCKindOfType(Ctx);
-    return Ctx.getObjCObjectType(baseType, objType->getTypeArgsAsWritten(),
-                                 objType->getProtocols(),
-                                 /*isKindOf=*/false);
-  }
-};
+//     QualType baseType = objType->getBaseType().stripObjCKindOfType(Ctx);
+//     return Ctx.getObjCObjectType(baseType, objType->getTypeArgsAsWritten(),
+//                                  objType->getProtocols(),
+//                                  /*isKindOf=*/false);
+//   }
+// };
 
 } // namespace
 
@@ -1509,236 +1509,236 @@ QualType QualType::getAtomicUnqualifiedType() const {
   return getUnqualifiedType();
 }
 
-Optional<ArrayRef<QualType>> Type::getObjCSubstitutions(
-                               const DeclContext *dc) const {
-  // Look through method scopes.
-  if (const auto method = dyn_cast<ObjCMethodDecl>(dc))
-    dc = method->getDeclContext();
+// Optional<ArrayRef<QualType>> Type::getObjCSubstitutions(
+//                                const DeclContext *dc) const {
+//   // Look through method scopes.
+//   if (const auto method = dyn_cast<ObjCMethodDecl>(dc))
+//     dc = method->getDeclContext();
 
-  // Find the class or category in which the type we're substituting
-  // was declared.
-  const auto *dcClassDecl = dyn_cast<ObjCInterfaceDecl>(dc);
-  const ObjCCategoryDecl *dcCategoryDecl = nullptr;
-  ObjCTypeParamList *dcTypeParams = nullptr;
-  if (dcClassDecl) {
-    // If the class does not have any type parameters, there's no
-    // substitution to do.
-    dcTypeParams = dcClassDecl->getTypeParamList();
-    if (!dcTypeParams)
-      return None;
-  } else {
-    // If we are in neither a class nor a category, there's no
-    // substitution to perform.
-    dcCategoryDecl = dyn_cast<ObjCCategoryDecl>(dc);
-    if (!dcCategoryDecl)
-      return None;
+//   // Find the class or category in which the type we're substituting
+//   // was declared.
+//   const auto *dcClassDecl = dyn_cast<ObjCInterfaceDecl>(dc);
+//   const ObjCCategoryDecl *dcCategoryDecl = nullptr;
+//   ObjCTypeParamList *dcTypeParams = nullptr;
+//   if (dcClassDecl) {
+//     // If the class does not have any type parameters, there's no
+//     // substitution to do.
+//     dcTypeParams = dcClassDecl->getTypeParamList();
+//     if (!dcTypeParams)
+//       return None;
+//   } else {
+//     // If we are in neither a class nor a category, there's no
+//     // substitution to perform.
+//     dcCategoryDecl = dyn_cast<ObjCCategoryDecl>(dc);
+//     if (!dcCategoryDecl)
+//       return None;
 
-    // If the category does not have any type parameters, there's no
-    // substitution to do.
-    dcTypeParams = dcCategoryDecl->getTypeParamList();
-    if (!dcTypeParams)
-      return None;
+//     // If the category does not have any type parameters, there's no
+//     // substitution to do.
+//     dcTypeParams = dcCategoryDecl->getTypeParamList();
+//     if (!dcTypeParams)
+//       return None;
 
-    dcClassDecl = dcCategoryDecl->getClassInterface();
-    if (!dcClassDecl)
-      return None;
-  }
-  assert(dcTypeParams && "No substitutions to perform");
-  assert(dcClassDecl && "No class context");
+//     dcClassDecl = dcCategoryDecl->getClassInterface();
+//     if (!dcClassDecl)
+//       return None;
+//   }
+//   assert(dcTypeParams && "No substitutions to perform");
+//   assert(dcClassDecl && "No class context");
 
-  // Find the underlying object type.
-  const ObjCObjectType *objectType;
-  if (const auto *objectPointerType = getAs<ObjCObjectPointerType>()) {
-    objectType = objectPointerType->getObjectType();
-  } else if (getAs<BlockPointerType>()) {
-    ASTContext &ctx = dc->getParentASTContext();
-    objectType = ctx.getObjCObjectType(ctx.ObjCBuiltinIdTy, {}, {})
-                   ->castAs<ObjCObjectType>();
-  } else {
-    objectType = getAs<ObjCObjectType>();
-  }
+//   // Find the underlying object type.
+//   const ObjCObjectType *objectType;
+//   if (const auto *objectPointerType = getAs<ObjCObjectPointerType>()) {
+//     objectType = objectPointerType->getObjectType();
+//   } else if (getAs<BlockPointerType>()) {
+//     ASTContext &ctx = dc->getParentASTContext();
+//     objectType = ctx.getObjCObjectType(ctx.ObjCBuiltinIdTy, {}, {})
+//                    ->castAs<ObjCObjectType>();
+//   } else {
+//     objectType = getAs<ObjCObjectType>();
+//   }
 
-  /// Extract the class from the receiver object type.
-  ObjCInterfaceDecl *curClassDecl = objectType ? objectType->getInterface()
-                                               : nullptr;
-  if (!curClassDecl) {
-    // If we don't have a context type (e.g., this is "id" or some
-    // variant thereof), substitute the bounds.
-    return llvm::ArrayRef<QualType>();
-  }
+//   /// Extract the class from the receiver object type.
+//   ObjCInterfaceDecl *curClassDecl = objectType ? objectType->getInterface()
+//                                                : nullptr;
+//   if (!curClassDecl) {
+//     // If we don't have a context type (e.g., this is "id" or some
+//     // variant thereof), substitute the bounds.
+//     return llvm::ArrayRef<QualType>();
+//   }
 
-  // Follow the superclass chain until we've mapped the receiver type
-  // to the same class as the context.
-  while (curClassDecl != dcClassDecl) {
-    // Map to the superclass type.
-    QualType superType = objectType->getSuperClassType();
-    if (superType.isNull()) {
-      objectType = nullptr;
-      break;
-    }
+//   // Follow the superclass chain until we've mapped the receiver type
+//   // to the same class as the context.
+//   while (curClassDecl != dcClassDecl) {
+//     // Map to the superclass type.
+//     QualType superType = objectType->getSuperClassType();
+//     if (superType.isNull()) {
+//       objectType = nullptr;
+//       break;
+//     }
 
-    objectType = superType->castAs<ObjCObjectType>();
-    curClassDecl = objectType->getInterface();
-  }
+//     objectType = superType->castAs<ObjCObjectType>();
+//     curClassDecl = objectType->getInterface();
+//   }
 
-  // If we don't have a receiver type, or the receiver type does not
-  // have type arguments, substitute in the defaults.
-  if (!objectType || objectType->isUnspecialized()) {
-    return llvm::ArrayRef<QualType>();
-  }
+//   // If we don't have a receiver type, or the receiver type does not
+//   // have type arguments, substitute in the defaults.
+//   if (!objectType || objectType->isUnspecialized()) {
+//     return llvm::ArrayRef<QualType>();
+//   }
 
-  // The receiver type has the type arguments we want.
-  return objectType->getTypeArgs();
-}
+//   // The receiver type has the type arguments we want.
+//   return objectType->getTypeArgs();
+// }
 
-bool Type::acceptsObjCTypeParams() const {
-  if (auto *IfaceT = getAsObjCInterfaceType()) {
-    if (auto *ID = IfaceT->getInterface()) {
-      if (ID->getTypeParamList())
-        return true;
-    }
-  }
+// bool Type::acceptsObjCTypeParams() const {
+//   if (auto *IfaceT = getAsObjCInterfaceType()) {
+//     if (auto *ID = IfaceT->getInterface()) {
+//       if (ID->getTypeParamList())
+//         return true;
+//     }
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
-void ObjCObjectType::computeSuperClassTypeSlow() const {
-  // Retrieve the class declaration for this type. If there isn't one
-  // (e.g., this is some variant of "id" or "Class"), then there is no
-  // superclass type.
-  ObjCInterfaceDecl *classDecl = getInterface();
-  if (!classDecl) {
-    CachedSuperClassType.setInt(true);
-    return;
-  }
+// void ObjCObjectType::computeSuperClassTypeSlow() const {
+//   // Retrieve the class declaration for this type. If there isn't one
+//   // (e.g., this is some variant of "id" or "Class"), then there is no
+//   // superclass type.
+//   ObjCInterfaceDecl *classDecl = getInterface();
+//   if (!classDecl) {
+//     CachedSuperClassType.setInt(true);
+//     return;
+//   }
 
-  // Extract the superclass type.
-  const ObjCObjectType *superClassObjTy = classDecl->getSuperClassType();
-  if (!superClassObjTy) {
-    CachedSuperClassType.setInt(true);
-    return;
-  }
+//   // Extract the superclass type.
+//   const ObjCObjectType *superClassObjTy = classDecl->getSuperClassType();
+//   if (!superClassObjTy) {
+//     CachedSuperClassType.setInt(true);
+//     return;
+//   }
 
-  ObjCInterfaceDecl *superClassDecl = superClassObjTy->getInterface();
-  if (!superClassDecl) {
-    CachedSuperClassType.setInt(true);
-    return;
-  }
+//   ObjCInterfaceDecl *superClassDecl = superClassObjTy->getInterface();
+//   if (!superClassDecl) {
+//     CachedSuperClassType.setInt(true);
+//     return;
+//   }
 
-  // If the superclass doesn't have type parameters, then there is no
-  // substitution to perform.
-  QualType superClassType(superClassObjTy, 0);
-  ObjCTypeParamList *superClassTypeParams = superClassDecl->getTypeParamList();
-  if (!superClassTypeParams) {
-    CachedSuperClassType.setPointerAndInt(
-      superClassType->castAs<ObjCObjectType>(), true);
-    return;
-  }
+//   // If the superclass doesn't have type parameters, then there is no
+//   // substitution to perform.
+//   QualType superClassType(superClassObjTy, 0);
+//   ObjCTypeParamList *superClassTypeParams = superClassDecl->getTypeParamList();
+//   if (!superClassTypeParams) {
+//     CachedSuperClassType.setPointerAndInt(
+//       superClassType->castAs<ObjCObjectType>(), true);
+//     return;
+//   }
 
-  // If the superclass reference is unspecialized, return it.
-  if (superClassObjTy->isUnspecialized()) {
-    CachedSuperClassType.setPointerAndInt(superClassObjTy, true);
-    return;
-  }
+//   // If the superclass reference is unspecialized, return it.
+//   if (superClassObjTy->isUnspecialized()) {
+//     CachedSuperClassType.setPointerAndInt(superClassObjTy, true);
+//     return;
+//   }
 
-  // If the subclass is not parameterized, there aren't any type
-  // parameters in the superclass reference to substitute.
-  ObjCTypeParamList *typeParams = classDecl->getTypeParamList();
-  if (!typeParams) {
-    CachedSuperClassType.setPointerAndInt(
-      superClassType->castAs<ObjCObjectType>(), true);
-    return;
-  }
+//   // If the subclass is not parameterized, there aren't any type
+//   // parameters in the superclass reference to substitute.
+//   ObjCTypeParamList *typeParams = classDecl->getTypeParamList();
+//   if (!typeParams) {
+//     CachedSuperClassType.setPointerAndInt(
+//       superClassType->castAs<ObjCObjectType>(), true);
+//     return;
+//   }
 
-  // If the subclass type isn't specialized, return the unspecialized
-  // superclass.
-  if (isUnspecialized()) {
-    QualType unspecializedSuper
-      = classDecl->getASTContext().getObjCInterfaceType(
-          superClassObjTy->getInterface());
-    CachedSuperClassType.setPointerAndInt(
-      unspecializedSuper->castAs<ObjCObjectType>(),
-      true);
-    return;
-  }
+//   // If the subclass type isn't specialized, return the unspecialized
+//   // superclass.
+//   if (isUnspecialized()) {
+//     QualType unspecializedSuper
+//       = classDecl->getASTContext().getObjCInterfaceType(
+//           superClassObjTy->getInterface());
+//     CachedSuperClassType.setPointerAndInt(
+//       unspecializedSuper->castAs<ObjCObjectType>(),
+//       true);
+//     return;
+//   }
 
-  // Substitute the provided type arguments into the superclass type.
-  ArrayRef<QualType> typeArgs = getTypeArgs();
-  assert(typeArgs.size() == typeParams->size());
-  CachedSuperClassType.setPointerAndInt(
-    superClassType.substObjCTypeArgs(classDecl->getASTContext(), typeArgs,
-                                     ObjCSubstitutionContext::Superclass)
-      ->castAs<ObjCObjectType>(),
-    true);
-}
+//   // Substitute the provided type arguments into the superclass type.
+//   ArrayRef<QualType> typeArgs = getTypeArgs();
+//   assert(typeArgs.size() == typeParams->size());
+//   CachedSuperClassType.setPointerAndInt(
+//     superClassType.substObjCTypeArgs(classDecl->getASTContext(), typeArgs,
+//                                      ObjCSubstitutionContext::Superclass)
+//       ->castAs<ObjCObjectType>(),
+//     true);
+// }
 
-const ObjCInterfaceType *ObjCObjectPointerType::getInterfaceType() const {
-  if (auto interfaceDecl = getObjectType()->getInterface()) {
-    return interfaceDecl->getASTContext().getObjCInterfaceType(interfaceDecl)
-             ->castAs<ObjCInterfaceType>();
-  }
+// const ObjCInterfaceType *ObjCObjectPointerType::getInterfaceType() const {
+//   if (auto interfaceDecl = getObjectType()->getInterface()) {
+//     return interfaceDecl->getASTContext().getObjCInterfaceType(interfaceDecl)
+//              ->castAs<ObjCInterfaceType>();
+//   }
 
-  return nullptr;
-}
+//   return nullptr;
+// }
 
-QualType ObjCObjectPointerType::getSuperClassType() const {
-  QualType superObjectType = getObjectType()->getSuperClassType();
-  if (superObjectType.isNull())
-    return superObjectType;
+// QualType ObjCObjectPointerType::getSuperClassType() const {
+//   QualType superObjectType = getObjectType()->getSuperClassType();
+//   if (superObjectType.isNull())
+//     return superObjectType;
 
-  ASTContext &ctx = getInterfaceDecl()->getASTContext();
-  return ctx.getObjCObjectPointerType(superObjectType);
-}
+//   ASTContext &ctx = getInterfaceDecl()->getASTContext();
+//   return ctx.getObjCObjectPointerType(superObjectType);
+// }
 
-const ObjCObjectType *Type::getAsObjCQualifiedInterfaceType() const {
-  // There is no sugar for ObjCObjectType's, just return the canonical
-  // type pointer if it is the right class.  There is no typedef information to
-  // return and these cannot be Address-space qualified.
-  if (const auto *T = getAs<ObjCObjectType>())
-    if (T->getNumProtocols() && T->getInterface())
-      return T;
-  return nullptr;
-}
+// const ObjCObjectType *Type::getAsObjCQualifiedInterfaceType() const {
+//   // There is no sugar for ObjCObjectType's, just return the canonical
+//   // type pointer if it is the right class.  There is no typedef information to
+//   // return and these cannot be Address-space qualified.
+//   if (const auto *T = getAs<ObjCObjectType>())
+//     if (T->getNumProtocols() && T->getInterface())
+//       return T;
+//   return nullptr;
+// }
 
-bool Type::isObjCQualifiedInterfaceType() const {
-  return getAsObjCQualifiedInterfaceType() != nullptr;
-}
+// bool Type::isObjCQualifiedInterfaceType() const {
+//   return getAsObjCQualifiedInterfaceType() != nullptr;
+// }
 
-const ObjCObjectPointerType *Type::getAsObjCQualifiedIdType() const {
-  // There is no sugar for ObjCQualifiedIdType's, just return the canonical
-  // type pointer if it is the right class.
-  if (const auto *OPT = getAs<ObjCObjectPointerType>()) {
-    if (OPT->isObjCQualifiedIdType())
-      return OPT;
-  }
-  return nullptr;
-}
+// const ObjCObjectPointerType *Type::getAsObjCQualifiedIdType() const {
+//   // There is no sugar for ObjCQualifiedIdType's, just return the canonical
+//   // type pointer if it is the right class.
+//   if (const auto *OPT = getAs<ObjCObjectPointerType>()) {
+//     if (OPT->isObjCQualifiedIdType())
+//       return OPT;
+//   }
+//   return nullptr;
+// }
 
-const ObjCObjectPointerType *Type::getAsObjCQualifiedClassType() const {
-  // There is no sugar for ObjCQualifiedClassType's, just return the canonical
-  // type pointer if it is the right class.
-  if (const auto *OPT = getAs<ObjCObjectPointerType>()) {
-    if (OPT->isObjCQualifiedClassType())
-      return OPT;
-  }
-  return nullptr;
-}
+// const ObjCObjectPointerType *Type::getAsObjCQualifiedClassType() const {
+//   // There is no sugar for ObjCQualifiedClassType's, just return the canonical
+//   // type pointer if it is the right class.
+//   if (const auto *OPT = getAs<ObjCObjectPointerType>()) {
+//     if (OPT->isObjCQualifiedClassType())
+//       return OPT;
+//   }
+//   return nullptr;
+// }
 
-const ObjCObjectType *Type::getAsObjCInterfaceType() const {
-  if (const auto *OT = getAs<ObjCObjectType>()) {
-    if (OT->getInterface())
-      return OT;
-  }
-  return nullptr;
-}
+// const ObjCObjectType *Type::getAsObjCInterfaceType() const {
+//   if (const auto *OT = getAs<ObjCObjectType>()) {
+//     if (OT->getInterface())
+//       return OT;
+//   }
+//   return nullptr;
+// }
 
-const ObjCObjectPointerType *Type::getAsObjCInterfacePointerType() const {
-  if (const auto *OPT = getAs<ObjCObjectPointerType>()) {
-    if (OPT->getInterfaceType())
-      return OPT;
-  }
-  return nullptr;
-}
+// const ObjCObjectPointerType *Type::getAsObjCInterfacePointerType() const {
+//   if (const auto *OPT = getAs<ObjCObjectPointerType>()) {
+//     if (OPT->getInterfaceType())
+//       return OPT;
+//   }
+//   return nullptr;
+// }
 
 const CXXRecordDecl *Type::getPointeeCXXRecordDecl() const {
   QualType PointeeType;
@@ -2157,9 +2157,9 @@ Type::ScalarTypeKind Type::getScalarTypeKind() const {
     return STK_CPointer;
   } else if (isa<BlockPointerType>(T)) {
     return STK_BlockPointer;
-  } else if (isa<ObjCObjectPointerType>(T)) {
+  } /*else if (isa<ObjCObjectPointerType>(T)) {
     return STK_ObjCObjectPointer;
-  } else if (isa<MemberPointerType>(T)) {
+  } */else if (isa<MemberPointerType>(T)) {
     return STK_MemberPointer;
   } else if (isa<EnumType>(T)) {
     assert(cast<EnumType>(T)->getDecl()->isComplete());
@@ -2264,17 +2264,17 @@ bool Type::isIncompleteType(NamedDecl **Def) const {
       return false;
     return true;
   }
-  case ObjCObject:
-    return cast<ObjCObjectType>(CanonicalType)->getBaseType()
-             ->isIncompleteType(Def);
-  case ObjCInterface: {
-    // ObjC interfaces are incomplete if they are @class, not @interface.
-    ObjCInterfaceDecl *Interface
-      = cast<ObjCInterfaceType>(CanonicalType)->getDecl();
-    if (Def)
-      *Def = Interface;
-    return !Interface->hasDefinition();
-  }
+  // case ObjCObject:
+  //   return cast<ObjCObjectType>(CanonicalType)->getBaseType()
+  //            ->isIncompleteType(Def);
+  // case ObjCInterface: {
+  //   // ObjC interfaces are incomplete if they are @class, not @interface.
+  //   ObjCInterfaceDecl *Interface
+  //     = cast<ObjCInterfaceType>(CanonicalType)->getDecl();
+  //   if (Def)
+  //     *Def = Interface;
+  //   return !Interface->hasDefinition();
+  // }
   }
 }
 
@@ -2327,7 +2327,7 @@ bool QualType::isCXX98PODType(const ASTContext &Context) const {
     // IncompleteArray is handled above.
     return Context.getBaseElementType(*this).isCXX98PODType(Context);
 
-  case Type::ObjCObjectPointer:
+  // case Type::ObjCObjectPointer:
   case Type::BlockPointer:
   case Type::Builtin:
   case Type::Complex:
@@ -2990,8 +2990,8 @@ StringRef BuiltinType::getName(const PrintingPolicy &Policy) const {
     return "<overloaded function type>";
   case BoundMember:
     return "<bound member function type>";
-  case PseudoObject:
-    return "<pseudo-object type>";
+  // case PseudoObject:
+  //   return "<pseudo-object type>";
   case Dependent:
     return "<dependent type>";
   case UnknownAny:
@@ -3006,20 +3006,20 @@ StringRef BuiltinType::getName(const PrintingPolicy &Policy) const {
     return "Class";
   case ObjCSel:
     return "SEL";
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case Id: \
-    return "__" #Access " " #ImgType "_t";
-#include "latino/Basic/OpenCLImageTypes.def"
-  case OCLSampler:
-    return "sampler_t";
-  case OCLEvent:
-    return "event_t";
-  case OCLClkEvent:
-    return "clk_event_t";
-  case OCLQueue:
-    return "queue_t";
-  case OCLReserveID:
-    return "reserve_id_t";
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case Id: \
+//     return "__" #Access " " #ImgType "_t";
+// #include "latino/Basic/OpenCLImageTypes.def"
+  // case OCLSampler:
+  //   return "sampler_t";
+  // case OCLEvent:
+  //   return "event_t";
+  // case OCLClkEvent:
+  //   return "clk_event_t";
+  // case OCLQueue:
+  //   return "queue_t";
+  // case OCLReserveID:
+  //   return "reserve_id_t";
   case IncompleteMatrixIdx:
     return "<incomplete matrix index type>";
   case OMPArraySection:
@@ -3028,10 +3028,10 @@ StringRef BuiltinType::getName(const PrintingPolicy &Policy) const {
     return "<OpenMP array shaping type>";
   case OMPIterator:
     return "<OpenMP iterator type>";
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case Id: \
-    return #ExtType;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case Id: \
+//     return #ExtType;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   case Id: \
     return Name;
@@ -3632,42 +3632,42 @@ QualifierCollector::apply(const ASTContext &Context, const Type *T) const {
   return Context.getQualifiedType(T, *this);
 }
 
-void ObjCObjectTypeImpl::Profile(llvm::FoldingSetNodeID &ID,
-                                 QualType BaseType,
-                                 ArrayRef<QualType> typeArgs,
-                                 ArrayRef<ObjCProtocolDecl *> protocols,
-                                 bool isKindOf) {
-  ID.AddPointer(BaseType.getAsOpaquePtr());
-  ID.AddInteger(typeArgs.size());
-  for (auto typeArg : typeArgs)
-    ID.AddPointer(typeArg.getAsOpaquePtr());
-  ID.AddInteger(protocols.size());
-  for (auto proto : protocols)
-    ID.AddPointer(proto);
-  ID.AddBoolean(isKindOf);
-}
+// void ObjCObjectTypeImpl::Profile(llvm::FoldingSetNodeID &ID,
+//                                  QualType BaseType,
+//                                  ArrayRef<QualType> typeArgs,
+//                                  ArrayRef<ObjCProtocolDecl *> protocols,
+//                                  bool isKindOf) {
+//   ID.AddPointer(BaseType.getAsOpaquePtr());
+//   ID.AddInteger(typeArgs.size());
+//   for (auto typeArg : typeArgs)
+//     ID.AddPointer(typeArg.getAsOpaquePtr());
+//   ID.AddInteger(protocols.size());
+//   for (auto proto : protocols)
+//     ID.AddPointer(proto);
+//   ID.AddBoolean(isKindOf);
+// }
 
-void ObjCObjectTypeImpl::Profile(llvm::FoldingSetNodeID &ID) {
-  Profile(ID, getBaseType(), getTypeArgsAsWritten(),
-          llvm::makeArrayRef(qual_begin(), getNumProtocols()),
-          isKindOfTypeAsWritten());
-}
+// void ObjCObjectTypeImpl::Profile(llvm::FoldingSetNodeID &ID) {
+//   Profile(ID, getBaseType(), getTypeArgsAsWritten(),
+//           llvm::makeArrayRef(qual_begin(), getNumProtocols()),
+//           isKindOfTypeAsWritten());
+// }
 
-void ObjCTypeParamType::Profile(llvm::FoldingSetNodeID &ID,
-                                const ObjCTypeParamDecl *OTPDecl,
-                                QualType CanonicalType,
-                                ArrayRef<ObjCProtocolDecl *> protocols) {
-  ID.AddPointer(OTPDecl);
-  ID.AddPointer(CanonicalType.getAsOpaquePtr());
-  ID.AddInteger(protocols.size());
-  for (auto proto : protocols)
-    ID.AddPointer(proto);
-}
+// void ObjCTypeParamType::Profile(llvm::FoldingSetNodeID &ID,
+//                                 const ObjCTypeParamDecl *OTPDecl,
+//                                 QualType CanonicalType,
+//                                 ArrayRef<ObjCProtocolDecl *> protocols) {
+//   ID.AddPointer(OTPDecl);
+//   ID.AddPointer(CanonicalType.getAsOpaquePtr());
+//   ID.AddInteger(protocols.size());
+//   for (auto proto : protocols)
+//     ID.AddPointer(proto);
+// }
 
-void ObjCTypeParamType::Profile(llvm::FoldingSetNodeID &ID) {
-  Profile(ID, getDecl(), getCanonicalTypeInternal(),
-          llvm::makeArrayRef(qual_begin(), getNumProtocols()));
-}
+// void ObjCTypeParamType::Profile(llvm::FoldingSetNodeID &ID) {
+//   Profile(ID, getDecl(), getCanonicalTypeInternal(),
+//           llvm::makeArrayRef(qual_begin(), getNumProtocols()));
+// }
 
 namespace {
 
@@ -3825,14 +3825,14 @@ static CachedProperties computeCachedProperties(const Type *T) {
       result = merge(result, Cache::get(ai));
     return result;
   }
-  case Type::ObjCInterface: {
-    Linkage L = cast<ObjCInterfaceType>(T)->getDecl()->getLinkageInternal();
-    return CachedProperties(L, false);
-  }
-  case Type::ObjCObject:
-    return Cache::get(cast<ObjCObjectType>(T)->getBaseType());
-  case Type::ObjCObjectPointer:
-    return Cache::get(cast<ObjCObjectPointerType>(T)->getPointeeType());
+  // case Type::ObjCInterface: {
+  //   Linkage L = cast<ObjCInterfaceType>(T)->getDecl()->getLinkageInternal();
+  //   return CachedProperties(L, false);
+  // }
+  // case Type::ObjCObject:
+  //   return Cache::get(cast<ObjCObjectType>(T)->getBaseType());
+  // case Type::ObjCObjectPointer:
+  //   return Cache::get(cast<ObjCObjectPointerType>(T)->getPointeeType());
   case Type::Atomic:
     return Cache::get(cast<AtomicType>(T)->getValueType());
   case Type::Pipe:
@@ -3914,13 +3914,13 @@ LinkageInfo LinkageComputer::computeTypeLinkageInfo(const Type *T) {
       LV.merge(computeTypeLinkageInfo(ai));
     return LV;
   }
-  case Type::ObjCInterface:
-    return getDeclLinkageAndVisibility(cast<ObjCInterfaceType>(T)->getDecl());
-  case Type::ObjCObject:
-    return computeTypeLinkageInfo(cast<ObjCObjectType>(T)->getBaseType());
-  case Type::ObjCObjectPointer:
-    return computeTypeLinkageInfo(
-        cast<ObjCObjectPointerType>(T)->getPointeeType());
+  // case Type::ObjCInterface:
+  //   return getDeclLinkageAndVisibility(cast<ObjCInterfaceType>(T)->getDecl());
+  // case Type::ObjCObject:
+  //   return computeTypeLinkageInfo(cast<ObjCObjectType>(T)->getBaseType());
+  // case Type::ObjCObjectPointer:
+    // return computeTypeLinkageInfo(
+    //     cast<ObjCObjectPointerType>(T)->getPointeeType());
   case Type::Atomic:
     return computeTypeLinkageInfo(cast<AtomicType>(T)->getValueType());
   case Type::Pipe:
@@ -3982,7 +3982,7 @@ bool Type::canHaveNullability(bool ResultIfUnknown) const {
   case Type::Pointer:
   case Type::BlockPointer:
   case Type::MemberPointer:
-  case Type::ObjCObjectPointer:
+  // case Type::ObjCObjectPointer:
     return true;
 
   // Dependent types that could instantiate to pointer types.
@@ -4024,26 +4024,26 @@ bool Type::canHaveNullability(bool ResultIfUnknown) const {
     case BuiltinType::Dependent:
     case BuiltinType::Overload:
     case BuiltinType::BoundMember:
-    case BuiltinType::PseudoObject:
+    // case BuiltinType::PseudoObject:
     case BuiltinType::UnknownAny:
     case BuiltinType::ARCUnbridgedCast:
       return ResultIfUnknown;
 
     case BuiltinType::Void:
-    case BuiltinType::ObjCId:
-    case BuiltinType::ObjCClass:
-    case BuiltinType::ObjCSel:
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-    case BuiltinType::OCLSampler:
-    case BuiltinType::OCLEvent:
-    case BuiltinType::OCLClkEvent:
-    case BuiltinType::OCLQueue:
-    case BuiltinType::OCLReserveID:
+    // case BuiltinType::ObjCId:
+    // case BuiltinType::ObjCClass:
+    // case BuiltinType::ObjCSel:
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+    // case BuiltinType::OCLSampler:
+    // case BuiltinType::OCLEvent:
+    // case BuiltinType::OCLClkEvent:
+    // case BuiltinType::OCLQueue:
+    // case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
     case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -4079,8 +4079,8 @@ bool Type::canHaveNullability(bool ResultIfUnknown) const {
   case Type::Enum:
   case Type::InjectedClassName:
   case Type::PackExpansion:
-  case Type::ObjCObject:
-  case Type::ObjCInterface:
+  // case Type::ObjCObject:
+  // case Type::ObjCInterface:
   case Type::Atomic:
   case Type::Pipe:
   case Type::ExtInt:
@@ -4116,115 +4116,115 @@ Optional<NullabilityKind> AttributedType::stripOuterNullability(QualType &T) {
   return None;
 }
 
-bool Type::isBlockCompatibleObjCPointerType(ASTContext &ctx) const {
-  const auto *objcPtr = getAs<ObjCObjectPointerType>();
-  if (!objcPtr)
-    return false;
+// bool Type::isBlockCompatibleObjCPointerType(ASTContext &ctx) const {
+//   const auto *objcPtr = getAs<ObjCObjectPointerType>();
+//   if (!objcPtr)
+//     return false;
 
-  if (objcPtr->isObjCIdType()) {
-    // id is always okay.
-    return true;
-  }
+//   if (objcPtr->isObjCIdType()) {
+//     // id is always okay.
+//     return true;
+//   }
 
-  // Blocks are NSObjects.
-  if (ObjCInterfaceDecl *iface = objcPtr->getInterfaceDecl()) {
-    if (iface->getIdentifier() != ctx.getNSObjectName())
-      return false;
+//   // Blocks are NSObjects.
+//   if (ObjCInterfaceDecl *iface = objcPtr->getInterfaceDecl()) {
+//     if (iface->getIdentifier() != ctx.getNSObjectName())
+//       return false;
 
-    // Continue to check qualifiers, below.
-  } else if (objcPtr->isObjCQualifiedIdType()) {
-    // Continue to check qualifiers, below.
-  } else {
-    return false;
-  }
+//     // Continue to check qualifiers, below.
+//   } else if (objcPtr->isObjCQualifiedIdType()) {
+//     // Continue to check qualifiers, below.
+//   } else {
+//     return false;
+//   }
 
-  // Check protocol qualifiers.
-  for (ObjCProtocolDecl *proto : objcPtr->quals()) {
-    // Blocks conform to NSObject and NSCopying.
-    if (proto->getIdentifier() != ctx.getNSObjectName() &&
-        proto->getIdentifier() != ctx.getNSCopyingName())
-      return false;
-  }
+//   // Check protocol qualifiers.
+//   for (ObjCProtocolDecl *proto : objcPtr->quals()) {
+//     // Blocks conform to NSObject and NSCopying.
+//     if (proto->getIdentifier() != ctx.getNSObjectName() &&
+//         proto->getIdentifier() != ctx.getNSCopyingName())
+//       return false;
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
-Qualifiers::ObjCLifetime Type::getObjCARCImplicitLifetime() const {
-  if (isObjCARCImplicitlyUnretainedType())
-    return Qualifiers::OCL_ExplicitNone;
-  return Qualifiers::OCL_Strong;
-}
+// Qualifiers::ObjCLifetime Type::getObjCARCImplicitLifetime() const {
+//   if (isObjCARCImplicitlyUnretainedType())
+//     return Qualifiers::OCL_ExplicitNone;
+//   return Qualifiers::OCL_Strong;
+// }
 
-bool Type::isObjCARCImplicitlyUnretainedType() const {
-  assert(isObjCLifetimeType() &&
-         "cannot query implicit lifetime for non-inferrable type");
+// bool Type::isObjCARCImplicitlyUnretainedType() const {
+//   assert(isObjCLifetimeType() &&
+//          "cannot query implicit lifetime for non-inferrable type");
 
-  const Type *canon = getCanonicalTypeInternal().getTypePtr();
+//   const Type *canon = getCanonicalTypeInternal().getTypePtr();
 
-  // Walk down to the base type.  We don't care about qualifiers for this.
-  while (const auto *array = dyn_cast<ArrayType>(canon))
-    canon = array->getElementType().getTypePtr();
+//   // Walk down to the base type.  We don't care about qualifiers for this.
+//   while (const auto *array = dyn_cast<ArrayType>(canon))
+//     canon = array->getElementType().getTypePtr();
 
-  if (const auto *opt = dyn_cast<ObjCObjectPointerType>(canon)) {
-    // Class and Class<Protocol> don't require retention.
-    if (opt->getObjectType()->isObjCClass())
-      return true;
-  }
+//   if (const auto *opt = dyn_cast<ObjCObjectPointerType>(canon)) {
+//     // Class and Class<Protocol> don't require retention.
+//     if (opt->getObjectType()->isObjCClass())
+//       return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
-bool Type::isObjCNSObjectType() const {
-  const Type *cur = this;
-  while (true) {
-    if (const auto *typedefType = dyn_cast<TypedefType>(cur))
-      return typedefType->getDecl()->hasAttr<ObjCNSObjectAttr>();
+// bool Type::isObjCNSObjectType() const {
+//   const Type *cur = this;
+//   while (true) {
+//     if (const auto *typedefType = dyn_cast<TypedefType>(cur))
+//       return typedefType->getDecl()->hasAttr<ObjCNSObjectAttr>();
 
-    // Single-step desugar until we run out of sugar.
-    QualType next = cur->getLocallyUnqualifiedSingleStepDesugaredType();
-    if (next.getTypePtr() == cur) return false;
-    cur = next.getTypePtr();
-  }
-}
+//     // Single-step desugar until we run out of sugar.
+//     QualType next = cur->getLocallyUnqualifiedSingleStepDesugaredType();
+//     if (next.getTypePtr() == cur) return false;
+//     cur = next.getTypePtr();
+//   }
+// }
 
-bool Type::isObjCIndependentClassType() const {
-  if (const auto *typedefType = dyn_cast<TypedefType>(this))
-    return typedefType->getDecl()->hasAttr<ObjCIndependentClassAttr>();
-  return false;
-}
+// bool Type::isObjCIndependentClassType() const {
+//   if (const auto *typedefType = dyn_cast<TypedefType>(this))
+//     return typedefType->getDecl()->hasAttr<ObjCIndependentClassAttr>();
+//   return false;
+// }
 
-bool Type::isObjCRetainableType() const {
-  return isObjCObjectPointerType() ||
-         isBlockPointerType() ||
-         isObjCNSObjectType();
-}
+// bool Type::isObjCRetainableType() const {
+//   return isObjCObjectPointerType() ||
+//          isBlockPointerType() ||
+//          isObjCNSObjectType();
+// }
 
-bool Type::isObjCIndirectLifetimeType() const {
-  if (isObjCLifetimeType())
-    return true;
-  if (const auto *OPT = getAs<PointerType>())
-    return OPT->getPointeeType()->isObjCIndirectLifetimeType();
-  if (const auto *Ref = getAs<ReferenceType>())
-    return Ref->getPointeeType()->isObjCIndirectLifetimeType();
-  if (const auto *MemPtr = getAs<MemberPointerType>())
-    return MemPtr->getPointeeType()->isObjCIndirectLifetimeType();
-  return false;
-}
+// bool Type::isObjCIndirectLifetimeType() const {
+//   if (isObjCLifetimeType())
+//     return true;
+//   if (const auto *OPT = getAs<PointerType>())
+//     return OPT->getPointeeType()->isObjCIndirectLifetimeType();
+//   if (const auto *Ref = getAs<ReferenceType>())
+//     return Ref->getPointeeType()->isObjCIndirectLifetimeType();
+//   if (const auto *MemPtr = getAs<MemberPointerType>())
+//     return MemPtr->getPointeeType()->isObjCIndirectLifetimeType();
+//   return false;
+// }
 
 /// Returns true if objects of this type have lifetime semantics under
 /// ARC.
-bool Type::isObjCLifetimeType() const {
-  const Type *type = this;
-  while (const ArrayType *array = type->getAsArrayTypeUnsafe())
-    type = array->getElementType().getTypePtr();
-  return type->isObjCRetainableType();
-}
+// bool Type::isObjCLifetimeType() const {
+//   const Type *type = this;
+//   while (const ArrayType *array = type->getAsArrayTypeUnsafe())
+//     type = array->getElementType().getTypePtr();
+//   return type->isObjCRetainableType();
+// }
 
 /// Determine whether the given type T is a "bridgable" Objective-C type,
 /// which is either an Objective-C object pointer type or an
-bool Type::isObjCARCBridgableType() const {
-  return isObjCObjectPointerType() || isBlockPointerType();
-}
+// bool Type::isObjCARCBridgableType() const {
+//   return isObjCObjectPointerType() || isBlockPointerType();
+// }
 
 /// Determine whether the given type T is a "bridgeable" C type.
 bool Type::isCARCBridgableType() const {
@@ -4269,17 +4269,17 @@ bool Type::hasSizedVLAType() const {
 }
 
 QualType::DestructionKind QualType::isDestructedTypeImpl(QualType type) {
-  switch (type.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-  case Qualifiers::OCL_ExplicitNone:
-  case Qualifiers::OCL_Autoreleasing:
-    break;
+  // switch (type.getObjCLifetime()) {
+  // case Qualifiers::OCL_None:
+  // case Qualifiers::OCL_ExplicitNone:
+  // case Qualifiers::OCL_Autoreleasing:
+  //   break;
 
-  case Qualifiers::OCL_Strong:
-    return DK_objc_strong_lifetime;
-  case Qualifiers::OCL_Weak:
-    return DK_objc_weak_lifetime;
-  }
+  // case Qualifiers::OCL_Strong:
+  //   return DK_objc_strong_lifetime;
+  // case Qualifiers::OCL_Weak:
+  //   return DK_objc_weak_lifetime;
+  // }
 
   if (const auto *RT =
           type->getBaseElementTypeUnsafe()->getAs<RecordType>()) {

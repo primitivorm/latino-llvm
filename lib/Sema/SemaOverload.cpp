@@ -12,11 +12,11 @@
 
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CXXInheritance.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/TypeOrdering.h"
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/DiagnosticOptions.h"
@@ -230,7 +230,7 @@ bool StandardConversionSequence::isPointerConversionToBool() const {
   if (getToType(1)->isBooleanType() &&
       (getFromType()->isPointerType() ||
        getFromType()->isMemberPointerType() ||
-       getFromType()->isObjCObjectPointerType() ||
+      //  getFromType()->isObjCObjectPointerType() ||
        getFromType()->isBlockPointerType() ||
        First == ICK_Array_To_Pointer || First == ICK_Function_To_Pointer))
     return true;
@@ -1509,9 +1509,9 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
   bool AllowObjCWritebackConversion
     = getLangOpts().ObjCAutoRefCount &&
       (Action == AA_Passing || Action == AA_Sending);
-  if (getLangOpts().ObjC)
-    CheckObjCBridgeRelatedConversions(From->getBeginLoc(), ToType,
-                                      From->getType(), From);
+  // if (getLangOpts().ObjC)
+  //   CheckObjCBridgeRelatedConversions(From->getBeginLoc(), ToType,
+  //                                     From->getType(), From);
   ICS = ::TryImplicitConversion(*this, From, ToType,
                                 /*SuppressUserConversions=*/false,
                                 AllowExplicit ? AllowedExplicit::All
@@ -1901,10 +1901,10 @@ static bool IsStandardConversion(Sema &S, Expr* From, QualType ToType,
     FromType = ToType.getUnqualifiedType();
   } else if (S.IsBlockPointerConversion(FromType, ToType, FromType)) {
     SCS.Second = ICK_Block_Pointer_Conversion;
-  } else if (AllowObjCWritebackConversion &&
+  } /*else if (AllowObjCWritebackConversion &&
              S.isObjCWritebackConversion(FromType, ToType, FromType)) {
     SCS.Second = ICK_Writeback_Conversion;
-  } else if (S.IsPointerConversion(From, FromType, ToType, InOverloadResolution,
+  } */else if (S.IsPointerConversion(From, FromType, ToType, InOverloadResolution,
                                    FromType, IncompatibleObjC)) {
     // Pointer conversions (C++ 4.10).
     SCS.Second = ICK_Pointer_Conversion;
@@ -2278,8 +2278,8 @@ BuildSimilarlyQualifiedPointerType(const Type *FromPtr,
                                    QualType ToPointee, QualType ToType,
                                    ASTContext &Context,
                                    bool StripObjCLifetime = false) {
-  assert((FromPtr->getTypeClass() == Type::Pointer ||
-          FromPtr->getTypeClass() == Type::ObjCObjectPointer) &&
+  assert((FromPtr->getTypeClass() == Type::Pointer /*||
+          FromPtr->getTypeClass() == Type::ObjCObjectPointer*/) &&
          "Invalid similarly-qualified pointer type");
 
   /// Conversions to 'id' subsume cv-qualifier conversions.
@@ -2302,8 +2302,8 @@ BuildSimilarlyQualifiedPointerType(const Type *FromPtr,
 
     // Build a pointer to ToPointee. It has the right qualifiers
     // already.
-    if (isa<ObjCObjectPointerType>(ToType))
-      return Context.getObjCObjectPointerType(ToPointee);
+    // if (isa<ObjCObjectPointerType>(ToType))
+    //   return Context.getObjCObjectPointerType(ToPointee);
     return Context.getPointerType(ToPointee);
   }
 
@@ -2311,8 +2311,8 @@ BuildSimilarlyQualifiedPointerType(const Type *FromPtr,
   QualType QualifiedCanonToPointee
     = Context.getQualifiedType(CanonToPointee.getLocalUnqualifiedType(), Quals);
 
-  if (isa<ObjCObjectPointerType>(ToType))
-    return Context.getObjCObjectPointerType(QualifiedCanonToPointee);
+  // if (isa<ObjCObjectPointerType>(ToType))
+  //   return Context.getObjCObjectPointerType(QualifiedCanonToPointee);
   return Context.getPointerType(QualifiedCanonToPointee);
 }
 
@@ -2351,16 +2351,16 @@ bool Sema::IsPointerConversion(Expr *From, QualType FromType, QualType ToType,
                                QualType& ConvertedType,
                                bool &IncompatibleObjC) {
   IncompatibleObjC = false;
-  if (isObjCPointerConversion(FromType, ToType, ConvertedType,
-                              IncompatibleObjC))
-    return true;
+  // if (isObjCPointerConversion(FromType, ToType, ConvertedType,
+  //                             IncompatibleObjC))
+  //   return true;
 
   // Conversion from a null pointer constant to any Objective-C pointer type.
-  if (ToType->isObjCObjectPointerType() &&
-      isNullPointerConstantForConversion(From, InOverloadResolution, Context)) {
-    ConvertedType = ToType;
-    return true;
-  }
+  // if (ToType->isObjCObjectPointerType() &&
+  //     isNullPointerConstantForConversion(From, InOverloadResolution, Context)) {
+  //   ConvertedType = ToType;
+  //   return true;
+  // }
 
   // Blocks: Block pointers can be converted to void*.
   if (FromType->isBlockPointerType() && ToType->isPointerType() &&
@@ -2397,14 +2397,14 @@ bool Sema::IsPointerConversion(Expr *From, QualType FromType, QualType ToType,
   // Beyond this point, both types need to be pointers
   // , including objective-c pointers.
   QualType ToPointeeType = ToTypePtr->getPointeeType();
-  if (FromType->isObjCObjectPointerType() && ToPointeeType->isVoidType() &&
-      !getLangOpts().ObjCAutoRefCount) {
-    ConvertedType = BuildSimilarlyQualifiedPointerType(
-                                      FromType->getAs<ObjCObjectPointerType>(),
-                                                       ToPointeeType,
-                                                       ToType, Context);
-    return true;
-  }
+  // if (FromType->isObjCObjectPointerType() && ToPointeeType->isVoidType() &&
+  //     !getLangOpts().ObjCAutoRefCount) {
+  //   ConvertedType = BuildSimilarlyQualifiedPointerType(
+  //                                     FromType->getAs<ObjCObjectPointerType>(),
+  //                                                      ToPointeeType,
+  //                                                      ToType, Context);
+  //   return true;
+  // }
   const PointerType *FromTypePtr = FromType->getAs<PointerType>();
   if (!FromTypePtr)
     return false;
@@ -2498,176 +2498,176 @@ static QualType AdoptQualifiers(ASTContext &Context, QualType T, Qualifiers Qs){
 /// isObjCPointerConversion - Determines whether this is an
 /// Objective-C pointer conversion. Subroutine of IsPointerConversion,
 /// with the same arguments and return values.
-bool Sema::isObjCPointerConversion(QualType FromType, QualType ToType,
-                                   QualType& ConvertedType,
-                                   bool &IncompatibleObjC) {
-  if (!getLangOpts().ObjC)
-    return false;
+// bool Sema::isObjCPointerConversion(QualType FromType, QualType ToType,
+//                                    QualType& ConvertedType,
+//                                    bool &IncompatibleObjC) {
+//   if (!getLangOpts().ObjC)
+//     return false;
 
-  // The set of qualifiers on the type we're converting from.
-  Qualifiers FromQualifiers = FromType.getQualifiers();
+//   // The set of qualifiers on the type we're converting from.
+//   Qualifiers FromQualifiers = FromType.getQualifiers();
 
-  // First, we handle all conversions on ObjC object pointer types.
-  const ObjCObjectPointerType* ToObjCPtr =
-    ToType->getAs<ObjCObjectPointerType>();
-  const ObjCObjectPointerType *FromObjCPtr =
-    FromType->getAs<ObjCObjectPointerType>();
+//   // First, we handle all conversions on ObjC object pointer types.
+//   const ObjCObjectPointerType* ToObjCPtr =
+//     ToType->getAs<ObjCObjectPointerType>();
+//   const ObjCObjectPointerType *FromObjCPtr =
+//     FromType->getAs<ObjCObjectPointerType>();
 
-  if (ToObjCPtr && FromObjCPtr) {
-    // If the pointee types are the same (ignoring qualifications),
-    // then this is not a pointer conversion.
-    if (Context.hasSameUnqualifiedType(ToObjCPtr->getPointeeType(),
-                                       FromObjCPtr->getPointeeType()))
-      return false;
+//   if (ToObjCPtr && FromObjCPtr) {
+//     // If the pointee types are the same (ignoring qualifications),
+//     // then this is not a pointer conversion.
+//     if (Context.hasSameUnqualifiedType(ToObjCPtr->getPointeeType(),
+//                                        FromObjCPtr->getPointeeType()))
+//       return false;
 
-    // Conversion between Objective-C pointers.
-    if (Context.canAssignObjCInterfaces(ToObjCPtr, FromObjCPtr)) {
-      const ObjCInterfaceType* LHS = ToObjCPtr->getInterfaceType();
-      const ObjCInterfaceType* RHS = FromObjCPtr->getInterfaceType();
-      if (getLangOpts().CPlusPlus && LHS && RHS &&
-          !ToObjCPtr->getPointeeType().isAtLeastAsQualifiedAs(
-                                                FromObjCPtr->getPointeeType()))
-        return false;
-      ConvertedType = BuildSimilarlyQualifiedPointerType(FromObjCPtr,
-                                                   ToObjCPtr->getPointeeType(),
-                                                         ToType, Context);
-      ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
-      return true;
-    }
+//     // Conversion between Objective-C pointers.
+//     // if (Context.canAssignObjCInterfaces(ToObjCPtr, FromObjCPtr)) {
+//     //   const ObjCInterfaceType* LHS = ToObjCPtr->getInterfaceType();
+//     //   const ObjCInterfaceType* RHS = FromObjCPtr->getInterfaceType();
+//     //   if (getLangOpts().CPlusPlus && LHS && RHS &&
+//     //       !ToObjCPtr->getPointeeType().isAtLeastAsQualifiedAs(
+//     //                                             FromObjCPtr->getPointeeType()))
+//     //     return false;
+//     //   ConvertedType = BuildSimilarlyQualifiedPointerType(FromObjCPtr,
+//     //                                                ToObjCPtr->getPointeeType(),
+//     //                                                      ToType, Context);
+//     //   ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
+//     //   return true;
+//     // }
 
-    if (Context.canAssignObjCInterfaces(FromObjCPtr, ToObjCPtr)) {
-      // Okay: this is some kind of implicit downcast of Objective-C
-      // interfaces, which is permitted. However, we're going to
-      // complain about it.
-      IncompatibleObjC = true;
-      ConvertedType = BuildSimilarlyQualifiedPointerType(FromObjCPtr,
-                                                   ToObjCPtr->getPointeeType(),
-                                                         ToType, Context);
-      ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
-      return true;
-    }
-  }
-  // Beyond this point, both types need to be C pointers or block pointers.
-  QualType ToPointeeType;
-  if (const PointerType *ToCPtr = ToType->getAs<PointerType>())
-    ToPointeeType = ToCPtr->getPointeeType();
-  else if (const BlockPointerType *ToBlockPtr =
-            ToType->getAs<BlockPointerType>()) {
-    // Objective C++: We're able to convert from a pointer to any object
-    // to a block pointer type.
-    if (FromObjCPtr && FromObjCPtr->isObjCBuiltinType()) {
-      ConvertedType = AdoptQualifiers(Context, ToType, FromQualifiers);
-      return true;
-    }
-    ToPointeeType = ToBlockPtr->getPointeeType();
-  }
-  else if (FromType->getAs<BlockPointerType>() &&
-           ToObjCPtr && ToObjCPtr->isObjCBuiltinType()) {
-    // Objective C++: We're able to convert from a block pointer type to a
-    // pointer to any object.
-    ConvertedType = AdoptQualifiers(Context, ToType, FromQualifiers);
-    return true;
-  }
-  else
-    return false;
+//     if (Context.canAssignObjCInterfaces(FromObjCPtr, ToObjCPtr)) {
+//       // Okay: this is some kind of implicit downcast of Objective-C
+//       // interfaces, which is permitted. However, we're going to
+//       // complain about it.
+//       IncompatibleObjC = true;
+//       ConvertedType = BuildSimilarlyQualifiedPointerType(FromObjCPtr,
+//                                                    ToObjCPtr->getPointeeType(),
+//                                                          ToType, Context);
+//       ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
+//       return true;
+//     }
+//   }
+//   // Beyond this point, both types need to be C pointers or block pointers.
+//   QualType ToPointeeType;
+//   if (const PointerType *ToCPtr = ToType->getAs<PointerType>())
+//     ToPointeeType = ToCPtr->getPointeeType();
+//   else if (const BlockPointerType *ToBlockPtr =
+//             ToType->getAs<BlockPointerType>()) {
+//     // Objective C++: We're able to convert from a pointer to any object
+//     // to a block pointer type.
+//     if (FromObjCPtr && FromObjCPtr->isObjCBuiltinType()) {
+//       ConvertedType = AdoptQualifiers(Context, ToType, FromQualifiers);
+//       return true;
+//     }
+//     ToPointeeType = ToBlockPtr->getPointeeType();
+//   }
+//   else if (FromType->getAs<BlockPointerType>() &&
+//            ToObjCPtr && ToObjCPtr->isObjCBuiltinType()) {
+//     // Objective C++: We're able to convert from a block pointer type to a
+//     // pointer to any object.
+//     ConvertedType = AdoptQualifiers(Context, ToType, FromQualifiers);
+//     return true;
+//   }
+//   else
+//     return false;
 
-  QualType FromPointeeType;
-  if (const PointerType *FromCPtr = FromType->getAs<PointerType>())
-    FromPointeeType = FromCPtr->getPointeeType();
-  else if (const BlockPointerType *FromBlockPtr =
-           FromType->getAs<BlockPointerType>())
-    FromPointeeType = FromBlockPtr->getPointeeType();
-  else
-    return false;
+//   QualType FromPointeeType;
+//   if (const PointerType *FromCPtr = FromType->getAs<PointerType>())
+//     FromPointeeType = FromCPtr->getPointeeType();
+//   else if (const BlockPointerType *FromBlockPtr =
+//            FromType->getAs<BlockPointerType>())
+//     FromPointeeType = FromBlockPtr->getPointeeType();
+//   else
+//     return false;
 
-  // If we have pointers to pointers, recursively check whether this
-  // is an Objective-C conversion.
-  if (FromPointeeType->isPointerType() && ToPointeeType->isPointerType() &&
-      isObjCPointerConversion(FromPointeeType, ToPointeeType, ConvertedType,
-                              IncompatibleObjC)) {
-    // We always complain about this conversion.
-    IncompatibleObjC = true;
-    ConvertedType = Context.getPointerType(ConvertedType);
-    ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
-    return true;
-  }
-  // Allow conversion of pointee being objective-c pointer to another one;
-  // as in I* to id.
-  if (FromPointeeType->getAs<ObjCObjectPointerType>() &&
-      ToPointeeType->getAs<ObjCObjectPointerType>() &&
-      isObjCPointerConversion(FromPointeeType, ToPointeeType, ConvertedType,
-                              IncompatibleObjC)) {
+//   // If we have pointers to pointers, recursively check whether this
+//   // is an Objective-C conversion.
+//   if (FromPointeeType->isPointerType() && ToPointeeType->isPointerType() &&
+//       isObjCPointerConversion(FromPointeeType, ToPointeeType, ConvertedType,
+//                               IncompatibleObjC)) {
+//     // We always complain about this conversion.
+//     IncompatibleObjC = true;
+//     ConvertedType = Context.getPointerType(ConvertedType);
+//     ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
+//     return true;
+//   }
+//   // Allow conversion of pointee being objective-c pointer to another one;
+//   // as in I* to id.
+//   if (FromPointeeType->getAs<ObjCObjectPointerType>() &&
+//       ToPointeeType->getAs<ObjCObjectPointerType>() &&
+//       isObjCPointerConversion(FromPointeeType, ToPointeeType, ConvertedType,
+//                               IncompatibleObjC)) {
 
-    ConvertedType = Context.getPointerType(ConvertedType);
-    ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
-    return true;
-  }
+//     ConvertedType = Context.getPointerType(ConvertedType);
+//     ConvertedType = AdoptQualifiers(Context, ConvertedType, FromQualifiers);
+//     return true;
+//   }
 
-  // If we have pointers to functions or blocks, check whether the only
-  // differences in the argument and result types are in Objective-C
-  // pointer conversions. If so, we permit the conversion (but
-  // complain about it).
-  const FunctionProtoType *FromFunctionType
-    = FromPointeeType->getAs<FunctionProtoType>();
-  const FunctionProtoType *ToFunctionType
-    = ToPointeeType->getAs<FunctionProtoType>();
-  if (FromFunctionType && ToFunctionType) {
-    // If the function types are exactly the same, this isn't an
-    // Objective-C pointer conversion.
-    if (Context.getCanonicalType(FromPointeeType)
-          == Context.getCanonicalType(ToPointeeType))
-      return false;
+//   // If we have pointers to functions or blocks, check whether the only
+//   // differences in the argument and result types are in Objective-C
+//   // pointer conversions. If so, we permit the conversion (but
+//   // complain about it).
+//   const FunctionProtoType *FromFunctionType
+//     = FromPointeeType->getAs<FunctionProtoType>();
+//   const FunctionProtoType *ToFunctionType
+//     = ToPointeeType->getAs<FunctionProtoType>();
+//   if (FromFunctionType && ToFunctionType) {
+//     // If the function types are exactly the same, this isn't an
+//     // Objective-C pointer conversion.
+//     if (Context.getCanonicalType(FromPointeeType)
+//           == Context.getCanonicalType(ToPointeeType))
+//       return false;
 
-    // Perform the quick checks that will tell us whether these
-    // function types are obviously different.
-    if (FromFunctionType->getNumParams() != ToFunctionType->getNumParams() ||
-        FromFunctionType->isVariadic() != ToFunctionType->isVariadic() ||
-        FromFunctionType->getMethodQuals() != ToFunctionType->getMethodQuals())
-      return false;
+//     // Perform the quick checks that will tell us whether these
+//     // function types are obviously different.
+//     if (FromFunctionType->getNumParams() != ToFunctionType->getNumParams() ||
+//         FromFunctionType->isVariadic() != ToFunctionType->isVariadic() ||
+//         FromFunctionType->getMethodQuals() != ToFunctionType->getMethodQuals())
+//       return false;
 
-    bool HasObjCConversion = false;
-    if (Context.getCanonicalType(FromFunctionType->getReturnType()) ==
-        Context.getCanonicalType(ToFunctionType->getReturnType())) {
-      // Okay, the types match exactly. Nothing to do.
-    } else if (isObjCPointerConversion(FromFunctionType->getReturnType(),
-                                       ToFunctionType->getReturnType(),
-                                       ConvertedType, IncompatibleObjC)) {
-      // Okay, we have an Objective-C pointer conversion.
-      HasObjCConversion = true;
-    } else {
-      // Function types are too different. Abort.
-      return false;
-    }
+//     bool HasObjCConversion = false;
+//     if (Context.getCanonicalType(FromFunctionType->getReturnType()) ==
+//         Context.getCanonicalType(ToFunctionType->getReturnType())) {
+//       // Okay, the types match exactly. Nothing to do.
+//     } else if (isObjCPointerConversion(FromFunctionType->getReturnType(),
+//                                        ToFunctionType->getReturnType(),
+//                                        ConvertedType, IncompatibleObjC)) {
+//       // Okay, we have an Objective-C pointer conversion.
+//       HasObjCConversion = true;
+//     } else {
+//       // Function types are too different. Abort.
+//       return false;
+//     }
 
-    // Check argument types.
-    for (unsigned ArgIdx = 0, NumArgs = FromFunctionType->getNumParams();
-         ArgIdx != NumArgs; ++ArgIdx) {
-      QualType FromArgType = FromFunctionType->getParamType(ArgIdx);
-      QualType ToArgType = ToFunctionType->getParamType(ArgIdx);
-      if (Context.getCanonicalType(FromArgType)
-            == Context.getCanonicalType(ToArgType)) {
-        // Okay, the types match exactly. Nothing to do.
-      } else if (isObjCPointerConversion(FromArgType, ToArgType,
-                                         ConvertedType, IncompatibleObjC)) {
-        // Okay, we have an Objective-C pointer conversion.
-        HasObjCConversion = true;
-      } else {
-        // Argument types are too different. Abort.
-        return false;
-      }
-    }
+//     // Check argument types.
+//     for (unsigned ArgIdx = 0, NumArgs = FromFunctionType->getNumParams();
+//          ArgIdx != NumArgs; ++ArgIdx) {
+//       QualType FromArgType = FromFunctionType->getParamType(ArgIdx);
+//       QualType ToArgType = ToFunctionType->getParamType(ArgIdx);
+//       if (Context.getCanonicalType(FromArgType)
+//             == Context.getCanonicalType(ToArgType)) {
+//         // Okay, the types match exactly. Nothing to do.
+//       } else if (isObjCPointerConversion(FromArgType, ToArgType,
+//                                          ConvertedType, IncompatibleObjC)) {
+//         // Okay, we have an Objective-C pointer conversion.
+//         HasObjCConversion = true;
+//       } else {
+//         // Argument types are too different. Abort.
+//         return false;
+//       }
+//     }
 
-    if (HasObjCConversion) {
-      // We had an Objective-C conversion. Allow this pointer
-      // conversion, but complain about it.
-      ConvertedType = AdoptQualifiers(Context, ToType, FromQualifiers);
-      IncompatibleObjC = true;
-      return true;
-    }
-  }
+//     if (HasObjCConversion) {
+//       // We had an Objective-C conversion. Allow this pointer
+//       // conversion, but complain about it.
+//       ConvertedType = AdoptQualifiers(Context, ToType, FromQualifiers);
+//       IncompatibleObjC = true;
+//       return true;
+//     }
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 /// Determine whether this is an Objective-C writeback conversion,
 /// used for parameter passing when performing automatic reference counting.
@@ -2678,63 +2678,63 @@ bool Sema::isObjCPointerConversion(QualType FromType, QualType ToType,
 ///
 /// \param ConvertedType The type that will be produced after applying
 /// this conversion.
-bool Sema::isObjCWritebackConversion(QualType FromType, QualType ToType,
-                                     QualType &ConvertedType) {
-  if (!getLangOpts().ObjCAutoRefCount ||
-      Context.hasSameUnqualifiedType(FromType, ToType))
-    return false;
+// bool Sema::isObjCWritebackConversion(QualType FromType, QualType ToType,
+//                                      QualType &ConvertedType) {
+//   if (!getLangOpts().ObjCAutoRefCount ||
+//       Context.hasSameUnqualifiedType(FromType, ToType))
+//     return false;
 
-  // Parameter must be a pointer to __autoreleasing (with no other qualifiers).
-  QualType ToPointee;
-  if (const PointerType *ToPointer = ToType->getAs<PointerType>())
-    ToPointee = ToPointer->getPointeeType();
-  else
-    return false;
+//   // Parameter must be a pointer to __autoreleasing (with no other qualifiers).
+//   QualType ToPointee;
+//   if (const PointerType *ToPointer = ToType->getAs<PointerType>())
+//     ToPointee = ToPointer->getPointeeType();
+//   else
+//     return false;
 
-  Qualifiers ToQuals = ToPointee.getQualifiers();
-  if (!ToPointee->isObjCLifetimeType() ||
-      ToQuals.getObjCLifetime() != Qualifiers::OCL_Autoreleasing ||
-      !ToQuals.withoutObjCLifetime().empty())
-    return false;
+//   Qualifiers ToQuals = ToPointee.getQualifiers();
+//   if (!ToPointee->isObjCLifetimeType() ||
+//       ToQuals.getObjCLifetime() != Qualifiers::OCL_Autoreleasing ||
+//       !ToQuals.withoutObjCLifetime().empty())
+//     return false;
 
-  // Argument must be a pointer to __strong to __weak.
-  QualType FromPointee;
-  if (const PointerType *FromPointer = FromType->getAs<PointerType>())
-    FromPointee = FromPointer->getPointeeType();
-  else
-    return false;
+//   // Argument must be a pointer to __strong to __weak.
+//   QualType FromPointee;
+//   if (const PointerType *FromPointer = FromType->getAs<PointerType>())
+//     FromPointee = FromPointer->getPointeeType();
+//   else
+//     return false;
 
-  Qualifiers FromQuals = FromPointee.getQualifiers();
-  if (!FromPointee->isObjCLifetimeType() ||
-      (FromQuals.getObjCLifetime() != Qualifiers::OCL_Strong &&
-       FromQuals.getObjCLifetime() != Qualifiers::OCL_Weak))
-    return false;
+//   Qualifiers FromQuals = FromPointee.getQualifiers();
+//   if (!FromPointee->isObjCLifetimeType() ||
+//       (FromQuals.getObjCLifetime() != Qualifiers::OCL_Strong &&
+//        FromQuals.getObjCLifetime() != Qualifiers::OCL_Weak))
+//     return false;
 
-  // Make sure that we have compatible qualifiers.
-  FromQuals.setObjCLifetime(Qualifiers::OCL_Autoreleasing);
-  if (!ToQuals.compatiblyIncludes(FromQuals))
-    return false;
+//   // Make sure that we have compatible qualifiers.
+//   FromQuals.setObjCLifetime(Qualifiers::OCL_Autoreleasing);
+//   if (!ToQuals.compatiblyIncludes(FromQuals))
+//     return false;
 
-  // Remove qualifiers from the pointee type we're converting from; they
-  // aren't used in the compatibility check belong, and we'll be adding back
-  // qualifiers (with __autoreleasing) if the compatibility check succeeds.
-  FromPointee = FromPointee.getUnqualifiedType();
+//   // Remove qualifiers from the pointee type we're converting from; they
+//   // aren't used in the compatibility check belong, and we'll be adding back
+//   // qualifiers (with __autoreleasing) if the compatibility check succeeds.
+//   FromPointee = FromPointee.getUnqualifiedType();
 
-  // The unqualified form of the pointee types must be compatible.
-  ToPointee = ToPointee.getUnqualifiedType();
-  bool IncompatibleObjC;
-  if (Context.typesAreCompatible(FromPointee, ToPointee))
-    FromPointee = ToPointee;
-  else if (!isObjCPointerConversion(FromPointee, ToPointee, FromPointee,
-                                    IncompatibleObjC))
-    return false;
+//   // The unqualified form of the pointee types must be compatible.
+//   ToPointee = ToPointee.getUnqualifiedType();
+//   bool IncompatibleObjC;
+//   if (Context.typesAreCompatible(FromPointee, ToPointee))
+//     FromPointee = ToPointee;
+//   else if (!isObjCPointerConversion(FromPointee, ToPointee, FromPointee,
+//                                     IncompatibleObjC))
+//     return false;
 
-  /// Construct the type we're converting to, which is a pointer to
-  /// __autoreleasing pointee.
-  FromPointee = Context.getQualifiedType(FromPointee, FromQuals);
-  ConvertedType = Context.getPointerType(FromPointee);
-  return true;
-}
+//   /// Construct the type we're converting to, which is a pointer to
+//   /// __autoreleasing pointee.
+//   FromPointee = Context.getQualifiedType(FromPointee, FromQuals);
+//   ConvertedType = Context.getPointerType(FromPointee);
+//   return true;
+// }
 
 bool Sema::IsBlockPointerConversion(QualType FromType, QualType ToType,
                                     QualType& ConvertedType) {
@@ -2790,12 +2790,12 @@ bool Sema::IsBlockPointerConversion(QualType FromType, QualType ToType,
 
      if (Context.hasSameType(RHS,LHS)) {
        // OK exact match.
-     } else if (isObjCPointerConversion(RHS, LHS,
+     } /*else if (isObjCPointerConversion(RHS, LHS,
                                         ConvertedType, IncompatibleObjC)) {
      if (IncompatibleObjC)
        return false;
      // Okay, we have an Objective-C pointer conversion.
-     }
+     }*/
      else
        return false;
    }
@@ -2808,12 +2808,12 @@ bool Sema::IsBlockPointerConversion(QualType FromType, QualType ToType,
      QualType ToArgType = ToFunctionType->getParamType(ArgIdx);
      if (Context.hasSameType(FromArgType, ToArgType)) {
        // Okay, the types match exactly. Nothing to do.
-     } else if (isObjCPointerConversion(ToArgType, FromArgType,
+     } /*else if (isObjCPointerConversion(ToArgType, FromArgType,
                                         ConvertedType, IncompatibleObjC)) {
        if (IncompatibleObjC)
          return false;
        // Okay, we have an Objective-C pointer conversion.
-     } else
+     }*/ else
        // Argument types are too different. Abort.
        return false;
    }
@@ -3034,7 +3034,7 @@ bool Sema::CheckPointerConversion(Expr *From, QualType ToType,
             << From->getSourceRange();
       }
     }
-  } else if (const ObjCObjectPointerType *ToPtrType =
+  } /*else if (const ObjCObjectPointerType *ToPtrType =
                ToType->getAs<ObjCObjectPointerType>()) {
     if (const ObjCObjectPointerType *FromPtrType =
           FromType->getAs<ObjCObjectPointerType>()) {
@@ -3048,7 +3048,7 @@ bool Sema::CheckPointerConversion(Expr *From, QualType ToType,
     } else {
       Kind = CK_CPointerToObjCPointerCast;
     }
-  } else if (ToType->isBlockPointerType()) {
+  } */else if (ToType->isBlockPointerType()) {
     if (!FromType->isBlockPointerType())
       Kind = CK_AnyPointerToBlockPointerCast;
   }
@@ -3992,20 +3992,20 @@ CompareStandardConversionSequences(Sema &S, SourceLocation Loc,
 
     // Objective-C++: If one interface is more specific than the
     // other, it is the better one.
-    const ObjCObjectPointerType* FromObjCPtr1
-      = FromType1->getAs<ObjCObjectPointerType>();
-    const ObjCObjectPointerType* FromObjCPtr2
-      = FromType2->getAs<ObjCObjectPointerType>();
-    if (FromObjCPtr1 && FromObjCPtr2) {
-      bool AssignLeft = S.Context.canAssignObjCInterfaces(FromObjCPtr1,
-                                                          FromObjCPtr2);
-      bool AssignRight = S.Context.canAssignObjCInterfaces(FromObjCPtr2,
-                                                           FromObjCPtr1);
-      if (AssignLeft != AssignRight) {
-        return AssignLeft? ImplicitConversionSequence::Better
-                         : ImplicitConversionSequence::Worse;
-      }
-    }
+    // const ObjCObjectPointerType* FromObjCPtr1
+    //   = FromType1->getAs<ObjCObjectPointerType>();
+    // const ObjCObjectPointerType* FromObjCPtr2
+    //   = FromType2->getAs<ObjCObjectPointerType>();
+    // if (FromObjCPtr1 && FromObjCPtr2) {
+    //   bool AssignLeft = S.Context.canAssignObjCInterfaces(FromObjCPtr1,
+    //                                                       FromObjCPtr2);
+    //   bool AssignRight = S.Context.canAssignObjCInterfaces(FromObjCPtr2,
+    //                                                        FromObjCPtr1);
+    //   if (AssignLeft != AssignRight) {
+    //     return AssignLeft? ImplicitConversionSequence::Better
+    //                      : ImplicitConversionSequence::Worse;
+    //   }
+    // }
   }
 
   if (SCS1.ReferenceBinding && SCS2.ReferenceBinding) {
@@ -4275,91 +4275,92 @@ CompareDerivedToBaseConversions(Sema &S, SourceLocation Loc,
       else if (S.IsDerivedFrom(Loc, FromPointee1, FromPointee2))
         return ImplicitConversionSequence::Worse;
     }
-  } else if (SCS1.Second == ICK_Pointer_Conversion &&
-             SCS2.Second == ICK_Pointer_Conversion) {
-    const ObjCObjectPointerType *FromPtr1
-      = FromType1->getAs<ObjCObjectPointerType>();
-    const ObjCObjectPointerType *FromPtr2
-      = FromType2->getAs<ObjCObjectPointerType>();
-    const ObjCObjectPointerType *ToPtr1
-      = ToType1->getAs<ObjCObjectPointerType>();
-    const ObjCObjectPointerType *ToPtr2
-      = ToType2->getAs<ObjCObjectPointerType>();
+  } 
+  // else if (SCS1.Second == ICK_Pointer_Conversion &&
+  //            SCS2.Second == ICK_Pointer_Conversion) {
+  //   const ObjCObjectPointerType *FromPtr1
+  //     = FromType1->getAs<ObjCObjectPointerType>();
+  //   const ObjCObjectPointerType *FromPtr2
+  //     = FromType2->getAs<ObjCObjectPointerType>();
+  //   const ObjCObjectPointerType *ToPtr1
+  //     = ToType1->getAs<ObjCObjectPointerType>();
+  //   const ObjCObjectPointerType *ToPtr2
+  //     = ToType2->getAs<ObjCObjectPointerType>();
 
-    if (FromPtr1 && FromPtr2 && ToPtr1 && ToPtr2) {
-      // Apply the same conversion ranking rules for Objective-C pointer types
-      // that we do for C++ pointers to class types. However, we employ the
-      // Objective-C pseudo-subtyping relationship used for assignment of
-      // Objective-C pointer types.
-      bool FromAssignLeft
-        = S.Context.canAssignObjCInterfaces(FromPtr1, FromPtr2);
-      bool FromAssignRight
-        = S.Context.canAssignObjCInterfaces(FromPtr2, FromPtr1);
-      bool ToAssignLeft
-        = S.Context.canAssignObjCInterfaces(ToPtr1, ToPtr2);
-      bool ToAssignRight
-        = S.Context.canAssignObjCInterfaces(ToPtr2, ToPtr1);
+  //   if (FromPtr1 && FromPtr2 && ToPtr1 && ToPtr2) {
+  //     // Apply the same conversion ranking rules for Objective-C pointer types
+  //     // that we do for C++ pointers to class types. However, we employ the
+  //     // Objective-C pseudo-subtyping relationship used for assignment of
+  //     // Objective-C pointer types.
+  //     // bool FromAssignLeft
+  //     //   = S.Context.canAssignObjCInterfaces(FromPtr1, FromPtr2);
+  //     // bool FromAssignRight
+  //     //   = S.Context.canAssignObjCInterfaces(FromPtr2, FromPtr1);
+  //     // bool ToAssignLeft
+  //     //   = S.Context.canAssignObjCInterfaces(ToPtr1, ToPtr2);
+  //     // bool ToAssignRight
+  //     //   = S.Context.canAssignObjCInterfaces(ToPtr2, ToPtr1);
 
-      // A conversion to an a non-id object pointer type or qualified 'id'
-      // type is better than a conversion to 'id'.
-      if (ToPtr1->isObjCIdType() &&
-          (ToPtr2->isObjCQualifiedIdType() || ToPtr2->getInterfaceDecl()))
-        return ImplicitConversionSequence::Worse;
-      if (ToPtr2->isObjCIdType() &&
-          (ToPtr1->isObjCQualifiedIdType() || ToPtr1->getInterfaceDecl()))
-        return ImplicitConversionSequence::Better;
+  //     // A conversion to an a non-id object pointer type or qualified 'id'
+  //     // type is better than a conversion to 'id'.
+  //     if (ToPtr1->isObjCIdType() &&
+  //         (ToPtr2->isObjCQualifiedIdType() || ToPtr2->getInterfaceDecl()))
+  //       return ImplicitConversionSequence::Worse;
+  //     if (ToPtr2->isObjCIdType() &&
+  //         (ToPtr1->isObjCQualifiedIdType() || ToPtr1->getInterfaceDecl()))
+  //       return ImplicitConversionSequence::Better;
 
-      // A conversion to a non-id object pointer type is better than a
-      // conversion to a qualified 'id' type
-      if (ToPtr1->isObjCQualifiedIdType() && ToPtr2->getInterfaceDecl())
-        return ImplicitConversionSequence::Worse;
-      if (ToPtr2->isObjCQualifiedIdType() && ToPtr1->getInterfaceDecl())
-        return ImplicitConversionSequence::Better;
+  //     // A conversion to a non-id object pointer type is better than a
+  //     // conversion to a qualified 'id' type
+  //     if (ToPtr1->isObjCQualifiedIdType() && ToPtr2->getInterfaceDecl())
+  //       return ImplicitConversionSequence::Worse;
+  //     if (ToPtr2->isObjCQualifiedIdType() && ToPtr1->getInterfaceDecl())
+  //       return ImplicitConversionSequence::Better;
 
-      // A conversion to an a non-Class object pointer type or qualified 'Class'
-      // type is better than a conversion to 'Class'.
-      if (ToPtr1->isObjCClassType() &&
-          (ToPtr2->isObjCQualifiedClassType() || ToPtr2->getInterfaceDecl()))
-        return ImplicitConversionSequence::Worse;
-      if (ToPtr2->isObjCClassType() &&
-          (ToPtr1->isObjCQualifiedClassType() || ToPtr1->getInterfaceDecl()))
-        return ImplicitConversionSequence::Better;
+  //     // A conversion to an a non-Class object pointer type or qualified 'Class'
+  //     // type is better than a conversion to 'Class'.
+  //     if (ToPtr1->isObjCClassType() &&
+  //         (ToPtr2->isObjCQualifiedClassType() || ToPtr2->getInterfaceDecl()))
+  //       return ImplicitConversionSequence::Worse;
+  //     if (ToPtr2->isObjCClassType() &&
+  //         (ToPtr1->isObjCQualifiedClassType() || ToPtr1->getInterfaceDecl()))
+  //       return ImplicitConversionSequence::Better;
 
-      // A conversion to a non-Class object pointer type is better than a
-      // conversion to a qualified 'Class' type.
-      if (ToPtr1->isObjCQualifiedClassType() && ToPtr2->getInterfaceDecl())
-        return ImplicitConversionSequence::Worse;
-      if (ToPtr2->isObjCQualifiedClassType() && ToPtr1->getInterfaceDecl())
-        return ImplicitConversionSequence::Better;
+  //     // A conversion to a non-Class object pointer type is better than a
+  //     // conversion to a qualified 'Class' type.
+  //     if (ToPtr1->isObjCQualifiedClassType() && ToPtr2->getInterfaceDecl())
+  //       return ImplicitConversionSequence::Worse;
+  //     if (ToPtr2->isObjCQualifiedClassType() && ToPtr1->getInterfaceDecl())
+  //       return ImplicitConversionSequence::Better;
 
-      //   -- "conversion of C* to B* is better than conversion of C* to A*,"
-      if (S.Context.hasSameType(FromType1, FromType2) &&
-          !FromPtr1->isObjCIdType() && !FromPtr1->isObjCClassType() &&
-          (ToAssignLeft != ToAssignRight)) {
-        if (FromPtr1->isSpecialized()) {
-          // "conversion of B<A> * to B * is better than conversion of B * to
-          // C *.
-          bool IsFirstSame =
-              FromPtr1->getInterfaceDecl() == ToPtr1->getInterfaceDecl();
-          bool IsSecondSame =
-              FromPtr1->getInterfaceDecl() == ToPtr2->getInterfaceDecl();
-          if (IsFirstSame) {
-            if (!IsSecondSame)
-              return ImplicitConversionSequence::Better;
-          } else if (IsSecondSame)
-            return ImplicitConversionSequence::Worse;
-        }
-        return ToAssignLeft? ImplicitConversionSequence::Worse
-                           : ImplicitConversionSequence::Better;
-      }
+  //     //   -- "conversion of C* to B* is better than conversion of C* to A*,"
+  //     if (S.Context.hasSameType(FromType1, FromType2) &&
+  //         !FromPtr1->isObjCIdType() && !FromPtr1->isObjCClassType() &&
+  //         (ToAssignLeft != ToAssignRight)) {
+  //       if (FromPtr1->isSpecialized()) {
+  //         // "conversion of B<A> * to B * is better than conversion of B * to
+  //         // C *.
+  //         bool IsFirstSame =
+  //             FromPtr1->getInterfaceDecl() == ToPtr1->getInterfaceDecl();
+  //         bool IsSecondSame =
+  //             FromPtr1->getInterfaceDecl() == ToPtr2->getInterfaceDecl();
+  //         if (IsFirstSame) {
+  //           if (!IsSecondSame)
+  //             return ImplicitConversionSequence::Better;
+  //         } else if (IsSecondSame)
+  //           return ImplicitConversionSequence::Worse;
+  //       }
+  //       return ToAssignLeft? ImplicitConversionSequence::Worse
+  //                          : ImplicitConversionSequence::Better;
+  //     }
 
-      //   -- "conversion of B* to A* is better than conversion of C* to A*,"
-      if (S.Context.hasSameUnqualifiedType(ToType1, ToType2) &&
-          (FromAssignLeft != FromAssignRight))
-        return FromAssignLeft? ImplicitConversionSequence::Better
-        : ImplicitConversionSequence::Worse;
-    }
-  }
+  //     //   -- "conversion of B* to A* is better than conversion of C* to A*,"
+  //     // if (S.Context.hasSameUnqualifiedType(ToType1, ToType2) &&
+  //     //     (FromAssignLeft != FromAssignRight))
+  //     //   return FromAssignLeft? ImplicitConversionSequence::Better
+  //     //   : ImplicitConversionSequence::Worse;
+  //   }
+  // }
 
   // Ranking of member-pointer types.
   if (SCS1.Second == ICK_Pointer_Member && SCS2.Second == ICK_Pointer_Member &&
@@ -4483,10 +4484,10 @@ Sema::CompareReferenceRelationship(SourceLocation Loc,
              isTypeValid(UnqualT1) && isTypeValid(UnqualT2) &&
              IsDerivedFrom(Loc, UnqualT2, UnqualT1))
     Conv |= ReferenceConversions::DerivedToBase;
-  else if (UnqualT1->isObjCObjectOrInterfaceType() &&
-           UnqualT2->isObjCObjectOrInterfaceType() &&
-           Context.canBindObjCObjectType(UnqualT1, UnqualT2))
-    Conv |= ReferenceConversions::ObjC;
+  // else if (UnqualT1->isObjCObjectOrInterfaceType() &&
+  //          UnqualT2->isObjCObjectOrInterfaceType() &&
+  //          Context.canBindObjCObjectType(UnqualT1, UnqualT2))
+  //   Conv |= ReferenceConversions::ObjC;
   else if (UnqualT2->isFunctionType() &&
            IsFunctionConversion(UnqualT2, UnqualT1, ConvertedT2)) {
     Conv |= ReferenceConversions::Function;
@@ -6379,97 +6380,97 @@ void Sema::AddOverloadCandidate(
   }
 }
 
-ObjCMethodDecl *
-Sema::SelectBestMethod(Selector Sel, MultiExprArg Args, bool IsInstance,
-                       SmallVectorImpl<ObjCMethodDecl *> &Methods) {
-  if (Methods.size() <= 1)
-    return nullptr;
+// ObjCMethodDecl *
+// Sema::SelectBestMethod(Selector Sel, MultiExprArg Args, bool IsInstance,
+//                        SmallVectorImpl<ObjCMethodDecl *> &Methods) {
+//   if (Methods.size() <= 1)
+//     return nullptr;
 
-  for (unsigned b = 0, e = Methods.size(); b < e; b++) {
-    bool Match = true;
-    ObjCMethodDecl *Method = Methods[b];
-    unsigned NumNamedArgs = Sel.getNumArgs();
-    // Method might have more arguments than selector indicates. This is due
-    // to addition of c-style arguments in method.
-    if (Method->param_size() > NumNamedArgs)
-      NumNamedArgs = Method->param_size();
-    if (Args.size() < NumNamedArgs)
-      continue;
+//   for (unsigned b = 0, e = Methods.size(); b < e; b++) {
+//     bool Match = true;
+//     ObjCMethodDecl *Method = Methods[b];
+//     unsigned NumNamedArgs = Sel.getNumArgs();
+//     // Method might have more arguments than selector indicates. This is due
+//     // to addition of c-style arguments in method.
+//     if (Method->param_size() > NumNamedArgs)
+//       NumNamedArgs = Method->param_size();
+//     if (Args.size() < NumNamedArgs)
+//       continue;
 
-    for (unsigned i = 0; i < NumNamedArgs; i++) {
-      // We can't do any type-checking on a type-dependent argument.
-      if (Args[i]->isTypeDependent()) {
-        Match = false;
-        break;
-      }
+//     for (unsigned i = 0; i < NumNamedArgs; i++) {
+//       // We can't do any type-checking on a type-dependent argument.
+//       if (Args[i]->isTypeDependent()) {
+//         Match = false;
+//         break;
+//       }
 
-      ParmVarDecl *param = Method->parameters()[i];
-      Expr *argExpr = Args[i];
-      assert(argExpr && "SelectBestMethod(): missing expression");
+//       ParmVarDecl *param = Method->parameters()[i];
+//       Expr *argExpr = Args[i];
+//       assert(argExpr && "SelectBestMethod(): missing expression");
 
-      // Strip the unbridged-cast placeholder expression off unless it's
-      // a consumed argument.
-      if (argExpr->hasPlaceholderType(BuiltinType::ARCUnbridgedCast) &&
-          !param->hasAttr<CFConsumedAttr>())
-        argExpr = stripARCUnbridgedCast(argExpr);
+//       // Strip the unbridged-cast placeholder expression off unless it's
+//       // a consumed argument.
+//       if (argExpr->hasPlaceholderType(BuiltinType::ARCUnbridgedCast) &&
+//           !param->hasAttr<CFConsumedAttr>())
+//         argExpr = stripARCUnbridgedCast(argExpr);
 
-      // If the parameter is __unknown_anytype, move on to the next method.
-      if (param->getType() == Context.UnknownAnyTy) {
-        Match = false;
-        break;
-      }
+//       // If the parameter is __unknown_anytype, move on to the next method.
+//       if (param->getType() == Context.UnknownAnyTy) {
+//         Match = false;
+//         break;
+//       }
 
-      ImplicitConversionSequence ConversionState
-        = TryCopyInitialization(*this, argExpr, param->getType(),
-                                /*SuppressUserConversions*/false,
-                                /*InOverloadResolution=*/true,
-                                /*AllowObjCWritebackConversion=*/
-                                getLangOpts().ObjCAutoRefCount,
-                                /*AllowExplicit*/false);
-      // This function looks for a reasonably-exact match, so we consider
-      // incompatible pointer conversions to be a failure here.
-      if (ConversionState.isBad() ||
-          (ConversionState.isStandard() &&
-           ConversionState.Standard.Second ==
-               ICK_Incompatible_Pointer_Conversion)) {
-        Match = false;
-        break;
-      }
-    }
-    // Promote additional arguments to variadic methods.
-    if (Match && Method->isVariadic()) {
-      for (unsigned i = NumNamedArgs, e = Args.size(); i < e; ++i) {
-        if (Args[i]->isTypeDependent()) {
-          Match = false;
-          break;
-        }
-        ExprResult Arg = DefaultVariadicArgumentPromotion(Args[i], VariadicMethod,
-                                                          nullptr);
-        if (Arg.isInvalid()) {
-          Match = false;
-          break;
-        }
-      }
-    } else {
-      // Check for extra arguments to non-variadic methods.
-      if (Args.size() != NumNamedArgs)
-        Match = false;
-      else if (Match && NumNamedArgs == 0 && Methods.size() > 1) {
-        // Special case when selectors have no argument. In this case, select
-        // one with the most general result type of 'id'.
-        for (unsigned b = 0, e = Methods.size(); b < e; b++) {
-          QualType ReturnT = Methods[b]->getReturnType();
-          if (ReturnT->isObjCIdType())
-            return Methods[b];
-        }
-      }
-    }
+//       ImplicitConversionSequence ConversionState
+//         = TryCopyInitialization(*this, argExpr, param->getType(),
+//                                 /*SuppressUserConversions*/false,
+//                                 /*InOverloadResolution=*/true,
+//                                 /*AllowObjCWritebackConversion=*/
+//                                 getLangOpts().ObjCAutoRefCount,
+//                                 /*AllowExplicit*/false);
+//       // This function looks for a reasonably-exact match, so we consider
+//       // incompatible pointer conversions to be a failure here.
+//       if (ConversionState.isBad() ||
+//           (ConversionState.isStandard() &&
+//            ConversionState.Standard.Second ==
+//                ICK_Incompatible_Pointer_Conversion)) {
+//         Match = false;
+//         break;
+//       }
+//     }
+//     // Promote additional arguments to variadic methods.
+//     if (Match && Method->isVariadic()) {
+//       for (unsigned i = NumNamedArgs, e = Args.size(); i < e; ++i) {
+//         if (Args[i]->isTypeDependent()) {
+//           Match = false;
+//           break;
+//         }
+//         ExprResult Arg = DefaultVariadicArgumentPromotion(Args[i], VariadicMethod,
+//                                                           nullptr);
+//         if (Arg.isInvalid()) {
+//           Match = false;
+//           break;
+//         }
+//       }
+//     } else {
+//       // Check for extra arguments to non-variadic methods.
+//       if (Args.size() != NumNamedArgs)
+//         Match = false;
+//       else if (Match && NumNamedArgs == 0 && Methods.size() > 1) {
+//         // Special case when selectors have no argument. In this case, select
+//         // one with the most general result type of 'id'.
+//         for (unsigned b = 0, e = Methods.size(); b < e; b++) {
+//           QualType ReturnT = Methods[b]->getReturnType();
+//           if (ReturnT->isObjCIdType())
+//             return Methods[b];
+//         }
+//       }
+//     }
 
-    if (Match)
-      return Method;
-  }
-  return nullptr;
-}
+//     if (Match)
+//       return Method;
+//   }
+//   return nullptr;
+// }
 
 static bool convertArgsForAvailabilityChecks(
     Sema &S, FunctionDecl *Function, Expr *ThisArg, SourceLocation CallLoc,
@@ -7134,10 +7135,11 @@ static bool isAllowableExplicitConversion(Sema &S,
     return false;
 
   // Is this an Objective-C pointer conversion?
-  bool IncompatibleObjC = false;
-  QualType ConvertedType;
-  return S.isObjCPointerConversion(ConvType, ToNonRefType, ConvertedType,
-                                   IncompatibleObjC);
+  // bool IncompatibleObjC = false;
+  // QualType ConvertedType;
+  // return S.isObjCPointerConversion(ConvType, ToNonRefType, ConvertedType,
+  //                                  IncompatibleObjC);
+  return false;
 }
 
 /// AddConversionCandidate - Add a C++ conversion function as a
@@ -7785,13 +7787,13 @@ BuiltinCandidateTypeSet::AddPointerWithMoreQualifiedTypeVariants(QualType Ty,
   QualType PointeeTy;
   const PointerType *PointerTy = Ty->getAs<PointerType>();
   bool buildObjCPtr = false;
-  if (!PointerTy) {
-    const ObjCObjectPointerType *PTy = Ty->castAs<ObjCObjectPointerType>();
-    PointeeTy = PTy->getPointeeType();
-    buildObjCPtr = true;
-  } else {
+  // if (!PointerTy) {
+  //   const ObjCObjectPointerType *PTy = Ty->castAs<ObjCObjectPointerType>();
+  //   PointeeTy = PTy->getPointeeType();
+  //   buildObjCPtr = true;
+  // } else {
     PointeeTy = PointerTy->getPointeeType();
-  }
+  // }
 
   // Don't add qualified variants of arrays. For one, they're not allowed
   // (the qualifier would sink to the element type), and for another, the
@@ -7915,12 +7917,12 @@ BuiltinCandidateTypeSet::AddTypesConvertedFrom(QualType Ty,
 
   if (Ty->isObjCIdType() || Ty->isObjCClassType())
     PointerTypes.insert(Ty);
-  else if (Ty->getAs<PointerType>() || Ty->getAs<ObjCObjectPointerType>()) {
+  /*else if (Ty->getAs<PointerType>() || Ty->getAs<ObjCObjectPointerType>()) {
     // Insert our type, and its more-qualified variants, into the set
     // of types.
     if (!AddPointerWithMoreQualifiedTypeVariants(Ty, VisibleQuals))
       return;
-  } else if (Ty->isMemberPointerType()) {
+  } */else if (Ty->isMemberPointerType()) {
     // Member pointers are far easier, since the pointee can't be converted.
     if (!AddMemberPointerWithMoreQualifiedTypeVariants(Ty))
       return;
@@ -10395,7 +10397,7 @@ static void DiagnoseBadConversion(Sema &S, OverloadCandidate *Cand,
                           FromPtrTy->getPointeeType()))
         BaseToDerivedConversion = 1;
     }
-  } else if (const ObjCObjectPointerType *FromPtrTy
+  } /*else if (const ObjCObjectPointerType *FromPtrTy
                                     = FromTy->getAs<ObjCObjectPointerType>()) {
     if (const ObjCObjectPointerType *ToPtrTy
                                         = ToTy->getAs<ObjCObjectPointerType>())
@@ -10405,7 +10407,7 @@ static void DiagnoseBadConversion(Sema &S, OverloadCandidate *Cand,
                                                 FromPtrTy->getPointeeType()) &&
               FromIface->isSuperClassOf(ToIface))
             BaseToDerivedConversion = 2;
-  } else if (const ReferenceType *ToRefTy = ToTy->getAs<ReferenceType>()) {
+  } */else if (const ReferenceType *ToRefTy = ToTy->getAs<ReferenceType>()) {
     if (ToRefTy->getPointeeType().isAtLeastAsQualifiedAs(FromTy) &&
         !FromTy->isIncompleteType() &&
         !ToRefTy->getPointeeType()->isIncompleteType() &&
@@ -10432,19 +10434,19 @@ static void DiagnoseBadConversion(Sema &S, OverloadCandidate *Cand,
     return;
   }
 
-  if (isa<ObjCObjectPointerType>(CFromTy) &&
-      isa<PointerType>(CToTy)) {
-      Qualifiers FromQs = CFromTy.getQualifiers();
-      Qualifiers ToQs = CToTy.getQualifiers();
-      if (FromQs.getObjCLifetime() != ToQs.getObjCLifetime()) {
-        S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_arc_conv)
-            << (unsigned)FnKindPair.first << (unsigned)FnKindPair.second
-            << FnDesc << (FromExpr ? FromExpr->getSourceRange() : SourceRange())
-            << FromTy << ToTy << (unsigned)isObjectArgument << I + 1;
-        MaybeEmitInheritedConstructorNote(S, Cand->FoundDecl);
-        return;
-      }
-  }
+  // if (isa<ObjCObjectPointerType>(CFromTy) &&
+  //     isa<PointerType>(CToTy)) {
+  //     Qualifiers FromQs = CFromTy.getQualifiers();
+  //     Qualifiers ToQs = CToTy.getQualifiers();
+  //     if (FromQs.getObjCLifetime() != ToQs.getObjCLifetime()) {
+  //       S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_arc_conv)
+  //           << (unsigned)FnKindPair.first << (unsigned)FnKindPair.second
+  //           << FnDesc << (FromExpr ? FromExpr->getSourceRange() : SourceRange())
+  //           << FromTy << ToTy << (unsigned)isObjectArgument << I + 1;
+  //       MaybeEmitInheritedConstructorNote(S, Cand->FoundDecl);
+  //       return;
+  //     }
+  // }
 
   if (TakingCandidateAddress &&
       !checkAddressOfCandidateIsAvailable(S, Cand->Function))

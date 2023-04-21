@@ -12,7 +12,7 @@
 
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/Lex/Preprocessor.h"
 #include "latino/Sema/Sema.h"
 #include "latino/Sema/SemaFixItUtils.h"
@@ -78,9 +78,9 @@ bool ConversionFixItGenerator::tryToFixConversion(const Expr *FullExpr,
       isa<CXXThisExpr>(Expr) ||
       isa<CXXTypeidExpr>(Expr) ||
       isa<CXXUnresolvedConstructExpr>(Expr) ||
-      isa<ObjCMessageExpr>(Expr) ||
-      isa<ObjCPropertyRefExpr>(Expr) ||
-      isa<ObjCProtocolExpr>(Expr) ||
+      // isa<ObjCMessageExpr>(Expr) ||
+      // isa<ObjCPropertyRefExpr>(Expr) ||
+      // isa<ObjCProtocolExpr>(Expr) ||
       isa<MemberExpr>(Expr) ||
       isa<ParenExpr>(FullExpr) ||
       isa<ParenListExpr>(Expr) ||
@@ -171,9 +171,9 @@ static std::string getScalarZeroExpressionForType(
   // better initializer.
   if (T.isEnumeralType())
     return std::string();
-  if ((T.isObjCObjectPointerType() || T.isBlockPointerType()) &&
-      isMacroDefined(S, Loc, "nil"))
-    return "nil";
+  // if ((T.isObjCObjectPointerType() || T.isBlockPointerType()) &&
+  //     isMacroDefined(S, Loc, "nil"))
+  //   return "nil";
   if (T.isRealFloatingType())
     return "0.0";
   if (T.isBooleanType() &&

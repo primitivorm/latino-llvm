@@ -24,7 +24,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
 #include "latino/AST/DeclGroup.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
@@ -50,7 +50,7 @@
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"
 #include "latino/Basic/Module.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/OperatorKinds.h"
 #include "latino/Basic/PragmaKinds.h"
 #include "latino/Basic/Sanitizers.h"
@@ -70,7 +70,7 @@
 #include "latino/Lex/Preprocessor.h"
 #include "latino/Lex/PreprocessorOptions.h"
 #include "latino/Lex/Token.h"
-#include "latino/Sema/ObjCMethodList.h"
+// #include "latino/Sema/ObjCMethodList.h"
 #include "latino/Sema/Scope.h"
 #include "latino/Sema/Sema.h"
 #include "latino/Sema/Weak.h"
@@ -870,18 +870,18 @@ ASTSelectorLookupTrait::ReadData(Selector, const unsigned char* d,
   unsigned NumFactoryMethods = FullFactoryBits >> 3;
 
   // Load instance methods
-  for (unsigned I = 0; I != NumInstanceMethods; ++I) {
-    if (ObjCMethodDecl *Method = Reader.GetLocalDeclAs<ObjCMethodDecl>(
-            F, endian::readNext<uint32_t, little, unaligned>(d)))
-      Result.Instance.push_back(Method);
-  }
+  // for (unsigned I = 0; I != NumInstanceMethods; ++I) {
+  //   if (ObjCMethodDecl *Method = Reader.GetLocalDeclAs<ObjCMethodDecl>(
+  //           F, endian::readNext<uint32_t, little, unaligned>(d)))
+  //     Result.Instance.push_back(Method);
+  // }
 
   // Load factory methods
-  for (unsigned I = 0; I != NumFactoryMethods; ++I) {
-    if (ObjCMethodDecl *Method = Reader.GetLocalDeclAs<ObjCMethodDecl>(
-            F, endian::readNext<uint32_t, little, unaligned>(d)))
-      Result.Factory.push_back(Method);
-  }
+  // for (unsigned I = 0; I != NumFactoryMethods; ++I) {
+  //   if (ObjCMethodDecl *Method = Reader.GetLocalDeclAs<ObjCMethodDecl>(
+  //           F, endian::readNext<uint32_t, little, unaligned>(d)))
+  //     Result.Factory.push_back(Method);
+  // }
 
   return Result;
 }
@@ -4000,33 +4000,33 @@ ASTReader::ReadModuleMapFileBlock(RecordData &Record, ModuleFile &F,
 }
 
 /// Move the given method to the back of the global list of methods.
-static void moveMethodToBackOfGlobalList(Sema &S, ObjCMethodDecl *Method) {
-  // Find the entry for this selector in the method pool.
-  Sema::GlobalMethodPool::iterator Known
-    = S.MethodPool.find(Method->getSelector());
-  if (Known == S.MethodPool.end())
-    return;
+// static void moveMethodToBackOfGlobalList(Sema &S, ObjCMethodDecl *Method) {
+//   // Find the entry for this selector in the method pool.
+//   Sema::GlobalMethodPool::iterator Known
+//     = S.MethodPool.find(Method->getSelector());
+//   if (Known == S.MethodPool.end())
+//     return;
 
-  // Retrieve the appropriate method list.
-  ObjCMethodList &Start = Method->isInstanceMethod()? Known->second.first
-                                                    : Known->second.second;
-  bool Found = false;
-  for (ObjCMethodList *List = &Start; List; List = List->getNext()) {
-    if (!Found) {
-      if (List->getMethod() == Method) {
-        Found = true;
-      } else {
-        // Keep searching.
-        continue;
-      }
-    }
+//   // Retrieve the appropriate method list.
+//   ObjCMethodList &Start = Method->isInstanceMethod()? Known->second.first
+//                                                     : Known->second.second;
+//   bool Found = false;
+//   for (ObjCMethodList *List = &Start; List; List = List->getNext()) {
+//     if (!Found) {
+//       if (List->getMethod() == Method) {
+//         Found = true;
+//       } else {
+//         // Keep searching.
+//         continue;
+//       }
+//     }
 
-    if (List->getNext())
-      List->setMethod(List->getNext()->getMethod());
-    else
-      List->setMethod(Method);
-  }
-}
+//     if (List->getNext())
+//       List->setMethod(List->getNext()->getMethod());
+//     else
+//       List->setMethod(Method);
+//   }
+// }
 
 void ASTReader::makeNamesVisible(const HiddenNames &Names, Module *Owner) {
   assert(Owner->NameVisibility != Module::Hidden && "nothing to make visible?");
@@ -4034,11 +4034,11 @@ void ASTReader::makeNamesVisible(const HiddenNames &Names, Module *Owner) {
     bool wasHidden = !D->isUnconditionallyVisible();
     D->setVisibleDespiteOwningModule();
 
-    if (wasHidden && SemaObj) {
-      if (ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(D)) {
-        moveMethodToBackOfGlobalList(*SemaObj, Method);
-      }
-    }
+    // if (wasHidden && SemaObj) {
+    //   if (ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(D)) {
+    //     moveMethodToBackOfGlobalList(*SemaObj, Method);
+    //   }
+    // }
   }
 }
 
@@ -4413,13 +4413,13 @@ ASTReader::ASTReadResult ASTReader::ReadAST(StringRef FileName,
 
   // For any Objective-C class definitions we have already loaded, make sure
   // that we load any additional categories.
-  if (ContextObj) {
-    for (unsigned I = 0, N = ObjCClassesLoaded.size(); I != N; ++I) {
-      loadObjCCategories(ObjCClassesLoaded[I]->getGlobalID(),
-                         ObjCClassesLoaded[I],
-                         PreviousGeneration);
-    }
-  }
+  // if (ContextObj) {
+  //   for (unsigned I = 0, N = ObjCClassesLoaded.size(); I != N; ++I) {
+  //     loadObjCCategories(ObjCClassesLoaded[I]->getGlobalID(),
+  //                        ObjCClassesLoaded[I],
+  //                        PreviousGeneration);
+  //   }
+  // }
 
   if (PP.getHeaderSearchInfo()
           .getHeaderSearchOpts()
@@ -6727,9 +6727,9 @@ void TypeLocReader::VisitPackExpansionTypeLoc(PackExpansionTypeLoc TL) {
   TL.setEllipsisLoc(readSourceLocation());
 }
 
-void TypeLocReader::VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
-  TL.setNameLoc(readSourceLocation());
-}
+// void TypeLocReader::VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
+//   TL.setNameLoc(readSourceLocation());
+// }
 
 void TypeLocReader::VisitObjCTypeParamTypeLoc(ObjCTypeParamTypeLoc TL) {
   if (TL.getNumProtocols()) {
@@ -6740,21 +6740,21 @@ void TypeLocReader::VisitObjCTypeParamTypeLoc(ObjCTypeParamTypeLoc TL) {
     TL.setProtocolLoc(i, readSourceLocation());
 }
 
-void TypeLocReader::VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
-  TL.setHasBaseTypeAsWritten(Reader.readBool());
-  TL.setTypeArgsLAngleLoc(readSourceLocation());
-  TL.setTypeArgsRAngleLoc(readSourceLocation());
-  for (unsigned i = 0, e = TL.getNumTypeArgs(); i != e; ++i)
-    TL.setTypeArgTInfo(i, GetTypeSourceInfo());
-  TL.setProtocolLAngleLoc(readSourceLocation());
-  TL.setProtocolRAngleLoc(readSourceLocation());
-  for (unsigned i = 0, e = TL.getNumProtocols(); i != e; ++i)
-    TL.setProtocolLoc(i, readSourceLocation());
-}
+// void TypeLocReader::VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
+//   TL.setHasBaseTypeAsWritten(Reader.readBool());
+//   TL.setTypeArgsLAngleLoc(readSourceLocation());
+//   TL.setTypeArgsRAngleLoc(readSourceLocation());
+//   for (unsigned i = 0, e = TL.getNumTypeArgs(); i != e; ++i)
+//     TL.setTypeArgTInfo(i, GetTypeSourceInfo());
+//   TL.setProtocolLAngleLoc(readSourceLocation());
+//   TL.setProtocolRAngleLoc(readSourceLocation());
+//   for (unsigned i = 0, e = TL.getNumProtocols(); i != e; ++i)
+//     TL.setProtocolLoc(i, readSourceLocation());
+// }
 
-void TypeLocReader::VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
-  TL.setStarLoc(readSourceLocation());
-}
+// void TypeLocReader::VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
+//   TL.setStarLoc(readSourceLocation());
+// }
 
 void TypeLocReader::VisitAtomicTypeLoc(AtomicTypeLoc TL) {
   TL.setKWLoc(readSourceLocation());
@@ -6982,31 +6982,31 @@ QualType ASTReader::GetType(TypeID ID) {
     case PREDEF_TYPE_OBJC_SEL:
       T = Context.ObjCBuiltinSelTy;
       break;
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-    case PREDEF_TYPE_##Id##_ID: \
-      T = Context.SingletonId; \
-      break;
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-    case PREDEF_TYPE_##Id##_ID: \
-      T = Context.Id##Ty; \
-      break;
-#include "latino/Basic/OpenCLExtensionTypes.def"
-    case PREDEF_TYPE_SAMPLER_ID:
-      T = Context.OCLSamplerTy;
-      break;
-    case PREDEF_TYPE_EVENT_ID:
-      T = Context.OCLEventTy;
-      break;
-    case PREDEF_TYPE_CLK_EVENT_ID:
-      T = Context.OCLClkEventTy;
-      break;
-    case PREDEF_TYPE_QUEUE_ID:
-      T = Context.OCLQueueTy;
-      break;
-    case PREDEF_TYPE_RESERVE_ID_ID:
-      T = Context.OCLReserveIDTy;
-      break;
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//     case PREDEF_TYPE_##Id##_ID: \
+//       T = Context.SingletonId; \
+//       break;
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//     case PREDEF_TYPE_##Id##_ID: \
+//       T = Context.Id##Ty; \
+//       break;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+    // case PREDEF_TYPE_SAMPLER_ID:
+    //   T = Context.OCLSamplerTy;
+    //   break;
+    // case PREDEF_TYPE_EVENT_ID:
+    //   T = Context.OCLEventTy;
+    //   break;
+    // case PREDEF_TYPE_CLK_EVENT_ID:
+    //   T = Context.OCLClkEventTy;
+    //   break;
+    // case PREDEF_TYPE_QUEUE_ID:
+    //   T = Context.OCLQueueTy;
+    //   break;
+    // case PREDEF_TYPE_RESERVE_ID_ID:
+    //   T = Context.OCLReserveIDTy;
+    //   break;
     case PREDEF_TYPE_AUTO_DEDUCT:
       T = Context.getAutoDeductType();
       break;
@@ -7323,17 +7323,17 @@ static Decl *getPredefinedDecl(ASTContext &Context, PredefinedDeclIDs ID) {
   case PREDEF_DECL_TRANSLATION_UNIT_ID:
     return Context.getTranslationUnitDecl();
 
-  case PREDEF_DECL_OBJC_ID_ID:
-    return Context.getObjCIdDecl();
+  // case PREDEF_DECL_OBJC_ID_ID:
+  //   return Context.getObjCIdDecl();
 
-  case PREDEF_DECL_OBJC_SEL_ID:
-    return Context.getObjCSelDecl();
+  // case PREDEF_DECL_OBJC_SEL_ID:
+  //   return Context.getObjCSelDecl();
 
-  case PREDEF_DECL_OBJC_CLASS_ID:
-    return Context.getObjCClassDecl();
+  // case PREDEF_DECL_OBJC_CLASS_ID:
+  //   return Context.getObjCClassDecl();
 
-  case PREDEF_DECL_OBJC_PROTOCOL_ID:
-    return Context.getObjCProtocolDecl();
+  // case PREDEF_DECL_OBJC_PROTOCOL_ID:
+  //   return Context.getObjCProtocolDecl();
 
   case PREDEF_DECL_INT_128_ID:
     return Context.getInt128Decl();
@@ -8087,8 +8087,8 @@ namespace serialization {
     unsigned FactoryBits = 0;
     bool InstanceHasMoreThanOneDecl = false;
     bool FactoryHasMoreThanOneDecl = false;
-    SmallVector<ObjCMethodDecl *, 4> InstanceMethods;
-    SmallVector<ObjCMethodDecl *, 4> FactoryMethods;
+    // SmallVector<ObjCMethodDecl *, 4> InstanceMethods;
+    // SmallVector<ObjCMethodDecl *, 4> FactoryMethods;
 
   public:
     ReadMethodPoolVisitor(ASTReader &Reader, Selector Sel,
@@ -8130,14 +8130,14 @@ namespace serialization {
     }
 
     /// Retrieve the instance methods found by this visitor.
-    ArrayRef<ObjCMethodDecl *> getInstanceMethods() const {
-      return InstanceMethods;
-    }
+    // ArrayRef<ObjCMethodDecl *> getInstanceMethods() const {
+    //   return InstanceMethods;
+    // }
 
     /// Retrieve the instance methods found by this visitor.
-    ArrayRef<ObjCMethodDecl *> getFactoryMethods() const {
-      return FactoryMethods;
-    }
+    // ArrayRef<ObjCMethodDecl *> getFactoryMethods() const {
+    //   return FactoryMethods;
+    // }
 
     unsigned getInstanceBits() const { return InstanceBits; }
     unsigned getFactoryBits() const { return FactoryBits; }
@@ -8153,12 +8153,12 @@ namespace serialization {
 } // namespace latino
 
 /// Add the given set of methods to the method list.
-static void addMethodsToPool(Sema &S, ArrayRef<ObjCMethodDecl *> Methods,
-                             ObjCMethodList &List) {
-  for (unsigned I = 0, N = Methods.size(); I != N; ++I) {
-    S.addMethodToGlobalList(&List, Methods[I]);
-  }
-}
+// static void addMethodsToPool(Sema &S, ArrayRef<ObjCMethodDecl *> Methods,
+//                              ObjCMethodList &List) {
+//   for (unsigned I = 0, N = Methods.size(); I != N; ++I) {
+//     S.addMethodToGlobalList(&List, Methods[I]);
+//   }
+// }
 
 void ASTReader::ReadMethodPool(Selector Sel) {
   // Get the selector generation and update it to the current generation.
@@ -9316,23 +9316,23 @@ void ASTReader::finishPendingActions() {
       continue;
     }
 
-    if (auto ID = dyn_cast<ObjCInterfaceDecl>(D)) {
-      // Make sure that the ObjCInterfaceType points at the definition.
-      const_cast<ObjCInterfaceType *>(cast<ObjCInterfaceType>(ID->TypeForDecl))
-        ->Decl = ID;
+    // if (auto ID = dyn_cast<ObjCInterfaceDecl>(D)) {
+    //   // Make sure that the ObjCInterfaceType points at the definition.
+    //   const_cast<ObjCInterfaceType *>(cast<ObjCInterfaceType>(ID->TypeForDecl))
+    //     ->Decl = ID;
 
-      for (auto *R = getMostRecentExistingDecl(ID); R; R = R->getPreviousDecl())
-        cast<ObjCInterfaceDecl>(R)->Data = ID->Data;
+    //   for (auto *R = getMostRecentExistingDecl(ID); R; R = R->getPreviousDecl())
+    //     cast<ObjCInterfaceDecl>(R)->Data = ID->Data;
 
-      continue;
-    }
+    //   continue;
+    // }
 
-    if (auto PD = dyn_cast<ObjCProtocolDecl>(D)) {
-      for (auto *R = getMostRecentExistingDecl(PD); R; R = R->getPreviousDecl())
-        cast<ObjCProtocolDecl>(R)->Data = PD->Data;
+    // if (auto PD = dyn_cast<ObjCProtocolDecl>(D)) {
+    //   for (auto *R = getMostRecentExistingDecl(PD); R; R = R->getPreviousDecl())
+    //     cast<ObjCProtocolDecl>(R)->Data = PD->Data;
 
-      continue;
-    }
+    //   continue;
+    // }
 
     auto RTD = cast<RedeclarableTemplateDecl>(D)->getCanonicalDecl();
     for (auto *R = getMostRecentExistingDecl(RTD); R; R = R->getPreviousDecl())
@@ -9387,9 +9387,9 @@ void ASTReader::finishPendingActions() {
       continue;
     }
 
-    ObjCMethodDecl *MD = cast<ObjCMethodDecl>(PB->first);
-    if (!getContext().getLangOpts().Modules || !MD->hasBody())
-      MD->setLazyBody(PB->second);
+    // ObjCMethodDecl *MD = cast<ObjCMethodDecl>(PB->first);
+    // if (!getContext().getLangOpts().Modules || !MD->hasBody())
+    //   MD->setLazyBody(PB->second);
   }
   PendingBodies.clear();
 

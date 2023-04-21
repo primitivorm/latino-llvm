@@ -13,7 +13,7 @@
 #include "CGCXXABI.h"
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
@@ -21,7 +21,7 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/AST/StmtVisitor.h"
@@ -459,9 +459,9 @@ public:
   Value *VisitCharacterLiteral(const CharacterLiteral *E) {
     return llvm::ConstantInt::get(ConvertType(E->getType()), E->getValue());
   }
-  Value *VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *E) {
-    return llvm::ConstantInt::get(ConvertType(E->getType()), E->getValue());
-  }
+  // Value *VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *E) {
+  //   return llvm::ConstantInt::get(ConvertType(E->getType()), E->getValue());
+  // }
   Value *VisitCXXBoolLiteralExpr(const CXXBoolLiteralExpr *E) {
     return llvm::ConstantInt::get(ConvertType(E->getType()), E->getValue());
   }
@@ -502,21 +502,21 @@ public:
     return EmitLoadOfLValue(E);
   }
 
-  Value *VisitObjCSelectorExpr(ObjCSelectorExpr *E) {
-    return CGF.EmitObjCSelectorExpr(E);
-  }
-  Value *VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
-    return CGF.EmitObjCProtocolExpr(E);
-  }
-  Value *VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
-    return EmitLoadOfLValue(E);
-  }
-  Value *VisitObjCMessageExpr(ObjCMessageExpr *E) {
-    if (E->getMethodDecl() &&
-        E->getMethodDecl()->getReturnType()->isReferenceType())
-      return EmitLoadOfLValue(E);
-    return CGF.EmitObjCMessageExpr(E).getScalarVal();
-  }
+  // Value *VisitObjCSelectorExpr(ObjCSelectorExpr *E) {
+  //   return CGF.EmitObjCSelectorExpr(E);
+  // }
+  // Value *VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
+  //   return CGF.EmitObjCProtocolExpr(E);
+  // }
+  // Value *VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
+  //   return EmitLoadOfLValue(E);
+  // }
+  // Value *VisitObjCMessageExpr(ObjCMessageExpr *E) {
+  //   if (E->getMethodDecl() &&
+  //       E->getMethodDecl()->getReturnType()->isReferenceType())
+  //     return EmitLoadOfLValue(E);
+  //   return CGF.EmitObjCMessageExpr(E).getScalarVal();
+  // }
 
   Value *VisitObjCIsaExpr(ObjCIsaExpr *E) {
     LValue LV = CGF.EmitObjCIsaExpr(E);
@@ -855,18 +855,18 @@ public:
   Value *VisitAbstractConditionalOperator(const AbstractConditionalOperator *);
   Value *VisitChooseExpr(ChooseExpr *CE);
   Value *VisitVAArgExpr(VAArgExpr *VE);
-  Value *VisitObjCStringLiteral(const ObjCStringLiteral *E) {
-    return CGF.EmitObjCStringLiteral(E);
-  }
-  Value *VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
-    return CGF.EmitObjCBoxedExpr(E);
-  }
-  Value *VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
-    return CGF.EmitObjCArrayLiteral(E);
-  }
-  Value *VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
-    return CGF.EmitObjCDictionaryLiteral(E);
-  }
+  // Value *VisitObjCStringLiteral(const ObjCStringLiteral *E) {
+  //   return CGF.EmitObjCStringLiteral(E);
+  // }
+  // Value *VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
+  //   return CGF.EmitObjCBoxedExpr(E);
+  // }
+  // Value *VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
+  //   return CGF.EmitObjCArrayLiteral(E);
+  // }
+  // Value *VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
+  //   return CGF.EmitObjCDictionaryLiteral(E);
+  // }
   Value *VisitAsTypeExpr(AsTypeExpr *CE);
   Value *VisitAtomicExpr(AtomicExpr *AE);
 };
@@ -2014,7 +2014,8 @@ Value *ScalarExprEmitter::VisitCastExpr(CastExpr *CE) {
     llvm_unreachable("builtin functions are handled elsewhere");
 
   case CK_LValueBitCast:
-  case CK_ObjCObjectLValueCast: {
+  // case CK_ObjCObjectLValueCast: 
+  {
     Address Addr = EmitLValue(E).getAddress(CGF);
     Addr = Builder.CreateElementBitCast(Addr, CGF.ConvertTypeForMem(DestTy));
     LValue LV = CGF.MakeAddrLValue(Addr, DestTy);
@@ -2030,8 +2031,8 @@ Value *ScalarExprEmitter::VisitCastExpr(CastExpr *CE) {
     return EmitLoadOfLValue(DestLV, CE->getExprLoc());
   }
 
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_AnyPointerToBlockPointerCast:
   case CK_BitCast: {
     Value *Src = Visit(const_cast<Expr*>(E));
@@ -2322,15 +2323,15 @@ Value *ScalarExprEmitter::VisitCastExpr(CastExpr *CE) {
                                          CE->getExprLoc());
   }
 
-  case CK_ZeroToOCLOpaqueType: {
-    assert((DestTy->isEventT() || DestTy->isQueueT() ||
-            DestTy->isOCLIntelSubgroupAVCType()) &&
-           "CK_ZeroToOCLEvent cast on non-event type");
-    return llvm::Constant::getNullValue(ConvertType(DestTy));
-  }
+  // case CK_ZeroToOCLOpaqueType: {
+  //   assert((DestTy->isEventT() || DestTy->isQueueT() ||
+  //           DestTy->isOCLIntelSubgroupAVCType()) &&
+  //          "CK_ZeroToOCLEvent cast on non-event type");
+  //   return llvm::Constant::getNullValue(ConvertType(DestTy));
+  // }
 
-  case CK_IntToOCLSampler:
-    return CGF.CGM.createOpenCLIntToSamplerConversion(E, CGF);
+  // case CK_IntToOCLSampler:
+  //   return CGF.CGM.createOpenCLIntToSamplerConversion(E, CGF);
 
   } // end of switch
 
@@ -2678,23 +2679,24 @@ ScalarExprEmitter::EmitScalarPrePostIncDec(const UnaryOperator *E, LValue LV,
     value = EmitFixedPointBinOp(Info);
 
   // Objective-C pointer types.
-  } else {
-    const ObjCObjectPointerType *OPT = type->castAs<ObjCObjectPointerType>();
-    value = CGF.EmitCastToVoidPtr(value);
+  } 
+  // else {
+  //   const ObjCObjectPointerType *OPT = type->castAs<ObjCObjectPointerType>();
+  //   value = CGF.EmitCastToVoidPtr(value);
 
-    CharUnits size = CGF.getContext().getTypeSizeInChars(OPT->getObjectType());
-    if (!isInc) size = -size;
-    llvm::Value *sizeValue =
-      llvm::ConstantInt::get(CGF.SizeTy, size.getQuantity());
+  //   CharUnits size = CGF.getContext().getTypeSizeInChars(OPT->getObjectType());
+  //   if (!isInc) size = -size;
+  //   llvm::Value *sizeValue =
+  //     llvm::ConstantInt::get(CGF.SizeTy, size.getQuantity());
 
-    if (CGF.getLangOpts().isSignedOverflowDefined())
-      value = Builder.CreateGEP(value, sizeValue, "incdec.objptr");
-    else
-      value = CGF.EmitCheckedInBoundsGEP(value, sizeValue,
-                                         /*SignedIndices=*/false, isSubtraction,
-                                         E->getExprLoc(), "incdec.objptr");
-    value = Builder.CreateBitCast(value, input->getType());
-  }
+  //   if (CGF.getLangOpts().isSignedOverflowDefined())
+  //     value = Builder.CreateGEP(value, sizeValue, "incdec.objptr");
+  //   else
+  //     value = CGF.EmitCheckedInBoundsGEP(value, sizeValue,
+  //                                        /*SignedIndices=*/false, isSubtraction,
+  //                                        E->getExprLoc(), "incdec.objptr");
+  //   value = Builder.CreateBitCast(value, input->getType());
+  // }
 
   if (atomicPHI) {
     llvm::BasicBlock *curBlock = Builder.GetInsertBlock();
@@ -2895,14 +2897,14 @@ ScalarExprEmitter::VisitUnaryExprOrTypeTraitExpr(
 
       return size;
     }
-  } else if (E->getKind() == UETT_OpenMPRequiredSimdAlign) {
+  } /*else if (E->getKind() == UETT_OpenMPRequiredSimdAlign) {
     auto Alignment =
         CGF.getContext()
             .toCharUnitsFromBits(CGF.getContext().getOpenMPDefaultSimdAlign(
                 E->getTypeOfArgument()->getPointeeType()))
             .getQuantity();
     return llvm::ConstantInt::get(CGF.SizeTy, Alignment);
-  }
+  }*/
 
   // If this isn't sizeof(vla), the result must be constant; use the constant
   // folding logic so we don't have to duplicate it here.
@@ -3380,19 +3382,19 @@ static Value *emitPointerArithmetic(CodeGenFunction &CGF,
 
   const PointerType *pointerType
     = pointerOperand->getType()->getAs<PointerType>();
-  if (!pointerType) {
-    QualType objectType = pointerOperand->getType()
-                                        ->castAs<ObjCObjectPointerType>()
-                                        ->getPointeeType();
-    llvm::Value *objectSize
-      = CGF.CGM.getSize(CGF.getContext().getTypeSizeInChars(objectType));
+  // if (!pointerType) {
+  //   QualType objectType = pointerOperand->getType()
+  //                                       ->castAs<ObjCObjectPointerType>()
+  //                                       ->getPointeeType();
+  //   llvm::Value *objectSize
+  //     = CGF.CGM.getSize(CGF.getContext().getTypeSizeInChars(objectType));
 
-    index = CGF.Builder.CreateMul(index, objectSize);
+  //   index = CGF.Builder.CreateMul(index, objectSize);
 
-    Value *result = CGF.Builder.CreateBitCast(pointer, CGF.VoidPtrTy);
-    result = CGF.Builder.CreateGEP(result, index, "add.ptr");
-    return CGF.Builder.CreateBitCast(result, pointer->getType());
-  }
+  //   Value *result = CGF.Builder.CreateBitCast(pointer, CGF.VoidPtrTy);
+  //   result = CGF.Builder.CreateGEP(result, index, "add.ptr");
+  //   return CGF.Builder.CreateBitCast(result, pointer->getType());
+  // }
 
   QualType elementType = pointerType->getPointeeType();
   if (const VariableArrayType *vla

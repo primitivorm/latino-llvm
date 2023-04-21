@@ -51,7 +51,7 @@ class ExprEngine;
 struct EvalCallOptions;
 class MemRegion;
 struct NodeBuilderContext;
-class ObjCMethodCall;
+// class ObjCMethodCall;
 class RegionAndSymbolInvalidationTraits;
 class SVal;
 class SymbolReaper;
@@ -118,11 +118,11 @@ public:
   operator StringRef() const { return Name; }
 };
 
-enum class ObjCMessageVisitKind {
-  Pre,
-  Post,
-  MessageNil
-};
+// enum class ObjCMessageVisitKind {
+//   Pre,
+//   Post,
+//   MessageNil
+// };
 
 class CheckerManager {
   ASTContext *Context = nullptr;
@@ -274,38 +274,38 @@ public:
                           bool wasInlined = false);
 
   /// Run checkers for pre-visiting obj-c messages.
-  void runCheckersForPreObjCMessage(ExplodedNodeSet &Dst,
-                                    const ExplodedNodeSet &Src,
-                                    const ObjCMethodCall &msg,
-                                    ExprEngine &Eng) {
-    runCheckersForObjCMessage(ObjCMessageVisitKind::Pre, Dst, Src, msg, Eng);
-  }
+  // void runCheckersForPreObjCMessage(ExplodedNodeSet &Dst,
+  //                                   const ExplodedNodeSet &Src,
+  //                                   const ObjCMethodCall &msg,
+  //                                   ExprEngine &Eng) {
+  //   runCheckersForObjCMessage(ObjCMessageVisitKind::Pre, Dst, Src, msg, Eng);
+  // }
 
   /// Run checkers for post-visiting obj-c messages.
-  void runCheckersForPostObjCMessage(ExplodedNodeSet &Dst,
-                                     const ExplodedNodeSet &Src,
-                                     const ObjCMethodCall &msg,
-                                     ExprEngine &Eng,
-                                     bool wasInlined = false) {
-    runCheckersForObjCMessage(ObjCMessageVisitKind::Post, Dst, Src, msg, Eng,
-                              wasInlined);
-  }
+  // void runCheckersForPostObjCMessage(ExplodedNodeSet &Dst,
+  //                                    const ExplodedNodeSet &Src,
+  //                                    const ObjCMethodCall &msg,
+  //                                    ExprEngine &Eng,
+  //                                    bool wasInlined = false) {
+  //   runCheckersForObjCMessage(ObjCMessageVisitKind::Post, Dst, Src, msg, Eng,
+  //                             wasInlined);
+  // }
 
   /// Run checkers for visiting an obj-c message to nil.
-  void runCheckersForObjCMessageNil(ExplodedNodeSet &Dst,
-                                    const ExplodedNodeSet &Src,
-                                    const ObjCMethodCall &msg,
-                                    ExprEngine &Eng) {
-    runCheckersForObjCMessage(ObjCMessageVisitKind::MessageNil, Dst, Src, msg,
-                              Eng);
-  }
+  // void runCheckersForObjCMessageNil(ExplodedNodeSet &Dst,
+  //                                   const ExplodedNodeSet &Src,
+  //                                   const ObjCMethodCall &msg,
+  //                                   ExprEngine &Eng) {
+  //   runCheckersForObjCMessage(ObjCMessageVisitKind::MessageNil, Dst, Src, msg,
+  //                             Eng);
+  // }
 
   /// Run checkers for visiting obj-c messages.
-  void runCheckersForObjCMessage(ObjCMessageVisitKind visitKind,
-                                 ExplodedNodeSet &Dst,
-                                 const ExplodedNodeSet &Src,
-                                 const ObjCMethodCall &msg, ExprEngine &Eng,
-                                 bool wasInlined = false);
+  // void runCheckersForObjCMessage(ObjCMessageVisitKind visitKind,
+  //                                ExplodedNodeSet &Dst,
+  //                                const ExplodedNodeSet &Src,
+  //                                const ObjCMethodCall &msg, ExprEngine &Eng,
+  //                                bool wasInlined = false);
 
   /// Run checkers for pre-visiting obj-c messages.
   void runCheckersForPreCall(ExplodedNodeSet &Dst, const ExplodedNodeSet &Src,
@@ -483,8 +483,8 @@ public:
 
   using CheckStmtFunc = CheckerFn<void (const Stmt *, CheckerContext &)>;
 
-  using CheckObjCMessageFunc =
-      CheckerFn<void (const ObjCMethodCall &, CheckerContext &)>;
+  // using CheckObjCMessageFunc =
+  //     CheckerFn<void (const ObjCMethodCall &, CheckerContext &)>;
 
   using CheckCallFunc =
       CheckerFn<void (const CallEvent &, CheckerContext &)>;
@@ -547,10 +547,10 @@ public:
   void _registerForPostStmt(CheckStmtFunc checkfn,
                             HandlesStmtFunc isForStmtFn);
 
-  void _registerForPreObjCMessage(CheckObjCMessageFunc checkfn);
-  void _registerForPostObjCMessage(CheckObjCMessageFunc checkfn);
+  // void _registerForPreObjCMessage(CheckObjCMessageFunc checkfn);
+  // void _registerForPostObjCMessage(CheckObjCMessageFunc checkfn);
 
-  void _registerForObjCMessageNil(CheckObjCMessageFunc checkfn);
+  // void _registerForObjCMessageNil(CheckObjCMessageFunc checkfn);
 
   void _registerForPreCall(CheckCallFunc checkfn);
   void _registerForPostCall(CheckCallFunc checkfn);
@@ -656,12 +656,12 @@ private:
 
   /// Returns the checkers that have registered for callbacks of the
   /// given \p Kind.
-  const std::vector<CheckObjCMessageFunc> &
-  getObjCMessageCheckers(ObjCMessageVisitKind Kind) const;
+  // const std::vector<CheckObjCMessageFunc> &
+  // getObjCMessageCheckers(ObjCMessageVisitKind Kind) const;
 
-  std::vector<CheckObjCMessageFunc> PreObjCMessageCheckers;
-  std::vector<CheckObjCMessageFunc> PostObjCMessageCheckers;
-  std::vector<CheckObjCMessageFunc> ObjCMessageNilCheckers;
+  // std::vector<CheckObjCMessageFunc> PreObjCMessageCheckers;
+  // std::vector<CheckObjCMessageFunc> PostObjCMessageCheckers;
+  // std::vector<CheckObjCMessageFunc> ObjCMessageNilCheckers;
 
   std::vector<CheckCallFunc> PreCallCheckers;
   std::vector<CheckCallFunc> PostCallCheckers;

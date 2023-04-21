@@ -18,7 +18,7 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/CodeGen/CGFunctionInfo.h"
@@ -429,9 +429,9 @@ llvm::Type *CodeGenTypes::ConvertType(QualType T) {
   case Type::Builtin: {
     switch (cast<BuiltinType>(Ty)->getKind()) {
     case BuiltinType::Void:
-    case BuiltinType::ObjCId:
-    case BuiltinType::ObjCClass:
-    case BuiltinType::ObjCSel:
+    // case BuiltinType::ObjCId:
+    // case BuiltinType::ObjCClass:
+    // case BuiltinType::ObjCSel:
       // LLVM void type can only be used as the result of a function call.  Just
       // map to the same as char.
       ResultType = llvm::Type::getInt8Ty(getLLVMContext());
@@ -520,19 +520,19 @@ llvm::Type *CodeGenTypes::ConvertType(QualType T) {
       ResultType = llvm::IntegerType::get(getLLVMContext(), 128);
       break;
 
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-    case BuiltinType::OCLSampler:
-    case BuiltinType::OCLEvent:
-    case BuiltinType::OCLClkEvent:
-    case BuiltinType::OCLQueue:
-    case BuiltinType::OCLReserveID:
-      ResultType = CGM.getOpenCLRuntime().convertOpenCLSpecificType(Ty);
-      break;
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+    // case BuiltinType::OCLSampler:
+    // case BuiltinType::OCLEvent:
+    // case BuiltinType::OCLClkEvent:
+    // case BuiltinType::OCLQueue:
+    // case BuiltinType::OCLReserveID:
+      // ResultType = CGM.getOpenCLRuntime().convertOpenCLSpecificType(Ty);
+      // break;
     case BuiltinType::SveInt8:
     case BuiltinType::SveUint8:
     case BuiltinType::SveInt8x2:
@@ -683,30 +683,30 @@ llvm::Type *CodeGenTypes::ConvertType(QualType T) {
   case Type::FunctionProto:
     ResultType = ConvertFunctionTypeInternal(T);
     break;
-  case Type::ObjCObject:
-    ResultType = ConvertType(cast<ObjCObjectType>(Ty)->getBaseType());
-    break;
+  // case Type::ObjCObject:
+  //   ResultType = ConvertType(cast<ObjCObjectType>(Ty)->getBaseType());
+  //   break;
 
-  case Type::ObjCInterface: {
-    // Objective-C interfaces are always opaque (outside of the
-    // runtime, which can do whatever it likes); we never refine
-    // these.
-    llvm::Type *&T = InterfaceTypes[cast<ObjCInterfaceType>(Ty)];
-    if (!T)
-      T = llvm::StructType::create(getLLVMContext());
-    ResultType = T;
-    break;
-  }
+  // case Type::ObjCInterface: {
+  //   // Objective-C interfaces are always opaque (outside of the
+  //   // runtime, which can do whatever it likes); we never refine
+  //   // these.
+  //   llvm::Type *&T = InterfaceTypes[cast<ObjCInterfaceType>(Ty)];
+  //   if (!T)
+  //     T = llvm::StructType::create(getLLVMContext());
+  //   ResultType = T;
+  //   break;
+  // }
 
-  case Type::ObjCObjectPointer: {
-    // Protocol qualifications do not influence the LLVM type, we just return a
-    // pointer to the underlying interface type. We don't need to worry about
-    // recursive conversion.
-    llvm::Type *T =
-      ConvertTypeForMem(cast<ObjCObjectPointerType>(Ty)->getPointeeType());
-    ResultType = T->getPointerTo();
-    break;
-  }
+  // case Type::ObjCObjectPointer: {
+  //   // Protocol qualifications do not influence the LLVM type, we just return a
+  //   // pointer to the underlying interface type. We don't need to worry about
+  //   // recursive conversion.
+  //   llvm::Type *T =
+  //     ConvertTypeForMem(cast<ObjCObjectPointerType>(Ty)->getPointeeType());
+  //   ResultType = T->getPointerTo();
+  //   break;
+  // }
 
   case Type::Enum: {
     const EnumDecl *ED = cast<EnumType>(Ty)->getDecl();

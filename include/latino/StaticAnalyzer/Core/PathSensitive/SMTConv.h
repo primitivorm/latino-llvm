@@ -627,8 +627,8 @@ public:
     }
 
     // Fallback: for the solver, assume that these types don't really matter
-    if ((LTy.getCanonicalType() == RTy.getCanonicalType()) ||
-        (LTy->isObjCObjectPointerType() && RTy->isObjCObjectPointerType())) {
+    if ((LTy.getCanonicalType() == RTy.getCanonicalType()) /*||
+        (LTy->isObjCObjectPointerType() && RTy->isObjCObjectPointerType())*/) {
       LTy = RTy;
       return;
     }

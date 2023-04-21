@@ -16,7 +16,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/LLVM.h"

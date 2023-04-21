@@ -320,7 +320,7 @@ public:
   void checkPreCall(const CallEvent &Call, CheckerContext &C) const;
   void checkPostCall(const CallEvent &Call, CheckerContext &C) const;
   void checkNewAllocator(const CXXAllocatorCall &Call, CheckerContext &C) const;
-  void checkPostObjCMessage(const ObjCMethodCall &Call, CheckerContext &C) const;
+  // void checkPostObjCMessage(const ObjCMethodCall &Call, CheckerContext &C) const;
   void checkPostStmt(const BlockExpr *BE, CheckerContext &C) const;
   void checkDeadSymbols(SymbolReaper &SymReaper, CheckerContext &C) const;
   void checkPreStmt(const ReturnStmt *S, CheckerContext &C) const;
@@ -794,8 +794,8 @@ public:
   static inline bool isRelinquished(const RefState *RSCurr,
                                     const RefState *RSPrev, const Stmt *Stmt) {
     return (Stmt &&
-            (isa<CallExpr>(Stmt) || isa<ObjCMessageExpr>(Stmt) ||
-             isa<ObjCPropertyRefExpr>(Stmt)) &&
+            (isa<CallExpr>(Stmt) /*|| isa<ObjCMessageExpr>(Stmt) ||
+             isa<ObjCPropertyRefExpr>(Stmt)*/) &&
             (RSCurr && RSCurr->isRelinquished()) &&
             (!RSPrev || !RSPrev->isRelinquished()));
   }
@@ -1485,52 +1485,52 @@ ProgramStateRef MallocChecker::addExtentSize(CheckerContext &C,
   return State;
 }
 
-static bool isKnownDeallocObjCMethodName(const ObjCMethodCall &Call) {
-  // If the first selector piece is one of the names below, assume that the
-  // object takes ownership of the memory, promising to eventually deallocate it
-  // with free().
-  // Ex:  [NSData dataWithBytesNoCopy:bytes length:10];
-  // (...unless a 'freeWhenDone' parameter is false, but that's checked later.)
-  StringRef FirstSlot = Call.getSelector().getNameForSlot(0);
-  return FirstSlot == "dataWithBytesNoCopy" ||
-         FirstSlot == "initWithBytesNoCopy" ||
-         FirstSlot == "initWithCharactersNoCopy";
-}
+// static bool isKnownDeallocObjCMethodName(const ObjCMethodCall &Call) {
+//   // If the first selector piece is one of the names below, assume that the
+//   // object takes ownership of the memory, promising to eventually deallocate it
+//   // with free().
+//   // Ex:  [NSData dataWithBytesNoCopy:bytes length:10];
+//   // (...unless a 'freeWhenDone' parameter is false, but that's checked later.)
+//   StringRef FirstSlot = Call.getSelector().getNameForSlot(0);
+//   return FirstSlot == "dataWithBytesNoCopy" ||
+//          FirstSlot == "initWithBytesNoCopy" ||
+//          FirstSlot == "initWithCharactersNoCopy";
+// }
 
-static Optional<bool> getFreeWhenDoneArg(const ObjCMethodCall &Call) {
-  Selector S = Call.getSelector();
+// static Optional<bool> getFreeWhenDoneArg(const ObjCMethodCall &Call) {
+//   Selector S = Call.getSelector();
 
-  // FIXME: We should not rely on fully-constrained symbols being folded.
-  for (unsigned i = 1; i < S.getNumArgs(); ++i)
-    if (S.getNameForSlot(i).equals("freeWhenDone"))
-      return !Call.getArgSVal(i).isZeroConstant();
+//   // FIXME: We should not rely on fully-constrained symbols being folded.
+//   for (unsigned i = 1; i < S.getNumArgs(); ++i)
+//     if (S.getNameForSlot(i).equals("freeWhenDone"))
+//       return !Call.getArgSVal(i).isZeroConstant();
 
-  return None;
-}
+//   return None;
+// }
 
-void MallocChecker::checkPostObjCMessage(const ObjCMethodCall &Call,
-                                         CheckerContext &C) const {
-  if (C.wasInlined)
-    return;
+// void MallocChecker::checkPostObjCMessage(const ObjCMethodCall &Call,
+//                                          CheckerContext &C) const {
+//   if (C.wasInlined)
+//     return;
 
-  if (!isKnownDeallocObjCMethodName(Call))
-    return;
+//   if (!isKnownDeallocObjCMethodName(Call))
+//     return;
 
-  if (Optional<bool> FreeWhenDone = getFreeWhenDoneArg(Call))
-    if (!*FreeWhenDone)
-      return;
+//   if (Optional<bool> FreeWhenDone = getFreeWhenDoneArg(Call))
+//     if (!*FreeWhenDone)
+//       return;
 
-  if (Call.hasNonZeroCallbackArg())
-    return;
+//   if (Call.hasNonZeroCallbackArg())
+//     return;
 
-  bool IsKnownToBeAllocatedMemory;
-  ProgramStateRef State =
-      FreeMemAux(C, Call.getArgExpr(0), Call, C.getState(),
-                 /*Hold=*/true, IsKnownToBeAllocatedMemory, AF_Malloc,
-                 /*RetNullOnFailure=*/true);
+//   bool IsKnownToBeAllocatedMemory;
+//   ProgramStateRef State =
+//       FreeMemAux(C, Call.getArgExpr(0), Call, C.getState(),
+//                  /*Hold=*/true, IsKnownToBeAllocatedMemory, AF_Malloc,
+//                  /*RetNullOnFailure=*/true);
 
-  C.addTransition(State);
-}
+//   C.addTransition(State);
+// }
 
 ProgramStateRef
 MallocChecker::MallocMemReturnsAttr(CheckerContext &C, const CallEvent &Call,
@@ -2979,59 +2979,59 @@ bool MallocChecker::mayFreeAnyEscapedMemoryOrIsModeledExplicitly(
   // TODO: If we want to be more optimistic here, we'll need to make sure that
   // regions escape to C++ containers. They seem to do that even now, but for
   // mysterious reasons.
-  if (!(isa<SimpleFunctionCall>(Call) || isa<ObjCMethodCall>(Call)))
+  if (!(isa<SimpleFunctionCall>(Call) /*|| isa<ObjCMethodCall>(Call)*/))
     return true;
 
   // Check Objective-C messages by selector name.
-  if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(Call)) {
-    // If it's not a framework call, or if it takes a callback, assume it
-    // can free memory.
-    if (!Call->isInSystemHeader() || Call->argumentsMayEscape())
-      return true;
+  // if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(Call)) {
+  //   // If it's not a framework call, or if it takes a callback, assume it
+  //   // can free memory.
+  //   if (!Call->isInSystemHeader() || Call->argumentsMayEscape())
+  //     return true;
 
-    // If it's a method we know about, handle it explicitly post-call.
-    // This should happen before the "freeWhenDone" check below.
-    if (isKnownDeallocObjCMethodName(*Msg))
-      return false;
+  //   // If it's a method we know about, handle it explicitly post-call.
+  //   // This should happen before the "freeWhenDone" check below.
+  //   if (isKnownDeallocObjCMethodName(*Msg))
+  //     return false;
 
-    // If there's a "freeWhenDone" parameter, but the method isn't one we know
-    // about, we can't be sure that the object will use free() to deallocate the
-    // memory, so we can't model it explicitly. The best we can do is use it to
-    // decide whether the pointer escapes.
-    if (Optional<bool> FreeWhenDone = getFreeWhenDoneArg(*Msg))
-      return *FreeWhenDone;
+  //   // If there's a "freeWhenDone" parameter, but the method isn't one we know
+  //   // about, we can't be sure that the object will use free() to deallocate the
+  //   // memory, so we can't model it explicitly. The best we can do is use it to
+  //   // decide whether the pointer escapes.
+  //   if (Optional<bool> FreeWhenDone = getFreeWhenDoneArg(*Msg))
+  //     return *FreeWhenDone;
 
-    // If the first selector piece ends with "NoCopy", and there is no
-    // "freeWhenDone" parameter set to zero, we know ownership is being
-    // transferred. Again, though, we can't be sure that the object will use
-    // free() to deallocate the memory, so we can't model it explicitly.
-    StringRef FirstSlot = Msg->getSelector().getNameForSlot(0);
-    if (FirstSlot.endswith("NoCopy"))
-      return true;
+  //   // If the first selector piece ends with "NoCopy", and there is no
+  //   // "freeWhenDone" parameter set to zero, we know ownership is being
+  //   // transferred. Again, though, we can't be sure that the object will use
+  //   // free() to deallocate the memory, so we can't model it explicitly.
+  //   StringRef FirstSlot = Msg->getSelector().getNameForSlot(0);
+  //   if (FirstSlot.endswith("NoCopy"))
+  //     return true;
 
-    // If the first selector starts with addPointer, insertPointer,
-    // or replacePointer, assume we are dealing with NSPointerArray or similar.
-    // This is similar to C++ containers (vector); we still might want to check
-    // that the pointers get freed by following the container itself.
-    if (FirstSlot.startswith("addPointer") ||
-        FirstSlot.startswith("insertPointer") ||
-        FirstSlot.startswith("replacePointer") ||
-        FirstSlot.equals("valueWithPointer")) {
-      return true;
-    }
+  //   // If the first selector starts with addPointer, insertPointer,
+  //   // or replacePointer, assume we are dealing with NSPointerArray or similar.
+  //   // This is similar to C++ containers (vector); we still might want to check
+  //   // that the pointers get freed by following the container itself.
+  //   if (FirstSlot.startswith("addPointer") ||
+  //       FirstSlot.startswith("insertPointer") ||
+  //       FirstSlot.startswith("replacePointer") ||
+  //       FirstSlot.equals("valueWithPointer")) {
+  //     return true;
+  //   }
 
-    // We should escape receiver on call to 'init'. This is especially relevant
-    // to the receiver, as the corresponding symbol is usually not referenced
-    // after the call.
-    if (Msg->getMethodFamily() == OMF_init) {
-      EscapingSymbol = Msg->getReceiverSVal().getAsSymbol();
-      return true;
-    }
+  //   // We should escape receiver on call to 'init'. This is especially relevant
+  //   // to the receiver, as the corresponding symbol is usually not referenced
+  //   // after the call.
+  //   if (Msg->getMethodFamily() == OMF_init) {
+  //     EscapingSymbol = Msg->getReceiverSVal().getAsSymbol();
+  //     return true;
+  //   }
 
-    // Otherwise, assume that the method does not free memory.
-    // Most framework methods do not free memory.
-    return false;
-  }
+  //   // Otherwise, assume that the method does not free memory.
+  //   // Most framework methods do not free memory.
+  //   return false;
+  // }
 
   // At this point the only thing left to handle is straight function calls.
   const FunctionDecl *FD = cast<SimpleFunctionCall>(Call)->getDecl();

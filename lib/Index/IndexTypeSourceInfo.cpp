@@ -120,18 +120,18 @@ public:
                                     Relations);
   }
 
-  bool VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
-    return IndexCtx.handleReference(TL.getIFaceDecl(), TL.getNameLoc(),
-                                    Parent, ParentDC, SymbolRoleSet(), Relations);
-  }
+  // bool VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
+  //   return IndexCtx.handleReference(TL.getIFaceDecl(), TL.getNameLoc(),
+  //                                   Parent, ParentDC, SymbolRoleSet(), Relations);
+  // }
 
-  bool VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
-    for (unsigned i = 0, e = TL.getNumProtocols(); i != e; ++i) {
-      IndexCtx.handleReference(TL.getProtocol(i), TL.getProtocolLoc(i),
-                               Parent, ParentDC, SymbolRoleSet(), Relations);
-    }
-    return true;
-  }
+  // bool VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
+  //   for (unsigned i = 0, e = TL.getNumProtocols(); i != e; ++i) {
+  //     IndexCtx.handleReference(TL.getProtocol(i), TL.getProtocolLoc(i),
+  //                              Parent, ParentDC, SymbolRoleSet(), Relations);
+  //   }
+  //   return true;
+  // }
 
   void HandleTemplateSpecializationTypeLoc(TemplateName TemplName,
                                            SourceLocation TemplNameLoc,

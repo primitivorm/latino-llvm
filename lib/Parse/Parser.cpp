@@ -446,18 +446,18 @@ void Parser::Initialize() {
 
   // Initialization for Objective-C context sensitive keywords recognition.
   // Referenced in Parser::ParseObjCTypeQualifierList.
-  if (getLangOpts().ObjC) {
-    ObjCTypeQuals[objc_in] = &PP.getIdentifierTable().get("in");
-    ObjCTypeQuals[objc_out] = &PP.getIdentifierTable().get("out");
-    ObjCTypeQuals[objc_inout] = &PP.getIdentifierTable().get("inout");
-    ObjCTypeQuals[objc_oneway] = &PP.getIdentifierTable().get("oneway");
-    ObjCTypeQuals[objc_bycopy] = &PP.getIdentifierTable().get("bycopy");
-    ObjCTypeQuals[objc_byref] = &PP.getIdentifierTable().get("byref");
-    ObjCTypeQuals[objc_nonnull] = &PP.getIdentifierTable().get("nonnull");
-    ObjCTypeQuals[objc_nullable] = &PP.getIdentifierTable().get("nullable");
-    ObjCTypeQuals[objc_null_unspecified]
-      = &PP.getIdentifierTable().get("null_unspecified");
-  }
+  // if (getLangOpts().ObjC) {
+  //   ObjCTypeQuals[objc_in] = &PP.getIdentifierTable().get("in");
+  //   ObjCTypeQuals[objc_out] = &PP.getIdentifierTable().get("out");
+  //   ObjCTypeQuals[objc_inout] = &PP.getIdentifierTable().get("inout");
+  //   ObjCTypeQuals[objc_oneway] = &PP.getIdentifierTable().get("oneway");
+  //   ObjCTypeQuals[objc_bycopy] = &PP.getIdentifierTable().get("bycopy");
+  //   ObjCTypeQuals[objc_byref] = &PP.getIdentifierTable().get("byref");
+  //   ObjCTypeQuals[objc_nonnull] = &PP.getIdentifierTable().get("nonnull");
+  //   ObjCTypeQuals[objc_nullable] = &PP.getIdentifierTable().get("nullable");
+  //   ObjCTypeQuals[objc_null_unspecified]
+  //     = &PP.getIdentifierTable().get("null_unspecified");
+  // }
 
   Ident_instancetype = nullptr;
   Ident_final = nullptr;
@@ -822,17 +822,17 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     SingleDecl = Actions.ActOnFileScopeAsmDecl(Result.get(), StartLoc, EndLoc);
     break;
   }
-  case tok::at:
-    return ParseObjCAtDirectives(attrs);
-  case tok::minus:
-  case tok::plus:
-    if (!getLangOpts().ObjC) {
-      Diag(Tok, diag::err_expected_external_declaration);
-      ConsumeToken();
-      return nullptr;
-    }
-    SingleDecl = ParseObjCMethodDefinition();
-    break;
+  // case tok::at:
+  //   return ParseObjCAtDirectives(attrs);
+  // case tok::minus:
+  // case tok::plus:
+  //   if (!getLangOpts().ObjC) {
+  //     Diag(Tok, diag::err_expected_external_declaration);
+  //     ConsumeToken();
+  //     return nullptr;
+  //   }
+  //   SingleDecl = ParseObjCMethodDefinition();
+  //   break;
   case tok::code_completion:
     if (CurParsedObjCImpl) {
       // Code-complete Objective-C methods even without leading '-'/'+' prefix.
@@ -842,7 +842,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
     }
     Actions.CodeCompleteOrdinaryName(
         getCurScope(),
-        CurParsedObjCImpl ? Sema::PCC_ObjCImplementation : Sema::PCC_Namespace);
+        /*CurParsedObjCImpl ? Sema::PCC_ObjCImplementation :*/ Sema::PCC_Namespace);
     cutOffParsing();
     return nullptr;
   case tok::kw_importar:
@@ -1667,21 +1667,21 @@ Parser::TryAnnotateName(CorrectionCandidateCallback *CCC) {
     /// An Objective-C object type followed by '<' is a specialization of
     /// a parameterized class type or a protocol-qualified type.
     ParsedType Ty = Classification.getType();
-    if (getLangOpts().ObjC && NextToken().is(tok::less) &&
-        (Ty.get()->isObjCObjectType() ||
-         Ty.get()->isObjCObjectPointerType())) {
-      // Consume the name.
-      SourceLocation IdentifierLoc = ConsumeToken();
-      SourceLocation NewEndLoc;
-      TypeResult NewType
-          = parseObjCTypeArgsAndProtocolQualifiers(IdentifierLoc, Ty,
-                                                   /*consumeLastToken=*/false,
-                                                   NewEndLoc);
-      if (NewType.isUsable())
-        Ty = NewType.get();
-      else if (Tok.is(tok::eof)) // Nothing to do here, bail out...
-        return ANK_Error;
-    }
+    // if (getLangOpts().ObjC && NextToken().is(tok::less) &&
+    //     (Ty.get()->isObjCObjectType() ||
+    //      Ty.get()->isObjCObjectPointerType())) {
+    //   // Consume the name.
+    //   SourceLocation IdentifierLoc = ConsumeToken();
+    //   SourceLocation NewEndLoc;
+    //   TypeResult NewType
+    //       = parseObjCTypeArgsAndProtocolQualifiers(IdentifierLoc, Ty,
+    //                                                /*consumeLastToken=*/false,
+    //                                                NewEndLoc);
+    //   if (NewType.isUsable())
+    //     Ty = NewType.get();
+    //   else if (Tok.is(tok::eof)) // Nothing to do here, bail out...
+    //     return ANK_Error;
+    // }
 
     Tok.setKind(tok::annot_typename);
     setTypeAnnotation(Tok, Ty);
@@ -1804,7 +1804,7 @@ bool Parser::TryAnnotateTypeOrScopeToken() {
   assert((Tok.is(tok::identifier) || Tok.is(tok::coloncolon) ||
           Tok.is(tok::kw_typename) || Tok.is(tok::annot_cxxscope) ||
           Tok.is(tok::kw_decltype) || Tok.is(tok::annot_template_id) ||
-          Tok.is(tok::kw___super)) &&
+          Tok.is(tok::kw_base)) &&
          "Cannot be a type or scope token!");
 
   if (Tok.is(tok::kw_typename)) {
@@ -1931,21 +1931,21 @@ bool Parser::TryAnnotateTypeOrScopeTokenAfterScopeSpec(CXXScopeSpec &SS,
 
       /// An Objective-C object type followed by '<' is a specialization of
       /// a parameterized class type or a protocol-qualified type.
-      if (getLangOpts().ObjC && NextToken().is(tok::less) &&
-          (Ty.get()->isObjCObjectType() ||
-           Ty.get()->isObjCObjectPointerType())) {
-        // Consume the name.
-        SourceLocation IdentifierLoc = ConsumeToken();
-        SourceLocation NewEndLoc;
-        TypeResult NewType
-          = parseObjCTypeArgsAndProtocolQualifiers(IdentifierLoc, Ty,
-                                                   /*consumeLastToken=*/false,
-                                                   NewEndLoc);
-        if (NewType.isUsable())
-          Ty = NewType.get();
-        else if (Tok.is(tok::eof)) // Nothing to do here, bail out...
-          return false;
-      }
+      // if (getLangOpts().ObjC && NextToken().is(tok::less) &&
+      //     (Ty.get()->isObjCObjectType() ||
+      //      Ty.get()->isObjCObjectPointerType())) {
+      //   // Consume the name.
+      //   SourceLocation IdentifierLoc = ConsumeToken();
+      //   SourceLocation NewEndLoc;
+      //   TypeResult NewType
+      //     = parseObjCTypeArgsAndProtocolQualifiers(IdentifierLoc, Ty,
+      //                                              /*consumeLastToken=*/false,
+      //                                              NewEndLoc);
+      //   if (NewType.isUsable())
+      //     Ty = NewType.get();
+      //   else if (Tok.is(tok::eof)) // Nothing to do here, bail out...
+      //     return false;
+      // }
 
       // This is a typename. Replace the current token in-place with an
       // annotation type token.

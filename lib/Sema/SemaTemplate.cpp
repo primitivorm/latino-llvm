@@ -6021,19 +6021,19 @@ bool UnnamedLocalNoLinkageFinder::VisitPackExpansionType(
   return Visit(T->getPattern());
 }
 
-bool UnnamedLocalNoLinkageFinder::VisitObjCObjectType(const ObjCObjectType *) {
-  return false;
-}
+// bool UnnamedLocalNoLinkageFinder::VisitObjCObjectType(const ObjCObjectType *) {
+//   return false;
+// }
 
-bool UnnamedLocalNoLinkageFinder::VisitObjCInterfaceType(
-                                                   const ObjCInterfaceType *) {
-  return false;
-}
+// bool UnnamedLocalNoLinkageFinder::VisitObjCInterfaceType(
+//                                                    const ObjCInterfaceType *) {
+//   return false;
+// }
 
-bool UnnamedLocalNoLinkageFinder::VisitObjCObjectPointerType(
-                                                const ObjCObjectPointerType *) {
-  return false;
-}
+// bool UnnamedLocalNoLinkageFinder::VisitObjCObjectPointerType(
+//                                                 const ObjCObjectPointerType *) {
+//   return false;
+// }
 
 bool UnnamedLocalNoLinkageFinder::VisitAtomicType(const AtomicType* T) {
   return Visit(T->getValueType());

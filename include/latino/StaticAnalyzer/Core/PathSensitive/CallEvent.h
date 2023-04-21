@@ -18,10 +18,10 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/IdentifierTable.h"
@@ -1129,115 +1129,115 @@ enum ObjCMessageKind {
 /// Represents any expression that calls an Objective-C method.
 ///
 /// This includes all of the kinds listed in ObjCMessageKind.
-class ObjCMethodCall : public CallEvent {
-  friend class CallEventManager;
+// class ObjCMethodCall : public CallEvent {
+//   friend class CallEventManager;
 
-  const PseudoObjectExpr *getContainingPseudoObjectExpr() const;
+//   const PseudoObjectExpr *getContainingPseudoObjectExpr() const;
 
-protected:
-  ObjCMethodCall(const ObjCMessageExpr *Msg, ProgramStateRef St,
-                 const LocationContext *LCtx)
-      : CallEvent(Msg, St, LCtx) {
-    Data = nullptr;
-  }
+// protected:
+//   ObjCMethodCall(const ObjCMessageExpr *Msg, ProgramStateRef St,
+//                  const LocationContext *LCtx)
+//       : CallEvent(Msg, St, LCtx) {
+//     Data = nullptr;
+//   }
 
-  ObjCMethodCall(const ObjCMethodCall &Other) = default;
+//   ObjCMethodCall(const ObjCMethodCall &Other) = default;
 
-  void cloneTo(void *Dest) const override { new (Dest) ObjCMethodCall(*this); }
+//   void cloneTo(void *Dest) const override { new (Dest) ObjCMethodCall(*this); }
 
-  void getExtraInvalidatedValues(ValueList &Values,
-         RegionAndSymbolInvalidationTraits *ETraits) const override;
+//   void getExtraInvalidatedValues(ValueList &Values,
+//          RegionAndSymbolInvalidationTraits *ETraits) const override;
 
-  /// Check if the selector may have multiple definitions (may have overrides).
-  virtual bool canBeOverridenInSubclass(ObjCInterfaceDecl *IDecl,
-                                        Selector Sel) const;
+//   /// Check if the selector may have multiple definitions (may have overrides).
+//   virtual bool canBeOverridenInSubclass(ObjCInterfaceDecl *IDecl,
+//                                         Selector Sel) const;
 
-public:
-  virtual const ObjCMessageExpr *getOriginExpr() const {
-    return cast<ObjCMessageExpr>(CallEvent::getOriginExpr());
-  }
+// public:
+//   virtual const ObjCMessageExpr *getOriginExpr() const {
+//     return cast<ObjCMessageExpr>(CallEvent::getOriginExpr());
+//   }
 
-  const ObjCMethodDecl *getDecl() const override {
-    return getOriginExpr()->getMethodDecl();
-  }
+//   const ObjCMethodDecl *getDecl() const override {
+//     return getOriginExpr()->getMethodDecl();
+//   }
 
-  unsigned getNumArgs() const override {
-    return getOriginExpr()->getNumArgs();
-  }
+//   unsigned getNumArgs() const override {
+//     return getOriginExpr()->getNumArgs();
+//   }
 
-  const Expr *getArgExpr(unsigned Index) const override {
-    return getOriginExpr()->getArg(Index);
-  }
+//   const Expr *getArgExpr(unsigned Index) const override {
+//     return getOriginExpr()->getArg(Index);
+//   }
 
-  bool isInstanceMessage() const {
-    return getOriginExpr()->isInstanceMessage();
-  }
+//   bool isInstanceMessage() const {
+//     return getOriginExpr()->isInstanceMessage();
+//   }
 
-  ObjCMethodFamily getMethodFamily() const {
-    return getOriginExpr()->getMethodFamily();
-  }
+//   ObjCMethodFamily getMethodFamily() const {
+//     return getOriginExpr()->getMethodFamily();
+//   }
 
-  Selector getSelector() const {
-    return getOriginExpr()->getSelector();
-  }
+//   Selector getSelector() const {
+//     return getOriginExpr()->getSelector();
+//   }
 
-  SourceRange getSourceRange() const override;
+//   SourceRange getSourceRange() const override;
 
-  /// Returns the value of the receiver at the time of this call.
-  SVal getReceiverSVal() const;
+//   /// Returns the value of the receiver at the time of this call.
+//   SVal getReceiverSVal() const;
 
-  /// Get the interface for the receiver.
-  ///
-  /// This works whether this is an instance message or a class message.
-  /// However, it currently just uses the static type of the receiver.
-  const ObjCInterfaceDecl *getReceiverInterface() const {
-    return getOriginExpr()->getReceiverInterface();
-  }
+//   /// Get the interface for the receiver.
+//   ///
+//   /// This works whether this is an instance message or a class message.
+//   /// However, it currently just uses the static type of the receiver.
+//   const ObjCInterfaceDecl *getReceiverInterface() const {
+//     return getOriginExpr()->getReceiverInterface();
+//   }
 
-  /// Checks if the receiver refers to 'self' or 'super'.
-  bool isReceiverSelfOrSuper() const;
+//   /// Checks if the receiver refers to 'self' or 'super'.
+//   bool isReceiverSelfOrSuper() const;
 
-  /// Returns how the message was written in the source (property access,
-  /// subscript, or explicit message send).
-  ObjCMessageKind getMessageKind() const;
+//   /// Returns how the message was written in the source (property access,
+//   /// subscript, or explicit message send).
+//   ObjCMessageKind getMessageKind() const;
 
-  /// Returns true if this property access or subscript is a setter (has the
-  /// form of an assignment).
-  bool isSetter() const {
-    switch (getMessageKind()) {
-    case OCM_Message:
-      llvm_unreachable("This is not a pseudo-object access!");
-    case OCM_PropertyAccess:
-      return getNumArgs() > 0;
-    case OCM_Subscript:
-      return getNumArgs() > 1;
-    }
-    llvm_unreachable("Unknown message kind");
-  }
+//   /// Returns true if this property access or subscript is a setter (has the
+//   /// form of an assignment).
+//   bool isSetter() const {
+//     switch (getMessageKind()) {
+//     case OCM_Message:
+//       llvm_unreachable("This is not a pseudo-object access!");
+//     case OCM_PropertyAccess:
+//       return getNumArgs() > 0;
+//     case OCM_Subscript:
+//       return getNumArgs() > 1;
+//     }
+//     llvm_unreachable("Unknown message kind");
+//   }
 
-  // Returns the property accessed by this method, either explicitly via
-  // property syntax or implicitly via a getter or setter method. Returns
-  // nullptr if the call is not a prooperty access.
-  const ObjCPropertyDecl *getAccessedProperty() const;
+//   // Returns the property accessed by this method, either explicitly via
+//   // property syntax or implicitly via a getter or setter method. Returns
+//   // nullptr if the call is not a prooperty access.
+//   // const ObjCPropertyDecl *getAccessedProperty() const;
 
-  RuntimeDefinition getRuntimeDefinition() const override;
+//   RuntimeDefinition getRuntimeDefinition() const override;
 
-  bool argumentsMayEscape() const override;
+//   bool argumentsMayEscape() const override;
 
-  void getInitialStackFrameContents(const StackFrameContext *CalleeCtx,
-                                    BindingsTy &Bindings) const override;
+//   void getInitialStackFrameContents(const StackFrameContext *CalleeCtx,
+//                                     BindingsTy &Bindings) const override;
 
-  ArrayRef<ParmVarDecl*> parameters() const override;
+//   ArrayRef<ParmVarDecl*> parameters() const override;
 
-  Kind getKind() const override { return CE_ObjCMessage; }
-  virtual StringRef getKindAsString() const override {
-    return "ObjCMethodCall";
-  }
+//   Kind getKind() const override { return CE_ObjCMessage; }
+//   virtual StringRef getKindAsString() const override {
+//     return "ObjCMethodCall";
+//   }
 
-  static bool classof(const CallEvent *CA) {
-    return CA->getKind() == CE_ObjCMessage;
-  }
-};
+//   static bool classof(const CallEvent *CA) {
+//     return CA->getKind() == CE_ObjCMessage;
+//   }
+// };
 
 enum CallDescriptionFlags : int {
   /// Describes a C standard function that is sometimes implemented as a macro
@@ -1407,11 +1407,11 @@ public:
   getSimpleCall(const CallExpr *E, ProgramStateRef State,
                 const LocationContext *LCtx);
 
-  CallEventRef<ObjCMethodCall>
-  getObjCMethodCall(const ObjCMessageExpr *E, ProgramStateRef State,
-                    const LocationContext *LCtx) {
-    return create<ObjCMethodCall>(E, State, LCtx);
-  }
+  // CallEventRef<ObjCMethodCall>
+  // getObjCMethodCall(const ObjCMessageExpr *E, ProgramStateRef State,
+  //                   const LocationContext *LCtx) {
+  //   return create<ObjCMethodCall>(E, State, LCtx);
+  // }
 
   CallEventRef<CXXConstructorCall>
   getCXXConstructorCall(const CXXConstructExpr *E, const MemRegion *Target,

@@ -18,20 +18,20 @@
 #include "latino/AST/DeclAccessPair.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclGroup.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/AST/TemplateBase.h"
@@ -1383,164 +1383,164 @@ void ASTStmtReader::VisitAtomicExpr(AtomicExpr *E) {
 //===----------------------------------------------------------------------===//
 // Objective-C Expressions and Statements
 
-void ASTStmtReader::VisitObjCStringLiteral(ObjCStringLiteral *E) {
-  VisitExpr(E);
-  E->setString(cast<StringLiteral>(Record.readSubStmt()));
-  E->setAtLoc(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCStringLiteral(ObjCStringLiteral *E) {
+//   VisitExpr(E);
+//   E->setString(cast<StringLiteral>(Record.readSubStmt()));
+//   E->setAtLoc(readSourceLocation());
+// }
 
-void ASTStmtReader::VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
-  VisitExpr(E);
-  // could be one of several IntegerLiteral, FloatLiteral, etc.
-  E->SubExpr = Record.readSubStmt();
-  E->BoxingMethod = readDeclAs<ObjCMethodDecl>();
-  E->Range = readSourceRange();
-}
+// void ASTStmtReader::VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
+//   VisitExpr(E);
+//   // could be one of several IntegerLiteral, FloatLiteral, etc.
+//   E->SubExpr = Record.readSubStmt();
+//   E->BoxingMethod = readDeclAs<ObjCMethodDecl>();
+//   E->Range = readSourceRange();
+// }
 
-void ASTStmtReader::VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
-  VisitExpr(E);
-  unsigned NumElements = Record.readInt();
-  assert(NumElements == E->getNumElements() && "Wrong number of elements");
-  Expr **Elements = E->getElements();
-  for (unsigned I = 0, N = NumElements; I != N; ++I)
-    Elements[I] = Record.readSubExpr();
-  E->ArrayWithObjectsMethod = readDeclAs<ObjCMethodDecl>();
-  E->Range = readSourceRange();
-}
+// void ASTStmtReader::VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
+//   VisitExpr(E);
+//   unsigned NumElements = Record.readInt();
+//   assert(NumElements == E->getNumElements() && "Wrong number of elements");
+//   Expr **Elements = E->getElements();
+//   for (unsigned I = 0, N = NumElements; I != N; ++I)
+//     Elements[I] = Record.readSubExpr();
+//   E->ArrayWithObjectsMethod = readDeclAs<ObjCMethodDecl>();
+//   E->Range = readSourceRange();
+// }
 
-void ASTStmtReader::VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
-  VisitExpr(E);
-  unsigned NumElements = Record.readInt();
-  assert(NumElements == E->getNumElements() && "Wrong number of elements");
-  bool HasPackExpansions = Record.readInt();
-  assert(HasPackExpansions == E->HasPackExpansions &&"Pack expansion mismatch");
-  auto *KeyValues =
-      E->getTrailingObjects<ObjCDictionaryLiteral::KeyValuePair>();
-  auto *Expansions =
-      E->getTrailingObjects<ObjCDictionaryLiteral::ExpansionData>();
-  for (unsigned I = 0; I != NumElements; ++I) {
-    KeyValues[I].Key = Record.readSubExpr();
-    KeyValues[I].Value = Record.readSubExpr();
-    if (HasPackExpansions) {
-      Expansions[I].EllipsisLoc = readSourceLocation();
-      Expansions[I].NumExpansionsPlusOne = Record.readInt();
-    }
-  }
-  E->DictWithObjectsMethod = readDeclAs<ObjCMethodDecl>();
-  E->Range = readSourceRange();
-}
+// void ASTStmtReader::VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
+//   VisitExpr(E);
+//   unsigned NumElements = Record.readInt();
+//   assert(NumElements == E->getNumElements() && "Wrong number of elements");
+//   bool HasPackExpansions = Record.readInt();
+//   assert(HasPackExpansions == E->HasPackExpansions &&"Pack expansion mismatch");
+//   auto *KeyValues =
+//       E->getTrailingObjects<ObjCDictionaryLiteral::KeyValuePair>();
+//   auto *Expansions =
+//       E->getTrailingObjects<ObjCDictionaryLiteral::ExpansionData>();
+//   for (unsigned I = 0; I != NumElements; ++I) {
+//     KeyValues[I].Key = Record.readSubExpr();
+//     KeyValues[I].Value = Record.readSubExpr();
+//     if (HasPackExpansions) {
+//       Expansions[I].EllipsisLoc = readSourceLocation();
+//       Expansions[I].NumExpansionsPlusOne = Record.readInt();
+//     }
+//   }
+//   E->DictWithObjectsMethod = readDeclAs<ObjCMethodDecl>();
+//   E->Range = readSourceRange();
+// }
 
-void ASTStmtReader::VisitObjCEncodeExpr(ObjCEncodeExpr *E) {
-  VisitExpr(E);
-  E->setEncodedTypeSourceInfo(readTypeSourceInfo());
-  E->setAtLoc(readSourceLocation());
-  E->setRParenLoc(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCEncodeExpr(ObjCEncodeExpr *E) {
+//   VisitExpr(E);
+//   E->setEncodedTypeSourceInfo(readTypeSourceInfo());
+//   E->setAtLoc(readSourceLocation());
+//   E->setRParenLoc(readSourceLocation());
+// }
 
-void ASTStmtReader::VisitObjCSelectorExpr(ObjCSelectorExpr *E) {
-  VisitExpr(E);
-  E->setSelector(Record.readSelector());
-  E->setAtLoc(readSourceLocation());
-  E->setRParenLoc(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCSelectorExpr(ObjCSelectorExpr *E) {
+//   VisitExpr(E);
+//   E->setSelector(Record.readSelector());
+//   E->setAtLoc(readSourceLocation());
+//   E->setRParenLoc(readSourceLocation());
+// }
 
-void ASTStmtReader::VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
-  VisitExpr(E);
-  E->setProtocol(readDeclAs<ObjCProtocolDecl>());
-  E->setAtLoc(readSourceLocation());
-  E->ProtoLoc = readSourceLocation();
-  E->setRParenLoc(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
+//   VisitExpr(E);
+//   E->setProtocol(readDeclAs<ObjCProtocolDecl>());
+//   E->setAtLoc(readSourceLocation());
+//   E->ProtoLoc = readSourceLocation();
+//   E->setRParenLoc(readSourceLocation());
+// }
 
-void ASTStmtReader::VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
-  VisitExpr(E);
-  E->setDecl(readDeclAs<ObjCIvarDecl>());
-  E->setLocation(readSourceLocation());
-  E->setOpLoc(readSourceLocation());
-  E->setBase(Record.readSubExpr());
-  E->setIsArrow(Record.readInt());
-  E->setIsFreeIvar(Record.readInt());
-}
+// void ASTStmtReader::VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
+//   VisitExpr(E);
+//   E->setDecl(readDeclAs<ObjCIvarDecl>());
+//   E->setLocation(readSourceLocation());
+//   E->setOpLoc(readSourceLocation());
+//   E->setBase(Record.readSubExpr());
+//   E->setIsArrow(Record.readInt());
+//   E->setIsFreeIvar(Record.readInt());
+// }
 
-void ASTStmtReader::VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *E) {
-  VisitExpr(E);
-  unsigned MethodRefFlags = Record.readInt();
-  bool Implicit = Record.readInt() != 0;
-  if (Implicit) {
-    auto *Getter = readDeclAs<ObjCMethodDecl>();
-    auto *Setter = readDeclAs<ObjCMethodDecl>();
-    E->setImplicitProperty(Getter, Setter, MethodRefFlags);
-  } else {
-    E->setExplicitProperty(readDeclAs<ObjCPropertyDecl>(), MethodRefFlags);
-  }
-  E->setLocation(readSourceLocation());
-  E->setReceiverLocation(readSourceLocation());
-  switch (Record.readInt()) {
-  case 0:
-    E->setBase(Record.readSubExpr());
-    break;
-  case 1:
-    E->setSuperReceiver(Record.readType());
-    break;
-  case 2:
-    E->setClassReceiver(readDeclAs<ObjCInterfaceDecl>());
-    break;
-  }
-}
+// void ASTStmtReader::VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *E) {
+//   VisitExpr(E);
+//   unsigned MethodRefFlags = Record.readInt();
+//   bool Implicit = Record.readInt() != 0;
+//   if (Implicit) {
+//     auto *Getter = readDeclAs<ObjCMethodDecl>();
+//     auto *Setter = readDeclAs<ObjCMethodDecl>();
+//     E->setImplicitProperty(Getter, Setter, MethodRefFlags);
+//   } else {
+//     E->setExplicitProperty(readDeclAs<ObjCPropertyDecl>(), MethodRefFlags);
+//   }
+//   E->setLocation(readSourceLocation());
+//   E->setReceiverLocation(readSourceLocation());
+//   switch (Record.readInt()) {
+//   case 0:
+//     E->setBase(Record.readSubExpr());
+//     break;
+//   case 1:
+//     E->setSuperReceiver(Record.readType());
+//     break;
+//   case 2:
+//     E->setClassReceiver(readDeclAs<ObjCInterfaceDecl>());
+//     break;
+//   }
+// }
 
-void ASTStmtReader::VisitObjCSubscriptRefExpr(ObjCSubscriptRefExpr *E) {
-  VisitExpr(E);
-  E->setRBracket(readSourceLocation());
-  E->setBaseExpr(Record.readSubExpr());
-  E->setKeyExpr(Record.readSubExpr());
-  E->GetAtIndexMethodDecl = readDeclAs<ObjCMethodDecl>();
-  E->SetAtIndexMethodDecl = readDeclAs<ObjCMethodDecl>();
-}
+// void ASTStmtReader::VisitObjCSubscriptRefExpr(ObjCSubscriptRefExpr *E) {
+//   VisitExpr(E);
+//   E->setRBracket(readSourceLocation());
+//   E->setBaseExpr(Record.readSubExpr());
+//   E->setKeyExpr(Record.readSubExpr());
+//   E->GetAtIndexMethodDecl = readDeclAs<ObjCMethodDecl>();
+//   E->SetAtIndexMethodDecl = readDeclAs<ObjCMethodDecl>();
+// }
 
-void ASTStmtReader::VisitObjCMessageExpr(ObjCMessageExpr *E) {
-  VisitExpr(E);
-  assert(Record.peekInt() == E->getNumArgs());
-  Record.skipInts(1);
-  unsigned NumStoredSelLocs = Record.readInt();
-  E->SelLocsKind = Record.readInt();
-  E->setDelegateInitCall(Record.readInt());
-  E->IsImplicit = Record.readInt();
-  auto Kind = static_cast<ObjCMessageExpr::ReceiverKind>(Record.readInt());
-  switch (Kind) {
-  case ObjCMessageExpr::Instance:
-    E->setInstanceReceiver(Record.readSubExpr());
-    break;
+// void ASTStmtReader::VisitObjCMessageExpr(ObjCMessageExpr *E) {
+//   VisitExpr(E);
+//   assert(Record.peekInt() == E->getNumArgs());
+//   Record.skipInts(1);
+//   unsigned NumStoredSelLocs = Record.readInt();
+//   E->SelLocsKind = Record.readInt();
+//   E->setDelegateInitCall(Record.readInt());
+//   E->IsImplicit = Record.readInt();
+//   auto Kind = static_cast<ObjCMessageExpr::ReceiverKind>(Record.readInt());
+//   switch (Kind) {
+//   case ObjCMessageExpr::Instance:
+//     E->setInstanceReceiver(Record.readSubExpr());
+//     break;
 
-  case ObjCMessageExpr::Class:
-    E->setClassReceiver(readTypeSourceInfo());
-    break;
+//   case ObjCMessageExpr::Class:
+//     E->setClassReceiver(readTypeSourceInfo());
+//     break;
 
-  case ObjCMessageExpr::SuperClass:
-  case ObjCMessageExpr::SuperInstance: {
-    QualType T = Record.readType();
-    SourceLocation SuperLoc = readSourceLocation();
-    E->setSuper(SuperLoc, T, Kind == ObjCMessageExpr::SuperInstance);
-    break;
-  }
-  }
+//   case ObjCMessageExpr::SuperClass:
+//   case ObjCMessageExpr::SuperInstance: {
+//     QualType T = Record.readType();
+//     SourceLocation SuperLoc = readSourceLocation();
+//     E->setSuper(SuperLoc, T, Kind == ObjCMessageExpr::SuperInstance);
+//     break;
+//   }
+//   }
 
-  assert(Kind == E->getReceiverKind());
+//   assert(Kind == E->getReceiverKind());
 
-  if (Record.readInt())
-    E->setMethodDecl(readDeclAs<ObjCMethodDecl>());
-  else
-    E->setSelector(Record.readSelector());
+//   if (Record.readInt())
+//     E->setMethodDecl(readDeclAs<ObjCMethodDecl>());
+//   else
+//     E->setSelector(Record.readSelector());
 
-  E->LBracLoc = readSourceLocation();
-  E->RBracLoc = readSourceLocation();
+//   E->LBracLoc = readSourceLocation();
+//   E->RBracLoc = readSourceLocation();
 
-  for (unsigned I = 0, N = E->getNumArgs(); I != N; ++I)
-    E->setArg(I, Record.readSubExpr());
+//   for (unsigned I = 0, N = E->getNumArgs(); I != N; ++I)
+//     E->setArg(I, Record.readSubExpr());
 
-  SourceLocation *Locs = E->getStoredSelLocs();
-  for (unsigned I = 0; I != NumStoredSelLocs; ++I)
-    Locs[I] = readSourceLocation();
-}
+//   SourceLocation *Locs = E->getStoredSelLocs();
+//   for (unsigned I = 0; I != NumStoredSelLocs; ++I)
+//     Locs[I] = readSourceLocation();
+// }
 
 void ASTStmtReader::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
   VisitStmt(S);
@@ -1598,11 +1598,11 @@ void ASTStmtReader::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
   S->setThrowLoc(readSourceLocation());
 }
 
-void ASTStmtReader::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *E) {
-  VisitExpr(E);
-  E->setValue(Record.readInt());
-  E->setLocation(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *E) {
+//   VisitExpr(E);
+//   E->setValue(Record.readInt());
+//   E->setLocation(readSourceLocation());
+// }
 
 void ASTStmtReader::VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
   VisitExpr(E);
@@ -3100,107 +3100,107 @@ Stmt *ASTReader::ReadStmtFromStream(ModuleFile &F) {
           /*NumAssocs=*/Record[ASTStmtReader::NumExprFields]);
       break;
 
-    case EXPR_OBJC_STRING_LITERAL:
-      S = new (Context) ObjCStringLiteral(Empty);
-      break;
+    // case EXPR_OBJC_STRING_LITERAL:
+    //   S = new (Context) ObjCStringLiteral(Empty);
+    //   break;
 
-    case EXPR_OBJC_BOXED_EXPRESSION:
-      S = new (Context) ObjCBoxedExpr(Empty);
-      break;
+    // case EXPR_OBJC_BOXED_EXPRESSION:
+    //   S = new (Context) ObjCBoxedExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_ARRAY_LITERAL:
-      S = ObjCArrayLiteral::CreateEmpty(Context,
-                                        Record[ASTStmtReader::NumExprFields]);
-      break;
+    // case EXPR_OBJC_ARRAY_LITERAL:
+    //   S = ObjCArrayLiteral::CreateEmpty(Context,
+    //                                     Record[ASTStmtReader::NumExprFields]);
+    //   break;
 
-    case EXPR_OBJC_DICTIONARY_LITERAL:
-      S = ObjCDictionaryLiteral::CreateEmpty(Context,
-            Record[ASTStmtReader::NumExprFields],
-            Record[ASTStmtReader::NumExprFields + 1]);
-      break;
+    // case EXPR_OBJC_DICTIONARY_LITERAL:
+    //   S = ObjCDictionaryLiteral::CreateEmpty(Context,
+    //         Record[ASTStmtReader::NumExprFields],
+    //         Record[ASTStmtReader::NumExprFields + 1]);
+    //   break;
 
-    case EXPR_OBJC_ENCODE:
-      S = new (Context) ObjCEncodeExpr(Empty);
-      break;
+    // case EXPR_OBJC_ENCODE:
+    //   S = new (Context) ObjCEncodeExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_SELECTOR_EXPR:
-      S = new (Context) ObjCSelectorExpr(Empty);
-      break;
+    // case EXPR_OBJC_SELECTOR_EXPR:
+    //   S = new (Context) ObjCSelectorExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_PROTOCOL_EXPR:
-      S = new (Context) ObjCProtocolExpr(Empty);
-      break;
+    // case EXPR_OBJC_PROTOCOL_EXPR:
+    //   S = new (Context) ObjCProtocolExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_IVAR_REF_EXPR:
-      S = new (Context) ObjCIvarRefExpr(Empty);
-      break;
+    // case EXPR_OBJC_IVAR_REF_EXPR:
+    //   S = new (Context) ObjCIvarRefExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_PROPERTY_REF_EXPR:
-      S = new (Context) ObjCPropertyRefExpr(Empty);
-      break;
+    // case EXPR_OBJC_PROPERTY_REF_EXPR:
+    //   S = new (Context) ObjCPropertyRefExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_SUBSCRIPT_REF_EXPR:
-      S = new (Context) ObjCSubscriptRefExpr(Empty);
-      break;
+    // case EXPR_OBJC_SUBSCRIPT_REF_EXPR:
+    //   S = new (Context) ObjCSubscriptRefExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_KVC_REF_EXPR:
-      llvm_unreachable("mismatching AST file");
+    // case EXPR_OBJC_KVC_REF_EXPR:
+    //   llvm_unreachable("mismatching AST file");
 
-    case EXPR_OBJC_MESSAGE_EXPR:
-      S = ObjCMessageExpr::CreateEmpty(Context,
-                                     Record[ASTStmtReader::NumExprFields],
-                                     Record[ASTStmtReader::NumExprFields + 1]);
-      break;
+    // case EXPR_OBJC_MESSAGE_EXPR:
+    //   S = ObjCMessageExpr::CreateEmpty(Context,
+    //                                  Record[ASTStmtReader::NumExprFields],
+    //                                  Record[ASTStmtReader::NumExprFields + 1]);
+    //   break;
 
-    case EXPR_OBJC_ISA:
-      S = new (Context) ObjCIsaExpr(Empty);
-      break;
+    // case EXPR_OBJC_ISA:
+    //   S = new (Context) ObjCIsaExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_INDIRECT_COPY_RESTORE:
-      S = new (Context) ObjCIndirectCopyRestoreExpr(Empty);
-      break;
+    // case EXPR_OBJC_INDIRECT_COPY_RESTORE:
+    //   S = new (Context) ObjCIndirectCopyRestoreExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_BRIDGED_CAST:
-      S = new (Context) ObjCBridgedCastExpr(Empty);
-      break;
+    // case EXPR_OBJC_BRIDGED_CAST:
+    //   S = new (Context) ObjCBridgedCastExpr(Empty);
+    //   break;
 
-    case STMT_OBJC_FOR_COLLECTION:
-      S = new (Context) ObjCForCollectionStmt(Empty);
-      break;
+    // case STMT_OBJC_FOR_COLLECTION:
+    //   S = new (Context) ObjCForCollectionStmt(Empty);
+    //   break;
 
-    case STMT_OBJC_CATCH:
-      S = new (Context) ObjCAtCatchStmt(Empty);
-      break;
+    // case STMT_OBJC_CATCH:
+    //   S = new (Context) ObjCAtCatchStmt(Empty);
+    //   break;
 
-    case STMT_OBJC_FINALLY:
-      S = new (Context) ObjCAtFinallyStmt(Empty);
-      break;
+    // case STMT_OBJC_FINALLY:
+    //   S = new (Context) ObjCAtFinallyStmt(Empty);
+    //   break;
 
-    case STMT_OBJC_AT_TRY:
-      S = ObjCAtTryStmt::CreateEmpty(Context,
-                                     Record[ASTStmtReader::NumStmtFields],
-                                     Record[ASTStmtReader::NumStmtFields + 1]);
-      break;
+    // case STMT_OBJC_AT_TRY:
+    //   S = ObjCAtTryStmt::CreateEmpty(Context,
+    //                                  Record[ASTStmtReader::NumStmtFields],
+    //                                  Record[ASTStmtReader::NumStmtFields + 1]);
+    //   break;
 
-    case STMT_OBJC_AT_SYNCHRONIZED:
-      S = new (Context) ObjCAtSynchronizedStmt(Empty);
-      break;
+    // case STMT_OBJC_AT_SYNCHRONIZED:
+    //   S = new (Context) ObjCAtSynchronizedStmt(Empty);
+    //   break;
 
-    case STMT_OBJC_AT_THROW:
-      S = new (Context) ObjCAtThrowStmt(Empty);
-      break;
+    // case STMT_OBJC_AT_THROW:
+    //   S = new (Context) ObjCAtThrowStmt(Empty);
+    //   break;
 
-    case STMT_OBJC_AUTORELEASE_POOL:
-      S = new (Context) ObjCAutoreleasePoolStmt(Empty);
-      break;
+    // case STMT_OBJC_AUTORELEASE_POOL:
+    //   S = new (Context) ObjCAutoreleasePoolStmt(Empty);
+    //   break;
 
-    case EXPR_OBJC_BOOL_LITERAL:
-      S = new (Context) ObjCBoolLiteralExpr(Empty);
-      break;
+    // case EXPR_OBJC_BOOL_LITERAL:
+    //   S = new (Context) ObjCBoolLiteralExpr(Empty);
+    //   break;
 
-    case EXPR_OBJC_AVAILABILITY_CHECK:
-      S = new (Context) ObjCAvailabilityCheckExpr(Empty);
-      break;
+    // case EXPR_OBJC_AVAILABILITY_CHECK:
+    //   S = new (Context) ObjCAvailabilityCheckExpr(Empty);
+    //   break;
 
     case STMT_SEH_LEAVE:
       S = new (Context) SEHLeaveStmt(Empty);

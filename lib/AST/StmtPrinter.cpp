@@ -16,19 +16,19 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/AST/TemplateBase.h"
@@ -1011,43 +1011,43 @@ static bool isImplicitSelf(const Expr *E) {
   return false;
 }
 
-void StmtPrinter::VisitObjCIvarRefExpr(ObjCIvarRefExpr *Node) {
-  if (Node->getBase()) {
-    if (!Policy.SuppressImplicitBase ||
-        !isImplicitSelf(Node->getBase()->IgnoreImpCasts())) {
-      PrintExpr(Node->getBase());
-      OS << (Node->isArrow() ? "->" : ".");
-    }
-  }
-  OS << *Node->getDecl();
-}
+// void StmtPrinter::VisitObjCIvarRefExpr(ObjCIvarRefExpr *Node) {
+//   if (Node->getBase()) {
+//     if (!Policy.SuppressImplicitBase ||
+//         !isImplicitSelf(Node->getBase()->IgnoreImpCasts())) {
+//       PrintExpr(Node->getBase());
+//       OS << (Node->isArrow() ? "->" : ".");
+//     }
+//   }
+//   OS << *Node->getDecl();
+// }
 
-void StmtPrinter::VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *Node) {
-  if (Node->isSuperReceiver())
-    OS << "super.";
-  else if (Node->isObjectReceiver() && Node->getBase()) {
-    PrintExpr(Node->getBase());
-    OS << ".";
-  } else if (Node->isClassReceiver() && Node->getClassReceiver()) {
-    OS << Node->getClassReceiver()->getName() << ".";
-  }
+// void StmtPrinter::VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *Node) {
+//   if (Node->isSuperReceiver())
+//     OS << "super.";
+//   else if (Node->isObjectReceiver() && Node->getBase()) {
+//     PrintExpr(Node->getBase());
+//     OS << ".";
+//   } else if (Node->isClassReceiver() && Node->getClassReceiver()) {
+//     OS << Node->getClassReceiver()->getName() << ".";
+//   }
 
-  if (Node->isImplicitProperty()) {
-    if (const auto *Getter = Node->getImplicitPropertyGetter())
-      Getter->getSelector().print(OS);
-    else
-      OS << SelectorTable::getPropertyNameFromSetterSelector(
-          Node->getImplicitPropertySetter()->getSelector());
-  } else
-    OS << Node->getExplicitProperty()->getName();
-}
+//   if (Node->isImplicitProperty()) {
+//     if (const auto *Getter = Node->getImplicitPropertyGetter())
+//       Getter->getSelector().print(OS);
+//     else
+//       OS << SelectorTable::getPropertyNameFromSetterSelector(
+//           Node->getImplicitPropertySetter()->getSelector());
+//   } else
+//     OS << Node->getExplicitProperty()->getName();
+// }
 
-void StmtPrinter::VisitObjCSubscriptRefExpr(ObjCSubscriptRefExpr *Node) {
-  PrintExpr(Node->getBaseExpr());
-  OS << "[";
-  PrintExpr(Node->getKeyExpr());
-  OS << "]";
-}
+// void StmtPrinter::VisitObjCSubscriptRefExpr(ObjCSubscriptRefExpr *Node) {
+//   PrintExpr(Node->getBaseExpr());
+//   OS << "[";
+//   PrintExpr(Node->getKeyExpr());
+//   OS << "]";
+// }
 
 void StmtPrinter::VisitPredefinedExpr(PredefinedExpr *Node) {
   OS << PredefinedExpr::getIdentKindName(Node->getIdentKind());
@@ -2374,100 +2374,100 @@ void StmtPrinter::VisitCoyieldExpr(CoyieldExpr *S) {
 
 // Obj-C
 
-void StmtPrinter::VisitObjCStringLiteral(ObjCStringLiteral *Node) {
-  OS << "@";
-  VisitStringLiteral(Node->getString());
-}
+// void StmtPrinter::VisitObjCStringLiteral(ObjCStringLiteral *Node) {
+//   OS << "@";
+//   VisitStringLiteral(Node->getString());
+// }
 
-void StmtPrinter::VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
-  OS << "@";
-  Visit(E->getSubExpr());
-}
+// void StmtPrinter::VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
+//   OS << "@";
+//   Visit(E->getSubExpr());
+// }
 
-void StmtPrinter::VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
-  OS << "@[ ";
-  ObjCArrayLiteral::child_range Ch = E->children();
-  for (auto I = Ch.begin(), E = Ch.end(); I != E; ++I) {
-    if (I != Ch.begin())
-      OS << ", ";
-    Visit(*I);
-  }
-  OS << " ]";
-}
+// void StmtPrinter::VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
+//   OS << "@[ ";
+//   ObjCArrayLiteral::child_range Ch = E->children();
+//   for (auto I = Ch.begin(), E = Ch.end(); I != E; ++I) {
+//     if (I != Ch.begin())
+//       OS << ", ";
+//     Visit(*I);
+//   }
+//   OS << " ]";
+// }
 
-void StmtPrinter::VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
-  OS << "@{ ";
-  for (unsigned I = 0, N = E->getNumElements(); I != N; ++I) {
-    if (I > 0)
-      OS << ", ";
+// void StmtPrinter::VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
+//   OS << "@{ ";
+//   for (unsigned I = 0, N = E->getNumElements(); I != N; ++I) {
+//     if (I > 0)
+//       OS << ", ";
 
-    ObjCDictionaryElement Element = E->getKeyValueElement(I);
-    Visit(Element.Key);
-    OS << " : ";
-    Visit(Element.Value);
-    if (Element.isPackExpansion())
-      OS << "...";
-  }
-  OS << " }";
-}
+//     ObjCDictionaryElement Element = E->getKeyValueElement(I);
+//     Visit(Element.Key);
+//     OS << " : ";
+//     Visit(Element.Value);
+//     if (Element.isPackExpansion())
+//       OS << "...";
+//   }
+//   OS << " }";
+// }
 
-void StmtPrinter::VisitObjCEncodeExpr(ObjCEncodeExpr *Node) {
-  OS << "@encode(";
-  Node->getEncodedType().print(OS, Policy);
-  OS << ')';
-}
+// void StmtPrinter::VisitObjCEncodeExpr(ObjCEncodeExpr *Node) {
+//   OS << "@encode(";
+//   Node->getEncodedType().print(OS, Policy);
+//   OS << ')';
+// }
 
-void StmtPrinter::VisitObjCSelectorExpr(ObjCSelectorExpr *Node) {
-  OS << "@selector(";
-  Node->getSelector().print(OS);
-  OS << ')';
-}
+// void StmtPrinter::VisitObjCSelectorExpr(ObjCSelectorExpr *Node) {
+//   OS << "@selector(";
+//   Node->getSelector().print(OS);
+//   OS << ')';
+// }
 
-void StmtPrinter::VisitObjCProtocolExpr(ObjCProtocolExpr *Node) {
-  OS << "@protocol(" << *Node->getProtocol() << ')';
-}
+// void StmtPrinter::VisitObjCProtocolExpr(ObjCProtocolExpr *Node) {
+//   OS << "@protocol(" << *Node->getProtocol() << ')';
+// }
 
-void StmtPrinter::VisitObjCMessageExpr(ObjCMessageExpr *Mess) {
-  OS << "[";
-  switch (Mess->getReceiverKind()) {
-  case ObjCMessageExpr::Instance:
-    PrintExpr(Mess->getInstanceReceiver());
-    break;
+// void StmtPrinter::VisitObjCMessageExpr(ObjCMessageExpr *Mess) {
+//   OS << "[";
+//   switch (Mess->getReceiverKind()) {
+//   case ObjCMessageExpr::Instance:
+//     PrintExpr(Mess->getInstanceReceiver());
+//     break;
 
-  case ObjCMessageExpr::Class:
-    Mess->getClassReceiver().print(OS, Policy);
-    break;
+//   case ObjCMessageExpr::Class:
+//     Mess->getClassReceiver().print(OS, Policy);
+//     break;
 
-  case ObjCMessageExpr::SuperInstance:
-  case ObjCMessageExpr::SuperClass:
-    OS << "Super";
-    break;
-  }
+//   case ObjCMessageExpr::SuperInstance:
+//   case ObjCMessageExpr::SuperClass:
+//     OS << "Super";
+//     break;
+//   }
 
-  OS << ' ';
-  Selector selector = Mess->getSelector();
-  if (selector.isUnarySelector()) {
-    OS << selector.getNameForSlot(0);
-  } else {
-    for (unsigned i = 0, e = Mess->getNumArgs(); i != e; ++i) {
-      if (i < selector.getNumArgs()) {
-        if (i > 0) OS << ' ';
-        if (selector.getIdentifierInfoForSlot(i))
-          OS << selector.getIdentifierInfoForSlot(i)->getName() << ':';
-        else
-           OS << ":";
-      }
-      else OS << ", "; // Handle variadic methods.
+//   OS << ' ';
+//   Selector selector = Mess->getSelector();
+//   if (selector.isUnarySelector()) {
+//     OS << selector.getNameForSlot(0);
+//   } else {
+//     for (unsigned i = 0, e = Mess->getNumArgs(); i != e; ++i) {
+//       if (i < selector.getNumArgs()) {
+//         if (i > 0) OS << ' ';
+//         if (selector.getIdentifierInfoForSlot(i))
+//           OS << selector.getIdentifierInfoForSlot(i)->getName() << ':';
+//         else
+//            OS << ":";
+//       }
+//       else OS << ", "; // Handle variadic methods.
 
-      PrintExpr(Mess->getArg(i));
-    }
-  }
-  OS << "]";
-}
+//       PrintExpr(Mess->getArg(i));
+//     }
+//   }
+//   OS << "]";
+// }
 
-void StmtPrinter::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *Node) {
-  OS << (Node->getValue() ? "__objc_yes" : "__objc_no");
-}
+// void StmtPrinter::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *Node) {
+//   OS << (Node->getValue() ? "__objc_yes" : "__objc_no");
+// }
 
 void
 StmtPrinter::VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {

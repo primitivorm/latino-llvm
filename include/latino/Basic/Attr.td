@@ -101,9 +101,9 @@ def NonStaticNonConstCXXMethod
                     [{!S->isStatic() && !S->isConst()}],
                     "non-static non-const member functions">;
 
-def ObjCInstanceMethod : SubsetSubject<ObjCMethod,
-                                       [{S->isInstanceMethod()}],
-                                       "Objective-C instance methods">;
+// def ObjCInstanceMethod : SubsetSubject<ObjCMethod,
+//                                        [{S->isInstanceMethod()}],
+//                                        "Objective-C instance methods">;
 
 def Struct : SubsetSubject<Record,
                            [{!S->isUnion()}], "structs">;
@@ -146,7 +146,7 @@ def OpenCLKernelFunction
 def HasFunctionProto : SubsetSubject<DeclBase,
                                      [{(S->getFunctionType(true) != nullptr &&
                               isa<FunctionProtoType>(S->getFunctionType())) ||
-                                       isa<ObjCMethodDecl>(S) ||
+                                       // isa<ObjCMethodDecl>(S) ||
                                        isa<BlockDecl>(S)}],
                                      "non-K&R-style functions">;
 
@@ -324,11 +324,11 @@ def COnly : LangOpt<"", "!LangOpts.CPlusPlus">;
 def CPlusPlus : LangOpt<"CPlusPlus">;
 def OpenCL : LangOpt<"OpenCL">;
 def RenderScript : LangOpt<"RenderScript">;
-def ObjC : LangOpt<"ObjC">;
+// def ObjC : LangOpt<"ObjC">;
 def BlocksSupported : LangOpt<"Blocks">;
-def ObjCAutoRefCount : LangOpt<"ObjCAutoRefCount">;
-def ObjCNonFragileRuntime
-    : LangOpt<"", "LangOpts.ObjCRuntime.allowsClassStubs()">;
+// def ObjCAutoRefCount : LangOpt<"ObjCAutoRefCount">;
+// def ObjCNonFragileRuntime
+//     : LangOpt<"", "LangOpts.ObjCRuntime.allowsClassStubs()">;
 
 // Language option for CMSE extensions
 def Cmse : LangOpt<"Cmse">;
@@ -450,32 +450,32 @@ def SubjectMatcherForNamespace : AttrSubjectMatcherRule<"namespace",
                                                         [Namespace]> {
   let LangOpts = [CPlusPlus];
 }
-def SubjectMatcherForObjCInterface : AttrSubjectMatcherRule<"objc_interface",
-                                                            [ObjCInterface]> {
-  let LangOpts = [ObjC];
-}
-def SubjectMatcherForObjCProtocol : AttrSubjectMatcherRule<"objc_protocol",
-                                                           [ObjCProtocol]> {
-  let LangOpts = [ObjC];
-}
-def SubjectMatcherForObjCCategory : AttrSubjectMatcherRule<"objc_category",
-                                                           [ObjCCategory]> {
-  let LangOpts = [ObjC];
-}
-def SubjectMatcherForObjCImplementation :
-    AttrSubjectMatcherRule<"objc_implementation", [ObjCImpl]> {
-  let LangOpts = [ObjC];
-}
-def SubjectMatcherForObjCMethod : AttrSubjectMatcherRule<"objc_method",
-                                                         [ObjCMethod], [
-  AttrSubjectMatcherSubRule<"is_instance", [ObjCInstanceMethod]>
-]> {
-  let LangOpts = [ObjC];
-}
-def SubjectMatcherForObjCProperty : AttrSubjectMatcherRule<"objc_property",
-                                                           [ObjCProperty]> {
-  let LangOpts = [ObjC];
-}
+// def SubjectMatcherForObjCInterface : AttrSubjectMatcherRule<"objc_interface",
+//                                                             [ObjCInterface]> {
+//   let LangOpts = [ObjC];
+// }
+// def SubjectMatcherForObjCProtocol : AttrSubjectMatcherRule<"objc_protocol",
+//                                                            [ObjCProtocol]> {
+//   let LangOpts = [ObjC];
+// }
+// def SubjectMatcherForObjCCategory : AttrSubjectMatcherRule<"objc_category",
+//                                                            [ObjCCategory]> {
+//   let LangOpts = [ObjC];
+// }
+// def SubjectMatcherForObjCImplementation :
+//     AttrSubjectMatcherRule<"objc_implementation", [ObjCImpl]> {
+//   let LangOpts = [ObjC];
+// }
+// def SubjectMatcherForObjCMethod : AttrSubjectMatcherRule<"objc_method",
+//                                                          [ObjCMethod], [
+//   AttrSubjectMatcherSubRule<"is_instance", [ObjCInstanceMethod]>
+// ]> {
+//   let LangOpts = [ObjC];
+// }
+// def SubjectMatcherForObjCProperty : AttrSubjectMatcherRule<"objc_property",
+//                                                            [ObjCProperty]> {
+//   let LangOpts = [ObjC];
+// }
 def SubjectMatcherForBlock : AttrSubjectMatcherRule<"block", [Block]> {
   let LangOpts = [BlocksSupported];
 }
@@ -686,7 +686,7 @@ def Artificial : InheritableAttr {
 def XRayInstrument : InheritableAttr {
   let Spellings = [Clang<"xray_always_instrument">,
                    Clang<"xray_never_instrument">];
-  let Subjects = SubjectList<[Function, ObjCMethod]>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/]>;
   let Accessors = [Accessor<"alwaysXRayInstrument",
                      [Clang<"xray_always_instrument">]>,
                    Accessor<"neverXRayInstrument",
@@ -697,7 +697,7 @@ def XRayInstrument : InheritableAttr {
 
 def XRayLogArgs : InheritableAttr {
   let Spellings = [Clang<"xray_log_args">];
-  let Subjects = SubjectList<[Function, ObjCMethod]>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/]>;
   // This argument is a count not an index, so it has the same encoding (base
   // 1 including C++ implicit this parameter) at the source and LLVM levels of
   // representation, so ParamIdxArgument is inappropriate.  It is never used
@@ -712,7 +712,7 @@ def PatchableFunctionEntry
     : InheritableAttr,
       TargetSpecificAttr<TargetArch<["aarch64", "aarch64_be", "x86", "x86_64"]>> {
   let Spellings = [GCC<"patchable_function_entry">];
-  let Subjects = SubjectList<[Function, ObjCMethod]>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/]>;
   let Args = [UnsignedArgument<"Count">, DefaultIntArgument<"Offset", 0>];
   let Documentation = [PatchableFunctionEntryDocs];
 }
@@ -867,13 +867,13 @@ def Bounded : IgnoredAttr {
 def CarriesDependency : InheritableParamAttr {
   let Spellings = [GNU<"carries_dependency">,
                    CXX11<"","carries_dependency", 200809>];
-  let Subjects = SubjectList<[ParmVar, ObjCMethod, Function], ErrorDiag>;
+  let Subjects = SubjectList<[ParmVar, /*ObjCMethod,*/ Function], ErrorDiag>;
   let Documentation = [CarriesDependencyDocs];
 }
 
 def CDecl : DeclOrTypeAttr {
   let Spellings = [GCC<"cdecl">, Keyword<"__cdecl">, Keyword<"_cdecl">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
@@ -898,13 +898,13 @@ def CFUnknownTransfer : InheritableAttr {
 
 def CFReturnsRetained : InheritableAttr {
   let Spellings = [Clang<"cf_returns_retained">];
-//  let Subjects = SubjectList<[ObjCMethod, ObjCProperty, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod, ObjCProperty,*/ Function]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
 def CFReturnsNotRetained : InheritableAttr {
   let Spellings = [Clang<"cf_returns_not_retained">];
-//  let Subjects = SubjectList<[ObjCMethod, ObjCProperty, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod, ObjCProperty,*/ Function]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
@@ -923,13 +923,13 @@ def OSConsumed : InheritableParamAttr {
 
 def OSReturnsRetained : InheritableAttr {
   let Spellings = [Clang<"os_returns_retained">];
-  let Subjects = SubjectList<[Function, ObjCMethod, ObjCProperty, ParmVar]>;
+  let Subjects = SubjectList<[Function, /*ObjCMethod, ObjCProperty,*/ ParmVar]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
 def OSReturnsNotRetained : InheritableAttr {
   let Spellings = [Clang<"os_returns_not_retained">];
-  let Subjects = SubjectList<[Function, ObjCMethod, ObjCProperty, ParmVar]>;
+  let Subjects = SubjectList<[Function, /*ObjCMethod, ObjCProperty,*/ ParmVar]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
@@ -1095,7 +1095,7 @@ def CUDALaunchBounds : InheritableAttr {
   let Spellings = [GNU<"launch_bounds">, Declspec<"__launch_bounds__">];
   let Args = [ExprArgument<"MaxThreads">, ExprArgument<"MinBlocks", 1>];
   let LangOpts = [CUDA];
-  let Subjects = SubjectList<[ObjCMethod, FunctionLike]>;
+  let Subjects = SubjectList<[/*ObjCMethod,*/ FunctionLike]>;
   // An AST node is created for this attribute, but is not used by other parts
   // of the compiler. However, this node needs to exist in the AST because
   // non-LLVM backends may be relying on the attribute's presence.
@@ -1282,7 +1282,7 @@ def NoMerge : StmtAttr {
 def FastCall : DeclOrTypeAttr {
   let Spellings = [GCC<"fastcall">, Keyword<"__fastcall">,
                    Keyword<"_fastcall">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [FastCallDocs];
 }
 
@@ -1300,7 +1300,7 @@ def Final : InheritableAttr {
 
 def MinSize : InheritableAttr {
   let Spellings = [Clang<"minsize">];
-  let Subjects = SubjectList<[Function, ObjCMethod], ErrorDiag>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/], ErrorDiag>;
   let Documentation = [Undocumented];
 }
 
@@ -1330,14 +1330,14 @@ def Format : InheritableAttr {
   let Spellings = [GCC<"format">];
   let Args = [IdentifierArgument<"Type">, IntArgument<"FormatIdx">,
               IntArgument<"FirstArg">];
-  let Subjects = SubjectList<[ObjCMethod, Block, HasFunctionProto]>;
+  let Subjects = SubjectList<[/*ObjCMethod,*/ Block, HasFunctionProto]>;
   let Documentation = [FormatDocs];
 }
 
 def FormatArg : InheritableAttr {
   let Spellings = [GCC<"format_arg">];
   let Args = [ParamIdxArgument<"FormatIdx">];
-  let Subjects = SubjectList<[ObjCMethod, HasFunctionProto]>;
+  let Subjects = SubjectList<[/*ObjCMethod,*/ HasFunctionProto]>;
   let Documentation = [Undocumented];
 }
 
@@ -1364,7 +1364,7 @@ def Hot : InheritableAttr {
 
 def IBAction : InheritableAttr {
   let Spellings = [Clang<"ibaction">];
-  let Subjects = SubjectList<[ObjCInstanceMethod]>;
+  // let Subjects = SubjectList<[ObjCInstanceMethod]>;
   // An AST node is created for this attribute, but is not used by other parts
   // of the compiler. However, this node needs to exist in the AST because
   // external tools rely on it.
@@ -1374,7 +1374,7 @@ def IBAction : InheritableAttr {
 
 def IBOutlet : InheritableAttr {
   let Spellings = [Clang<"iboutlet">];
-//  let Subjects = [ObjCIvar, ObjCProperty];
+  // let Subjects = [ObjCIvar, ObjCProperty];
   let Documentation = [Undocumented];
 }
 
@@ -1440,13 +1440,13 @@ def MayAlias : InheritableAttr {
 
 def MIGServerRoutine : InheritableAttr {
   let Spellings = [Clang<"mig_server_routine">];
-  let Subjects = SubjectList<[Function, ObjCMethod, Block]>;
+  let Subjects = SubjectList<[Function, /*ObjCMethod,*/ Block]>;
   let Documentation = [MIGConventionDocs];
 }
 
 def MSABI : DeclOrTypeAttr {
   let Spellings = [GCC<"ms_abi">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [MSABIDocs];
 }
 
@@ -1553,7 +1553,7 @@ def ReturnsTwice : InheritableAttr {
 
 def DisableTailCalls : InheritableAttr {
   let Spellings = [Clang<"disable_tail_calls">];
-  let Subjects = SubjectList<[Function, ObjCMethod]>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/]>;
   let Documentation = [DisableTailCallsDocs];
 }
 
@@ -1573,7 +1573,7 @@ def NoCommon : InheritableAttr {
 
 def NoDebug : InheritableAttr {
   let Spellings = [GCC<"nodebug">];
-  let Subjects = SubjectList<[TypedefName, FunctionLike, ObjCMethod, NonParmVar]>;
+  let Subjects = SubjectList<[TypedefName, FunctionLike, /*ObjCMethod,*/ NonParmVar]>;
   let Documentation = [NoDebugDocs];
 }
 
@@ -1709,7 +1709,7 @@ def NoSplitStack : InheritableAttr {
 
 def NonNull : InheritableParamAttr {
   let Spellings = [GCC<"nonnull">];
-  let Subjects = SubjectList<[ObjCMethod, HasFunctionProto, ParmVar], WarnDiag,
+  let Subjects = SubjectList<[/*ObjCMethod,*/ HasFunctionProto, ParmVar], WarnDiag,
                              "functions, methods, and parameters">;
   let Args = [VariadicParamIdxArgument<"Args">];
   let AdditionalMembers = [{
@@ -1728,7 +1728,7 @@ def NonNull : InheritableParamAttr {
 
 def ReturnsNonNull : InheritableAttr {
   let Spellings = [GCC<"returns_nonnull">];
-  let Subjects = SubjectList<[ObjCMethod, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod,*/ Function]>;
   let Documentation = [ReturnsNonNullDocs];
 }
 
@@ -1762,15 +1762,15 @@ def TypeNullUnspecified : TypeAttr {
 // This is a marker used to indicate that an __unsafe_unretained qualifier was
 // ignored because ARC is not enabled. The usual representation for this
 // qualifier is as an ObjCOwnership attribute with Kind == "none".
-def ObjCInertUnsafeUnretained : TypeAttr {
-  let Spellings = [Keyword<"__unsafe_unretained">];
-  let Documentation = [Undocumented];
-}
+// def ObjCInertUnsafeUnretained : TypeAttr {
+//   let Spellings = [Keyword<"__unsafe_unretained">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCKindOf : TypeAttr {
-  let Spellings = [Keyword<"__kindof">];
-  let Documentation = [Undocumented];
-}
+// def ObjCKindOf : TypeAttr {
+//   let Spellings = [Keyword<"__kindof">];
+//   let Documentation = [Undocumented];
+// }
 
 def NoEscape : Attr {
   let Spellings = [Clang<"noescape">];
@@ -1780,7 +1780,7 @@ def NoEscape : Attr {
 
 def AssumeAligned : InheritableAttr {
   let Spellings = [GCC<"assume_aligned">];
-  let Subjects = SubjectList<[ObjCMethod, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod,*/ Function]>;
   let Args = [ExprArgument<"Alignment">, ExprArgument<"Offset", 1>];
   let Documentation = [AssumeAlignedDocs];
 }
@@ -1832,51 +1832,51 @@ def NvWeak : IgnoredAttr {
   let LangOpts = [CUDA];
 }
 
-def ObjCBridge : InheritableAttr {
-  let Spellings = [Clang<"objc_bridge">];
-  let Subjects = SubjectList<[Record, TypedefName], ErrorDiag>;
-  let Args = [IdentifierArgument<"BridgedType">];
-  let Documentation = [Undocumented];
-}
+// def ObjCBridge : InheritableAttr {
+//   let Spellings = [Clang<"objc_bridge">];
+//   let Subjects = SubjectList<[Record, TypedefName], ErrorDiag>;
+//   let Args = [IdentifierArgument<"BridgedType">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCBridgeMutable : InheritableAttr {
-  let Spellings = [Clang<"objc_bridge_mutable">];
-  let Subjects = SubjectList<[Record], ErrorDiag>;
-  let Args = [IdentifierArgument<"BridgedType">];
-  let Documentation = [Undocumented];
-}
+// def ObjCBridgeMutable : InheritableAttr {
+//   let Spellings = [Clang<"objc_bridge_mutable">];
+//   let Subjects = SubjectList<[Record], ErrorDiag>;
+//   let Args = [IdentifierArgument<"BridgedType">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCBridgeRelated : InheritableAttr {
-  let Spellings = [Clang<"objc_bridge_related">];
-  let Subjects = SubjectList<[Record], ErrorDiag>;
-  let Args = [IdentifierArgument<"RelatedClass">,
-          IdentifierArgument<"ClassMethod">,
-          IdentifierArgument<"InstanceMethod">];
-  let HasCustomParsing = 1;
-  let Documentation = [Undocumented];
-}
+// def ObjCBridgeRelated : InheritableAttr {
+//   let Spellings = [Clang<"objc_bridge_related">];
+//   let Subjects = SubjectList<[Record], ErrorDiag>;
+//   let Args = [IdentifierArgument<"RelatedClass">,
+//           IdentifierArgument<"ClassMethod">,
+//           IdentifierArgument<"InstanceMethod">];
+//   let HasCustomParsing = 1;
+//   let Documentation = [Undocumented];
+// }
 
 def NSReturnsRetained : DeclOrTypeAttr {
   let Spellings = [Clang<"ns_returns_retained">];
-//  let Subjects = SubjectList<[ObjCMethod, ObjCProperty, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod, ObjCProperty,*/ Function]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
 def NSReturnsNotRetained : InheritableAttr {
   let Spellings = [Clang<"ns_returns_not_retained">];
-//  let Subjects = SubjectList<[ObjCMethod, ObjCProperty, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod, ObjCProperty,*/ Function]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
 def NSReturnsAutoreleased : InheritableAttr {
   let Spellings = [Clang<"ns_returns_autoreleased">];
-//  let Subjects = SubjectList<[ObjCMethod, ObjCProperty, Function]>;
+  let Subjects = SubjectList<[/*ObjCMethod, ObjCProperty,*/ Function]>;
   let Documentation = [RetainBehaviorDocs];
 }
 
 def NSConsumesSelf : InheritableAttr {
   let Spellings = [Clang<"ns_consumes_self">];
-  let Subjects = SubjectList<[ObjCMethod]>;
+  // let Subjects = SubjectList<[ObjCMethod]>;
   let Documentation = [RetainBehaviorDocs];
   let SimpleHandler = 1;
 }
@@ -1887,130 +1887,130 @@ def NSConsumed : InheritableParamAttr {
   let Documentation = [RetainBehaviorDocs];
 }
 
-def ObjCException : InheritableAttr {
-  let Spellings = [Clang<"objc_exception">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [Undocumented];
-  let SimpleHandler = 1;
-}
+// def ObjCException : InheritableAttr {
+//   let Spellings = [Clang<"objc_exception">];
+//   let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+//   let Documentation = [Undocumented];
+//   let SimpleHandler = 1;
+// }
 
-def ObjCMethodFamily : InheritableAttr {
-  let Spellings = [Clang<"objc_method_family">];
-  let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
-  let Args = [EnumArgument<"Family", "FamilyKind",
-               ["none", "alloc", "copy", "init", "mutableCopy", "new"],
-               ["OMF_None", "OMF_alloc", "OMF_copy", "OMF_init",
-                "OMF_mutableCopy", "OMF_new"]>];
-  let Documentation = [ObjCMethodFamilyDocs];
-}
+// def ObjCMethodFamily : InheritableAttr {
+//   let Spellings = [Clang<"objc_method_family">];
+//   let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
+//   let Args = [EnumArgument<"Family", "FamilyKind",
+//                ["none", "alloc", "copy", "init", "mutableCopy", "new"],
+//                ["OMF_None", "OMF_alloc", "OMF_copy", "OMF_init",
+//                 "OMF_mutableCopy", "OMF_new"]>];
+//   let Documentation = [ObjCMethodFamilyDocs];
+// }
 
-def ObjCNSObject : InheritableAttr {
-  let Spellings = [Clang<"NSObject">];
-  let Documentation = [Undocumented];
-}
+// def ObjCNSObject : InheritableAttr {
+//   let Spellings = [Clang<"NSObject">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCIndependentClass : InheritableAttr {
-  let Spellings = [Clang<"objc_independent_class">];
-  let Documentation = [Undocumented];
-}
+// def ObjCIndependentClass : InheritableAttr {
+//   let Spellings = [Clang<"objc_independent_class">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCPreciseLifetime : InheritableAttr {
-  let Spellings = [Clang<"objc_precise_lifetime">];
-  let Subjects = SubjectList<[Var], ErrorDiag>;
-  let Documentation = [Undocumented];
-}
+// def ObjCPreciseLifetime : InheritableAttr {
+//   let Spellings = [Clang<"objc_precise_lifetime">];
+//   let Subjects = SubjectList<[Var], ErrorDiag>;
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCReturnsInnerPointer : InheritableAttr {
-  let Spellings = [Clang<"objc_returns_inner_pointer">];
-  let Subjects = SubjectList<[ObjCMethod, ObjCProperty], ErrorDiag>;
-  let Documentation = [Undocumented];
-}
+// def ObjCReturnsInnerPointer : InheritableAttr {
+//   let Spellings = [Clang<"objc_returns_inner_pointer">];
+//   let Subjects = SubjectList<[ObjCMethod, ObjCProperty], ErrorDiag>;
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCRequiresSuper : InheritableAttr {
-  let Spellings = [Clang<"objc_requires_super">];
-  let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
-  let Documentation = [ObjCRequiresSuperDocs];
-}
+// def ObjCRequiresSuper : InheritableAttr {
+//   let Spellings = [Clang<"objc_requires_super">];
+//   let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
+//   let Documentation = [ObjCRequiresSuperDocs];
+// }
 
-def ObjCRootClass : InheritableAttr {
-  let Spellings = [Clang<"objc_root_class">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [Undocumented];
-  let SimpleHandler = 1;
-}
+// def ObjCRootClass : InheritableAttr {
+//   let Spellings = [Clang<"objc_root_class">];
+//   let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+//   let Documentation = [Undocumented];
+//   let SimpleHandler = 1;
+// }
 
-def ObjCNonLazyClass : Attr {
-  let Spellings = [Clang<"objc_nonlazy_class">];
-  let Subjects = SubjectList<[ObjCInterface, ObjCImpl], ErrorDiag>;
-  let LangOpts = [ObjC];
-  let Documentation = [ObjCNonLazyClassDocs];
-  let SimpleHandler = 1;
-}
+// def ObjCNonLazyClass : Attr {
+//   let Spellings = [Clang<"objc_nonlazy_class">];
+//   let Subjects = SubjectList<[ObjCInterface, ObjCImpl], ErrorDiag>;
+//   let LangOpts = [ObjC];
+//   let Documentation = [ObjCNonLazyClassDocs];
+//   let SimpleHandler = 1;
+// }
 
-def ObjCSubclassingRestricted : InheritableAttr {
-  let Spellings = [Clang<"objc_subclassing_restricted">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [ObjCSubclassingRestrictedDocs];
-  let SimpleHandler = 1;
-}
+// def ObjCSubclassingRestricted : InheritableAttr {
+//   let Spellings = [Clang<"objc_subclassing_restricted">];
+//   let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+//   let Documentation = [ObjCSubclassingRestrictedDocs];
+//   let SimpleHandler = 1;
+// }
 
-def ObjCExplicitProtocolImpl : InheritableAttr {
-  let Spellings = [Clang<"objc_protocol_requires_explicit_implementation">];
-  let Subjects = SubjectList<[ObjCProtocol], ErrorDiag>;
-  let Documentation = [Undocumented];
-}
+// def ObjCExplicitProtocolImpl : InheritableAttr {
+//   let Spellings = [Clang<"objc_protocol_requires_explicit_implementation">];
+//   let Subjects = SubjectList<[ObjCProtocol], ErrorDiag>;
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCDesignatedInitializer : Attr {
-  let Spellings = [Clang<"objc_designated_initializer">];
-  let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
-  let Documentation = [Undocumented];
-}
+// def ObjCDesignatedInitializer : Attr {
+//   let Spellings = [Clang<"objc_designated_initializer">];
+//   let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCDirect : Attr {
-  let Spellings = [Clang<"objc_direct">];
-  let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
-  let LangOpts = [ObjC];
-  let Documentation = [ObjCDirectDocs];
-}
+// def ObjCDirect : Attr {
+//   let Spellings = [Clang<"objc_direct">];
+//   let Subjects = SubjectList<[ObjCMethod], ErrorDiag>;
+//   let LangOpts = [ObjC];
+//   let Documentation = [ObjCDirectDocs];
+// }
 
-def ObjCDirectMembers : Attr {
-  let Spellings = [Clang<"objc_direct_members">];
-  let Subjects = SubjectList<[ObjCImpl, ObjCInterface, ObjCCategory], ErrorDiag>;
-  let LangOpts = [ObjC];
-  let Documentation = [ObjCDirectMembersDocs];
-}
+// def ObjCDirectMembers : Attr {
+//   let Spellings = [Clang<"objc_direct_members">];
+//   let Subjects = SubjectList<[ObjCImpl, ObjCInterface, ObjCCategory], ErrorDiag>;
+//   let LangOpts = [ObjC];
+//   let Documentation = [ObjCDirectMembersDocs];
+// }
 
-def ObjCRuntimeName : Attr {
-  let Spellings = [Clang<"objc_runtime_name">];
-  let Subjects = SubjectList<[ObjCInterface, ObjCProtocol], ErrorDiag>;
-  let Args = [StringArgument<"MetadataName">];
-  let Documentation = [ObjCRuntimeNameDocs];
-}
+// def ObjCRuntimeName : Attr {
+//   let Spellings = [Clang<"objc_runtime_name">];
+//   let Subjects = SubjectList<[ObjCInterface, ObjCProtocol], ErrorDiag>;
+//   let Args = [StringArgument<"MetadataName">];
+//   let Documentation = [ObjCRuntimeNameDocs];
+// }
 
-def ObjCRuntimeVisible : Attr {
-  let Spellings = [Clang<"objc_runtime_visible">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [ObjCRuntimeVisibleDocs];
-  let SimpleHandler = 1;
-}
+// def ObjCRuntimeVisible : Attr {
+//   let Spellings = [Clang<"objc_runtime_visible">];
+//   let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+//   let Documentation = [ObjCRuntimeVisibleDocs];
+//   let SimpleHandler = 1;
+// }
 
-def ObjCClassStub : Attr {
-  let Spellings = [Clang<"objc_class_stub">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [ObjCClassStubDocs];
-  let LangOpts = [ObjCNonFragileRuntime];
-  let SimpleHandler = 1;
-}
+// def ObjCClassStub : Attr {
+//   let Spellings = [Clang<"objc_class_stub">];
+//   let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+//   let Documentation = [ObjCClassStubDocs];
+//   let LangOpts = [ObjCNonFragileRuntime];
+//   let SimpleHandler = 1;
+// }
 
-def ObjCBoxable : Attr {
-  let Spellings = [Clang<"objc_boxable">];
-  let Subjects = SubjectList<[Record], ErrorDiag>;
-  let Documentation = [ObjCBoxableDocs];
-}
+// def ObjCBoxable : Attr {
+//   let Spellings = [Clang<"objc_boxable">];
+//   let Subjects = SubjectList<[Record], ErrorDiag>;
+//   let Documentation = [ObjCBoxableDocs];
+// }
 
 def OptimizeNone : InheritableAttr {
   let Spellings = [Clang<"optnone">];
-  let Subjects = SubjectList<[Function, ObjCMethod]>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/]>;
   let Documentation = [OptnoneDocs];
 }
 
@@ -2055,7 +2055,7 @@ def Packed : InheritableAttr {
 
 def IntelOclBicc : DeclOrTypeAttr {
   let Spellings = [Clang<"intel_ocl_bicc", 0>];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
@@ -2064,7 +2064,7 @@ def Pcs : DeclOrTypeAttr {
   let Args = [EnumArgument<"PCS", "PCSType",
                            ["aapcs", "aapcs-vfp"],
                            ["AAPCS", "AAPCS_VFP"]>];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [PcsDocs];
 }
 
@@ -2122,7 +2122,7 @@ def Section : InheritableAttr {
   let Spellings = [GCC<"section">, Declspec<"allocate">];
   let Args = [StringArgument<"Name">];
   let Subjects =
-      SubjectList<[ Function, GlobalVar, ObjCMethod, ObjCProperty ], ErrorDiag>;
+      SubjectList<[ Function, GlobalVar/*, ObjCMethod, ObjCProperty*/ ], ErrorDiag>;
   let Documentation = [SectionDocs];
 }
 
@@ -2179,19 +2179,19 @@ def Sentinel : InheritableAttr {
   let Spellings = [GCC<"sentinel">];
   let Args = [DefaultIntArgument<"Sentinel", 0>,
               DefaultIntArgument<"NullPos", 0>];
-//  let Subjects = SubjectList<[Function, ObjCMethod, Block, Var]>;
+  let Subjects = SubjectList<[Function, /*ObjCMethod,*/ Block, Var]>;
   let Documentation = [Undocumented];
 }
 
 def StdCall : DeclOrTypeAttr {
   let Spellings = [GCC<"stdcall">, Keyword<"__stdcall">, Keyword<"_stdcall">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [StdCallDocs];
 }
 
 def SwiftCall : DeclOrTypeAttr {
   let Spellings = [Clang<"swiftcall">];
-//  let Subjects = SubjectList<[Function]>;
+  let Subjects = SubjectList<[Function]>;
   let Documentation = [SwiftCallDocs];
 }
 
@@ -2218,27 +2218,27 @@ def Suppress : StmtAttr {
 
 def SysVABI : DeclOrTypeAttr {
   let Spellings = [GCC<"sysv_abi">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
 def ThisCall : DeclOrTypeAttr {
   let Spellings = [GCC<"thiscall">, Keyword<"__thiscall">,
                    Keyword<"_thiscall">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [ThisCallDocs];
 }
 
 def VectorCall : DeclOrTypeAttr {
   let Spellings = [Clang<"vectorcall">, Keyword<"__vectorcall">,
                    Keyword<"_vectorcall">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [VectorCallDocs];
 }
 
 def Pascal : DeclOrTypeAttr {
   let Spellings = [Clang<"pascal">, Keyword<"__pascal">, Keyword<"_pascal">];
-//  let Subjects = [Function, ObjCMethod];
+  let Subjects = [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
@@ -2378,7 +2378,7 @@ def DiagnoseIf : InheritableAttr {
   // to parse function arguments but the attribute is not written in the type
   // position.
   let Spellings = [GNU<"diagnose_if">];
-  let Subjects = SubjectList<[Function, ObjCMethod, ObjCProperty]>;
+  let Subjects = SubjectList<[Function, /*ObjCMethod, ObjCProperty*/]>;
   let Args = [ExprArgument<"Cond">, StringArgument<"Message">,
               EnumArgument<"DiagnosticType",
                            "DiagnosticType",
@@ -2398,41 +2398,41 @@ def DiagnoseIf : InheritableAttr {
 
 def ArcWeakrefUnavailable : InheritableAttr {
   let Spellings = [Clang<"objc_arc_weak_reference_unavailable">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+  // let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
   let Documentation = [Undocumented];
   let SimpleHandler = 1;
 }
 
-def ObjCGC : TypeAttr {
-  let Spellings = [Clang<"objc_gc">];
-  let Args = [IdentifierArgument<"Kind">];
-  let Documentation = [Undocumented];
-}
+// def ObjCGC : TypeAttr {
+//   let Spellings = [Clang<"objc_gc">];
+//   let Args = [IdentifierArgument<"Kind">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCOwnership : DeclOrTypeAttr {
-  let Spellings = [Clang<"objc_ownership">];
-  let Args = [IdentifierArgument<"Kind">];
-  let Documentation = [Undocumented];
-}
+// def ObjCOwnership : DeclOrTypeAttr {
+//   let Spellings = [Clang<"objc_ownership">];
+//   let Args = [IdentifierArgument<"Kind">];
+//   let Documentation = [Undocumented];
+// }
 
-def ObjCRequiresPropertyDefs : InheritableAttr {
-  let Spellings = [Clang<"objc_requires_property_definitions">];
-  let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [Undocumented];
-  let SimpleHandler = 1;
-}
+// def ObjCRequiresPropertyDefs : InheritableAttr {
+//   let Spellings = [Clang<"objc_requires_property_definitions">];
+//   let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
+//   let Documentation = [Undocumented];
+//   let SimpleHandler = 1;
+// }
 
 def Unused : InheritableAttr {
   let Spellings = [CXX11<"", "maybe_unused", 201603>, GCC<"unused">,
                    C2x<"", "maybe_unused">];
-  let Subjects = SubjectList<[Var, ObjCIvar, Type, Enum, EnumConstant, Label,
-                              Field, ObjCMethod, FunctionLike]>;
+  let Subjects = SubjectList<[Var, /*ObjCIvar,*/ Type, Enum, EnumConstant, Label,
+                              Field, /*ObjCMethod,*/ FunctionLike]>;
   let Documentation = [WarnMaybeUnusedDocs];
 }
 
 def Used : InheritableAttr {
   let Spellings = [GCC<"used">];
-  let Subjects = SubjectList<[NonLocalVar, Function, ObjCMethod]>;
+  let Subjects = SubjectList<[NonLocalVar, Function/*, ObjCMethod*/]>;
   let Documentation = [Undocumented];
   let SimpleHandler = 1;
 }
@@ -2489,7 +2489,7 @@ def TypeVisibility : InheritableAttr {
   let Args = [EnumArgument<"Visibility", "VisibilityType",
                            ["default", "hidden", "internal", "protected"],
                            ["Default", "Hidden", "Hidden", "Protected"]>];
-//  let Subjects = [Tag, ObjCInterface, Namespace];
+  let Subjects = [Tag, /*ObjCInterface,*/ Namespace];
   let Documentation = [Undocumented];
 }
 
@@ -2513,7 +2513,7 @@ def WarnUnusedResult : InheritableAttr {
   let Spellings = [CXX11<"", "nodiscard", 201907>, C2x<"", "nodiscard">,
                    CXX11<"clang", "warn_unused_result">,
                    GCC<"warn_unused_result">];
-  let Subjects = SubjectList<[ObjCMethod, Enum, Record, FunctionLike]>;
+  let Subjects = SubjectList<[/*ObjCMethod,*/ Enum, Record, FunctionLike]>;
   let Args = [StringArgument<"Message", 1>];
   let Documentation = [WarnUnusedResultsDocs];
   let AdditionalMembers = [{
@@ -2586,7 +2586,7 @@ def X86ForceAlignArgPointer : InheritableAttr, TargetSpecificAttr<TargetAnyX86> 
 def NoSanitize : InheritableAttr {
   let Spellings = [Clang<"no_sanitize">];
   let Args = [VariadicStringArgument<"Sanitizers">];
-  let Subjects = SubjectList<[Function, ObjCMethod, GlobalVar], ErrorDiag>;
+  let Subjects = SubjectList<[Function, /*ObjCMethod,*/ GlobalVar], ErrorDiag>;
   let Documentation = [NoSanitizeDocs];
   let AdditionalMembers = [{
     SanitizerMask getMask() const {
@@ -3033,7 +3033,7 @@ def MSStruct : InheritableAttr {
 
 def DLLExport : InheritableAttr, TargetSpecificAttr<TargetWindows> {
   let Spellings = [Declspec<"dllexport">, GCC<"dllexport">];
-  let Subjects = SubjectList<[Function, Var, CXXRecord, ObjCInterface]>;
+  let Subjects = SubjectList<[Function, Var, CXXRecord/*, ObjCInterface*/]>;
   let Documentation = [DLLExportDocs];
 }
 
@@ -3050,7 +3050,7 @@ def DLLExportStaticLocal : InheritableAttr, TargetSpecificAttr<TargetWindows> {
 
 def DLLImport : InheritableAttr, TargetSpecificAttr<TargetWindows> {
   let Spellings = [Declspec<"dllimport">, GCC<"dllimport">];
-  let Subjects = SubjectList<[Function, Var, CXXRecord, ObjCInterface]>;
+  let Subjects = SubjectList<[Function, Var, CXXRecord/*, ObjCInterface*/]>;
   let Documentation = [DLLImportDocs];
 
 
@@ -3384,13 +3384,13 @@ def AlwaysDestroy : InheritableAttr {
 
 def SpeculativeLoadHardening : InheritableAttr {
   let Spellings = [Clang<"speculative_load_hardening">];
-  let Subjects = SubjectList<[Function, ObjCMethod], ErrorDiag>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/], ErrorDiag>;
   let Documentation = [SpeculativeLoadHardeningDocs];
 }
 
 def NoSpeculativeLoadHardening : InheritableAttr {
   let Spellings = [Clang<"no_speculative_load_hardening">];
-  let Subjects = SubjectList<[Function, ObjCMethod], ErrorDiag>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod*/], ErrorDiag>;
   let Documentation = [NoSpeculativeLoadHardeningDocs];
 }
 
@@ -3407,12 +3407,12 @@ def LoaderUninitialized : Attr {
   let Documentation = [LoaderUninitializedDocs];
 }
 
-def ObjCExternallyRetained : InheritableAttr {
-  let LangOpts = [ObjCAutoRefCount];
-  let Spellings = [Clang<"objc_externally_retained">];
-  let Subjects = SubjectList<[NonParmVar, Function, Block, ObjCMethod]>;
-  let Documentation = [ObjCExternallyRetainedDocs];
-}
+// def ObjCExternallyRetained : InheritableAttr {
+//   let LangOpts = [ObjCAutoRefCount];
+//   let Spellings = [Clang<"objc_externally_retained">];
+//   let Subjects = SubjectList<[NonParmVar, Function, Block, ObjCMethod]>;
+//   let Documentation = [ObjCExternallyRetainedDocs];
+// }
 
 def NoBuiltin : Attr {
   let Spellings = [Clang<"no_builtin">];

@@ -862,7 +862,7 @@ bool Sema::containsUnexpandedParameterPacks(Declarator &D) {
   case TST_char32:
   case TST_int:
   case TST_int128:
-  case TST_half:
+  // case TST_half:
   case TST_float:
   case TST_double:
   case TST_Accum:
@@ -882,8 +882,8 @@ bool Sema::containsUnexpandedParameterPacks(Declarator &D) {
   case TST_auto_type:
   case TST_decltype_auto:
   case TST_BFloat16:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case TST_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case TST_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
   case TST_unknown_anytype:
   case TST_error:
     break;

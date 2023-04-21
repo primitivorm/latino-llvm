@@ -16,7 +16,7 @@
 #include "latino/Sema/DeclSpec.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Lex/Token.h"
@@ -1256,171 +1256,171 @@ void ASTStmtWriter::VisitAtomicExpr(AtomicExpr *E) {
 // Objective-C Expressions and Statements.
 //===----------------------------------------------------------------------===//
 
-void ASTStmtWriter::VisitObjCStringLiteral(ObjCStringLiteral *E) {
-  VisitExpr(E);
-  Record.AddStmt(E->getString());
-  Record.AddSourceLocation(E->getAtLoc());
-  Code = serialization::EXPR_OBJC_STRING_LITERAL;
-}
+// void ASTStmtWriter::VisitObjCStringLiteral(ObjCStringLiteral *E) {
+//   VisitExpr(E);
+//   Record.AddStmt(E->getString());
+//   Record.AddSourceLocation(E->getAtLoc());
+//   Code = serialization::EXPR_OBJC_STRING_LITERAL;
+// }
 
-void ASTStmtWriter::VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
-  VisitExpr(E);
-  Record.AddStmt(E->getSubExpr());
-  Record.AddDeclRef(E->getBoxingMethod());
-  Record.AddSourceRange(E->getSourceRange());
-  Code = serialization::EXPR_OBJC_BOXED_EXPRESSION;
-}
+// void ASTStmtWriter::VisitObjCBoxedExpr(ObjCBoxedExpr *E) {
+//   VisitExpr(E);
+//   Record.AddStmt(E->getSubExpr());
+//   Record.AddDeclRef(E->getBoxingMethod());
+//   Record.AddSourceRange(E->getSourceRange());
+//   Code = serialization::EXPR_OBJC_BOXED_EXPRESSION;
+// }
 
-void ASTStmtWriter::VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
-  VisitExpr(E);
-  Record.push_back(E->getNumElements());
-  for (unsigned i = 0; i < E->getNumElements(); i++)
-    Record.AddStmt(E->getElement(i));
-  Record.AddDeclRef(E->getArrayWithObjectsMethod());
-  Record.AddSourceRange(E->getSourceRange());
-  Code = serialization::EXPR_OBJC_ARRAY_LITERAL;
-}
+// void ASTStmtWriter::VisitObjCArrayLiteral(ObjCArrayLiteral *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->getNumElements());
+//   for (unsigned i = 0; i < E->getNumElements(); i++)
+//     Record.AddStmt(E->getElement(i));
+//   Record.AddDeclRef(E->getArrayWithObjectsMethod());
+//   Record.AddSourceRange(E->getSourceRange());
+//   Code = serialization::EXPR_OBJC_ARRAY_LITERAL;
+// }
 
-void ASTStmtWriter::VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
-  VisitExpr(E);
-  Record.push_back(E->getNumElements());
-  Record.push_back(E->HasPackExpansions);
-  for (unsigned i = 0; i < E->getNumElements(); i++) {
-    ObjCDictionaryElement Element = E->getKeyValueElement(i);
-    Record.AddStmt(Element.Key);
-    Record.AddStmt(Element.Value);
-    if (E->HasPackExpansions) {
-      Record.AddSourceLocation(Element.EllipsisLoc);
-      unsigned NumExpansions = 0;
-      if (Element.NumExpansions)
-        NumExpansions = *Element.NumExpansions + 1;
-      Record.push_back(NumExpansions);
-    }
-  }
+// void ASTStmtWriter::VisitObjCDictionaryLiteral(ObjCDictionaryLiteral *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->getNumElements());
+//   Record.push_back(E->HasPackExpansions);
+//   for (unsigned i = 0; i < E->getNumElements(); i++) {
+//     ObjCDictionaryElement Element = E->getKeyValueElement(i);
+//     Record.AddStmt(Element.Key);
+//     Record.AddStmt(Element.Value);
+//     if (E->HasPackExpansions) {
+//       Record.AddSourceLocation(Element.EllipsisLoc);
+//       unsigned NumExpansions = 0;
+//       if (Element.NumExpansions)
+//         NumExpansions = *Element.NumExpansions + 1;
+//       Record.push_back(NumExpansions);
+//     }
+//   }
 
-  Record.AddDeclRef(E->getDictWithObjectsMethod());
-  Record.AddSourceRange(E->getSourceRange());
-  Code = serialization::EXPR_OBJC_DICTIONARY_LITERAL;
-}
+//   Record.AddDeclRef(E->getDictWithObjectsMethod());
+//   Record.AddSourceRange(E->getSourceRange());
+//   Code = serialization::EXPR_OBJC_DICTIONARY_LITERAL;
+// }
 
-void ASTStmtWriter::VisitObjCEncodeExpr(ObjCEncodeExpr *E) {
-  VisitExpr(E);
-  Record.AddTypeSourceInfo(E->getEncodedTypeSourceInfo());
-  Record.AddSourceLocation(E->getAtLoc());
-  Record.AddSourceLocation(E->getRParenLoc());
-  Code = serialization::EXPR_OBJC_ENCODE;
-}
+// void ASTStmtWriter::VisitObjCEncodeExpr(ObjCEncodeExpr *E) {
+//   VisitExpr(E);
+//   Record.AddTypeSourceInfo(E->getEncodedTypeSourceInfo());
+//   Record.AddSourceLocation(E->getAtLoc());
+//   Record.AddSourceLocation(E->getRParenLoc());
+//   Code = serialization::EXPR_OBJC_ENCODE;
+// }
 
-void ASTStmtWriter::VisitObjCSelectorExpr(ObjCSelectorExpr *E) {
-  VisitExpr(E);
-  Record.AddSelectorRef(E->getSelector());
-  Record.AddSourceLocation(E->getAtLoc());
-  Record.AddSourceLocation(E->getRParenLoc());
-  Code = serialization::EXPR_OBJC_SELECTOR_EXPR;
-}
+// void ASTStmtWriter::VisitObjCSelectorExpr(ObjCSelectorExpr *E) {
+//   VisitExpr(E);
+//   Record.AddSelectorRef(E->getSelector());
+//   Record.AddSourceLocation(E->getAtLoc());
+//   Record.AddSourceLocation(E->getRParenLoc());
+//   Code = serialization::EXPR_OBJC_SELECTOR_EXPR;
+// }
 
-void ASTStmtWriter::VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
-  VisitExpr(E);
-  Record.AddDeclRef(E->getProtocol());
-  Record.AddSourceLocation(E->getAtLoc());
-  Record.AddSourceLocation(E->ProtoLoc);
-  Record.AddSourceLocation(E->getRParenLoc());
-  Code = serialization::EXPR_OBJC_PROTOCOL_EXPR;
-}
+// void ASTStmtWriter::VisitObjCProtocolExpr(ObjCProtocolExpr *E) {
+//   VisitExpr(E);
+//   Record.AddDeclRef(E->getProtocol());
+//   Record.AddSourceLocation(E->getAtLoc());
+//   Record.AddSourceLocation(E->ProtoLoc);
+//   Record.AddSourceLocation(E->getRParenLoc());
+//   Code = serialization::EXPR_OBJC_PROTOCOL_EXPR;
+// }
 
-void ASTStmtWriter::VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
-  VisitExpr(E);
-  Record.AddDeclRef(E->getDecl());
-  Record.AddSourceLocation(E->getLocation());
-  Record.AddSourceLocation(E->getOpLoc());
-  Record.AddStmt(E->getBase());
-  Record.push_back(E->isArrow());
-  Record.push_back(E->isFreeIvar());
-  Code = serialization::EXPR_OBJC_IVAR_REF_EXPR;
-}
+// void ASTStmtWriter::VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
+//   VisitExpr(E);
+//   Record.AddDeclRef(E->getDecl());
+//   Record.AddSourceLocation(E->getLocation());
+//   Record.AddSourceLocation(E->getOpLoc());
+//   Record.AddStmt(E->getBase());
+//   Record.push_back(E->isArrow());
+//   Record.push_back(E->isFreeIvar());
+//   Code = serialization::EXPR_OBJC_IVAR_REF_EXPR;
+// }
 
-void ASTStmtWriter::VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *E) {
-  VisitExpr(E);
-  Record.push_back(E->SetterAndMethodRefFlags.getInt());
-  Record.push_back(E->isImplicitProperty());
-  if (E->isImplicitProperty()) {
-    Record.AddDeclRef(E->getImplicitPropertyGetter());
-    Record.AddDeclRef(E->getImplicitPropertySetter());
-  } else {
-    Record.AddDeclRef(E->getExplicitProperty());
-  }
-  Record.AddSourceLocation(E->getLocation());
-  Record.AddSourceLocation(E->getReceiverLocation());
-  if (E->isObjectReceiver()) {
-    Record.push_back(0);
-    Record.AddStmt(E->getBase());
-  } else if (E->isSuperReceiver()) {
-    Record.push_back(1);
-    Record.AddTypeRef(E->getSuperReceiverType());
-  } else {
-    Record.push_back(2);
-    Record.AddDeclRef(E->getClassReceiver());
-  }
+// void ASTStmtWriter::VisitObjCPropertyRefExpr(ObjCPropertyRefExpr *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->SetterAndMethodRefFlags.getInt());
+//   Record.push_back(E->isImplicitProperty());
+//   if (E->isImplicitProperty()) {
+//     Record.AddDeclRef(E->getImplicitPropertyGetter());
+//     Record.AddDeclRef(E->getImplicitPropertySetter());
+//   } else {
+//     Record.AddDeclRef(E->getExplicitProperty());
+//   }
+//   Record.AddSourceLocation(E->getLocation());
+//   Record.AddSourceLocation(E->getReceiverLocation());
+//   if (E->isObjectReceiver()) {
+//     Record.push_back(0);
+//     Record.AddStmt(E->getBase());
+//   } else if (E->isSuperReceiver()) {
+//     Record.push_back(1);
+//     Record.AddTypeRef(E->getSuperReceiverType());
+//   } else {
+//     Record.push_back(2);
+//     Record.AddDeclRef(E->getClassReceiver());
+//   }
 
-  Code = serialization::EXPR_OBJC_PROPERTY_REF_EXPR;
-}
+//   Code = serialization::EXPR_OBJC_PROPERTY_REF_EXPR;
+// }
 
-void ASTStmtWriter::VisitObjCSubscriptRefExpr(ObjCSubscriptRefExpr *E) {
-  VisitExpr(E);
-  Record.AddSourceLocation(E->getRBracket());
-  Record.AddStmt(E->getBaseExpr());
-  Record.AddStmt(E->getKeyExpr());
-  Record.AddDeclRef(E->getAtIndexMethodDecl());
-  Record.AddDeclRef(E->setAtIndexMethodDecl());
+// void ASTStmtWriter::VisitObjCSubscriptRefExpr(ObjCSubscriptRefExpr *E) {
+//   VisitExpr(E);
+//   Record.AddSourceLocation(E->getRBracket());
+//   Record.AddStmt(E->getBaseExpr());
+//   Record.AddStmt(E->getKeyExpr());
+//   Record.AddDeclRef(E->getAtIndexMethodDecl());
+//   Record.AddDeclRef(E->setAtIndexMethodDecl());
 
-  Code = serialization::EXPR_OBJC_SUBSCRIPT_REF_EXPR;
-}
+//   Code = serialization::EXPR_OBJC_SUBSCRIPT_REF_EXPR;
+// }
 
-void ASTStmtWriter::VisitObjCMessageExpr(ObjCMessageExpr *E) {
-  VisitExpr(E);
-  Record.push_back(E->getNumArgs());
-  Record.push_back(E->getNumStoredSelLocs());
-  Record.push_back(E->SelLocsKind);
-  Record.push_back(E->isDelegateInitCall());
-  Record.push_back(E->IsImplicit);
-  Record.push_back((unsigned)E->getReceiverKind()); // FIXME: stable encoding
-  switch (E->getReceiverKind()) {
-  case ObjCMessageExpr::Instance:
-    Record.AddStmt(E->getInstanceReceiver());
-    break;
+// void ASTStmtWriter::VisitObjCMessageExpr(ObjCMessageExpr *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->getNumArgs());
+//   Record.push_back(E->getNumStoredSelLocs());
+//   Record.push_back(E->SelLocsKind);
+//   Record.push_back(E->isDelegateInitCall());
+//   Record.push_back(E->IsImplicit);
+//   Record.push_back((unsigned)E->getReceiverKind()); // FIXME: stable encoding
+//   switch (E->getReceiverKind()) {
+//   case ObjCMessageExpr::Instance:
+//     Record.AddStmt(E->getInstanceReceiver());
+//     break;
 
-  case ObjCMessageExpr::Class:
-    Record.AddTypeSourceInfo(E->getClassReceiverTypeInfo());
-    break;
+//   case ObjCMessageExpr::Class:
+//     Record.AddTypeSourceInfo(E->getClassReceiverTypeInfo());
+//     break;
 
-  case ObjCMessageExpr::SuperClass:
-  case ObjCMessageExpr::SuperInstance:
-    Record.AddTypeRef(E->getSuperType());
-    Record.AddSourceLocation(E->getSuperLoc());
-    break;
-  }
+//   case ObjCMessageExpr::SuperClass:
+//   case ObjCMessageExpr::SuperInstance:
+//     Record.AddTypeRef(E->getSuperType());
+//     Record.AddSourceLocation(E->getSuperLoc());
+//     break;
+//   }
 
-  if (E->getMethodDecl()) {
-    Record.push_back(1);
-    Record.AddDeclRef(E->getMethodDecl());
-  } else {
-    Record.push_back(0);
-    Record.AddSelectorRef(E->getSelector());
-  }
+//   if (E->getMethodDecl()) {
+//     Record.push_back(1);
+//     Record.AddDeclRef(E->getMethodDecl());
+//   } else {
+//     Record.push_back(0);
+//     Record.AddSelectorRef(E->getSelector());
+//   }
 
-  Record.AddSourceLocation(E->getLeftLoc());
-  Record.AddSourceLocation(E->getRightLoc());
+//   Record.AddSourceLocation(E->getLeftLoc());
+//   Record.AddSourceLocation(E->getRightLoc());
 
-  for (CallExpr::arg_iterator Arg = E->arg_begin(), ArgEnd = E->arg_end();
-       Arg != ArgEnd; ++Arg)
-    Record.AddStmt(*Arg);
+//   for (CallExpr::arg_iterator Arg = E->arg_begin(), ArgEnd = E->arg_end();
+//        Arg != ArgEnd; ++Arg)
+//     Record.AddStmt(*Arg);
 
-  SourceLocation *Locs = E->getStoredSelLocs();
-  for (unsigned i = 0, e = E->getNumStoredSelLocs(); i != e; ++i)
-    Record.AddSourceLocation(Locs[i]);
+//   SourceLocation *Locs = E->getStoredSelLocs();
+//   for (unsigned i = 0, e = E->getNumStoredSelLocs(); i != e; ++i)
+//     Record.AddSourceLocation(Locs[i]);
 
-  Code = serialization::EXPR_OBJC_MESSAGE_EXPR;
-}
+//   Code = serialization::EXPR_OBJC_MESSAGE_EXPR;
+// }
 
 void ASTStmtWriter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
   VisitStmt(S);
@@ -1483,12 +1483,12 @@ void ASTStmtWriter::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
   Code = serialization::STMT_OBJC_AT_THROW;
 }
 
-void ASTStmtWriter::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *E) {
-  VisitExpr(E);
-  Record.push_back(E->getValue());
-  Record.AddSourceLocation(E->getLocation());
-  Code = serialization::EXPR_OBJC_BOOL_LITERAL;
-}
+// void ASTStmtWriter::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->getValue());
+//   Record.AddSourceLocation(E->getLocation());
+//   Code = serialization::EXPR_OBJC_BOOL_LITERAL;
+// }
 
 void ASTStmtWriter::VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
   VisitExpr(E);

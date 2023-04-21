@@ -48,10 +48,10 @@ def BitFieldWidth : DiagGroup<"bitfield-width">;
 def CoroutineMissingUnhandledException :
   DiagGroup<"coroutine-missing-unhandled-exception">;
 def Coroutine : DiagGroup<"coroutine", [CoroutineMissingUnhandledException]>;
-def ObjCBoolConstantConversion : DiagGroup<"objc-bool-constant-conversion">;
+// def ObjCBoolConstantConversion : DiagGroup<"objc-bool-constant-conversion">;
 def ConstantConversion : DiagGroup<"constant-conversion",
-                                   [BitFieldConstantConversion,
-                                    ObjCBoolConstantConversion]>;
+                                   [BitFieldConstantConversion/*,
+                                    ObjCBoolConstantConversion*/]>;
 def LiteralConversion : DiagGroup<"literal-conversion">;
 def StringConversion : DiagGroup<"string-conversion">;
 def SignConversion : DiagGroup<"sign-conversion">;
@@ -82,18 +82,18 @@ def EnumConversion : DiagGroup<"enum-conversion",
                                [EnumEnumConversion,
                                 EnumFloatConversion,
                                 EnumCompareConditional]>;
-def ObjCSignedCharBoolImplicitIntConversion :
-  DiagGroup<"objc-signed-char-bool-implicit-int-conversion">;
-def ImplicitIntConversion : DiagGroup<"implicit-int-conversion",
-                                     [ObjCSignedCharBoolImplicitIntConversion]>;
+// def ObjCSignedCharBoolImplicitIntConversion :
+//   DiagGroup<"objc-signed-char-bool-implicit-int-conversion">;
+// def ImplicitIntConversion : DiagGroup<"implicit-int-conversion",
+//                                      [ObjCSignedCharBoolImplicitIntConversion]>;
 def ImplicitConstIntFloatConversion : DiagGroup<"implicit-const-int-float-conversion">;
 def ImplicitIntFloatConversion : DiagGroup<"implicit-int-float-conversion",
  [ImplicitConstIntFloatConversion]>;
-def ObjCSignedCharBoolImplicitFloatConversion :
-  DiagGroup<"objc-signed-char-bool-implicit-float-conversion">;
-def ImplicitFloatConversion : DiagGroup<"implicit-float-conversion",
-  [ImplicitIntFloatConversion,
-   ObjCSignedCharBoolImplicitFloatConversion]>;
+// def ObjCSignedCharBoolImplicitFloatConversion :
+//   DiagGroup<"objc-signed-char-bool-implicit-float-conversion">;
+// def ImplicitFloatConversion : DiagGroup<"implicit-float-conversion",
+//   [ImplicitIntFloatConversion,
+//    ObjCSignedCharBoolImplicitFloatConversion]>;
 def ImplicitFixedPointConversion : DiagGroup<"implicit-fixed-point-conversion">;
 
 def FloatOverflowConversion : DiagGroup<"float-overflow-conversion">;
@@ -115,7 +115,7 @@ def NonLiteralNullConversion : DiagGroup<"non-literal-null-conversion">;
 def NullConversion : DiagGroup<"null-conversion">;
 def ImplicitConversionFloatingPointToBool :
   DiagGroup<"implicit-conversion-floating-point-to-bool">;
-def ObjCLiteralConversion : DiagGroup<"objc-literal-conversion">;
+// def ObjCLiteralConversion : DiagGroup<"objc-literal-conversion">;
 def MacroRedefined : DiagGroup<"macro-redefined">;
 def BuiltinMacroRedefined : DiagGroup<"builtin-macro-redefined">;
 def BuiltinRequiresHeader : DiagGroup<"builtin-requires-header">;
@@ -456,7 +456,7 @@ def OutOfLineDeclaration : DiagGroup<"out-of-line-declaration">;
 def : DiagGroup<"overflow">;
 def ForwardClassReceiver : DiagGroup<"receiver-forward-class">;
 def MethodAccess : DiagGroup<"objc-method-access">;
-def ObjCReceiver : DiagGroup<"receiver-expr">;
+// def ObjCReceiver : DiagGroup<"receiver-expr">;
 def OperatorNewReturnsNull : DiagGroup<"new-returns-null">;
 def OverlengthStrings : DiagGroup<"overlength-strings">;
 def OverloadedVirtual : DiagGroup<"overloaded-virtual">;
@@ -464,24 +464,24 @@ def PrivateExtern : DiagGroup<"private-extern">;
 def SelTypeCast : DiagGroup<"cast-of-sel-type">;
 def FunctionDefInObjCContainer : DiagGroup<"function-def-in-objc-container">;
 def BadFunctionCast : DiagGroup<"bad-function-cast">;
-def ObjCPropertyImpl : DiagGroup<"objc-property-implementation">;
-def ObjCPropertyNoAttribute : DiagGroup<"objc-property-no-attribute">;
-def ObjCPropertyAssignOnObjectType : DiagGroup<"objc-property-assign-on-object-type">;
-def ObjCProtocolQualifiers : DiagGroup<"objc-protocol-qualifiers">;
-def ObjCMissingSuperCalls : DiagGroup<"objc-missing-super-calls">;
-def ObjCDesignatedInit : DiagGroup<"objc-designated-initializers">;
-def ObjCRetainBlockProperty : DiagGroup<"objc-noncopy-retain-block-property">;
-def ObjCReadonlyPropertyHasSetter : DiagGroup<"objc-readonly-with-setter-property">;
-def ObjCInvalidIBOutletProperty : DiagGroup<"invalid-iboutlet">;
-def ObjCRootClass : DiagGroup<"objc-root-class">;
-def ObjCPointerIntrospectPerformSelector : DiagGroup<"deprecated-objc-pointer-introspection-performSelector">;
-def ObjCPointerIntrospect : DiagGroup<"deprecated-objc-pointer-introspection", [ObjCPointerIntrospectPerformSelector]>;
-def ObjCMultipleMethodNames : DiagGroup<"objc-multiple-method-names">;
-def ObjCFlexibleArray : DiagGroup<"objc-flexible-array">;
-def ObjCBoxing : DiagGroup<"objc-boxing">;
+// def ObjCPropertyImpl : DiagGroup<"objc-property-implementation">;
+// def ObjCPropertyNoAttribute : DiagGroup<"objc-property-no-attribute">;
+// def ObjCPropertyAssignOnObjectType : DiagGroup<"objc-property-assign-on-object-type">;
+// def ObjCProtocolQualifiers : DiagGroup<"objc-protocol-qualifiers">;
+// def ObjCMissingSuperCalls : DiagGroup<"objc-missing-super-calls">;
+// def ObjCDesignatedInit : DiagGroup<"objc-designated-initializers">;
+// def ObjCRetainBlockProperty : DiagGroup<"objc-noncopy-retain-block-property">;
+// def ObjCReadonlyPropertyHasSetter : DiagGroup<"objc-readonly-with-setter-property">;
+// def ObjCInvalidIBOutletProperty : DiagGroup<"invalid-iboutlet">;
+// def ObjCRootClass : DiagGroup<"objc-root-class">;
+// def ObjCPointerIntrospectPerformSelector : DiagGroup<"deprecated-objc-pointer-introspection-performSelector">;
+// def ObjCPointerIntrospect : DiagGroup<"deprecated-objc-pointer-introspection", [ObjCPointerIntrospectPerformSelector]>;
+// def ObjCMultipleMethodNames : DiagGroup<"objc-multiple-method-names">;
+// def ObjCFlexibleArray : DiagGroup<"objc-flexible-array">;
+// def ObjCBoxing : DiagGroup<"objc-boxing">;
 def OpenCLUnsupportedRGBA: DiagGroup<"opencl-unsupported-rgba">;
 def UnderalignedExceptionObject : DiagGroup<"underaligned-exception-object">;
-def DeprecatedObjCIsaUsage : DiagGroup<"deprecated-objc-isa-usage">;
+// def DeprecatedObjCIsaUsage : DiagGroup<"deprecated-objc-isa-usage">;
 def ExplicitInitializeCall : DiagGroup<"explicit-initialize-call">;
 def Packed : DiagGroup<"packed">;
 def Padded : DiagGroup<"padded">;
@@ -568,14 +568,14 @@ def TautologicalPointerCompare : DiagGroup<"tautological-pointer-compare">;
 def TautologicalOverlapCompare : DiagGroup<"tautological-overlap-compare">;
 def TautologicalBitwiseCompare : DiagGroup<"tautological-bitwise-compare">;
 def TautologicalUndefinedCompare : DiagGroup<"tautological-undefined-compare">;
-def TautologicalObjCBoolCompare : DiagGroup<"tautological-objc-bool-compare">;
+// def TautologicalObjCBoolCompare : DiagGroup<"tautological-objc-bool-compare">;
 def TautologicalCompare : DiagGroup<"tautological-compare",
                                     [TautologicalConstantCompare,
                                      TautologicalPointerCompare,
                                      TautologicalOverlapCompare,
                                      TautologicalBitwiseCompare,
                                      TautologicalUndefinedCompare,
-                                     TautologicalObjCBoolCompare]>;
+                                     /*TautologicalObjCBoolCompare*/]>;
 def HeaderHygiene : DiagGroup<"header-hygiene">;
 def DuplicateDeclSpecifier : DiagGroup<"duplicate-decl-specifier">;
 def CompareDistinctPointerType : DiagGroup<"compare-distinct-pointer-types">;
@@ -612,7 +612,7 @@ def InvalidOffsetof : DiagGroup<"invalid-offsetof">;
 def : DiagGroup<"strict-prototypes">;
 def StrictSelector : DiagGroup<"strict-selector-match">;
 def MethodDuplicate : DiagGroup<"duplicate-method-match">;
-def ObjCCStringFormat : DiagGroup<"cstring-format-directive">;
+// def ObjCCStringFormat : DiagGroup<"cstring-format-directive">;
 def CoveredSwitchDefault : DiagGroup<"covered-switch-default">;
 def SwitchBool     : DiagGroup<"switch-bool">;
 def SwitchEnum     : DiagGroup<"switch-enum">;
@@ -713,7 +713,7 @@ def ARCRepeatedUseOfWeakMaybe : DiagGroup<"arc-maybe-repeated-use-of-weak">;
 def ARCRepeatedUseOfWeak : DiagGroup<"arc-repeated-use-of-weak",
                                      [ARCRepeatedUseOfWeakMaybe]>;
 def BlockCaptureAutoReleasing : DiagGroup<"block-capture-autoreleasing">;
-def ObjCBridge : DiagGroup<"bridge-cast">;
+// def ObjCBridge : DiagGroup<"bridge-cast">;
 
 def DeallocInCategory:DiagGroup<"dealloc-in-category">;
 def SelectorTypeMismatch : DiagGroup<"selector-type-mismatch">;
@@ -809,12 +809,12 @@ def Conversion : DiagGroup<"conversion",
                             FloatConversion,
                             Shorten64To32,
                             IntConversion,
-                            ImplicitIntConversion,
+                            // ImplicitIntConversion,
                             ImplicitFloatConversion,
                             LiteralConversion,
                             NonLiteralNullConversion, // (1-1)->pointer (etc)
                             NullConversion, // NULL->non-pointer
-                            ObjCLiteralConversion,
+                            // ObjCLiteralConversion,
                             SignConversion,
                             StringConversion]>,
                  DiagCategory<"Value Conversion Issue">;
@@ -907,9 +907,9 @@ def Most : DiagGroup<"most", [
     UnknownPragmas,
     Unused,
     VolatileRegisterVar,
-    ObjCMissingSuperCalls,
-    ObjCDesignatedInit,
-    ObjCFlexibleArray,
+    // ObjCMissingSuperCalls,
+    // ObjCDesignatedInit,
+    // ObjCFlexibleArray,
     OverloadedVirtual,
     PrivateExtern,
     SelTypeCast,
@@ -1075,38 +1075,38 @@ def Microsoft : DiagGroup<"microsoft",
 
 def ClangClPch : DiagGroup<"clang-cl-pch">;
 
-def ObjCNonUnifiedException : DiagGroup<"objc-nonunified-exceptions">;
+// def ObjCNonUnifiedException : DiagGroup<"objc-nonunified-exceptions">;
 
-def ObjCProtocolMethodImpl : DiagGroup<"objc-protocol-method-implementation">;
+// def ObjCProtocolMethodImpl : DiagGroup<"objc-protocol-method-implementation">;
 
-def ObjCNoPropertyAutoSynthesis : DiagGroup<"objc-property-synthesis">;
+// def ObjCNoPropertyAutoSynthesis : DiagGroup<"objc-property-synthesis">;
 
 // ObjC API warning groups.
-def ObjCRedundantLiteralUse : DiagGroup<"objc-redundant-literal-use">;
-def ObjCRedundantAPIUse : DiagGroup<"objc-redundant-api-use", [
-    ObjCRedundantLiteralUse
-  ]>;
+// def ObjCRedundantLiteralUse : DiagGroup<"objc-redundant-literal-use">;
+// def ObjCRedundantAPIUse : DiagGroup<"objc-redundant-api-use", [
+//     ObjCRedundantLiteralUse
+//   ]>;
 
-def ObjCCocoaAPI : DiagGroup<"objc-cocoa-api", [
-    ObjCRedundantAPIUse
-  ]>;
+// def ObjCCocoaAPI : DiagGroup<"objc-cocoa-api", [
+//     ObjCRedundantAPIUse
+//   ]>;
 
-def ObjCStringComparison : DiagGroup<"objc-string-compare">;
-def ObjCStringConcatenation : DiagGroup<"objc-string-concatenation">;
-def ObjCLiteralComparison : DiagGroup<"objc-literal-compare", [
-    ObjCStringComparison
-  ]>;
+// def ObjCStringComparison : DiagGroup<"objc-string-compare">;
+// def ObjCStringConcatenation : DiagGroup<"objc-string-concatenation">;
+// def ObjCLiteralComparison : DiagGroup<"objc-literal-compare", [
+//     ObjCStringComparison
+//   ]>;
 
-def ObjCSignedCharBool : DiagGroup<"objc-signed-char-bool",
-  [ObjCSignedCharBoolImplicitIntConversion,
-   ObjCSignedCharBoolImplicitFloatConversion,
-   ObjCBoolConstantConversion,
-   TautologicalObjCBoolCompare]>;
+// def ObjCSignedCharBool : DiagGroup<"objc-signed-char-bool",
+//   [ObjCSignedCharBoolImplicitIntConversion,
+//    ObjCSignedCharBoolImplicitFloatConversion,
+//    ObjCBoolConstantConversion,
+//    TautologicalObjCBoolCompare]>;
 
-def ObjCPotentiallyDirectSelector : DiagGroup<"potentially-direct-selector">;
-def ObjCStrictPotentiallyDirectSelector :
-  DiagGroup<"strict-potentially-direct-selector",
-            [ObjCPotentiallyDirectSelector]>;
+// def ObjCPotentiallyDirectSelector : DiagGroup<"potentially-direct-selector">;
+// def ObjCStrictPotentiallyDirectSelector :
+//   DiagGroup<"strict-potentially-direct-selector",
+//             [ObjCPotentiallyDirectSelector]>;
 
 // Inline ASM warnings.
 def ASMOperandWidths : DiagGroup<"asm-operand-widths">;

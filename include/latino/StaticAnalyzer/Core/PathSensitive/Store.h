@@ -38,7 +38,7 @@ class CXXBasePath;
 class Decl;
 class Expr;
 class LocationContext;
-class ObjCIvarDecl;
+// class ObjCIvarDecl;
 class StackFrameContext;
 
 namespace ento {
@@ -140,7 +140,7 @@ public:
     return loc::MemRegionVal(MRMgr.getCompoundLiteralRegion(CL, LC));
   }
 
-  virtual SVal getLValueIvar(const ObjCIvarDecl *decl, SVal base);
+  // virtual SVal getLValueIvar(const ObjCIvarDecl *decl, SVal base);
 
   virtual SVal getLValueField(const FieldDecl *D, SVal Base) {
     return getLValueFieldOrIvar(D, Base);

@@ -18,7 +18,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/Type.h"
 #include "latino/ASTMatchers/ASTMatchFinder.h"
@@ -432,36 +432,36 @@ private:
 
 /// \return Whether the method declaration \p Parent
 /// syntactically has a binary operation writing into the ivar \p Ivar.
-static bool potentiallyWritesIntoIvar(const Decl *Parent,
-                                      const ObjCIvarDecl *Ivar) {
-  using namespace ast_matchers;
-  const char *IvarBind = "Ivar";
-  if (!Parent || !Parent->hasBody())
-    return false;
-  StatementMatcher WriteIntoIvarM = binaryOperator(
-      hasOperatorName("="),
-      hasLHS(ignoringParenImpCasts(
-          objcIvarRefExpr(hasDeclaration(equalsNode(Ivar))).bind(IvarBind))));
-  StatementMatcher ParentM = stmt(hasDescendant(WriteIntoIvarM));
-  auto Matches = match(ParentM, *Parent->getBody(), Parent->getASTContext());
-  for (BoundNodes &Match : Matches) {
-    auto IvarRef = Match.getNodeAs<ObjCIvarRefExpr>(IvarBind);
-    if (IvarRef->isFreeIvar())
-      return true;
+// static bool potentiallyWritesIntoIvar(const Decl *Parent,
+//                                       const ObjCIvarDecl *Ivar) {
+//   using namespace ast_matchers;
+//   const char *IvarBind = "Ivar";
+//   if (!Parent || !Parent->hasBody())
+//     return false;
+//   StatementMatcher WriteIntoIvarM = binaryOperator(
+//       hasOperatorName("="),
+//       hasLHS(ignoringParenImpCasts(
+//           objcIvarRefExpr(hasDeclaration(equalsNode(Ivar))).bind(IvarBind))));
+//   StatementMatcher ParentM = stmt(hasDescendant(WriteIntoIvarM));
+//   auto Matches = match(ParentM, *Parent->getBody(), Parent->getASTContext());
+//   for (BoundNodes &Match : Matches) {
+//     auto IvarRef = Match.getNodeAs<ObjCIvarRefExpr>(IvarBind);
+//     if (IvarRef->isFreeIvar())
+//       return true;
 
-    const Expr *Base = IvarRef->getBase();
-    if (const auto *ICE = dyn_cast<ImplicitCastExpr>(Base))
-      Base = ICE->getSubExpr();
+//     const Expr *Base = IvarRef->getBase();
+//     if (const auto *ICE = dyn_cast<ImplicitCastExpr>(Base))
+//       Base = ICE->getSubExpr();
 
-    if (const auto *DRE = dyn_cast<DeclRefExpr>(Base))
-      if (const auto *ID = dyn_cast<ImplicitParamDecl>(DRE->getDecl()))
-        if (ID->getParameterKind() == ImplicitParamDecl::ObjCSelf)
-          return true;
+//     if (const auto *DRE = dyn_cast<DeclRefExpr>(Base))
+//       if (const auto *ID = dyn_cast<ImplicitParamDecl>(DRE->getDecl()))
+//         if (ID->getParameterKind() == ImplicitParamDecl::ObjCSelf)
+//           return true;
 
-    return false;
-  }
-  return false;
-}
+//     return false;
+//   }
+//   return false;
+// }
 
 /// Get parameters associated with runtime definition in order
 /// to get the correct parameter name.
@@ -470,8 +470,8 @@ static ArrayRef<ParmVarDecl *> getCallParameters(CallEventRef<> Call) {
   RuntimeDefinition RD = Call->getRuntimeDefinition();
   if (const auto *FD = dyn_cast_or_null<FunctionDecl>(RD.getDecl()))
     return FD->parameters();
-  if (const auto *MD = dyn_cast_or_null<ObjCMethodDecl>(RD.getDecl()))
-    return MD->parameters();
+  // if (const auto *MD = dyn_cast_or_null<ObjCMethodDecl>(RD.getDecl()))
+  //   return MD->parameters();
 
   return Call->parameters();
 }
@@ -558,16 +558,16 @@ NoStoreFuncVisitor::VisitNode(const ExplodedNode *N, BugReporterContext &BR,
 
   // Region of interest corresponds to an IVar, exiting a method
   // which could have written into that IVar, but did not.
-  if (const auto *MC = dyn_cast<ObjCMethodCall>(Call)) {
-    if (const auto *IvarR = dyn_cast<ObjCIvarRegion>(RegionOfInterest)) {
-      const MemRegion *SelfRegion = MC->getReceiverSVal().getAsRegion();
-      if (RegionOfInterest->isSubRegionOf(SelfRegion) &&
-          potentiallyWritesIntoIvar(Call->getRuntimeDefinition().getDecl(),
-                                    IvarR->getDecl()))
-        return maybeEmitNote(R, *Call, N, {}, SelfRegion, "self",
-                             /*FirstIsReferenceType=*/false, 1);
-    }
-  }
+  // if (const auto *MC = dyn_cast<ObjCMethodCall>(Call)) {
+  //   if (const auto *IvarR = dyn_cast<ObjCIvarRegion>(RegionOfInterest)) {
+  //     const MemRegion *SelfRegion = MC->getReceiverSVal().getAsRegion();
+  //     if (RegionOfInterest->isSubRegionOf(SelfRegion) &&
+  //         potentiallyWritesIntoIvar(Call->getRuntimeDefinition().getDecl(),
+  //                                   IvarR->getDecl()))
+  //       return maybeEmitNote(R, *Call, N, {}, SelfRegion, "self",
+  //                            /*FirstIsReferenceType=*/false, 1);
+  //   }
+  // }
 
   if (const auto *CCall = dyn_cast<CXXConstructorCall>(Call)) {
     const MemRegion *ThisR = CCall->getCXXThisVal().getAsRegion();
@@ -1064,11 +1064,11 @@ public:
             Options.ShouldAvoidSuppressingNullArgumentPaths)
           Mode = MaybeUnsuppress;
 
-        if (RetE->getType()->isObjCObjectPointerType()) {
-          Out << "Returning nil";
-        } else {
+        // if (RetE->getType()->isObjCObjectPointerType()) {
+        //   Out << "Returning nil";
+        // } else {
           Out << "Returning null pointer";
-        }
+        // }
       } else {
         Out << "Returning zero";
       }
@@ -1249,14 +1249,14 @@ static void showBRDiagnostics(const char *action, llvm::raw_svector_ostream &os,
 
   if (V.getAs<loc::ConcreteInt>()) {
     bool b = false;
-    if (R->isBoundable()) {
-      if (const auto *TR = dyn_cast<TypedValueRegion>(R)) {
-        if (TR->getValueType()->isObjCObjectPointerType()) {
-          os << action << "nil";
-          b = true;
-        }
-      }
-    }
+    // if (R->isBoundable()) {
+    //   if (const auto *TR = dyn_cast<TypedValueRegion>(R)) {
+    //     if (TR->getValueType()->isObjCObjectPointerType()) {
+    //       os << action << "nil";
+    //       b = true;
+    //     }
+    //   }
+    // }
     if (!b)
       os << action << "a null pointer value";
 
@@ -1290,9 +1290,9 @@ static void showBRParamDiagnostics(llvm::raw_svector_ostream& os,
   os << "Passing ";
 
   if (V.getAs<loc::ConcreteInt>()) {
-    if (Param->getType()->isObjCObjectPointerType())
-      os << "nil object reference";
-    else
+    // if (Param->getType()->isObjCObjectPointerType())
+    //   os << "nil object reference";
+    // else
       os << "null pointer value";
   } else if (V.isUndef()) {
     os << "uninitialized value";
@@ -1316,14 +1316,14 @@ static void showBRDefaultDiagnostics(llvm::raw_svector_ostream &os,
                                      const MemRegion *R, SVal V) {
   if (V.getAs<loc::ConcreteInt>()) {
     bool b = false;
-    if (R->isBoundable()) {
-      if (const auto *TR = dyn_cast<TypedValueRegion>(R)) {
-        if (TR->getValueType()->isObjCObjectPointerType()) {
-          os << "nil object reference stored";
-          b = true;
-        }
-      }
-    }
+    // if (R->isBoundable()) {
+    //   if (const auto *TR = dyn_cast<TypedValueRegion>(R)) {
+    //     if (TR->getValueType()->isObjCObjectPointerType()) {
+    //       os << "nil object reference stored";
+    //       b = true;
+    //     }
+    //   }
+    // }
     if (!b) {
       if (R->canPrintPretty())
         os << "Null pointer value stored";
@@ -1855,15 +1855,15 @@ static const Expr *peelOffOuterExpr(const Expr *Ex,
     return peelOffOuterExpr(FE->getSubExpr(), N);
   if (const auto *OVE = dyn_cast<OpaqueValueExpr>(Ex))
     return peelOffOuterExpr(OVE->getSourceExpr(), N);
-  if (const auto *POE = dyn_cast<PseudoObjectExpr>(Ex)) {
-    const auto *PropRef = dyn_cast<ObjCPropertyRefExpr>(POE->getSyntacticForm());
-    if (PropRef && PropRef->isMessagingGetter()) {
-      const Expr *GetterMessageSend =
-          POE->getSemanticExpr(POE->getNumSemanticExprs() - 1);
-      assert(isa<ObjCMessageExpr>(GetterMessageSend->IgnoreParenCasts()));
-      return peelOffOuterExpr(GetterMessageSend, N);
-    }
-  }
+  // if (const auto *POE = dyn_cast<PseudoObjectExpr>(Ex)) {
+  //   const auto *PropRef = dyn_cast<ObjCPropertyRefExpr>(POE->getSyntacticForm());
+  //   if (PropRef && PropRef->isMessagingGetter()) {
+  //     const Expr *GetterMessageSend =
+  //         POE->getSemanticExpr(POE->getNumSemanticExprs() - 1);
+  //     assert(isa<ObjCMessageExpr>(GetterMessageSend->IgnoreParenCasts()));
+  //     return peelOffOuterExpr(GetterMessageSend, N);
+  //   }
+  // }
 
   // Peel off the ternary operator.
   if (const auto *CO = dyn_cast<ConditionalOperator>(Ex)) {
@@ -2375,12 +2375,12 @@ bool ConditionBRVisitor::patternMatch(const Expr *Ex,
         return false;
       }
     }
-    else if (OriginalTy->isObjCObjectPointerType()) {
+    /*else if (OriginalTy->isObjCObjectPointerType()) {
       if (IL->getValue() == 0) {
         Out << "nil";
         return false;
       }
-    }
+    }*/
 
     Out << IL->getValue();
     return false;
@@ -2631,10 +2631,10 @@ bool ConditionBRVisitor::printValue(const Expr *CondVarExpr, raw_ostream &Out,
     return true;
   }
 
-  if (Ty->isObjCObjectPointerType()) {
-    Out << (TookTrue ? "non-nil" : "nil");
-    return true;
-  }
+  // if (Ty->isObjCObjectPointerType()) {
+  //   Out << (TookTrue ? "non-nil" : "nil");
+  //   return true;
+  // }
 
   if (!Ty->isIntegralOrEnumerationType())
     return false;

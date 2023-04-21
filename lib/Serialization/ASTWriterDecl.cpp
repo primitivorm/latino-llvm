@@ -134,20 +134,20 @@ namespace latino {
 
 
     // FIXME: Put in the same order is DeclNodes.td?
-    void VisitObjCMethodDecl(ObjCMethodDecl *D);
-    void VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
-    void VisitObjCContainerDecl(ObjCContainerDecl *D);
-    void VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
-    void VisitObjCIvarDecl(ObjCIvarDecl *D);
-    void VisitObjCProtocolDecl(ObjCProtocolDecl *D);
-    void VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D);
-    void VisitObjCCategoryDecl(ObjCCategoryDecl *D);
-    void VisitObjCImplDecl(ObjCImplDecl *D);
-    void VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D);
-    void VisitObjCImplementationDecl(ObjCImplementationDecl *D);
-    void VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D);
-    void VisitObjCPropertyDecl(ObjCPropertyDecl *D);
-    void VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
+    // void VisitObjCMethodDecl(ObjCMethodDecl *D);
+    // void VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
+    // void VisitObjCContainerDecl(ObjCContainerDecl *D);
+    // void VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
+    // void VisitObjCIvarDecl(ObjCIvarDecl *D);
+    // void VisitObjCProtocolDecl(ObjCProtocolDecl *D);
+    // void VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D);
+    // void VisitObjCCategoryDecl(ObjCCategoryDecl *D);
+    // void VisitObjCImplDecl(ObjCImplDecl *D);
+    // void VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D);
+    // void VisitObjCImplementationDecl(ObjCImplementationDecl *D);
+    // void VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D);
+    // void VisitObjCPropertyDecl(ObjCPropertyDecl *D);
+    // void VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
     void VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D);
     void VisitOMPAllocateDecl(OMPAllocateDecl *D);
     void VisitOMPRequiresDecl(OMPRequiresDecl *D);
@@ -678,238 +678,238 @@ void ASTDeclWriter::VisitCXXDeductionGuideDecl(CXXDeductionGuideDecl *D) {
   Code = serialization::DECL_CXX_DEDUCTION_GUIDE;
 }
 
-void ASTDeclWriter::VisitObjCMethodDecl(ObjCMethodDecl *D) {
-  VisitNamedDecl(D);
-  // FIXME: convert to LazyStmtPtr?
-  // Unlike C/C++, method bodies will never be in header files.
-  bool HasBodyStuff = D->getBody() != nullptr;
-  Record.push_back(HasBodyStuff);
-  if (HasBodyStuff) {
-    Record.AddStmt(D->getBody());
-  }
-  Record.AddDeclRef(D->getSelfDecl());
-  Record.AddDeclRef(D->getCmdDecl());
-  Record.push_back(D->isInstanceMethod());
-  Record.push_back(D->isVariadic());
-  Record.push_back(D->isPropertyAccessor());
-  Record.push_back(D->isSynthesizedAccessorStub());
-  Record.push_back(D->isDefined());
-  Record.push_back(D->isOverriding());
-  Record.push_back(D->hasSkippedBody());
+// void ASTDeclWriter::VisitObjCMethodDecl(ObjCMethodDecl *D) {
+//   VisitNamedDecl(D);
+//   // FIXME: convert to LazyStmtPtr?
+//   // Unlike C/C++, method bodies will never be in header files.
+//   bool HasBodyStuff = D->getBody() != nullptr;
+//   Record.push_back(HasBodyStuff);
+//   if (HasBodyStuff) {
+//     Record.AddStmt(D->getBody());
+//   }
+//   Record.AddDeclRef(D->getSelfDecl());
+//   Record.AddDeclRef(D->getCmdDecl());
+//   Record.push_back(D->isInstanceMethod());
+//   Record.push_back(D->isVariadic());
+//   Record.push_back(D->isPropertyAccessor());
+//   Record.push_back(D->isSynthesizedAccessorStub());
+//   Record.push_back(D->isDefined());
+//   Record.push_back(D->isOverriding());
+//   Record.push_back(D->hasSkippedBody());
 
-  Record.push_back(D->isRedeclaration());
-  Record.push_back(D->hasRedeclaration());
-  if (D->hasRedeclaration()) {
-    assert(Context.getObjCMethodRedeclaration(D));
-    Record.AddDeclRef(Context.getObjCMethodRedeclaration(D));
-  }
+//   Record.push_back(D->isRedeclaration());
+//   Record.push_back(D->hasRedeclaration());
+//   if (D->hasRedeclaration()) {
+//     assert(Context.getObjCMethodRedeclaration(D));
+//     Record.AddDeclRef(Context.getObjCMethodRedeclaration(D));
+//   }
 
-  // FIXME: stable encoding for @required/@optional
-  Record.push_back(D->getImplementationControl());
-  // FIXME: stable encoding for in/out/inout/bycopy/byref/oneway/nullability
-  Record.push_back(D->getObjCDeclQualifier());
-  Record.push_back(D->hasRelatedResultType());
-  Record.AddTypeRef(D->getReturnType());
-  Record.AddTypeSourceInfo(D->getReturnTypeSourceInfo());
-  Record.AddSourceLocation(D->getEndLoc());
-  Record.push_back(D->param_size());
-  for (const auto *P : D->parameters())
-    Record.AddDeclRef(P);
+//   // FIXME: stable encoding for @required/@optional
+//   Record.push_back(D->getImplementationControl());
+//   // FIXME: stable encoding for in/out/inout/bycopy/byref/oneway/nullability
+//   Record.push_back(D->getObjCDeclQualifier());
+//   Record.push_back(D->hasRelatedResultType());
+//   Record.AddTypeRef(D->getReturnType());
+//   Record.AddTypeSourceInfo(D->getReturnTypeSourceInfo());
+//   Record.AddSourceLocation(D->getEndLoc());
+//   Record.push_back(D->param_size());
+//   for (const auto *P : D->parameters())
+//     Record.AddDeclRef(P);
 
-  Record.push_back(D->getSelLocsKind());
-  unsigned NumStoredSelLocs = D->getNumStoredSelLocs();
-  SourceLocation *SelLocs = D->getStoredSelLocs();
-  Record.push_back(NumStoredSelLocs);
-  for (unsigned i = 0; i != NumStoredSelLocs; ++i)
-    Record.AddSourceLocation(SelLocs[i]);
+//   Record.push_back(D->getSelLocsKind());
+//   unsigned NumStoredSelLocs = D->getNumStoredSelLocs();
+//   SourceLocation *SelLocs = D->getStoredSelLocs();
+//   Record.push_back(NumStoredSelLocs);
+//   for (unsigned i = 0; i != NumStoredSelLocs; ++i)
+//     Record.AddSourceLocation(SelLocs[i]);
 
-  Code = serialization::DECL_OBJC_METHOD;
-}
+//   Code = serialization::DECL_OBJC_METHOD;
+// }
 
-void ASTDeclWriter::VisitObjCTypeParamDecl(ObjCTypeParamDecl *D) {
-  VisitTypedefNameDecl(D);
-  Record.push_back(D->Variance);
-  Record.push_back(D->Index);
-  Record.AddSourceLocation(D->VarianceLoc);
-  Record.AddSourceLocation(D->ColonLoc);
+// void ASTDeclWriter::VisitObjCTypeParamDecl(ObjCTypeParamDecl *D) {
+//   VisitTypedefNameDecl(D);
+//   Record.push_back(D->Variance);
+//   Record.push_back(D->Index);
+//   Record.AddSourceLocation(D->VarianceLoc);
+//   Record.AddSourceLocation(D->ColonLoc);
 
-  Code = serialization::DECL_OBJC_TYPE_PARAM;
-}
+//   Code = serialization::DECL_OBJC_TYPE_PARAM;
+// }
 
-void ASTDeclWriter::VisitObjCContainerDecl(ObjCContainerDecl *D) {
-  VisitNamedDecl(D);
-  Record.AddSourceLocation(D->getAtStartLoc());
-  Record.AddSourceRange(D->getAtEndRange());
-  // Abstract class (no need to define a stable serialization::DECL code).
-}
+// void ASTDeclWriter::VisitObjCContainerDecl(ObjCContainerDecl *D) {
+//   VisitNamedDecl(D);
+//   Record.AddSourceLocation(D->getAtStartLoc());
+//   Record.AddSourceRange(D->getAtEndRange());
+//   // Abstract class (no need to define a stable serialization::DECL code).
+// }
 
-void ASTDeclWriter::VisitObjCInterfaceDecl(ObjCInterfaceDecl *D) {
-  VisitRedeclarable(D);
-  VisitObjCContainerDecl(D);
-  Record.AddTypeRef(QualType(D->getTypeForDecl(), 0));
-  AddObjCTypeParamList(D->TypeParamList);
+// void ASTDeclWriter::VisitObjCInterfaceDecl(ObjCInterfaceDecl *D) {
+//   VisitRedeclarable(D);
+//   VisitObjCContainerDecl(D);
+//   Record.AddTypeRef(QualType(D->getTypeForDecl(), 0));
+//   AddObjCTypeParamList(D->TypeParamList);
 
-  Record.push_back(D->isThisDeclarationADefinition());
-  if (D->isThisDeclarationADefinition()) {
-    // Write the DefinitionData
-    ObjCInterfaceDecl::DefinitionData &Data = D->data();
+//   Record.push_back(D->isThisDeclarationADefinition());
+//   if (D->isThisDeclarationADefinition()) {
+//     // Write the DefinitionData
+//     ObjCInterfaceDecl::DefinitionData &Data = D->data();
 
-    Record.AddTypeSourceInfo(D->getSuperClassTInfo());
-    Record.AddSourceLocation(D->getEndOfDefinitionLoc());
-    Record.push_back(Data.HasDesignatedInitializers);
+//     Record.AddTypeSourceInfo(D->getSuperClassTInfo());
+//     Record.AddSourceLocation(D->getEndOfDefinitionLoc());
+//     Record.push_back(Data.HasDesignatedInitializers);
 
-    // Write out the protocols that are directly referenced by the @interface.
-    Record.push_back(Data.ReferencedProtocols.size());
-    for (const auto *P : D->protocols())
-      Record.AddDeclRef(P);
-    for (const auto &PL : D->protocol_locs())
-      Record.AddSourceLocation(PL);
+//     // Write out the protocols that are directly referenced by the @interface.
+//     Record.push_back(Data.ReferencedProtocols.size());
+//     for (const auto *P : D->protocols())
+//       Record.AddDeclRef(P);
+//     for (const auto &PL : D->protocol_locs())
+//       Record.AddSourceLocation(PL);
 
-    // Write out the protocols that are transitively referenced.
-    Record.push_back(Data.AllReferencedProtocols.size());
-    for (ObjCList<ObjCProtocolDecl>::iterator
-              P = Data.AllReferencedProtocols.begin(),
-           PEnd = Data.AllReferencedProtocols.end();
-         P != PEnd; ++P)
-      Record.AddDeclRef(*P);
+//     // Write out the protocols that are transitively referenced.
+//     Record.push_back(Data.AllReferencedProtocols.size());
+//     for (ObjCList<ObjCProtocolDecl>::iterator
+//               P = Data.AllReferencedProtocols.begin(),
+//            PEnd = Data.AllReferencedProtocols.end();
+//          P != PEnd; ++P)
+//       Record.AddDeclRef(*P);
 
 
-    if (ObjCCategoryDecl *Cat = D->getCategoryListRaw()) {
-      // Ensure that we write out the set of categories for this class.
-      Writer.ObjCClassesWithCategories.insert(D);
+//     // if (ObjCCategoryDecl *Cat = D->getCategoryListRaw()) {
+//     //   // Ensure that we write out the set of categories for this class.
+//     //   Writer.ObjCClassesWithCategories.insert(D);
 
-      // Make sure that the categories get serialized.
-      for (; Cat; Cat = Cat->getNextClassCategoryRaw())
-        (void)Writer.GetDeclRef(Cat);
-    }
-  }
+//     //   // Make sure that the categories get serialized.
+//     //   for (; Cat; Cat = Cat->getNextClassCategoryRaw())
+//     //     (void)Writer.GetDeclRef(Cat);
+//     // }
+//   }
 
-  Code = serialization::DECL_OBJC_INTERFACE;
-}
+//   Code = serialization::DECL_OBJC_INTERFACE;
+// }
 
-void ASTDeclWriter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
-  VisitFieldDecl(D);
-  // FIXME: stable encoding for @public/@private/@protected/@package
-  Record.push_back(D->getAccessControl());
-  Record.push_back(D->getSynthesize());
+// void ASTDeclWriter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
+//   VisitFieldDecl(D);
+//   // FIXME: stable encoding for @public/@private/@protected/@package
+//   Record.push_back(D->getAccessControl());
+//   Record.push_back(D->getSynthesize());
 
-  if (D->getDeclContext() == D->getLexicalDeclContext() &&
-      !D->hasAttrs() &&
-      !D->isImplicit() &&
-      !D->isUsed(false) &&
-      !D->isInvalidDecl() &&
-      !D->isReferenced() &&
-      !D->isModulePrivate() &&
-      !D->getBitWidth() &&
-      !D->hasExtInfo() &&
-      D->getDeclName())
-    AbbrevToUse = Writer.getDeclObjCIvarAbbrev();
+//   if (D->getDeclContext() == D->getLexicalDeclContext() &&
+//       !D->hasAttrs() &&
+//       !D->isImplicit() &&
+//       !D->isUsed(false) &&
+//       !D->isInvalidDecl() &&
+//       !D->isReferenced() &&
+//       !D->isModulePrivate() &&
+//       !D->getBitWidth() &&
+//       !D->hasExtInfo() &&
+//       D->getDeclName())
+//     AbbrevToUse = Writer.getDeclObjCIvarAbbrev();
 
-  Code = serialization::DECL_OBJC_IVAR;
-}
+//   Code = serialization::DECL_OBJC_IVAR;
+// }
 
-void ASTDeclWriter::VisitObjCProtocolDecl(ObjCProtocolDecl *D) {
-  VisitRedeclarable(D);
-  VisitObjCContainerDecl(D);
+// void ASTDeclWriter::VisitObjCProtocolDecl(ObjCProtocolDecl *D) {
+//   VisitRedeclarable(D);
+//   VisitObjCContainerDecl(D);
 
-  Record.push_back(D->isThisDeclarationADefinition());
-  if (D->isThisDeclarationADefinition()) {
-    Record.push_back(D->protocol_size());
-    for (const auto *I : D->protocols())
-      Record.AddDeclRef(I);
-    for (const auto &PL : D->protocol_locs())
-      Record.AddSourceLocation(PL);
-  }
+//   Record.push_back(D->isThisDeclarationADefinition());
+//   if (D->isThisDeclarationADefinition()) {
+//     Record.push_back(D->protocol_size());
+//     for (const auto *I : D->protocols())
+//       Record.AddDeclRef(I);
+//     for (const auto &PL : D->protocol_locs())
+//       Record.AddSourceLocation(PL);
+//   }
 
-  Code = serialization::DECL_OBJC_PROTOCOL;
-}
+//   Code = serialization::DECL_OBJC_PROTOCOL;
+// }
 
-void ASTDeclWriter::VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D) {
-  VisitFieldDecl(D);
-  Code = serialization::DECL_OBJC_AT_DEFS_FIELD;
-}
+// void ASTDeclWriter::VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D) {
+//   VisitFieldDecl(D);
+//   Code = serialization::DECL_OBJC_AT_DEFS_FIELD;
+// }
 
-void ASTDeclWriter::VisitObjCCategoryDecl(ObjCCategoryDecl *D) {
-  VisitObjCContainerDecl(D);
-  Record.AddSourceLocation(D->getCategoryNameLoc());
-  Record.AddSourceLocation(D->getIvarLBraceLoc());
-  Record.AddSourceLocation(D->getIvarRBraceLoc());
-  Record.AddDeclRef(D->getClassInterface());
-  AddObjCTypeParamList(D->TypeParamList);
-  Record.push_back(D->protocol_size());
-  for (const auto *I : D->protocols())
-    Record.AddDeclRef(I);
-  for (const auto &PL : D->protocol_locs())
-    Record.AddSourceLocation(PL);
-  Code = serialization::DECL_OBJC_CATEGORY;
-}
+// void ASTDeclWriter::VisitObjCCategoryDecl(ObjCCategoryDecl *D) {
+//   VisitObjCContainerDecl(D);
+//   Record.AddSourceLocation(D->getCategoryNameLoc());
+//   Record.AddSourceLocation(D->getIvarLBraceLoc());
+//   Record.AddSourceLocation(D->getIvarRBraceLoc());
+//   Record.AddDeclRef(D->getClassInterface());
+//   AddObjCTypeParamList(D->TypeParamList);
+//   Record.push_back(D->protocol_size());
+//   for (const auto *I : D->protocols())
+//     Record.AddDeclRef(I);
+//   for (const auto &PL : D->protocol_locs())
+//     Record.AddSourceLocation(PL);
+//   Code = serialization::DECL_OBJC_CATEGORY;
+// }
 
-void ASTDeclWriter::VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D) {
-  VisitNamedDecl(D);
-  Record.AddDeclRef(D->getClassInterface());
-  Code = serialization::DECL_OBJC_COMPATIBLE_ALIAS;
-}
+// void ASTDeclWriter::VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D) {
+//   VisitNamedDecl(D);
+//   Record.AddDeclRef(D->getClassInterface());
+//   Code = serialization::DECL_OBJC_COMPATIBLE_ALIAS;
+// }
 
-void ASTDeclWriter::VisitObjCPropertyDecl(ObjCPropertyDecl *D) {
-  VisitNamedDecl(D);
-  Record.AddSourceLocation(D->getAtLoc());
-  Record.AddSourceLocation(D->getLParenLoc());
-  Record.AddTypeRef(D->getType());
-  Record.AddTypeSourceInfo(D->getTypeSourceInfo());
-  // FIXME: stable encoding
-  Record.push_back((unsigned)D->getPropertyAttributes());
-  Record.push_back((unsigned)D->getPropertyAttributesAsWritten());
-  // FIXME: stable encoding
-  Record.push_back((unsigned)D->getPropertyImplementation());
-  Record.AddDeclarationName(D->getGetterName());
-  Record.AddSourceLocation(D->getGetterNameLoc());
-  Record.AddDeclarationName(D->getSetterName());
-  Record.AddSourceLocation(D->getSetterNameLoc());
-  Record.AddDeclRef(D->getGetterMethodDecl());
-  Record.AddDeclRef(D->getSetterMethodDecl());
-  Record.AddDeclRef(D->getPropertyIvarDecl());
-  Code = serialization::DECL_OBJC_PROPERTY;
-}
+// void ASTDeclWriter::VisitObjCPropertyDecl(ObjCPropertyDecl *D) {
+//   VisitNamedDecl(D);
+//   Record.AddSourceLocation(D->getAtLoc());
+//   Record.AddSourceLocation(D->getLParenLoc());
+//   Record.AddTypeRef(D->getType());
+//   Record.AddTypeSourceInfo(D->getTypeSourceInfo());
+//   // FIXME: stable encoding
+//   Record.push_back((unsigned)D->getPropertyAttributes());
+//   Record.push_back((unsigned)D->getPropertyAttributesAsWritten());
+//   // FIXME: stable encoding
+//   Record.push_back((unsigned)D->getPropertyImplementation());
+//   Record.AddDeclarationName(D->getGetterName());
+//   Record.AddSourceLocation(D->getGetterNameLoc());
+//   Record.AddDeclarationName(D->getSetterName());
+//   Record.AddSourceLocation(D->getSetterNameLoc());
+//   Record.AddDeclRef(D->getGetterMethodDecl());
+//   Record.AddDeclRef(D->getSetterMethodDecl());
+//   Record.AddDeclRef(D->getPropertyIvarDecl());
+//   Code = serialization::DECL_OBJC_PROPERTY;
+// }
 
-void ASTDeclWriter::VisitObjCImplDecl(ObjCImplDecl *D) {
-  VisitObjCContainerDecl(D);
-  Record.AddDeclRef(D->getClassInterface());
-  // Abstract class (no need to define a stable serialization::DECL code).
-}
+// void ASTDeclWriter::VisitObjCImplDecl(ObjCImplDecl *D) {
+//   VisitObjCContainerDecl(D);
+//   Record.AddDeclRef(D->getClassInterface());
+//   // Abstract class (no need to define a stable serialization::DECL code).
+// }
 
-void ASTDeclWriter::VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
-  VisitObjCImplDecl(D);
-  Record.AddSourceLocation(D->getCategoryNameLoc());
-  Code = serialization::DECL_OBJC_CATEGORY_IMPL;
-}
+// void ASTDeclWriter::VisitObjCCategoryImplDecl(ObjCCategoryImplDecl *D) {
+//   VisitObjCImplDecl(D);
+//   Record.AddSourceLocation(D->getCategoryNameLoc());
+//   Code = serialization::DECL_OBJC_CATEGORY_IMPL;
+// }
 
-void ASTDeclWriter::VisitObjCImplementationDecl(ObjCImplementationDecl *D) {
-  VisitObjCImplDecl(D);
-  Record.AddDeclRef(D->getSuperClass());
-  Record.AddSourceLocation(D->getSuperClassLoc());
-  Record.AddSourceLocation(D->getIvarLBraceLoc());
-  Record.AddSourceLocation(D->getIvarRBraceLoc());
-  Record.push_back(D->hasNonZeroConstructors());
-  Record.push_back(D->hasDestructors());
-  Record.push_back(D->NumIvarInitializers);
-  if (D->NumIvarInitializers)
-    Record.AddCXXCtorInitializers(
-        llvm::makeArrayRef(D->init_begin(), D->init_end()));
-  Code = serialization::DECL_OBJC_IMPLEMENTATION;
-}
+// void ASTDeclWriter::VisitObjCImplementationDecl(ObjCImplementationDecl *D) {
+//   VisitObjCImplDecl(D);
+//   Record.AddDeclRef(D->getSuperClass());
+//   Record.AddSourceLocation(D->getSuperClassLoc());
+//   Record.AddSourceLocation(D->getIvarLBraceLoc());
+//   Record.AddSourceLocation(D->getIvarRBraceLoc());
+//   Record.push_back(D->hasNonZeroConstructors());
+//   Record.push_back(D->hasDestructors());
+//   Record.push_back(D->NumIvarInitializers);
+//   if (D->NumIvarInitializers)
+//     Record.AddCXXCtorInitializers(
+//         llvm::makeArrayRef(D->init_begin(), D->init_end()));
+//   Code = serialization::DECL_OBJC_IMPLEMENTATION;
+// }
 
-void ASTDeclWriter::VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D) {
-  VisitDecl(D);
-  Record.AddSourceLocation(D->getBeginLoc());
-  Record.AddDeclRef(D->getPropertyDecl());
-  Record.AddDeclRef(D->getPropertyIvarDecl());
-  Record.AddSourceLocation(D->getPropertyIvarDeclLoc());
-  Record.AddDeclRef(D->getGetterMethodDecl());
-  Record.AddDeclRef(D->getSetterMethodDecl());
-  Record.AddStmt(D->getGetterCXXConstructor());
-  Record.AddStmt(D->getSetterCXXAssignment());
-  Code = serialization::DECL_OBJC_PROPERTY_IMPL;
-}
+// void ASTDeclWriter::VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D) {
+//   VisitDecl(D);
+//   Record.AddSourceLocation(D->getBeginLoc());
+//   Record.AddDeclRef(D->getPropertyDecl());
+//   Record.AddDeclRef(D->getPropertyIvarDecl());
+//   Record.AddSourceLocation(D->getPropertyIvarDeclLoc());
+//   Record.AddDeclRef(D->getGetterMethodDecl());
+//   Record.AddDeclRef(D->getSetterMethodDecl());
+//   Record.AddStmt(D->getGetterCXXConstructor());
+//   Record.AddStmt(D->getSetterCXXAssignment());
+//   Code = serialization::DECL_OBJC_PROPERTY_IMPL;
+// }
 
 void ASTDeclWriter::VisitFieldDecl(FieldDecl *D) {
   VisitDeclaratorDecl(D);
@@ -939,8 +939,8 @@ void ASTDeclWriter::VisitFieldDecl(FieldDecl *D) {
       !D->hasInClassInitializer() &&
       !D->hasCapturedVLAType() &&
       !D->hasExtInfo() &&
-      !ObjCIvarDecl::classofKind(D->getKind()) &&
-      !ObjCAtDefsFieldDecl::classofKind(D->getKind()) &&
+      // !ObjCIvarDecl::classofKind(D->getKind()) &&
+      // !ObjCAtDefsFieldDecl::classofKind(D->getKind()) &&
       D->getDeclName())
     AbbrevToUse = Writer.getDeclFieldAbbrev();
 
@@ -986,7 +986,7 @@ void ASTDeclWriter::VisitVarDecl(VarDecl *D) {
     Record.push_back(D->isExceptionVariable());
     Record.push_back(D->isNRVOVariable());
     Record.push_back(D->isCXXForRangeDecl());
-    Record.push_back(D->isObjCForDecl());
+    // Record.push_back(D->isObjCForDecl());
     Record.push_back(D->isInline());
     Record.push_back(D->isInlineSpecified());
     Record.push_back(D->isConstexpr());
@@ -1061,7 +1061,7 @@ void ASTDeclWriter::VisitVarDecl(VarDecl *D) {
       !D->isUsed(false) &&
       !D->isInvalidDecl() &&
       !D->isReferenced() &&
-      !D->isTopLevelDeclInObjCContainer() &&
+      // !D->isTopLevelDeclInObjCContainer() &&
       D->getAccess() == AS_none &&
       !D->isModulePrivate() &&
       !needsAnonymousDeclarationNumber(D) &&
@@ -1089,10 +1089,10 @@ void ASTDeclWriter::VisitImplicitParamDecl(ImplicitParamDecl *D) {
 
 void ASTDeclWriter::VisitParmVarDecl(ParmVarDecl *D) {
   VisitVarDecl(D);
-  Record.push_back(D->isObjCMethodParameter());
+  // Record.push_back(D->isObjCMethodParameter());
   Record.push_back(D->getFunctionScopeDepth());
   Record.push_back(D->getFunctionScopeIndex());
-  Record.push_back(D->getObjCDeclQualifier()); // FIXME: stable encoding
+  // Record.push_back(D->getObjCDeclQualifier()); // FIXME: stable encoding
   Record.push_back(D->isKNRPromoted());
   Record.push_back(D->hasInheritedDefaultArg());
   Record.push_back(D->hasUninstantiatedDefaultArg());
@@ -1115,7 +1115,7 @@ void ASTDeclWriter::VisitParmVarDecl(ParmVarDecl *D) {
       D->getStorageClass() == 0 &&
       D->getInitStyle() == VarDecl::CInit && // Can params have anything else?
       D->getFunctionScopeDepth() == 0 &&
-      D->getObjCDeclQualifier() == 0 &&
+      // D->getObjCDeclQualifier() == 0 &&
       !D->isKNRPromoted() &&
       !D->hasInheritedDefaultArg() &&
       D->getInit() == nullptr &&
@@ -1383,7 +1383,7 @@ void ASTDeclWriter::VisitCXXMethodDecl(CXXMethodDecl *D) {
       D->getFirstDecl() == D->getMostRecentDecl() &&
       !D->isInvalidDecl() &&
       !D->hasAttrs() &&
-      !D->isTopLevelDeclInObjCContainer() &&
+      // !D->isTopLevelDeclInObjCContainer() &&
       D->getDeclName().getNameKind() == DeclarationName::Identifier &&
       !D->hasExtInfo() &&
       !D->hasInheritedPrototype() &&
@@ -1941,8 +1941,8 @@ void ASTWriter::WriteDeclAbbrevs() {
   DeclFieldAbbrev = Stream.EmitAbbrev(std::move(Abv));
 
   // Abbreviation for DECL_OBJC_IVAR
-  Abv = std::make_shared<BitCodeAbbrev>();
-  Abv->Add(BitCodeAbbrevOp(serialization::DECL_OBJC_IVAR));
+  // Abv = std::make_shared<BitCodeAbbrev>();
+  // Abv->Add(BitCodeAbbrevOp(serialization::DECL_OBJC_IVAR));
   // Decl
   Abv->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::VBR, 6)); // DeclContext
   Abv->Add(BitCodeAbbrevOp(0));                       // LexicalDeclContext
@@ -1974,7 +1974,7 @@ void ASTWriter::WriteDeclAbbrevs() {
   // Type Source Info
   Abv->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::Array));
   Abv->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::VBR, 6)); // TypeLoc
-  DeclObjCIvarAbbrev = Stream.EmitAbbrev(std::move(Abv));
+  // DeclObjCIvarAbbrev = Stream.EmitAbbrev(std::move(Abv));
 
   // Abbreviation for DECL_ENUM
   Abv = std::make_shared<BitCodeAbbrev>();

@@ -917,46 +917,46 @@ public:
     VisitType(T);
   }
 
-  void VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
-    AddQualType(T->getPointeeType());
-    VisitType(T);
-  }
+  // void VisitObjCObjectPointerType(const ObjCObjectPointerType *T) {
+  //   AddQualType(T->getPointeeType());
+  //   VisitType(T);
+  // }
 
-  void VisitObjCObjectType(const ObjCObjectType *T) {
-    AddDecl(T->getInterface());
+  // void VisitObjCObjectType(const ObjCObjectType *T) {
+  //   AddDecl(T->getInterface());
 
-    auto TypeArgs = T->getTypeArgsAsWritten();
-    ID.AddInteger(TypeArgs.size());
-    for (auto Arg : TypeArgs) {
-      AddQualType(Arg);
-    }
+  //   auto TypeArgs = T->getTypeArgsAsWritten();
+  //   ID.AddInteger(TypeArgs.size());
+  //   for (auto Arg : TypeArgs) {
+  //     AddQualType(Arg);
+  //   }
 
-    auto Protocols = T->getProtocols();
-    ID.AddInteger(Protocols.size());
-    for (auto Protocol : Protocols) {
-      AddDecl(Protocol);
-    }
+  //   auto Protocols = T->getProtocols();
+  //   ID.AddInteger(Protocols.size());
+  //   for (auto Protocol : Protocols) {
+  //     AddDecl(Protocol);
+  //   }
 
-    Hash.AddBoolean(T->isKindOfType());
+  //   Hash.AddBoolean(T->isKindOfType());
 
-    VisitType(T);
-  }
+  //   VisitType(T);
+  // }
 
-  void VisitObjCInterfaceType(const ObjCInterfaceType *T) {
-    // This type is handled by the parent type ObjCObjectType.
-    VisitObjCObjectType(T);
-  }
+  // void VisitObjCInterfaceType(const ObjCInterfaceType *T) {
+  //   // This type is handled by the parent type ObjCObjectType.
+  //   VisitObjCObjectType(T);
+  // }
 
-  void VisitObjCTypeParamType(const ObjCTypeParamType *T) {
-    AddDecl(T->getDecl());
-    auto Protocols = T->getProtocols();
-    ID.AddInteger(Protocols.size());
-    for (auto Protocol : Protocols) {
-      AddDecl(Protocol);
-    }
+  // void VisitObjCTypeParamType(const ObjCTypeParamType *T) {
+  //   AddDecl(T->getDecl());
+  //   auto Protocols = T->getProtocols();
+  //   ID.AddInteger(Protocols.size());
+  //   for (auto Protocol : Protocols) {
+  //     AddDecl(Protocol);
+  //   }
 
-    VisitType(T);
-  }
+  //   VisitType(T);
+  // }
 
   void VisitPackExpansionType(const PackExpansionType *T) {
     AddQualType(T->getPattern());

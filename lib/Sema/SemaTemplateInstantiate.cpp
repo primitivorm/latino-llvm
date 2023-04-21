@@ -1768,8 +1768,8 @@ TemplateInstantiator::TransformFunctionTypeParam(ParmVarDecl *OldParm,
   auto NewParm =
       SemaRef.SubstParmVarDecl(OldParm, TemplateArgs, indexAdjustment,
                                NumExpansions, ExpectParameterPack);
-  if (NewParm && SemaRef.getLangOpts().OpenCL)
-    SemaRef.deduceOpenCLAddressSpace(NewParm);
+  // if (NewParm && SemaRef.getLangOpts().OpenCL)
+  //   SemaRef.deduceOpenCLAddressSpace(NewParm);
   return NewParm;
 }
 
@@ -2771,12 +2771,12 @@ Sema::InstantiateClass(SourceLocation PointOfInstantiation,
 
       if (NewMember->isInvalidDecl())
         Instantiation->setInvalidDecl();
-    } else {
+    } /*else {
       // FIXME: Eventually, a NULL return will mean that one of the
       // instantiations was a semantic disaster, and we'll want to mark the
       // declaration invalid.
       // For now, we expect to skip some members that we can't yet handle.
-    }
+    }*/
   }
 
   // Finish checking fields.

@@ -14,7 +14,7 @@
 #include "CGDebugInfo.h"
 #include "CodeGenModule.h"
 #include "latino/AST/ASTContext.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/Diagnostic.h"

@@ -9,7 +9,7 @@ add_latino_unittest(FormatTests
   FormatTestCSharp.cpp
   FormatTestJS.cpp
   FormatTestJava.cpp
-  FormatTestObjC.cpp
+  # FormatTestObjC.cpp
   FormatTestProto.cpp
   FormatTestRawStrings.cpp
   FormatTestSelective.cpp

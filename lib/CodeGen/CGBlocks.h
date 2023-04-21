@@ -21,7 +21,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/TargetInfo.h"
 

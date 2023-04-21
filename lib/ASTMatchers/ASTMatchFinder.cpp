@@ -434,11 +434,11 @@ public:
     return true;
   }
 
-  bool VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *CAD) {
-    const ObjCInterfaceDecl *InterfaceDecl = CAD->getClassInterface();
-    CompatibleAliases[InterfaceDecl].insert(CAD);
-    return true;
-  }
+  // bool VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *CAD) {
+  //   const ObjCInterfaceDecl *InterfaceDecl = CAD->getClassInterface();
+  //   CompatibleAliases[InterfaceDecl].insert(CAD);
+  //   return true;
+  // }
 
   bool TraverseDecl(Decl *DeclNode);
   bool TraverseStmt(Stmt *StmtNode, DataRecursionQueue *Queue = nullptr);
@@ -499,10 +499,10 @@ public:
                           BoundNodesTreeBuilder *Builder,
                           bool Directly) override;
 
-  bool objcClassIsDerivedFrom(const ObjCInterfaceDecl *Declaration,
-                              const Matcher<NamedDecl> &Base,
-                              BoundNodesTreeBuilder *Builder,
-                              bool Directly) override;
+  // bool objcClassIsDerivedFrom(const ObjCInterfaceDecl *Declaration,
+  //                             const Matcher<NamedDecl> &Base,
+  //                             BoundNodesTreeBuilder *Builder,
+  //                             bool Directly) override;
 
   // Implements ASTMatchFinder::matchesChildOf.
   bool matchesChildOf(const DynTypedNode &Node, ASTContext &Ctx,
@@ -838,22 +838,22 @@ private:
     return false;
   }
 
-  bool
-  objcClassHasMatchingCompatibilityAlias(const ObjCInterfaceDecl *InterfaceDecl,
-                                         const Matcher<NamedDecl> &Matcher,
-                                         BoundNodesTreeBuilder *Builder) {
-    auto Aliases = CompatibleAliases.find(InterfaceDecl);
-    if (Aliases == CompatibleAliases.end())
-      return false;
-    for (const ObjCCompatibleAliasDecl *Alias : Aliases->second) {
-      BoundNodesTreeBuilder Result(*Builder);
-      if (Matcher.matches(*Alias, this, &Result)) {
-        *Builder = std::move(Result);
-        return true;
-      }
-    }
-    return false;
-  }
+  // bool
+  // objcClassHasMatchingCompatibilityAlias(const ObjCInterfaceDecl *InterfaceDecl,
+  //                                        const Matcher<NamedDecl> &Matcher,
+  //                                        BoundNodesTreeBuilder *Builder) {
+  //   auto Aliases = CompatibleAliases.find(InterfaceDecl);
+  //   if (Aliases == CompatibleAliases.end())
+  //     return false;
+  //   for (const ObjCCompatibleAliasDecl *Alias : Aliases->second) {
+  //     BoundNodesTreeBuilder Result(*Builder);
+  //     if (Matcher.matches(*Alias, this, &Result)) {
+  //       *Builder = std::move(Result);
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
 
   /// Bucket to record map.
   ///
@@ -877,9 +877,9 @@ private:
   llvm::DenseMap<const Type*, std::set<const TypedefNameDecl*> > TypeAliases;
 
   // Maps an Objective-C interface to its ObjCCompatibleAliasDecls.
-  llvm::DenseMap<const ObjCInterfaceDecl *,
-                 llvm::SmallPtrSet<const ObjCCompatibleAliasDecl *, 2>>
-      CompatibleAliases;
+  // llvm::DenseMap<const ObjCInterfaceDecl *,
+  //                llvm::SmallPtrSet<const ObjCCompatibleAliasDecl *, 2>>
+  //     CompatibleAliases;
 
   // Maps (matcher, node) -> the match result for memoization.
   typedef std::map<MatchKey, MemoizedMatchResult> MemoizationMap;
@@ -946,31 +946,31 @@ bool MatchASTVisitor::classIsDerivedFrom(const CXXRecordDecl *Declaration,
 // Returns true if the given Objective-C class is directly or indirectly
 // derived from a matching base class. A class is not considered to be derived
 // from itself.
-bool MatchASTVisitor::objcClassIsDerivedFrom(
-    const ObjCInterfaceDecl *Declaration, const Matcher<NamedDecl> &Base,
-    BoundNodesTreeBuilder *Builder, bool Directly) {
-  // Check if any of the superclasses of the class match.
-  for (const ObjCInterfaceDecl *ClassDecl = Declaration->getSuperClass();
-       ClassDecl != nullptr; ClassDecl = ClassDecl->getSuperClass()) {
-    // Check if there are any matching compatibility aliases.
-    if (objcClassHasMatchingCompatibilityAlias(ClassDecl, Base, Builder))
-      return true;
+// bool MatchASTVisitor::objcClassIsDerivedFrom(
+//     const ObjCInterfaceDecl *Declaration, const Matcher<NamedDecl> &Base,
+//     BoundNodesTreeBuilder *Builder, bool Directly) {
+//   // Check if any of the superclasses of the class match.
+//   for (const ObjCInterfaceDecl *ClassDecl = Declaration->getSuperClass();
+//        ClassDecl != nullptr; ClassDecl = ClassDecl->getSuperClass()) {
+//     // Check if there are any matching compatibility aliases.
+//     // if (objcClassHasMatchingCompatibilityAlias(ClassDecl, Base, Builder))
+//     //   return true;
 
-    // Check if there are any matching type aliases.
-    const Type *TypeNode = ClassDecl->getTypeForDecl();
-    if (typeHasMatchingAlias(TypeNode, Base, Builder))
-      return true;
+//     // Check if there are any matching type aliases.
+//     const Type *TypeNode = ClassDecl->getTypeForDecl();
+//     if (typeHasMatchingAlias(TypeNode, Base, Builder))
+//       return true;
 
-    if (Base.matches(*ClassDecl, this, Builder))
-      return true;
+//     if (Base.matches(*ClassDecl, this, Builder))
+//       return true;
 
-    // Not `return false` as a temporary workaround for PR43879.
-    if (Directly)
-      break;
-  }
+//     // Not `return false` as a temporary workaround for PR43879.
+//     if (Directly)
+//       break;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 bool MatchASTVisitor::TraverseDecl(Decl *DeclNode) {
   if (!DeclNode) {

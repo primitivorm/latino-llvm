@@ -14,14 +14,14 @@
 
 #include "latino/Sema/AnalysisBasedWarnings.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ParentMap.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Analysis/Analyses/CFGReachabilityAnalysis.h"
 #include "latino/Analysis/Analyses/Consumed.h"
@@ -650,10 +650,10 @@ static void CheckFallThroughForBody(Sema &S, const Decl *D, const Stmt *Body,
       ReturnsVoid = FD->getReturnType()->isVoidType();
     HasNoReturn = FD->isNoReturn();
   }
-  else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
-    ReturnsVoid = MD->getReturnType()->isVoidType();
-    HasNoReturn = MD->hasAttr<NoReturnAttr>();
-  }
+  // else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  //   ReturnsVoid = MD->getReturnType()->isVoidType();
+  //   HasNoReturn = MD->hasAttr<NoReturnAttr>();
+  // }
   else if (isa<BlockDecl>(D)) {
     if (const FunctionType *FT =
           BlockType->getPointeeType()->getAs<FunctionType>()) {
@@ -702,9 +702,9 @@ static void CheckFallThroughForBody(Sema &S, const Decl *D, const Stmt *Body,
       if (ReturnsVoid && !HasNoReturn && CD.diag_NeverFallThroughOrReturn) {
         if (const FunctionDecl *FD = dyn_cast<FunctionDecl>(D)) {
           S.Diag(LBrace, CD.diag_NeverFallThroughOrReturn) << 0 << FD;
-        } else if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(D)) {
+        } /*else if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(D)) {
           S.Diag(LBrace, CD.diag_NeverFallThroughOrReturn) << 1 << MD;
-        } else {
+        }*/ else {
           S.Diag(LBrace, CD.diag_NeverFallThroughOrReturn);
         }
       }
@@ -1352,7 +1352,7 @@ static void diagnoseRepeatedUseOfWeak(Sema &S,
                                       const sema::FunctionScopeInfo *CurFn,
                                       const Decl *D,
                                       const ParentMap &PM) {
-  typedef sema::FunctionScopeInfo::WeakObjectProfileTy WeakObjectProfileTy;
+  // typedef sema::FunctionScopeInfo::WeakObjectProfileTy WeakObjectProfileTy;
   typedef sema::FunctionScopeInfo::WeakObjectUseMap WeakObjectUseMap;
   typedef sema::FunctionScopeInfo::WeakUseVector WeakUseVector;
   typedef std::pair<const Stmt *, WeakObjectUseMap::const_iterator>
@@ -1393,9 +1393,9 @@ static void diagnoseRepeatedUseOfWeak(Sema &S,
         if (!isInLoop(Ctx, PM, UI->getUseExpr()))
           continue;
 
-        const WeakObjectProfileTy &Profile = I->first;
-        if (!Profile.isExactProfile())
-          continue;
+        // const WeakObjectProfileTy &Profile = I->first;
+        // if (!Profile.isExactProfile())
+        //   continue;
 
         const NamedDecl *Base = Profile.getBase();
         if (!Base)
@@ -1438,15 +1438,15 @@ static void diagnoseRepeatedUseOfWeak(Sema &S,
     FunctionKind = Block;
   else if (isa<sema::LambdaScopeInfo>(CurFn))
     FunctionKind = Lambda;
-  else if (isa<ObjCMethodDecl>(D))
-    FunctionKind = Method;
+  // else if (isa<ObjCMethodDecl>(D))
+  //   FunctionKind = Method;
   else
     FunctionKind = Function;
 
   // Iterate through the sorted problems and emit warnings for each.
   for (const auto &P : UsesByStmt) {
     const Stmt *FirstRead = P.first;
-    const WeakObjectProfileTy &Key = P.second->first;
+    // const WeakObjectProfileTy &Key = P.second->first;
     const WeakUseVector &Uses = P.second->second;
 
     // For complicated expressions like 'a.b.c' and 'x.b.c', WeakObjectProfileTy
@@ -1455,9 +1455,9 @@ static void diagnoseRepeatedUseOfWeak(Sema &S,
     // and we adjust the diagnostic kind accordingly so that the less certain
     // case can be turned off if it is too noisy.
     unsigned DiagKind;
-    if (Key.isExactProfile())
-      DiagKind = diag::warn_arc_repeated_use_of_weak;
-    else
+    // if (Key.isExactProfile())
+    //   DiagKind = diag::warn_arc_repeated_use_of_weak;
+    // else
       DiagKind = diag::warn_arc_possible_repeated_use_of_weak;
 
     // Classify the weak object being accessed for better warning text.
@@ -1473,20 +1473,20 @@ static void diagnoseRepeatedUseOfWeak(Sema &S,
     const NamedDecl *KeyProp = Key.getProperty();
     if (isa<VarDecl>(KeyProp))
       ObjectKind = Variable;
-    else if (isa<ObjCPropertyDecl>(KeyProp))
-      ObjectKind = Property;
-    else if (isa<ObjCMethodDecl>(KeyProp))
-      ObjectKind = ImplicitProperty;
-    else if (isa<ObjCIvarDecl>(KeyProp))
-      ObjectKind = Ivar;
+    // else if (isa<ObjCPropertyDecl>(KeyProp))
+    //   ObjectKind = Property;
+    // else if (isa<ObjCMethodDecl>(KeyProp))
+    //   ObjectKind = ImplicitProperty;
+    // else if (isa<ObjCIvarDecl>(KeyProp))
+    //   ObjectKind = Ivar;
     else
       llvm_unreachable("Unexpected weak object kind!");
 
     // Do not warn about IBOutlet weak property receivers being set to null
     // since they are typically only used from the main thread.
-    if (const ObjCPropertyDecl *Prop = dyn_cast<ObjCPropertyDecl>(KeyProp))
-      if (Prop->hasAttr<IBOutletAttr>())
-        continue;
+    // if (const ObjCPropertyDecl *Prop = dyn_cast<ObjCPropertyDecl>(KeyProp))
+    //   if (Prop->hasAttr<IBOutletAttr>())
+    //     continue;
 
     // Show the first time the object was read.
     S.Diag(FirstRead->getBeginLoc(), DiagKind)

@@ -95,7 +95,7 @@ public:
   void checkBind(SVal L, SVal V, const Stmt *S, CheckerContext &C) const;
   void checkPostStmt(const ExplicitCastExpr *CE, CheckerContext &C) const;
   void checkPreStmt(const ReturnStmt *S, CheckerContext &C) const;
-  void checkPostObjCMessage(const ObjCMethodCall &M, CheckerContext &C) const;
+  // void checkPostObjCMessage(const ObjCMethodCall &M, CheckerContext &C) const;
   void checkPostCall(const CallEvent &Call, CheckerContext &C) const;
   void checkPreCall(const CallEvent &Call, CheckerContext &C) const;
   void checkDeadSymbols(SymbolReaper &SR, CheckerContext &C) const;
@@ -374,36 +374,36 @@ checkParamsForPreconditionViolation(ArrayRef<ParmVarDecl *> Params,
   return false;
 }
 
-static bool
-checkSelfIvarsForInvariantViolation(ProgramStateRef State,
-                                    const LocationContext *LocCtxt) {
-  auto *MD = dyn_cast<ObjCMethodDecl>(LocCtxt->getDecl());
-  if (!MD || !MD->isInstanceMethod())
-    return false;
+// static bool
+// checkSelfIvarsForInvariantViolation(ProgramStateRef State,
+//                                     const LocationContext *LocCtxt) {
+//   auto *MD = dyn_cast<ObjCMethodDecl>(LocCtxt->getDecl());
+//   if (!MD || !MD->isInstanceMethod())
+//     return false;
 
-  const ImplicitParamDecl *SelfDecl = LocCtxt->getSelfDecl();
-  if (!SelfDecl)
-    return false;
+//   const ImplicitParamDecl *SelfDecl = LocCtxt->getSelfDecl();
+//   if (!SelfDecl)
+//     return false;
 
-  SVal SelfVal = State->getSVal(State->getRegion(SelfDecl, LocCtxt));
+//   // SVal SelfVal = State->getSVal(State->getRegion(SelfDecl, LocCtxt));
 
-  const ObjCObjectPointerType *SelfType =
-      dyn_cast<ObjCObjectPointerType>(SelfDecl->getType());
-  if (!SelfType)
-    return false;
+//   // const ObjCObjectPointerType *SelfType =
+//   //     dyn_cast<ObjCObjectPointerType>(SelfDecl->getType());
+//   // if (!SelfType)
+//   //   return false;
 
-  const ObjCInterfaceDecl *ID = SelfType->getInterfaceDecl();
-  if (!ID)
-    return false;
+//   // const ObjCInterfaceDecl *ID = SelfType->getInterfaceDecl();
+//   // if (!ID)
+//   //   return false;
 
-  for (const auto *IvarDecl : ID->ivars()) {
-    SVal LV = State->getLValue(IvarDecl, SelfVal);
-    if (checkValueAtLValForInvariantViolation(State, LV, IvarDecl->getType())) {
-      return true;
-    }
-  }
-  return false;
-}
+//   // for (const auto *IvarDecl : ID->ivars()) {
+//   //   SVal LV = State->getLValue(IvarDecl, SelfVal);
+//   //   if (checkValueAtLValForInvariantViolation(State, LV, IvarDecl->getType())) {
+//   //     return true;
+//   //   }
+//   // }
+//   return false;
+// }
 
 static bool checkInvariantViolation(ProgramStateRef State, ExplodedNode *N,
                                     CheckerContext &C) {
@@ -420,8 +420,8 @@ static bool checkInvariantViolation(ProgramStateRef State, ExplodedNode *N,
     Params = BD->parameters();
   else if (const auto *FD = dyn_cast<FunctionDecl>(D))
     Params = FD->parameters();
-  else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-    Params = MD->parameters();
+  // else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //   Params = MD->parameters();
   else
     return false;
 
@@ -589,17 +589,18 @@ void NullabilityChecker::checkPreStmt(const ReturnStmt *S,
   AnalysisDeclContext *DeclCtxt =
       C.getLocationContext()->getAnalysisDeclContext();
   const Decl *D = DeclCtxt->getDecl();
-  if (auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
-    // HACK: This is a big hammer to avoid warning when there are defensive
-    // nil checks in -init and -copy methods. We should add more sophisticated
-    // logic here to suppress on common defensive idioms but still
-    // warn when there is a likely problem.
-    ObjCMethodFamily Family = MD->getMethodFamily();
-    if (OMF_init == Family || OMF_copy == Family || OMF_mutableCopy == Family)
-      InSuppressedMethodFamily = true;
+  // if (auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  //   // HACK: This is a big hammer to avoid warning when there are defensive
+  //   // nil checks in -init and -copy methods. We should add more sophisticated
+  //   // logic here to suppress on common defensive idioms but still
+  //   // warn when there is a likely problem.
+  //   ObjCMethodFamily Family = MD->getMethodFamily();
+  //   if (OMF_init == Family || OMF_copy == Family || OMF_mutableCopy == Family)
+  //     InSuppressedMethodFamily = true;
 
-    RequiredRetType = MD->getReturnType();
-  } else if (auto *FD = dyn_cast<FunctionDecl>(D)) {
+  //   RequiredRetType = MD->getReturnType();
+  // } else 
+  if (auto *FD = dyn_cast<FunctionDecl>(D)) {
     RequiredRetType = FD->getReturnType();
   } else {
     return;
@@ -629,7 +630,7 @@ void NullabilityChecker::checkPreStmt(const ReturnStmt *S,
 
     SmallString<256> SBuf;
     llvm::raw_svector_ostream OS(SBuf);
-    OS << (RetExpr->getType()->isObjCObjectPointerType() ? "nil" : "Null");
+    OS << (/*RetExpr->getType()->isObjCObjectPointerType() ? "nil" :*/ "Null");
     OS << " returned from a " << C.getDeclDescription(D) <<
           " that is expected to return a non-null value";
     reportBugIfInvariantHolds(OS.str(), ErrorKind::NilReturnedToNonnull,
@@ -729,7 +730,7 @@ void NullabilityChecker::checkPreCall(const CallEvent &Call,
 
       SmallString<256> SBuf;
       llvm::raw_svector_ostream OS(SBuf);
-      OS << (Param->getType()->isObjCObjectPointerType() ? "nil" : "Null");
+      OS << (/*Param->getType()->isObjCObjectPointerType() ? "nil" :*/ "Null");
       OS << " passed to a callee that requires a non-null " << ParamIdx
          << llvm::getOrdinalSuffix(ParamIdx) << " parameter";
       reportBugIfInvariantHolds(OS.str(), ErrorKind::NilPassedToNonnull,
@@ -822,148 +823,148 @@ void NullabilityChecker::checkPostCall(const CallEvent &Call,
   }
 }
 
-static Nullability getReceiverNullability(const ObjCMethodCall &M,
-                                          ProgramStateRef State) {
-  if (M.isReceiverSelfOrSuper()) {
-    // For super and super class receivers we assume that the receiver is
-    // nonnull.
-    return Nullability::Nonnull;
-  }
-  // Otherwise look up nullability in the state.
-  SVal Receiver = M.getReceiverSVal();
-  if (auto DefOrUnknown = Receiver.getAs<DefinedOrUnknownSVal>()) {
-    // If the receiver is constrained to be nonnull, assume that it is nonnull
-    // regardless of its type.
-    NullConstraint Nullness = getNullConstraint(*DefOrUnknown, State);
-    if (Nullness == NullConstraint::IsNotNull)
-      return Nullability::Nonnull;
-  }
-  auto ValueRegionSVal = Receiver.getAs<loc::MemRegionVal>();
-  if (ValueRegionSVal) {
-    const MemRegion *SelfRegion = ValueRegionSVal->getRegion();
-    assert(SelfRegion);
+// static Nullability getReceiverNullability(const ObjCMethodCall &M,
+//                                           ProgramStateRef State) {
+//   if (M.isReceiverSelfOrSuper()) {
+//     // For super and super class receivers we assume that the receiver is
+//     // nonnull.
+//     return Nullability::Nonnull;
+//   }
+//   // Otherwise look up nullability in the state.
+//   SVal Receiver = M.getReceiverSVal();
+//   if (auto DefOrUnknown = Receiver.getAs<DefinedOrUnknownSVal>()) {
+//     // If the receiver is constrained to be nonnull, assume that it is nonnull
+//     // regardless of its type.
+//     NullConstraint Nullness = getNullConstraint(*DefOrUnknown, State);
+//     if (Nullness == NullConstraint::IsNotNull)
+//       return Nullability::Nonnull;
+//   }
+//   auto ValueRegionSVal = Receiver.getAs<loc::MemRegionVal>();
+//   if (ValueRegionSVal) {
+//     const MemRegion *SelfRegion = ValueRegionSVal->getRegion();
+//     assert(SelfRegion);
 
-    const NullabilityState *TrackedSelfNullability =
-        State->get<NullabilityMap>(SelfRegion);
-    if (TrackedSelfNullability)
-      return TrackedSelfNullability->getValue();
-  }
-  return Nullability::Unspecified;
-}
+//     const NullabilityState *TrackedSelfNullability =
+//         State->get<NullabilityMap>(SelfRegion);
+//     if (TrackedSelfNullability)
+//       return TrackedSelfNullability->getValue();
+//   }
+//   return Nullability::Unspecified;
+// }
 
 /// Calculate the nullability of the result of a message expr based on the
 /// nullability of the receiver, the nullability of the return value, and the
 /// constraints.
-void NullabilityChecker::checkPostObjCMessage(const ObjCMethodCall &M,
-                                              CheckerContext &C) const {
-  auto Decl = M.getDecl();
-  if (!Decl)
-    return;
-  QualType RetType = Decl->getReturnType();
-  if (!RetType->isAnyPointerType())
-    return;
+// void NullabilityChecker::checkPostObjCMessage(const ObjCMethodCall &M,
+//                                               CheckerContext &C) const {
+//   auto Decl = M.getDecl();
+//   if (!Decl)
+//     return;
+//   QualType RetType = Decl->getReturnType();
+//   if (!RetType->isAnyPointerType())
+//     return;
 
-  ProgramStateRef State = C.getState();
-  if (State->get<InvariantViolated>())
-    return;
+//   ProgramStateRef State = C.getState();
+//   if (State->get<InvariantViolated>())
+//     return;
 
-  const MemRegion *ReturnRegion = getTrackRegion(M.getReturnValue());
-  if (!ReturnRegion)
-    return;
+//   const MemRegion *ReturnRegion = getTrackRegion(M.getReturnValue());
+//   if (!ReturnRegion)
+//     return;
 
-  auto Interface = Decl->getClassInterface();
-  auto Name = Interface ? Interface->getName() : "";
-  // In order to reduce the noise in the diagnostics generated by this checker,
-  // some framework and programming style based heuristics are used. These
-  // heuristics are for Cocoa APIs which have NS prefix.
-  if (Name.startswith("NS")) {
-    // Developers rely on dynamic invariants such as an item should be available
-    // in a collection, or a collection is not empty often. Those invariants can
-    // not be inferred by any static analysis tool. To not to bother the users
-    // with too many false positives, every item retrieval function should be
-    // ignored for collections. The instance methods of dictionaries in Cocoa
-    // are either item retrieval related or not interesting nullability wise.
-    // Using this fact, to keep the code easier to read just ignore the return
-    // value of every instance method of dictionaries.
-    if (M.isInstanceMessage() && Name.contains("Dictionary")) {
-      State =
-          State->set<NullabilityMap>(ReturnRegion, Nullability::Contradicted);
-      C.addTransition(State);
-      return;
-    }
-    // For similar reasons ignore some methods of Cocoa arrays.
-    StringRef FirstSelectorSlot = M.getSelector().getNameForSlot(0);
-    if (Name.contains("Array") &&
-        (FirstSelectorSlot == "firstObject" ||
-         FirstSelectorSlot == "lastObject")) {
-      State =
-          State->set<NullabilityMap>(ReturnRegion, Nullability::Contradicted);
-      C.addTransition(State);
-      return;
-    }
+//   auto Interface = Decl->getClassInterface();
+//   auto Name = Interface ? Interface->getName() : "";
+//   // In order to reduce the noise in the diagnostics generated by this checker,
+//   // some framework and programming style based heuristics are used. These
+//   // heuristics are for Cocoa APIs which have NS prefix.
+//   if (Name.startswith("NS")) {
+//     // Developers rely on dynamic invariants such as an item should be available
+//     // in a collection, or a collection is not empty often. Those invariants can
+//     // not be inferred by any static analysis tool. To not to bother the users
+//     // with too many false positives, every item retrieval function should be
+//     // ignored for collections. The instance methods of dictionaries in Cocoa
+//     // are either item retrieval related or not interesting nullability wise.
+//     // Using this fact, to keep the code easier to read just ignore the return
+//     // value of every instance method of dictionaries.
+//     if (M.isInstanceMessage() && Name.contains("Dictionary")) {
+//       State =
+//           State->set<NullabilityMap>(ReturnRegion, Nullability::Contradicted);
+//       C.addTransition(State);
+//       return;
+//     }
+//     // For similar reasons ignore some methods of Cocoa arrays.
+//     StringRef FirstSelectorSlot = M.getSelector().getNameForSlot(0);
+//     if (Name.contains("Array") &&
+//         (FirstSelectorSlot == "firstObject" ||
+//          FirstSelectorSlot == "lastObject")) {
+//       State =
+//           State->set<NullabilityMap>(ReturnRegion, Nullability::Contradicted);
+//       C.addTransition(State);
+//       return;
+//     }
 
-    // Encoding related methods of string should not fail when lossless
-    // encodings are used. Using lossless encodings is so frequent that ignoring
-    // this class of methods reduced the emitted diagnostics by about 30% on
-    // some projects (and all of that was false positives).
-    if (Name.contains("String")) {
-      for (auto Param : M.parameters()) {
-        if (Param->getName() == "encoding") {
-          State = State->set<NullabilityMap>(ReturnRegion,
-                                             Nullability::Contradicted);
-          C.addTransition(State);
-          return;
-        }
-      }
-    }
-  }
+//     // Encoding related methods of string should not fail when lossless
+//     // encodings are used. Using lossless encodings is so frequent that ignoring
+//     // this class of methods reduced the emitted diagnostics by about 30% on
+//     // some projects (and all of that was false positives).
+//     if (Name.contains("String")) {
+//       for (auto Param : M.parameters()) {
+//         if (Param->getName() == "encoding") {
+//           State = State->set<NullabilityMap>(ReturnRegion,
+//                                              Nullability::Contradicted);
+//           C.addTransition(State);
+//           return;
+//         }
+//       }
+//     }
+//   }
 
-  const ObjCMessageExpr *Message = M.getOriginExpr();
-  Nullability SelfNullability = getReceiverNullability(M, State);
+//   const ObjCMessageExpr *Message = M.getOriginExpr();
+//   Nullability SelfNullability = getReceiverNullability(M, State);
 
-  const NullabilityState *NullabilityOfReturn =
-      State->get<NullabilityMap>(ReturnRegion);
+//   const NullabilityState *NullabilityOfReturn =
+//       State->get<NullabilityMap>(ReturnRegion);
 
-  if (NullabilityOfReturn) {
-    // When we have a nullability tracked for the return value, the nullability
-    // of the expression will be the most nullable of the receiver and the
-    // return value.
-    Nullability RetValTracked = NullabilityOfReturn->getValue();
-    Nullability ComputedNullab =
-        getMostNullable(RetValTracked, SelfNullability);
-    if (ComputedNullab != RetValTracked &&
-        ComputedNullab != Nullability::Unspecified) {
-      const Stmt *NullabilitySource =
-          ComputedNullab == RetValTracked
-              ? NullabilityOfReturn->getNullabilitySource()
-              : Message->getInstanceReceiver();
-      State = State->set<NullabilityMap>(
-          ReturnRegion, NullabilityState(ComputedNullab, NullabilitySource));
-      C.addTransition(State);
-    }
-    return;
-  }
+//   if (NullabilityOfReturn) {
+//     // When we have a nullability tracked for the return value, the nullability
+//     // of the expression will be the most nullable of the receiver and the
+//     // return value.
+//     Nullability RetValTracked = NullabilityOfReturn->getValue();
+//     Nullability ComputedNullab =
+//         getMostNullable(RetValTracked, SelfNullability);
+//     if (ComputedNullab != RetValTracked &&
+//         ComputedNullab != Nullability::Unspecified) {
+//       const Stmt *NullabilitySource =
+//           ComputedNullab == RetValTracked
+//               ? NullabilityOfReturn->getNullabilitySource()
+//               : Message->getInstanceReceiver();
+//       State = State->set<NullabilityMap>(
+//           ReturnRegion, NullabilityState(ComputedNullab, NullabilitySource));
+//       C.addTransition(State);
+//     }
+//     return;
+//   }
 
-  // No tracked information. Use static type information for return value.
-  Nullability RetNullability = getNullabilityAnnotation(RetType);
+//   // No tracked information. Use static type information for return value.
+//   Nullability RetNullability = getNullabilityAnnotation(RetType);
 
-  // Properties might be computed. For this reason the static analyzer creates a
-  // new symbol each time an unknown property  is read. To avoid false pozitives
-  // do not treat unknown properties as nullable, even when they explicitly
-  // marked nullable.
-  if (M.getMessageKind() == OCM_PropertyAccess && !C.wasInlined)
-    RetNullability = Nullability::Nonnull;
+//   // Properties might be computed. For this reason the static analyzer creates a
+//   // new symbol each time an unknown property  is read. To avoid false pozitives
+//   // do not treat unknown properties as nullable, even when they explicitly
+//   // marked nullable.
+//   if (M.getMessageKind() == OCM_PropertyAccess && !C.wasInlined)
+//     RetNullability = Nullability::Nonnull;
 
-  Nullability ComputedNullab = getMostNullable(RetNullability, SelfNullability);
-  if (ComputedNullab == Nullability::Nullable) {
-    const Stmt *NullabilitySource = ComputedNullab == RetNullability
-                                        ? Message
-                                        : Message->getInstanceReceiver();
-    State = State->set<NullabilityMap>(
-        ReturnRegion, NullabilityState(ComputedNullab, NullabilitySource));
-    C.addTransition(State);
-  }
-}
+//   Nullability ComputedNullab = getMostNullable(RetNullability, SelfNullability);
+//   if (ComputedNullab == Nullability::Nullable) {
+//     const Stmt *NullabilitySource = ComputedNullab == RetNullability
+//                                         ? Message
+//                                         : Message->getInstanceReceiver();
+//     State = State->set<NullabilityMap>(
+//         ReturnRegion, NullabilityState(ComputedNullab, NullabilitySource));
+//     C.addTransition(State);
+//   }
+// }
 
 /// Explicit casts are trusted. If there is a disagreement in the nullability
 /// annotations in the destination and the source or '0' is casted to nonnull
@@ -1145,7 +1146,7 @@ void NullabilityChecker::checkBind(SVal L, SVal V, const Stmt *S,
 
     SmallString<256> SBuf;
     llvm::raw_svector_ostream OS(SBuf);
-    OS << (LocType->isObjCObjectPointerType() ? "nil" : "Null");
+    OS << (/*LocType->isObjCObjectPointerType() ? "nil" :*/ "Null");
     OS << " assigned to a pointer which is expected to have non-null value";
     reportBugIfInvariantHolds(OS.str(), ErrorKind::NilAssignedToNonnull,
                               CK_NullPassedToNonnull, N, nullptr, C, ValueStmt);

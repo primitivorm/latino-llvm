@@ -673,9 +673,9 @@ void JSONNodeDumper::VisitInjectedClassNameType(
   JOS.attribute("decl", createBareDeclRef(ICNT->getDecl()));
 }
 
-void JSONNodeDumper::VisitObjCInterfaceType(const ObjCInterfaceType *OIT) {
-  JOS.attribute("decl", createBareDeclRef(OIT->getDecl()));
-}
+// void JSONNodeDumper::VisitObjCInterfaceType(const ObjCInterfaceType *OIT) {
+//   JOS.attribute("decl", createBareDeclRef(OIT->getDecl()));
+// }
 
 void JSONNodeDumper::VisitPackExpansionType(const PackExpansionType *PET) {
   if (llvm::Optional<unsigned> N = PET->getNumExpansions())
@@ -907,242 +907,242 @@ void JSONNodeDumper::VisitFriendDecl(const FriendDecl *FD) {
     JOS.attribute("type", createQualType(T->getType()));
 }
 
-void JSONNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("type", createQualType(D->getType()));
-  attributeOnlyIfTrue("synthesized", D->getSynthesize());
-  switch (D->getAccessControl()) {
-  case ObjCIvarDecl::None: JOS.attribute("access", "none"); break;
-  case ObjCIvarDecl::Private: JOS.attribute("access", "private"); break;
-  case ObjCIvarDecl::Protected: JOS.attribute("access", "protected"); break;
-  case ObjCIvarDecl::Public: JOS.attribute("access", "public"); break;
-  case ObjCIvarDecl::Package: JOS.attribute("access", "package"); break;
-  }
-}
+// void JSONNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("type", createQualType(D->getType()));
+//   attributeOnlyIfTrue("synthesized", D->getSynthesize());
+//   switch (D->getAccessControl()) {
+//   case ObjCIvarDecl::None: JOS.attribute("access", "none"); break;
+//   case ObjCIvarDecl::Private: JOS.attribute("access", "private"); break;
+//   case ObjCIvarDecl::Protected: JOS.attribute("access", "protected"); break;
+//   case ObjCIvarDecl::Public: JOS.attribute("access", "public"); break;
+//   case ObjCIvarDecl::Package: JOS.attribute("access", "package"); break;
+//   }
+// }
 
-void JSONNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("returnType", createQualType(D->getReturnType()));
-  JOS.attribute("instance", D->isInstanceMethod());
-  attributeOnlyIfTrue("variadic", D->isVariadic());
-}
+// void JSONNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("returnType", createQualType(D->getReturnType()));
+//   JOS.attribute("instance", D->isInstanceMethod());
+//   attributeOnlyIfTrue("variadic", D->isVariadic());
+// }
 
-void JSONNodeDumper::VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("type", createQualType(D->getUnderlyingType()));
-  attributeOnlyIfTrue("bounded", D->hasExplicitBound());
-  switch (D->getVariance()) {
-  case ObjCTypeParamVariance::Invariant:
-    break;
-  case ObjCTypeParamVariance::Covariant:
-    JOS.attribute("variance", "covariant");
-    break;
-  case ObjCTypeParamVariance::Contravariant:
-    JOS.attribute("variance", "contravariant");
-    break;
-  }
-}
+// void JSONNodeDumper::VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("type", createQualType(D->getUnderlyingType()));
+//   attributeOnlyIfTrue("bounded", D->hasExplicitBound());
+//   switch (D->getVariance()) {
+//   case ObjCTypeParamVariance::Invariant:
+//     break;
+//   case ObjCTypeParamVariance::Covariant:
+//     JOS.attribute("variance", "covariant");
+//     break;
+//   case ObjCTypeParamVariance::Contravariant:
+//     JOS.attribute("variance", "contravariant");
+//     break;
+//   }
+// }
 
-void JSONNodeDumper::VisitObjCCategoryDecl(const ObjCCategoryDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
-  JOS.attribute("implementation", createBareDeclRef(D->getImplementation()));
+// void JSONNodeDumper::VisitObjCCategoryDecl(const ObjCCategoryDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
+//   JOS.attribute("implementation", createBareDeclRef(D->getImplementation()));
 
-  llvm::json::Array Protocols;
-  for (const auto* P : D->protocols())
-    Protocols.push_back(createBareDeclRef(P));
-  if (!Protocols.empty())
-    JOS.attribute("protocols", std::move(Protocols));
-}
+//   llvm::json::Array Protocols;
+//   for (const auto* P : D->protocols())
+//     Protocols.push_back(createBareDeclRef(P));
+//   if (!Protocols.empty())
+//     JOS.attribute("protocols", std::move(Protocols));
+// }
 
-void JSONNodeDumper::VisitObjCCategoryImplDecl(const ObjCCategoryImplDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
-  JOS.attribute("categoryDecl", createBareDeclRef(D->getCategoryDecl()));
-}
+// void JSONNodeDumper::VisitObjCCategoryImplDecl(const ObjCCategoryImplDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
+//   JOS.attribute("categoryDecl", createBareDeclRef(D->getCategoryDecl()));
+// }
 
-void JSONNodeDumper::VisitObjCProtocolDecl(const ObjCProtocolDecl *D) {
-  VisitNamedDecl(D);
+// void JSONNodeDumper::VisitObjCProtocolDecl(const ObjCProtocolDecl *D) {
+//   VisitNamedDecl(D);
 
-  llvm::json::Array Protocols;
-  for (const auto *P : D->protocols())
-    Protocols.push_back(createBareDeclRef(P));
-  if (!Protocols.empty())
-    JOS.attribute("protocols", std::move(Protocols));
-}
+//   llvm::json::Array Protocols;
+//   for (const auto *P : D->protocols())
+//     Protocols.push_back(createBareDeclRef(P));
+//   if (!Protocols.empty())
+//     JOS.attribute("protocols", std::move(Protocols));
+// }
 
-void JSONNodeDumper::VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("super", createBareDeclRef(D->getSuperClass()));
-  JOS.attribute("implementation", createBareDeclRef(D->getImplementation()));
+// void JSONNodeDumper::VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("super", createBareDeclRef(D->getSuperClass()));
+//   JOS.attribute("implementation", createBareDeclRef(D->getImplementation()));
 
-  llvm::json::Array Protocols;
-  for (const auto* P : D->protocols())
-    Protocols.push_back(createBareDeclRef(P));
-  if (!Protocols.empty())
-    JOS.attribute("protocols", std::move(Protocols));
-}
+//   llvm::json::Array Protocols;
+//   for (const auto* P : D->protocols())
+//     Protocols.push_back(createBareDeclRef(P));
+//   if (!Protocols.empty())
+//     JOS.attribute("protocols", std::move(Protocols));
+// }
 
-void JSONNodeDumper::VisitObjCImplementationDecl(
-    const ObjCImplementationDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("super", createBareDeclRef(D->getSuperClass()));
-  JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
-}
+// void JSONNodeDumper::VisitObjCImplementationDecl(
+//     const ObjCImplementationDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("super", createBareDeclRef(D->getSuperClass()));
+//   JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
+// }
 
-void JSONNodeDumper::VisitObjCCompatibleAliasDecl(
-    const ObjCCompatibleAliasDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
-}
+// void JSONNodeDumper::VisitObjCCompatibleAliasDecl(
+//     const ObjCCompatibleAliasDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("interface", createBareDeclRef(D->getClassInterface()));
+// }
 
-void JSONNodeDumper::VisitObjCPropertyDecl(const ObjCPropertyDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("type", createQualType(D->getType()));
+// void JSONNodeDumper::VisitObjCPropertyDecl(const ObjCPropertyDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("type", createQualType(D->getType()));
 
-  switch (D->getPropertyImplementation()) {
-  case ObjCPropertyDecl::None: break;
-  case ObjCPropertyDecl::Required: JOS.attribute("control", "required"); break;
-  case ObjCPropertyDecl::Optional: JOS.attribute("control", "optional"); break;
-  }
+//   switch (D->getPropertyImplementation()) {
+//   case ObjCPropertyDecl::None: break;
+//   case ObjCPropertyDecl::Required: JOS.attribute("control", "required"); break;
+//   case ObjCPropertyDecl::Optional: JOS.attribute("control", "optional"); break;
+//   }
 
-  ObjCPropertyAttribute::Kind Attrs = D->getPropertyAttributes();
-  if (Attrs != ObjCPropertyAttribute::kind_noattr) {
-    if (Attrs & ObjCPropertyAttribute::kind_getter)
-      JOS.attribute("getter", createBareDeclRef(D->getGetterMethodDecl()));
-    if (Attrs & ObjCPropertyAttribute::kind_setter)
-      JOS.attribute("setter", createBareDeclRef(D->getSetterMethodDecl()));
-    attributeOnlyIfTrue("readonly",
-                        Attrs & ObjCPropertyAttribute::kind_readonly);
-    attributeOnlyIfTrue("assign", Attrs & ObjCPropertyAttribute::kind_assign);
-    attributeOnlyIfTrue("readwrite",
-                        Attrs & ObjCPropertyAttribute::kind_readwrite);
-    attributeOnlyIfTrue("retain", Attrs & ObjCPropertyAttribute::kind_retain);
-    attributeOnlyIfTrue("copy", Attrs & ObjCPropertyAttribute::kind_copy);
-    attributeOnlyIfTrue("nonatomic",
-                        Attrs & ObjCPropertyAttribute::kind_nonatomic);
-    attributeOnlyIfTrue("atomic", Attrs & ObjCPropertyAttribute::kind_atomic);
-    attributeOnlyIfTrue("weak", Attrs & ObjCPropertyAttribute::kind_weak);
-    attributeOnlyIfTrue("strong", Attrs & ObjCPropertyAttribute::kind_strong);
-    attributeOnlyIfTrue("unsafe_unretained",
-                        Attrs & ObjCPropertyAttribute::kind_unsafe_unretained);
-    attributeOnlyIfTrue("class", Attrs & ObjCPropertyAttribute::kind_class);
-    attributeOnlyIfTrue("direct", Attrs & ObjCPropertyAttribute::kind_direct);
-    attributeOnlyIfTrue("nullability",
-                        Attrs & ObjCPropertyAttribute::kind_nullability);
-    attributeOnlyIfTrue("null_resettable",
-                        Attrs & ObjCPropertyAttribute::kind_null_resettable);
-  }
-}
+//   ObjCPropertyAttribute::Kind Attrs = D->getPropertyAttributes();
+//   if (Attrs != ObjCPropertyAttribute::kind_noattr) {
+//     if (Attrs & ObjCPropertyAttribute::kind_getter)
+//       JOS.attribute("getter", createBareDeclRef(D->getGetterMethodDecl()));
+//     if (Attrs & ObjCPropertyAttribute::kind_setter)
+//       JOS.attribute("setter", createBareDeclRef(D->getSetterMethodDecl()));
+//     attributeOnlyIfTrue("readonly",
+//                         Attrs & ObjCPropertyAttribute::kind_readonly);
+//     attributeOnlyIfTrue("assign", Attrs & ObjCPropertyAttribute::kind_assign);
+//     attributeOnlyIfTrue("readwrite",
+//                         Attrs & ObjCPropertyAttribute::kind_readwrite);
+//     attributeOnlyIfTrue("retain", Attrs & ObjCPropertyAttribute::kind_retain);
+//     attributeOnlyIfTrue("copy", Attrs & ObjCPropertyAttribute::kind_copy);
+//     attributeOnlyIfTrue("nonatomic",
+//                         Attrs & ObjCPropertyAttribute::kind_nonatomic);
+//     attributeOnlyIfTrue("atomic", Attrs & ObjCPropertyAttribute::kind_atomic);
+//     attributeOnlyIfTrue("weak", Attrs & ObjCPropertyAttribute::kind_weak);
+//     attributeOnlyIfTrue("strong", Attrs & ObjCPropertyAttribute::kind_strong);
+//     attributeOnlyIfTrue("unsafe_unretained",
+//                         Attrs & ObjCPropertyAttribute::kind_unsafe_unretained);
+//     attributeOnlyIfTrue("class", Attrs & ObjCPropertyAttribute::kind_class);
+//     attributeOnlyIfTrue("direct", Attrs & ObjCPropertyAttribute::kind_direct);
+//     attributeOnlyIfTrue("nullability",
+//                         Attrs & ObjCPropertyAttribute::kind_nullability);
+//     attributeOnlyIfTrue("null_resettable",
+//                         Attrs & ObjCPropertyAttribute::kind_null_resettable);
+//   }
+// }
 
-void JSONNodeDumper::VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D) {
-  VisitNamedDecl(D->getPropertyDecl());
-  JOS.attribute("implKind", D->getPropertyImplementation() ==
-                                    ObjCPropertyImplDecl::Synthesize
-                                ? "synthesize"
-                                : "dynamic");
-  JOS.attribute("propertyDecl", createBareDeclRef(D->getPropertyDecl()));
-  JOS.attribute("ivarDecl", createBareDeclRef(D->getPropertyIvarDecl()));
-}
+// void JSONNodeDumper::VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D) {
+//   VisitNamedDecl(D->getPropertyDecl());
+//   JOS.attribute("implKind", D->getPropertyImplementation() ==
+//                                     ObjCPropertyImplDecl::Synthesize
+//                                 ? "synthesize"
+//                                 : "dynamic");
+//   JOS.attribute("propertyDecl", createBareDeclRef(D->getPropertyDecl()));
+//   JOS.attribute("ivarDecl", createBareDeclRef(D->getPropertyIvarDecl()));
+// }
 
 void JSONNodeDumper::VisitBlockDecl(const BlockDecl *D) {
   attributeOnlyIfTrue("variadic", D->isVariadic());
   attributeOnlyIfTrue("capturesThis", D->capturesCXXThis());
 }
 
-void JSONNodeDumper::VisitObjCEncodeExpr(const ObjCEncodeExpr *OEE) {
-  JOS.attribute("encodedType", createQualType(OEE->getEncodedType()));
-}
+// void JSONNodeDumper::VisitObjCEncodeExpr(const ObjCEncodeExpr *OEE) {
+//   JOS.attribute("encodedType", createQualType(OEE->getEncodedType()));
+// }
 
-void JSONNodeDumper::VisitObjCMessageExpr(const ObjCMessageExpr *OME) {
-  std::string Str;
-  llvm::raw_string_ostream OS(Str);
+// void JSONNodeDumper::VisitObjCMessageExpr(const ObjCMessageExpr *OME) {
+//   std::string Str;
+//   llvm::raw_string_ostream OS(Str);
 
-  OME->getSelector().print(OS);
-  JOS.attribute("selector", OS.str());
+//   OME->getSelector().print(OS);
+//   JOS.attribute("selector", OS.str());
 
-  switch (OME->getReceiverKind()) {
-  case ObjCMessageExpr::Instance:
-    JOS.attribute("receiverKind", "instance");
-    break;
-  case ObjCMessageExpr::Class:
-    JOS.attribute("receiverKind", "class");
-    JOS.attribute("classType", createQualType(OME->getClassReceiver()));
-    break;
-  case ObjCMessageExpr::SuperInstance:
-    JOS.attribute("receiverKind", "super (instance)");
-    JOS.attribute("superType", createQualType(OME->getSuperType()));
-    break;
-  case ObjCMessageExpr::SuperClass:
-    JOS.attribute("receiverKind", "super (class)");
-    JOS.attribute("superType", createQualType(OME->getSuperType()));
-    break;
-  }
+//   switch (OME->getReceiverKind()) {
+//   case ObjCMessageExpr::Instance:
+//     JOS.attribute("receiverKind", "instance");
+//     break;
+//   case ObjCMessageExpr::Class:
+//     JOS.attribute("receiverKind", "class");
+//     JOS.attribute("classType", createQualType(OME->getClassReceiver()));
+//     break;
+//   case ObjCMessageExpr::SuperInstance:
+//     JOS.attribute("receiverKind", "super (instance)");
+//     JOS.attribute("superType", createQualType(OME->getSuperType()));
+//     break;
+//   case ObjCMessageExpr::SuperClass:
+//     JOS.attribute("receiverKind", "super (class)");
+//     JOS.attribute("superType", createQualType(OME->getSuperType()));
+//     break;
+//   }
 
-  QualType CallReturnTy = OME->getCallReturnType(Ctx);
-  if (OME->getType() != CallReturnTy)
-    JOS.attribute("callReturnType", createQualType(CallReturnTy));
-}
+//   QualType CallReturnTy = OME->getCallReturnType(Ctx);
+//   if (OME->getType() != CallReturnTy)
+//     JOS.attribute("callReturnType", createQualType(CallReturnTy));
+// }
 
-void JSONNodeDumper::VisitObjCBoxedExpr(const ObjCBoxedExpr *OBE) {
-  if (const ObjCMethodDecl *MD = OBE->getBoxingMethod()) {
-    std::string Str;
-    llvm::raw_string_ostream OS(Str);
+// void JSONNodeDumper::VisitObjCBoxedExpr(const ObjCBoxedExpr *OBE) {
+//   if (const ObjCMethodDecl *MD = OBE->getBoxingMethod()) {
+//     std::string Str;
+//     llvm::raw_string_ostream OS(Str);
 
-    MD->getSelector().print(OS);
-    JOS.attribute("selector", OS.str());
-  }
-}
+//     MD->getSelector().print(OS);
+//     JOS.attribute("selector", OS.str());
+//   }
+// }
 
-void JSONNodeDumper::VisitObjCSelectorExpr(const ObjCSelectorExpr *OSE) {
-  std::string Str;
-  llvm::raw_string_ostream OS(Str);
+// void JSONNodeDumper::VisitObjCSelectorExpr(const ObjCSelectorExpr *OSE) {
+//   std::string Str;
+//   llvm::raw_string_ostream OS(Str);
 
-  OSE->getSelector().print(OS);
-  JOS.attribute("selector", OS.str());
-}
+//   OSE->getSelector().print(OS);
+//   JOS.attribute("selector", OS.str());
+// }
 
-void JSONNodeDumper::VisitObjCProtocolExpr(const ObjCProtocolExpr *OPE) {
-  JOS.attribute("protocol", createBareDeclRef(OPE->getProtocol()));
-}
+// void JSONNodeDumper::VisitObjCProtocolExpr(const ObjCProtocolExpr *OPE) {
+//   JOS.attribute("protocol", createBareDeclRef(OPE->getProtocol()));
+// }
 
-void JSONNodeDumper::VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *OPRE) {
-  if (OPRE->isImplicitProperty()) {
-    JOS.attribute("propertyKind", "implicit");
-    if (const ObjCMethodDecl *MD = OPRE->getImplicitPropertyGetter())
-      JOS.attribute("getter", createBareDeclRef(MD));
-    if (const ObjCMethodDecl *MD = OPRE->getImplicitPropertySetter())
-      JOS.attribute("setter", createBareDeclRef(MD));
-  } else {
-    JOS.attribute("propertyKind", "explicit");
-    JOS.attribute("property", createBareDeclRef(OPRE->getExplicitProperty()));
-  }
+// void JSONNodeDumper::VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *OPRE) {
+//   if (OPRE->isImplicitProperty()) {
+//     JOS.attribute("propertyKind", "implicit");
+//     if (const ObjCMethodDecl *MD = OPRE->getImplicitPropertyGetter())
+//       JOS.attribute("getter", createBareDeclRef(MD));
+//     if (const ObjCMethodDecl *MD = OPRE->getImplicitPropertySetter())
+//       JOS.attribute("setter", createBareDeclRef(MD));
+//   } else {
+//     JOS.attribute("propertyKind", "explicit");
+//     JOS.attribute("property", createBareDeclRef(OPRE->getExplicitProperty()));
+//   }
 
-  attributeOnlyIfTrue("isSuperReceiver", OPRE->isSuperReceiver());
-  attributeOnlyIfTrue("isMessagingGetter", OPRE->isMessagingGetter());
-  attributeOnlyIfTrue("isMessagingSetter", OPRE->isMessagingSetter());
-}
+//   attributeOnlyIfTrue("isSuperReceiver", OPRE->isSuperReceiver());
+//   attributeOnlyIfTrue("isMessagingGetter", OPRE->isMessagingGetter());
+//   attributeOnlyIfTrue("isMessagingSetter", OPRE->isMessagingSetter());
+// }
 
-void JSONNodeDumper::VisitObjCSubscriptRefExpr(
-    const ObjCSubscriptRefExpr *OSRE) {
-  JOS.attribute("subscriptKind",
-                OSRE->isArraySubscriptRefExpr() ? "array" : "dictionary");
+// void JSONNodeDumper::VisitObjCSubscriptRefExpr(
+//     const ObjCSubscriptRefExpr *OSRE) {
+//   JOS.attribute("subscriptKind",
+//                 OSRE->isArraySubscriptRefExpr() ? "array" : "dictionary");
 
-  if (const ObjCMethodDecl *MD = OSRE->getAtIndexMethodDecl())
-    JOS.attribute("getter", createBareDeclRef(MD));
-  if (const ObjCMethodDecl *MD = OSRE->setAtIndexMethodDecl())
-    JOS.attribute("setter", createBareDeclRef(MD));
-}
+//   if (const ObjCMethodDecl *MD = OSRE->getAtIndexMethodDecl())
+//     JOS.attribute("getter", createBareDeclRef(MD));
+//   if (const ObjCMethodDecl *MD = OSRE->setAtIndexMethodDecl())
+//     JOS.attribute("setter", createBareDeclRef(MD));
+// }
 
-void JSONNodeDumper::VisitObjCIvarRefExpr(const ObjCIvarRefExpr *OIRE) {
-  JOS.attribute("decl", createBareDeclRef(OIRE->getDecl()));
-  attributeOnlyIfTrue("isFreeIvar", OIRE->isFreeIvar());
-  JOS.attribute("isArrow", OIRE->isArrow());
-}
+// void JSONNodeDumper::VisitObjCIvarRefExpr(const ObjCIvarRefExpr *OIRE) {
+//   JOS.attribute("decl", createBareDeclRef(OIRE->getDecl()));
+//   attributeOnlyIfTrue("isFreeIvar", OIRE->isFreeIvar());
+//   JOS.attribute("isArrow", OIRE->isArrow());
+// }
 
-void JSONNodeDumper::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *OBLE) {
-  JOS.attribute("value", OBLE->getValue() ? "__objc_yes" : "__objc_no");
-}
+// void JSONNodeDumper::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *OBLE) {
+//   JOS.attribute("value", OBLE->getValue() ? "__objc_yes" : "__objc_no");
+// }
 
 void JSONNodeDumper::VisitDeclRefExpr(const DeclRefExpr *DRE) {
   JOS.attribute("referencedDecl", createBareDeclRef(DRE->getDecl()));

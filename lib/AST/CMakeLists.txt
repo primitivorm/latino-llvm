@@ -41,7 +41,7 @@ add_latino_library(latinoAST
   DeclCXX.cpp
   DeclFriend.cpp
   DeclGroup.cpp
-  DeclObjC.cpp
+  # DeclObjC.cpp
   DeclOpenMP.cpp
   DeclPrinter.cpp
   DeclTemplate.cpp
@@ -51,7 +51,7 @@ add_latino_library(latinoAST
   ExprConcepts.cpp
   ExprConstant.cpp
   ExprCXX.cpp
-  ExprObjC.cpp
+  # ExprObjC.cpp
   ExternalASTMerger.cpp
   ExternalASTSource.cpp
   FormatString.cpp
@@ -99,7 +99,7 @@ add_latino_library(latinoAST
   Stmt.cpp
   StmtCXX.cpp
   StmtIterator.cpp
-  StmtObjC.cpp
+  # StmtObjC.cpp
   StmtOpenMP.cpp
   StmtPrinter.cpp
   StmtProfile.cpp

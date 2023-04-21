@@ -12,7 +12,7 @@
 
 #include "CGCXXABI.h"
 #include "CGCleanup.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CodeGenFunction.h"
 #include "ConstantEmitter.h"
 #include "TargetInfo.h"
@@ -426,13 +426,13 @@ void CodeGenFunction::EmitCXXThrowExpr(const CXXThrowExpr *E,
                                        bool KeepInsertionPoint) {
   if (const Expr *SubExpr = E->getSubExpr()) {
     QualType ThrowType = SubExpr->getType();
-    if (ThrowType->isObjCObjectPointerType()) {
-      const Stmt *ThrowStmt = E->getSubExpr();
-      const ObjCAtThrowStmt S(E->getExprLoc(), const_cast<Stmt *>(ThrowStmt));
-      CGM.getObjCRuntime().EmitThrowStmt(*this, S, false);
-    } else {
+    // if (ThrowType->isObjCObjectPointerType()) {
+    //   const Stmt *ThrowStmt = E->getSubExpr();
+    //   const ObjCAtThrowStmt S(E->getExprLoc(), const_cast<Stmt *>(ThrowStmt));
+    //   CGM.getObjCRuntime().EmitThrowStmt(*this, S, false);
+    // } else {
       CGM.getCXXABI().emitThrow(*this, E);
-    }
+    // }
   } else {
     CGM.getCXXABI().emitRethrow(*this, /*isNoReturn=*/true);
   }
@@ -597,9 +597,9 @@ void CodeGenFunction::EnterCXXTryStmt(const CXXTryStmt &S, bool IsFnTryBlock) {
           C->getCaughtType().getNonReferenceType(), CaughtTypeQuals);
 
       CatchTypeInfo TypeInfo{nullptr, 0};
-      if (CaughtType->isObjCObjectPointerType())
-        TypeInfo.RTTI = CGM.getObjCRuntime().GetEHType(CaughtType);
-      else
+      // if (CaughtType->isObjCObjectPointerType())
+      //   TypeInfo.RTTI = CGM.getObjCRuntime().GetEHType(CaughtType);
+      // else
         TypeInfo = CGM.getCXXABI().getAddrOfCXXCatchHandlerType(
             CaughtType, C->getCaughtType());
       CatchScope->setHandler(I, TypeInfo, Handler);

@@ -57,108 +57,108 @@ public:
     TraverseStmt(body);
   }
 
-  bool VisitObjCMessageExpr(ObjCMessageExpr *E) {
-    switch (E->getMethodFamily()) {
-    default:
-      if (E->isInstanceMessage() && E->getSelector() == FinalizeSel)
-        break;
-      return true;
-    case OMF_autorelease:
-      if (isRemovable(E)) {
-        if (!isCommonUnusedAutorelease(E)) {
-          // An unused autorelease is badness. If we remove it the receiver
-          // will likely die immediately while previously it was kept alive
-          // by the autorelease pool. This is bad practice in general, leave it
-          // and emit an error to force the user to restructure their code.
-          Pass.TA.reportError(
-              "it is not safe to remove an unused 'autorelease' "
-              "message; its receiver may be destroyed immediately",
-              E->getBeginLoc(), E->getSourceRange());
-          return true;
-        }
-      }
-      // Pass through.
-      LLVM_FALLTHROUGH;
-    case OMF_retain:
-    case OMF_release:
-      if (E->getReceiverKind() == ObjCMessageExpr::Instance)
-        if (Expr *rec = E->getInstanceReceiver()) {
-          rec = rec->IgnoreParenImpCasts();
-          if (rec->getType().getObjCLifetime() == Qualifiers::OCL_ExplicitNone &&
-              (E->getMethodFamily() != OMF_retain || isRemovable(E))) {
-            std::string err = "it is not safe to remove '";
-            err += E->getSelector().getAsString() + "' message on "
-                "an __unsafe_unretained type";
-            Pass.TA.reportError(err, rec->getBeginLoc());
-            return true;
-          }
+  // bool VisitObjCMessageExpr(ObjCMessageExpr *E) {
+  //   switch (E->getMethodFamily()) {
+  //   default:
+  //     if (E->isInstanceMessage() && E->getSelector() == FinalizeSel)
+  //       break;
+  //     return true;
+  //   case OMF_autorelease:
+  //     if (isRemovable(E)) {
+  //       if (!isCommonUnusedAutorelease(E)) {
+  //         // An unused autorelease is badness. If we remove it the receiver
+  //         // will likely die immediately while previously it was kept alive
+  //         // by the autorelease pool. This is bad practice in general, leave it
+  //         // and emit an error to force the user to restructure their code.
+  //         Pass.TA.reportError(
+  //             "it is not safe to remove an unused 'autorelease' "
+  //             "message; its receiver may be destroyed immediately",
+  //             E->getBeginLoc(), E->getSourceRange());
+  //         return true;
+  //       }
+  //     }
+  //     // Pass through.
+  //     LLVM_FALLTHROUGH;
+  //   case OMF_retain:
+  //   case OMF_release:
+  //     if (E->getReceiverKind() == ObjCMessageExpr::Instance)
+  //       if (Expr *rec = E->getInstanceReceiver()) {
+  //         rec = rec->IgnoreParenImpCasts();
+  //         if (rec->getType().getObjCLifetime() == Qualifiers::OCL_ExplicitNone &&
+  //             (E->getMethodFamily() != OMF_retain || isRemovable(E))) {
+  //           std::string err = "it is not safe to remove '";
+  //           err += E->getSelector().getAsString() + "' message on "
+  //               "an __unsafe_unretained type";
+  //           Pass.TA.reportError(err, rec->getBeginLoc());
+  //           return true;
+  //         }
 
-          if (isGlobalVar(rec) &&
-              (E->getMethodFamily() != OMF_retain || isRemovable(E))) {
-            std::string err = "it is not safe to remove '";
-            err += E->getSelector().getAsString() + "' message on "
-                "a global variable";
-            Pass.TA.reportError(err, rec->getBeginLoc());
-            return true;
-          }
+  //         if (isGlobalVar(rec) &&
+  //             (E->getMethodFamily() != OMF_retain || isRemovable(E))) {
+  //           std::string err = "it is not safe to remove '";
+  //           err += E->getSelector().getAsString() + "' message on "
+  //               "a global variable";
+  //           Pass.TA.reportError(err, rec->getBeginLoc());
+  //           return true;
+  //         }
 
-          if (E->getMethodFamily() == OMF_release && isDelegateMessage(rec)) {
-            Pass.TA.reportError(
-                "it is not safe to remove 'retain' "
-                "message on the result of a 'delegate' message; "
-                "the object that was passed to 'setDelegate:' may not be "
-                "properly retained",
-                rec->getBeginLoc());
-            return true;
-          }
-        }
-      break;
-    case OMF_dealloc:
-      break;
-    }
+  //         if (E->getMethodFamily() == OMF_release && isDelegateMessage(rec)) {
+  //           Pass.TA.reportError(
+  //               "it is not safe to remove 'retain' "
+  //               "message on the result of a 'delegate' message; "
+  //               "the object that was passed to 'setDelegate:' may not be "
+  //               "properly retained",
+  //               rec->getBeginLoc());
+  //           return true;
+  //         }
+  //       }
+  //     break;
+  //   case OMF_dealloc:
+  //     break;
+  //   }
 
-    switch (E->getReceiverKind()) {
-    default:
-      return true;
-    case ObjCMessageExpr::SuperInstance: {
-      Transaction Trans(Pass.TA);
-      clearDiagnostics(E->getSelectorLoc(0));
-      if (tryRemoving(E))
-        return true;
-      Pass.TA.replace(E->getSourceRange(), "self");
-      return true;
-    }
-    case ObjCMessageExpr::Instance:
-      break;
-    }
+  //   switch (E->getReceiverKind()) {
+  //   default:
+  //     return true;
+  //   case ObjCMessageExpr::SuperInstance: {
+  //     Transaction Trans(Pass.TA);
+  //     clearDiagnostics(E->getSelectorLoc(0));
+  //     if (tryRemoving(E))
+  //       return true;
+  //     Pass.TA.replace(E->getSourceRange(), "self");
+  //     return true;
+  //   }
+  //   case ObjCMessageExpr::Instance:
+  //     break;
+  //   }
 
-    Expr *rec = E->getInstanceReceiver();
-    if (!rec) return true;
+  //   Expr *rec = E->getInstanceReceiver();
+  //   if (!rec) return true;
 
-    Transaction Trans(Pass.TA);
-    clearDiagnostics(E->getSelectorLoc(0));
+  //   Transaction Trans(Pass.TA);
+  //   clearDiagnostics(E->getSelectorLoc(0));
 
-    ObjCMessageExpr *Msg = E;
-    Expr *RecContainer = Msg;
-    SourceRange RecRange = rec->getSourceRange();
-    checkForGCDOrXPC(Msg, RecContainer, rec, RecRange);
+  //   ObjCMessageExpr *Msg = E;
+  //   Expr *RecContainer = Msg;
+  //   SourceRange RecRange = rec->getSourceRange();
+  //   checkForGCDOrXPC(Msg, RecContainer, rec, RecRange);
 
-    if (Msg->getMethodFamily() == OMF_release &&
-        isRemovable(RecContainer) && isInAtFinally(RecContainer)) {
-      // Change the -release to "receiver = nil" in a finally to avoid a leak
-      // when an exception is thrown.
-      Pass.TA.replace(RecContainer->getSourceRange(), RecRange);
-      std::string str = " = ";
-      str += getNilString(Pass);
-      Pass.TA.insertAfterToken(RecRange.getEnd(), str);
-      return true;
-    }
+  //   if (Msg->getMethodFamily() == OMF_release &&
+  //       isRemovable(RecContainer) && isInAtFinally(RecContainer)) {
+  //     // Change the -release to "receiver = nil" in a finally to avoid a leak
+  //     // when an exception is thrown.
+  //     Pass.TA.replace(RecContainer->getSourceRange(), RecRange);
+  //     std::string str = " = ";
+  //     str += getNilString(Pass);
+  //     Pass.TA.insertAfterToken(RecRange.getEnd(), str);
+  //     return true;
+  //   }
 
-    if (hasSideEffects(rec, Pass.Ctx) || !tryRemoving(RecContainer))
-      Pass.TA.replace(RecContainer->getSourceRange(), RecRange);
+  //   if (hasSideEffects(rec, Pass.Ctx) || !tryRemoving(RecContainer))
+  //     Pass.TA.replace(RecContainer->getSourceRange(), RecRange);
 
-    return true;
-  }
+  //   return true;
+  // }
 
 private:
   /// Checks for idioms where an unused -autorelease is common.

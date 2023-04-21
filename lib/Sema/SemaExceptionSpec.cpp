@@ -1249,7 +1249,7 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
 
     // ObjC message sends are like function calls, but never have exception
     // specs.
-  case Expr::ObjCMessageExprClass:
+  // case Expr::ObjCMessageExprClass:
   case Expr::ObjCPropertyRefExprClass:
   case Expr::ObjCSubscriptRefExprClass:
     return CT_Can;
@@ -1288,7 +1288,7 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
 
   case Expr::CompoundLiteralExprClass:
   case Expr::CXXConstCastExprClass:
-  case Expr::CXXAddrspaceCastExprClass:
+  // case Expr::CXXAddrspaceCastExprClass:
   case Expr::CXXReinterpretCastExprClass:
   case Expr::BuiltinBitCastExprClass:
       // FIXME: Properly determine whether a variably-modified type can throw.

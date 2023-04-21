@@ -2917,7 +2917,7 @@ class ItaniumRTTIBuilder {
 
   /// BuildObjCObjectTypeInfo - Build the appropriate kind of
   /// type_info for an object type.
-  void BuildObjCObjectTypeInfo(const ObjCObjectType *Ty);
+  // void BuildObjCObjectTypeInfo(const ObjCObjectType *Ty);
 
   /// BuildPointerToMemberTypeInfo - Build an abi::__pointer_to_member_type_info
   /// struct, used for member pointer types.
@@ -3078,17 +3078,17 @@ static bool TypeInfoIsInStandardLibrary(const BuiltinType *Ty) {
     case BuiltinType::UInt128:
       return true;
 
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-    case BuiltinType::OCLSampler:
-    case BuiltinType::OCLEvent:
-    case BuiltinType::OCLClkEvent:
-    case BuiltinType::OCLQueue:
-    case BuiltinType::OCLReserveID:
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+    // case BuiltinType::OCLSampler:
+    // case BuiltinType::OCLEvent:
+    // case BuiltinType::OCLClkEvent:
+    // case BuiltinType::OCLQueue:
+    // case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
     case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -3126,10 +3126,10 @@ static bool TypeInfoIsInStandardLibrary(const BuiltinType *Ty) {
 #include "latino/AST/BuiltinTypes.def"
       llvm_unreachable("asking for RRTI for a placeholder type!");
 
-    case BuiltinType::ObjCId:
-    case BuiltinType::ObjCClass:
-    case BuiltinType::ObjCSel:
-      llvm_unreachable("FIXME: Objective-C types are unsupported!");
+    // case BuiltinType::ObjCId:
+    // case BuiltinType::ObjCClass:
+    // case BuiltinType::ObjCSel:
+    //   llvm_unreachable("FIXME: Objective-C types are unsupported!");
   }
 
   llvm_unreachable("Invalid BuiltinType Kind!");
@@ -3355,28 +3355,28 @@ void ItaniumRTTIBuilder::BuildVTablePointer(const Type *Ty) {
     break;
   }
 
-  case Type::ObjCObject:
-    // Ignore protocol qualifiers.
-    Ty = cast<ObjCObjectType>(Ty)->getBaseType().getTypePtr();
+  // case Type::ObjCObject:
+  //   // Ignore protocol qualifiers.
+  //   Ty = cast<ObjCObjectType>(Ty)->getBaseType().getTypePtr();
 
-    // Handle id and Class.
-    if (isa<BuiltinType>(Ty)) {
-      VTableName = ClassTypeInfo;
-      break;
-    }
+  //   // Handle id and Class.
+  //   if (isa<BuiltinType>(Ty)) {
+  //     VTableName = ClassTypeInfo;
+  //     break;
+  //   }
 
-    assert(isa<ObjCInterfaceType>(Ty));
-    LLVM_FALLTHROUGH;
+  //   assert(isa<ObjCInterfaceType>(Ty));
+  //   LLVM_FALLTHROUGH;
 
-  case Type::ObjCInterface:
-    if (cast<ObjCInterfaceType>(Ty)->getDecl()->getSuperClass()) {
-      VTableName = SIClassTypeInfo;
-    } else {
-      VTableName = ClassTypeInfo;
-    }
-    break;
+  // case Type::ObjCInterface:
+  //   if (cast<ObjCInterfaceType>(Ty)->getDecl()->getSuperClass()) {
+  //     VTableName = SIClassTypeInfo;
+  //   } else {
+  //     VTableName = ClassTypeInfo;
+  //   }
+  //   break;
 
-  case Type::ObjCObjectPointer:
+  // case Type::ObjCObjectPointer:
   case Type::Pointer:
     // abi::__pointer_type_info.
     VTableName = "_ZTVN10__cxxabiv119__pointer_type_infoE";
@@ -3619,14 +3619,14 @@ llvm::Constant *ItaniumRTTIBuilder::BuildTypeInfo(
     break;
   }
 
-  case Type::ObjCObject:
-  case Type::ObjCInterface:
-    BuildObjCObjectTypeInfo(cast<ObjCObjectType>(Ty));
-    break;
+  // case Type::ObjCObject:
+  // case Type::ObjCInterface:
+  //   BuildObjCObjectTypeInfo(cast<ObjCObjectType>(Ty));
+  //   break;
 
-  case Type::ObjCObjectPointer:
-    BuildPointerTypeInfo(cast<ObjCObjectPointerType>(Ty)->getPointeeType());
-    break;
+  // case Type::ObjCObjectPointer:
+  //   BuildPointerTypeInfo(cast<ObjCObjectPointerType>(Ty)->getPointeeType());
+  //   break;
 
   case Type::Pointer:
     BuildPointerTypeInfo(cast<PointerType>(Ty)->getPointeeType());
@@ -3700,28 +3700,28 @@ llvm::Constant *ItaniumRTTIBuilder::BuildTypeInfo(
 
 /// BuildObjCObjectTypeInfo - Build the appropriate kind of type_info
 /// for the given Objective-C object type.
-void ItaniumRTTIBuilder::BuildObjCObjectTypeInfo(const ObjCObjectType *OT) {
-  // Drop qualifiers.
-  const Type *T = OT->getBaseType().getTypePtr();
-  assert(isa<BuiltinType>(T) || isa<ObjCInterfaceType>(T));
+// void ItaniumRTTIBuilder::BuildObjCObjectTypeInfo(const ObjCObjectType *OT) {
+//   // Drop qualifiers.
+//   const Type *T = OT->getBaseType().getTypePtr();
+//   assert(isa<BuiltinType>(T) || isa<ObjCInterfaceType>(T));
 
-  // The builtin types are abi::__class_type_infos and don't require
-  // extra fields.
-  if (isa<BuiltinType>(T)) return;
+//   // The builtin types are abi::__class_type_infos and don't require
+//   // extra fields.
+//   if (isa<BuiltinType>(T)) return;
 
-  ObjCInterfaceDecl *Class = cast<ObjCInterfaceType>(T)->getDecl();
-  ObjCInterfaceDecl *Super = Class->getSuperClass();
+//   ObjCInterfaceDecl *Class = cast<ObjCInterfaceType>(T)->getDecl();
+//   ObjCInterfaceDecl *Super = Class->getSuperClass();
 
-  // Root classes are also __class_type_info.
-  if (!Super) return;
+//   // Root classes are also __class_type_info.
+//   if (!Super) return;
 
-  QualType SuperTy = CGM.getContext().getObjCInterfaceType(Super);
+//   QualType SuperTy = CGM.getContext().getObjCInterfaceType(Super);
 
-  // Everything else is single inheritance.
-  llvm::Constant *BaseTypeInfo =
-      ItaniumRTTIBuilder(CXXABI).BuildTypeInfo(SuperTy);
-  Fields.push_back(BaseTypeInfo);
-}
+//   // Everything else is single inheritance.
+//   llvm::Constant *BaseTypeInfo =
+//       ItaniumRTTIBuilder(CXXABI).BuildTypeInfo(SuperTy);
+//   Fields.push_back(BaseTypeInfo);
+// }
 
 /// BuildSIClassTypeInfo - Build an abi::__si_class_type_info, used for single
 /// inheritance, according to the Itanium C++ ABI, 2.95p6b.

@@ -85,9 +85,9 @@ struct GetStartLoc : TypeLocVisitor<GetStartLoc, SourceLocation> {
     return HandlePointer(T);
   }
 
-  SourceLocation VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc T) {
-    return HandlePointer(T);
-  }
+  // SourceLocation VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc T) {
+  //   return HandlePointer(T);
+  // }
 
   // All other cases are not important, as they are either part of declaration
   // specifiers (e.g. inheritors of TypeSpecTypeLoc) or introduce modifiers on

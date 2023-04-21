@@ -13,10 +13,10 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "llvm/Support/ErrorHandling.h"
 
 using namespace latino;
@@ -259,8 +259,8 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
       Cl::Kinds K = ClassifyInternal(Ctx, Op);
       if (K != Cl::CL_LValue) return K;
 
-      if (isa<ObjCPropertyRefExpr>(Op))
-        return Cl::CL_SubObjCPropertySetting;
+      // if (isa<ObjCPropertyRefExpr>(Op))
+      //   return Cl::CL_SubObjCPropertySetting;
       return Cl::CL_LValue;
     }
 
@@ -356,7 +356,7 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
   case Expr::CXXDynamicCastExprClass:
   case Expr::CXXReinterpretCastExprClass:
   case Expr::CXXConstCastExprClass:
-  case Expr::CXXAddrspaceCastExprClass:
+  // case Expr::CXXAddrspaceCastExprClass:
   case Expr::ObjCBridgedCastExprClass:
   case Expr::BuiltinBitCastExprClass:
     // Only in C++ can casts be interesting at all.
@@ -382,13 +382,13 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
 
     // ObjC message sends are effectively function calls, if the target function
     // is known.
-  case Expr::ObjCMessageExprClass:
-    if (const ObjCMethodDecl *Method =
-          cast<ObjCMessageExpr>(E)->getMethodDecl()) {
-      Cl::Kinds kind = ClassifyUnnamed(Ctx, Method->getReturnType());
-      return (kind == Cl::CL_PRValue) ? Cl::CL_ObjCMessageRValue : kind;
-    }
-    return Cl::CL_PRValue;
+  // case Expr::ObjCMessageExprClass:
+  //   if (const ObjCMethodDecl *Method =
+  //         cast<ObjCMessageExpr>(E)->getMethodDecl()) {
+  //     Cl::Kinds kind = ClassifyUnnamed(Ctx, Method->getReturnType());
+  //     return (kind == Cl::CL_PRValue) ? Cl::CL_ObjCMessageRValue : kind;
+  //   }
+  //   return Cl::CL_PRValue;
 
     // Some C++ expressions are always class temporaries.
   case Expr::CXXConstructExprClass:
@@ -500,8 +500,8 @@ static Cl::Kinds ClassifyMemberExpr(ASTContext &Ctx, const MemberExpr *E) {
       return Cl::CL_LValue;
     // ObjC property accesses are not lvalues, but get special treatment.
     Expr *Base = E->getBase()->IgnoreParens();
-    if (isa<ObjCPropertyRefExpr>(Base))
-      return Cl::CL_SubObjCPropertySetting;
+    // if (isa<ObjCPropertyRefExpr>(Base))
+    //   return Cl::CL_SubObjCPropertySetting;
     return ClassifyInternal(Ctx, Base);
   }
 
@@ -526,8 +526,8 @@ static Cl::Kinds ClassifyMemberExpr(ASTContext &Ctx, const MemberExpr *E) {
     if (E->isArrow())
       return Cl::CL_LValue;
     Expr *Base = E->getBase()->IgnoreParenImpCasts();
-    if (isa<ObjCPropertyRefExpr>(Base))
-      return Cl::CL_SubObjCPropertySetting;
+    // if (isa<ObjCPropertyRefExpr>(Base))
+    //   return Cl::CL_SubObjCPropertySetting;
     return ClassifyInternal(Ctx, E->getBase());
   }
 
@@ -634,11 +634,11 @@ static Cl::ModifiableType IsModifiable(ASTContext &Ctx, const Expr *E,
 
   // Assignment to a property in ObjC is an implicit setter access. But a
   // setter might not exist.
-  if (const auto *Expr = dyn_cast<ObjCPropertyRefExpr>(E)) {
-    if (Expr->isImplicitProperty() &&
-        Expr->getImplicitPropertySetter() == nullptr)
-      return Cl::CM_NoSetterProperty;
-  }
+  // if (const auto *Expr = dyn_cast<ObjCPropertyRefExpr>(E)) {
+  //   if (Expr->isImplicitProperty() &&
+  //       Expr->getImplicitPropertySetter() == nullptr)
+  //     return Cl::CM_NoSetterProperty;
+  // }
 
   CanQualType CT = Ctx.getCanonicalType(E->getType());
   // Const stuff is obviously not modifiable.

@@ -11,14 +11,14 @@ add_latino_library(latinoAnalysis
   CFGStmtMap.cpp
   CallGraph.cpp
   CloneDetection.cpp
-  CocoaConventions.cpp
+  # CocoaConventions.cpp
   ConstructionContext.cpp
   Consumed.cpp
   CodeInjector.cpp
   Dominators.cpp
   ExprMutationAnalyzer.cpp
   LiveVariables.cpp
-  ObjCNoReturn.cpp
+  # ObjCNoReturn.cpp
   PathDiagnostic.cpp
   PostOrderCFGView.cpp
   ProgramPoint.cpp

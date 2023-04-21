@@ -802,22 +802,22 @@ SourceLocation Parser::SkipExtendedMicrosoftTypeAttributes() {
 //   }
 // }
 
-void Parser::ParseOpenCLKernelAttributes(ParsedAttributes &attrs) {
-  // Treat these like attributes
-  while (Tok.is(tok::kw___kernel)) {
-    IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-    SourceLocation AttrNameLoc = ConsumeToken();
-    attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-                 ParsedAttr::AS_Keyword);
-  }
-}
+// void Parser::ParseOpenCLKernelAttributes(ParsedAttributes &attrs) {
+//   // Treat these like attributes
+//   while (Tok.is(tok::kw___kernel)) {
+//     IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+//     SourceLocation AttrNameLoc = ConsumeToken();
+//     attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//                  ParsedAttr::AS_Keyword);
+//   }
+// }
 
-void Parser::ParseOpenCLQualifiers(ParsedAttributes &Attrs) {
-  IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-  SourceLocation AttrNameLoc = Tok.getLocation();
-  Attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-               ParsedAttr::AS_Keyword);
-}
+// void Parser::ParseOpenCLQualifiers(ParsedAttributes &Attrs) {
+//   IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+//   SourceLocation AttrNameLoc = Tok.getLocation();
+//   Attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+//                ParsedAttr::AS_Keyword);
+// }
 
 // void Parser::ParseNullabilityTypeSpecifiers(ParsedAttributes &attrs) {
 //   // Treat these like attributes, even though they're type specifiers.
@@ -3011,8 +3011,8 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
                                                       : Sema::PCC_Template;
       else if (DSContext == DeclSpecContext::DSC_class)
         CCC = Sema::PCC_Class;
-      else if (CurParsedObjCImpl)
-        CCC = Sema::PCC_ObjCImplementation;
+      // else if (CurParsedObjCImpl)
+      //   CCC = Sema::PCC_ObjCImplementation;
 
       Actions.CodeCompleteOrdinaryName(getCurScope(), CCC);
       return cutOffParsing();
@@ -3197,7 +3197,7 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       goto DoneWithDeclSpec;
 
       // typedef-name
-    case tok::kw___super:
+    case tok::kw_base:
     case tok::kw_decltype:
     case tok::identifier: {
       // This identifier can only be a typedef name if we haven't already seen
@@ -3243,8 +3243,8 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       }
 
       // Check for need to substitute AltiVec keyword tokens.
-      if (TryAltiVecToken(DS, Loc, PrevSpec, DiagID, isInvalid))
-        break;
+      // if (TryAltiVecToken(DS, Loc, PrevSpec, DiagID, isInvalid))
+      //   break;
 
       // [AltiVec] 2.2: [If the 'vector' specifier is used] The syntax does not
       //                allow the use of a typedef name as a type specifier.
@@ -3317,16 +3317,16 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       // Objective-C supports type arguments and protocol references
       // following an Objective-C object or object pointer
       // type. Handle either one of them.
-      if (Tok.is(tok::less) && getLangOpts().ObjC) {
-        SourceLocation NewEndLoc;
-        TypeResult NewTypeRep = parseObjCTypeArgsAndProtocolQualifiers(
-                                  Loc, TypeRep, /*consumeLastToken=*/true,
-                                  NewEndLoc);
-        if (NewTypeRep.isUsable()) {
-          DS.UpdateTypeRep(NewTypeRep.get());
-          DS.SetRangeEnd(NewEndLoc);
-        }
-      }
+      // if (Tok.is(tok::less) && getLangOpts().ObjC) {
+      //   SourceLocation NewEndLoc;
+      //   TypeResult NewTypeRep = parseObjCTypeArgsAndProtocolQualifiers(
+      //                             Loc, TypeRep, /*consumeLastToken=*/true,
+      //                             NewEndLoc);
+      //   if (NewTypeRep.isUsable()) {
+      //     DS.UpdateTypeRep(NewTypeRep.get());
+      //     DS.SetRangeEnd(NewEndLoc);
+      //   }
+      // }
 
       // Need to support trailing type qualifiers (e.g. "id<p> const").
       // If a type specifier follows, it will be diagnosed elsewhere.
@@ -3456,9 +3456,9 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   continue;
 
     // OpenCL single token adornments.
-    case tok::kw___kernel:
-      ParseOpenCLKernelAttributes(DS.getAttributes());
-      continue;
+    // case tok::kw___kernel:
+    //   ParseOpenCLKernelAttributes(DS.getAttributes());
+    //   continue;
 
     // Nullability type specifiers.
     // case tok::kw__Nonnull:
@@ -3697,10 +3697,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_int128, Loc, PrevSpec,
     //                                  DiagID, Policy);
     //   break;
-    case tok::kw_half:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
+    // case tok::kw_half:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
     // case tok::kw___bf16:
     //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec,
     //                                  DiagID, Policy);
@@ -3793,28 +3793,28 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     // case tok::kw___vector:
     //   isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID, Policy);
     //   break;
-    case tok::kw___pixel:
-      isInvalid = DS.SetTypeAltiVecPixel(true, Loc, PrevSpec, DiagID, Policy);
-      break;
-    case tok::kw___bool:
-      isInvalid = DS.SetTypeAltiVecBool(true, Loc, PrevSpec, DiagID, Policy);
-      break;
-    case tok::kw_pipe:
-      if (!getLangOpts().OpenCL || (getLangOpts().OpenCLVersion < 200 &&
-                                    !getLangOpts().OpenCLCPlusPlus)) {
-        // OpenCL 2.0 defined this keyword. OpenCL 1.2 and earlier should
-        // support the "pipe" word as identifier.
-        Tok.getIdentifierInfo()->revertTokenIDToIdentifier();
-        goto DoneWithDeclSpec;
-      }
-      isInvalid = DS.SetTypePipe(true, Loc, PrevSpec, DiagID, Policy);
-      break;
-#define GENERIC_IMAGE_TYPE(ImgType, Id) \
-  case tok::kw_##ImgType##_t: \
-    isInvalid = DS.SetTypeSpecType(DeclSpec::TST_##ImgType##_t, Loc, PrevSpec, \
-                                   DiagID, Policy); \
-    break;
-#include "latino/Basic/OpenCLImageTypes.def"
+    // case tok::kw___pixel:
+    //   isInvalid = DS.SetTypeAltiVecPixel(true, Loc, PrevSpec, DiagID, Policy);
+    //   break;
+    // case tok::kw___bool:
+    //   isInvalid = DS.SetTypeAltiVecBool(true, Loc, PrevSpec, DiagID, Policy);
+    //   break;
+    // case tok::kw_pipe:
+    //   if (!getLangOpts().OpenCL || (getLangOpts().OpenCLVersion < 200 &&
+    //                                 !getLangOpts().OpenCLCPlusPlus)) {
+    //     // OpenCL 2.0 defined this keyword. OpenCL 1.2 and earlier should
+    //     // support the "pipe" word as identifier.
+    //     Tok.getIdentifierInfo()->revertTokenIDToIdentifier();
+    //     goto DoneWithDeclSpec;
+    //   }
+    //   isInvalid = DS.SetTypePipe(true, Loc, PrevSpec, DiagID, Policy);
+    //   break;
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) \
+//   case tok::kw_##ImgType##_t: \
+//     isInvalid = DS.SetTypeSpecType(DeclSpec::TST_##ImgType##_t, Loc, PrevSpec, \
+//                                    DiagID, Policy); \
+//     break;
+// #include "latino/Basic/OpenCLImageTypes.def"
     case tok::kw___unknown_anytype:
       isInvalid = DS.SetTypeSpecType(TST_unknown_anytype, Loc,
                                      PrevSpec, DiagID, Policy);
@@ -3920,33 +3920,33 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   break;
 
     // OpenCL address space qualifiers:
-    case tok::kw___generic:
-      // generic address space is introduced only in OpenCL v2.0
-      // see OpenCL C Spec v2.0 s6.5.5
-      if (Actions.getLangOpts().OpenCLVersion < 200 &&
-          !Actions.getLangOpts().OpenCLCPlusPlus) {
-        DiagID = diag::err_opencl_unknown_type_specifier;
-        PrevSpec = Tok.getIdentifierInfo()->getNameStart();
-        isInvalid = true;
-        break;
-      }
-      LLVM_FALLTHROUGH;
+    // case tok::kw___generic:
+    //   // generic address space is introduced only in OpenCL v2.0
+    //   // see OpenCL C Spec v2.0 s6.5.5
+    //   if (Actions.getLangOpts().OpenCLVersion < 200 &&
+    //       !Actions.getLangOpts().OpenCLCPlusPlus) {
+    //     DiagID = diag::err_opencl_unknown_type_specifier;
+    //     PrevSpec = Tok.getIdentifierInfo()->getNameStart();
+    //     isInvalid = true;
+    //     break;
+    //   }
+    //   LLVM_FALLTHROUGH;
     case tok::kw_pri:
       // It's fine (but redundant) to check this for __generic on the
       // fallthrough path; we only form the __generic token in OpenCL mode.
       if (!getLangOpts().OpenCL)
         goto DoneWithDeclSpec;
       LLVM_FALLTHROUGH;
-    case tok::kw___private:
-    case tok::kw___global:
-    case tok::kw___local:
-    case tok::kw___constant:
+    // case tok::kw___private:
+    // case tok::kw___global:
+    // case tok::kw___local:
+    // case tok::kw___constant:
     // OpenCL access qualifiers:
-    case tok::kw___read_only:
-    case tok::kw___write_only:
-    case tok::kw___read_write:
-      ParseOpenCLQualifiers(DS.getAttributes());
-      break;
+    // case tok::kw___read_only:
+    // case tok::kw___write_only:
+    // case tok::kw___read_write:
+    //   ParseOpenCLQualifiers(DS.getAttributes());
+    //   break;
 
     case tok::less:
       // GCC ObjC supports types like "<SomeProtocol>" as a synonym for
@@ -3955,19 +3955,19 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       if (DS.hasTypeSpecifier() || !getLangOpts().ObjC)
         goto DoneWithDeclSpec;
 
-      SourceLocation StartLoc = Tok.getLocation();
-      SourceLocation EndLoc;
-      TypeResult Type = parseObjCProtocolQualifierType(EndLoc);
-      if (Type.isUsable()) {
-        if (DS.SetTypeSpecType(DeclSpec::TST_typename, StartLoc, StartLoc,
-                               PrevSpec, DiagID, Type.get(),
-                               Actions.getASTContext().getPrintingPolicy()))
-          Diag(StartLoc, DiagID) << PrevSpec;
+      // SourceLocation StartLoc = Tok.getLocation();
+      // SourceLocation EndLoc;
+      // TypeResult Type = parseObjCProtocolQualifierType(EndLoc);
+      // if (Type.isUsable()) {
+      //   if (DS.SetTypeSpecType(DeclSpec::TST_typename, StartLoc, StartLoc,
+      //                          PrevSpec, DiagID, Type.get(),
+      //                          Actions.getASTContext().getPrintingPolicy()))
+      //     Diag(StartLoc, DiagID) << PrevSpec;
 
-        DS.SetRangeEnd(EndLoc);
-      } else {
-        DS.SetTypeSpecError();
-      }
+      //   DS.SetRangeEnd(EndLoc);
+      // } else {
+      //   DS.SetTypeSpecError();
+      // }
 
       // Need to support trailing type qualifiers (e.g. "id<p> const").
       // If a type specifier follows, it will be diagnosed elsewhere.
@@ -4805,7 +4805,7 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   case tok::kw_int:
   // case tok::kw__ExtInt:
   // case tok::kw___bf16:
-  case tok::kw_half:
+  // case tok::kw_half:
   case tok::kw_float:
   case tok::kw_double:
   // case tok::kw__Accum:
@@ -4818,8 +4818,8 @@ bool Parser::isKnownToBeTypeSpecifier(const Token &Tok) const {
   // case tok::kw__Decimal64:
   // case tok::kw__Decimal128:
   // case tok::kw___vector:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
@@ -4841,10 +4841,10 @@ bool Parser::isTypeSpecifierQualifier() {
   switch (Tok.getKind()) {
   default: return false;
 
-  case tok::identifier:   // foo::bar
-    if (TryAltiVecVectorToken())
-      return true;
-    LLVM_FALLTHROUGH;
+  // case tok::identifier:   // foo::bar
+  //   if (TryAltiVecVectorToken())
+  //     return true;
+  //   LLVM_FALLTHROUGH;
   case tok::kw_typename:  // typename T::type
     // Annotate typenames and C++ scope specifiers.  If we get one, just
     // recurse to handle whatever we get.
@@ -4885,7 +4885,7 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::kw_char32_t:
   case tok::kw_int:
   // case tok::kw__ExtInt:
-  case tok::kw_half:
+  // case tok::kw_half:
   // case tok::kw___bf16:
   case tok::kw_float:
   case tok::kw_double:
@@ -4899,8 +4899,8 @@ bool Parser::isTypeSpecifierQualifier() {
   // case tok::kw__Decimal64:
   // case tok::kw__Decimal128:
   // case tok::kw___vector:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
 
     // struct-or-union-specifier (C99) or class-specifier (C++)
   case tok::kw_clase:
@@ -4945,15 +4945,15 @@ bool Parser::isTypeSpecifierQualifier() {
 
   // case tok::kw___kindof:
 
-  case tok::kw___private:
-  case tok::kw___local:
-  case tok::kw___global:
-  case tok::kw___constant:
-  case tok::kw___generic:
-  case tok::kw___read_only:
-  case tok::kw___read_write:
-  case tok::kw___write_only:
-    return true;
+  // case tok::kw___private:
+  // case tok::kw___local:
+  // case tok::kw___global:
+  // case tok::kw___constant:
+  // case tok::kw___generic:
+  // case tok::kw___read_only:
+  // case tok::kw___read_write:
+  // case tok::kw___write_only:
+    // return true;
 
   case tok::kw_pri:
     return getLangOpts().OpenCL;
@@ -4973,16 +4973,16 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   switch (Tok.getKind()) {
   default: return false;
 
-  case tok::kw_pipe:
-    return (getLangOpts().OpenCL && getLangOpts().OpenCLVersion >= 200) ||
-           getLangOpts().OpenCLCPlusPlus;
+  // case tok::kw_pipe:
+  //   return (getLangOpts().OpenCL && getLangOpts().OpenCLVersion >= 200) ||
+  //          getLangOpts().OpenCLCPlusPlus;
 
   case tok::identifier:   // foo::bar
     // Unfortunate hack to support "Class.factoryMethod" notation.
     if (getLangOpts().ObjC && NextToken().is(tok::period))
       return false;
-    if (TryAltiVecVectorToken())
-      return true;
+    // if (TryAltiVecVectorToken())
+    //   return true;
     LLVM_FALLTHROUGH;
   case tok::kw_decltype: // decltype(T())::type
   case tok::kw_typename: // typename T::type
@@ -5053,7 +5053,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
   case tok::kw_int:
   // case tok::kw__ExtInt:
-  case tok::kw_half:
+  // case tok::kw_half:
   // case tok::kw___bf16:
   case tok::kw_float:
   case tok::kw_double:
@@ -5172,18 +5172,18 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
   // case tok::kw___kindof:
 
-  case tok::kw___private:
-  case tok::kw___local:
-  case tok::kw___global:
-  case tok::kw___constant:
-  case tok::kw___generic:
-  case tok::kw___read_only:
-  case tok::kw___read_write:
-  case tok::kw___write_only:
-#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-#include "latino/Basic/OpenCLImageTypes.def"
+  // case tok::kw___private:
+  // case tok::kw___local:
+  // case tok::kw___global:
+  // case tok::kw___constant:
+  // case tok::kw___generic:
+  // case tok::kw___read_only:
+  // case tok::kw___read_write:
+  // case tok::kw___write_only:
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+// #include "latino/Basic/OpenCLImageTypes.def"
 
-    return true;
+//     return true;
 
   case tok::kw_pri:
     return getLangOpts().OpenCL;
@@ -5394,16 +5394,16 @@ void Parser::ParseTypeQualifierListOpt(
       if (!getLangOpts().OpenCL)
         goto DoneWithTypeQuals;
       LLVM_FALLTHROUGH;
-    case tok::kw___private:
-    case tok::kw___global:
-    case tok::kw___local:
-    case tok::kw___constant:
-    case tok::kw___generic:
-    case tok::kw___read_only:
-    case tok::kw___write_only:
-    case tok::kw___read_write:
-      ParseOpenCLQualifiers(DS.getAttributes());
-      break;
+    // case tok::kw___private:
+    // case tok::kw___global:
+    // case tok::kw___local:
+    // case tok::kw___constant:
+    // case tok::kw___generic:
+    // case tok::kw___read_only:
+    // case tok::kw___write_only:
+    // case tok::kw___read_write:
+    //   ParseOpenCLQualifiers(DS.getAttributes());
+    //   break;
 
     // case tok::kw___unaligned:
     //   isInvalid = DS.SetTypeQual(DeclSpec::TQ_unaligned, Loc, PrevSpec, DiagID,
@@ -5500,9 +5500,9 @@ static bool isPtrOperatorToken(tok::TokenKind Kind, const LangOptions &Lang,
   if (Kind == tok::star || Kind == tok::caret)
     return true;
 
-  if (Kind == tok::kw_pipe &&
-      ((Lang.OpenCL && Lang.OpenCLVersion >= 200) || Lang.OpenCLCPlusPlus))
-    return true;
+  // if (Kind == tok::kw_pipe &&
+  //     ((Lang.OpenCL && Lang.OpenCLVersion >= 200) || Lang.OpenCLCPlusPlus))
+  //   return true;
 
   if (!Lang.CPlusPlus)
     return false;
@@ -6532,7 +6532,7 @@ bool Parser::ParseRefQualifier(bool &RefQualifierIsLValueRef,
 bool Parser::isFunctionDeclaratorIdentifierList() {
   return !getLangOpts().CPlusPlus
          && Tok.is(tok::identifier)
-         && !TryAltiVecVectorToken()
+        //  && !TryAltiVecVectorToken()
          // K&R identifier lists can't have typedefs as identifiers, per C99
          // 6.7.5.3p11.
          && (TryAnnotateTypeOrScopeToken() || !Tok.is(tok::annot_typename))
@@ -7167,79 +7167,79 @@ void Parser::ParseTypeofSpecifier(DeclSpec &DS) {
 
 /// TryAltiVecVectorTokenOutOfLine - Out of line body that should only be called
 /// from TryAltiVecVectorToken.
-bool Parser::TryAltiVecVectorTokenOutOfLine() {
-  Token Next = NextToken();
-  switch (Next.getKind()) {
-  default: return false;
-  case tok::kw_short:
-  case tok::kw_long:
-  case tok::kw_signed:
-  case tok::kw_unsigned:
-  case tok::kw_void:
-  case tok::kw_char:
-  case tok::kw_int:
-  case tok::kw_float:
-  case tok::kw_double:
-  case tok::kw_bool:
-  case tok::kw___bool:
-  case tok::kw___pixel:
-    Tok.setKind(tok::kw___vector);
-    return true;
-  case tok::identifier:
-    if (Next.getIdentifierInfo() == Ident_pixel) {
-      Tok.setKind(tok::kw___vector);
-      return true;
-    }
-    if (Next.getIdentifierInfo() == Ident_bool) {
-      Tok.setKind(tok::kw___vector);
-      return true;
-    }
-    return false;
-  }
-}
+// bool Parser::TryAltiVecVectorTokenOutOfLine() {
+//   Token Next = NextToken();
+//   switch (Next.getKind()) {
+//   default: return false;
+//   case tok::kw_short:
+//   case tok::kw_long:
+//   case tok::kw_signed:
+//   case tok::kw_unsigned:
+//   case tok::kw_void:
+//   case tok::kw_char:
+//   case tok::kw_int:
+//   case tok::kw_float:
+//   case tok::kw_double:
+//   case tok::kw_bool:
+//   case tok::kw___bool:
+//   case tok::kw___pixel:
+//     Tok.setKind(tok::kw___vector);
+//     return true;
+//   case tok::identifier:
+//     if (Next.getIdentifierInfo() == Ident_pixel) {
+//       Tok.setKind(tok::kw___vector);
+//       return true;
+//     }
+//     if (Next.getIdentifierInfo() == Ident_bool) {
+//       Tok.setKind(tok::kw___vector);
+//       return true;
+//     }
+//     return false;
+//   }
+// }
 
-bool Parser::TryAltiVecTokenOutOfLine(DeclSpec &DS, SourceLocation Loc,
-                                      const char *&PrevSpec, unsigned &DiagID,
-                                      bool &isInvalid) {
-  const PrintingPolicy &Policy = Actions.getASTContext().getPrintingPolicy();
-  if (Tok.getIdentifierInfo() == Ident_vector) {
-    Token Next = NextToken();
-    switch (Next.getKind()) {
-    case tok::kw_short:
-    case tok::kw_long:
-    case tok::kw_signed:
-    case tok::kw_unsigned:
-    case tok::kw_void:
-    case tok::kw_char:
-    case tok::kw_int:
-    case tok::kw_float:
-    case tok::kw_double:
-    case tok::kw_bool:
-    case tok::kw___bool:
-    case tok::kw___pixel:
-      isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID, Policy);
-      return true;
-    case tok::identifier:
-      if (Next.getIdentifierInfo() == Ident_pixel) {
-        isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID,Policy);
-        return true;
-      }
-      if (Next.getIdentifierInfo() == Ident_bool) {
-        isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID,Policy);
-        return true;
-      }
-      break;
-    default:
-      break;
-    }
-  } else if ((Tok.getIdentifierInfo() == Ident_pixel) &&
-             DS.isTypeAltiVecVector()) {
-    isInvalid = DS.SetTypeAltiVecPixel(true, Loc, PrevSpec, DiagID, Policy);
-    return true;
-  } else if ((Tok.getIdentifierInfo() == Ident_bool) &&
-             DS.isTypeAltiVecVector()) {
-    isInvalid = DS.SetTypeAltiVecBool(true, Loc, PrevSpec, DiagID, Policy);
-    return true;
-  }
-  return false;
-}
+// bool Parser::TryAltiVecTokenOutOfLine(DeclSpec &DS, SourceLocation Loc,
+//                                       const char *&PrevSpec, unsigned &DiagID,
+//                                       bool &isInvalid) {
+//   const PrintingPolicy &Policy = Actions.getASTContext().getPrintingPolicy();
+//   if (Tok.getIdentifierInfo() == Ident_vector) {
+//     Token Next = NextToken();
+//     switch (Next.getKind()) {
+//     case tok::kw_short:
+//     case tok::kw_long:
+//     case tok::kw_signed:
+//     case tok::kw_unsigned:
+//     case tok::kw_void:
+//     case tok::kw_char:
+//     case tok::kw_int:
+//     case tok::kw_float:
+//     case tok::kw_double:
+//     case tok::kw_bool:
+//     case tok::kw___bool:
+//     case tok::kw___pixel:
+//       isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID, Policy);
+//       return true;
+//     case tok::identifier:
+//       if (Next.getIdentifierInfo() == Ident_pixel) {
+//         isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID,Policy);
+//         return true;
+//       }
+//       if (Next.getIdentifierInfo() == Ident_bool) {
+//         isInvalid = DS.SetTypeAltiVecVector(true, Loc, PrevSpec, DiagID,Policy);
+//         return true;
+//       }
+//       break;
+//     default:
+//       break;
+//     }
+//   } else if ((Tok.getIdentifierInfo() == Ident_pixel) &&
+//              DS.isTypeAltiVecVector()) {
+//     isInvalid = DS.SetTypeAltiVecPixel(true, Loc, PrevSpec, DiagID, Policy);
+//     return true;
+//   } else if ((Tok.getIdentifierInfo() == Ident_bool) &&
+//              DS.isTypeAltiVecVector()) {
+//     isInvalid = DS.SetTypeAltiVecBool(true, Loc, PrevSpec, DiagID, Policy);
+//     return true;
+//   }
+//   return false;
+// }

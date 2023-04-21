@@ -87,8 +87,8 @@ class MacroInfo;
 class InMemoryModuleCache;
 class NamedDecl;
 class NamespaceDecl;
-class ObjCCategoryDecl;
-class ObjCInterfaceDecl;
+// class ObjCCategoryDecl;
+// class ObjCInterfaceDecl;
 class PCHContainerReader;
 class Preprocessor;
 class PreprocessorOptions;
@@ -1131,12 +1131,12 @@ private:
 
   /// The set of Objective-C categories that have been deserialized
   /// since the last time the declaration chains were linked.
-  llvm::SmallPtrSet<ObjCCategoryDecl *, 16> CategoriesDeserialized;
+  // llvm::SmallPtrSet<ObjCCategoryDecl *, 16> CategoriesDeserialized;
 
   /// The set of Objective-C class definitions that have already been
   /// loaded, for which we will need to check for categories whenever a new
   /// module is loaded.
-  SmallVector<ObjCInterfaceDecl *, 16> ObjCClassesLoaded;
+  // SmallVector<ObjCInterfaceDecl *, 16> ObjCClassesLoaded;
 
   using KeyDeclsMap =
       llvm::DenseMap<Decl *, SmallVector<serialization::DeclID, 2>>;
@@ -1363,8 +1363,8 @@ private:
                                  SourceLocation &Location);
   void loadDeclUpdateRecords(PendingUpdateRecord &Record);
   void loadPendingDeclChain(Decl *D, uint64_t LocalOffset);
-  void loadObjCCategories(serialization::GlobalDeclID ID, ObjCInterfaceDecl *D,
-                          unsigned PreviousGeneration = 0);
+  // void loadObjCCategories(serialization::GlobalDeclID ID, ObjCInterfaceDecl *D,
+  //                         unsigned PreviousGeneration = 0);
 
   RecordLocation getLocalBitOffset(uint64_t GlobalOffset);
   uint64_t getGlobalBitOffset(ModuleFile &M, uint64_t LocalOffset);

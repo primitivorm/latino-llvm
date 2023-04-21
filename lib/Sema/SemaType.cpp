@@ -16,7 +16,7 @@
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/ASTStructuralEquivalence.h"
 #include "latino/AST/CXXInheritance.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/TypeLoc.h"
@@ -707,8 +707,8 @@ static void distributeTypeAttrsFromDeclarator(TypeProcessingState &state,
       // Nullability specifiers cannot go after the declarator-id.
 
     // Objective-C __kindof does not get distributed.
-    case ParsedAttr::AT_ObjCKindOf:
-      continue;
+    // case ParsedAttr::AT_ObjCKindOf:
+    //   continue;
 
     default:
       break;
@@ -832,419 +832,419 @@ static bool checkOmittedBlockReturnType(Sema &S, Declarator &declarator,
 }
 
 /// Apply Objective-C type arguments to the given type.
-static QualType applyObjCTypeArgs(Sema &S, SourceLocation loc, QualType type,
-                                  ArrayRef<TypeSourceInfo *> typeArgs,
-                                  SourceRange typeArgsRange,
-                                  bool failOnError = false) {
-  // We can only apply type arguments to an Objective-C class type.
-  const auto *objcObjectType = type->getAs<ObjCObjectType>();
-  if (!objcObjectType || !objcObjectType->getInterface()) {
-    S.Diag(loc, diag::err_objc_type_args_non_class)
-      << type
-      << typeArgsRange;
+// static QualType applyObjCTypeArgs(Sema &S, SourceLocation loc, QualType type,
+//                                   ArrayRef<TypeSourceInfo *> typeArgs,
+//                                   SourceRange typeArgsRange,
+//                                   bool failOnError = false) {
+//   // We can only apply type arguments to an Objective-C class type.
+//   const auto *objcObjectType = type->getAs<ObjCObjectType>();
+//   if (!objcObjectType || !objcObjectType->getInterface()) {
+//     S.Diag(loc, diag::err_objc_type_args_non_class)
+//       << type
+//       << typeArgsRange;
 
-    if (failOnError)
-      return QualType();
-    return type;
-  }
+//     if (failOnError)
+//       return QualType();
+//     return type;
+//   }
 
-  // The class type must be parameterized.
-  ObjCInterfaceDecl *objcClass = objcObjectType->getInterface();
-  ObjCTypeParamList *typeParams = objcClass->getTypeParamList();
-  if (!typeParams) {
-    S.Diag(loc, diag::err_objc_type_args_non_parameterized_class)
-      << objcClass->getDeclName()
-      << FixItHint::CreateRemoval(typeArgsRange);
+//   // The class type must be parameterized.
+//   ObjCInterfaceDecl *objcClass = objcObjectType->getInterface();
+//   ObjCTypeParamList *typeParams = objcClass->getTypeParamList();
+//   if (!typeParams) {
+//     S.Diag(loc, diag::err_objc_type_args_non_parameterized_class)
+//       << objcClass->getDeclName()
+//       << FixItHint::CreateRemoval(typeArgsRange);
 
-    if (failOnError)
-      return QualType();
+//     if (failOnError)
+//       return QualType();
 
-    return type;
-  }
+//     return type;
+//   }
 
-  // The type must not already be specialized.
-  if (objcObjectType->isSpecialized()) {
-    S.Diag(loc, diag::err_objc_type_args_specialized_class)
-      << type
-      << FixItHint::CreateRemoval(typeArgsRange);
+//   // The type must not already be specialized.
+//   if (objcObjectType->isSpecialized()) {
+//     S.Diag(loc, diag::err_objc_type_args_specialized_class)
+//       << type
+//       << FixItHint::CreateRemoval(typeArgsRange);
 
-    if (failOnError)
-      return QualType();
+//     if (failOnError)
+//       return QualType();
 
-    return type;
-  }
+//     return type;
+//   }
 
-  // Check the type arguments.
-  SmallVector<QualType, 4> finalTypeArgs;
-  unsigned numTypeParams = typeParams->size();
-  bool anyPackExpansions = false;
-  for (unsigned i = 0, n = typeArgs.size(); i != n; ++i) {
-    TypeSourceInfo *typeArgInfo = typeArgs[i];
-    QualType typeArg = typeArgInfo->getType();
+//   // Check the type arguments.
+//   SmallVector<QualType, 4> finalTypeArgs;
+//   unsigned numTypeParams = typeParams->size();
+//   bool anyPackExpansions = false;
+//   for (unsigned i = 0, n = typeArgs.size(); i != n; ++i) {
+//     TypeSourceInfo *typeArgInfo = typeArgs[i];
+//     QualType typeArg = typeArgInfo->getType();
 
-    // Type arguments cannot have explicit qualifiers or nullability.
-    // We ignore indirect sources of these, e.g. behind typedefs or
-    // template arguments.
-    if (TypeLoc qual = typeArgInfo->getTypeLoc().findExplicitQualifierLoc()) {
-      bool diagnosed = false;
-      SourceRange rangeToRemove;
-      if (auto attr = qual.getAs<AttributedTypeLoc>()) {
-        rangeToRemove = attr.getLocalSourceRange();
-        if (attr.getTypePtr()->getImmediateNullability()) {
-          typeArg = attr.getTypePtr()->getModifiedType();
-          S.Diag(attr.getBeginLoc(),
-                 diag::err_objc_type_arg_explicit_nullability)
-              << typeArg << FixItHint::CreateRemoval(rangeToRemove);
-          diagnosed = true;
-        }
-      }
+//     // Type arguments cannot have explicit qualifiers or nullability.
+//     // We ignore indirect sources of these, e.g. behind typedefs or
+//     // template arguments.
+//     if (TypeLoc qual = typeArgInfo->getTypeLoc().findExplicitQualifierLoc()) {
+//       bool diagnosed = false;
+//       SourceRange rangeToRemove;
+//       if (auto attr = qual.getAs<AttributedTypeLoc>()) {
+//         rangeToRemove = attr.getLocalSourceRange();
+//         if (attr.getTypePtr()->getImmediateNullability()) {
+//           typeArg = attr.getTypePtr()->getModifiedType();
+//           S.Diag(attr.getBeginLoc(),
+//                  diag::err_objc_type_arg_explicit_nullability)
+//               << typeArg << FixItHint::CreateRemoval(rangeToRemove);
+//           diagnosed = true;
+//         }
+//       }
 
-      if (!diagnosed) {
-        S.Diag(qual.getBeginLoc(), diag::err_objc_type_arg_qualified)
-            << typeArg << typeArg.getQualifiers().getAsString()
-            << FixItHint::CreateRemoval(rangeToRemove);
-      }
-    }
+//       if (!diagnosed) {
+//         S.Diag(qual.getBeginLoc(), diag::err_objc_type_arg_qualified)
+//             << typeArg << typeArg.getQualifiers().getAsString()
+//             << FixItHint::CreateRemoval(rangeToRemove);
+//       }
+//     }
 
-    // Remove qualifiers even if they're non-local.
-    typeArg = typeArg.getUnqualifiedType();
+//     // Remove qualifiers even if they're non-local.
+//     typeArg = typeArg.getUnqualifiedType();
 
-    finalTypeArgs.push_back(typeArg);
+//     finalTypeArgs.push_back(typeArg);
 
-    if (typeArg->getAs<PackExpansionType>())
-      anyPackExpansions = true;
+//     if (typeArg->getAs<PackExpansionType>())
+//       anyPackExpansions = true;
 
-    // Find the corresponding type parameter, if there is one.
-    ObjCTypeParamDecl *typeParam = nullptr;
-    if (!anyPackExpansions) {
-      if (i < numTypeParams) {
-        typeParam = typeParams->begin()[i];
-      } else {
-        // Too many arguments.
-        S.Diag(loc, diag::err_objc_type_args_wrong_arity)
-          << false
-          << objcClass->getDeclName()
-          << (unsigned)typeArgs.size()
-          << numTypeParams;
-        S.Diag(objcClass->getLocation(), diag::note_previous_decl)
-          << objcClass;
+//     // Find the corresponding type parameter, if there is one.
+//     ObjCTypeParamDecl *typeParam = nullptr;
+//     if (!anyPackExpansions) {
+//       if (i < numTypeParams) {
+//         typeParam = typeParams->begin()[i];
+//       } else {
+//         // Too many arguments.
+//         S.Diag(loc, diag::err_objc_type_args_wrong_arity)
+//           << false
+//           << objcClass->getDeclName()
+//           << (unsigned)typeArgs.size()
+//           << numTypeParams;
+//         S.Diag(objcClass->getLocation(), diag::note_previous_decl)
+//           << objcClass;
 
-        if (failOnError)
-          return QualType();
+//         if (failOnError)
+//           return QualType();
 
-        return type;
-      }
-    }
+//         return type;
+//       }
+//     }
 
-    // Objective-C object pointer types must be substitutable for the bounds.
-    if (const auto *typeArgObjC = typeArg->getAs<ObjCObjectPointerType>()) {
-      // If we don't have a type parameter to match against, assume
-      // everything is fine. There was a prior pack expansion that
-      // means we won't be able to match anything.
-      if (!typeParam) {
-        assert(anyPackExpansions && "Too many arguments?");
-        continue;
-      }
+//     // Objective-C object pointer types must be substitutable for the bounds.
+//     if (const auto *typeArgObjC = typeArg->getAs<ObjCObjectPointerType>()) {
+//       // If we don't have a type parameter to match against, assume
+//       // everything is fine. There was a prior pack expansion that
+//       // means we won't be able to match anything.
+//       if (!typeParam) {
+//         assert(anyPackExpansions && "Too many arguments?");
+//         continue;
+//       }
 
-      // Retrieve the bound.
-      QualType bound = typeParam->getUnderlyingType();
-      const auto *boundObjC = bound->getAs<ObjCObjectPointerType>();
+//       // Retrieve the bound.
+//       QualType bound = typeParam->getUnderlyingType();
+//       const auto *boundObjC = bound->getAs<ObjCObjectPointerType>();
 
-      // Determine whether the type argument is substitutable for the bound.
-      if (typeArgObjC->isObjCIdType()) {
-        // When the type argument is 'id', the only acceptable type
-        // parameter bound is 'id'.
-        if (boundObjC->isObjCIdType())
-          continue;
-      } else if (S.Context.canAssignObjCInterfaces(boundObjC, typeArgObjC)) {
-        // Otherwise, we follow the assignability rules.
-        continue;
-      }
+//       // Determine whether the type argument is substitutable for the bound.
+//       if (typeArgObjC->isObjCIdType()) {
+//         // When the type argument is 'id', the only acceptable type
+//         // parameter bound is 'id'.
+//         if (boundObjC->isObjCIdType())
+//           continue;
+//       } else if (S.Context.canAssignObjCInterfaces(boundObjC, typeArgObjC)) {
+//         // Otherwise, we follow the assignability rules.
+//         continue;
+//       }
 
-      // Diagnose the mismatch.
-      S.Diag(typeArgInfo->getTypeLoc().getBeginLoc(),
-             diag::err_objc_type_arg_does_not_match_bound)
-          << typeArg << bound << typeParam->getDeclName();
-      S.Diag(typeParam->getLocation(), diag::note_objc_type_param_here)
-        << typeParam->getDeclName();
+//       // Diagnose the mismatch.
+//       S.Diag(typeArgInfo->getTypeLoc().getBeginLoc(),
+//              diag::err_objc_type_arg_does_not_match_bound)
+//           << typeArg << bound << typeParam->getDeclName();
+//       S.Diag(typeParam->getLocation(), diag::note_objc_type_param_here)
+//         << typeParam->getDeclName();
 
-      if (failOnError)
-        return QualType();
+//       if (failOnError)
+//         return QualType();
 
-      return type;
-    }
+//       return type;
+//     }
 
-    // Block pointer types are permitted for unqualified 'id' bounds.
-    if (typeArg->isBlockPointerType()) {
-      // If we don't have a type parameter to match against, assume
-      // everything is fine. There was a prior pack expansion that
-      // means we won't be able to match anything.
-      if (!typeParam) {
-        assert(anyPackExpansions && "Too many arguments?");
-        continue;
-      }
+//     // Block pointer types are permitted for unqualified 'id' bounds.
+//     if (typeArg->isBlockPointerType()) {
+//       // If we don't have a type parameter to match against, assume
+//       // everything is fine. There was a prior pack expansion that
+//       // means we won't be able to match anything.
+//       if (!typeParam) {
+//         assert(anyPackExpansions && "Too many arguments?");
+//         continue;
+//       }
 
-      // Retrieve the bound.
-      QualType bound = typeParam->getUnderlyingType();
-      if (bound->isBlockCompatibleObjCPointerType(S.Context))
-        continue;
+//       // Retrieve the bound.
+//       QualType bound = typeParam->getUnderlyingType();
+//       if (bound->isBlockCompatibleObjCPointerType(S.Context))
+//         continue;
 
-      // Diagnose the mismatch.
-      S.Diag(typeArgInfo->getTypeLoc().getBeginLoc(),
-             diag::err_objc_type_arg_does_not_match_bound)
-          << typeArg << bound << typeParam->getDeclName();
-      S.Diag(typeParam->getLocation(), diag::note_objc_type_param_here)
-        << typeParam->getDeclName();
+//       // Diagnose the mismatch.
+//       S.Diag(typeArgInfo->getTypeLoc().getBeginLoc(),
+//              diag::err_objc_type_arg_does_not_match_bound)
+//           << typeArg << bound << typeParam->getDeclName();
+//       S.Diag(typeParam->getLocation(), diag::note_objc_type_param_here)
+//         << typeParam->getDeclName();
 
-      if (failOnError)
-        return QualType();
+//       if (failOnError)
+//         return QualType();
 
-      return type;
-    }
+//       return type;
+//     }
 
-    // Dependent types will be checked at instantiation time.
-    if (typeArg->isDependentType()) {
-      continue;
-    }
+//     // Dependent types will be checked at instantiation time.
+//     if (typeArg->isDependentType()) {
+//       continue;
+//     }
 
-    // Diagnose non-id-compatible type arguments.
-    S.Diag(typeArgInfo->getTypeLoc().getBeginLoc(),
-           diag::err_objc_type_arg_not_id_compatible)
-        << typeArg << typeArgInfo->getTypeLoc().getSourceRange();
+//     // Diagnose non-id-compatible type arguments.
+//     S.Diag(typeArgInfo->getTypeLoc().getBeginLoc(),
+//            diag::err_objc_type_arg_not_id_compatible)
+//         << typeArg << typeArgInfo->getTypeLoc().getSourceRange();
 
-    if (failOnError)
-      return QualType();
+//     if (failOnError)
+//       return QualType();
 
-    return type;
-  }
+//     return type;
+//   }
 
-  // Make sure we didn't have the wrong number of arguments.
-  if (!anyPackExpansions && finalTypeArgs.size() != numTypeParams) {
-    S.Diag(loc, diag::err_objc_type_args_wrong_arity)
-      << (typeArgs.size() < typeParams->size())
-      << objcClass->getDeclName()
-      << (unsigned)finalTypeArgs.size()
-      << (unsigned)numTypeParams;
-    S.Diag(objcClass->getLocation(), diag::note_previous_decl)
-      << objcClass;
+//   // Make sure we didn't have the wrong number of arguments.
+//   if (!anyPackExpansions && finalTypeArgs.size() != numTypeParams) {
+//     S.Diag(loc, diag::err_objc_type_args_wrong_arity)
+//       << (typeArgs.size() < typeParams->size())
+//       << objcClass->getDeclName()
+//       << (unsigned)finalTypeArgs.size()
+//       << (unsigned)numTypeParams;
+//     S.Diag(objcClass->getLocation(), diag::note_previous_decl)
+//       << objcClass;
 
-    if (failOnError)
-      return QualType();
+//     if (failOnError)
+//       return QualType();
 
-    return type;
-  }
+//     return type;
+//   }
 
-  // Success. Form the specialized type.
-  return S.Context.getObjCObjectType(type, finalTypeArgs, { }, false);
-}
+//   // Success. Form the specialized type.
+//   return S.Context.getObjCObjectType(type, finalTypeArgs, { }, false);
+// }
 
-QualType Sema::BuildObjCTypeParamType(const ObjCTypeParamDecl *Decl,
-                                      SourceLocation ProtocolLAngleLoc,
-                                      ArrayRef<ObjCProtocolDecl *> Protocols,
-                                      ArrayRef<SourceLocation> ProtocolLocs,
-                                      SourceLocation ProtocolRAngleLoc,
-                                      bool FailOnError) {
-  QualType Result = QualType(Decl->getTypeForDecl(), 0);
-  if (!Protocols.empty()) {
-    bool HasError;
-    Result = Context.applyObjCProtocolQualifiers(Result, Protocols,
-                                                 HasError);
-    if (HasError) {
-      Diag(SourceLocation(), diag::err_invalid_protocol_qualifiers)
-        << SourceRange(ProtocolLAngleLoc, ProtocolRAngleLoc);
-      if (FailOnError) Result = QualType();
-    }
-    if (FailOnError && Result.isNull())
-      return QualType();
-  }
+// QualType Sema::BuildObjCTypeParamType(const ObjCTypeParamDecl *Decl,
+//                                       SourceLocation ProtocolLAngleLoc,
+//                                       ArrayRef<ObjCProtocolDecl *> Protocols,
+//                                       ArrayRef<SourceLocation> ProtocolLocs,
+//                                       SourceLocation ProtocolRAngleLoc,
+//                                       bool FailOnError) {
+//   QualType Result = QualType(Decl->getTypeForDecl(), 0);
+//   if (!Protocols.empty()) {
+//     bool HasError;
+//     Result = Context.applyObjCProtocolQualifiers(Result, Protocols,
+//                                                  HasError);
+//     if (HasError) {
+//       Diag(SourceLocation(), diag::err_invalid_protocol_qualifiers)
+//         << SourceRange(ProtocolLAngleLoc, ProtocolRAngleLoc);
+//       if (FailOnError) Result = QualType();
+//     }
+//     if (FailOnError && Result.isNull())
+//       return QualType();
+//   }
 
-  return Result;
-}
+//   return Result;
+// }
 
-QualType Sema::BuildObjCObjectType(QualType BaseType,
-                                   SourceLocation Loc,
-                                   SourceLocation TypeArgsLAngleLoc,
-                                   ArrayRef<TypeSourceInfo *> TypeArgs,
-                                   SourceLocation TypeArgsRAngleLoc,
-                                   SourceLocation ProtocolLAngleLoc,
-                                   ArrayRef<ObjCProtocolDecl *> Protocols,
-                                   ArrayRef<SourceLocation> ProtocolLocs,
-                                   SourceLocation ProtocolRAngleLoc,
-                                   bool FailOnError) {
-  QualType Result = BaseType;
-  if (!TypeArgs.empty()) {
-    Result = applyObjCTypeArgs(*this, Loc, Result, TypeArgs,
-                               SourceRange(TypeArgsLAngleLoc,
-                                           TypeArgsRAngleLoc),
-                               FailOnError);
-    if (FailOnError && Result.isNull())
-      return QualType();
-  }
+// QualType Sema::BuildObjCObjectType(QualType BaseType,
+//                                    SourceLocation Loc,
+//                                    SourceLocation TypeArgsLAngleLoc,
+//                                    ArrayRef<TypeSourceInfo *> TypeArgs,
+//                                    SourceLocation TypeArgsRAngleLoc,
+//                                    SourceLocation ProtocolLAngleLoc,
+//                                    ArrayRef<ObjCProtocolDecl *> Protocols,
+//                                    ArrayRef<SourceLocation> ProtocolLocs,
+//                                    SourceLocation ProtocolRAngleLoc,
+//                                    bool FailOnError) {
+//   QualType Result = BaseType;
+//   if (!TypeArgs.empty()) {
+//     Result = applyObjCTypeArgs(*this, Loc, Result, TypeArgs,
+//                                SourceRange(TypeArgsLAngleLoc,
+//                                            TypeArgsRAngleLoc),
+//                                FailOnError);
+//     if (FailOnError && Result.isNull())
+//       return QualType();
+//   }
 
-  if (!Protocols.empty()) {
-    bool HasError;
-    Result = Context.applyObjCProtocolQualifiers(Result, Protocols,
-                                                 HasError);
-    if (HasError) {
-      Diag(Loc, diag::err_invalid_protocol_qualifiers)
-        << SourceRange(ProtocolLAngleLoc, ProtocolRAngleLoc);
-      if (FailOnError) Result = QualType();
-    }
-    if (FailOnError && Result.isNull())
-      return QualType();
-  }
+//   if (!Protocols.empty()) {
+//     bool HasError;
+//     Result = Context.applyObjCProtocolQualifiers(Result, Protocols,
+//                                                  HasError);
+//     if (HasError) {
+//       Diag(Loc, diag::err_invalid_protocol_qualifiers)
+//         << SourceRange(ProtocolLAngleLoc, ProtocolRAngleLoc);
+//       if (FailOnError) Result = QualType();
+//     }
+//     if (FailOnError && Result.isNull())
+//       return QualType();
+//   }
 
-  return Result;
-}
+//   return Result;
+// }
 
-TypeResult Sema::actOnObjCProtocolQualifierType(
-             SourceLocation lAngleLoc,
-             ArrayRef<Decl *> protocols,
-             ArrayRef<SourceLocation> protocolLocs,
-             SourceLocation rAngleLoc) {
-  // Form id<protocol-list>.
-  QualType Result = Context.getObjCObjectType(
-                      Context.ObjCBuiltinIdTy, { },
-                      llvm::makeArrayRef(
-                        (ObjCProtocolDecl * const *)protocols.data(),
-                        protocols.size()),
-                      false);
-  Result = Context.getObjCObjectPointerType(Result);
+// TypeResult Sema::actOnObjCProtocolQualifierType(
+//              SourceLocation lAngleLoc,
+//              ArrayRef<Decl *> protocols,
+//              ArrayRef<SourceLocation> protocolLocs,
+//              SourceLocation rAngleLoc) {
+//   // Form id<protocol-list>.
+//   QualType Result = Context.getObjCObjectType(
+//                       Context.ObjCBuiltinIdTy, { },
+//                       llvm::makeArrayRef(
+//                         (ObjCProtocolDecl * const *)protocols.data(),
+//                         protocols.size()),
+//                       false);
+//   Result = Context.getObjCObjectPointerType(Result);
 
-  TypeSourceInfo *ResultTInfo = Context.CreateTypeSourceInfo(Result);
-  TypeLoc ResultTL = ResultTInfo->getTypeLoc();
+//   TypeSourceInfo *ResultTInfo = Context.CreateTypeSourceInfo(Result);
+//   TypeLoc ResultTL = ResultTInfo->getTypeLoc();
 
-  auto ObjCObjectPointerTL = ResultTL.castAs<ObjCObjectPointerTypeLoc>();
-  ObjCObjectPointerTL.setStarLoc(SourceLocation()); // implicit
+//   auto ObjCObjectPointerTL = ResultTL.castAs<ObjCObjectPointerTypeLoc>();
+//   ObjCObjectPointerTL.setStarLoc(SourceLocation()); // implicit
 
-  auto ObjCObjectTL = ObjCObjectPointerTL.getPointeeLoc()
-                        .castAs<ObjCObjectTypeLoc>();
-  ObjCObjectTL.setHasBaseTypeAsWritten(false);
-  ObjCObjectTL.getBaseLoc().initialize(Context, SourceLocation());
+//   auto ObjCObjectTL = ObjCObjectPointerTL.getPointeeLoc()
+//                         .castAs<ObjCObjectTypeLoc>();
+//   ObjCObjectTL.setHasBaseTypeAsWritten(false);
+//   ObjCObjectTL.getBaseLoc().initialize(Context, SourceLocation());
 
-  // No type arguments.
-  ObjCObjectTL.setTypeArgsLAngleLoc(SourceLocation());
-  ObjCObjectTL.setTypeArgsRAngleLoc(SourceLocation());
+//   // No type arguments.
+//   ObjCObjectTL.setTypeArgsLAngleLoc(SourceLocation());
+//   ObjCObjectTL.setTypeArgsRAngleLoc(SourceLocation());
 
-  // Fill in protocol qualifiers.
-  ObjCObjectTL.setProtocolLAngleLoc(lAngleLoc);
-  ObjCObjectTL.setProtocolRAngleLoc(rAngleLoc);
-  for (unsigned i = 0, n = protocols.size(); i != n; ++i)
-    ObjCObjectTL.setProtocolLoc(i, protocolLocs[i]);
+//   // Fill in protocol qualifiers.
+//   ObjCObjectTL.setProtocolLAngleLoc(lAngleLoc);
+//   ObjCObjectTL.setProtocolRAngleLoc(rAngleLoc);
+//   for (unsigned i = 0, n = protocols.size(); i != n; ++i)
+//     ObjCObjectTL.setProtocolLoc(i, protocolLocs[i]);
 
-  // We're done. Return the completed type to the parser.
-  return CreateParsedType(Result, ResultTInfo);
-}
+//   // We're done. Return the completed type to the parser.
+//   return CreateParsedType(Result, ResultTInfo);
+// }
 
-TypeResult Sema::actOnObjCTypeArgsAndProtocolQualifiers(
-             Scope *S,
-             SourceLocation Loc,
-             ParsedType BaseType,
-             SourceLocation TypeArgsLAngleLoc,
-             ArrayRef<ParsedType> TypeArgs,
-             SourceLocation TypeArgsRAngleLoc,
-             SourceLocation ProtocolLAngleLoc,
-             ArrayRef<Decl *> Protocols,
-             ArrayRef<SourceLocation> ProtocolLocs,
-             SourceLocation ProtocolRAngleLoc) {
-  TypeSourceInfo *BaseTypeInfo = nullptr;
-  QualType T = GetTypeFromParser(BaseType, &BaseTypeInfo);
-  if (T.isNull())
-    return true;
+// TypeResult Sema::actOnObjCTypeArgsAndProtocolQualifiers(
+//              Scope *S,
+//              SourceLocation Loc,
+//              ParsedType BaseType,
+//              SourceLocation TypeArgsLAngleLoc,
+//              ArrayRef<ParsedType> TypeArgs,
+//              SourceLocation TypeArgsRAngleLoc,
+//              SourceLocation ProtocolLAngleLoc,
+//              ArrayRef<Decl *> Protocols,
+//              ArrayRef<SourceLocation> ProtocolLocs,
+//              SourceLocation ProtocolRAngleLoc) {
+//   TypeSourceInfo *BaseTypeInfo = nullptr;
+//   QualType T = GetTypeFromParser(BaseType, &BaseTypeInfo);
+//   if (T.isNull())
+//     return true;
 
-  // Handle missing type-source info.
-  if (!BaseTypeInfo)
-    BaseTypeInfo = Context.getTrivialTypeSourceInfo(T, Loc);
+//   // Handle missing type-source info.
+//   if (!BaseTypeInfo)
+//     BaseTypeInfo = Context.getTrivialTypeSourceInfo(T, Loc);
 
-  // Extract type arguments.
-  SmallVector<TypeSourceInfo *, 4> ActualTypeArgInfos;
-  for (unsigned i = 0, n = TypeArgs.size(); i != n; ++i) {
-    TypeSourceInfo *TypeArgInfo = nullptr;
-    QualType TypeArg = GetTypeFromParser(TypeArgs[i], &TypeArgInfo);
-    if (TypeArg.isNull()) {
-      ActualTypeArgInfos.clear();
-      break;
-    }
+//   // Extract type arguments.
+//   SmallVector<TypeSourceInfo *, 4> ActualTypeArgInfos;
+//   for (unsigned i = 0, n = TypeArgs.size(); i != n; ++i) {
+//     TypeSourceInfo *TypeArgInfo = nullptr;
+//     QualType TypeArg = GetTypeFromParser(TypeArgs[i], &TypeArgInfo);
+//     if (TypeArg.isNull()) {
+//       ActualTypeArgInfos.clear();
+//       break;
+//     }
 
-    assert(TypeArgInfo && "No type source info?");
-    ActualTypeArgInfos.push_back(TypeArgInfo);
-  }
+//     assert(TypeArgInfo && "No type source info?");
+//     ActualTypeArgInfos.push_back(TypeArgInfo);
+//   }
 
-  // Build the object type.
-  QualType Result = BuildObjCObjectType(
-      T, BaseTypeInfo->getTypeLoc().getSourceRange().getBegin(),
-      TypeArgsLAngleLoc, ActualTypeArgInfos, TypeArgsRAngleLoc,
-      ProtocolLAngleLoc,
-      llvm::makeArrayRef((ObjCProtocolDecl * const *)Protocols.data(),
-                         Protocols.size()),
-      ProtocolLocs, ProtocolRAngleLoc,
-      /*FailOnError=*/false);
+//   // Build the object type.
+//   QualType Result = BuildObjCObjectType(
+//       T, BaseTypeInfo->getTypeLoc().getSourceRange().getBegin(),
+//       TypeArgsLAngleLoc, ActualTypeArgInfos, TypeArgsRAngleLoc,
+//       ProtocolLAngleLoc,
+//       llvm::makeArrayRef((ObjCProtocolDecl * const *)Protocols.data(),
+//                          Protocols.size()),
+//       ProtocolLocs, ProtocolRAngleLoc,
+//       /*FailOnError=*/false);
 
-  if (Result == T)
-    return BaseType;
+//   if (Result == T)
+//     return BaseType;
 
-  // Create source information for this type.
-  TypeSourceInfo *ResultTInfo = Context.CreateTypeSourceInfo(Result);
-  TypeLoc ResultTL = ResultTInfo->getTypeLoc();
+//   // Create source information for this type.
+//   TypeSourceInfo *ResultTInfo = Context.CreateTypeSourceInfo(Result);
+//   TypeLoc ResultTL = ResultTInfo->getTypeLoc();
 
-  // For id<Proto1, Proto2> or Class<Proto1, Proto2>, we'll have an
-  // object pointer type. Fill in source information for it.
-  if (auto ObjCObjectPointerTL = ResultTL.getAs<ObjCObjectPointerTypeLoc>()) {
-    // The '*' is implicit.
-    ObjCObjectPointerTL.setStarLoc(SourceLocation());
-    ResultTL = ObjCObjectPointerTL.getPointeeLoc();
-  }
+//   // For id<Proto1, Proto2> or Class<Proto1, Proto2>, we'll have an
+//   // object pointer type. Fill in source information for it.
+//   if (auto ObjCObjectPointerTL = ResultTL.getAs<ObjCObjectPointerTypeLoc>()) {
+//     // The '*' is implicit.
+//     ObjCObjectPointerTL.setStarLoc(SourceLocation());
+//     ResultTL = ObjCObjectPointerTL.getPointeeLoc();
+//   }
 
-  if (auto OTPTL = ResultTL.getAs<ObjCTypeParamTypeLoc>()) {
-    // Protocol qualifier information.
-    if (OTPTL.getNumProtocols() > 0) {
-      assert(OTPTL.getNumProtocols() == Protocols.size());
-      OTPTL.setProtocolLAngleLoc(ProtocolLAngleLoc);
-      OTPTL.setProtocolRAngleLoc(ProtocolRAngleLoc);
-      for (unsigned i = 0, n = Protocols.size(); i != n; ++i)
-        OTPTL.setProtocolLoc(i, ProtocolLocs[i]);
-    }
+//   if (auto OTPTL = ResultTL.getAs<ObjCTypeParamTypeLoc>()) {
+//     // Protocol qualifier information.
+//     if (OTPTL.getNumProtocols() > 0) {
+//       assert(OTPTL.getNumProtocols() == Protocols.size());
+//       OTPTL.setProtocolLAngleLoc(ProtocolLAngleLoc);
+//       OTPTL.setProtocolRAngleLoc(ProtocolRAngleLoc);
+//       for (unsigned i = 0, n = Protocols.size(); i != n; ++i)
+//         OTPTL.setProtocolLoc(i, ProtocolLocs[i]);
+//     }
 
-    // We're done. Return the completed type to the parser.
-    return CreateParsedType(Result, ResultTInfo);
-  }
+//     // We're done. Return the completed type to the parser.
+//     return CreateParsedType(Result, ResultTInfo);
+//   }
 
-  auto ObjCObjectTL = ResultTL.castAs<ObjCObjectTypeLoc>();
+//   auto ObjCObjectTL = ResultTL.castAs<ObjCObjectTypeLoc>();
 
-  // Type argument information.
-  if (ObjCObjectTL.getNumTypeArgs() > 0) {
-    assert(ObjCObjectTL.getNumTypeArgs() == ActualTypeArgInfos.size());
-    ObjCObjectTL.setTypeArgsLAngleLoc(TypeArgsLAngleLoc);
-    ObjCObjectTL.setTypeArgsRAngleLoc(TypeArgsRAngleLoc);
-    for (unsigned i = 0, n = ActualTypeArgInfos.size(); i != n; ++i)
-      ObjCObjectTL.setTypeArgTInfo(i, ActualTypeArgInfos[i]);
-  } else {
-    ObjCObjectTL.setTypeArgsLAngleLoc(SourceLocation());
-    ObjCObjectTL.setTypeArgsRAngleLoc(SourceLocation());
-  }
+//   // Type argument information.
+//   if (ObjCObjectTL.getNumTypeArgs() > 0) {
+//     assert(ObjCObjectTL.getNumTypeArgs() == ActualTypeArgInfos.size());
+//     ObjCObjectTL.setTypeArgsLAngleLoc(TypeArgsLAngleLoc);
+//     ObjCObjectTL.setTypeArgsRAngleLoc(TypeArgsRAngleLoc);
+//     for (unsigned i = 0, n = ActualTypeArgInfos.size(); i != n; ++i)
+//       ObjCObjectTL.setTypeArgTInfo(i, ActualTypeArgInfos[i]);
+//   } else {
+//     ObjCObjectTL.setTypeArgsLAngleLoc(SourceLocation());
+//     ObjCObjectTL.setTypeArgsRAngleLoc(SourceLocation());
+//   }
 
-  // Protocol qualifier information.
-  if (ObjCObjectTL.getNumProtocols() > 0) {
-    assert(ObjCObjectTL.getNumProtocols() == Protocols.size());
-    ObjCObjectTL.setProtocolLAngleLoc(ProtocolLAngleLoc);
-    ObjCObjectTL.setProtocolRAngleLoc(ProtocolRAngleLoc);
-    for (unsigned i = 0, n = Protocols.size(); i != n; ++i)
-      ObjCObjectTL.setProtocolLoc(i, ProtocolLocs[i]);
-  } else {
-    ObjCObjectTL.setProtocolLAngleLoc(SourceLocation());
-    ObjCObjectTL.setProtocolRAngleLoc(SourceLocation());
-  }
+//   // Protocol qualifier information.
+//   if (ObjCObjectTL.getNumProtocols() > 0) {
+//     assert(ObjCObjectTL.getNumProtocols() == Protocols.size());
+//     ObjCObjectTL.setProtocolLAngleLoc(ProtocolLAngleLoc);
+//     ObjCObjectTL.setProtocolRAngleLoc(ProtocolRAngleLoc);
+//     for (unsigned i = 0, n = Protocols.size(); i != n; ++i)
+//       ObjCObjectTL.setProtocolLoc(i, ProtocolLocs[i]);
+//   } else {
+//     ObjCObjectTL.setProtocolLAngleLoc(SourceLocation());
+//     ObjCObjectTL.setProtocolRAngleLoc(SourceLocation());
+//   }
 
-  // Base type.
-  ObjCObjectTL.setHasBaseTypeAsWritten(true);
-  if (ObjCObjectTL.getType() == T)
-    ObjCObjectTL.getBaseLoc().initializeFullCopy(BaseTypeInfo->getTypeLoc());
-  else
-    ObjCObjectTL.getBaseLoc().initialize(Context, Loc);
+//   // Base type.
+//   ObjCObjectTL.setHasBaseTypeAsWritten(true);
+//   if (ObjCObjectTL.getType() == T)
+//     ObjCObjectTL.getBaseLoc().initializeFullCopy(BaseTypeInfo->getTypeLoc());
+//   else
+//     ObjCObjectTL.getBaseLoc().initialize(Context, Loc);
 
-  // We're done. Return the completed type to the parser.
-  return CreateParsedType(Result, ResultTInfo);
-}
+//   // We're done. Return the completed type to the parser.
+//   return CreateParsedType(Result, ResultTInfo);
+// }
 
 static OpenCLAccessAttr::Spelling
 getImageAccess(const ParsedAttributesView &Attrs) {
@@ -1520,7 +1520,7 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
         << "_Float16";
     Result = Context.Float16Ty;
     break;
-  case DeclSpec::TST_half:    Result = Context.HalfTy; break;
+  // case DeclSpec::TST_half:    Result = Context.HalfTy; break;
   case DeclSpec::TST_BFloat16:
     if (!S.Context.getTargetInfo().hasBFloat16Type())
       S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
@@ -1674,23 +1674,23 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
     }
     break;
 
-#define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
-  case DeclSpec::TST_##ImgType##_t:                                            \
-    switch (getImageAccess(DS.getAttributes())) {                              \
-    case OpenCLAccessAttr::Keyword_write_only:                                 \
-      Result = Context.Id##WOTy;                                               \
-      break;                                                                   \
-    case OpenCLAccessAttr::Keyword_read_write:                                 \
-      Result = Context.Id##RWTy;                                               \
-      break;                                                                   \
-    case OpenCLAccessAttr::Keyword_read_only:                                  \
-      Result = Context.Id##ROTy;                                               \
-      break;                                                                   \
-    case OpenCLAccessAttr::SpellingNotCalculated:                              \
-      llvm_unreachable("Spelling not yet calculated");                         \
-    }                                                                          \
-    break;
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
+//   case DeclSpec::TST_##ImgType##_t:                                            \
+//     switch (getImageAccess(DS.getAttributes())) {                              \
+//     case OpenCLAccessAttr::Keyword_write_only:                                 \
+//       Result = Context.Id##WOTy;                                               \
+//       break;                                                                   \
+//     case OpenCLAccessAttr::Keyword_read_write:                                 \
+//       Result = Context.Id##RWTy;                                               \
+//       break;                                                                   \
+//     case OpenCLAccessAttr::Keyword_read_only:                                  \
+//       Result = Context.Id##ROTy;                                               \
+//       break;                                                                   \
+//     case OpenCLAccessAttr::SpellingNotCalculated:                              \
+//       llvm_unreachable("Spelling not yet calculated");                         \
+//     }                                                                          \
+//     break;
+// #include "latino/Basic/OpenCLImageTypes.def"
 
   case DeclSpec::TST_error:
     Result = Context.IntTy;
@@ -1843,9 +1843,9 @@ QualType Sema::BuildQualifiedType(QualType T, SourceLocation Loc,
     if (T->isAnyPointerType() || T->isReferenceType() ||
         T->isMemberPointerType()) {
       QualType EltTy;
-      if (T->isObjCObjectPointerType())
+      /*if (T->isObjCObjectPointerType())
         EltTy = T;
-      else if (const MemberPointerType *PTy = T->getAs<MemberPointerType>())
+      else*/ if (const MemberPointerType *PTy = T->getAs<MemberPointerType>())
         EltTy = PTy->getPointeeType();
       else
         EltTy = T->getPointeeType();
@@ -2078,14 +2078,14 @@ QualType Sema::BuildPointerType(QualType T,
   if (checkQualifiedFunction(*this, T, Loc, QFK_Pointer))
     return QualType();
 
-  assert(!T->isObjCObjectType() && "Should build ObjCObjectPointerType");
+  // assert(!T->isObjCObjectType() && "Should build ObjCObjectPointerType");
 
-  // In ARC, it is forbidden to build pointers to unqualified pointers.
-  if (getLangOpts().ObjCAutoRefCount)
-    T = inferARCLifetimeForPointee(*this, T, Loc, /*reference*/ false);
+  // // In ARC, it is forbidden to build pointers to unqualified pointers.
+  // if (getLangOpts().ObjCAutoRefCount)
+  //   T = inferARCLifetimeForPointee(*this, T, Loc, /*reference*/ false);
 
-  if (getLangOpts().OpenCL)
-    T = deduceOpenCLPointeeAddrSpace(*this, T);
+  // if (getLangOpts().OpenCL)
+  //   T = deduceOpenCLPointeeAddrSpace(*this, T);
 
   // Build the pointer type.
   return Context.getPointerType(T);
@@ -2319,10 +2319,10 @@ QualType Sema::BuildArrayType(QualType T, ArrayType::ArraySizeModifier ASM,
     // array, accept it as a GNU extension: C99 6.7.2.1p2.
     if (EltTy->getDecl()->hasFlexibleArrayMember())
       Diag(Loc, diag::ext_flexible_array_in_array) << T;
-  } else if (T->isObjCObjectType()) {
+  } /*else if (T->isObjCObjectType()) {
     Diag(Loc, diag::err_objc_array_of_interfaces) << T;
     return QualType();
-  }
+  }*/
 
   // Do placeholder conversions on the array size expression.
   if (ArraySize && ArraySize->hasPlaceholderType()) {
@@ -2663,11 +2663,11 @@ bool Sema::CheckFunctionReturnType(QualType T, SourceLocation Loc) {
 
   // Methods cannot return interface types. All ObjC objects are
   // passed by reference.
-  if (T->isObjCObjectType()) {
-    Diag(Loc, diag::err_object_cannot_be_passed_returned_by_value)
-        << 0 << T << FixItHint::CreateInsertion(Loc, "*");
-    return true;
-  }
+  // if (T->isObjCObjectType()) {
+  //   Diag(Loc, diag::err_object_cannot_be_passed_returned_by_value)
+  //       << 0 << T << FixItHint::CreateInsertion(Loc, "*");
+  //   return true;
+  // }
 
   if (T.hasNonTrivialToPrimitiveDestructCUnion() ||
       T.hasNonTrivialToPrimitiveCopyCUnion())
@@ -2959,8 +2959,8 @@ static void inferARCWriteback(TypeProcessingState &state,
     // If we don't have a block pointer, we need to check whether the
     // declaration-specifiers gave us something that will turn into a
     // retainable object pointer after we slap the first pointer on it.
-    if (!isBlockPointer && !declSpecType->isObjCObjectType())
-      return;
+    // if (!isBlockPointer && !declSpecType->isObjCObjectType())
+    //   return;
 
     // Look for an explicit lifetime attribute there.
     DeclaratorChunk &chunk = declarator.getTypeObject(outermostPointerIndex);
@@ -3966,20 +3966,20 @@ classifyPointerDeclarator(Sema &S, QualType type, Declarator &declarator,
     }
 
     // Look at Objective-C object pointers.
-    if (auto objcObjectPtr = type->getAs<ObjCObjectPointerType>()) {
-      ++numNormalPointers;
-      ++numTypeSpecifierPointers;
+    // if (auto objcObjectPtr = type->getAs<ObjCObjectPointerType>()) {
+    //   ++numNormalPointers;
+    //   ++numTypeSpecifierPointers;
 
-      // If this is NSError**, report that.
-      if (auto objcClassDecl = objcObjectPtr->getInterfaceDecl()) {
-        if (objcClassDecl->getIdentifier() == S.getNSErrorIdent() &&
-            numNormalPointers == 2 && numTypeSpecifierPointers < 2) {
-          return PointerDeclaratorKind::NSErrorPointerPointer;
-        }
-      }
+    //   // If this is NSError**, report that.
+    //   if (auto objcClassDecl = objcObjectPtr->getInterfaceDecl()) {
+    //     if (objcClassDecl->getIdentifier() == S.getNSErrorIdent() &&
+    //         numNormalPointers == 2 && numTypeSpecifierPointers < 2) {
+    //       return PointerDeclaratorKind::NSErrorPointerPointer;
+    //     }
+    //   }
 
-      break;
-    }
+    //   break;
+    // }
 
     // Look at Objective-C class types.
     if (auto objcClass = type->getAs<ObjCInterfaceType>()) {
@@ -4711,12 +4711,12 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
                               DeclType.EndLoc, DeclType.getAttrs(),
                               state.getDeclarator().getAttributePool());
 
-      if (LangOpts.ObjC && T->getAs<ObjCObjectType>()) {
-        T = Context.getObjCObjectPointerType(T);
-        if (DeclType.Ptr.TypeQuals)
-          T = S.BuildQualifiedType(T, DeclType.Loc, DeclType.Ptr.TypeQuals);
-        break;
-      }
+      // if (LangOpts.ObjC && T->getAs<ObjCObjectType>()) {
+      //   T = Context.getObjCObjectPointerType(T);
+      //   if (DeclType.Ptr.TypeQuals)
+      //     T = S.BuildQualifiedType(T, DeclType.Loc, DeclType.Ptr.TypeQuals);
+      //   break;
+      // }
 
       // OpenCL v2.0 s6.9b - Pointer to image/sampler cannot be used.
       // OpenCL v2.0 s6.13.16.1 - Pointer to pipe cannot be used.
@@ -4949,30 +4949,30 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
 
       // Methods cannot return interface types. All ObjC objects are
       // passed by reference.
-      if (T->isObjCObjectType()) {
-        SourceLocation DiagLoc, FixitLoc;
-        if (TInfo) {
-          DiagLoc = TInfo->getTypeLoc().getBeginLoc();
-          FixitLoc = S.getLocForEndOfToken(TInfo->getTypeLoc().getEndLoc());
-        } else {
-          DiagLoc = D.getDeclSpec().getTypeSpecTypeLoc();
-          FixitLoc = S.getLocForEndOfToken(D.getDeclSpec().getEndLoc());
-        }
-        S.Diag(DiagLoc, diag::err_object_cannot_be_passed_returned_by_value)
-          << 0 << T
-          << FixItHint::CreateInsertion(FixitLoc, "*");
+      // if (T->isObjCObjectType()) {
+      //   SourceLocation DiagLoc, FixitLoc;
+      //   if (TInfo) {
+      //     DiagLoc = TInfo->getTypeLoc().getBeginLoc();
+      //     FixitLoc = S.getLocForEndOfToken(TInfo->getTypeLoc().getEndLoc());
+      //   } else {
+      //     DiagLoc = D.getDeclSpec().getTypeSpecTypeLoc();
+      //     FixitLoc = S.getLocForEndOfToken(D.getDeclSpec().getEndLoc());
+      //   }
+      //   S.Diag(DiagLoc, diag::err_object_cannot_be_passed_returned_by_value)
+      //     << 0 << T
+      //     << FixItHint::CreateInsertion(FixitLoc, "*");
 
-        T = Context.getObjCObjectPointerType(T);
-        if (TInfo) {
-          TypeLocBuilder TLB;
-          TLB.pushFullCopy(TInfo->getTypeLoc());
-          ObjCObjectPointerTypeLoc TLoc = TLB.push<ObjCObjectPointerTypeLoc>(T);
-          TLoc.setStarLoc(FixitLoc);
-          TInfo = TLB.getTypeSourceInfo(Context, T);
-        }
+      //   T = Context.getObjCObjectPointerType(T);
+      //   if (TInfo) {
+      //     TypeLocBuilder TLB;
+      //     TLB.pushFullCopy(TInfo->getTypeLoc());
+      //     ObjCObjectPointerTypeLoc TLoc = TLB.push<ObjCObjectPointerTypeLoc>(T);
+      //     TLoc.setStarLoc(FixitLoc);
+      //     TInfo = TLB.getTypeSourceInfo(Context, T);
+      //   }
 
-        D.setInvalidType(true);
-      }
+      //   D.setInvalidType(true);
+      // }
 
       // cv-qualifiers on return types are pointless except when the type is a
       // class type in C++.
@@ -5686,16 +5686,16 @@ static void transferARCOwnership(TypeProcessingState &state,
     return;
 
   DeclaratorChunk &chunk = D.getTypeObject(inner);
-  if (chunk.Kind == DeclaratorChunk::Pointer) {
-    if (declSpecTy->isObjCRetainableType())
-      return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
-    if (declSpecTy->isObjCObjectType() && hasIndirection)
-      return transferARCOwnershipToDeclaratorChunk(state, ownership, inner);
-  } else {
+  // if (chunk.Kind == DeclaratorChunk::Pointer) {
+  //   if (declSpecTy->isObjCRetainableType())
+  //     return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
+  //   if (declSpecTy->isObjCObjectType() && hasIndirection)
+  //     return transferARCOwnershipToDeclaratorChunk(state, ownership, inner);
+  // } else {
     assert(chunk.Kind == DeclaratorChunk::Array ||
            chunk.Kind == DeclaratorChunk::Reference);
     return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
-  }
+  // }
 }
 
 TypeSourceInfo *Sema::GetTypeForDeclaratorCast(Declarator &D, QualType FromTy) {
@@ -5745,23 +5745,23 @@ namespace {
     void VisitTypedefTypeLoc(TypedefTypeLoc TL) {
       TL.setNameLoc(DS.getTypeSpecTypeLoc());
     }
-    void VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
-      TL.setNameLoc(DS.getTypeSpecTypeLoc());
-      // FIXME. We should have DS.getTypeSpecTypeEndLoc(). But, it requires
-      // addition field. What we have is good enough for dispay of location
-      // of 'fixit' on interface name.
-      TL.setNameEndLoc(DS.getEndLoc());
-    }
-    void VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
-      TypeSourceInfo *RepTInfo = nullptr;
-      Sema::GetTypeFromParser(DS.getRepAsType(), &RepTInfo);
-      TL.copy(RepTInfo->getTypeLoc());
-    }
-    void VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
-      TypeSourceInfo *RepTInfo = nullptr;
-      Sema::GetTypeFromParser(DS.getRepAsType(), &RepTInfo);
-      TL.copy(RepTInfo->getTypeLoc());
-    }
+    // void VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
+    //   TL.setNameLoc(DS.getTypeSpecTypeLoc());
+    //   // FIXME. We should have DS.getTypeSpecTypeEndLoc(). But, it requires
+    //   // addition field. What we have is good enough for dispay of location
+    //   // of 'fixit' on interface name.
+    //   TL.setNameEndLoc(DS.getEndLoc());
+    // }
+    // void VisitObjCObjectTypeLoc(ObjCObjectTypeLoc TL) {
+    //   TypeSourceInfo *RepTInfo = nullptr;
+    //   Sema::GetTypeFromParser(DS.getRepAsType(), &RepTInfo);
+    //   TL.copy(RepTInfo->getTypeLoc());
+    // }
+    // void VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
+    //   TypeSourceInfo *RepTInfo = nullptr;
+    //   Sema::GetTypeFromParser(DS.getRepAsType(), &RepTInfo);
+    //   TL.copy(RepTInfo->getTypeLoc());
+    // }
     void VisitTemplateSpecializationTypeLoc(TemplateSpecializationTypeLoc TL) {
       TypeSourceInfo *TInfo = nullptr;
       Sema::GetTypeFromParser(DS.getRepAsType(), &TInfo);
@@ -5959,10 +5959,10 @@ namespace {
       assert(Chunk.Kind == DeclaratorChunk::Pointer);
       TL.setStarLoc(Chunk.Loc);
     }
-    void VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
-      assert(Chunk.Kind == DeclaratorChunk::Pointer);
-      TL.setStarLoc(Chunk.Loc);
-    }
+    // void VisitObjCObjectPointerTypeLoc(ObjCObjectPointerTypeLoc TL) {
+    //   assert(Chunk.Kind == DeclaratorChunk::Pointer);
+    //   TL.setStarLoc(Chunk.Loc);
+    // }
     void VisitMemberPointerTypeLoc(MemberPointerTypeLoc TL) {
       assert(Chunk.Kind == DeclaratorChunk::MemberPointer);
       const CXXScopeSpec& SS = Chunk.Mem.Scope();
@@ -6593,18 +6593,18 @@ static bool handleObjCOwnershipTypeAttr(TypeProcessingState &state,
 
   // Forbid __weak for class objects marked as
   // objc_arc_weak_reference_unavailable
-  if (lifetime == Qualifiers::OCL_Weak) {
-    if (const ObjCObjectPointerType *ObjT =
-          type->getAs<ObjCObjectPointerType>()) {
-      if (ObjCInterfaceDecl *Class = ObjT->getInterfaceDecl()) {
-        if (Class->isArcWeakrefUnavailable()) {
-          S.Diag(AttrLoc, diag::err_arc_unsupported_weak_class);
-          S.Diag(ObjT->getInterfaceDecl()->getLocation(),
-                 diag::note_class_declared);
-        }
-      }
-    }
-  }
+  // if (lifetime == Qualifiers::OCL_Weak) {
+  //   if (const ObjCObjectPointerType *ObjT =
+  //         type->getAs<ObjCObjectPointerType>()) {
+  //     if (ObjCInterfaceDecl *Class = ObjT->getInterfaceDecl()) {
+  //       if (Class->isArcWeakrefUnavailable()) {
+  //         S.Diag(AttrLoc, diag::err_arc_unsupported_weak_class);
+  //         S.Diag(ObjT->getInterfaceDecl()->getLocation(),
+  //                diag::note_class_declared);
+  //       }
+  //     }
+  //   }
+  // }
 
   return true;
 }
@@ -6619,7 +6619,7 @@ static bool handleObjCGCTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
 
   // Delay if this isn't some kind of pointer.
   if (!type->isPointerType() &&
-      !type->isObjCObjectPointerType() &&
+      // !type->isObjCObjectPointerType() &&
       !type->isBlockPointerType())
     return false;
 
@@ -7040,7 +7040,7 @@ static bool checkNullabilityTypeSpecifier(TypeProcessingState &state,
       pointeeType = desugared->getPointeeType().getTypePtr();
 
     if (pointeeType && (pointeeType->isAnyPointerType() ||
-                        pointeeType->isObjCObjectPointerType() ||
+                        // pointeeType->isObjCObjectPointerType() ||
                         pointeeType->isMemberPointerType())) {
       S.Diag(nullabilityLoc, diag::err_nullability_cs_multilevel)
         << DiagNullabilityKind(nullability, true)
@@ -7062,57 +7062,57 @@ static bool checkNullabilityTypeSpecifier(TypeProcessingState &state,
 
 /// Check the application of the Objective-C '__kindof' qualifier to
 /// the given type.
-static bool checkObjCKindOfType(TypeProcessingState &state, QualType &type,
-                                ParsedAttr &attr) {
-  Sema &S = state.getSema();
+// static bool checkObjCKindOfType(TypeProcessingState &state, QualType &type,
+//                                 ParsedAttr &attr) {
+//   Sema &S = state.getSema();
 
-  if (isa<ObjCTypeParamType>(type)) {
-    // Build the attributed type to record where __kindof occurred.
-    type = state.getAttributedType(
-        createSimpleAttr<ObjCKindOfAttr>(S.Context, attr), type, type);
-    return false;
-  }
+//   if (isa<ObjCTypeParamType>(type)) {
+//     // Build the attributed type to record where __kindof occurred.
+//     type = state.getAttributedType(
+//         createSimpleAttr<ObjCKindOfAttr>(S.Context, attr), type, type);
+//     return false;
+//   }
 
-  // Find out if it's an Objective-C object or object pointer type;
-  const ObjCObjectPointerType *ptrType = type->getAs<ObjCObjectPointerType>();
-  const ObjCObjectType *objType = ptrType ? ptrType->getObjectType()
-                                          : type->getAs<ObjCObjectType>();
+//   // Find out if it's an Objective-C object or object pointer type;
+//   const ObjCObjectPointerType *ptrType = type->getAs<ObjCObjectPointerType>();
+//   const ObjCObjectType *objType = ptrType ? ptrType->getObjectType()
+//                                           : type->getAs<ObjCObjectType>();
 
-  // If not, we can't apply __kindof.
-  if (!objType) {
-    // FIXME: Handle dependent types that aren't yet object types.
-    S.Diag(attr.getLoc(), diag::err_objc_kindof_nonobject)
-      << type;
-    return true;
-  }
+//   // If not, we can't apply __kindof.
+//   if (!objType) {
+//     // FIXME: Handle dependent types that aren't yet object types.
+//     S.Diag(attr.getLoc(), diag::err_objc_kindof_nonobject)
+//       << type;
+//     return true;
+//   }
 
-  // Rebuild the "equivalent" type, which pushes __kindof down into
-  // the object type.
-  // There is no need to apply kindof on an unqualified id type.
-  QualType equivType = S.Context.getObjCObjectType(
-      objType->getBaseType(), objType->getTypeArgsAsWritten(),
-      objType->getProtocols(),
-      /*isKindOf=*/objType->isObjCUnqualifiedId() ? false : true);
+//   // Rebuild the "equivalent" type, which pushes __kindof down into
+//   // the object type.
+//   // There is no need to apply kindof on an unqualified id type.
+//   QualType equivType = S.Context.getObjCObjectType(
+//       objType->getBaseType(), objType->getTypeArgsAsWritten(),
+//       objType->getProtocols(),
+//       /*isKindOf=*/objType->isObjCUnqualifiedId() ? false : true);
 
-  // If we started with an object pointer type, rebuild it.
-  if (ptrType) {
-    equivType = S.Context.getObjCObjectPointerType(equivType);
-    if (auto nullability = type->getNullability(S.Context)) {
-      // We create a nullability attribute from the __kindof attribute.
-      // Make sure that will make sense.
-      assert(attr.getAttributeSpellingListIndex() == 0 &&
-             "multiple spellings for __kindof?");
-      Attr *A = createNullabilityAttr(S.Context, attr, *nullability);
-      A->setImplicit(true);
-      equivType = state.getAttributedType(A, equivType, equivType);
-    }
-  }
+//   // If we started with an object pointer type, rebuild it.
+//   if (ptrType) {
+//     equivType = S.Context.getObjCObjectPointerType(equivType);
+//     if (auto nullability = type->getNullability(S.Context)) {
+//       // We create a nullability attribute from the __kindof attribute.
+//       // Make sure that will make sense.
+//       assert(attr.getAttributeSpellingListIndex() == 0 &&
+//              "multiple spellings for __kindof?");
+//       Attr *A = createNullabilityAttr(S.Context, attr, *nullability);
+//       A->setImplicit(true);
+//       equivType = state.getAttributedType(A, equivType, equivType);
+//     }
+//   }
 
-  // Build the attributed type to record where __kindof occurred.
-  type = state.getAttributedType(
-      createSimpleAttr<ObjCKindOfAttr>(S.Context, attr), type, equivType);
-  return false;
-}
+//   // Build the attributed type to record where __kindof occurred.
+//   type = state.getAttributedType(
+//       createSimpleAttr<ObjCKindOfAttr>(S.Context, attr), type, equivType);
+//   return false;
+// }
 
 /// Distribute a nullability type attribute that cannot be applied to
 /// the type specifier to a pointer, block pointer, or member pointer
@@ -7780,7 +7780,7 @@ static void HandleOpenCLAccessAttr(QualType &CurType, const ParsedAttr &Attr,
       } else {
         PrevAccessQual = "read_only";
       }
-    } else if (const BuiltinType* ImgType = BaseTy->getAs<BuiltinType>()) {
+    } /*else if (const BuiltinType* ImgType = BaseTy->getAs<BuiltinType>()) {
 
       switch (ImgType->getKind()) {
         #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
@@ -7791,7 +7791,7 @@ static void HandleOpenCLAccessAttr(QualType &CurType, const ParsedAttr &Attr,
       default:
         llvm_unreachable("Unable to find corresponding image type.");
       }
-    } else {
+    }*/ else {
       llvm_unreachable("unexpected type");
     }
     StringRef AttrName = Attr.getAttrName()->getName();
@@ -8065,27 +8065,27 @@ static void processTypeAttrs(TypeProcessingState &state, QualType &type,
       }
       break;
 
-    case ParsedAttr::AT_ObjCKindOf:
-      // '__kindof' must be part of the decl-specifiers.
-      switch (TAL) {
-      case TAL_DeclSpec:
-        break;
+    // case ParsedAttr::AT_ObjCKindOf:
+    //   // '__kindof' must be part of the decl-specifiers.
+    //   switch (TAL) {
+    //   case TAL_DeclSpec:
+    //     break;
 
-      case TAL_DeclChunk:
-      case TAL_DeclName:
-        state.getSema().Diag(attr.getLoc(),
-                             diag::err_objc_kindof_wrong_position)
-            << FixItHint::CreateRemoval(attr.getLoc())
-            << FixItHint::CreateInsertion(
-                   state.getDeclarator().getDeclSpec().getBeginLoc(),
-                   "__kindof ");
-        break;
-      }
+    //   case TAL_DeclChunk:
+    //   case TAL_DeclName:
+    //     state.getSema().Diag(attr.getLoc(),
+    //                          diag::err_objc_kindof_wrong_position)
+    //         << FixItHint::CreateRemoval(attr.getLoc())
+    //         << FixItHint::CreateInsertion(
+    //                state.getDeclarator().getDeclSpec().getBeginLoc(),
+    //                "__kindof ");
+    //     break;
+    //   }
 
       // Apply it regardless.
-      if (checkObjCKindOfType(state, type, attr))
-        attr.setInvalid();
-      break;
+      // if (checkObjCKindOfType(state, type, attr))
+      //   attr.setInvalid();
+      // break;
 
     case ParsedAttr::AT_NoThrow:
     // Exception Specifications aren't generally supported in C mode throughout
@@ -8468,13 +8468,13 @@ bool Sema::RequireCompleteTypeImpl(SourceLocation Loc, QualType T,
   }
 
   TagDecl *Tag = dyn_cast_or_null<TagDecl>(Def);
-  ObjCInterfaceDecl *IFace = dyn_cast_or_null<ObjCInterfaceDecl>(Def);
+  // ObjCInterfaceDecl *IFace = dyn_cast_or_null<ObjCInterfaceDecl>(Def);
 
   // Give the external source a chance to provide a definition of the type.
   // This is kept separate from completing the redeclaration chain so that
   // external sources such as LLDB can avoid synthesizing a type definition
   // unless it's actually needed.
-  if (Tag || IFace) {
+  if (Tag /*|| IFace*/) {
     // Avoid diagnosing invalid decls as incomplete.
     if (Def->isInvalidDecl())
       return true;
@@ -8483,8 +8483,8 @@ bool Sema::RequireCompleteTypeImpl(SourceLocation Loc, QualType T,
     if (auto *Source = Context.getExternalSource()) {
       if (Tag && Tag->hasExternalLexicalStorage())
           Source->CompleteType(Tag);
-      if (IFace && IFace->hasExternalLexicalStorage())
-          Source->CompleteType(IFace);
+      // if (IFace && IFace->hasExternalLexicalStorage())
+      //     Source->CompleteType(IFace);
       // If the external source completed the type, go through the motions
       // again to ensure we're allowed to use the completed type.
       if (!T->isIncompleteType())
@@ -8763,10 +8763,10 @@ static QualType getDecltypeForExpr(Sema &S, Expr *E) {
         return VD->getType();
   } else if (const ObjCIvarRefExpr *IR = dyn_cast<ObjCIvarRefExpr>(E)) {
     return IR->getDecl()->getType();
-  } else if (const ObjCPropertyRefExpr *PR = dyn_cast<ObjCPropertyRefExpr>(E)) {
+  } /*else if (const ObjCPropertyRefExpr *PR = dyn_cast<ObjCPropertyRefExpr>(E)) {
     if (PR->isExplicitProperty())
       return PR->getExplicitProperty()->getType();
-  } else if (auto *PE = dyn_cast<PredefinedExpr>(E)) {
+  } */else if (auto *PE = dyn_cast<PredefinedExpr>(E)) {
     return PE->getType();
   }
 

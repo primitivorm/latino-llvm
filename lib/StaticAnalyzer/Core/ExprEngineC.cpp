@@ -411,12 +411,12 @@ void ExprEngine::VisitCast(const CastExpr *CastE, const Expr *Ex,
       case CK_IntegralComplexToBoolean:
       case CK_IntegralComplexCast:
       case CK_IntegralComplexToFloatingComplex:
-      case CK_CPointerToObjCPointerCast:
-      case CK_BlockPointerToObjCPointerCast:
+      // case CK_CPointerToObjCPointerCast:
+      // case CK_BlockPointerToObjCPointerCast:
       case CK_AnyPointerToBlockPointerCast:
-      case CK_ObjCObjectLValueCast:
+      // case CK_ObjCObjectLValueCast:
       case CK_ZeroToOCLOpaqueType:
-      case CK_IntToOCLSampler:
+      // case CK_IntToOCLSampler:
       case CK_LValueBitCast:
       case CK_FixedPointCast:
       case CK_FixedPointToBoolean:
@@ -895,12 +895,12 @@ VisitUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *Ex,
         // FIXME: Add support for VLA type arguments and VLA expressions.
         // When that happens, we should probably refactor VLASizeChecker's code.
         continue;
-      } else if (T->getAs<ObjCObjectType>()) {
+      } /*else if (T->getAs<ObjCObjectType>()) {
         // Some code tries to take the sizeof an ObjCObjectType, relying that
         // the compiler has laid out its representation.  Just report Unknown
         // for these.
         continue;
-      }
+      }*/
     }
 
     APSInt Value = Ex->EvaluateKnownConstInt(getContext());

@@ -3152,12 +3152,12 @@ static APSInt extractStringLiteralCharacter(EvalInfo &Info, const Expr *Lit,
          "SourceLocExpr should have already been converted to a StringLiteral");
 
   // FIXME: Support MakeStringConstant
-  if (const auto *ObjCEnc = dyn_cast<ObjCEncodeExpr>(Lit)) {
-    std::string Str;
-    Info.Ctx.getObjCEncodingForType(ObjCEnc->getEncodedType(), Str);
-    assert(Index <= Str.size() && "Index too large");
-    return APSInt::getUnsigned(Str.c_str()[Index]);
-  }
+  // if (const auto *ObjCEnc = dyn_cast<ObjCEncodeExpr>(Lit)) {
+  //   std::string Str;
+  //   Info.Ctx.getObjCEncodingForType(ObjCEnc->getEncodedType(), Str);
+  //   assert(Index <= Str.size() && "Index too large");
+  //   return APSInt::getUnsigned(Str.c_str()[Index]);
+  // }
 
   if (auto PE = dyn_cast<PredefinedExpr>(Lit))
     Lit = PE->getFunctionName();
@@ -7701,7 +7701,7 @@ public:
   bool VisitCompoundLiteralExpr(const CompoundLiteralExpr *E);
   bool VisitMemberExpr(const MemberExpr *E);
   bool VisitStringLiteral(const StringLiteral *E) { return Success(E); }
-  bool VisitObjCEncodeExpr(const ObjCEncodeExpr *E) { return Success(E); }
+  // bool VisitObjCEncodeExpr(const ObjCEncodeExpr *E) { return Success(E); }
   bool VisitCXXTypeidExpr(const CXXTypeidExpr *E);
   bool VisitCXXUuidofExpr(const CXXUuidofExpr *E);
   bool VisitArraySubscriptExpr(const ArraySubscriptExpr *E);
@@ -8205,15 +8205,15 @@ public:
   bool VisitBinaryOperator(const BinaryOperator *E);
   bool VisitCastExpr(const CastExpr* E);
   bool VisitUnaryAddrOf(const UnaryOperator *E);
-  bool VisitObjCStringLiteral(const ObjCStringLiteral *E)
-      { return Success(E); }
-  bool VisitObjCBoxedExpr(const ObjCBoxedExpr *E) {
-    if (E->isExpressibleAsConstantInitializer())
-      return Success(E);
-    if (Info.noteFailure())
-      EvaluateIgnoredValue(Info, E->getSubExpr());
-    return Error(E);
-  }
+  // bool VisitObjCStringLiteral(const ObjCStringLiteral *E)
+      // { return Success(E); }
+  // bool VisitObjCBoxedExpr(const ObjCBoxedExpr *E) {
+  //   if (E->isExpressibleAsConstantInitializer())
+  //     return Success(E);
+  //   if (Info.noteFailure())
+  //     EvaluateIgnoredValue(Info, E->getSubExpr());
+  //   return Error(E);
+  // }
   bool VisitAddrLabelExpr(const AddrLabelExpr *E)
       { return Success(E); }
   bool VisitCallExpr(const CallExpr *E);
@@ -8320,8 +8320,8 @@ bool PointerExprEvaluator::VisitCastExpr(const CastExpr *E) {
   default:
     break;
   case CK_BitCast:
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_AnyPointerToBlockPointerCast:
   case CK_AddressSpaceConversion:
     if (!Visit(SubExpr))
@@ -10280,9 +10280,9 @@ public:
     return Success(E->getValue(), E);
   }
 
-  bool VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *E) {
-    return Success(E->getValue(), E);
-  }
+  // bool VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *E) {
+  //   return Success(E->getValue(), E);
+  // }
 
   bool VisitArrayInitIndexExpr(const ArrayInitIndexExpr *E) {
     if (Info.ArrayInitIndex == uint64_t(-1)) {
@@ -10551,20 +10551,20 @@ EvaluateBuiltinClassifyType(QualType T, const LangOptions &LangOpts) {
 
     case BuiltinType::NullPtr:
 
-    case BuiltinType::ObjCId:
-    case BuiltinType::ObjCClass:
-    case BuiltinType::ObjCSel:
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-    case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-    case BuiltinType::OCLSampler:
-    case BuiltinType::OCLEvent:
-    case BuiltinType::OCLClkEvent:
-    case BuiltinType::OCLQueue:
-    case BuiltinType::OCLReserveID:
+    // case BuiltinType::ObjCId:
+    // case BuiltinType::ObjCClass:
+    // case BuiltinType::ObjCSel:
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//     case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+    // case BuiltinType::OCLSampler:
+    // case BuiltinType::OCLEvent:
+    // case BuiltinType::OCLClkEvent:
+    // case BuiltinType::OCLQueue:
+    // case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
     case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -10607,9 +10607,9 @@ EvaluateBuiltinClassifyType(QualType T, const LangOptions &LangOpts) {
   case Type::Vector:
   case Type::ExtVector:
   case Type::ConstantMatrix:
-  case Type::ObjCObject:
-  case Type::ObjCInterface:
-  case Type::ObjCObjectPointer:
+  // case Type::ObjCObject:
+  // case Type::ObjCInterface:
+  // case Type::ObjCObjectPointer:
   case Type::Pipe:
   case Type::ExtInt:
     // GCC classifies vectors as None. We follow its lead and classify all
@@ -12528,21 +12528,21 @@ bool IntExprEvaluator::VisitUnaryExprOrTypeTraitExpr(
                      E);
   }
 
-  case UETT_VecStep: {
-    QualType Ty = E->getTypeOfArgument();
+  // case UETT_VecStep: {
+  //   QualType Ty = E->getTypeOfArgument();
 
-    if (Ty->isVectorType()) {
-      unsigned n = Ty->castAs<VectorType>()->getNumElements();
+  //   if (Ty->isVectorType()) {
+  //     unsigned n = Ty->castAs<VectorType>()->getNumElements();
 
-      // The vec_step built-in functions that take a 3-component
-      // vector return 4. (OpenCL 1.1 spec 6.11.12)
-      if (n == 3)
-        n = 4;
+  //     // The vec_step built-in functions that take a 3-component
+  //     // vector return 4. (OpenCL 1.1 spec 6.11.12)
+  //     if (n == 3)
+  //       n = 4;
 
-      return Success(n, E);
-    } else
-      return Success(1, E);
-  }
+  //     return Success(n, E);
+  //   } else
+  //     return Success(1, E);
+  // }
 
   case UETT_SizeOf: {
     QualType SrcTy = E->getTypeOfArgument();
@@ -12556,13 +12556,13 @@ bool IntExprEvaluator::VisitUnaryExprOrTypeTraitExpr(
       return false;
     return Success(Sizeof, E);
   }
-  case UETT_OpenMPRequiredSimdAlign:
-    assert(E->isArgumentType());
-    return Success(
-        Info.Ctx.toCharUnitsFromBits(
-                    Info.Ctx.getOpenMPDefaultSimdAlign(E->getArgumentType()))
-            .getQuantity(),
-        E);
+  // case UETT_OpenMPRequiredSimdAlign:
+  //   assert(E->isArgumentType());
+  //   return Success(
+  //       Info.Ctx.toCharUnitsFromBits(
+  //                   Info.Ctx.getOpenMPDefaultSimdAlign(E->getArgumentType()))
+  //           .getQuantity(),
+  //       E);
   }
 
   llvm_unreachable("unknown expr/type trait");
@@ -12702,10 +12702,10 @@ bool IntExprEvaluator::VisitCastExpr(const CastExpr *E) {
   case CK_VectorSplat:
   case CK_IntegralToFloating:
   case CK_FloatingCast:
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_AnyPointerToBlockPointerCast:
-  case CK_ObjCObjectLValueCast:
+  // case CK_ObjCObjectLValueCast:
   case CK_FloatingRealToComplex:
   case CK_FloatingComplexToReal:
   case CK_FloatingComplexCast:
@@ -12717,7 +12717,7 @@ bool IntExprEvaluator::VisitCastExpr(const CastExpr *E) {
   case CK_ZeroToOCLOpaqueType:
   case CK_NonAtomicToAtomic:
   case CK_AddressSpaceConversion:
-  case CK_IntToOCLSampler:
+  // case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_IntegralToFixedPoint:
     llvm_unreachable("invalid cast kind for integral value");
@@ -13371,10 +13371,10 @@ bool ComplexExprEvaluator::VisitCastExpr(const CastExpr *E) {
   case CK_FloatingToIntegral:
   case CK_FloatingToBoolean:
   case CK_FloatingCast:
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_AnyPointerToBlockPointerCast:
-  case CK_ObjCObjectLValueCast:
+  // case CK_ObjCObjectLValueCast:
   case CK_FloatingComplexToReal:
   case CK_FloatingComplexToBoolean:
   case CK_IntegralComplexToReal:
@@ -13388,7 +13388,7 @@ bool ComplexExprEvaluator::VisitCastExpr(const CastExpr *E) {
   case CK_ZeroToOCLOpaqueType:
   case CK_NonAtomicToAtomic:
   case CK_AddressSpaceConversion:
-  case CK_IntToOCLSampler:
+  // case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:
@@ -14495,7 +14495,7 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::StmtExprClass:
   case Expr::CXXMemberCallExprClass:
   case Expr::CUDAKernelCallExprClass:
-  case Expr::CXXAddrspaceCastExprClass:
+  // case Expr::CXXAddrspaceCastExprClass:
   case Expr::CXXDynamicCastExprClass:
   case Expr::CXXTypeidExprClass:
   case Expr::CXXUuidofExprClass:
@@ -14526,7 +14526,7 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::ObjCArrayLiteralClass:
   case Expr::ObjCDictionaryLiteralClass:
   case Expr::ObjCEncodeExprClass:
-  case Expr::ObjCMessageExprClass:
+  // case Expr::ObjCMessageExprClass:
   case Expr::ObjCSelectorExprClass:
   case Expr::ObjCProtocolExprClass:
   case Expr::ObjCIvarRefExprClass:

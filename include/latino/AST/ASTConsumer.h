@@ -84,7 +84,7 @@ public:
   /// Handle the specified top-level declaration that occurred inside
   /// and ObjC container.
   /// The default implementation ignored them.
-  virtual void HandleTopLevelDeclInObjCContainer(DeclGroupRef D);
+  // virtual void HandleTopLevelDeclInObjCContainer(DeclGroupRef D);
 
   /// Handle an ImportDecl that was implicitly created due to an
   /// inclusion directive.

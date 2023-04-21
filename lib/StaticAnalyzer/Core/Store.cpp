@@ -16,7 +16,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/LLVM.h"
@@ -75,8 +75,8 @@ const MemRegion *StoreManager::castRegion(const MemRegion *R, QualType CastToTy)
   ASTContext &Ctx = StateMgr.getContext();
 
   // Handle casts to Objective-C objects.
-  if (CastToTy->isObjCObjectPointerType())
-    return R->StripCasts();
+  // if (CastToTy->isObjCObjectPointerType())
+  //   return R->StripCasts();
 
   if (CastToTy->isBlockPointerType()) {
     // FIXME: We may need different solutions, depending on the symbol
@@ -471,15 +471,15 @@ SVal StoreManager::getLValueFieldOrIvar(const Decl *D, SVal Base) {
 
   // NOTE: We must have this check first because ObjCIvarDecl is a subclass
   // of FieldDecl.
-  if (const auto *ID = dyn_cast<ObjCIvarDecl>(D))
-    return loc::MemRegionVal(MRMgr.getObjCIvarRegion(ID, BaseR));
+  // if (const auto *ID = dyn_cast<ObjCIvarDecl>(D))
+  //   return loc::MemRegionVal(MRMgr.getObjCIvarRegion(ID, BaseR));
 
-  return loc::MemRegionVal(MRMgr.getFieldRegion(cast<FieldDecl>(D), BaseR));
+  // return loc::MemRegionVal(MRMgr.getFieldRegion(cast<FieldDecl>(D), BaseR));
 }
 
-SVal StoreManager::getLValueIvar(const ObjCIvarDecl *decl, SVal base) {
-  return getLValueFieldOrIvar(decl, base);
-}
+// SVal StoreManager::getLValueIvar(const ObjCIvarDecl *decl, SVal base) {
+//   return getLValueFieldOrIvar(decl, base);
+// }
 
 SVal StoreManager::getLValueElement(QualType elementType, NonLoc Offset,
                                     SVal Base) {

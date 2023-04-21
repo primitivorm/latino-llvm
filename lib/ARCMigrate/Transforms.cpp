@@ -11,7 +11,7 @@
 #include "latino/ARCMigrate/ARCMT.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/RecursiveASTVisitor.h"
-#include "latino/Analysis/DomainSpecific/CocoaConventions.h"
+// #include "latino/Analysis/DomainSpecific/CocoaConventions.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/Basic/TargetInfo.h"
 #include "latino/Lex/Lexer.h"
@@ -51,15 +51,15 @@ bool trans::canApplyWeak(ASTContext &Ctx, QualType type,
 
   while (const PointerType *ptr = T->getAs<PointerType>())
     T = ptr->getPointeeType();
-  if (const ObjCObjectPointerType *ObjT = T->getAs<ObjCObjectPointerType>()) {
-    ObjCInterfaceDecl *Class = ObjT->getInterfaceDecl();
-    if (!AllowOnUnknownClass && (!Class || Class->getName() == "NSObject"))
-      return false; // id/NSObject is not safe for weak.
-    if (!AllowOnUnknownClass && !Class->hasDefinition())
-      return false; // forward classes are not verifiable, therefore not safe.
-    if (Class && Class->isArcWeakrefUnavailable())
-      return false;
-  }
+  // if (const ObjCObjectPointerType *ObjT = T->getAs<ObjCObjectPointerType>()) {
+  //   ObjCInterfaceDecl *Class = ObjT->getInterfaceDecl();
+  //   if (!AllowOnUnknownClass && (!Class || Class->getName() == "NSObject"))
+  //     return false; // id/NSObject is not safe for weak.
+  //   if (!AllowOnUnknownClass && !Class->hasDefinition())
+  //     return false; // forward classes are not verifiable, therefore not safe.
+  //   if (Class && Class->isArcWeakrefUnavailable())
+  //     return false;
+  // }
 
   return true;
 }
@@ -325,15 +325,15 @@ public:
 
   bool shouldWalkTypesOfTypeLocs() const { return false; }
 
-  bool TraverseObjCImplementationDecl(ObjCImplementationDecl *D) {
-    ObjCImplementationContext ImplCtx(MigrateCtx, D);
-    for (MigrationContext::traverser_iterator
-           I = MigrateCtx.traversers_begin(),
-           E = MigrateCtx.traversers_end(); I != E; ++I)
-      (*I)->traverseObjCImplementation(ImplCtx);
+  // bool TraverseObjCImplementationDecl(ObjCImplementationDecl *D) {
+  //   ObjCImplementationContext ImplCtx(MigrateCtx, D);
+  //   for (MigrationContext::traverser_iterator
+  //          I = MigrateCtx.traversers_begin(),
+  //          E = MigrateCtx.traversers_end(); I != E; ++I)
+  //     (*I)->traverseObjCImplementation(ImplCtx);
 
-    return base::TraverseObjCImplementationDecl(D);
-  }
+  //   return base::TraverseObjCImplementationDecl(D);
+  // }
 
   bool TraverseStmt(Stmt *rootS) {
     if (!rootS)
@@ -530,23 +530,23 @@ static void GCRewriteFinalize(MigrationPass &pass) {
       if (!MD->hasBody())
         continue;
 
-      if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
-        const ObjCMethodDecl *FinalizeM = MD;
-        Transaction Trans(TA);
-        TA.insert(FinalizeM->getSourceRange().getBegin(),
-                  "#if !__has_feature(objc_arc)\n");
-        CharSourceRange::getTokenRange(FinalizeM->getSourceRange());
-        const SourceManager &SM = pass.Ctx.getSourceManager();
-        const LangOptions &LangOpts = pass.Ctx.getLangOpts();
-        bool Invalid;
-        std::string str = "\n#endif\n";
-        str += Lexer::getSourceText(
-                  CharSourceRange::getTokenRange(FinalizeM->getSourceRange()),
-                                    SM, LangOpts, &Invalid);
-        TA.insertAfterToken(FinalizeM->getSourceRange().getEnd(), str);
+      // if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
+      //   const ObjCMethodDecl *FinalizeM = MD;
+      //   Transaction Trans(TA);
+      //   TA.insert(FinalizeM->getSourceRange().getBegin(),
+      //             "#if !__has_feature(objc_arc)\n");
+      //   CharSourceRange::getTokenRange(FinalizeM->getSourceRange());
+      //   const SourceManager &SM = pass.Ctx.getSourceManager();
+      //   const LangOptions &LangOpts = pass.Ctx.getLangOpts();
+      //   bool Invalid;
+      //   std::string str = "\n#endif\n";
+      //   str += Lexer::getSourceText(
+      //             CharSourceRange::getTokenRange(FinalizeM->getSourceRange()),
+      //                               SM, LangOpts, &Invalid);
+      //   TA.insertAfterToken(FinalizeM->getSourceRange().getEnd(), str);
 
-        break;
-      }
+      //   break;
+      // }
     }
   }
 }
@@ -573,7 +573,7 @@ static void independentTransforms(MigrationPass &pass) {
   rewriteAutoreleasePool(pass);
   removeRetainReleaseDeallocFinalize(pass);
   rewriteUnusedInitDelegate(pass);
-  removeZeroOutPropsInDeallocFinalize(pass);
+  // removeZeroOutPropsInDeallocFinalize(pass);
   makeAssignARCSafe(pass);
   rewriteUnbridgedCasts(pass);
   checkAPIUses(pass);

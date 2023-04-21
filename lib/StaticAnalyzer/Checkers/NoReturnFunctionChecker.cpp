@@ -24,18 +24,18 @@
 using namespace latino;
 using namespace ento;
 
-namespace {
+// namespace {
 
-class NoReturnFunctionChecker : public Checker< check::PostCall,
-                                                check::PostObjCMessage > {
-  mutable Selector HandleFailureInFunctionSel;
-  mutable Selector HandleFailureInMethodSel;
-public:
-  void checkPostCall(const CallEvent &CE, CheckerContext &C) const;
-  void checkPostObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
-};
+// class NoReturnFunctionChecker : public Checker< check::PostCall,
+//                                                 check::PostObjCMessage > {
+//   mutable Selector HandleFailureInFunctionSel;
+//   mutable Selector HandleFailureInMethodSel;
+// public:
+//   void checkPostCall(const CallEvent &CE, CheckerContext &C) const;
+//   void checkPostObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
+// };
 
-}
+// }
 
 void NoReturnFunctionChecker::checkPostCall(const CallEvent &CE,
                                             CheckerContext &C) const {
@@ -84,60 +84,60 @@ void NoReturnFunctionChecker::checkPostCall(const CallEvent &CE,
     C.generateSink(C.getState(), C.getPredecessor());
 }
 
-void NoReturnFunctionChecker::checkPostObjCMessage(const ObjCMethodCall &Msg,
-                                                   CheckerContext &C) const {
-  // Check if the method is annotated with analyzer_noreturn.
-  if (const ObjCMethodDecl *MD = Msg.getDecl()) {
-    MD = MD->getCanonicalDecl();
-    if (MD->hasAttr<AnalyzerNoReturnAttr>()) {
-      C.generateSink(C.getState(), C.getPredecessor());
-      return;
-    }
-  }
+// void NoReturnFunctionChecker::checkPostObjCMessage(const ObjCMethodCall &Msg,
+//                                                    CheckerContext &C) const {
+//   // Check if the method is annotated with analyzer_noreturn.
+//   if (const ObjCMethodDecl *MD = Msg.getDecl()) {
+//     MD = MD->getCanonicalDecl();
+//     if (MD->hasAttr<AnalyzerNoReturnAttr>()) {
+//       C.generateSink(C.getState(), C.getPredecessor());
+//       return;
+//     }
+//   }
 
-  // HACK: This entire check is to handle two messages in the Cocoa frameworks:
-  // -[NSAssertionHandler
-  //    handleFailureInMethod:object:file:lineNumber:description:]
-  // -[NSAssertionHandler
-  //    handleFailureInFunction:file:lineNumber:description:]
-  // Eventually these should be annotated with __attribute__((noreturn)).
-  // Because ObjC messages use dynamic dispatch, it is not generally safe to
-  // assume certain methods can't return. In cases where it is definitely valid,
-  // see if you can mark the methods noreturn or analyzer_noreturn instead of
-  // adding more explicit checks to this method.
+//   // HACK: This entire check is to handle two messages in the Cocoa frameworks:
+//   // -[NSAssertionHandler
+//   //    handleFailureInMethod:object:file:lineNumber:description:]
+//   // -[NSAssertionHandler
+//   //    handleFailureInFunction:file:lineNumber:description:]
+//   // Eventually these should be annotated with __attribute__((noreturn)).
+//   // Because ObjC messages use dynamic dispatch, it is not generally safe to
+//   // assume certain methods can't return. In cases where it is definitely valid,
+//   // see if you can mark the methods noreturn or analyzer_noreturn instead of
+//   // adding more explicit checks to this method.
 
-  if (!Msg.isInstanceMessage())
-    return;
+//   if (!Msg.isInstanceMessage())
+//     return;
 
-  const ObjCInterfaceDecl *Receiver = Msg.getReceiverInterface();
-  if (!Receiver)
-    return;
-  if (!Receiver->getIdentifier()->isStr("NSAssertionHandler"))
-    return;
+//   const ObjCInterfaceDecl *Receiver = Msg.getReceiverInterface();
+//   if (!Receiver)
+//     return;
+//   if (!Receiver->getIdentifier()->isStr("NSAssertionHandler"))
+//     return;
 
-  Selector Sel = Msg.getSelector();
-  switch (Sel.getNumArgs()) {
-  default:
-    return;
-  case 4:
-    lazyInitKeywordSelector(HandleFailureInFunctionSel, C.getASTContext(),
-                            "handleFailureInFunction", "file", "lineNumber",
-                            "description");
-    if (Sel != HandleFailureInFunctionSel)
-      return;
-    break;
-  case 5:
-    lazyInitKeywordSelector(HandleFailureInMethodSel, C.getASTContext(),
-                            "handleFailureInMethod", "object", "file",
-                            "lineNumber", "description");
-    if (Sel != HandleFailureInMethodSel)
-      return;
-    break;
-  }
+//   Selector Sel = Msg.getSelector();
+//   switch (Sel.getNumArgs()) {
+//   default:
+//     return;
+//   case 4:
+//     lazyInitKeywordSelector(HandleFailureInFunctionSel, C.getASTContext(),
+//                             "handleFailureInFunction", "file", "lineNumber",
+//                             "description");
+//     if (Sel != HandleFailureInFunctionSel)
+//       return;
+//     break;
+//   case 5:
+//     lazyInitKeywordSelector(HandleFailureInMethodSel, C.getASTContext(),
+//                             "handleFailureInMethod", "object", "file",
+//                             "lineNumber", "description");
+//     if (Sel != HandleFailureInMethodSel)
+//       return;
+//     break;
+//   }
 
-  // If we got here, it's one of the messages we care about.
-  C.generateSink(C.getState(), C.getPredecessor());
-}
+//   // If we got here, it's one of the messages we care about.
+//   C.generateSink(C.getState(), C.getPredecessor());
+// }
 
 void ento::registerNoReturnFunctionChecker(CheckerManager &mgr) {
   mgr.registerChecker<NoReturnFunctionChecker>();

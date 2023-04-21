@@ -105,11 +105,11 @@ static std::string GetEnclosingDeclContextSignature(const Decl *D) {
     case Decl::Function:
       DeclName = GetSignature(dyn_cast_or_null<FunctionDecl>(ND));
       break;
-    case Decl::ObjCMethod:
-      // ObjC Methods can not be overloaded, qualified name uniquely identifies
-      // the method.
-      DeclName = ND->getQualifiedNameAsString();
-      break;
+    // case Decl::ObjCMethod:
+    //   // ObjC Methods can not be overloaded, qualified name uniquely identifies
+    //   // the method.
+    //   DeclName = ND->getQualifiedNameAsString();
+    //   break;
     default:
       break;
     }

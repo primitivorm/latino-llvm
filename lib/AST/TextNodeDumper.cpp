@@ -284,16 +284,16 @@ void TextNodeDumper::Visit(const Decl *D) {
       OS << " consteval";
   }
 
-  if (!isa<FunctionDecl>(*D)) {
-    const auto *MD = dyn_cast<ObjCMethodDecl>(D);
-    if (!MD || !MD->isThisDeclarationADefinition()) {
-      const auto *DC = dyn_cast<DeclContext>(D);
-      if (DC && DC->hasExternalLexicalStorage()) {
-        ColorScope Color(OS, ShowColors, UndeserializedColor);
-        OS << " <undeserialized declarations>";
-      }
-    }
-  }
+  // if (!isa<FunctionDecl>(*D)) {
+  //   const auto *MD = dyn_cast<ObjCMethodDecl>(D);
+  //   if (!MD || !MD->isThisDeclarationADefinition()) {
+  //     const auto *DC = dyn_cast<DeclContext>(D);
+  //     if (DC && DC->hasExternalLexicalStorage()) {
+  //       ColorScope Color(OS, ShowColors, UndeserializedColor);
+  //       OS << " <undeserialized declarations>";
+  //     }
+  //   }
+  // }
 
   ConstDeclVisitor<TextNodeDumper>::Visit(D);
 }
@@ -994,16 +994,16 @@ void TextNodeDumper::VisitUnresolvedLookupExpr(
     dumpPointer(*I);
 }
 
-void TextNodeDumper::VisitObjCIvarRefExpr(const ObjCIvarRefExpr *Node) {
-  {
-    ColorScope Color(OS, ShowColors, DeclKindNameColor);
-    OS << " " << Node->getDecl()->getDeclKindName() << "Decl";
-  }
-  OS << "='" << *Node->getDecl() << "'";
-  dumpPointer(Node->getDecl());
-  if (Node->isFreeIvar())
-    OS << " isFreeIvar";
-}
+// void TextNodeDumper::VisitObjCIvarRefExpr(const ObjCIvarRefExpr *Node) {
+//   {
+//     ColorScope Color(OS, ShowColors, DeclKindNameColor);
+//     OS << " " << Node->getDecl()->getDeclKindName() << "Decl";
+//   }
+//   OS << "='" << *Node->getDecl() << "'";
+//   dumpPointer(Node->getDecl());
+//   if (Node->isFreeIvar())
+//     OS << " isFreeIvar";
+// }
 
 void TextNodeDumper::VisitPredefinedExpr(const PredefinedExpr *Node) {
   OS << " " << PredefinedExpr::getIdentKindName(Node->getIdentKind());
@@ -1207,108 +1207,108 @@ void TextNodeDumper::VisitCXXDependentScopeMemberExpr(
   OS << " " << (Node->isArrow() ? "->" : ".") << Node->getMember();
 }
 
-void TextNodeDumper::VisitObjCMessageExpr(const ObjCMessageExpr *Node) {
-  OS << " selector=";
-  Node->getSelector().print(OS);
-  switch (Node->getReceiverKind()) {
-  case ObjCMessageExpr::Instance:
-    break;
+// void TextNodeDumper::VisitObjCMessageExpr(const ObjCMessageExpr *Node) {
+//   OS << " selector=";
+//   Node->getSelector().print(OS);
+//   switch (Node->getReceiverKind()) {
+//   case ObjCMessageExpr::Instance:
+//     break;
 
-  case ObjCMessageExpr::Class:
-    OS << " class=";
-    dumpBareType(Node->getClassReceiver());
-    break;
+//   case ObjCMessageExpr::Class:
+//     OS << " class=";
+//     dumpBareType(Node->getClassReceiver());
+//     break;
 
-  case ObjCMessageExpr::SuperInstance:
-    OS << " super (instance)";
-    break;
+//   case ObjCMessageExpr::SuperInstance:
+//     OS << " super (instance)";
+//     break;
 
-  case ObjCMessageExpr::SuperClass:
-    OS << " super (class)";
-    break;
-  }
-}
+//   case ObjCMessageExpr::SuperClass:
+//     OS << " super (class)";
+//     break;
+//   }
+// }
 
-void TextNodeDumper::VisitObjCBoxedExpr(const ObjCBoxedExpr *Node) {
-  if (auto *BoxingMethod = Node->getBoxingMethod()) {
-    OS << " selector=";
-    BoxingMethod->getSelector().print(OS);
-  }
-}
+// void TextNodeDumper::VisitObjCBoxedExpr(const ObjCBoxedExpr *Node) {
+//   if (auto *BoxingMethod = Node->getBoxingMethod()) {
+//     OS << " selector=";
+//     BoxingMethod->getSelector().print(OS);
+//   }
+// }
 
 void TextNodeDumper::VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node) {
   if (!Node->getCatchParamDecl())
     OS << " catch all";
 }
 
-void TextNodeDumper::VisitObjCEncodeExpr(const ObjCEncodeExpr *Node) {
-  dumpType(Node->getEncodedType());
-}
+// void TextNodeDumper::VisitObjCEncodeExpr(const ObjCEncodeExpr *Node) {
+//   dumpType(Node->getEncodedType());
+// }
 
-void TextNodeDumper::VisitObjCSelectorExpr(const ObjCSelectorExpr *Node) {
-  OS << " ";
-  Node->getSelector().print(OS);
-}
+// void TextNodeDumper::VisitObjCSelectorExpr(const ObjCSelectorExpr *Node) {
+//   OS << " ";
+//   Node->getSelector().print(OS);
+// }
 
-void TextNodeDumper::VisitObjCProtocolExpr(const ObjCProtocolExpr *Node) {
-  OS << ' ' << *Node->getProtocol();
-}
+// void TextNodeDumper::VisitObjCProtocolExpr(const ObjCProtocolExpr *Node) {
+//   OS << ' ' << *Node->getProtocol();
+// }
 
-void TextNodeDumper::VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *Node) {
-  if (Node->isImplicitProperty()) {
-    OS << " Kind=MethodRef Getter=\"";
-    if (Node->getImplicitPropertyGetter())
-      Node->getImplicitPropertyGetter()->getSelector().print(OS);
-    else
-      OS << "(null)";
+// void TextNodeDumper::VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *Node) {
+//   if (Node->isImplicitProperty()) {
+//     OS << " Kind=MethodRef Getter=\"";
+//     if (Node->getImplicitPropertyGetter())
+//       Node->getImplicitPropertyGetter()->getSelector().print(OS);
+//     else
+//       OS << "(null)";
 
-    OS << "\" Setter=\"";
-    if (ObjCMethodDecl *Setter = Node->getImplicitPropertySetter())
-      Setter->getSelector().print(OS);
-    else
-      OS << "(null)";
-    OS << "\"";
-  } else {
-    OS << " Kind=PropertyRef Property=\"" << *Node->getExplicitProperty()
-       << '"';
-  }
+//     OS << "\" Setter=\"";
+//     if (ObjCMethodDecl *Setter = Node->getImplicitPropertySetter())
+//       Setter->getSelector().print(OS);
+//     else
+//       OS << "(null)";
+//     OS << "\"";
+//   } else {
+//     OS << " Kind=PropertyRef Property=\"" << *Node->getExplicitProperty()
+//        << '"';
+//   }
 
-  if (Node->isSuperReceiver())
-    OS << " super";
+//   if (Node->isSuperReceiver())
+//     OS << " super";
 
-  OS << " Messaging=";
-  if (Node->isMessagingGetter() && Node->isMessagingSetter())
-    OS << "Getter&Setter";
-  else if (Node->isMessagingGetter())
-    OS << "Getter";
-  else if (Node->isMessagingSetter())
-    OS << "Setter";
-}
+//   OS << " Messaging=";
+//   if (Node->isMessagingGetter() && Node->isMessagingSetter())
+//     OS << "Getter&Setter";
+//   else if (Node->isMessagingGetter())
+//     OS << "Getter";
+//   else if (Node->isMessagingSetter())
+//     OS << "Setter";
+// }
 
-void TextNodeDumper::VisitObjCSubscriptRefExpr(
-    const ObjCSubscriptRefExpr *Node) {
-  if (Node->isArraySubscriptRefExpr())
-    OS << " Kind=ArraySubscript GetterForArray=\"";
-  else
-    OS << " Kind=DictionarySubscript GetterForDictionary=\"";
-  if (Node->getAtIndexMethodDecl())
-    Node->getAtIndexMethodDecl()->getSelector().print(OS);
-  else
-    OS << "(null)";
+// void TextNodeDumper::VisitObjCSubscriptRefExpr(
+//     const ObjCSubscriptRefExpr *Node) {
+//   if (Node->isArraySubscriptRefExpr())
+//     OS << " Kind=ArraySubscript GetterForArray=\"";
+//   else
+//     OS << " Kind=DictionarySubscript GetterForDictionary=\"";
+//   if (Node->getAtIndexMethodDecl())
+//     Node->getAtIndexMethodDecl()->getSelector().print(OS);
+//   else
+//     OS << "(null)";
 
-  if (Node->isArraySubscriptRefExpr())
-    OS << "\" SetterForArray=\"";
-  else
-    OS << "\" SetterForDictionary=\"";
-  if (Node->setAtIndexMethodDecl())
-    Node->setAtIndexMethodDecl()->getSelector().print(OS);
-  else
-    OS << "(null)";
-}
+//   if (Node->isArraySubscriptRefExpr())
+//     OS << "\" SetterForArray=\"";
+//   else
+//     OS << "\" SetterForDictionary=\"";
+//   if (Node->setAtIndexMethodDecl())
+//     Node->setAtIndexMethodDecl()->getSelector().print(OS);
+//   else
+//     OS << "(null)";
+// }
 
-void TextNodeDumper::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *Node) {
-  OS << " " << (Node->getValue() ? "__objc_yes" : "__objc_no");
-}
+// void TextNodeDumper::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *Node) {
+//   OS << " " << (Node->getValue() ? "__objc_yes" : "__objc_no");
+// }
 
 void TextNodeDumper::VisitOMPIteratorExpr(const OMPIteratorExpr *Node) {
   OS << " ";
@@ -1483,9 +1483,9 @@ void TextNodeDumper::VisitInjectedClassNameType(
   dumpDeclRef(T->getDecl());
 }
 
-void TextNodeDumper::VisitObjCInterfaceType(const ObjCInterfaceType *T) {
-  dumpDeclRef(T->getDecl());
-}
+// void TextNodeDumper::VisitObjCInterfaceType(const ObjCInterfaceType *T) {
+//   dumpDeclRef(T->getDecl());
+// }
 
 void TextNodeDumper::VisitPackExpansionType(const PackExpansionType *T) {
   if (auto N = T->getNumExpansions())
@@ -2084,157 +2084,157 @@ void TextNodeDumper::VisitFriendDecl(const FriendDecl *D) {
     dumpType(T->getType());
 }
 
-void TextNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-  dumpName(D);
-  dumpType(D->getType());
-  if (D->getSynthesize())
-    OS << " synthesize";
+// void TextNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+//   dumpName(D);
+//   dumpType(D->getType());
+//   if (D->getSynthesize())
+//     OS << " synthesize";
 
-  switch (D->getAccessControl()) {
-  case ObjCIvarDecl::None:
-    OS << " none";
-    break;
-  case ObjCIvarDecl::Private:
-    OS << " private";
-    break;
-  case ObjCIvarDecl::Protected:
-    OS << " protected";
-    break;
-  case ObjCIvarDecl::Public:
-    OS << " public";
-    break;
-  case ObjCIvarDecl::Package:
-    OS << " package";
-    break;
-  }
-}
+//   switch (D->getAccessControl()) {
+//   case ObjCIvarDecl::None:
+//     OS << " none";
+//     break;
+//   case ObjCIvarDecl::Private:
+//     OS << " private";
+//     break;
+//   case ObjCIvarDecl::Protected:
+//     OS << " protected";
+//     break;
+//   case ObjCIvarDecl::Public:
+//     OS << " public";
+//     break;
+//   case ObjCIvarDecl::Package:
+//     OS << " package";
+//     break;
+//   }
+// }
 
-void TextNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
-  if (D->isInstanceMethod())
-    OS << " -";
-  else
-    OS << " +";
-  dumpName(D);
-  dumpType(D->getReturnType());
+// void TextNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
+//   if (D->isInstanceMethod())
+//     OS << " -";
+//   else
+//     OS << " +";
+//   dumpName(D);
+//   dumpType(D->getReturnType());
 
-  if (D->isVariadic())
-    OS << " variadic";
-}
+//   if (D->isVariadic())
+//     OS << " variadic";
+// }
 
-void TextNodeDumper::VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D) {
-  dumpName(D);
-  switch (D->getVariance()) {
-  case ObjCTypeParamVariance::Invariant:
-    break;
+// void TextNodeDumper::VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D) {
+//   dumpName(D);
+//   switch (D->getVariance()) {
+//   case ObjCTypeParamVariance::Invariant:
+//     break;
 
-  case ObjCTypeParamVariance::Covariant:
-    OS << " covariant";
-    break;
+//   case ObjCTypeParamVariance::Covariant:
+//     OS << " covariant";
+//     break;
 
-  case ObjCTypeParamVariance::Contravariant:
-    OS << " contravariant";
-    break;
-  }
+//   case ObjCTypeParamVariance::Contravariant:
+//     OS << " contravariant";
+//     break;
+//   }
 
-  if (D->hasExplicitBound())
-    OS << " bounded";
-  dumpType(D->getUnderlyingType());
-}
+//   if (D->hasExplicitBound())
+//     OS << " bounded";
+//   dumpType(D->getUnderlyingType());
+// }
 
-void TextNodeDumper::VisitObjCCategoryDecl(const ObjCCategoryDecl *D) {
-  dumpName(D);
-  dumpDeclRef(D->getClassInterface());
-  dumpDeclRef(D->getImplementation());
-  for (const auto *P : D->protocols())
-    dumpDeclRef(P);
-}
+// void TextNodeDumper::VisitObjCCategoryDecl(const ObjCCategoryDecl *D) {
+//   dumpName(D);
+//   dumpDeclRef(D->getClassInterface());
+//   dumpDeclRef(D->getImplementation());
+//   for (const auto *P : D->protocols())
+//     dumpDeclRef(P);
+// }
 
-void TextNodeDumper::VisitObjCCategoryImplDecl(const ObjCCategoryImplDecl *D) {
-  dumpName(D);
-  dumpDeclRef(D->getClassInterface());
-  dumpDeclRef(D->getCategoryDecl());
-}
+// void TextNodeDumper::VisitObjCCategoryImplDecl(const ObjCCategoryImplDecl *D) {
+//   dumpName(D);
+//   dumpDeclRef(D->getClassInterface());
+//   dumpDeclRef(D->getCategoryDecl());
+// }
 
-void TextNodeDumper::VisitObjCProtocolDecl(const ObjCProtocolDecl *D) {
-  dumpName(D);
+// void TextNodeDumper::VisitObjCProtocolDecl(const ObjCProtocolDecl *D) {
+//   dumpName(D);
 
-  for (const auto *Child : D->protocols())
-    dumpDeclRef(Child);
-}
+//   for (const auto *Child : D->protocols())
+//     dumpDeclRef(Child);
+// }
 
-void TextNodeDumper::VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D) {
-  dumpName(D);
-  dumpDeclRef(D->getSuperClass(), "super");
+// void TextNodeDumper::VisitObjCInterfaceDecl(const ObjCInterfaceDecl *D) {
+//   dumpName(D);
+//   dumpDeclRef(D->getSuperClass(), "super");
 
-  dumpDeclRef(D->getImplementation());
-  for (const auto *Child : D->protocols())
-    dumpDeclRef(Child);
-}
+//   dumpDeclRef(D->getImplementation());
+//   for (const auto *Child : D->protocols())
+//     dumpDeclRef(Child);
+// }
 
-void TextNodeDumper::VisitObjCImplementationDecl(
-    const ObjCImplementationDecl *D) {
-  dumpName(D);
-  dumpDeclRef(D->getSuperClass(), "super");
-  dumpDeclRef(D->getClassInterface());
-}
+// void TextNodeDumper::VisitObjCImplementationDecl(
+//     const ObjCImplementationDecl *D) {
+//   dumpName(D);
+//   dumpDeclRef(D->getSuperClass(), "super");
+//   dumpDeclRef(D->getClassInterface());
+// }
 
-void TextNodeDumper::VisitObjCCompatibleAliasDecl(
-    const ObjCCompatibleAliasDecl *D) {
-  dumpName(D);
-  dumpDeclRef(D->getClassInterface());
-}
+// void TextNodeDumper::VisitObjCCompatibleAliasDecl(
+//     const ObjCCompatibleAliasDecl *D) {
+//   dumpName(D);
+//   dumpDeclRef(D->getClassInterface());
+// }
 
-void TextNodeDumper::VisitObjCPropertyDecl(const ObjCPropertyDecl *D) {
-  dumpName(D);
-  dumpType(D->getType());
+// void TextNodeDumper::VisitObjCPropertyDecl(const ObjCPropertyDecl *D) {
+//   dumpName(D);
+//   dumpType(D->getType());
 
-  if (D->getPropertyImplementation() == ObjCPropertyDecl::Required)
-    OS << " required";
-  else if (D->getPropertyImplementation() == ObjCPropertyDecl::Optional)
-    OS << " optional";
+//   if (D->getPropertyImplementation() == ObjCPropertyDecl::Required)
+//     OS << " required";
+//   else if (D->getPropertyImplementation() == ObjCPropertyDecl::Optional)
+//     OS << " optional";
 
-  ObjCPropertyAttribute::Kind Attrs = D->getPropertyAttributes();
-  if (Attrs != ObjCPropertyAttribute::kind_noattr) {
-    if (Attrs & ObjCPropertyAttribute::kind_readonly)
-      OS << " readonly";
-    if (Attrs & ObjCPropertyAttribute::kind_assign)
-      OS << " assign";
-    if (Attrs & ObjCPropertyAttribute::kind_readwrite)
-      OS << " readwrite";
-    if (Attrs & ObjCPropertyAttribute::kind_retain)
-      OS << " retain";
-    if (Attrs & ObjCPropertyAttribute::kind_copy)
-      OS << " copy";
-    if (Attrs & ObjCPropertyAttribute::kind_nonatomic)
-      OS << " nonatomic";
-    if (Attrs & ObjCPropertyAttribute::kind_atomic)
-      OS << " atomic";
-    if (Attrs & ObjCPropertyAttribute::kind_weak)
-      OS << " weak";
-    if (Attrs & ObjCPropertyAttribute::kind_strong)
-      OS << " strong";
-    if (Attrs & ObjCPropertyAttribute::kind_unsafe_unretained)
-      OS << " unsafe_unretained";
-    if (Attrs & ObjCPropertyAttribute::kind_class)
-      OS << " class";
-    if (Attrs & ObjCPropertyAttribute::kind_direct)
-      OS << " direct";
-    if (Attrs & ObjCPropertyAttribute::kind_getter)
-      dumpDeclRef(D->getGetterMethodDecl(), "getter");
-    if (Attrs & ObjCPropertyAttribute::kind_setter)
-      dumpDeclRef(D->getSetterMethodDecl(), "setter");
-  }
-}
+//   ObjCPropertyAttribute::Kind Attrs = D->getPropertyAttributes();
+//   if (Attrs != ObjCPropertyAttribute::kind_noattr) {
+//     if (Attrs & ObjCPropertyAttribute::kind_readonly)
+//       OS << " readonly";
+//     if (Attrs & ObjCPropertyAttribute::kind_assign)
+//       OS << " assign";
+//     if (Attrs & ObjCPropertyAttribute::kind_readwrite)
+//       OS << " readwrite";
+//     if (Attrs & ObjCPropertyAttribute::kind_retain)
+//       OS << " retain";
+//     if (Attrs & ObjCPropertyAttribute::kind_copy)
+//       OS << " copy";
+//     if (Attrs & ObjCPropertyAttribute::kind_nonatomic)
+//       OS << " nonatomic";
+//     if (Attrs & ObjCPropertyAttribute::kind_atomic)
+//       OS << " atomic";
+//     if (Attrs & ObjCPropertyAttribute::kind_weak)
+//       OS << " weak";
+//     if (Attrs & ObjCPropertyAttribute::kind_strong)
+//       OS << " strong";
+//     if (Attrs & ObjCPropertyAttribute::kind_unsafe_unretained)
+//       OS << " unsafe_unretained";
+//     if (Attrs & ObjCPropertyAttribute::kind_class)
+//       OS << " class";
+//     if (Attrs & ObjCPropertyAttribute::kind_direct)
+//       OS << " direct";
+//     if (Attrs & ObjCPropertyAttribute::kind_getter)
+//       dumpDeclRef(D->getGetterMethodDecl(), "getter");
+//     if (Attrs & ObjCPropertyAttribute::kind_setter)
+//       dumpDeclRef(D->getSetterMethodDecl(), "setter");
+//   }
+// }
 
-void TextNodeDumper::VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D) {
-  dumpName(D->getPropertyDecl());
-  if (D->getPropertyImplementation() == ObjCPropertyImplDecl::Synthesize)
-    OS << " synthesize";
-  else
-    OS << " dynamic";
-  dumpDeclRef(D->getPropertyDecl());
-  dumpDeclRef(D->getPropertyIvarDecl());
-}
+// void TextNodeDumper::VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D) {
+//   dumpName(D->getPropertyDecl());
+//   if (D->getPropertyImplementation() == ObjCPropertyImplDecl::Synthesize)
+//     OS << " synthesize";
+//   else
+//     OS << " dynamic";
+//   dumpDeclRef(D->getPropertyDecl());
+//   dumpDeclRef(D->getPropertyIvarDecl());
+// }
 
 void TextNodeDumper::VisitBlockDecl(const BlockDecl *D) {
   if (D->isVariadic())

@@ -233,7 +233,7 @@ static void generateDiagnosticsForCallLike(ProgramStateRef CurrSt,
     }
   } else if (isa<CXXNewExpr>(S)) {
     os << "Operator 'new'";
-  } else {
+  } /*else {
     assert(isa<ObjCMessageExpr>(S));
     CallEventRef<ObjCMethodCall> Call =
         Mgr.getObjCMethodCall(cast<ObjCMessageExpr>(S), CurrSt, LCtx);
@@ -249,7 +249,7 @@ static void generateDiagnosticsForCallLike(ProgramStateRef CurrSt,
       os << "Subscript";
       break;
     }
-  }
+  }*/
 
   Optional<CallEventRef<>> CE = Mgr.getCall(S, CurrSt, LCtx);
   auto Idx = findArgIdxOfSymbol(CurrSt, LCtx, Sym, CE);
@@ -270,7 +270,7 @@ static void generateDiagnosticsForCallLike(ProgramStateRef CurrSt,
   } else if (CurrV.getObjKind() == ObjKind::Generalized) {
     os << "an object of type '" << Sym->getType().getAsString()
        << "' with a ";
-  } else {
+  } /*else {
     assert(CurrV.getObjKind() == ObjKind::ObjC);
     QualType T = Sym->getType();
     if (!isa<ObjCObjectPointerType>(T)) {
@@ -280,7 +280,7 @@ static void generateDiagnosticsForCallLike(ProgramStateRef CurrSt,
       os << "an instance of " << PT->getPointeeType().getAsString()
          << " with a ";
     }
-  }
+  }*/
 
   if (CurrV.isOwned()) {
     os << "+1 retain count";
@@ -513,21 +513,21 @@ RefCountReportVisitor::VisitNode(const ExplodedNode *N, BugReporterContext &BRC,
     } else if (const ObjCBoxedExpr *BL = dyn_cast<ObjCBoxedExpr>(S)) {
       if (isNumericLiteralExpression(BL->getSubExpr()))
         os << "NSNumber literal is an object with a +0 retain count";
-      else {
-        const ObjCInterfaceDecl *BoxClass = nullptr;
-        if (const ObjCMethodDecl *Method = BL->getBoxingMethod())
-          BoxClass = Method->getClassInterface();
+      // else {
+      //   const ObjCInterfaceDecl *BoxClass = nullptr;
+      //   if (const ObjCMethodDecl *Method = BL->getBoxingMethod())
+      //     BoxClass = Method->getClassInterface();
 
-        // We should always be able to find the boxing class interface,
-        // but consider this future-proofing.
-        if (BoxClass) {
-          os << *BoxClass << " b";
-        } else {
-          os << "B";
-        }
+      //   // We should always be able to find the boxing class interface,
+      //   // but consider this future-proofing.
+      //   if (BoxClass) {
+      //     os << *BoxClass << " b";
+      //   } else {
+      //     os << "B";
+      //   }
 
-        os << "oxed expression produces an object with a +0 retain count";
-      }
+      //   os << "oxed expression produces an object with a +0 retain count";
+      // }
     } else if (isa<ObjCIvarRefExpr>(S)) {
       os << "Object loaded from instance variable";
     } else {
@@ -762,8 +762,8 @@ RefLeakReportVisitor::getEndPath(BugReporterContext &BRC,
     // to the caller for NS objects.
     const Decl *D = &EndN->getCodeDecl();
 
-    os << (isa<ObjCMethodDecl>(D) ? " is returned from a method "
-                                  : " is returned from a function ");
+    os << (/*isa<ObjCMethodDecl>(D) ? " is returned from a method "
+                                  :*/ " is returned from a function ");
 
     if (D->hasAttr<CFReturnsNotRetainedAttr>()) {
       os << "that is annotated as CF_RETURNS_NOT_RETAINED";
@@ -772,17 +772,17 @@ RefLeakReportVisitor::getEndPath(BugReporterContext &BRC,
     } else if (D->hasAttr<OSReturnsNotRetainedAttr>()) {
       os << "that is annotated as OS_RETURNS_NOT_RETAINED";
     } else {
-      if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(D)) {
-        if (BRC.getASTContext().getLangOpts().ObjCAutoRefCount) {
-          os << "managed by Automatic Reference Counting";
-        } else {
-          os << "whose name ('" << MD->getSelector().getAsString()
-             << "') does not start with "
-                "'copy', 'mutableCopy', 'alloc' or 'new'."
-                "  This violates the naming convention rules"
-                " given in the Memory Management Guide for Cocoa";
-        }
-      } else {
+      // if (const ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(D)) {
+      //   if (BRC.getASTContext().getLangOpts().ObjCAutoRefCount) {
+      //     os << "managed by Automatic Reference Counting";
+      //   } else {
+      //     os << "whose name ('" << MD->getSelector().getAsString()
+      //        << "') does not start with "
+      //           "'copy', 'mutableCopy', 'alloc' or 'new'."
+      //           "  This violates the naming convention rules"
+      //           " given in the Memory Management Guide for Cocoa";
+      //   }
+      // } else {
         const FunctionDecl *FD = cast<FunctionDecl>(D);
         ObjKind K = RV->getObjKind();
         if (K == ObjKind::ObjC || K == ObjKind::CF) {
@@ -797,7 +797,7 @@ RefLeakReportVisitor::getEndPath(BugReporterContext &BRC,
           os << "whose name ('" << FuncName
             << "') starts with '" << StringRef(FuncName).substr(0, 3) << "'";
         }
-      }
+      // }
     }
   } else {
     os << " is not referenced later in this execution path and has a retain "

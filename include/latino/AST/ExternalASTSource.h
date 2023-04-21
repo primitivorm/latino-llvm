@@ -46,7 +46,7 @@ class DeclarationName;
 class FieldDecl;
 class IdentifierInfo;
 class NamedDecl;
-class ObjCInterfaceDecl;
+// class ObjCInterfaceDecl;
 class RecordDecl;
 class Selector;
 class Stmt;
@@ -214,7 +214,7 @@ public:
   /// This routine will only be invoked if the "externally completed" bit is
   /// set on the ObjCInterfaceDecl via the function
   /// \c ObjCInterfaceDecl::setExternallyCompleted().
-  virtual void CompleteType(ObjCInterfaceDecl *Class);
+  // virtual void CompleteType(ObjCInterfaceDecl *Class);
 
   /// Loads comment ranges.
   virtual void ReadComments();

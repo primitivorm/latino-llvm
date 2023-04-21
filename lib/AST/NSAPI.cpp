@@ -8,7 +8,7 @@
 
 #include "latino/AST/NSAPI.h"
 #include "latino/AST/ASTContext.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "llvm/ADT/StringSwitch.h"
 
@@ -380,16 +380,16 @@ NSAPI::getNSNumberFactoryMethodKind(QualType T) const {
   if (!BT)
     return None;
 
-  const TypedefType *TDT = T->getAs<TypedefType>();
-  if (TDT) {
-    QualType TDTTy = QualType(TDT, 0);
-    if (isObjCBOOLType(TDTTy))
-      return NSAPI::NSNumberWithBool;
-    if (isObjCNSIntegerType(TDTTy))
-      return NSAPI::NSNumberWithInteger;
-    if (isObjCNSUIntegerType(TDTTy))
-      return NSAPI::NSNumberWithUnsignedInteger;
-  }
+  // const TypedefType *TDT = T->getAs<TypedefType>();
+  // if (TDT) {
+  //   QualType TDTTy = QualType(TDT, 0);
+  //   // if (isObjCBOOLType(TDTTy))
+  //   //   return NSAPI::NSNumberWithBool;
+  //   // if (isObjCNSIntegerType(TDTTy))
+  //   //   return NSAPI::NSNumberWithInteger;
+  //   // if (isObjCNSUIntegerType(TDTTy))
+  //   //   return NSAPI::NSNumberWithUnsignedInteger;
+  // }
 
   switch (BT->getKind()) {
   case BuiltinType::Char_S:
@@ -457,20 +457,20 @@ NSAPI::getNSNumberFactoryMethodKind(QualType T) const {
   case BuiltinType::Float16:
   case BuiltinType::Float128:
   case BuiltinType::NullPtr:
-  case BuiltinType::ObjCClass:
-  case BuiltinType::ObjCId:
-  case BuiltinType::ObjCSel:
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-  case BuiltinType::OCLSampler:
-  case BuiltinType::OCLEvent:
-  case BuiltinType::OCLClkEvent:
-  case BuiltinType::OCLQueue:
-  case BuiltinType::OCLReserveID:
+  // case BuiltinType::ObjCClass:
+  // case BuiltinType::ObjCId:
+  // case BuiltinType::ObjCSel:
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+  // case BuiltinType::OCLSampler:
+  // case BuiltinType::OCLEvent:
+  // case BuiltinType::OCLClkEvent:
+  // case BuiltinType::OCLQueue:
+  // case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -480,7 +480,7 @@ NSAPI::getNSNumberFactoryMethodKind(QualType T) const {
   case BuiltinType::UnknownAny:
   case BuiltinType::ARCUnbridgedCast:
   case BuiltinType::Half:
-  case BuiltinType::PseudoObject:
+  // case BuiltinType::PseudoObject:
   case BuiltinType::BuiltinFn:
   case BuiltinType::IncompleteMatrixIdx:
   case BuiltinType::OMPArraySection:
@@ -493,18 +493,18 @@ NSAPI::getNSNumberFactoryMethodKind(QualType T) const {
   return None;
 }
 
-/// Returns true if \param T is a typedef of "BOOL" in objective-c.
-bool NSAPI::isObjCBOOLType(QualType T) const {
-  return isObjCTypedef(T, "BOOL", BOOLId);
-}
-/// Returns true if \param T is a typedef of "NSInteger" in objective-c.
-bool NSAPI::isObjCNSIntegerType(QualType T) const {
-  return isObjCTypedef(T, "NSInteger", NSIntegerId);
-}
-/// Returns true if \param T is a typedef of "NSUInteger" in objective-c.
-bool NSAPI::isObjCNSUIntegerType(QualType T) const {
-  return isObjCTypedef(T, "NSUInteger", NSUIntegerId);
-}
+// /// Returns true if \param T is a typedef of "BOOL" in objective-c.
+// bool NSAPI::isObjCBOOLType(QualType T) const {
+//   return isObjCTypedef(T, "BOOL", BOOLId);
+// }
+// /// Returns true if \param T is a typedef of "NSInteger" in objective-c.
+// bool NSAPI::isObjCNSIntegerType(QualType T) const {
+//   return isObjCTypedef(T, "NSInteger", NSIntegerId);
+// }
+// /// Returns true if \param T is a typedef of "NSUInteger" in objective-c.
+// bool NSAPI::isObjCNSUIntegerType(QualType T) const {
+//   return isObjCTypedef(T, "NSUInteger", NSUIntegerId);
+// }
 
 StringRef NSAPI::GetNSIntegralKind(QualType T) const {
   if (!Ctx.getLangOpts().ObjC || T.isNull())
@@ -537,62 +537,62 @@ bool NSAPI::isMacroDefined(StringRef Id) const {
   return Ctx.Idents.get(Id).hasMacroDefinition();
 }
 
-bool NSAPI::isSubclassOfNSClass(ObjCInterfaceDecl *InterfaceDecl,
-                                NSClassIdKindKind NSClassKind) const {
-  if (!InterfaceDecl) {
-    return false;
-  }
+// bool NSAPI::isSubclassOfNSClass(ObjCInterfaceDecl *InterfaceDecl,
+//                                 NSClassIdKindKind NSClassKind) const {
+//   if (!InterfaceDecl) {
+//     return false;
+//   }
 
-  IdentifierInfo *NSClassID = getNSClassId(NSClassKind);
+//   IdentifierInfo *NSClassID = getNSClassId(NSClassKind);
 
-  bool IsSubclass = false;
-  do {
-    IsSubclass = NSClassID == InterfaceDecl->getIdentifier();
+//   bool IsSubclass = false;
+//   do {
+//     IsSubclass = NSClassID == InterfaceDecl->getIdentifier();
 
-    if (IsSubclass) {
-      break;
-    }
-  } while ((InterfaceDecl = InterfaceDecl->getSuperClass()));
+//     if (IsSubclass) {
+//       break;
+//     }
+//   } while ((InterfaceDecl = InterfaceDecl->getSuperClass()));
 
-  return IsSubclass;
-}
+//   return IsSubclass;
+// }
 
-bool NSAPI::isObjCTypedef(QualType T,
-                          StringRef name, IdentifierInfo *&II) const {
-  if (!Ctx.getLangOpts().ObjC)
-    return false;
-  if (T.isNull())
-    return false;
+// bool NSAPI::isObjCTypedef(QualType T,
+//                           StringRef name, IdentifierInfo *&II) const {
+//   if (!Ctx.getLangOpts().ObjC)
+//     return false;
+//   if (T.isNull())
+//     return false;
 
-  if (!II)
-    II = &Ctx.Idents.get(name);
+//   if (!II)
+//     II = &Ctx.Idents.get(name);
 
-  while (const TypedefType *TDT = T->getAs<TypedefType>()) {
-    if (TDT->getDecl()->getDeclName().getAsIdentifierInfo() == II)
-      return true;
-    T = TDT->desugar();
-  }
+//   while (const TypedefType *TDT = T->getAs<TypedefType>()) {
+//     if (TDT->getDecl()->getDeclName().getAsIdentifierInfo() == II)
+//       return true;
+//     T = TDT->desugar();
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
-bool NSAPI::isObjCEnumerator(const Expr *E,
-                             StringRef name, IdentifierInfo *&II) const {
-  if (!Ctx.getLangOpts().ObjC)
-    return false;
-  if (!E)
-    return false;
+// bool NSAPI::isObjCEnumerator(const Expr *E,
+//                              StringRef name, IdentifierInfo *&II) const {
+//   if (!Ctx.getLangOpts().ObjC)
+//     return false;
+//   if (!E)
+//     return false;
 
-  if (!II)
-    II = &Ctx.Idents.get(name);
+//   if (!II)
+//     II = &Ctx.Idents.get(name);
 
-  if (const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(E->IgnoreParenImpCasts()))
-    if (const EnumConstantDecl *
-          EnumD = dyn_cast_or_null<EnumConstantDecl>(DRE->getDecl()))
-      return EnumD->getIdentifier() == II;
+//   if (const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(E->IgnoreParenImpCasts()))
+//     if (const EnumConstantDecl *
+//           EnumD = dyn_cast_or_null<EnumConstantDecl>(DRE->getDecl()))
+//       return EnumD->getIdentifier() == II;
 
-  return false;
-}
+//   return false;
+// }
 
 Selector NSAPI::getOrInitSelector(ArrayRef<StringRef> Ids,
                                   Selector &Sel) const {

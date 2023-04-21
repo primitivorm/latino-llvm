@@ -14,7 +14,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -796,8 +796,8 @@ PathDiagnosticRange
       break;
     }
     case DeclK:
-      if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-        return MD->getSourceRange();
+      // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+      //   return MD->getSourceRange();
       if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
         if (Stmt *Body = FD->getBody())
           return Body->getSourceRange();
@@ -864,10 +864,10 @@ void PathDiagnosticCallPiece::setCallee(const CallEnter &CE,
   // non-autosynthesized callbacks.
   // Unless set here, the IsCalleeAnAutosynthesizedPropertyAccessor flag
   // defaults to false.
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(Callee))
-    IsCalleeAnAutosynthesizedPropertyAccessor = (
-        MD->isPropertyAccessor() &&
-        CalleeCtx->getAnalysisDeclContext()->isBodyAutosynthesized());
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(Callee))
+  //   IsCalleeAnAutosynthesizedPropertyAccessor = (
+  //       MD->isPropertyAccessor() &&
+  //       CalleeCtx->getAnalysisDeclContext()->isBodyAutosynthesized());
 }
 
 static void describeTemplateParameters(raw_ostream &Out,

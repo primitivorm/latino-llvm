@@ -25,7 +25,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/SourceManager.h"
@@ -66,8 +66,8 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
   case Decl::Field:
   case Decl::MSProperty:
   case Decl::IndirectField:
-  case Decl::ObjCIvar:
-  case Decl::ObjCAtDefsField:
+  // case Decl::ObjCIvar:
+  // case Decl::ObjCAtDefsField:
   case Decl::ParmVar:
   case Decl::ImplicitParam:
   case Decl::ClassTemplate:
@@ -75,20 +75,20 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
   case Decl::FunctionTemplate:
   case Decl::TypeAliasTemplate:
   case Decl::TemplateTemplateParm:
-  case Decl::ObjCMethod:
-  case Decl::ObjCCategory:
-  case Decl::ObjCProtocol:
-  case Decl::ObjCInterface:
-  case Decl::ObjCCategoryImpl:
-  case Decl::ObjCImplementation:
-  case Decl::ObjCProperty:
-  case Decl::ObjCCompatibleAlias:
+  // case Decl::ObjCMethod:
+  // case Decl::ObjCCategory:
+  // case Decl::ObjCProtocol:
+  // case Decl::ObjCInterface:
+  // case Decl::ObjCCategoryImpl:
+  // case Decl::ObjCImplementation:
+  // case Decl::ObjCProperty:
+  // case Decl::ObjCCompatibleAlias:
   case Decl::PragmaComment:
   case Decl::PragmaDetectMismatch:
   case Decl::AccessSpec:
   case Decl::LinkageSpec:
   case Decl::Export:
-  case Decl::ObjCPropertyImpl:
+  // case Decl::ObjCPropertyImpl:
   case Decl::FileScopeAsm:
   case Decl::Friend:
   case Decl::FriendTemplate:
@@ -97,7 +97,7 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
   case Decl::ClassScopeFunctionSpecialization:
   case Decl::UsingShadow:
   case Decl::ConstructorUsingShadow:
-  case Decl::ObjCTypeParam:
+  // case Decl::ObjCTypeParam:
   case Decl::Binding:
     llvm_unreachable("Declaration should not be in declstmts!");
   case Decl::Function:  // void X();
@@ -214,8 +214,8 @@ static std::string getStaticDeclName(CodeGenModule &CGM, const VarDecl &D) {
     ContextName = std::string(CGM.getMangledName(FD));
   else if (const auto *BD = dyn_cast<BlockDecl>(DC))
     ContextName = std::string(CGM.getBlockMangledName(GlobalDecl(), BD));
-  else if (const auto *OMD = dyn_cast<ObjCMethodDecl>(DC))
-    ContextName = OMD->getSelector().getAsString();
+  // else if (const auto *OMD = dyn_cast<ObjCMethodDecl>(DC))
+  //   ContextName = OMD->getSelector().getAsString();
   else
     llvm_unreachable("Unknown context for static var decl");
 
@@ -299,11 +299,11 @@ llvm::Constant *CodeGenModule::getOrCreateStaticVarDecl(
     GD = GlobalDecl(DD, Dtor_Base);
   else if (const auto *FD = dyn_cast<FunctionDecl>(DC))
     GD = GlobalDecl(FD);
-  else {
-    // Don't do anything for Obj-C method decls or global closures. We should
-    // never defer them.
-    assert(isa<ObjCMethodDecl>(DC) && "unexpected parent code decl");
-  }
+  // else {
+  //   // Don't do anything for Obj-C method decls or global closures. We should
+  //   // never defer them.
+  //   assert(isa<ObjCMethodDecl>(DC) && "unexpected parent code decl");
+  // }
   if (GD.getDecl()) {
     // Disable emission of the parent function for the OpenMP device codegen.
     CGOpenMPRuntime::DisableAutoDeclareTargetRAII NoDeclTarget(*this);
@@ -1090,9 +1090,9 @@ Address CodeGenModule::createUnnamedGlobalFrom(const VarDecl &D,
       if (const auto *CD = dyn_cast<CXXDestructorDecl>(FD))
         return CD->getNameAsString();
       return std::string(getMangledName(FD));
-    } else if (const auto *OM = dyn_cast<ObjCMethodDecl>(DC)) {
+    } /*else if (const auto *OM = dyn_cast<ObjCMethodDecl>(DC)) {
       return OM->getNameAsString();
-    } else if (isa<BlockDecl>(DC)) {
+    }*/ else if (isa<BlockDecl>(DC)) {
       return "<block>";
     } else if (isa<CapturedDecl>(DC)) {
       return "<captured>";
@@ -1424,8 +1424,8 @@ CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
     // for POD-ness protects us from some of these.
     if (D.getInit() && (Ty->isArrayType() || Ty->isRecordType()) &&
         (D.isConstexpr() ||
-         ((Ty.isPODType(getContext()) ||
-           getContext().getBaseElementType(Ty)->isObjCObjectPointerType()) &&
+         ((Ty.isPODType(getContext()) /*||
+           getContext().getBaseElementType(Ty)->isObjCObjectPointerType()*/) &&
           D.getInit()->isConstantInitializer(getContext(), false)))) {
 
       // If the variable's a const type, and it's neither an NRVO

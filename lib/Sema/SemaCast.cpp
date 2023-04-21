@@ -17,7 +17,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/Basic/PartialDiagnostic.h"
 #include "latino/Basic/TargetInfo.h"
@@ -300,15 +300,15 @@ Sema::BuildCXXNamedCast(SourceLocation OpLoc, tok::TokenKind Kind,
   switch (Kind) {
   default: llvm_unreachable("Unknown C++ cast!");
 
-  case tok::kw_addrspace_cast:
-    if (!TypeDependent) {
-      Op.CheckAddrspaceCast();
-      if (Op.SrcExpr.isInvalid())
-        return ExprError();
-    }
-    return Op.complete(CXXAddrspaceCastExpr::Create(
-        Context, Op.ResultType, Op.ValueKind, Op.Kind, Op.SrcExpr.get(),
-        DestTInfo, OpLoc, Parens.getEnd(), AngleBrackets));
+  // case tok::kw_addrspace_cast:
+  //   if (!TypeDependent) {
+  //     Op.CheckAddrspaceCast();
+  //     if (Op.SrcExpr.isInvalid())
+  //       return ExprError();
+  //   }
+  //   return Op.complete(CXXAddrspaceCastExpr::Create(
+  //       Context, Op.ResultType, Op.ValueKind, Op.Kind, Op.SrcExpr.get(),
+  //       DestTInfo, OpLoc, Parens.getEnd(), AngleBrackets));
 
   case tok::kw_const_cast:
     if (!TypeDependent) {
@@ -672,9 +672,9 @@ CastsAwayConstness(Sema &Self, QualType SrcType, QualType DestType,
     // We do not meaningfully track object const-ness of Objective-C object
     // types. Remove const from the source type if either the source or
     // the destination is an Objective-C object type.
-    if (UnwrappedSrcType->isObjCObjectType() ||
-        UnwrappedDestType->isObjCObjectType())
-      SrcQuals.removeConst();
+    // if (UnwrappedSrcType->isObjCObjectType() ||
+    //     UnwrappedDestType->isObjCObjectType())
+    //   SrcQuals.removeConst();
 
     if (CheckCVR) {
       Qualifiers SrcCvrQuals =
@@ -1308,12 +1308,12 @@ static TryCastResult TryStaticCast(Sema &Self, ExprResult &SrcExpr,
           return TC_Success;
         }
       }
-      else if (DestType->isObjCObjectPointerType()) {
-        // allow both c-style cast and static_cast of objective-c pointers as
-        // they are pervasive.
-        Kind = CK_CPointerToObjCPointerCast;
-        return TC_Success;
-      }
+      // else if (DestType->isObjCObjectPointerType()) {
+      //   // allow both c-style cast and static_cast of objective-c pointers as
+      //   // they are pervasive.
+      //   Kind = CK_CPointerToObjCPointerCast;
+      //   return TC_Success;
+      // }
       else if (CStyle && DestType->isBlockPointerType()) {
         // allow c-style cast of void * to block pointers.
         Kind = CK_AnyPointerToBlockPointerCast;
@@ -1322,11 +1322,11 @@ static TryCastResult TryStaticCast(Sema &Self, ExprResult &SrcExpr,
     }
   }
   // Allow arbitrary objective-c pointer conversion with static casts.
-  if (SrcType->isObjCObjectPointerType() &&
-      DestType->isObjCObjectPointerType()) {
-    Kind = CK_BitCast;
-    return TC_Success;
-  }
+  // if (SrcType->isObjCObjectPointerType() &&
+  //     DestType->isObjCObjectPointerType()) {
+  //   Kind = CK_BitCast;
+  //   return TC_Success;
+  // }
   // Allow ns-pointer to cf-pointer conversion in either direction
   // with static casts.
   if (!CStyle &&
@@ -1816,8 +1816,8 @@ static TryCastResult TryConstCast(Sema &Self, ExprResult &SrcExpr,
   //   the rules for const_cast are the same as those used for pointers.
 
   if (!DestType->isPointerType() &&
-      !DestType->isMemberPointerType() &&
-      !DestType->isObjCObjectPointerType()) {
+      !DestType->isMemberPointerType() /*&&
+      !DestType->isObjCObjectPointerType()*/) {
     // Cannot cast to non-pointer, non-reference type. Note that, if DestType
     // was a reference type, we converted it to a pointer above.
     // The status of rvalue references isn't entirely clear, but it looks like
@@ -2300,9 +2300,9 @@ static TryCastResult TryReinterpretCast(Sema &Self, ExprResult &SrcExpr,
   }
 
   // Cannot convert between block pointers and Objective-C object pointers.
-  if ((SrcType->isBlockPointerType() && DestType->isObjCObjectPointerType()) ||
-      (DestType->isBlockPointerType() && SrcType->isObjCObjectPointerType()))
-    return TC_NotApplicable;
+  // if ((SrcType->isBlockPointerType() && DestType->isObjCObjectPointerType()) ||
+  //     (DestType->isBlockPointerType() && SrcType->isObjCObjectPointerType()))
+  //   return TC_NotApplicable;
 
   // C++ 5.2.10p2: The reinterpret_cast operator shall not cast away constness.
   // The C-style cast operator can.
@@ -2322,8 +2322,8 @@ static TryCastResult TryReinterpretCast(Sema &Self, ExprResult &SrcExpr,
     }
   } else if (IsLValueCast) {
     Kind = CK_LValueBitCast;
-  } else if (DestType->isObjCObjectPointerType()) {
-    Kind = Self.PrepareCastToObjCObjectPointer(SrcExpr);
+  // } else if (DestType->isObjCObjectPointerType()) {
+  //   Kind = Self.PrepareCastToObjCObjectPointer(SrcExpr);
   } else if (DestType->isBlockPointerType()) {
     if (!SrcType->isBlockPointerType()) {
       Kind = CK_AnyPointerToBlockPointerCast;
@@ -2336,11 +2336,11 @@ static TryCastResult TryReinterpretCast(Sema &Self, ExprResult &SrcExpr,
 
   // Any pointer can be cast to an Objective-C pointer type with a C-style
   // cast.
-  if (CStyle && DestType->isObjCObjectPointerType()) {
-    return SuccessResult;
-  }
-  if (CStyle)
-    DiagnoseCastOfObjCSEL(Self, SrcExpr, DestType);
+  // if (CStyle && DestType->isObjCObjectPointerType()) {
+  //   return SuccessResult;
+  // }
+  // if (CStyle)
+  //   DiagnoseCastOfObjCSEL(Self, SrcExpr, DestType);
 
   DiagnoseCallingConvCast(Self, SrcExpr, DestType, OpRange);
 

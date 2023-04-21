@@ -412,7 +412,7 @@ CodeRangeASTSelection::create(SourceRange SelectionRange,
 
 static bool isFunctionLikeDeclaration(const Decl *D) {
   // FIXME (Alex L): Test for BlockDecl.
-  return isa<FunctionDecl>(D) || isa<ObjCMethodDecl>(D);
+  return isa<FunctionDecl>(D) /*|| isa<ObjCMethodDecl>(D)*/;
 }
 
 bool CodeRangeASTSelection::isInFunctionLikeBodyOfCode() const {

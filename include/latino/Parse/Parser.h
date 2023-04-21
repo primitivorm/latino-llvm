@@ -844,7 +844,7 @@ public:
     return Tok.is(tok::identifier) || Tok.is(tok::coloncolon) ||
            (Tok.is(tok::annot_template_id) &&
             NextToken().is(tok::coloncolon)) ||
-           Tok.is(tok::kw_decltype) || Tok.is(tok::kw___super);
+           Tok.is(tok::kw_decltype) || Tok.is(tok::kw_base);
   }
   bool TryAnnotateOptionalCXXScopeToken(bool EnteringContext = false) {
     return MightBeCXXScopeToken() && TryAnnotateCXXScopeToken(EnteringContext);
@@ -871,33 +871,33 @@ private:
   /// TryAltiVecToken - Check for context-sensitive AltiVec identifier tokens,
   /// replacing them with the non-context-sensitive keywords.  This returns
   /// true if the token was replaced.
-  bool TryAltiVecToken(DeclSpec &DS, SourceLocation Loc,
-                       const char *&PrevSpec, unsigned &DiagID,
-                       bool &isInvalid) {
-    if (!getLangOpts().AltiVec && !getLangOpts().ZVector)
-      return false;
+  // bool TryAltiVecToken(DeclSpec &DS, SourceLocation Loc,
+  //                      const char *&PrevSpec, unsigned &DiagID,
+  //                      bool &isInvalid) {
+  //   if (!getLangOpts().AltiVec && !getLangOpts().ZVector)
+  //     return false;
 
-    if (Tok.getIdentifierInfo() != Ident_vector &&
-        Tok.getIdentifierInfo() != Ident_bool &&
-        (!getLangOpts().AltiVec || Tok.getIdentifierInfo() != Ident_pixel))
-      return false;
+  //   if (Tok.getIdentifierInfo() != Ident_vector &&
+  //       Tok.getIdentifierInfo() != Ident_bool &&
+  //       (!getLangOpts().AltiVec || Tok.getIdentifierInfo() != Ident_pixel))
+  //     return false;
 
-    return TryAltiVecTokenOutOfLine(DS, Loc, PrevSpec, DiagID, isInvalid);
-  }
+  //   return TryAltiVecTokenOutOfLine(DS, Loc, PrevSpec, DiagID, isInvalid);
+  // }
 
   /// TryAltiVecVectorToken - Check for context-sensitive AltiVec vector
   /// identifier token, replacing it with the non-context-sensitive __vector.
   /// This returns true if the token was replaced.
-  bool TryAltiVecVectorToken() {
-    if ((!getLangOpts().AltiVec && !getLangOpts().ZVector) ||
-        Tok.getIdentifierInfo() != Ident_vector) return false;
-    return TryAltiVecVectorTokenOutOfLine();
-  }
+  // bool TryAltiVecVectorToken() {
+  //   if ((!getLangOpts().AltiVec && !getLangOpts().ZVector) ||
+  //       Tok.getIdentifierInfo() != Ident_vector) return false;
+  //   return TryAltiVecVectorTokenOutOfLine();
+  // }
 
-  bool TryAltiVecVectorTokenOutOfLine();
-  bool TryAltiVecTokenOutOfLine(DeclSpec &DS, SourceLocation Loc,
-                                const char *&PrevSpec, unsigned &DiagID,
-                                bool &isInvalid);
+  // bool TryAltiVecVectorTokenOutOfLine();
+  // bool TryAltiVecTokenOutOfLine(DeclSpec &DS, SourceLocation Loc,
+  //                               const char *&PrevSpec, unsigned &DiagID,
+  //                               bool &isInvalid);
 
   /// Returns true if the current token is the identifier 'instancetype'.
   ///
@@ -1597,7 +1597,7 @@ private:
 
   // Objective-C External Declarations
   void MaybeSkipAttributes(tok::ObjCKeywordKind Kind);
-  DeclGroupPtrTy ParseObjCAtDirectives(ParsedAttributesWithRange &Attrs);
+  // DeclGroupPtrTy ParseObjCAtDirectives(ParsedAttributesWithRange &Attrs);
   // DeclGroupPtrTy ParseObjCAtClassDeclaration(SourceLocation atLoc);
   // Decl *ParseObjCAtInterfaceDeclaration(SourceLocation AtLoc,
   //                                       ParsedAttributes &prefixAttrs);
@@ -1612,60 +1612,60 @@ private:
                                         BalancedDelimiterTracker &T,
                                         SmallVectorImpl<Decl *> &AllIvarDecls,
                                         bool RBraceMissing);
-  void ParseObjCClassInstanceVariables(Decl *interfaceDecl,
-                                       tok::ObjCKeywordKind visibility,
-                                       SourceLocation atLoc);
-  bool ParseObjCProtocolReferences(SmallVectorImpl<Decl *> &P,
-                                   SmallVectorImpl<SourceLocation> &PLocs,
-                                   bool WarnOnDeclarations,
-                                   bool ForObjCContainer,
-                                   SourceLocation &LAngleLoc,
-                                   SourceLocation &EndProtoLoc,
-                                   bool consumeLastToken);
+  // void ParseObjCClassInstanceVariables(Decl *interfaceDecl,
+  //                                      tok::ObjCKeywordKind visibility,
+  //                                      SourceLocation atLoc);
+  // bool ParseObjCProtocolReferences(SmallVectorImpl<Decl *> &P,
+  //                                  SmallVectorImpl<SourceLocation> &PLocs,
+  //                                  bool WarnOnDeclarations,
+  //                                  bool ForObjCContainer,
+  //                                  SourceLocation &LAngleLoc,
+  //                                  SourceLocation &EndProtoLoc,
+  //                                  bool consumeLastToken);
 
   /// Parse the first angle-bracket-delimited clause for an
   /// Objective-C object or object pointer type, which may be either
   /// type arguments or protocol qualifiers.
-  void parseObjCTypeArgsOrProtocolQualifiers(
-         ParsedType baseType,
-         SourceLocation &typeArgsLAngleLoc,
-         SmallVectorImpl<ParsedType> &typeArgs,
-         SourceLocation &typeArgsRAngleLoc,
-         SourceLocation &protocolLAngleLoc,
-         SmallVectorImpl<Decl *> &protocols,
-         SmallVectorImpl<SourceLocation> &protocolLocs,
-         SourceLocation &protocolRAngleLoc,
-         bool consumeLastToken,
-         bool warnOnIncompleteProtocols);
+  // void parseObjCTypeArgsOrProtocolQualifiers(
+  //        ParsedType baseType,
+  //        SourceLocation &typeArgsLAngleLoc,
+  //        SmallVectorImpl<ParsedType> &typeArgs,
+  //        SourceLocation &typeArgsRAngleLoc,
+  //        SourceLocation &protocolLAngleLoc,
+  //        SmallVectorImpl<Decl *> &protocols,
+  //        SmallVectorImpl<SourceLocation> &protocolLocs,
+  //        SourceLocation &protocolRAngleLoc,
+  //        bool consumeLastToken,
+  //        bool warnOnIncompleteProtocols);
 
   /// Parse either Objective-C type arguments or protocol qualifiers; if the
   /// former, also parse protocol qualifiers afterward.
-  void parseObjCTypeArgsAndProtocolQualifiers(
-         ParsedType baseType,
-         SourceLocation &typeArgsLAngleLoc,
-         SmallVectorImpl<ParsedType> &typeArgs,
-         SourceLocation &typeArgsRAngleLoc,
-         SourceLocation &protocolLAngleLoc,
-         SmallVectorImpl<Decl *> &protocols,
-         SmallVectorImpl<SourceLocation> &protocolLocs,
-         SourceLocation &protocolRAngleLoc,
-         bool consumeLastToken);
+  // void parseObjCTypeArgsAndProtocolQualifiers(
+  //        ParsedType baseType,
+  //        SourceLocation &typeArgsLAngleLoc,
+  //        SmallVectorImpl<ParsedType> &typeArgs,
+  //        SourceLocation &typeArgsRAngleLoc,
+  //        SourceLocation &protocolLAngleLoc,
+  //        SmallVectorImpl<Decl *> &protocols,
+  //        SmallVectorImpl<SourceLocation> &protocolLocs,
+  //        SourceLocation &protocolRAngleLoc,
+  //        bool consumeLastToken);
 
   /// Parse a protocol qualifier type such as '<NSCopying>', which is
   /// an anachronistic way of writing 'id<NSCopying>'.
-  TypeResult parseObjCProtocolQualifierType(SourceLocation &rAngleLoc);
+  // TypeResult parseObjCProtocolQualifierType(SourceLocation &rAngleLoc);
 
   /// Parse Objective-C type arguments and protocol qualifiers, extending the
   /// current type with the parsed result.
-  TypeResult parseObjCTypeArgsAndProtocolQualifiers(SourceLocation loc,
-                                                    ParsedType type,
-                                                    bool consumeLastToken,
-                                                    SourceLocation &endLoc);
+  // TypeResult parseObjCTypeArgsAndProtocolQualifiers(SourceLocation loc,
+  //                                                   ParsedType type,
+  //                                                   bool consumeLastToken,
+  //                                                   SourceLocation &endLoc);
 
-  void ParseObjCInterfaceDeclList(tok::ObjCKeywordKind contextKey,
-                                  Decl *CDecl);
-  DeclGroupPtrTy ParseObjCAtProtocolDeclaration(SourceLocation atLoc,
-                                                ParsedAttributes &prefixAttrs);
+  // void ParseObjCInterfaceDeclList(tok::ObjCKeywordKind contextKey,
+  //                                 Decl *CDecl);
+  // DeclGroupPtrTy ParseObjCAtProtocolDeclaration(SourceLocation atLoc,
+  //                                               ParsedAttributes &prefixAttrs);
 
   struct ObjCImplParsingDataRAII {
     Parser &P;
@@ -1690,12 +1690,12 @@ private:
   ObjCImplParsingDataRAII *CurParsedObjCImpl;
   void StashAwayMethodOrFunctionBodyTokens(Decl *MDecl);
 
-  DeclGroupPtrTy ParseObjCAtImplementationDeclaration(SourceLocation AtLoc,
-                                                      ParsedAttributes &Attrs);
-  DeclGroupPtrTy ParseObjCAtEndDeclaration(SourceRange atEnd);
-  Decl *ParseObjCAtAliasDeclaration(SourceLocation atLoc);
-  Decl *ParseObjCPropertySynthesize(SourceLocation atLoc);
-  Decl *ParseObjCPropertyDynamic(SourceLocation atLoc);
+  // DeclGroupPtrTy ParseObjCAtImplementationDeclaration(SourceLocation AtLoc,
+  //                                                     ParsedAttributes &Attrs);
+  // DeclGroupPtrTy ParseObjCAtEndDeclaration(SourceRange atEnd);
+  // Decl *ParseObjCAtAliasDeclaration(SourceLocation atLoc);
+  // Decl *ParseObjCPropertySynthesize(SourceLocation atLoc);
+  // Decl *ParseObjCPropertyDynamic(SourceLocation atLoc);
 
   IdentifierInfo *ParseObjCSelectorPiece(SourceLocation &MethodLocation);
   // Definitions for Objective-c context sensitive keywords recognition.
@@ -1708,18 +1708,18 @@ private:
 
   bool isTokIdentifier_in() const;
 
-  ParsedType ParseObjCTypeName(ObjCDeclSpec &DS, DeclaratorContext Ctx,
-                               ParsedAttributes *ParamAttrs);
+  // ParsedType ParseObjCTypeName(ObjCDeclSpec &DS, DeclaratorContext Ctx,
+  //                              ParsedAttributes *ParamAttrs);
   void ParseObjCMethodRequirement();
-  Decl *ParseObjCMethodPrototype(
-            tok::ObjCKeywordKind MethodImplKind = tok::objc_not_keyword,
-            bool MethodDefinition = true);
-  Decl *ParseObjCMethodDecl(SourceLocation mLoc, tok::TokenKind mType,
-            tok::ObjCKeywordKind MethodImplKind = tok::objc_not_keyword,
-            bool MethodDefinition=true);
-  void ParseObjCPropertyAttribute(ObjCDeclSpec &DS);
+  // Decl *ParseObjCMethodPrototype(
+  //           tok::ObjCKeywordKind MethodImplKind = tok::objc_not_keyword,
+  //           bool MethodDefinition = true);
+  // Decl *ParseObjCMethodDecl(SourceLocation mLoc, tok::TokenKind mType,
+  //           tok::ObjCKeywordKind MethodImplKind = tok::objc_not_keyword,
+  //           bool MethodDefinition=true);
+  // void ParseObjCPropertyAttribute(ObjCDeclSpec &DS);
 
-  Decl *ParseObjCMethodDefinition();
+  // Decl *ParseObjCMethodDefinition();
 
 public:
   //===--------------------------------------------------------------------===//
@@ -1751,7 +1751,7 @@ public:
   ExprResult ParseStringLiteralExpression(bool AllowUserDefinedLiteral = false);
 
 private:
-  ExprResult ParseExpressionWithLeadingAt(SourceLocation AtLoc);
+  // ExprResult ParseExpressionWithLeadingAt(SourceLocation AtLoc);
 
   // ExprResult ParseExpressionWithLeadingExtension(SourceLocation ExtLoc);
 
@@ -1799,7 +1799,7 @@ private:
 
   ExprResult ParsePostfixExpressionSuffix(ExprResult LHS);
   ExprResult ParseUnaryExprOrTypeTraitExpression();
-  ExprResult ParseBuiltinPrimaryExpression();
+  // ExprResult ParseBuiltinPrimaryExpression();
   // ExprResult ParseUniqueStableNameExpression();
 
   ExprResult ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
@@ -2012,26 +2012,26 @@ private:
 
   //===--------------------------------------------------------------------===//
   // Objective-C Expressions
-  ExprResult ParseObjCAtExpression(SourceLocation AtLocation);
-  ExprResult ParseObjCStringLiteral(SourceLocation AtLoc);
-  ExprResult ParseObjCCharacterLiteral(SourceLocation AtLoc);
-  ExprResult ParseObjCNumericLiteral(SourceLocation AtLoc);
-  ExprResult ParseObjCBooleanLiteral(SourceLocation AtLoc, bool ArgValue);
-  ExprResult ParseObjCArrayLiteral(SourceLocation AtLoc);
-  ExprResult ParseObjCDictionaryLiteral(SourceLocation AtLoc);
-  ExprResult ParseObjCBoxedExpr(SourceLocation AtLoc);
-  ExprResult ParseObjCEncodeExpression(SourceLocation AtLoc);
-  ExprResult ParseObjCSelectorExpression(SourceLocation AtLoc);
-  ExprResult ParseObjCProtocolExpression(SourceLocation AtLoc);
-  bool isSimpleObjCMessageExpression();
-  ExprResult ParseObjCMessageExpression();
-  ExprResult ParseObjCMessageExpressionBody(SourceLocation LBracloc,
-                                            SourceLocation SuperLoc,
-                                            ParsedType ReceiverType,
-                                            Expr *ReceiverExpr);
-  ExprResult ParseAssignmentExprWithObjCMessageExprStart(
-      SourceLocation LBracloc, SourceLocation SuperLoc,
-      ParsedType ReceiverType, Expr *ReceiverExpr);
+  // ExprResult ParseObjCAtExpression(SourceLocation AtLocation);
+  // ExprResult ParseObjCStringLiteral(SourceLocation AtLoc);
+  // ExprResult ParseObjCCharacterLiteral(SourceLocation AtLoc);
+  // ExprResult ParseObjCNumericLiteral(SourceLocation AtLoc);
+  // ExprResult ParseObjCBooleanLiteral(SourceLocation AtLoc, bool ArgValue);
+  // ExprResult ParseObjCArrayLiteral(SourceLocation AtLoc);
+  // ExprResult ParseObjCDictionaryLiteral(SourceLocation AtLoc);
+  // ExprResult ParseObjCBoxedExpr(SourceLocation AtLoc);
+  // ExprResult ParseObjCEncodeExpression(SourceLocation AtLoc);
+  // ExprResult ParseObjCSelectorExpression(SourceLocation AtLoc);
+  // ExprResult ParseObjCProtocolExpression(SourceLocation AtLoc);
+  // bool isSimpleObjCMessageExpression();
+  // ExprResult ParseObjCMessageExpression();
+  // ExprResult ParseObjCMessageExpressionBody(SourceLocation LBracloc,
+  //                                           SourceLocation SuperLoc,
+  //                                           ParsedType ReceiverType,
+  //                                           Expr *ReceiverExpr);
+  // ExprResult ParseAssignmentExprWithObjCMessageExprStart(
+  //     SourceLocation LBracloc, SourceLocation SuperLoc,
+  //     ParsedType ReceiverType, Expr *ReceiverExpr);
   bool ParseObjCXXMessageReceiver(bool &IsExpr, void *&TypeOrExpr);
 
   //===--------------------------------------------------------------------===//
@@ -2152,12 +2152,12 @@ private:
   //===--------------------------------------------------------------------===//
   // Objective-C Statements
 
-  StmtResult ParseObjCAtStatement(SourceLocation atLoc,
-                                  ParsedStmtContext StmtCtx);
-  StmtResult ParseObjCTryStmt(SourceLocation atLoc);
-  StmtResult ParseObjCThrowStmt(SourceLocation atLoc);
-  StmtResult ParseObjCSynchronizedStmt(SourceLocation atLoc);
-  StmtResult ParseObjCAutoreleasePoolStmt(SourceLocation atLoc);
+  // StmtResult ParseObjCAtStatement(SourceLocation atLoc,
+  //                                 ParsedStmtContext StmtCtx);
+  // StmtResult ParseObjCTryStmt(SourceLocation atLoc);
+  // StmtResult ParseObjCThrowStmt(SourceLocation atLoc);
+  // StmtResult ParseObjCSynchronizedStmt(SourceLocation atLoc);
+  // StmtResult ParseObjCAutoreleasePoolStmt(SourceLocation atLoc);
 
 
   //===--------------------------------------------------------------------===//
@@ -2344,8 +2344,8 @@ private:
       DeclSpec &DS, AccessSpecifier AS = AS_none,
       DeclSpecContext DSC = DeclSpecContext::DSC_normal);
 
-  void ParseObjCTypeQualifierList(ObjCDeclSpec &DS,
-                                  DeclaratorContext Context);
+  // void ParseObjCTypeQualifierList(ObjCDeclSpec &DS,
+  //                                 DeclaratorContext Context);
 
   void ParseEnumSpecifier(SourceLocation TagLoc, DeclSpec &DS,
                           const ParsedTemplateInfo &TemplateInfo,
@@ -2737,8 +2737,8 @@ private:
   SourceLocation SkipExtendedMicrosoftTypeAttributes();
   // void ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs);
   // void ParseBorlandTypeAttributes(ParsedAttributes &attrs);
-  void ParseOpenCLKernelAttributes(ParsedAttributes &attrs);
-  void ParseOpenCLQualifiers(ParsedAttributes &Attrs);
+  // void ParseOpenCLKernelAttributes(ParsedAttributes &attrs);
+  // void ParseOpenCLQualifiers(ParsedAttributes &Attrs);
   /// Parses opencl_unroll_hint attribute if language is OpenCL v2.0
   /// or higher.
   /// \return false if error happens.

@@ -19,7 +19,7 @@
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"
 #include "latino/Basic/LangStandard.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/Sanitizers.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/TargetOptions.h"

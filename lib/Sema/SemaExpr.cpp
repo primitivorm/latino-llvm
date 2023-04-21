@@ -17,12 +17,12 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/CXXInheritance.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/AST/TypeLoc.h"
@@ -309,16 +309,16 @@ bool Sema::DiagnoseUseOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
     }
   }
 
-  auto getReferencedObjCProp = [](const NamedDecl *D) ->
-                                      const ObjCPropertyDecl * {
-    if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-      return MD->findPropertyDecl();
-    return nullptr;
-  };
-  if (const ObjCPropertyDecl *ObjCPDecl = getReferencedObjCProp(D)) {
+  // auto getReferencedObjCProp = [](const NamedDecl *D) ->
+  //                                     const ObjCPropertyDecl * {
+  //   if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //     return MD->findPropertyDecl();
+  //   return nullptr;
+  // };
+  /*if (const ObjCPropertyDecl *ObjCPDecl = getReferencedObjCProp(D)) {
     if (diagnoseArgIndependentDiagnoseIfAttrs(ObjCPDecl, Loc))
       return true;
-  } else if (diagnoseArgIndependentDiagnoseIfAttrs(D, Loc)) {
+  } else*/ if (diagnoseArgIndependentDiagnoseIfAttrs(D, Loc)) {
       return true;
   }
 
@@ -348,8 +348,8 @@ bool Sema::DiagnoseUseOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
     return true;
   }
 
-  DiagnoseAvailabilityOfDecl(D, Locs, UnknownObjCClass, ObjCPropertyAccess,
-                             AvoidPartialAvailabilityChecks, ClassReceiver);
+  // DiagnoseAvailabilityOfDecl(D, Locs, UnknownObjCClass, ObjCPropertyAccess,
+  //                            AvoidPartialAvailabilityChecks, ClassReceiver);
 
   DiagnoseUnusedOfDecl(*this, D, Loc);
 
@@ -396,10 +396,10 @@ void Sema::DiagnoseSentinelCalls(NamedDecl *D, SourceLocation Loc,
   // the diagnostic.
   enum CalleeType { CT_Function, CT_Method, CT_Block } calleeType;
 
-  if (ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  /*if (ObjCMethodDecl *MD = dyn_cast<ObjCMethodDecl>(D)) {
     numFormalParams = MD->param_size();
     calleeType = CT_Method;
-  } else if (FunctionDecl *FD = dyn_cast<FunctionDecl>(D)) {
+  } else*/ if (FunctionDecl *FD = dyn_cast<FunctionDecl>(D)) {
     numFormalParams = FD->param_size();
     calleeType = CT_Function;
   } else if (isa<VarDecl>(D)) {
@@ -549,58 +549,58 @@ static void CheckForNullPointerDereference(Sema &S, Expr *E) {
 static void DiagnoseDirectIsaAccess(Sema &S, const ObjCIvarRefExpr *OIRE,
                                     SourceLocation AssignLoc,
                                     const Expr* RHS) {
-  const ObjCIvarDecl *IV = OIRE->getDecl();
-  if (!IV)
-    return;
+  // const ObjCIvarDecl *IV = OIRE->getDecl();
+  // if (!IV)
+  //   return;
 
-  DeclarationName MemberName = IV->getDeclName();
-  IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
-  if (!Member || !Member->isStr("isa"))
-    return;
+  // DeclarationName MemberName = IV->getDeclName();
+  // IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
+  // if (!Member || !Member->isStr("isa"))
+  //   return;
 
   const Expr *Base = OIRE->getBase();
   QualType BaseType = Base->getType();
   if (OIRE->isArrow())
     BaseType = BaseType->getPointeeType();
-  if (const ObjCObjectType *OTy = BaseType->getAs<ObjCObjectType>())
-    if (ObjCInterfaceDecl *IDecl = OTy->getInterface()) {
-      ObjCInterfaceDecl *ClassDeclared = nullptr;
-      ObjCIvarDecl *IV = IDecl->lookupInstanceVariable(Member, ClassDeclared);
-      if (!ClassDeclared->getSuperClass()
-          && (*ClassDeclared->ivar_begin()) == IV) {
-        if (RHS) {
-          NamedDecl *ObjectSetClass =
-            S.LookupSingleName(S.TUScope,
-                               &S.Context.Idents.get("object_setClass"),
-                               SourceLocation(), S.LookupOrdinaryName);
-          if (ObjectSetClass) {
-            SourceLocation RHSLocEnd = S.getLocForEndOfToken(RHS->getEndLoc());
-            S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_assign)
-                << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
-                                              "object_setClass(")
-                << FixItHint::CreateReplacement(
-                       SourceRange(OIRE->getOpLoc(), AssignLoc), ",")
-                << FixItHint::CreateInsertion(RHSLocEnd, ")");
-          }
-          else
-            S.Diag(OIRE->getLocation(), diag::warn_objc_isa_assign);
-        } else {
-          NamedDecl *ObjectGetClass =
-            S.LookupSingleName(S.TUScope,
-                               &S.Context.Idents.get("object_getClass"),
-                               SourceLocation(), S.LookupOrdinaryName);
-          if (ObjectGetClass)
-            S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_use)
-                << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
-                                              "object_getClass(")
-                << FixItHint::CreateReplacement(
-                       SourceRange(OIRE->getOpLoc(), OIRE->getEndLoc()), ")");
-          else
-            S.Diag(OIRE->getLocation(), diag::warn_objc_isa_use);
-        }
-        S.Diag(IV->getLocation(), diag::note_ivar_decl);
-      }
-    }
+  // if (const ObjCObjectType *OTy = BaseType->getAs<ObjCObjectType>())
+  //   if (ObjCInterfaceDecl *IDecl = OTy->getInterface()) {
+  //     ObjCInterfaceDecl *ClassDeclared = nullptr;
+  //     ObjCIvarDecl *IV = IDecl->lookupInstanceVariable(Member, ClassDeclared);
+  //     if (!ClassDeclared->getSuperClass()
+  //         && (*ClassDeclared->ivar_begin()) == IV) {
+  //       if (RHS) {
+  //         NamedDecl *ObjectSetClass =
+  //           S.LookupSingleName(S.TUScope,
+  //                              &S.Context.Idents.get("object_setClass"),
+  //                              SourceLocation(), S.LookupOrdinaryName);
+  //         if (ObjectSetClass) {
+  //           SourceLocation RHSLocEnd = S.getLocForEndOfToken(RHS->getEndLoc());
+  //           S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_assign)
+  //               << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
+  //                                             "object_setClass(")
+  //               << FixItHint::CreateReplacement(
+  //                      SourceRange(OIRE->getOpLoc(), AssignLoc), ",")
+  //               << FixItHint::CreateInsertion(RHSLocEnd, ")");
+  //         }
+  //         else
+  //           S.Diag(OIRE->getLocation(), diag::warn_objc_isa_assign);
+  //       } else {
+  //         NamedDecl *ObjectGetClass =
+  //           S.LookupSingleName(S.TUScope,
+  //                              &S.Context.Idents.get("object_getClass"),
+  //                              SourceLocation(), S.LookupOrdinaryName);
+  //         if (ObjectGetClass)
+  //           S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_use)
+  //               << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
+  //                                             "object_getClass(")
+  //               << FixItHint::CreateReplacement(
+  //                      SourceRange(OIRE->getOpLoc(), OIRE->getEndLoc()), ")");
+  //         else
+  //           S.Diag(OIRE->getLocation(), diag::warn_objc_isa_use);
+  //       }
+  //       S.Diag(IV->getLocation(), diag::note_ivar_decl);
+  //     }
+  //   }
 }
 
 ExprResult Sema::DefaultLvalueConversion(Expr *E) {
@@ -859,8 +859,8 @@ Sema::VarArgKind Sema::isValidVarArgType(const QualType &Ty) {
     if (Ty->isVoidType())
       return VAK_Invalid;
 
-    if (Ty->isObjCObjectType())
-      return VAK_Invalid;
+    // if (Ty->isObjCObjectType())
+    //   return VAK_Invalid;
     return VAK_Valid;
   }
 
@@ -885,8 +885,8 @@ Sema::VarArgKind Sema::isValidVarArgType(const QualType &Ty) {
   if (getLangOpts().ObjCAutoRefCount && Ty->isObjCLifetimeType())
     return VAK_Valid;
 
-  if (Ty->isObjCObjectType())
-    return VAK_Invalid;
+  // if (Ty->isObjCObjectType())
+  //   return VAK_Invalid;
 
   if (getLangOpts().MSVCCompat)
     return VAK_MSVCUndefined;
@@ -930,10 +930,10 @@ void Sema::checkVariadicArgument(const Expr *E, VariadicCallType CT) {
       Diag(E->getBeginLoc(),
            diag::err_cannot_pass_non_trivial_c_struct_to_vararg)
           << Ty << CT;
-    else if (Ty->isObjCObjectType())
-      DiagRuntimeBehavior(E->getBeginLoc(), nullptr,
-                          PDiag(diag::err_cannot_pass_objc_interface_to_vararg)
-                              << Ty << CT);
+    // else if (Ty->isObjCObjectType())
+    //   DiagRuntimeBehavior(E->getBeginLoc(), nullptr,
+    //                       PDiag(diag::err_cannot_pass_objc_interface_to_vararg)
+    //                           << Ty << CT);
     else
       Diag(E->getBeginLoc(), diag::err_cannot_pass_to_vararg)
           << isa<InitListExpr>(E) << Ty << CT;
@@ -2216,7 +2216,7 @@ bool Sema::DiagnoseEmptyLookup(Scope *S, CXXScopeSpec &SS, LookupResult &R,
       // to recover well anyway.
       AcceptableWithoutRecovery = isa<TypeDecl>(UnderlyingND) ||
                                   getAsTypeTemplateDecl(UnderlyingND) ||
-                                  isa<ObjCInterfaceDecl>(UnderlyingND);
+                                  /*isa<ObjCInterfaceDecl>(UnderlyingND)*/;
     } else {
       // FIXME: We found a keyword. Suggest it, but don't provide a fix-it
       // because we aren't able to recover.
@@ -2382,7 +2382,7 @@ Sema::ActOnIdExpression(Scope *S, CXXScopeSpec &SS,
       return ActOnDependentIdExpression(SS, TemplateKWLoc, NameInfo,
                                         IsAddressOfOperand, TemplateArgs);
   } else {
-    bool IvarLookupFollowUp = II && !SS.isSet() && getCurMethodDecl();
+    bool IvarLookupFollowUp = II && !SS.isSet() /*&& getCurMethodDecl()*/;
     LookupParsedName(R, S, &SS, !IvarLookupFollowUp);
 
     // If the result might be in a dependent base class, this is a dependent
@@ -2394,9 +2394,9 @@ Sema::ActOnIdExpression(Scope *S, CXXScopeSpec &SS,
     // If this reference is in an Objective-C method, then we need to do
     // some special Objective-C lookup, too.
     if (IvarLookupFollowUp) {
-      ExprResult E(LookupInObjCMethod(R, S, II, true));
-      if (E.isInvalid())
-        return ExprError();
+      // ExprResult E(LookupInObjCMethod(R, S, II, true));
+      // if (E.isInvalid())
+      //   return ExprError();
 
       if (Expr *Ex = E.getAs<Expr>())
         return Ex;
@@ -2476,15 +2476,15 @@ Sema::ActOnIdExpression(Scope *S, CXXScopeSpec &SS,
     // If we found an Objective-C instance variable, let
     // LookupInObjCMethod build the appropriate expression to
     // reference the ivar.
-    if (ObjCIvarDecl *Ivar = R.getAsSingle<ObjCIvarDecl>()) {
-      R.clear();
-      ExprResult E(LookupInObjCMethod(R, S, Ivar->getIdentifier()));
-      // In a hopelessly buggy code, Objective-C instance variable
-      // lookup fails and no expression will be built to reference it.
-      if (!E.isInvalid() && !E.get())
-        return ExprError();
-      return E;
-    }
+    // if (ObjCIvarDecl *Ivar = R.getAsSingle<ObjCIvarDecl>()) {
+    //   R.clear();
+    //   ExprResult E(LookupInObjCMethod(R, S, Ivar->getIdentifier()));
+    //   // In a hopelessly buggy code, Objective-C instance variable
+    //   // lookup fails and no expression will be built to reference it.
+    //   if (!E.isInvalid() && !E.get())
+    //     return ExprError();
+    //   return E;
+    // }
   }
 
   // This is guaranteed from this point on.
@@ -2635,160 +2635,160 @@ ExprResult Sema::BuildQualifiedDeclarationNameExpr(
 ///
 /// Ideally, most of this would be done by lookup, but there's
 /// actually quite a lot of extra work involved.
-DeclResult Sema::LookupIvarInObjCMethod(LookupResult &Lookup, Scope *S,
-                                        IdentifierInfo *II) {
-  SourceLocation Loc = Lookup.getNameLoc();
-  ObjCMethodDecl *CurMethod = getCurMethodDecl();
+// DeclResult Sema::LookupIvarInObjCMethod(LookupResult &Lookup, Scope *S,
+//                                         IdentifierInfo *II) {
+//   SourceLocation Loc = Lookup.getNameLoc();
+//   ObjCMethodDecl *CurMethod = getCurMethodDecl();
 
-  // Check for error condition which is already reported.
-  if (!CurMethod)
-    return DeclResult(true);
+//   // Check for error condition which is already reported.
+//   if (!CurMethod)
+//     return DeclResult(true);
 
-  // There are two cases to handle here.  1) scoped lookup could have failed,
-  // in which case we should look for an ivar.  2) scoped lookup could have
-  // found a decl, but that decl is outside the current instance method (i.e.
-  // a global variable).  In these two cases, we do a lookup for an ivar with
-  // this name, if the lookup sucedes, we replace it our current decl.
+//   // There are two cases to handle here.  1) scoped lookup could have failed,
+//   // in which case we should look for an ivar.  2) scoped lookup could have
+//   // found a decl, but that decl is outside the current instance method (i.e.
+//   // a global variable).  In these two cases, we do a lookup for an ivar with
+//   // this name, if the lookup sucedes, we replace it our current decl.
 
-  // If we're in a class method, we don't normally want to look for
-  // ivars.  But if we don't find anything else, and there's an
-  // ivar, that's an error.
-  bool IsClassMethod = CurMethod->isClassMethod();
+//   // If we're in a class method, we don't normally want to look for
+//   // ivars.  But if we don't find anything else, and there's an
+//   // ivar, that's an error.
+//   bool IsClassMethod = CurMethod->isClassMethod();
 
-  bool LookForIvars;
-  if (Lookup.empty())
-    LookForIvars = true;
-  else if (IsClassMethod)
-    LookForIvars = false;
-  else
-    LookForIvars = (Lookup.isSingleResult() &&
-                    Lookup.getFoundDecl()->isDefinedOutsideFunctionOrMethod());
-  ObjCInterfaceDecl *IFace = nullptr;
-  if (LookForIvars) {
-    IFace = CurMethod->getClassInterface();
-    ObjCInterfaceDecl *ClassDeclared;
-    ObjCIvarDecl *IV = nullptr;
-    if (IFace && (IV = IFace->lookupInstanceVariable(II, ClassDeclared))) {
-      // Diagnose using an ivar in a class method.
-      if (IsClassMethod) {
-        Diag(Loc, diag::err_ivar_use_in_class_method) << IV->getDeclName();
-        return DeclResult(true);
-      }
+//   bool LookForIvars;
+//   if (Lookup.empty())
+//     LookForIvars = true;
+//   else if (IsClassMethod)
+//     LookForIvars = false;
+//   else
+//     LookForIvars = (Lookup.isSingleResult() &&
+//                     Lookup.getFoundDecl()->isDefinedOutsideFunctionOrMethod());
+//   // ObjCInterfaceDecl *IFace = nullptr;
+//   /*if (LookForIvars) {
+//     IFace = CurMethod->getClassInterface();
+//     ObjCInterfaceDecl *ClassDeclared;
+//     ObjCIvarDecl *IV = nullptr;
+//     if (IFace && (IV = IFace->lookupInstanceVariable(II, ClassDeclared))) {
+//       // Diagnose using an ivar in a class method.
+//       if (IsClassMethod) {
+//         Diag(Loc, diag::err_ivar_use_in_class_method) << IV->getDeclName();
+//         return DeclResult(true);
+//       }
 
-      // Diagnose the use of an ivar outside of the declaring class.
-      if (IV->getAccessControl() == ObjCIvarDecl::Private &&
-          !declaresSameEntity(ClassDeclared, IFace) &&
-          !getLangOpts().DebuggerSupport)
-        Diag(Loc, diag::err_private_ivar_access) << IV->getDeclName();
+//       // Diagnose the use of an ivar outside of the declaring class.
+//       if (IV->getAccessControl() == ObjCIvarDecl::Private &&
+//           !declaresSameEntity(ClassDeclared, IFace) &&
+//           !getLangOpts().DebuggerSupport)
+//         Diag(Loc, diag::err_private_ivar_access) << IV->getDeclName();
 
-      // Success.
-      return IV;
-    }
-  } else if (CurMethod->isInstanceMethod()) {
-    // We should warn if a local variable hides an ivar.
-    if (ObjCInterfaceDecl *IFace = CurMethod->getClassInterface()) {
-      ObjCInterfaceDecl *ClassDeclared;
-      if (ObjCIvarDecl *IV = IFace->lookupInstanceVariable(II, ClassDeclared)) {
-        if (IV->getAccessControl() != ObjCIvarDecl::Private ||
-            declaresSameEntity(IFace, ClassDeclared))
-          Diag(Loc, diag::warn_ivar_use_hidden) << IV->getDeclName();
-      }
-    }
-  } else if (Lookup.isSingleResult() &&
-             Lookup.getFoundDecl()->isDefinedOutsideFunctionOrMethod()) {
-    // If accessing a stand-alone ivar in a class method, this is an error.
-    if (const ObjCIvarDecl *IV =
-            dyn_cast<ObjCIvarDecl>(Lookup.getFoundDecl())) {
-      Diag(Loc, diag::err_ivar_use_in_class_method) << IV->getDeclName();
-      return DeclResult(true);
-    }
-  }
+//       // Success.
+//       return IV;
+//     }
+//   } else if (CurMethod->isInstanceMethod()) {
+//     // We should warn if a local variable hides an ivar.
+//     // if (ObjCInterfaceDecl *IFace = CurMethod->getClassInterface()) {
+//     //   ObjCInterfaceDecl *ClassDeclared;
+//     //   if (ObjCIvarDecl *IV = IFace->lookupInstanceVariable(II, ClassDeclared)) {
+//     //     if (IV->getAccessControl() != ObjCIvarDecl::Private ||
+//     //         declaresSameEntity(IFace, ClassDeclared))
+//     //       Diag(Loc, diag::warn_ivar_use_hidden) << IV->getDeclName();
+//     //   }
+//     // }
+//   } else*/ if (Lookup.isSingleResult() &&
+//              Lookup.getFoundDecl()->isDefinedOutsideFunctionOrMethod()) {
+//     // If accessing a stand-alone ivar in a class method, this is an error.
+//     if (const ObjCIvarDecl *IV =
+//             dyn_cast<ObjCIvarDecl>(Lookup.getFoundDecl())) {
+//       Diag(Loc, diag::err_ivar_use_in_class_method) << IV->getDeclName();
+//       return DeclResult(true);
+//     }
+//   }
 
-  // Didn't encounter an error, didn't find an ivar.
-  return DeclResult(false);
-}
+//   // Didn't encounter an error, didn't find an ivar.
+//   return DeclResult(false);
+// }
 
-ExprResult Sema::BuildIvarRefExpr(Scope *S, SourceLocation Loc,
-                                  ObjCIvarDecl *IV) {
-  ObjCMethodDecl *CurMethod = getCurMethodDecl();
-  assert(CurMethod && CurMethod->isInstanceMethod() &&
-         "should not reference ivar from this context");
+// ExprResult Sema::BuildIvarRefExpr(Scope *S, SourceLocation Loc,
+//                                   ObjCIvarDecl *IV) {
+//   ObjCMethodDecl *CurMethod = getCurMethodDecl();
+//   assert(CurMethod && CurMethod->isInstanceMethod() &&
+//          "should not reference ivar from this context");
 
-  ObjCInterfaceDecl *IFace = CurMethod->getClassInterface();
-  assert(IFace && "should not reference ivar from this context");
+//   // ObjCInterfaceDecl *IFace = CurMethod->getClassInterface();
+//   // assert(IFace && "should not reference ivar from this context");
 
-  // If we're referencing an invalid decl, just return this as a silent
-  // error node.  The error diagnostic was already emitted on the decl.
-  if (IV->isInvalidDecl())
-    return ExprError();
+//   // If we're referencing an invalid decl, just return this as a silent
+//   // error node.  The error diagnostic was already emitted on the decl.
+//   if (IV->isInvalidDecl())
+//     return ExprError();
 
-  // Check if referencing a field with __attribute__((deprecated)).
-  if (DiagnoseUseOfDecl(IV, Loc))
-    return ExprError();
+//   // Check if referencing a field with __attribute__((deprecated)).
+//   if (DiagnoseUseOfDecl(IV, Loc))
+//     return ExprError();
 
-  // FIXME: This should use a new expr for a direct reference, don't
-  // turn this into Self->ivar, just return a BareIVarExpr or something.
-  IdentifierInfo &II = Context.Idents.get("self");
-  UnqualifiedId SelfName;
-  SelfName.setIdentifier(&II, SourceLocation());
-  SelfName.setKind(UnqualifiedIdKind::IK_ImplicitSelfParam);
-  CXXScopeSpec SelfScopeSpec;
-  SourceLocation TemplateKWLoc;
-  ExprResult SelfExpr =
-      ActOnIdExpression(S, SelfScopeSpec, TemplateKWLoc, SelfName,
-                        /*HasTrailingLParen=*/false,
-                        /*IsAddressOfOperand=*/false);
-  if (SelfExpr.isInvalid())
-    return ExprError();
+//   // FIXME: This should use a new expr for a direct reference, don't
+//   // turn this into Self->ivar, just return a BareIVarExpr or something.
+//   IdentifierInfo &II = Context.Idents.get("self");
+//   UnqualifiedId SelfName;
+//   SelfName.setIdentifier(&II, SourceLocation());
+//   SelfName.setKind(UnqualifiedIdKind::IK_ImplicitSelfParam);
+//   CXXScopeSpec SelfScopeSpec;
+//   SourceLocation TemplateKWLoc;
+//   ExprResult SelfExpr =
+//       ActOnIdExpression(S, SelfScopeSpec, TemplateKWLoc, SelfName,
+//                         /*HasTrailingLParen=*/false,
+//                         /*IsAddressOfOperand=*/false);
+//   if (SelfExpr.isInvalid())
+//     return ExprError();
 
-  SelfExpr = DefaultLvalueConversion(SelfExpr.get());
-  if (SelfExpr.isInvalid())
-    return ExprError();
+//   SelfExpr = DefaultLvalueConversion(SelfExpr.get());
+//   if (SelfExpr.isInvalid())
+//     return ExprError();
 
-  MarkAnyDeclReferenced(Loc, IV, true);
+//   MarkAnyDeclReferenced(Loc, IV, true);
 
-  ObjCMethodFamily MF = CurMethod->getMethodFamily();
-  if (MF != OMF_init && MF != OMF_dealloc && MF != OMF_finalize &&
-      !IvarBacksCurrentMethodAccessor(IFace, CurMethod, IV))
-    Diag(Loc, diag::warn_direct_ivar_access) << IV->getDeclName();
+//   ObjCMethodFamily MF = CurMethod->getMethodFamily();
+//   if (MF != OMF_init && MF != OMF_dealloc && MF != OMF_finalize &&
+//       !IvarBacksCurrentMethodAccessor(IFace, CurMethod, IV))
+//     Diag(Loc, diag::warn_direct_ivar_access) << IV->getDeclName();
 
-  ObjCIvarRefExpr *Result = new (Context)
-      ObjCIvarRefExpr(IV, IV->getUsageType(SelfExpr.get()->getType()), Loc,
-                      IV->getLocation(), SelfExpr.get(), true, true);
+//   ObjCIvarRefExpr *Result = new (Context)
+//       ObjCIvarRefExpr(IV, IV->getUsageType(SelfExpr.get()->getType()), Loc,
+//                       IV->getLocation(), SelfExpr.get(), true, true);
 
-  if (IV->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
-    if (!isUnevaluatedContext() &&
-        !Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, Loc))
-      getCurFunction()->recordUseOfWeak(Result);
-  }
-  if (getLangOpts().ObjCAutoRefCount)
-    if (const BlockDecl *BD = CurContext->getInnermostBlockDecl())
-      ImplicitlyRetainedSelfLocs.push_back({Loc, BD});
+//   if (IV->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
+//     if (!isUnevaluatedContext() &&
+//         !Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, Loc))
+//       getCurFunction()->recordUseOfWeak(Result);
+//   }
+//   if (getLangOpts().ObjCAutoRefCount)
+//     if (const BlockDecl *BD = CurContext->getInnermostBlockDecl())
+//       ImplicitlyRetainedSelfLocs.push_back({Loc, BD});
 
-  return Result;
-}
+//   return Result;
+// }
 
 /// The parser has read a name in, and Sema has detected that we're currently
 /// inside an ObjC method. Perform some additional checks and determine if we
 /// should form a reference to an ivar. If so, build an expression referencing
 /// that ivar.
-ExprResult
-Sema::LookupInObjCMethod(LookupResult &Lookup, Scope *S,
-                         IdentifierInfo *II, bool AllowBuiltinCreation) {
-  // FIXME: Integrate this lookup step into LookupParsedName.
-  DeclResult Ivar = LookupIvarInObjCMethod(Lookup, S, II);
-  if (Ivar.isInvalid())
-    return ExprError();
-  if (Ivar.isUsable())
-    return BuildIvarRefExpr(S, Lookup.getNameLoc(),
-                            cast<ObjCIvarDecl>(Ivar.get()));
+// ExprResult
+// Sema::LookupInObjCMethod(LookupResult &Lookup, Scope *S,
+//                          IdentifierInfo *II, bool AllowBuiltinCreation) {
+//   // FIXME: Integrate this lookup step into LookupParsedName.
+//   DeclResult Ivar = LookupIvarInObjCMethod(Lookup, S, II);
+//   if (Ivar.isInvalid())
+//     return ExprError();
+//   // if (Ivar.isUsable())
+//   //   return BuildIvarRefExpr(S, Lookup.getNameLoc(),
+//   //                           cast<ObjCIvarDecl>(Ivar.get()));
 
-  if (Lookup.empty() && II && AllowBuiltinCreation)
-    LookupBuiltin(Lookup);
+//   if (Lookup.empty() && II && AllowBuiltinCreation)
+//     LookupBuiltin(Lookup);
 
-  // Sentinel value saying that we didn't do anything special.
-  return ExprResult(false);
-}
+//   // Sentinel value saying that we didn't do anything special.
+//   return ExprResult(false);
+// }
 
 /// Cast a base object to a member's actual type.
 ///
@@ -3042,10 +3042,10 @@ static bool CheckDeclInExpr(Sema &S, SourceLocation Loc, NamedDecl *D) {
     return true;
   }
 
-  if (isa<ObjCInterfaceDecl>(D)) {
-    S.Diag(Loc, diag::err_unexpected_interface) << D->getDeclName();
-    return true;
-  }
+  // if (isa<ObjCInterfaceDecl>(D)) {
+  //   S.Diag(Loc, diag::err_unexpected_interface) << D->getDeclName();
+  //   return true;
+  // }
 
   if (isa<NamespaceDecl>(D)) {
     S.Diag(Loc, diag::err_unexpected_namespace) << D->getDeclName();
@@ -3171,8 +3171,8 @@ ExprResult Sema::BuildDeclarationNameExpr(
       llvm_unreachable("invalid value decl kind");
 
     // These shouldn't make it here.
-    case Decl::ObjCAtDefsField:
-      llvm_unreachable("forming non-member reference to ivar?");
+    // case Decl::ObjCAtDefsField:
+    //   llvm_unreachable("forming non-member reference to ivar?");
 
     // Enum constants are always r-values and never references.
     // Unresolved using declarations are dependent.
@@ -3189,7 +3189,7 @@ ExprResult Sema::BuildDeclarationNameExpr(
     // exist in the high-level semantics.
     case Decl::Field:
     case Decl::IndirectField:
-    case Decl::ObjCIvar:
+    // case Decl::ObjCIvar:
       assert(getLangOpts().CPlusPlus &&
              "building reference to field in C?");
 
@@ -3957,23 +3957,23 @@ ExprResult Sema::ActOnParenExpr(SourceLocation L, SourceLocation R, Expr *E) {
   return new (Context) ParenExpr(L, R, E);
 }
 
-static bool CheckVecStepTraitOperandType(Sema &S, QualType T,
-                                         SourceLocation Loc,
-                                         SourceRange ArgRange) {
-  // [OpenCL 1.1 6.11.12] "The vec_step built-in function takes a built-in
-  // scalar or vector data type argument..."
-  // Every built-in scalar type (OpenCL 1.1 6.1.1) is either an arithmetic
-  // type (C99 6.2.5p18) or void.
-  if (!(T->isArithmeticType() || T->isVoidType() || T->isVectorType())) {
-    S.Diag(Loc, diag::err_vecstep_non_scalar_vector_type)
-      << T << ArgRange;
-    return true;
-  }
+// static bool CheckVecStepTraitOperandType(Sema &S, QualType T,
+//                                          SourceLocation Loc,
+//                                          SourceRange ArgRange) {
+//   // [OpenCL 1.1 6.11.12] "The vec_step built-in function takes a built-in
+//   // scalar or vector data type argument..."
+//   // Every built-in scalar type (OpenCL 1.1 6.1.1) is either an arithmetic
+//   // type (C99 6.2.5p18) or void.
+//   if (!(T->isArithmeticType() || T->isVoidType() || T->isVectorType())) {
+//     S.Diag(Loc, diag::err_vecstep_non_scalar_vector_type)
+//       << T << ArgRange;
+//     return true;
+//   }
 
-  assert((T->isVoidType() || !T->isIncompleteType()) &&
-         "Scalar types should always be complete");
-  return false;
-}
+//   assert((T->isVoidType() || !T->isIncompleteType()) &&
+//          "Scalar types should always be complete");
+//   return false;
+// }
 
 static bool CheckExtensionTraitOperandType(Sema &S, QualType T,
                                            SourceLocation Loc,
@@ -4005,21 +4005,21 @@ static bool CheckExtensionTraitOperandType(Sema &S, QualType T,
   return true;
 }
 
-static bool CheckObjCTraitOperandConstraints(Sema &S, QualType T,
-                                             SourceLocation Loc,
-                                             SourceRange ArgRange,
-                                             UnaryExprOrTypeTrait TraitKind) {
-  // Reject sizeof(interface) and sizeof(interface<proto>) if the
-  // runtime doesn't allow it.
-  if (!S.LangOpts.ObjCRuntime.allowsSizeofAlignof() && T->isObjCObjectType()) {
-    S.Diag(Loc, diag::err_sizeof_nonfragile_interface)
-      << T << (TraitKind == UETT_SizeOf)
-      << ArgRange;
-    return true;
-  }
+// static bool CheckObjCTraitOperandConstraints(Sema &S, QualType T,
+//                                              SourceLocation Loc,
+//                                              SourceRange ArgRange,
+//                                              UnaryExprOrTypeTrait TraitKind) {
+//   // Reject sizeof(interface) and sizeof(interface<proto>) if the
+//   // runtime doesn't allow it.
+//   if (!S.LangOpts.ObjCRuntime.allowsSizeofAlignof() && T->isObjCObjectType()) {
+//     S.Diag(Loc, diag::err_sizeof_nonfragile_interface)
+//       << T << (TraitKind == UETT_SizeOf)
+//       << ArgRange;
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 /// Check whether E is a pointer from a decayed array type (the decayed
 /// pointer type is equal to T) and emit a warning if it is.
@@ -4061,9 +4061,9 @@ bool Sema::CheckUnaryExprOrTypeTraitOperand(Expr *E,
     E = Result.get();
   }
 
-  if (ExprKind == UETT_VecStep)
-    return CheckVecStepTraitOperandType(*this, ExprTy, E->getExprLoc(),
-                                        E->getSourceRange());
+  // if (ExprKind == UETT_VecStep)
+  //   return CheckVecStepTraitOperandType(*this, ExprTy, E->getExprLoc(),
+  //                                       E->getSourceRange());
 
   // Explicitly list some types as extensions.
   if (!CheckExtensionTraitOperandType(*this, ExprTy, E->getExprLoc(),
@@ -4172,8 +4172,8 @@ bool Sema::CheckUnaryExprOrTypeTraitOperand(QualType ExprType,
       ExprKind == UETT_OpenMPRequiredSimdAlign)
     ExprType = Context.getBaseElementType(ExprType);
 
-  if (ExprKind == UETT_VecStep)
-    return CheckVecStepTraitOperandType(*this, ExprType, OpLoc, ExprRange);
+  // if (ExprKind == UETT_VecStep)
+  //   return CheckVecStepTraitOperandType(*this, ExprType, OpLoc, ExprRange);
 
   // Explicitly list some types as extensions.
   if (!CheckExtensionTraitOperandType(*this, ExprType, OpLoc, ExprRange,
@@ -4254,15 +4254,15 @@ static bool CheckAlignOfExpr(Sema &S, Expr *E, UnaryExprOrTypeTrait ExprKind) {
   return S.CheckUnaryExprOrTypeTraitOperand(E, ExprKind);
 }
 
-bool Sema::CheckVecStepExpr(Expr *E) {
-  E = E->IgnoreParens();
+// bool Sema::CheckVecStepExpr(Expr *E) {
+//   E = E->IgnoreParens();
 
-  // Cannot know anything else if the expression is dependent.
-  if (E->isTypeDependent())
-    return false;
+//   // Cannot know anything else if the expression is dependent.
+//   if (E->isTypeDependent())
+//     return false;
 
-  return CheckUnaryExprOrTypeTraitOperand(E, UETT_VecStep);
-}
+//   return CheckUnaryExprOrTypeTraitOperand(E, UETT_VecStep);
+// }
 
 static void captureVariablyModifiedType(ASTContext &Context, QualType T,
                                         CapturingScopeInfo *CSI) {
@@ -4291,10 +4291,10 @@ static void captureVariablyModifiedType(ASTContext &Context, QualType T,
     case Type::Enum:
     case Type::Elaborated:
     case Type::TemplateSpecialization:
-    case Type::ObjCObject:
-    case Type::ObjCInterface:
-    case Type::ObjCObjectPointer:
-    case Type::ObjCTypeParam:
+    // case Type::ObjCObject:
+    // case Type::ObjCInterface:
+    // case Type::ObjCObjectPointer:
+    // case Type::ObjCTypeParam:
     case Type::Pipe:
     case Type::ExtInt:
       llvm_unreachable("type class is never variably-modified!");
@@ -4431,8 +4431,8 @@ Sema::CreateUnaryExprOrTypeTraitExpr(Expr *E, SourceLocation OpLoc,
     // Delay type-checking for type-dependent expressions.
   } else if (ExprKind == UETT_AlignOf || ExprKind == UETT_PreferredAlignOf) {
     isInvalid = CheckAlignOfExpr(*this, E, ExprKind);
-  } else if (ExprKind == UETT_VecStep) {
-    isInvalid = CheckVecStepExpr(E);
+  // } else if (ExprKind == UETT_VecStep) {
+  //   isInvalid = CheckVecStepExpr(E);
   } else if (ExprKind == UETT_OpenMPRequiredSimdAlign) {
       Diag(E->getExprLoc(), diag::err_openmp_default_simd_align_expr);
       isInvalid = true;
@@ -4535,19 +4535,19 @@ Sema::ActOnPostfixUnaryOp(Scope *S, SourceLocation OpLoc,
 /// Diagnose if arithmetic on the given ObjC pointer is illegal.
 ///
 /// \return true on error
-static bool checkArithmeticOnObjCPointer(Sema &S,
-                                         SourceLocation opLoc,
-                                         Expr *op) {
-  assert(op->getType()->isObjCObjectPointerType());
-  if (S.LangOpts.ObjCRuntime.allowsPointerArithmetic() &&
-      !S.LangOpts.ObjCSubscriptingLegacyRuntime)
-    return false;
+// static bool checkArithmeticOnObjCPointer(Sema &S,
+//                                          SourceLocation opLoc,
+//                                          Expr *op) {
+//   assert(op->getType()->isObjCObjectPointerType());
+//   if (S.LangOpts.ObjCRuntime.allowsPointerArithmetic() &&
+//       !S.LangOpts.ObjCSubscriptingLegacyRuntime)
+//     return false;
 
-  S.Diag(opLoc, diag::err_arithmetic_nonfragile_interface)
-    << op->getType()->castAs<ObjCObjectPointerType>()->getPointeeType()
-    << op->getSourceRange();
-  return true;
-}
+//   S.Diag(opLoc, diag::err_arithmetic_nonfragile_interface)
+//     << op->getType()->castAs<ObjCObjectPointerType>()->getPointeeType()
+//     << op->getSourceRange();
+//   return true;
+// }
 
 static bool isMSPropertySubscriptExpr(Sema &S, Expr *Base) {
   auto *BaseNoParens = Base->IgnoreParens();
@@ -4680,7 +4680,7 @@ Sema::ActOnArraySubscriptExpr(Scope *S, Expr *base, SourceLocation lbLoc,
   // to overload resolution and so should not take this path.
   if (getLangOpts().CPlusPlus &&
       (base->getType()->isRecordType() ||
-       (!base->getType()->isObjCObjectPointerType() &&
+       (/*!base->getType()->isObjCObjectPointerType() &&*/
         idx->getType()->isRecordType()))) {
     return CreateOverloadedArraySubscriptExpr(lbLoc, rbLoc, base, idx);
   }
@@ -5408,35 +5408,35 @@ Sema::CreateBuiltinArraySubscriptExpr(Expr *Base, SourceLocation LLoc,
     BaseExpr = LHSExp;
     IndexExpr = RHSExp;
     ResultType = PTy->getPointeeType();
-  } else if (const ObjCObjectPointerType *PTy =
+  } /*else if (const ObjCObjectPointerType *PTy =
                LHSTy->getAs<ObjCObjectPointerType>()) {
     BaseExpr = LHSExp;
     IndexExpr = RHSExp;
 
     // Use custom logic if this should be the pseudo-object subscript
     // expression.
-    if (!LangOpts.isSubscriptPointerArithmetic())
-      return BuildObjCSubscriptExpression(RLoc, BaseExpr, IndexExpr, nullptr,
-                                          nullptr);
+    // if (!LangOpts.isSubscriptPointerArithmetic())
+    //   return BuildObjCSubscriptExpression(RLoc, BaseExpr, IndexExpr, nullptr,
+    //                                       nullptr);
 
     ResultType = PTy->getPointeeType();
-  } else if (const PointerType *PTy = RHSTy->getAs<PointerType>()) {
+  } */else if (const PointerType *PTy = RHSTy->getAs<PointerType>()) {
      // Handle the uncommon case of "123[Ptr]".
     BaseExpr = RHSExp;
     IndexExpr = LHSExp;
     ResultType = PTy->getPointeeType();
-  } else if (const ObjCObjectPointerType *PTy =
+  } /*else if (const ObjCObjectPointerType *PTy =
                RHSTy->getAs<ObjCObjectPointerType>()) {
      // Handle the uncommon case of "123[Ptr]".
     BaseExpr = RHSExp;
     IndexExpr = LHSExp;
     ResultType = PTy->getPointeeType();
-    if (!LangOpts.isSubscriptPointerArithmetic()) {
-      Diag(LLoc, diag::err_subscript_nonfragile_interface)
-        << ResultType << BaseExpr->getSourceRange();
-      return ExprError();
-    }
-  } else if (const VectorType *VTy = LHSTy->getAs<VectorType>()) {
+    // if (!LangOpts.isSubscriptPointerArithmetic()) {
+    //   Diag(LLoc, diag::err_subscript_nonfragile_interface)
+    //     << ResultType << BaseExpr->getSourceRange();
+    //   return ExprError();
+    // }
+  } */else if (const VectorType *VTy = LHSTy->getAs<VectorType>()) {
     BaseExpr = LHSExp;    // vectors: V[123]
     IndexExpr = RHSExp;
     // We apply C++ DR1213 to vector subscripting too.
@@ -6010,12 +6010,12 @@ static bool isPlaceholderToRemoveAsArg(QualType type) {
 
   switch (placeholder->getKind()) {
   // Ignore all the non-placeholder types.
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
   // In practice we'll never use this, since all SVE types are sugared
   // via TypedefTypes rather than exposed directly as BuiltinTypes.
 #define SVE_TYPE(Name, Id, SingletonId) \
@@ -6037,8 +6037,8 @@ static bool isPlaceholderToRemoveAsArg(QualType type) {
     return false;
 
   // Pseudo-objects should be converted as soon as possible.
-  case BuiltinType::PseudoObject:
-    return true;
+  // case BuiltinType::PseudoObject:
+  //   return true;
 
   // The debugger mode could theoretically but currently does not try
   // to resolve unknown-typed arguments based on known parameter types.
@@ -6969,18 +6969,18 @@ void Sema::maybeExtendBlockObject(ExprResult &E) {
 
 /// Prepare a conversion of the given expression to an ObjC object
 /// pointer type.
-CastKind Sema::PrepareCastToObjCObjectPointer(ExprResult &E) {
-  QualType type = E.get()->getType();
-  if (type->isObjCObjectPointerType()) {
-    return CK_BitCast;
-  } else if (type->isBlockPointerType()) {
-    maybeExtendBlockObject(E);
-    return CK_BlockPointerToObjCPointerCast;
-  } else {
-    assert(type->isPointerType());
-    return CK_CPointerToObjCPointerCast;
-  }
-}
+// CastKind Sema::PrepareCastToObjCObjectPointer(ExprResult &E) {
+//   QualType type = E.get()->getType();
+//   if (type->isObjCObjectPointerType()) {
+//     return CK_BitCast;
+//   } else if (type->isBlockPointerType()) {
+//     maybeExtendBlockObject(E);
+//     return CK_BlockPointerToObjCPointerCast;
+//   } else {
+//     assert(type->isPointerType());
+//     return CK_CPointerToObjCPointerCast;
+//   }
+// }
 
 /// Prepares for a scalar cast, performing all the necessary stages
 /// except the final cast and returning the kind required.
@@ -7013,13 +7013,13 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
     case Type::STK_BlockPointer:
       return (SrcKind == Type::STK_BlockPointer
                 ? CK_BitCast : CK_AnyPointerToBlockPointerCast);
-    case Type::STK_ObjCObjectPointer:
-      if (SrcKind == Type::STK_ObjCObjectPointer)
-        return CK_BitCast;
-      if (SrcKind == Type::STK_CPointer)
-        return CK_CPointerToObjCPointerCast;
-      maybeExtendBlockObject(Src);
-      return CK_BlockPointerToObjCPointerCast;
+    // case Type::STK_ObjCObjectPointer:
+    //   if (SrcKind == Type::STK_ObjCObjectPointer)
+    //     return CK_BitCast;
+    //   if (SrcKind == Type::STK_CPointer)
+    //     return CK_CPointerToObjCPointerCast;
+    //   maybeExtendBlockObject(Src);
+    //   return CK_BlockPointerToObjCPointerCast;
     case Type::STK_Bool:
       return CK_PointerToBoolean;
     case Type::STK_Integral:
@@ -7429,7 +7429,7 @@ Sema::ActOnCastExpr(Scope *S, SourceLocation LParenLoc,
 
   CheckTollFreeBridgeCast(castType, CastExpr);
 
-  CheckObjCBridgeRelatedCast(castType, CastExpr);
+  // CheckObjCBridgeRelatedCast(castType, CastExpr);
 
   DiscardMisalignedMemberAddress(castType.getTypePtr(), CastExpr);
 
@@ -8141,12 +8141,12 @@ QualType Sema::CheckConditionalOperands(ExprResult &Cond, ExprResult &LHS,
   if (!checkConditionalNullPointer(*this, LHS, RHSTy)) return RHSTy;
 
   // All objective-c pointer type analysis is done here.
-  QualType compositeType = FindCompositeObjCPointerType(LHS, RHS,
-                                                        QuestionLoc);
-  if (LHS.isInvalid() || RHS.isInvalid())
-    return QualType();
-  if (!compositeType.isNull())
-    return compositeType;
+  // QualType compositeType = FindCompositeObjCPointerType(LHS, RHS,
+  //                                                       QuestionLoc);
+  // if (LHS.isInvalid() || RHS.isInvalid())
+  //   return QualType();
+  // if (!compositeType.isNull())
+  //   return compositeType;
 
 
   // Handle block pointer types.
@@ -8188,145 +8188,145 @@ QualType Sema::CheckConditionalOperands(ExprResult &Cond, ExprResult &LHS,
 
 /// FindCompositeObjCPointerType - Helper method to find composite type of
 /// two objective-c pointer types of the two input expressions.
-QualType Sema::FindCompositeObjCPointerType(ExprResult &LHS, ExprResult &RHS,
-                                            SourceLocation QuestionLoc) {
-  QualType LHSTy = LHS.get()->getType();
-  QualType RHSTy = RHS.get()->getType();
+// QualType Sema::FindCompositeObjCPointerType(ExprResult &LHS, ExprResult &RHS,
+//                                             SourceLocation QuestionLoc) {
+//   QualType LHSTy = LHS.get()->getType();
+//   QualType RHSTy = RHS.get()->getType();
 
-  // Handle things like Class and struct objc_class*.  Here we case the result
-  // to the pseudo-builtin, because that will be implicitly cast back to the
-  // redefinition type if an attempt is made to access its fields.
-  if (LHSTy->isObjCClassType() &&
-      (Context.hasSameType(RHSTy, Context.getObjCClassRedefinitionType()))) {
-    RHS = ImpCastExprToType(RHS.get(), LHSTy, CK_CPointerToObjCPointerCast);
-    return LHSTy;
-  }
-  if (RHSTy->isObjCClassType() &&
-      (Context.hasSameType(LHSTy, Context.getObjCClassRedefinitionType()))) {
-    LHS = ImpCastExprToType(LHS.get(), RHSTy, CK_CPointerToObjCPointerCast);
-    return RHSTy;
-  }
-  // And the same for struct objc_object* / id
-  if (LHSTy->isObjCIdType() &&
-      (Context.hasSameType(RHSTy, Context.getObjCIdRedefinitionType()))) {
-    RHS = ImpCastExprToType(RHS.get(), LHSTy, CK_CPointerToObjCPointerCast);
-    return LHSTy;
-  }
-  if (RHSTy->isObjCIdType() &&
-      (Context.hasSameType(LHSTy, Context.getObjCIdRedefinitionType()))) {
-    LHS = ImpCastExprToType(LHS.get(), RHSTy, CK_CPointerToObjCPointerCast);
-    return RHSTy;
-  }
-  // And the same for struct objc_selector* / SEL
-  if (Context.isObjCSelType(LHSTy) &&
-      (Context.hasSameType(RHSTy, Context.getObjCSelRedefinitionType()))) {
-    RHS = ImpCastExprToType(RHS.get(), LHSTy, CK_BitCast);
-    return LHSTy;
-  }
-  if (Context.isObjCSelType(RHSTy) &&
-      (Context.hasSameType(LHSTy, Context.getObjCSelRedefinitionType()))) {
-    LHS = ImpCastExprToType(LHS.get(), RHSTy, CK_BitCast);
-    return RHSTy;
-  }
-  // Check constraints for Objective-C object pointers types.
-  if (LHSTy->isObjCObjectPointerType() && RHSTy->isObjCObjectPointerType()) {
+//   // Handle things like Class and struct objc_class*.  Here we case the result
+//   // to the pseudo-builtin, because that will be implicitly cast back to the
+//   // redefinition type if an attempt is made to access its fields.
+//   if (LHSTy->isObjCClassType() &&
+//       (Context.hasSameType(RHSTy, Context.getObjCClassRedefinitionType()))) {
+//     RHS = ImpCastExprToType(RHS.get(), LHSTy, CK_CPointerToObjCPointerCast);
+//     return LHSTy;
+//   }
+//   if (RHSTy->isObjCClassType() &&
+//       (Context.hasSameType(LHSTy, Context.getObjCClassRedefinitionType()))) {
+//     LHS = ImpCastExprToType(LHS.get(), RHSTy, CK_CPointerToObjCPointerCast);
+//     return RHSTy;
+//   }
+//   // And the same for struct objc_object* / id
+//   if (LHSTy->isObjCIdType() &&
+//       (Context.hasSameType(RHSTy, Context.getObjCIdRedefinitionType()))) {
+//     RHS = ImpCastExprToType(RHS.get(), LHSTy, CK_CPointerToObjCPointerCast);
+//     return LHSTy;
+//   }
+//   if (RHSTy->isObjCIdType() &&
+//       (Context.hasSameType(LHSTy, Context.getObjCIdRedefinitionType()))) {
+//     LHS = ImpCastExprToType(LHS.get(), RHSTy, CK_CPointerToObjCPointerCast);
+//     return RHSTy;
+//   }
+//   // And the same for struct objc_selector* / SEL
+//   if (Context.isObjCSelType(LHSTy) &&
+//       (Context.hasSameType(RHSTy, Context.getObjCSelRedefinitionType()))) {
+//     RHS = ImpCastExprToType(RHS.get(), LHSTy, CK_BitCast);
+//     return LHSTy;
+//   }
+//   if (Context.isObjCSelType(RHSTy) &&
+//       (Context.hasSameType(LHSTy, Context.getObjCSelRedefinitionType()))) {
+//     LHS = ImpCastExprToType(LHS.get(), RHSTy, CK_BitCast);
+//     return RHSTy;
+//   }
+//   // Check constraints for Objective-C object pointers types.
+//   if (LHSTy->isObjCObjectPointerType() && RHSTy->isObjCObjectPointerType()) {
 
-    if (Context.getCanonicalType(LHSTy) == Context.getCanonicalType(RHSTy)) {
-      // Two identical object pointer types are always compatible.
-      return LHSTy;
-    }
-    const ObjCObjectPointerType *LHSOPT = LHSTy->castAs<ObjCObjectPointerType>();
-    const ObjCObjectPointerType *RHSOPT = RHSTy->castAs<ObjCObjectPointerType>();
-    QualType compositeType = LHSTy;
+//     if (Context.getCanonicalType(LHSTy) == Context.getCanonicalType(RHSTy)) {
+//       // Two identical object pointer types are always compatible.
+//       return LHSTy;
+//     }
+//     const ObjCObjectPointerType *LHSOPT = LHSTy->castAs<ObjCObjectPointerType>();
+//     const ObjCObjectPointerType *RHSOPT = RHSTy->castAs<ObjCObjectPointerType>();
+//     QualType compositeType = LHSTy;
 
-    // If both operands are interfaces and either operand can be
-    // assigned to the other, use that type as the composite
-    // type. This allows
-    //   xxx ? (A*) a : (B*) b
-    // where B is a subclass of A.
-    //
-    // Additionally, as for assignment, if either type is 'id'
-    // allow silent coercion. Finally, if the types are
-    // incompatible then make sure to use 'id' as the composite
-    // type so the result is acceptable for sending messages to.
+//     // If both operands are interfaces and either operand can be
+//     // assigned to the other, use that type as the composite
+//     // type. This allows
+//     //   xxx ? (A*) a : (B*) b
+//     // where B is a subclass of A.
+//     //
+//     // Additionally, as for assignment, if either type is 'id'
+//     // allow silent coercion. Finally, if the types are
+//     // incompatible then make sure to use 'id' as the composite
+//     // type so the result is acceptable for sending messages to.
 
-    // FIXME: Consider unifying with 'areComparableObjCPointerTypes'.
-    // It could return the composite type.
-    if (!(compositeType =
-          Context.areCommonBaseCompatible(LHSOPT, RHSOPT)).isNull()) {
-      // Nothing more to do.
-    } else if (Context.canAssignObjCInterfaces(LHSOPT, RHSOPT)) {
-      compositeType = RHSOPT->isObjCBuiltinType() ? RHSTy : LHSTy;
-    } else if (Context.canAssignObjCInterfaces(RHSOPT, LHSOPT)) {
-      compositeType = LHSOPT->isObjCBuiltinType() ? LHSTy : RHSTy;
-    } else if ((LHSOPT->isObjCQualifiedIdType() ||
-                RHSOPT->isObjCQualifiedIdType()) &&
-               Context.ObjCQualifiedIdTypesAreCompatible(LHSOPT, RHSOPT,
-                                                         true)) {
-      // Need to handle "id<xx>" explicitly.
-      // GCC allows qualified id and any Objective-C type to devolve to
-      // id. Currently localizing to here until clear this should be
-      // part of ObjCQualifiedIdTypesAreCompatible.
-      compositeType = Context.getObjCIdType();
-    } else if (LHSTy->isObjCIdType() || RHSTy->isObjCIdType()) {
-      compositeType = Context.getObjCIdType();
-    } else {
-      Diag(QuestionLoc, diag::ext_typecheck_cond_incompatible_operands)
-      << LHSTy << RHSTy
-      << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
-      QualType incompatTy = Context.getObjCIdType();
-      LHS = ImpCastExprToType(LHS.get(), incompatTy, CK_BitCast);
-      RHS = ImpCastExprToType(RHS.get(), incompatTy, CK_BitCast);
-      return incompatTy;
-    }
-    // The object pointer types are compatible.
-    LHS = ImpCastExprToType(LHS.get(), compositeType, CK_BitCast);
-    RHS = ImpCastExprToType(RHS.get(), compositeType, CK_BitCast);
-    return compositeType;
-  }
-  // Check Objective-C object pointer types and 'void *'
-  if (LHSTy->isVoidPointerType() && RHSTy->isObjCObjectPointerType()) {
-    if (getLangOpts().ObjCAutoRefCount) {
-      // ARC forbids the implicit conversion of object pointers to 'void *',
-      // so these types are not compatible.
-      Diag(QuestionLoc, diag::err_cond_voidptr_arc) << LHSTy << RHSTy
-          << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
-      LHS = RHS = true;
-      return QualType();
-    }
-    QualType lhptee = LHSTy->castAs<PointerType>()->getPointeeType();
-    QualType rhptee = RHSTy->castAs<ObjCObjectPointerType>()->getPointeeType();
-    QualType destPointee
-    = Context.getQualifiedType(lhptee, rhptee.getQualifiers());
-    QualType destType = Context.getPointerType(destPointee);
-    // Add qualifiers if necessary.
-    LHS = ImpCastExprToType(LHS.get(), destType, CK_NoOp);
-    // Promote to void*.
-    RHS = ImpCastExprToType(RHS.get(), destType, CK_BitCast);
-    return destType;
-  }
-  if (LHSTy->isObjCObjectPointerType() && RHSTy->isVoidPointerType()) {
-    if (getLangOpts().ObjCAutoRefCount) {
-      // ARC forbids the implicit conversion of object pointers to 'void *',
-      // so these types are not compatible.
-      Diag(QuestionLoc, diag::err_cond_voidptr_arc) << LHSTy << RHSTy
-          << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
-      LHS = RHS = true;
-      return QualType();
-    }
-    QualType lhptee = LHSTy->castAs<ObjCObjectPointerType>()->getPointeeType();
-    QualType rhptee = RHSTy->castAs<PointerType>()->getPointeeType();
-    QualType destPointee
-    = Context.getQualifiedType(rhptee, lhptee.getQualifiers());
-    QualType destType = Context.getPointerType(destPointee);
-    // Add qualifiers if necessary.
-    RHS = ImpCastExprToType(RHS.get(), destType, CK_NoOp);
-    // Promote to void*.
-    LHS = ImpCastExprToType(LHS.get(), destType, CK_BitCast);
-    return destType;
-  }
-  return QualType();
-}
+//     // FIXME: Consider unifying with 'areComparableObjCPointerTypes'.
+//     // It could return the composite type.
+//     if (!(compositeType =
+//           Context.areCommonBaseCompatible(LHSOPT, RHSOPT)).isNull()) {
+//       // Nothing more to do.
+//     // } else if (Context.canAssignObjCInterfaces(LHSOPT, RHSOPT)) {
+//     //   compositeType = RHSOPT->isObjCBuiltinType() ? RHSTy : LHSTy;
+//     // } else if (Context.canAssignObjCInterfaces(RHSOPT, LHSOPT)) {
+//     //   compositeType = LHSOPT->isObjCBuiltinType() ? LHSTy : RHSTy;
+//     } else if ((LHSOPT->isObjCQualifiedIdType() ||
+//                 RHSOPT->isObjCQualifiedIdType()) &&
+//                Context.ObjCQualifiedIdTypesAreCompatible(LHSOPT, RHSOPT,
+//                                                          true)) {
+//       // Need to handle "id<xx>" explicitly.
+//       // GCC allows qualified id and any Objective-C type to devolve to
+//       // id. Currently localizing to here until clear this should be
+//       // part of ObjCQualifiedIdTypesAreCompatible.
+//       compositeType = Context.getObjCIdType();
+//     } else if (LHSTy->isObjCIdType() || RHSTy->isObjCIdType()) {
+//       compositeType = Context.getObjCIdType();
+//     } else {
+//       Diag(QuestionLoc, diag::ext_typecheck_cond_incompatible_operands)
+//       << LHSTy << RHSTy
+//       << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
+//       QualType incompatTy = Context.getObjCIdType();
+//       LHS = ImpCastExprToType(LHS.get(), incompatTy, CK_BitCast);
+//       RHS = ImpCastExprToType(RHS.get(), incompatTy, CK_BitCast);
+//       return incompatTy;
+//     }
+//     // The object pointer types are compatible.
+//     LHS = ImpCastExprToType(LHS.get(), compositeType, CK_BitCast);
+//     RHS = ImpCastExprToType(RHS.get(), compositeType, CK_BitCast);
+//     return compositeType;
+//   }
+//   // Check Objective-C object pointer types and 'void *'
+//   if (LHSTy->isVoidPointerType() && RHSTy->isObjCObjectPointerType()) {
+//     if (getLangOpts().ObjCAutoRefCount) {
+//       // ARC forbids the implicit conversion of object pointers to 'void *',
+//       // so these types are not compatible.
+//       Diag(QuestionLoc, diag::err_cond_voidptr_arc) << LHSTy << RHSTy
+//           << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
+//       LHS = RHS = true;
+//       return QualType();
+//     }
+//     QualType lhptee = LHSTy->castAs<PointerType>()->getPointeeType();
+//     QualType rhptee = RHSTy->castAs<ObjCObjectPointerType>()->getPointeeType();
+//     QualType destPointee
+//     = Context.getQualifiedType(lhptee, rhptee.getQualifiers());
+//     QualType destType = Context.getPointerType(destPointee);
+//     // Add qualifiers if necessary.
+//     LHS = ImpCastExprToType(LHS.get(), destType, CK_NoOp);
+//     // Promote to void*.
+//     RHS = ImpCastExprToType(RHS.get(), destType, CK_BitCast);
+//     return destType;
+//   }
+//   if (LHSTy->isObjCObjectPointerType() && RHSTy->isVoidPointerType()) {
+//     if (getLangOpts().ObjCAutoRefCount) {
+//       // ARC forbids the implicit conversion of object pointers to 'void *',
+//       // so these types are not compatible.
+//       Diag(QuestionLoc, diag::err_cond_voidptr_arc) << LHSTy << RHSTy
+//           << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
+//       LHS = RHS = true;
+//       return QualType();
+//     }
+//     QualType lhptee = LHSTy->castAs<ObjCObjectPointerType>()->getPointeeType();
+//     QualType rhptee = RHSTy->castAs<PointerType>()->getPointeeType();
+//     QualType destPointee
+//     = Context.getQualifiedType(rhptee, lhptee.getQualifiers());
+//     QualType destType = Context.getPointerType(destPointee);
+//     // Add qualifiers if necessary.
+//     RHS = ImpCastExprToType(RHS.get(), destType, CK_NoOp);
+//     // Promote to void*.
+//     LHS = ImpCastExprToType(LHS.get(), destType, CK_BitCast);
+//     return destType;
+//   }
+//   return QualType();
+// }
 
 /// SuggestParentheses - Emit a note with a fixit hint that wraps
 /// ParenRange in parentheses.
@@ -8832,39 +8832,39 @@ checkBlockPointerTypesForAssignment(Sema &S, QualType LHSType,
 
 /// checkObjCPointerTypesForAssignment - Compares two objective-c pointer types
 /// for assignment compatibility.
-static Sema::AssignConvertType
-checkObjCPointerTypesForAssignment(Sema &S, QualType LHSType,
-                                   QualType RHSType) {
-  assert(LHSType.isCanonical() && "LHS was not canonicalized!");
-  assert(RHSType.isCanonical() && "RHS was not canonicalized!");
+// static Sema::AssignConvertType
+// checkObjCPointerTypesForAssignment(Sema &S, QualType LHSType,
+//                                    QualType RHSType) {
+//   assert(LHSType.isCanonical() && "LHS was not canonicalized!");
+//   assert(RHSType.isCanonical() && "RHS was not canonicalized!");
 
-  if (LHSType->isObjCBuiltinType()) {
-    // Class is not compatible with ObjC object pointers.
-    if (LHSType->isObjCClassType() && !RHSType->isObjCBuiltinType() &&
-        !RHSType->isObjCQualifiedClassType())
-      return Sema::IncompatiblePointer;
-    return Sema::Compatible;
-  }
-  if (RHSType->isObjCBuiltinType()) {
-    if (RHSType->isObjCClassType() && !LHSType->isObjCBuiltinType() &&
-        !LHSType->isObjCQualifiedClassType())
-      return Sema::IncompatiblePointer;
-    return Sema::Compatible;
-  }
-  QualType lhptee = LHSType->castAs<ObjCObjectPointerType>()->getPointeeType();
-  QualType rhptee = RHSType->castAs<ObjCObjectPointerType>()->getPointeeType();
+//   if (LHSType->isObjCBuiltinType()) {
+//     // Class is not compatible with ObjC object pointers.
+//     if (LHSType->isObjCClassType() && !RHSType->isObjCBuiltinType() &&
+//         !RHSType->isObjCQualifiedClassType())
+//       return Sema::IncompatiblePointer;
+//     return Sema::Compatible;
+//   }
+//   if (RHSType->isObjCBuiltinType()) {
+//     if (RHSType->isObjCClassType() && !LHSType->isObjCBuiltinType() &&
+//         !LHSType->isObjCQualifiedClassType())
+//       return Sema::IncompatiblePointer;
+//     return Sema::Compatible;
+//   }
+//   QualType lhptee = LHSType->castAs<ObjCObjectPointerType>()->getPointeeType();
+//   QualType rhptee = RHSType->castAs<ObjCObjectPointerType>()->getPointeeType();
 
-  if (!lhptee.isAtLeastAsQualifiedAs(rhptee) &&
-      // make an exception for id<P>
-      !LHSType->isObjCQualifiedIdType())
-    return Sema::CompatiblePointerDiscardsQualifiers;
+//   if (!lhptee.isAtLeastAsQualifiedAs(rhptee) &&
+//       // make an exception for id<P>
+//       !LHSType->isObjCQualifiedIdType())
+//     return Sema::CompatiblePointerDiscardsQualifiers;
 
-  if (S.Context.typesAreCompatible(LHSType, RHSType))
-    return Sema::Compatible;
-  if (LHSType->isObjCQualifiedIdType() || RHSType->isObjCQualifiedIdType())
-    return Sema::IncompatibleObjCQualifiedId;
-  return Sema::IncompatiblePointer;
-}
+//   if (S.Context.typesAreCompatible(LHSType, RHSType))
+//     return Sema::Compatible;
+//   if (LHSType->isObjCQualifiedIdType() || RHSType->isObjCQualifiedIdType())
+//     return Sema::IncompatibleObjCQualifiedId;
+//   return Sema::IncompatiblePointer;
+// }
 
 Sema::AssignConvertType
 Sema::CheckAssignmentConstraints(SourceLocation Loc,
@@ -9043,24 +9043,24 @@ Sema::CheckAssignmentConstraints(QualType LHSType, ExprResult &RHS,
 
     // C pointers are not compatible with ObjC object pointers,
     // with two exceptions:
-    if (isa<ObjCObjectPointerType>(RHSType)) {
-      //  - conversions to void*
-      if (LHSPointer->getPointeeType()->isVoidType()) {
-        Kind = CK_BitCast;
-        return Compatible;
-      }
+    // if (isa<ObjCObjectPointerType>(RHSType)) {
+    //   //  - conversions to void*
+    //   if (LHSPointer->getPointeeType()->isVoidType()) {
+    //     Kind = CK_BitCast;
+    //     return Compatible;
+    //   }
 
-      //  - conversions from 'Class' to the redefinition type
-      if (RHSType->isObjCClassType() &&
-          Context.hasSameType(LHSType,
-                              Context.getObjCClassRedefinitionType())) {
-        Kind = CK_BitCast;
-        return Compatible;
-      }
+    //   //  - conversions from 'Class' to the redefinition type
+    //   if (RHSType->isObjCClassType() &&
+    //       Context.hasSameType(LHSType,
+    //                           Context.getObjCClassRedefinitionType())) {
+    //     Kind = CK_BitCast;
+    //     return Compatible;
+    //   }
 
-      Kind = CK_BitCast;
-      return IncompatiblePointer;
-    }
+    //   Kind = CK_BitCast;
+    //   return IncompatiblePointer;
+    // }
 
     // U^ -> void*
     if (RHSType->getAs<BlockPointerType>()) {
@@ -9115,56 +9115,56 @@ Sema::CheckAssignmentConstraints(QualType LHSType, ExprResult &RHS,
   }
 
   // Conversions to Objective-C pointers.
-  if (isa<ObjCObjectPointerType>(LHSType)) {
-    // A* -> B*
-    if (RHSType->isObjCObjectPointerType()) {
-      Kind = CK_BitCast;
-      Sema::AssignConvertType result =
-        checkObjCPointerTypesForAssignment(*this, LHSType, RHSType);
-      if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
-          result == Compatible &&
-          !CheckObjCARCUnavailableWeakConversion(OrigLHSType, RHSType))
-        result = IncompatibleObjCWeakRef;
-      return result;
-    }
+  // if (isa<ObjCObjectPointerType>(LHSType)) {
+  //   // A* -> B*
+  //   if (RHSType->isObjCObjectPointerType()) {
+  //     Kind = CK_BitCast;
+  //     Sema::AssignConvertType result =
+  //       checkObjCPointerTypesForAssignment(*this, LHSType, RHSType);
+  //     if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
+  //         result == Compatible &&
+  //         !CheckObjCARCUnavailableWeakConversion(OrigLHSType, RHSType))
+  //       result = IncompatibleObjCWeakRef;
+  //     return result;
+  //   }
 
-    // int or null -> A*
-    if (RHSType->isIntegerType()) {
-      Kind = CK_IntegralToPointer; // FIXME: null
-      return IntToPointer;
-    }
+  //   // int or null -> A*
+  //   if (RHSType->isIntegerType()) {
+  //     Kind = CK_IntegralToPointer; // FIXME: null
+  //     return IntToPointer;
+  //   }
 
-    // In general, C pointers are not compatible with ObjC object pointers,
-    // with two exceptions:
-    if (isa<PointerType>(RHSType)) {
-      Kind = CK_CPointerToObjCPointerCast;
+  //   // In general, C pointers are not compatible with ObjC object pointers,
+  //   // with two exceptions:
+  //   if (isa<PointerType>(RHSType)) {
+  //     Kind = CK_CPointerToObjCPointerCast;
 
-      //  - conversions from 'void*'
-      if (RHSType->isVoidPointerType()) {
-        return Compatible;
-      }
+  //     //  - conversions from 'void*'
+  //     if (RHSType->isVoidPointerType()) {
+  //       return Compatible;
+  //     }
 
-      //  - conversions to 'Class' from its redefinition type
-      if (LHSType->isObjCClassType() &&
-          Context.hasSameType(RHSType,
-                              Context.getObjCClassRedefinitionType())) {
-        return Compatible;
-      }
+  //     //  - conversions to 'Class' from its redefinition type
+  //     if (LHSType->isObjCClassType() &&
+  //         Context.hasSameType(RHSType,
+  //                             Context.getObjCClassRedefinitionType())) {
+  //       return Compatible;
+  //     }
 
-      return IncompatiblePointer;
-    }
+  //     return IncompatiblePointer;
+  //   }
 
-    // Only under strict condition T^ is compatible with an Objective-C pointer.
-    if (RHSType->isBlockPointerType() &&
-        LHSType->isBlockCompatibleObjCPointerType(Context)) {
-      if (ConvertRHS)
-        maybeExtendBlockObject(RHS);
-      Kind = CK_BlockPointerToObjCPointerCast;
-      return Compatible;
-    }
+  //   // Only under strict condition T^ is compatible with an Objective-C pointer.
+  //   if (RHSType->isBlockPointerType() &&
+  //       LHSType->isBlockCompatibleObjCPointerType(Context)) {
+  //     if (ConvertRHS)
+  //       maybeExtendBlockObject(RHS);
+  //     Kind = CK_BlockPointerToObjCPointerCast;
+  //     return Compatible;
+  //   }
 
-    return Incompatible;
-  }
+  //   return Incompatible;
+  // }
 
   // Conversions from pointers that are not covered by the above.
   if (isa<PointerType>(RHSType)) {
@@ -9184,21 +9184,21 @@ Sema::CheckAssignmentConstraints(QualType LHSType, ExprResult &RHS,
   }
 
   // Conversions from Objective-C pointers that are not covered by the above.
-  if (isa<ObjCObjectPointerType>(RHSType)) {
-    // T* -> _Bool
-    if (LHSType == Context.BoolTy) {
-      Kind = CK_PointerToBoolean;
-      return Compatible;
-    }
+  // if (isa<ObjCObjectPointerType>(RHSType)) {
+  //   // T* -> _Bool
+  //   if (LHSType == Context.BoolTy) {
+  //     Kind = CK_PointerToBoolean;
+  //     return Compatible;
+  //   }
 
-    // T* -> int
-    if (LHSType->isIntegerType()) {
-      Kind = CK_PointerToIntegral;
-      return PointerToInt;
-    }
+  //   // T* -> int
+  //   if (LHSType->isIntegerType()) {
+  //     Kind = CK_PointerToIntegral;
+  //     return PointerToInt;
+  //   }
 
-    return Incompatible;
-  }
+  //   return Incompatible;
+  // }
 
   // struct A -> struct B
   if (isa<TagType>(LHSType) && isa<TagType>(RHSType)) {
@@ -9208,10 +9208,10 @@ Sema::CheckAssignmentConstraints(QualType LHSType, ExprResult &RHS,
     }
   }
 
-  if (LHSType->isSamplerT() && RHSType->isIntegerType()) {
-    Kind = CK_IntToOCLSampler;
-    return Compatible;
-  }
+  // if (LHSType->isSamplerT() && RHSType->isIntegerType()) {
+  //   Kind = CK_IntToOCLSampler;
+  //   return Compatible;
+  // }
 
   return Incompatible;
 }
@@ -9362,7 +9362,7 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &CallerRHS,
 
   // C99 6.5.16.1p1: the left operand is a pointer and the right is
   // a null pointer constant.
-  if ((LHSType->isPointerType() || LHSType->isObjCObjectPointerType() ||
+  if ((LHSType->isPointerType() || /*LHSType->isObjCObjectPointerType() ||*/
        LHSType->isBlockPointerType()) &&
       RHS.get()->isNullPointerConstant(Context,
                                        Expr::NPC_ValueDependentIsNull)) {
@@ -9419,17 +9419,17 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &CallerRHS,
       if (!Diagnose)
         return Incompatible;
     }
-    if (getLangOpts().ObjC &&
-        (CheckObjCBridgeRelatedConversions(E->getBeginLoc(), LHSType,
-                                           E->getType(), E, Diagnose) ||
-         CheckConversionToObjCLiteral(LHSType, E, Diagnose))) {
-      if (!Diagnose)
-        return Incompatible;
-      // Replace the expression with a corrected version and continue so we
-      // can find further errors.
-      RHS = E;
-      return Compatible;
-    }
+    // if (getLangOpts().ObjC &&
+    //     (CheckObjCBridgeRelatedConversions(E->getBeginLoc(), LHSType,
+    //                                        E->getType(), E, Diagnose) ||
+    //      CheckConversionToObjCLiteral(LHSType, E, Diagnose))) {
+    //   if (!Diagnose)
+    //     return Incompatible;
+    //   // Replace the expression with a corrected version and continue so we
+    //   // can find further errors.
+    //   RHS = E;
+    //   return Compatible;
+    // }
 
     if (ConvertRHS)
       RHS = ImpCastExprToType(E, Ty, Kind);
@@ -10389,15 +10389,15 @@ QualType Sema::CheckAdditionOperands(ExprResult &LHS, ExprResult &RHS,
   bool isObjCPointer;
   if (PExp->getType()->isPointerType()) {
     isObjCPointer = false;
-  } else if (PExp->getType()->isObjCObjectPointerType()) {
-    isObjCPointer = true;
+  // } else if (PExp->getType()->isObjCObjectPointerType()) {
+  //   isObjCPointer = true;
   } else {
     std::swap(PExp, IExp);
     if (PExp->getType()->isPointerType()) {
       isObjCPointer = false;
-    } else if (PExp->getType()->isObjCObjectPointerType()) {
+    } /*else if (PExp->getType()->isObjCObjectPointerType()) {
       isObjCPointer = true;
-    } else {
+    }*/ else {
       return InvalidOperands(Loc, LHS, RHS);
     }
   }
@@ -10425,8 +10425,8 @@ QualType Sema::CheckAdditionOperands(ExprResult &LHS, ExprResult &RHS,
   if (!checkArithmeticOpPointerOperand(*this, Loc, PExp))
     return QualType();
 
-  if (isObjCPointer && checkArithmeticOnObjCPointer(*this, Loc, PExp))
-    return QualType();
+  // if (isObjCPointer && checkArithmeticOnObjCPointer(*this, Loc, PExp))
+  //   return QualType();
 
   // Check array bounds for pointer arithemtic
   CheckArrayAccess(PExp, IExp);
@@ -10483,9 +10483,9 @@ QualType Sema::CheckSubtractionOperands(ExprResult &LHS, ExprResult &RHS,
     QualType lpointee = LHS.get()->getType()->getPointeeType();
 
     // Diagnose bad cases where we step over interface counts.
-    if (LHS.get()->getType()->isObjCObjectPointerType() &&
-        checkArithmeticOnObjCPointer(*this, Loc, LHS.get()))
-      return QualType();
+    // if (LHS.get()->getType()->isObjCObjectPointerType() &&
+    //     checkArithmeticOnObjCPointer(*this, Loc, LHS.get()))
+    //   return QualType();
 
     // The result type of a pointer-int computation is the pointer type.
     if (RHS.get()->getType()->isIntegerType()) {
@@ -10866,51 +10866,51 @@ static bool isObjCObjectLiteral(ExprResult &E) {
   }
 }
 
-static bool hasIsEqualMethod(Sema &S, const Expr *LHS, const Expr *RHS) {
-  const ObjCObjectPointerType *Type =
-    LHS->getType()->getAs<ObjCObjectPointerType>();
+// static bool hasIsEqualMethod(Sema &S, const Expr *LHS, const Expr *RHS) {
+//   const ObjCObjectPointerType *Type =
+//     LHS->getType()->getAs<ObjCObjectPointerType>();
 
-  // If this is not actually an Objective-C object, bail out.
-  if (!Type)
-    return false;
+//   // If this is not actually an Objective-C object, bail out.
+//   if (!Type)
+//     return false;
 
-  // Get the LHS object's interface type.
-  QualType InterfaceType = Type->getPointeeType();
+//   // Get the LHS object's interface type.
+//   QualType InterfaceType = Type->getPointeeType();
 
-  // If the RHS isn't an Objective-C object, bail out.
-  if (!RHS->getType()->isObjCObjectPointerType())
-    return false;
+//   // If the RHS isn't an Objective-C object, bail out.
+//   if (!RHS->getType()->isObjCObjectPointerType())
+//     return false;
 
-  // Try to find the -isEqual: method.
-  Selector IsEqualSel = S.NSAPIObj->getIsEqualSelector();
-  ObjCMethodDecl *Method = S.LookupMethodInObjectType(IsEqualSel,
-                                                      InterfaceType,
-                                                      /*IsInstance=*/true);
-  if (!Method) {
-    if (Type->isObjCIdType()) {
-      // For 'id', just check the global pool.
-      Method = S.LookupInstanceMethodInGlobalPool(IsEqualSel, SourceRange(),
-                                                  /*receiverId=*/true);
-    } else {
-      // Check protocols.
-      Method = S.LookupMethodInQualifiedType(IsEqualSel, Type,
-                                             /*IsInstance=*/true);
-    }
-  }
+//   // Try to find the -isEqual: method.
+//   Selector IsEqualSel = S.NSAPIObj->getIsEqualSelector();
+//   ObjCMethodDecl *Method = S.LookupMethodInObjectType(IsEqualSel,
+//                                                       InterfaceType,
+//                                                       /*IsInstance=*/true);
+//   if (!Method) {
+//     if (Type->isObjCIdType()) {
+//       // For 'id', just check the global pool.
+//       Method = S.LookupInstanceMethodInGlobalPool(IsEqualSel, SourceRange(),
+//                                                   /*receiverId=*/true);
+//     } else {
+//       // Check protocols.
+//       Method = S.LookupMethodInQualifiedType(IsEqualSel, Type,
+//                                              /*IsInstance=*/true);
+//     }
+//   }
 
-  if (!Method)
-    return false;
+//   if (!Method)
+//     return false;
 
-  QualType T = Method->parameters()[0]->getType();
-  if (!T->isObjCObjectPointerType())
-    return false;
+//   QualType T = Method->parameters()[0]->getType();
+//   if (!T->isObjCObjectPointerType())
+//     return false;
 
-  QualType R = Method->getReturnType();
-  if (!R->isScalarType())
-    return false;
+//   QualType R = Method->getReturnType();
+//   if (!R->isScalarType())
+//     return false;
 
-  return true;
-}
+//   return true;
+// }
 
 Sema::ObjCLiteralKind Sema::CheckLiteralKind(Expr *FromE) {
   FromE = FromE->IgnoreParenImpCasts();
@@ -10954,54 +10954,54 @@ Sema::ObjCLiteralKind Sema::CheckLiteralKind(Expr *FromE) {
   return LK_None;
 }
 
-static void diagnoseObjCLiteralComparison(Sema &S, SourceLocation Loc,
-                                          ExprResult &LHS, ExprResult &RHS,
-                                          BinaryOperator::Opcode Opc){
-  Expr *Literal;
-  Expr *Other;
-  if (isObjCObjectLiteral(LHS)) {
-    Literal = LHS.get();
-    Other = RHS.get();
-  } else {
-    Literal = RHS.get();
-    Other = LHS.get();
-  }
+// static void diagnoseObjCLiteralComparison(Sema &S, SourceLocation Loc,
+//                                           ExprResult &LHS, ExprResult &RHS,
+//                                           BinaryOperator::Opcode Opc){
+//   Expr *Literal;
+//   Expr *Other;
+//   if (isObjCObjectLiteral(LHS)) {
+//     Literal = LHS.get();
+//     Other = RHS.get();
+//   } else {
+//     Literal = RHS.get();
+//     Other = LHS.get();
+//   }
 
-  // Don't warn on comparisons against nil.
-  Other = Other->IgnoreParenCasts();
-  if (Other->isNullPointerConstant(S.getASTContext(),
-                                   Expr::NPC_ValueDependentIsNotNull))
-    return;
+//   // Don't warn on comparisons against nil.
+//   Other = Other->IgnoreParenCasts();
+//   if (Other->isNullPointerConstant(S.getASTContext(),
+//                                    Expr::NPC_ValueDependentIsNotNull))
+//     return;
 
-  // This should be kept in sync with warn_objc_literal_comparison.
-  // LK_String should always be after the other literals, since it has its own
-  // warning flag.
-  Sema::ObjCLiteralKind LiteralKind = S.CheckLiteralKind(Literal);
-  assert(LiteralKind != Sema::LK_Block);
-  if (LiteralKind == Sema::LK_None) {
-    llvm_unreachable("Unknown Objective-C object literal kind");
-  }
+//   // This should be kept in sync with warn_objc_literal_comparison.
+//   // LK_String should always be after the other literals, since it has its own
+//   // warning flag.
+//   Sema::ObjCLiteralKind LiteralKind = S.CheckLiteralKind(Literal);
+//   assert(LiteralKind != Sema::LK_Block);
+//   if (LiteralKind == Sema::LK_None) {
+//     llvm_unreachable("Unknown Objective-C object literal kind");
+//   }
 
-  if (LiteralKind == Sema::LK_String)
-    S.Diag(Loc, diag::warn_objc_string_literal_comparison)
-      << Literal->getSourceRange();
-  else
-    S.Diag(Loc, diag::warn_objc_literal_comparison)
-      << LiteralKind << Literal->getSourceRange();
+//   if (LiteralKind == Sema::LK_String)
+//     S.Diag(Loc, diag::warn_objc_string_literal_comparison)
+//       << Literal->getSourceRange();
+//   else
+//     S.Diag(Loc, diag::warn_objc_literal_comparison)
+//       << LiteralKind << Literal->getSourceRange();
 
-  if (BinaryOperator::isEqualityOp(Opc) &&
-      hasIsEqualMethod(S, LHS.get(), RHS.get())) {
-    SourceLocation Start = LHS.get()->getBeginLoc();
-    SourceLocation End = S.getLocForEndOfToken(RHS.get()->getEndLoc());
-    CharSourceRange OpRange =
-      CharSourceRange::getCharRange(Loc, S.getLocForEndOfToken(Loc));
+//   if (BinaryOperator::isEqualityOp(Opc) &&
+//       hasIsEqualMethod(S, LHS.get(), RHS.get())) {
+//     SourceLocation Start = LHS.get()->getBeginLoc();
+//     SourceLocation End = S.getLocForEndOfToken(RHS.get()->getEndLoc());
+//     CharSourceRange OpRange =
+//       CharSourceRange::getCharRange(Loc, S.getLocForEndOfToken(Loc));
 
-    S.Diag(Loc, diag::note_objc_literal_comparison_isequal)
-      << FixItHint::CreateInsertion(Start, Opc == BO_EQ ? "[" : "![")
-      << FixItHint::CreateReplacement(OpRange, " isEqual:")
-      << FixItHint::CreateInsertion(End, "]");
-  }
-}
+//     S.Diag(Loc, diag::note_objc_literal_comparison_isequal)
+//       << FixItHint::CreateInsertion(Start, Opc == BO_EQ ? "[" : "![")
+//       << FixItHint::CreateReplacement(OpRange, " isEqual:")
+//       << FixItHint::CreateInsertion(End, "]");
+//   }
+// }
 
 /// Warns on !x < y, !x & y where !(x < y), !(x & y) was probably intended.
 static void diagnoseLogicalNotOnLHSofCheck(Sema &S, ExprResult &LHS,
@@ -11538,9 +11538,9 @@ QualType Sema::CheckCompareOperands(ExprResult &LHS, ExprResult &RHS,
     // we already decayed those, so this is really the same as the relational
     // comparison rule.
     if ((int)LHSType->isPointerType() + (int)RHSType->isPointerType() >=
-            (IsOrdered ? 2 : 1) &&
+            (IsOrdered ? 2 : 1) /*&&
         (!LangOpts.ObjCAutoRefCount || !(LHSType->isObjCObjectPointerType() ||
-                                         RHSType->isObjCObjectPointerType()))) {
+                                         RHSType->isObjCObjectPointerType()))*/) {
       if (convertPointersToCompositeType(*this, Loc, LHS, RHS))
         return QualType();
       return computeResultTy();
@@ -11625,12 +11625,12 @@ QualType Sema::CheckCompareOperands(ExprResult &LHS, ExprResult &RHS,
     // Comparison of Objective-C pointers and block pointers against nullptr_t.
     // These aren't covered by the composite pointer type rules.
     if (!IsOrdered && RHSType->isNullPtrType() &&
-        (LHSType->isObjCObjectPointerType() || LHSType->isBlockPointerType())) {
+        (/*LHSType->isObjCObjectPointerType() ||*/ LHSType->isBlockPointerType())) {
       RHS = ImpCastExprToType(RHS.get(), LHSType, CK_NullToPointer);
       return computeResultTy();
     }
     if (!IsOrdered && LHSType->isNullPtrType() &&
-        (RHSType->isObjCObjectPointerType() || RHSType->isBlockPointerType())) {
+        (/*RHSType->isObjCObjectPointerType() ||*/ RHSType->isBlockPointerType())) {
       LHS = ImpCastExprToType(LHS.get(), RHSType, CK_NullToPointer);
       return computeResultTy();
     }
@@ -11712,69 +11712,69 @@ QualType Sema::CheckCompareOperands(ExprResult &LHS, ExprResult &RHS,
     return computeResultTy();
   }
 
-  if (LHSType->isObjCObjectPointerType() ||
-      RHSType->isObjCObjectPointerType()) {
-    const PointerType *LPT = LHSType->getAs<PointerType>();
-    const PointerType *RPT = RHSType->getAs<PointerType>();
-    if (LPT || RPT) {
-      bool LPtrToVoid = LPT ? LPT->getPointeeType()->isVoidType() : false;
-      bool RPtrToVoid = RPT ? RPT->getPointeeType()->isVoidType() : false;
+  // if (LHSType->isObjCObjectPointerType() ||
+  //     RHSType->isObjCObjectPointerType()) {
+  //   const PointerType *LPT = LHSType->getAs<PointerType>();
+  //   const PointerType *RPT = RHSType->getAs<PointerType>();
+  //   if (LPT || RPT) {
+  //     bool LPtrToVoid = LPT ? LPT->getPointeeType()->isVoidType() : false;
+  //     bool RPtrToVoid = RPT ? RPT->getPointeeType()->isVoidType() : false;
 
-      if (!LPtrToVoid && !RPtrToVoid &&
-          !Context.typesAreCompatible(LHSType, RHSType)) {
-        diagnoseDistinctPointerComparison(*this, Loc, LHS, RHS,
-                                          /*isError*/false);
-      }
-      // FIXME: If LPtrToVoid, we should presumably convert the LHS rather than
-      // the RHS, but we have test coverage for this behavior.
-      // FIXME: Consider using convertPointersToCompositeType in C++.
-      if (LHSIsNull && !RHSIsNull) {
-        Expr *E = LHS.get();
-        if (getLangOpts().ObjCAutoRefCount)
-          CheckObjCConversion(SourceRange(), RHSType, E,
-                              CCK_ImplicitConversion);
-        LHS = ImpCastExprToType(E, RHSType,
-                                RPT ? CK_BitCast :CK_CPointerToObjCPointerCast);
-      }
-      else {
-        Expr *E = RHS.get();
-        if (getLangOpts().ObjCAutoRefCount)
-          CheckObjCConversion(SourceRange(), LHSType, E, CCK_ImplicitConversion,
-                              /*Diagnose=*/true,
-                              /*DiagnoseCFAudited=*/false, Opc);
-        RHS = ImpCastExprToType(E, LHSType,
-                                LPT ? CK_BitCast :CK_CPointerToObjCPointerCast);
-      }
-      return computeResultTy();
-    }
-    if (LHSType->isObjCObjectPointerType() &&
-        RHSType->isObjCObjectPointerType()) {
-      if (!Context.areComparableObjCPointerTypes(LHSType, RHSType))
-        diagnoseDistinctPointerComparison(*this, Loc, LHS, RHS,
-                                          /*isError*/false);
-      if (isObjCObjectLiteral(LHS) || isObjCObjectLiteral(RHS))
-        diagnoseObjCLiteralComparison(*this, Loc, LHS, RHS, Opc);
+  //     if (!LPtrToVoid && !RPtrToVoid &&
+  //         !Context.typesAreCompatible(LHSType, RHSType)) {
+  //       diagnoseDistinctPointerComparison(*this, Loc, LHS, RHS,
+  //                                         /*isError*/false);
+  //     }
+  //     // FIXME: If LPtrToVoid, we should presumably convert the LHS rather than
+  //     // the RHS, but we have test coverage for this behavior.
+  //     // FIXME: Consider using convertPointersToCompositeType in C++.
+  //     if (LHSIsNull && !RHSIsNull) {
+  //       Expr *E = LHS.get();
+  //       if (getLangOpts().ObjCAutoRefCount)
+  //         CheckObjCConversion(SourceRange(), RHSType, E,
+  //                             CCK_ImplicitConversion);
+  //       LHS = ImpCastExprToType(E, RHSType,
+  //                               RPT ? CK_BitCast :CK_CPointerToObjCPointerCast);
+  //     }
+  //     else {
+  //       Expr *E = RHS.get();
+  //       if (getLangOpts().ObjCAutoRefCount)
+  //         CheckObjCConversion(SourceRange(), LHSType, E, CCK_ImplicitConversion,
+  //                             /*Diagnose=*/true,
+  //                             /*DiagnoseCFAudited=*/false, Opc);
+  //       RHS = ImpCastExprToType(E, LHSType,
+  //                               LPT ? CK_BitCast :CK_CPointerToObjCPointerCast);
+  //     }
+  //     return computeResultTy();
+  //   }
+  //   if (LHSType->isObjCObjectPointerType() &&
+  //       RHSType->isObjCObjectPointerType()) {
+  //     if (!Context.areComparableObjCPointerTypes(LHSType, RHSType))
+  //       diagnoseDistinctPointerComparison(*this, Loc, LHS, RHS,
+  //                                         /*isError*/false);
+  //     // if (isObjCObjectLiteral(LHS) || isObjCObjectLiteral(RHS))
+  //     //   diagnoseObjCLiteralComparison(*this, Loc, LHS, RHS, Opc);
 
-      if (LHSIsNull && !RHSIsNull)
-        LHS = ImpCastExprToType(LHS.get(), RHSType, CK_BitCast);
-      else
-        RHS = ImpCastExprToType(RHS.get(), LHSType, CK_BitCast);
-      return computeResultTy();
-    }
+  //     if (LHSIsNull && !RHSIsNull)
+  //       LHS = ImpCastExprToType(LHS.get(), RHSType, CK_BitCast);
+  //     else
+  //       RHS = ImpCastExprToType(RHS.get(), LHSType, CK_BitCast);
+  //     return computeResultTy();
+  //   }
 
-    if (!IsOrdered && LHSType->isBlockPointerType() &&
-        RHSType->isBlockCompatibleObjCPointerType(Context)) {
-      LHS = ImpCastExprToType(LHS.get(), RHSType,
-                              CK_BlockPointerToObjCPointerCast);
-      return computeResultTy();
-    } else if (!IsOrdered &&
-               LHSType->isBlockCompatibleObjCPointerType(Context) &&
-               RHSType->isBlockPointerType()) {
-      RHS = ImpCastExprToType(RHS.get(), LHSType,
-                              CK_BlockPointerToObjCPointerCast);
-      return computeResultTy();
-    }
-  }
+  //   if (!IsOrdered && LHSType->isBlockPointerType() &&
+  //       RHSType->isBlockCompatibleObjCPointerType(Context)) {
+  //     LHS = ImpCastExprToType(LHS.get(), RHSType,
+  //                             CK_BlockPointerToObjCPointerCast);
+  //     return computeResultTy();
+  //   } else if (!IsOrdered &&
+  //              LHSType->isBlockCompatibleObjCPointerType(Context) &&
+  //              RHSType->isBlockPointerType()) {
+  //     RHS = ImpCastExprToType(RHS.get(), LHSType,
+  //                             CK_BlockPointerToObjCPointerCast);
+  //     return computeResultTy();
+  //   }
+  // }
   if ((LHSType->isAnyPointerType() && RHSType->isIntegerType()) ||
       (LHSType->isIntegerType() && RHSType->isAnyPointerType())) {
     unsigned DiagID = 0;
@@ -12555,7 +12555,7 @@ static void DiagnoseRecursiveConstFields(Sema &S, const Expr *E,
 /// CheckForModifiableLvalue - Verify that E is a modifiable lvalue.  If not,
 /// emit an error and return true.  If so, return false.
 static bool CheckForModifiableLvalue(Expr *E, SourceLocation Loc, Sema &S) {
-  assert(!E->hasPlaceholderType(BuiltinType::PseudoObject));
+  // assert(!E->hasPlaceholderType(BuiltinType::PseudoObject));
 
   S.CheckShadowingDeclModification(E, Loc);
 
@@ -12583,44 +12583,44 @@ static bool CheckForModifiableLvalue(Expr *E, SourceLocation Loc, Sema &S) {
 
     // In ARC, use some specialized diagnostics for occasions where we
     // infer 'const'.  These are always pseudo-strong variables.
-    if (S.getLangOpts().ObjCAutoRefCount) {
-      DeclRefExpr *declRef = dyn_cast<DeclRefExpr>(E->IgnoreParenCasts());
-      if (declRef && isa<VarDecl>(declRef->getDecl())) {
-        VarDecl *var = cast<VarDecl>(declRef->getDecl());
+    // if (S.getLangOpts().ObjCAutoRefCount) {
+    //   DeclRefExpr *declRef = dyn_cast<DeclRefExpr>(E->IgnoreParenCasts());
+    //   if (declRef && isa<VarDecl>(declRef->getDecl())) {
+    //     VarDecl *var = cast<VarDecl>(declRef->getDecl());
 
-        // Use the normal diagnostic if it's pseudo-__strong but the
-        // user actually wrote 'const'.
-        if (var->isARCPseudoStrong() &&
-            (!var->getTypeSourceInfo() ||
-             !var->getTypeSourceInfo()->getType().isConstQualified())) {
-          // There are three pseudo-strong cases:
-          //  - self
-          ObjCMethodDecl *method = S.getCurMethodDecl();
-          if (method && var == method->getSelfDecl()) {
-            DiagID = method->isClassMethod()
-              ? diag::err_typecheck_arc_assign_self_class_method
-              : diag::err_typecheck_arc_assign_self;
+    //     // Use the normal diagnostic if it's pseudo-__strong but the
+    //     // user actually wrote 'const'.
+    //     if (var->isARCPseudoStrong() &&
+    //         (!var->getTypeSourceInfo() ||
+    //          !var->getTypeSourceInfo()->getType().isConstQualified())) {
+    //       // There are three pseudo-strong cases:
+    //       //  - self
+    //       ObjCMethodDecl *method = S.getCurMethodDecl();
+    //       if (method && var == method->getSelfDecl()) {
+    //         DiagID = method->isClassMethod()
+    //           ? diag::err_typecheck_arc_assign_self_class_method
+    //           : diag::err_typecheck_arc_assign_self;
 
-          //  - Objective-C externally_retained attribute.
-          } else if (var->hasAttr<ObjCExternallyRetainedAttr>() ||
-                     isa<ParmVarDecl>(var)) {
-            DiagID = diag::err_typecheck_arc_assign_externally_retained;
+    //       //  - Objective-C externally_retained attribute.
+    //       } else if (/*var->hasAttr<ObjCExternallyRetainedAttr>() ||*/
+    //                  isa<ParmVarDecl>(var)) {
+    //         DiagID = diag::err_typecheck_arc_assign_externally_retained;
 
-          //  - fast enumeration variables
-          } else {
-            DiagID = diag::err_typecheck_arr_assign_enumeration;
-          }
+    //       //  - fast enumeration variables
+    //       } else {
+    //         DiagID = diag::err_typecheck_arr_assign_enumeration;
+    //       }
 
-          SourceRange Assign;
-          if (Loc != OrigLoc)
-            Assign = SourceRange(OrigLoc, OrigLoc);
-          S.Diag(Loc, DiagID) << E->getSourceRange() << Assign;
-          // We need to preserve the AST regardless, so migration tool
-          // can do its job.
-          return false;
-        }
-      }
-    }
+    //       SourceRange Assign;
+    //       if (Loc != OrigLoc)
+    //         Assign = SourceRange(OrigLoc, OrigLoc);
+    //       S.Diag(Loc, DiagID) << E->getSourceRange() << Assign;
+    //       // We need to preserve the AST regardless, so migration tool
+    //       // can do its job.
+    //       return false;
+    //     }
+    //   }
+    // }
 
     // If none of the special cases above are triggered, then this is a
     // simple const assignment.
@@ -12716,21 +12716,21 @@ static void CheckIdentityFieldAssignment(Expr *LHSExpr, Expr *RHSExpr,
   }
 
   // Objective-C instance variables
-  ObjCIvarRefExpr *OL = dyn_cast<ObjCIvarRefExpr>(LHSExpr);
-  ObjCIvarRefExpr *OR = dyn_cast<ObjCIvarRefExpr>(RHSExpr);
-  if (OL && OR && OL->getDecl() == OR->getDecl()) {
-    DeclRefExpr *RL = dyn_cast<DeclRefExpr>(OL->getBase()->IgnoreImpCasts());
-    DeclRefExpr *RR = dyn_cast<DeclRefExpr>(OR->getBase()->IgnoreImpCasts());
-    if (RL && RR && RL->getDecl() == RR->getDecl())
-      Sema.Diag(Loc, diag::warn_identity_field_assign) << 1;
-  }
+  // ObjCIvarRefExpr *OL = dyn_cast<ObjCIvarRefExpr>(LHSExpr);
+  // ObjCIvarRefExpr *OR = dyn_cast<ObjCIvarRefExpr>(RHSExpr);
+  // if (OL && OR && OL->getDecl() == OR->getDecl()) {
+  //   DeclRefExpr *RL = dyn_cast<DeclRefExpr>(OL->getBase()->IgnoreImpCasts());
+  //   DeclRefExpr *RR = dyn_cast<DeclRefExpr>(OR->getBase()->IgnoreImpCasts());
+  //   if (RL && RR && RL->getDecl() == RR->getDecl())
+  //     Sema.Diag(Loc, diag::warn_identity_field_assign) << 1;
+  // }
 }
 
 // C99 6.5.16.1
 QualType Sema::CheckAssignmentOperands(Expr *LHSExpr, ExprResult &RHS,
                                        SourceLocation Loc,
                                        QualType CompoundType) {
-  assert(!LHSExpr->hasPlaceholderType(BuiltinType::PseudoObject));
+  // assert(!LHSExpr->hasPlaceholderType(BuiltinType::PseudoObject));
 
   // Verify that LHS is a modifiable lvalue, and emit error if not.
   if (CheckForModifiableLvalue(LHSExpr, Loc, *this))
@@ -12760,17 +12760,17 @@ QualType Sema::CheckAssignmentOperands(Expr *LHSExpr, ExprResult &RHS,
     if (RHS.isInvalid())
       return QualType();
     // Special case of NSObject attributes on c-style pointer types.
-    if (ConvTy == IncompatiblePointer &&
-        ((Context.isObjCNSObjectType(LHSType) &&
-          RHSType->isObjCObjectPointerType()) ||
-         (Context.isObjCNSObjectType(RHSType) &&
-          LHSType->isObjCObjectPointerType())))
-      ConvTy = Compatible;
+    // if (ConvTy == IncompatiblePointer &&
+    //     ((Context.isObjCNSObjectType(LHSType) &&
+    //       RHSType->isObjCObjectPointerType()) ||
+    //      (Context.isObjCNSObjectType(RHSType) &&
+    //       LHSType->isObjCObjectPointerType())))
+    //   ConvTy = Compatible;
 
-    if (ConvTy == Compatible &&
-        LHSType->isObjCObjectType())
-        Diag(Loc, diag::err_objc_object_assignment)
-          << LHSType;
+    // if (ConvTy == Compatible &&
+    //     LHSType->isObjCObjectType())
+    //     Diag(Loc, diag::err_objc_object_assignment)
+    //       << LHSType;
 
     // If the RHS is a unary plus or minus, check to see if they = and + are
     // right next to each other.  If so, the user may have typo'd "x =+ 4"
@@ -12792,36 +12792,36 @@ QualType Sema::CheckAssignmentOperands(Expr *LHSExpr, ExprResult &RHS,
       }
     }
 
-    if (ConvTy == Compatible) {
-      if (LHSType.getObjCLifetime() == Qualifiers::OCL_Strong) {
-        // Warn about retain cycles where a block captures the LHS, but
-        // not if the LHS is a simple variable into which the block is
-        // being stored...unless that variable can be captured by reference!
-        const Expr *InnerLHS = LHSExpr->IgnoreParenCasts();
-        const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(InnerLHS);
-        if (!DRE || DRE->getDecl()->hasAttr<BlocksAttr>())
-          checkRetainCycles(LHSExpr, RHS.get());
-      }
+    // if (ConvTy == Compatible) {
+    //   if (LHSType.getObjCLifetime() == Qualifiers::OCL_Strong) {
+    //     // Warn about retain cycles where a block captures the LHS, but
+    //     // not if the LHS is a simple variable into which the block is
+    //     // being stored...unless that variable can be captured by reference!
+    //     const Expr *InnerLHS = LHSExpr->IgnoreParenCasts();
+    //     const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(InnerLHS);
+    //     if (!DRE || DRE->getDecl()->hasAttr<BlocksAttr>())
+    //       checkRetainCycles(LHSExpr, RHS.get());
+    //   }
 
-      if (LHSType.getObjCLifetime() == Qualifiers::OCL_Strong ||
-          LHSType.isNonWeakInMRRWithObjCWeak(Context)) {
-        // It is safe to assign a weak reference into a strong variable.
-        // Although this code can still have problems:
-        //   id x = self.weakProp;
-        //   id y = self.weakProp;
-        // we do not warn to warn spuriously when 'x' and 'y' are on separate
-        // paths through the function. This should be revisited if
-        // -Wrepeated-use-of-weak is made flow-sensitive.
-        // For ObjCWeak only, we do not warn if the assign is to a non-weak
-        // variable, which will be valid for the current autorelease scope.
-        if (!Diags.isIgnored(diag::warn_arc_repeated_use_of_weak,
-                             RHS.get()->getBeginLoc()))
-          getCurFunction()->markSafeWeakUse(RHS.get());
+    //   // if (LHSType.getObjCLifetime() == Qualifiers::OCL_Strong ||
+    //   //     LHSType.isNonWeakInMRRWithObjCWeak(Context)) {
+    //   //   // It is safe to assign a weak reference into a strong variable.
+    //   //   // Although this code can still have problems:
+    //   //   //   id x = self.weakProp;
+    //   //   //   id y = self.weakProp;
+    //   //   // we do not warn to warn spuriously when 'x' and 'y' are on separate
+    //   //   // paths through the function. This should be revisited if
+    //   //   // -Wrepeated-use-of-weak is made flow-sensitive.
+    //   //   // For ObjCWeak only, we do not warn if the assign is to a non-weak
+    //   //   // variable, which will be valid for the current autorelease scope.
+    //   //   if (!Diags.isIgnored(diag::warn_arc_repeated_use_of_weak,
+    //   //                        RHS.get()->getBeginLoc()))
+    //   //     getCurFunction()->markSafeWeakUse(RHS.get());
 
-      } else if (getLangOpts().ObjCAutoRefCount || getLangOpts().ObjCWeak) {
-        checkUnsafeExprAssigns(Loc, LHSExpr, RHS.get());
-      }
-    }
+    //   // } else if (getLangOpts().ObjCAutoRefCount || getLangOpts().ObjCWeak) {
+    //   //   checkUnsafeExprAssigns(Loc, LHSExpr, RHS.get());
+    //   // }
+    // }
   } else {
     // Compound assignment "x += y"
     ConvTy = CheckAssignmentConstraints(Loc, LHSType, RHSType);
@@ -13003,13 +13003,13 @@ static QualType CheckIncrementDecrementOperand(Sema &S, Expr *Op,
     // C99 6.5.2.4p2, 6.5.6p2
     if (!checkArithmeticOpPointerOperand(S, OpLoc, Op))
       return QualType();
-  } else if (ResType->isObjCObjectPointerType()) {
+  } /*else if (ResType->isObjCObjectPointerType()) {
     // On modern runtimes, ObjC pointer arithmetic is forbidden.
     // Otherwise, we just need a complete type.
     if (checkArithmeticIncompletePointerType(S, OpLoc, Op) ||
         checkArithmeticOnObjCPointer(S, OpLoc, Op))
       return QualType();
-  } else if (ResType->isAnyComplexType()) {
+  }*/ else if (ResType->isAnyComplexType()) {
     // C99 does not support ++/-- on complex types, we allow as an extension.
     S.Diag(OpLoc, diag::ext_integer_increment_complex)
       << ResType << Op->getSourceRange();
@@ -13191,13 +13191,13 @@ QualType Sema::CheckAddressOfOperand(ExprResult &OrigOp, SourceLocation OpLoc) {
   // enqueue_kernel can be located in a different address space
   // depending on a vendor implementation. Thus preventing
   // taking an address of the capture to avoid invalid AS casts.
-  if (LangOpts.OpenCL) {
-    auto* VarRef = dyn_cast<DeclRefExpr>(op);
-    if (VarRef && VarRef->refersToEnclosingVariableOrCapture()) {
-      Diag(op->getExprLoc(), diag::err_opencl_taking_address_capture);
-      return QualType();
-    }
-  }
+  // if (LangOpts.OpenCL) {
+  //   auto* VarRef = dyn_cast<DeclRefExpr>(op);
+  //   if (VarRef && VarRef->refersToEnclosingVariableOrCapture()) {
+  //     Diag(op->getExprLoc(), diag::err_opencl_taking_address_capture);
+  //     return QualType();
+  //   }
+  // }
 
   if (getLangOpts().C99) {
     // Implement C99-only parts of addressof rules.
@@ -13354,8 +13354,8 @@ QualType Sema::CheckAddressOfOperand(ExprResult &OrigOp, SourceLocation OpLoc) {
   }
 
   // If the operand has type "type", the result has type "pointer to type".
-  if (op->getType()->isObjCObjectType())
-    return Context.getObjCObjectPointerType(op->getType());
+  // if (op->getType()->isObjCObjectType())
+  //   return Context.getObjCObjectPointerType(op->getType());
 
   CheckAddressOfPackedMember(op);
 
@@ -13403,9 +13403,9 @@ static QualType CheckIndirectionOperand(Sema &S, Expr *Op, ExprValueKind &VK,
   {
     Result = PT->getPointeeType();
   }
-  else if (const ObjCObjectPointerType *OPT =
-             OpTy->getAs<ObjCObjectPointerType>())
-    Result = OPT->getPointeeType();
+  // else if (const ObjCObjectPointerType *OPT =
+  //            OpTy->getAs<ObjCObjectPointerType>())
+  //   Result = OPT->getPointeeType();
   else {
     ExprResult PR = S.CheckPlaceholderExpr(Op);
     if (PR.isInvalid()) return QualType();
@@ -13541,46 +13541,46 @@ static void DiagnoseSelfAssignment(Sema &S, Expr *LHSExpr, Expr *RHSExpr,
 
 /// Check if a bitwise-& is performed on an Objective-C pointer.  This
 /// is usually indicative of introspection within the Objective-C pointer.
-static void checkObjCPointerIntrospection(Sema &S, ExprResult &L, ExprResult &R,
-                                          SourceLocation OpLoc) {
-  if (!S.getLangOpts().ObjC)
-    return;
+// static void checkObjCPointerIntrospection(Sema &S, ExprResult &L, ExprResult &R,
+//                                           SourceLocation OpLoc) {
+//   if (!S.getLangOpts().ObjC)
+//     return;
 
-  const Expr *ObjCPointerExpr = nullptr, *OtherExpr = nullptr;
-  const Expr *LHS = L.get();
-  const Expr *RHS = R.get();
+//   const Expr *ObjCPointerExpr = nullptr, *OtherExpr = nullptr;
+//   const Expr *LHS = L.get();
+//   const Expr *RHS = R.get();
 
-  if (LHS->IgnoreParenCasts()->getType()->isObjCObjectPointerType()) {
-    ObjCPointerExpr = LHS;
-    OtherExpr = RHS;
-  }
-  else if (RHS->IgnoreParenCasts()->getType()->isObjCObjectPointerType()) {
-    ObjCPointerExpr = RHS;
-    OtherExpr = LHS;
-  }
+//   // if (LHS->IgnoreParenCasts()->getType()->isObjCObjectPointerType()) {
+//   //   ObjCPointerExpr = LHS;
+//   //   OtherExpr = RHS;
+//   // }
+//   // else if (RHS->IgnoreParenCasts()->getType()->isObjCObjectPointerType()) {
+//   //   ObjCPointerExpr = RHS;
+//   //   OtherExpr = LHS;
+//   // }
 
-  // This warning is deliberately made very specific to reduce false
-  // positives with logic that uses '&' for hashing.  This logic mainly
-  // looks for code trying to introspect into tagged pointers, which
-  // code should generally never do.
-  if (ObjCPointerExpr && isa<IntegerLiteral>(OtherExpr->IgnoreParenCasts())) {
-    unsigned Diag = diag::warn_objc_pointer_masking;
-    // Determine if we are introspecting the result of performSelectorXXX.
-    const Expr *Ex = ObjCPointerExpr->IgnoreParenCasts();
-    // Special case messages to -performSelector and friends, which
-    // can return non-pointer values boxed in a pointer value.
-    // Some clients may wish to silence warnings in this subcase.
-    if (const ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(Ex)) {
-      Selector S = ME->getSelector();
-      StringRef SelArg0 = S.getNameForSlot(0);
-      if (SelArg0.startswith("performSelector"))
-        Diag = diag::warn_objc_pointer_masking_performSelector;
-    }
+//   // This warning is deliberately made very specific to reduce false
+//   // positives with logic that uses '&' for hashing.  This logic mainly
+//   // looks for code trying to introspect into tagged pointers, which
+//   // code should generally never do.
+//   if (ObjCPointerExpr && isa<IntegerLiteral>(OtherExpr->IgnoreParenCasts())) {
+//     unsigned Diag = diag::warn_objc_pointer_masking;
+//     // Determine if we are introspecting the result of performSelectorXXX.
+//     const Expr *Ex = ObjCPointerExpr->IgnoreParenCasts();
+//     // Special case messages to -performSelector and friends, which
+//     // can return non-pointer values boxed in a pointer value.
+//     // Some clients may wish to silence warnings in this subcase.
+//     if (const ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(Ex)) {
+//       Selector S = ME->getSelector();
+//       StringRef SelArg0 = S.getNameForSlot(0);
+//       if (SelArg0.startswith("performSelector"))
+//         Diag = diag::warn_objc_pointer_masking_performSelector;
+//     }
 
-    S.Diag(OpLoc, Diag)
-      << ObjCPointerExpr->getSourceRange();
-  }
-}
+//     S.Diag(OpLoc, Diag)
+//       << ObjCPointerExpr->getSourceRange();
+//   }
+// }
 
 static NamedDecl *getDeclFromExpr(Expr *E) {
   if (!E)
@@ -13819,9 +13819,9 @@ ExprResult Sema::CreateBuiltinBinOp(SourceLocation OpLoc,
     ResultTy = CheckCompareOperands(LHS, RHS, OpLoc, Opc);
     assert(ResultTy.isNull() || ResultTy->getAsCXXRecordDecl());
     break;
-  case BO_And:
-    checkObjCPointerIntrospection(*this, LHS, RHS, OpLoc);
-    LLVM_FALLTHROUGH;
+  // case BO_And:
+  //   checkObjCPointerIntrospection(*this, LHS, RHS, OpLoc);
+  //   LLVM_FALLTHROUGH;
   case BO_Xor:
   case BO_Or:
     ResultTy = CheckBitwiseOperands(LHS, RHS, OpLoc, Opc);
@@ -14231,9 +14231,9 @@ ExprResult Sema::BuildBinOp(Scope *S, SourceLocation OpLoc,
   // Handle pseudo-objects in the LHS.
   if (const BuiltinType *pty = LHSExpr->getType()->getAsPlaceholderType()) {
     // Assignments with a pseudo-object l-value need special analysis.
-    if (pty->getKind() == BuiltinType::PseudoObject &&
-        BinaryOperator::isAssignmentOp(Opc))
-      return checkPseudoObjectAssignment(S, OpLoc, Opc, LHSExpr, RHSExpr);
+    // if (pty->getKind() == BuiltinType::PseudoObject &&
+    //     BinaryOperator::isAssignmentOp(Opc))
+    //   return checkPseudoObjectAssignment(S, OpLoc, Opc, LHSExpr, RHSExpr);
 
     // Don't resolve overloads if the other type is overloadable.
     if (getLangOpts().CPlusPlus && pty->getKind() == BuiltinType::Overload) {
@@ -14596,9 +14596,9 @@ ExprResult Sema::BuildUnaryOp(Scope *S, SourceLocation OpLoc,
   // overloaded-operator check considers the right type.
   if (const BuiltinType *pty = Input->getType()->getAsPlaceholderType()) {
     // Increment and decrement of pseudo-object references.
-    if (pty->getKind() == BuiltinType::PseudoObject &&
-        UnaryOperator::isIncrementDecrementOp(Opc))
-      return checkPseudoObjectIncDec(S, OpLoc, Opc, Input);
+    // if (pty->getKind() == BuiltinType::PseudoObject &&
+    //     UnaryOperator::isIncrementDecrementOp(Opc))
+    //   return checkPseudoObjectIncDec(S, OpLoc, Opc, Input);
 
     // extension is always a builtin operator.
     if (Opc == UO_Extension)
@@ -15458,60 +15458,60 @@ ExprResult Sema::BuildSourceLocExpr(SourceLocExpr::IdentKind Kind,
       SourceLocExpr(Context, Kind, BuiltinLoc, RPLoc, ParentContext);
 }
 
-bool Sema::CheckConversionToObjCLiteral(QualType DstType, Expr *&Exp,
-                                        bool Diagnose) {
-  if (!getLangOpts().ObjC)
-    return false;
+// bool Sema::CheckConversionToObjCLiteral(QualType DstType, Expr *&Exp,
+//                                         bool Diagnose) {
+//   if (!getLangOpts().ObjC)
+//     return false;
 
-  const ObjCObjectPointerType *PT = DstType->getAs<ObjCObjectPointerType>();
-  if (!PT)
-    return false;
-  const ObjCInterfaceDecl *ID = PT->getInterfaceDecl();
+//   const ObjCObjectPointerType *PT = DstType->getAs<ObjCObjectPointerType>();
+//   if (!PT)
+//     return false;
+//   const ObjCInterfaceDecl *ID = PT->getInterfaceDecl();
 
-  // Ignore any parens, implicit casts (should only be
-  // array-to-pointer decays), and not-so-opaque values.  The last is
-  // important for making this trigger for property assignments.
-  Expr *SrcExpr = Exp->IgnoreParenImpCasts();
-  if (OpaqueValueExpr *OV = dyn_cast<OpaqueValueExpr>(SrcExpr))
-    if (OV->getSourceExpr())
-      SrcExpr = OV->getSourceExpr()->IgnoreParenImpCasts();
+//   // Ignore any parens, implicit casts (should only be
+//   // array-to-pointer decays), and not-so-opaque values.  The last is
+//   // important for making this trigger for property assignments.
+//   Expr *SrcExpr = Exp->IgnoreParenImpCasts();
+//   if (OpaqueValueExpr *OV = dyn_cast<OpaqueValueExpr>(SrcExpr))
+//     if (OV->getSourceExpr())
+//       SrcExpr = OV->getSourceExpr()->IgnoreParenImpCasts();
 
-  if (auto *SL = dyn_cast<StringLiteral>(SrcExpr)) {
-    if (!PT->isObjCIdType() &&
-        !(ID && ID->getIdentifier()->isStr("NSString")))
-      return false;
-    if (!SL->isAscii())
-      return false;
+//   if (auto *SL = dyn_cast<StringLiteral>(SrcExpr)) {
+//     if (!PT->isObjCIdType() &&
+//         !(ID && ID->getIdentifier()->isStr("NSString")))
+//       return false;
+//     if (!SL->isAscii())
+//       return false;
 
-    if (Diagnose) {
-      Diag(SL->getBeginLoc(), diag::err_missing_atsign_prefix)
-          << /*string*/0 << FixItHint::CreateInsertion(SL->getBeginLoc(), "@");
-      Exp = BuildObjCStringLiteral(SL->getBeginLoc(), SL).get();
-    }
-    return true;
-  }
+//     if (Diagnose) {
+//       Diag(SL->getBeginLoc(), diag::err_missing_atsign_prefix)
+//           << /*string*/0 << FixItHint::CreateInsertion(SL->getBeginLoc(), "@");
+//       Exp = BuildObjCStringLiteral(SL->getBeginLoc(), SL).get();
+//     }
+//     return true;
+//   }
 
-  if ((isa<IntegerLiteral>(SrcExpr) || isa<CharacterLiteral>(SrcExpr) ||
-      isa<FloatingLiteral>(SrcExpr) || isa<ObjCBoolLiteralExpr>(SrcExpr) ||
-      isa<CXXBoolLiteralExpr>(SrcExpr)) &&
-      !SrcExpr->isNullPointerConstant(
-          getASTContext(), Expr::NPC_NeverValueDependent)) {
-    if (!ID || !ID->getIdentifier()->isStr("NSNumber"))
-      return false;
-    if (Diagnose) {
-      Diag(SrcExpr->getBeginLoc(), diag::err_missing_atsign_prefix)
-          << /*number*/1
-          << FixItHint::CreateInsertion(SrcExpr->getBeginLoc(), "@");
-      Expr *NumLit =
-          BuildObjCNumericLiteral(SrcExpr->getBeginLoc(), SrcExpr).get();
-      if (NumLit)
-        Exp = NumLit;
-    }
-    return true;
-  }
+//   if ((isa<IntegerLiteral>(SrcExpr) || isa<CharacterLiteral>(SrcExpr) ||
+//       isa<FloatingLiteral>(SrcExpr) || isa<ObjCBoolLiteralExpr>(SrcExpr) ||
+//       isa<CXXBoolLiteralExpr>(SrcExpr)) &&
+//       !SrcExpr->isNullPointerConstant(
+//           getASTContext(), Expr::NPC_NeverValueDependent)) {
+//     if (!ID || !ID->getIdentifier()->isStr("NSNumber"))
+//       return false;
+//     if (Diagnose) {
+//       Diag(SrcExpr->getBeginLoc(), diag::err_missing_atsign_prefix)
+//           << /*number*/1
+//           << FixItHint::CreateInsertion(SrcExpr->getBeginLoc(), "@");
+//       Expr *NumLit =
+//           BuildObjCNumericLiteral(SrcExpr->getBeginLoc(), SrcExpr).get();
+//       if (NumLit)
+//         Exp = NumLit;
+//     }
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 static bool maybeDiagnoseAssignmentToFunction(Sema &S, QualType DstType,
                                               const Expr *SrcExpr) {
@@ -15548,8 +15548,8 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
   ConversionFixItGenerator ConvHints;
   bool MayHaveConvFixit = false;
   bool MayHaveFunctionDiff = false;
-  const ObjCInterfaceDecl *IFace = nullptr;
-  const ObjCProtocolDecl *PDecl = nullptr;
+  // const ObjCInterfaceDecl *IFace = nullptr;
+  // const ObjCProtocolDecl *PDecl = nullptr;
 
   switch (ConvTy) {
   case Compatible:
@@ -15595,15 +15595,15 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
     } else {
       DiagKind = diag::ext_typecheck_convert_incompatible_pointer;
     }
-    CheckInferredResultType = DstType->isObjCObjectPointerType() &&
-      SrcType->isObjCObjectPointerType();
-    if (Hint.isNull() && !CheckInferredResultType) {
+    // CheckInferredResultType = DstType->isObjCObjectPointerType() &&
+    //   SrcType->isObjCObjectPointerType();
+    if (Hint.isNull() /*&& !CheckInferredResultType*/) {
       ConvHints.tryToFixConversion(SrcExpr, SrcType, DstType, *this);
     }
-    else if (CheckInferredResultType) {
-      SrcType = SrcType.getUnqualifiedType();
-      DstType = DstType.getUnqualifiedType();
-    }
+    // else if (CheckInferredResultType) {
+    //   SrcType = SrcType.getUnqualifiedType();
+    //   DstType = DstType.getUnqualifiedType();
+    // }
     MayHaveConvFixit = true;
     break;
   case IncompatiblePointerSign:
@@ -15634,10 +15634,10 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
       DiagKind = diag::err_typecheck_incompatible_address_space;
       break;
 
-    } else if (lhq.getObjCLifetime() != rhq.getObjCLifetime()) {
+    } /*else if (lhq.getObjCLifetime() != rhq.getObjCLifetime()) {
       DiagKind = diag::err_typecheck_incompatible_ownership;
       break;
-    }
+    }*/
 
     llvm_unreachable("unknown error case for discarding qualifiers!");
     // fallthrough
@@ -15683,37 +15683,37 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
     DiagKind = diag::err_typecheck_convert_incompatible_block_pointer;
     isInvalid = true;
     break;
-  case IncompatibleObjCQualifiedId: {
-    if (SrcType->isObjCQualifiedIdType()) {
-      const ObjCObjectPointerType *srcOPT =
-                SrcType->castAs<ObjCObjectPointerType>();
-      for (auto *srcProto : srcOPT->quals()) {
-        PDecl = srcProto;
-        break;
-      }
-      if (const ObjCInterfaceType *IFaceT =
-            DstType->castAs<ObjCObjectPointerType>()->getInterfaceType())
-        IFace = IFaceT->getDecl();
-    }
-    else if (DstType->isObjCQualifiedIdType()) {
-      const ObjCObjectPointerType *dstOPT =
-        DstType->castAs<ObjCObjectPointerType>();
-      for (auto *dstProto : dstOPT->quals()) {
-        PDecl = dstProto;
-        break;
-      }
-      if (const ObjCInterfaceType *IFaceT =
-            SrcType->castAs<ObjCObjectPointerType>()->getInterfaceType())
-        IFace = IFaceT->getDecl();
-    }
-    if (getLangOpts().CPlusPlus) {
-      DiagKind = diag::err_incompatible_qualified_id;
-      isInvalid = true;
-    } else {
-      DiagKind = diag::warn_incompatible_qualified_id;
-    }
-    break;
-  }
+  // case IncompatibleObjCQualifiedId: {
+  //   if (SrcType->isObjCQualifiedIdType()) {
+  //     const ObjCObjectPointerType *srcOPT =
+  //               SrcType->castAs<ObjCObjectPointerType>();
+  //     for (auto *srcProto : srcOPT->quals()) {
+  //       PDecl = srcProto;
+  //       break;
+  //     }
+  //     if (const ObjCInterfaceType *IFaceT =
+  //           DstType->castAs<ObjCObjectPointerType>()->getInterfaceType())
+  //       IFace = IFaceT->getDecl();
+  //   }
+  //   else if (DstType->isObjCQualifiedIdType()) {
+  //     const ObjCObjectPointerType *dstOPT =
+  //       DstType->castAs<ObjCObjectPointerType>();
+  //     for (auto *dstProto : dstOPT->quals()) {
+  //       PDecl = dstProto;
+  //       break;
+  //     }
+  //     if (const ObjCInterfaceType *IFaceT =
+  //           SrcType->castAs<ObjCObjectPointerType>()->getInterfaceType())
+  //       IFace = IFaceT->getDecl();
+  //   }
+  //   if (getLangOpts().CPlusPlus) {
+  //     DiagKind = diag::err_incompatible_qualified_id;
+  //     isInvalid = true;
+  //   } else {
+  //     DiagKind = diag::warn_incompatible_qualified_id;
+  //   }
+  //   break;
+  // }
   case IncompatibleVectors:
     if (getLangOpts().CPlusPlus) {
       DiagKind = diag::err_incompatible_vectors;
@@ -17009,19 +17009,19 @@ static bool captureInBlock(BlockScopeInfo *BSI, VarDecl *Var,
   }
 
   // Warn about implicitly autoreleasing indirect parameters captured by blocks.
-  if (const auto *PT = CaptureType->getAs<PointerType>()) {
-    QualType PointeeTy = PT->getPointeeType();
+  // if (const auto *PT = CaptureType->getAs<PointerType>()) {
+  //   QualType PointeeTy = PT->getPointeeType();
 
-    if (!Invalid && PointeeTy->getAs<ObjCObjectPointerType>() &&
-        PointeeTy.getObjCLifetime() == Qualifiers::OCL_Autoreleasing &&
-        !S.Context.hasDirectOwnershipQualifier(PointeeTy)) {
-      if (BuildAndDiagnose) {
-        SourceLocation VarLoc = Var->getLocation();
-        S.Diag(Loc, diag::warn_block_capture_autoreleasing);
-        S.Diag(VarLoc, diag::note_declare_parameter_strong);
-      }
-    }
-  }
+  //   if (!Invalid && PointeeTy->getAs<ObjCObjectPointerType>() &&
+  //       PointeeTy.getObjCLifetime() == Qualifiers::OCL_Autoreleasing &&
+  //       !S.Context.hasDirectOwnershipQualifier(PointeeTy)) {
+  //     if (BuildAndDiagnose) {
+  //       SourceLocation VarLoc = Var->getLocation();
+  //       S.Diag(Loc, diag::warn_block_capture_autoreleasing);
+  //       S.Diag(VarLoc, diag::note_declare_parameter_strong);
+  //     }
+  //   }
+  // }
 
   const bool HasBlocksAttr = Var->hasAttr<BlocksAttr>();
   if (HasBlocksAttr || CaptureType->isReferenceType() ||
@@ -18588,7 +18588,7 @@ namespace {
     }
 
     ExprResult VisitCallExpr(CallExpr *E);
-    ExprResult VisitObjCMessageExpr(ObjCMessageExpr *E);
+    // ExprResult VisitObjCMessageExpr(ObjCMessageExpr *E);
 
     /// Rebuild an expression which simply semantically wraps another
     /// expression which it shares the type and value kind of.
@@ -18761,26 +18761,26 @@ ExprResult RebuildUnknownAnyExpr::VisitCallExpr(CallExpr *E) {
   return S.MaybeBindToTemporary(E);
 }
 
-ExprResult RebuildUnknownAnyExpr::VisitObjCMessageExpr(ObjCMessageExpr *E) {
-  // Verify that this is a legal result type of a call.
-  if (DestType->isArrayType() || DestType->isFunctionType()) {
-    S.Diag(E->getExprLoc(), diag::err_func_returning_array_function)
-      << DestType->isFunctionType() << DestType;
-    return ExprError();
-  }
+// ExprResult RebuildUnknownAnyExpr::VisitObjCMessageExpr(ObjCMessageExpr *E) {
+//   // Verify that this is a legal result type of a call.
+//   if (DestType->isArrayType() || DestType->isFunctionType()) {
+//     S.Diag(E->getExprLoc(), diag::err_func_returning_array_function)
+//       << DestType->isFunctionType() << DestType;
+//     return ExprError();
+//   }
 
-  // Rewrite the method result type if available.
-  if (ObjCMethodDecl *Method = E->getMethodDecl()) {
-    assert(Method->getReturnType() == S.Context.UnknownAnyTy);
-    Method->setReturnType(DestType);
-  }
+//   // Rewrite the method result type if available.
+//   if (ObjCMethodDecl *Method = E->getMethodDecl()) {
+//     assert(Method->getReturnType() == S.Context.UnknownAnyTy);
+//     Method->setReturnType(DestType);
+//   }
 
-  // Change the type of the message.
-  E->setType(DestType.getNonReferenceType());
-  E->setValueKind(Expr::getValueKindForType(DestType));
+//   // Change the type of the message.
+//   E->setType(DestType.getNonReferenceType());
+//   E->setValueKind(Expr::getValueKindForType(DestType));
 
-  return S.MaybeBindToTemporary(E);
-}
+//   return S.MaybeBindToTemporary(E);
+// }
 
 ExprResult RebuildUnknownAnyExpr::VisitImplicitCastExpr(ImplicitCastExpr *E) {
   // The only case we should ever see here is a function-to-pointer decay.
@@ -19066,8 +19066,8 @@ ExprResult Sema::CheckPlaceholderExpr(Expr *E) {
     return diagnoseUnknownAnyExpr(*this, E);
 
   // Pseudo-objects.
-  case BuiltinType::PseudoObject:
-    return checkPseudoObjectRValue(E);
+  // case BuiltinType::PseudoObject:
+  //   return checkPseudoObjectRValue(E);
 
   case BuiltinType::BuiltinFn: {
     // Accept __noop without parens by implicitly converting it to a call expr.
@@ -19107,12 +19107,12 @@ ExprResult Sema::CheckPlaceholderExpr(Expr *E) {
     return ExprError(Diag(E->getBeginLoc(), diag::err_omp_iterator_use));
 
   // Everything else should be impossible.
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"

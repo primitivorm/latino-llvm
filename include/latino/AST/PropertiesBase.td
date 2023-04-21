@@ -91,10 +91,10 @@ def DeclRef : RefPropertyType<"Decl"> { let ConstWhenWriting = 1; }
     SubclassPropertyType<"NamespaceDecl", DeclRef>;
   def NamespaceAliasDeclRef :
     SubclassPropertyType<"NamespaceAliasDecl", DeclRef>;
-  def ObjCProtocolDeclRef :
-    SubclassPropertyType<"ObjCProtocolDecl", DeclRef>;
-  def ObjCTypeParamDeclRef :
-    SubclassPropertyType<"ObjCTypeParamDecl", DeclRef>;
+  // def ObjCProtocolDeclRef :
+  //   SubclassPropertyType<"ObjCProtocolDecl", DeclRef>;
+  // def ObjCTypeParamDeclRef :
+  //   SubclassPropertyType<"ObjCTypeParamDecl", DeclRef>;
   def TagDeclRef :
     SubclassPropertyType<"TagDecl", DeclRef>;
   def TemplateDeclRef :
@@ -248,16 +248,16 @@ let Class = PropertyTypeCase<DeclarationName, "Identifier"> in {
     return DeclarationName(identifier);
   }]>;
 }
-foreach count = ["Zero", "One", "Multi"] in {
-  let Class = PropertyTypeCase<DeclarationName, "ObjC"#count#"ArgSelector"> in {
-    def : Property<"selector", Selector> {
-      let Read = [{ node.getObjCSelector() }];
-    }
-    def : Creator<[{
-      return DeclarationName(selector);
-    }]>;
-  }
-}
+// foreach count = ["Zero", "One", "Multi"] in {
+//   let Class = PropertyTypeCase<DeclarationName, "ObjC"#count#"ArgSelector"> in {
+//     def : Property<"selector", Selector> {
+//       let Read = [{ node.getObjCSelector() }];
+//     }
+//     def : Creator<[{
+//       return DeclarationName(selector);
+//     }]>;
+//   }
+// }
 foreach kind = ["Constructor", "Destructor", "ConversionFunction"] in {
   let Class = PropertyTypeCase<DeclarationName, "CXX"#kind#"Name"> in {
     def : Property<"type", QualType> {

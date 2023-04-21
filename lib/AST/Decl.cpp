@@ -20,7 +20,7 @@
 #include "latino/AST/CanonicalType.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
@@ -179,8 +179,8 @@ static Optional<Visibility> getExplicitVisibility(const NamedDecl *D,
 /// visibility computation?
 static bool usesTypeVisibility(const NamedDecl *D) {
   return isa<TypeDecl>(D) ||
-         isa<ClassTemplateDecl>(D) ||
-         isa<ObjCInterfaceDecl>(D);
+         isa<ClassTemplateDecl>(D) /*||
+         isa<ObjCInterfaceDecl>(D)*/;
 }
 
 /// Does the given declaration have member specialization information,
@@ -883,10 +883,10 @@ LinkageComputer::getLVForNamespaceScopeDecl(const NamedDecl *D,
 
   // By extension, we assign external linkage to Objective-C
   // interfaces.
-  } else if (isa<ObjCInterfaceDecl>(D)) {
+  } /*else if (isa<ObjCInterfaceDecl>(D)) {
     // fallout
 
-  } else if (auto *TD = dyn_cast<TypedefNameDecl>(D)) {
+  } */else if (auto *TD = dyn_cast<TypedefNameDecl>(D)) {
     // A typedef declaration has linkage if it gives a type a name for
     // linkage purposes.
     if (!TD->getAnonDeclWithTypedefName(/*AnyRedecl*/true))
@@ -1367,15 +1367,15 @@ LinkageInfo LinkageComputer::computeLVForDecl(const NamedDecl *D,
 
     case Decl::TemplateTemplateParm: // count these as external
     case Decl::NonTypeTemplateParm:
-    case Decl::ObjCAtDefsField:
-    case Decl::ObjCCategory:
-    case Decl::ObjCCategoryImpl:
-    case Decl::ObjCCompatibleAlias:
-    case Decl::ObjCImplementation:
-    case Decl::ObjCMethod:
-    case Decl::ObjCProperty:
-    case Decl::ObjCPropertyImpl:
-    case Decl::ObjCProtocol:
+    // case Decl::ObjCAtDefsField:
+    // case Decl::ObjCCategory:
+    // case Decl::ObjCCategoryImpl:
+    // case Decl::ObjCCompatibleAlias:
+    // case Decl::ObjCImplementation:
+    // case Decl::ObjCMethod:
+    // case Decl::ObjCProperty:
+    // case Decl::ObjCPropertyImpl:
+    // case Decl::ObjCProtocol:
       return getExternalLinkageFor(D);
 
     case Decl::CXXRecord: {
@@ -1571,7 +1571,7 @@ void NamedDecl::printNestedNameSpecifier(raw_ostream &OS,
 
   // For ObjC methods and properties, look through categories and use the
   // interface as context.
-  if (auto *MD = dyn_cast<ObjCMethodDecl>(this)) {
+  /*if (auto *MD = dyn_cast<ObjCMethodDecl>(this)) {
     if (auto *ID = MD->getClassInterface())
       Ctx = ID;
   } else if (auto *PD = dyn_cast<ObjCPropertyDecl>(this)) {
@@ -1581,7 +1581,7 @@ void NamedDecl::printNestedNameSpecifier(raw_ostream &OS,
   } else if (auto *ID = dyn_cast<ObjCIvarDecl>(this)) {
     if (auto *CI = ID->getContainingInterface())
       Ctx = CI;
-  }
+  }*/
 
   if (Ctx->isFunctionOrMethod())
     return;
@@ -1693,8 +1693,8 @@ bool NamedDecl::declarationReplaces(NamedDecl *OldD, bool IsKnownNewer) const {
     return false;
 
   // For method declarations, we never replace. (Why?)
-  if (isa<ObjCMethodDecl>(this))
-    return false;
+  // if (isa<ObjCMethodDecl>(this))
+  //   return false;
 
   // For parameters, pick the newer one. This is either an error or (in
   // Objective-C) permitted as an extension.
@@ -2688,8 +2688,8 @@ SourceRange ParmVarDecl::getSourceRange() const {
 
   // DeclaratorDecl considers the range of postfix types as overlapping with the
   // declaration name, but this is not the case with parameters in ObjC methods.
-  if (isa<ObjCMethodDecl>(getDeclContext()))
-    return SourceRange(DeclaratorDecl::getBeginLoc(), getLocation());
+  // if (isa<ObjCMethodDecl>(getDeclContext()))
+  //   return SourceRange(DeclaratorDecl::getBeginLoc(), getLocation());
 
   return DeclaratorDecl::getSourceRange();
 }

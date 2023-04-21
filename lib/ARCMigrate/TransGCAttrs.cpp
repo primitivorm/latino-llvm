@@ -127,8 +127,8 @@ public:
     if (FunctionDecl *FD = dyn_cast<FunctionDecl>(D))
       return FD->hasBody();
 
-    if (ObjCContainerDecl *ContD = dyn_cast<ObjCContainerDecl>(D))
-      return hasObjCImpl(ContD);
+    // if (ObjCContainerDecl *ContD = dyn_cast<ObjCContainerDecl>(D))
+    //   return hasObjCImpl(ContD);
 
     if (CXXRecordDecl *RD = dyn_cast<CXXRecordDecl>(D)) {
       for (const auto *MI : RD->methods()) {
@@ -141,18 +141,18 @@ public:
     return isMigratable(cast<Decl>(D->getDeclContext()));
   }
 
-  static bool hasObjCImpl(Decl *D) {
-    if (!D)
-      return false;
-    if (ObjCContainerDecl *ContD = dyn_cast<ObjCContainerDecl>(D)) {
-      if (ObjCInterfaceDecl *ID = dyn_cast<ObjCInterfaceDecl>(ContD))
-        return ID->getImplementation() != nullptr;
-      if (ObjCCategoryDecl *CD = dyn_cast<ObjCCategoryDecl>(ContD))
-        return CD->getImplementation() != nullptr;
-      return isa<ObjCImplDecl>(ContD);
-    }
-    return false;
-  }
+  // static bool hasObjCImpl(Decl *D) {
+  //   if (!D)
+  //     return false;
+  //   if (ObjCContainerDecl *ContD = dyn_cast<ObjCContainerDecl>(D)) {
+  //     if (ObjCInterfaceDecl *ID = dyn_cast<ObjCInterfaceDecl>(ContD))
+  //       return ID->getImplementation() != nullptr;
+  //     if (ObjCCategoryDecl *CD = dyn_cast<ObjCCategoryDecl>(ContD))
+  //       return CD->getImplementation() != nullptr;
+  //     return isa<ObjCImplDecl>(ContD);
+  //   }
+  //   return false;
+  // }
 
   bool isInMainFile(Decl *D) {
     if (!D)

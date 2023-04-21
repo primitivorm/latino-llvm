@@ -41,7 +41,7 @@
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/TemplateName.h"
@@ -821,9 +821,9 @@ private:
     if (const auto *S = dyn_cast<UnresolvedUsingType>(EffectiveType)) {
       return matchesDecl(S->getDecl(), Finder, Builder);
     }
-    if (const auto *S = dyn_cast<ObjCObjectType>(EffectiveType)) {
-      return matchesDecl(S->getInterface(), Finder, Builder);
-    }
+    // if (const auto *S = dyn_cast<ObjCObjectType>(EffectiveType)) {
+    //   return matchesDecl(S->getInterface(), Finder, Builder);
+    // }
 
     // A SubstTemplateTypeParmType exists solely to mark a type substitution
     // on the instantiated template. As users usually want to match the
@@ -1004,10 +1004,10 @@ public:
   /// derived from a base class matching \c base.
   ///
   /// A class is not considered to be derived from itself.
-  virtual bool objcClassIsDerivedFrom(const ObjCInterfaceDecl *Declaration,
-                                      const Matcher<NamedDecl> &Base,
-                                      BoundNodesTreeBuilder *Builder,
-                                      bool Directly) = 0;
+  // virtual bool objcClassIsDerivedFrom(const ObjCInterfaceDecl *Declaration,
+  //                                     const Matcher<NamedDecl> &Base,
+  //                                     BoundNodesTreeBuilder *Builder,
+  //                                     bool Directly) = 0;
 
   template <typename T>
   bool matchesChildOf(const T &Node, const DynTypedMatcher &Matcher,

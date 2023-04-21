@@ -43,18 +43,18 @@ add_latino_library(latinoSema
   SemaDecl.cpp
   SemaDeclAttr.cpp
   SemaDeclCXX.cpp
-  SemaDeclObjC.cpp
+  # SemaDeclObjC.cpp
   SemaExceptionSpec.cpp
   SemaExpr.cpp
   SemaExprCXX.cpp
   SemaExprMember.cpp
-  SemaExprObjC.cpp
+  # SemaExprObjC.cpp
   SemaFixItUtils.cpp
   SemaInit.cpp
   SemaLambda.cpp
   SemaLookup.cpp
   SemaModule.cpp
-  SemaObjCProperty.cpp
+  # SemaObjCProperty.cpp
   SemaOpenMP.cpp
   SemaOverload.cpp
   SemaPseudoObject.cpp

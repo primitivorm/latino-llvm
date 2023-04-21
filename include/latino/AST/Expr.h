@@ -50,7 +50,7 @@ namespace latino {
   class IdentifierInfo;
   class MaterializeTemporaryExpr;
   class NamedDecl;
-  class ObjCPropertyRefExpr;
+  // class ObjCPropertyRefExpr;
   class OpaqueValueExpr;
   class ParmVarDecl;
   class StringLiteral;
@@ -480,7 +480,7 @@ public:
 
   /// If this expression is an l-value for an Objective C
   /// property, find the underlying property reference expression.
-  const ObjCPropertyRefExpr *getObjCProperty() const;
+  // const ObjCPropertyRefExpr *getObjCProperty() const;
 
   /// Check if this expression is the ObjC 'self' implicit parameter.
   bool isObjCSelfExpr() const;

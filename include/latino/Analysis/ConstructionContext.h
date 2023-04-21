@@ -18,7 +18,7 @@
 
 #include "latino/Analysis/Support/BumpVector.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 
 namespace latino {
 

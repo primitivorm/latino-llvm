@@ -12,7 +12,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"

@@ -76,14 +76,14 @@ static bool isTest(const Decl *D) {
     if (StringRef(DeclName).startswith("test"))
       return true;
   }
-  if (const auto *OD = dyn_cast<ObjCMethodDecl>(D)) {
-    if (const auto *CD = dyn_cast<ObjCContainerDecl>(OD->getParent())) {
-      std::string ContainerName = CD->getNameAsString();
-      StringRef CN(ContainerName);
-      if (CN.contains_lower("test") || CN.contains_lower("mock"))
-        return true;
-    }
-  }
+  // if (const auto *OD = dyn_cast<ObjCMethodDecl>(D)) {
+  //   if (const auto *CD = dyn_cast<ObjCContainerDecl>(OD->getParent())) {
+  //     std::string ContainerName = CD->getNameAsString();
+  //     StringRef CN(ContainerName);
+  //     if (CN.contains_lower("test") || CN.contains_lower("mock"))
+  //       return true;
+  //   }
+  // }
   return false;
 }
 

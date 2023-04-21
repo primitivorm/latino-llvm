@@ -11,7 +11,7 @@
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LangStandard.h"
 #include "latino/Basic/Stack.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Frontend/ASTUnit.h"
 #include "latino/Frontend/CompilerInstance.h"
 #include "latino/Frontend/FrontendAction.h"
@@ -33,10 +33,10 @@ Stmt *ModelInjector::getBody(const FunctionDecl *D) {
   return Bodies[D->getName()];
 }
 
-Stmt *ModelInjector::getBody(const ObjCMethodDecl *D) {
-  onBodySynthesis(D);
-  return Bodies[D->getName()];
-}
+// Stmt *ModelInjector::getBody(const ObjCMethodDecl *D) {
+//   onBodySynthesis(D);
+//   return Bodies[D->getName()];
+// }
 
 void ModelInjector::onBodySynthesis(const NamedDecl *D) {
 

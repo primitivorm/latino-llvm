@@ -303,20 +303,20 @@ public:
     }
   }
 
-  LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const override {
-    switch (TK) {
-    case OCLTK_Image:
-      return LangAS::opencl_constant;
+  // LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const override {
+  //   switch (TK) {
+  //   case OCLTK_Image:
+  //     return LangAS::opencl_constant;
 
-    case OCLTK_ClkEvent:
-    case OCLTK_Queue:
-    case OCLTK_ReserveID:
-      return LangAS::opencl_global;
+  //   case OCLTK_ClkEvent:
+  //   case OCLTK_Queue:
+  //   case OCLTK_ReserveID:
+  //     return LangAS::opencl_global;
 
-    default:
-      return TargetInfo::getOpenCLTypeAddrSpace(TK);
-    }
-  }
+  //   default:
+  //     return TargetInfo::getOpenCLTypeAddrSpace(TK);
+  //   }
+  // }
 
   LangAS getOpenCLBuiltinAddressSpace(unsigned AS) const override {
     switch (AS) {

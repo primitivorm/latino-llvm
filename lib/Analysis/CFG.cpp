@@ -594,7 +594,7 @@ private:
   CFGBlock *VisitObjCAtTryStmt(ObjCAtTryStmt *S);
   CFGBlock *VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S);
   CFGBlock *VisitObjCForCollectionStmt(ObjCForCollectionStmt *S);
-  CFGBlock *VisitObjCMessageExpr(ObjCMessageExpr *E, AddStmtChoice asc);
+  // CFGBlock *VisitObjCMessageExpr(ObjCMessageExpr *E, AddStmtChoice asc);
   CFGBlock *VisitPseudoObjectExpr(PseudoObjectExpr *E);
   CFGBlock *VisitReturnStmt(Stmt *S);
   CFGBlock *VisitSEHExceptStmt(SEHExceptStmt *S);
@@ -1385,7 +1385,8 @@ void CFGBuilder::findConstructionContexts(
   case Stmt::CXXMemberCallExprClass:
   case Stmt::CXXOperatorCallExprClass:
   case Stmt::UserDefinedLiteralClass:
-  case Stmt::ObjCMessageExprClass: {
+  // case Stmt::ObjCMessageExprClass: 
+  {
     auto *E = cast<Expr>(Child);
     if (CFGCXXRecordTypedCall::isCXXRecordTypedCall(E))
       consumeConstructionContext(Layer, E);
@@ -2289,8 +2290,8 @@ CFGBlock *CFGBuilder::Visit(Stmt * S, AddStmtChoice asc,
     case Stmt::ObjCForCollectionStmtClass:
       return VisitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(S));
 
-    case Stmt::ObjCMessageExprClass:
-      return VisitObjCMessageExpr(cast<ObjCMessageExpr>(S), asc);
+    // case Stmt::ObjCMessageExprClass:
+    //   return VisitObjCMessageExpr(cast<ObjCMessageExpr>(S), asc);
 
     case Stmt::OpaqueValueExprClass:
       return Block;
@@ -3668,30 +3669,30 @@ CFGBlock *CFGBuilder::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
   return NYS();
 }
 
-CFGBlock *CFGBuilder::VisitPseudoObjectExpr(PseudoObjectExpr *E) {
-  autoCreateBlock();
+// CFGBlock *CFGBuilder::VisitPseudoObjectExpr(PseudoObjectExpr *E) {
+//   autoCreateBlock();
 
-  // Add the PseudoObject as the last thing.
-  appendStmt(Block, E);
+//   // Add the PseudoObject as the last thing.
+//   appendStmt(Block, E);
 
-  CFGBlock *lastBlock = Block;
+//   CFGBlock *lastBlock = Block;
 
-  // Before that, evaluate all of the semantics in order.  In
-  // CFG-land, that means appending them in reverse order.
-  for (unsigned i = E->getNumSemanticExprs(); i != 0; ) {
-    Expr *Semantic = E->getSemanticExpr(--i);
+//   // Before that, evaluate all of the semantics in order.  In
+//   // CFG-land, that means appending them in reverse order.
+//   for (unsigned i = E->getNumSemanticExprs(); i != 0; ) {
+//     Expr *Semantic = E->getSemanticExpr(--i);
 
-    // If the semantic is an opaque value, we're being asked to bind
-    // it to its source expression.
-    if (OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Semantic))
-      Semantic = OVE->getSourceExpr();
+//     // If the semantic is an opaque value, we're being asked to bind
+//     // it to its source expression.
+//     if (OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Semantic))
+//       Semantic = OVE->getSourceExpr();
 
-    if (CFGBlock *B = Visit(Semantic))
-      lastBlock = B;
-  }
+//     if (CFGBlock *B = Visit(Semantic))
+//       lastBlock = B;
+//   }
 
-  return lastBlock;
-}
+//   return lastBlock;
+// }
 
 CFGBlock *CFGBuilder::VisitWhileStmt(WhileStmt *W) {
   CFGBlock *LoopSuccessor = nullptr;

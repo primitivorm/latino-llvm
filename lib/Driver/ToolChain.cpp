@@ -12,7 +12,7 @@
 #include "ToolChains/Latino.h"
 #include "ToolChains/InterfaceStubs.h"
 #include "ToolChains/Flang.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/Sanitizers.h"
 #include "latino/Config/config.h"
 #include "latino/Driver/Action.h"

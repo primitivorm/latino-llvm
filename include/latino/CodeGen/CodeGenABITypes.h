@@ -49,8 +49,8 @@ class CodeGenOptions;
 class CoverageSourceInfo;
 class DiagnosticsEngine;
 class HeaderSearchOptions;
-class ObjCMethodDecl;
-class ObjCProtocolDecl;
+// class ObjCMethodDecl;
+// class ObjCProtocolDecl;
 class PreprocessorOptions;
 
 namespace CodeGen {
@@ -67,9 +67,9 @@ struct ImplicitCXXConstructorArgs {
   SmallVector<llvm::Value *, 1> Suffix;
 };
 
-const CGFunctionInfo &arrangeObjCMessageSendSignature(CodeGenModule &CGM,
-                                                      const ObjCMethodDecl *MD,
-                                                      QualType receiverType);
+// const CGFunctionInfo &arrangeObjCMessageSendSignature(CodeGenModule &CGM,
+//                                                       const ObjCMethodDecl *MD,
+//                                                       QualType receiverType);
 
 const CGFunctionInfo &arrangeFreeFunctionType(CodeGenModule &CGM,
                                               CanQual<FunctionProtoType> Ty);
@@ -189,8 +189,8 @@ llvm::Function *getNonTrivialCStructDestructor(CodeGenModule &CGM,
 /// for emitting a protocol reference in code (e.g. for a protocol expression)
 /// in most runtimes is not as simple as just materializing a pointer to this
 /// object.
-llvm::Constant *emitObjCProtocolObject(CodeGenModule &CGM,
-                                       const ObjCProtocolDecl *p);
+// llvm::Constant *emitObjCProtocolObject(CodeGenModule &CGM,
+//                                        const ObjCProtocolDecl *p);
 }  // end namespace CodeGen
 }  // end namespace latino
 

@@ -14,13 +14,13 @@
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporter.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/ParentMap.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/Analysis/AnalysisDeclContext.h"
 #include "latino/Analysis/CFG.h"
 #include "latino/Analysis/CFGStmtMap.h"
@@ -599,8 +599,8 @@ PathDiagnosticLocation PathDiagnosticBuilder::ExecutionContinues(
   else {
     os << "Execution jumps to the end of the ";
     const Decl *D = C.getCurrLocationContext()->getDecl();
-    if (isa<ObjCMethodDecl>(D))
-      os << "method";
+    // if (isa<ObjCMethodDecl>(D))
+    //   os << "method";
     else if (isa<FunctionDecl>(D))
       os << "function";
     else {
@@ -3098,9 +3098,9 @@ static void populateExecutedLinesWithFunctionSignature(
   const Stmt* Body = Signature->getBody();
   if (const auto FD = dyn_cast<FunctionDecl>(Signature)) {
     SignatureSourceRange = FD->getSourceRange();
-  } else if (const auto OD = dyn_cast<ObjCMethodDecl>(Signature)) {
+  } /*else if (const auto OD = dyn_cast<ObjCMethodDecl>(Signature)) {
     SignatureSourceRange = OD->getSourceRange();
-  } else {
+  }*/ else {
     return;
   }
   SourceLocation Start = SignatureSourceRange.getBegin();

@@ -15,7 +15,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/NestedNameSpecifier.h"
@@ -222,9 +222,9 @@ bool TypePrinter::canPrefixQualifiers(const Type *T,
     case Type::InjectedClassName:
     case Type::DependentName:
     case Type::DependentTemplateSpecialization:
-    case Type::ObjCObject:
-    case Type::ObjCTypeParam:
-    case Type::ObjCInterface:
+    // case Type::ObjCObject:
+    // case Type::ObjCTypeParam:
+    // case Type::ObjCInterface:
     case Type::Atomic:
     case Type::Pipe:
     case Type::ExtInt:
@@ -232,10 +232,10 @@ bool TypePrinter::canPrefixQualifiers(const Type *T,
       CanPrefixQualifiers = true;
       break;
 
-    case Type::ObjCObjectPointer:
-      CanPrefixQualifiers = T->isObjCIdType() || T->isObjCClassType() ||
-        T->isObjCQualifiedIdType() || T->isObjCQualifiedClassType();
-      break;
+    // case Type::ObjCObjectPointer:
+    //   CanPrefixQualifiers = T->isObjCIdType() || T->isObjCClassType() ||
+    //     T->isObjCQualifiedIdType() || T->isObjCQualifiedClassType();
+    //   break;
 
     case Type::ConstantArray:
     case Type::IncompleteArray:
@@ -1664,72 +1664,72 @@ void TypePrinter::printObjCTypeParamBefore(const ObjCTypeParamType *T,
   spaceBeforePlaceHolder(OS);
 }
 
-void TypePrinter::printObjCTypeParamAfter(const ObjCTypeParamType *T,
-                                          raw_ostream &OS) {}
+// void TypePrinter::printObjCTypeParamAfter(const ObjCTypeParamType *T,
+//                                           raw_ostream &OS) {}
 
-void TypePrinter::printObjCObjectBefore(const ObjCObjectType *T,
-                                        raw_ostream &OS) {
-  if (T->qual_empty() && T->isUnspecializedAsWritten() &&
-      !T->isKindOfTypeAsWritten())
-    return printBefore(T->getBaseType(), OS);
+// void TypePrinter::printObjCObjectBefore(const ObjCObjectType *T,
+//                                         raw_ostream &OS) {
+//   if (T->qual_empty() && T->isUnspecializedAsWritten() &&
+//       !T->isKindOfTypeAsWritten())
+//     return printBefore(T->getBaseType(), OS);
 
-  if (T->isKindOfTypeAsWritten())
-    OS << "__kindof ";
+//   if (T->isKindOfTypeAsWritten())
+//     OS << "__kindof ";
 
-  print(T->getBaseType(), OS, StringRef());
+//   print(T->getBaseType(), OS, StringRef());
 
-  if (T->isSpecializedAsWritten()) {
-    bool isFirst = true;
-    OS << '<';
-    for (auto typeArg : T->getTypeArgsAsWritten()) {
-      if (isFirst)
-        isFirst = false;
-      else
-        OS << ",";
+//   if (T->isSpecializedAsWritten()) {
+//     bool isFirst = true;
+//     OS << '<';
+//     for (auto typeArg : T->getTypeArgsAsWritten()) {
+//       if (isFirst)
+//         isFirst = false;
+//       else
+//         OS << ",";
 
-      print(typeArg, OS, StringRef());
-    }
-    OS << '>';
-  }
+//       print(typeArg, OS, StringRef());
+//     }
+//     OS << '>';
+//   }
 
-  if (!T->qual_empty()) {
-    bool isFirst = true;
-    OS << '<';
-    for (const auto *I : T->quals()) {
-      if (isFirst)
-        isFirst = false;
-      else
-        OS << ',';
-      OS << I->getName();
-    }
-    OS << '>';
-  }
+//   if (!T->qual_empty()) {
+//     bool isFirst = true;
+//     OS << '<';
+//     for (const auto *I : T->quals()) {
+//       if (isFirst)
+//         isFirst = false;
+//       else
+//         OS << ',';
+//       OS << I->getName();
+//     }
+//     OS << '>';
+//   }
 
-  spaceBeforePlaceHolder(OS);
-}
+//   spaceBeforePlaceHolder(OS);
+// }
 
-void TypePrinter::printObjCObjectAfter(const ObjCObjectType *T,
-                                        raw_ostream &OS) {
-  if (T->qual_empty() && T->isUnspecializedAsWritten() &&
-      !T->isKindOfTypeAsWritten())
-    return printAfter(T->getBaseType(), OS);
-}
+// void TypePrinter::printObjCObjectAfter(const ObjCObjectType *T,
+//                                         raw_ostream &OS) {
+//   if (T->qual_empty() && T->isUnspecializedAsWritten() &&
+//       !T->isKindOfTypeAsWritten())
+//     return printAfter(T->getBaseType(), OS);
+// }
 
-void TypePrinter::printObjCObjectPointerBefore(const ObjCObjectPointerType *T,
-                                               raw_ostream &OS) {
-  printBefore(T->getPointeeType(), OS);
+// void TypePrinter::printObjCObjectPointerBefore(const ObjCObjectPointerType *T,
+//                                                raw_ostream &OS) {
+//   printBefore(T->getPointeeType(), OS);
 
-  // If we need to print the pointer, print it now.
-  if (!T->isObjCIdType() && !T->isObjCQualifiedIdType() &&
-      !T->isObjCClassType() && !T->isObjCQualifiedClassType()) {
-    if (HasEmptyPlaceHolder)
-      OS << ' ';
-    OS << '*';
-  }
-}
+//   // If we need to print the pointer, print it now.
+//   if (!T->isObjCIdType() && !T->isObjCQualifiedIdType() &&
+//       !T->isObjCClassType() && !T->isObjCQualifiedClassType()) {
+//     if (HasEmptyPlaceHolder)
+//       OS << ' ';
+//     OS << '*';
+//   }
+// }
 
-void TypePrinter::printObjCObjectPointerAfter(const ObjCObjectPointerType *T,
-                                              raw_ostream &OS) {}
+// void TypePrinter::printObjCObjectPointerAfter(const ObjCObjectPointerType *T,
+//                                               raw_ostream &OS) {}
 
 static
 const TemplateArgument &getArgument(const TemplateArgument &A) { return A; }

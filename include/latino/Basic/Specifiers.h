@@ -68,7 +68,7 @@ namespace latino {
     TST_int,
     TST_int128,
     TST_extint,       // Extended Int types.
-    TST_half,         // OpenCL half, ARM NEON __fp16
+    // TST_half,         // OpenCL half, ARM NEON __fp16
     TST_Float16,      // C11 extension ISO/IEC TS 18661-3
     TST_Accum,        // ISO/IEC JTC1 SC22 WG14 N1169 Extension
     TST_Fract,
@@ -95,8 +95,8 @@ namespace latino {
     TST_auto_type,        // __auto_type extension
     TST_unknown_anytype,  // __unknown_anytype extension
     TST_atomic,           // C11 _Atomic
-#define GENERIC_IMAGE_TYPE(ImgType, Id) TST_##ImgType##_t, // OpenCL image types
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) TST_##ImgType##_t, // OpenCL image types
+// #include "latino/Basic/OpenCLImageTypes.def"
     TST_error // erroneous type
   };
 

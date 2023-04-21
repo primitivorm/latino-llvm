@@ -23,7 +23,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/TargetBuiltins.h"
 #include "latino/Basic/TargetInfo.h"
@@ -455,12 +455,12 @@ CodeGenTypes::arrangeFunctionDeclaration(const FunctionDecl *FD) {
 
 /// Arrange the argument and result information for the declaration or
 /// definition of an Objective-C method.
-const CGFunctionInfo &
-CodeGenTypes::arrangeObjCMethodDeclaration(const ObjCMethodDecl *MD) {
-  // It happens that this is the same as a call with no optional
-  // arguments, except also using the formal 'self' type.
-  return arrangeObjCMessageSendSignature(MD, MD->getSelfDecl()->getType());
-}
+// const CGFunctionInfo &
+// CodeGenTypes::arrangeObjCMethodDeclaration(const ObjCMethodDecl *MD) {
+//   // It happens that this is the same as a call with no optional
+//   // arguments, except also using the formal 'self' type.
+//   return arrangeObjCMessageSendSignature(MD, MD->getSelfDecl()->getType());
+// }
 
 /// Arrange the argument and result information for the function type
 /// through which to perform a send to the given Objective-C method,
@@ -468,36 +468,36 @@ CodeGenTypes::arrangeObjCMethodDeclaration(const ObjCMethodDecl *MD) {
 /// the 'self' type of the method or even an Objective-C pointer type.
 /// This is *not* the right method for actually performing such a
 /// message send, due to the possibility of optional arguments.
-const CGFunctionInfo &
-CodeGenTypes::arrangeObjCMessageSendSignature(const ObjCMethodDecl *MD,
-                                              QualType receiverType) {
-  SmallVector<CanQualType, 16> argTys;
-  SmallVector<FunctionProtoType::ExtParameterInfo, 4> extParamInfos(2);
-  argTys.push_back(Context.getCanonicalParamType(receiverType));
-  argTys.push_back(Context.getCanonicalParamType(Context.getObjCSelType()));
-  // FIXME: Kill copy?
-  for (const auto *I : MD->parameters()) {
-    argTys.push_back(Context.getCanonicalParamType(I->getType()));
-    auto extParamInfo = FunctionProtoType::ExtParameterInfo().withIsNoEscape(
-        I->hasAttr<NoEscapeAttr>());
-    extParamInfos.push_back(extParamInfo);
-  }
+// const CGFunctionInfo &
+// CodeGenTypes::arrangeObjCMessageSendSignature(const ObjCMethodDecl *MD,
+//                                               QualType receiverType) {
+//   SmallVector<CanQualType, 16> argTys;
+//   SmallVector<FunctionProtoType::ExtParameterInfo, 4> extParamInfos(2);
+//   argTys.push_back(Context.getCanonicalParamType(receiverType));
+//   argTys.push_back(Context.getCanonicalParamType(Context.getObjCSelType()));
+//   // FIXME: Kill copy?
+//   for (const auto *I : MD->parameters()) {
+//     argTys.push_back(Context.getCanonicalParamType(I->getType()));
+//     auto extParamInfo = FunctionProtoType::ExtParameterInfo().withIsNoEscape(
+//         I->hasAttr<NoEscapeAttr>());
+//     extParamInfos.push_back(extParamInfo);
+//   }
 
-  FunctionType::ExtInfo einfo;
-  bool IsWindows = getContext().getTargetInfo().getTriple().isOSWindows();
-  einfo = einfo.withCallingConv(getCallingConventionForDecl(MD, IsWindows));
+//   FunctionType::ExtInfo einfo;
+//   bool IsWindows = getContext().getTargetInfo().getTriple().isOSWindows();
+//   einfo = einfo.withCallingConv(getCallingConventionForDecl(MD, IsWindows));
 
-  if (getContext().getLangOpts().ObjCAutoRefCount &&
-      MD->hasAttr<NSReturnsRetainedAttr>())
-    einfo = einfo.withProducesResult(true);
+//   if (getContext().getLangOpts().ObjCAutoRefCount &&
+//       MD->hasAttr<NSReturnsRetainedAttr>())
+//     einfo = einfo.withProducesResult(true);
 
-  RequiredArgs required =
-    (MD->isVariadic() ? RequiredArgs(argTys.size()) : RequiredArgs::All);
+//   RequiredArgs required =
+//     (MD->isVariadic() ? RequiredArgs(argTys.size()) : RequiredArgs::All);
 
-  return arrangeLLVMFunctionInfo(
-      GetReturnType(MD->getReturnType()), /*instanceMethod=*/false,
-      /*chainCall=*/false, argTys, einfo, extParamInfos, required);
-}
+//   return arrangeLLVMFunctionInfo(
+//       GetReturnType(MD->getReturnType()), /*instanceMethod=*/false,
+//       /*chainCall=*/false, argTys, einfo, extParamInfos, required);
+// }
 
 const CGFunctionInfo &
 CodeGenTypes::arrangeUnprototypedObjCMessageSend(QualType returnType,
@@ -2814,41 +2814,41 @@ static llvm::Value *tryEmitFusedAutoreleaseOfResult(CodeGenFunction &CGF,
 }
 
 /// If this is a +1 of the value of an immutable 'self', remove it.
-static llvm::Value *tryRemoveRetainOfSelf(CodeGenFunction &CGF,
-                                          llvm::Value *result) {
-  // This is only applicable to a method with an immutable 'self'.
-  const ObjCMethodDecl *method =
-    dyn_cast_or_null<ObjCMethodDecl>(CGF.CurCodeDecl);
-  if (!method) return nullptr;
-  const VarDecl *self = method->getSelfDecl();
-  if (!self->getType().isConstQualified()) return nullptr;
+// static llvm::Value *tryRemoveRetainOfSelf(CodeGenFunction &CGF,
+//                                           llvm::Value *result) {
+//   // This is only applicable to a method with an immutable 'self'.
+//   const ObjCMethodDecl *method =
+//     dyn_cast_or_null<ObjCMethodDecl>(CGF.CurCodeDecl);
+//   if (!method) return nullptr;
+//   const VarDecl *self = method->getSelfDecl();
+//   if (!self->getType().isConstQualified()) return nullptr;
 
-  // Look for a retain call.
-  llvm::CallInst *retainCall =
-    dyn_cast<llvm::CallInst>(result->stripPointerCasts());
-  if (!retainCall || retainCall->getCalledOperand() !=
-                         CGF.CGM.getObjCEntrypoints().objc_retain)
-    return nullptr;
+//   // Look for a retain call.
+//   llvm::CallInst *retainCall =
+//     dyn_cast<llvm::CallInst>(result->stripPointerCasts());
+//   if (!retainCall || retainCall->getCalledOperand() !=
+//                          CGF.CGM.getObjCEntrypoints().objc_retain)
+//     return nullptr;
 
-  // Look for an ordinary load of 'self'.
-  llvm::Value *retainedValue = retainCall->getArgOperand(0);
-  llvm::LoadInst *load =
-    dyn_cast<llvm::LoadInst>(retainedValue->stripPointerCasts());
-  if (!load || load->isAtomic() || load->isVolatile() ||
-      load->getPointerOperand() != CGF.GetAddrOfLocalVar(self).getPointer())
-    return nullptr;
+//   // Look for an ordinary load of 'self'.
+//   llvm::Value *retainedValue = retainCall->getArgOperand(0);
+//   llvm::LoadInst *load =
+//     dyn_cast<llvm::LoadInst>(retainedValue->stripPointerCasts());
+//   if (!load || load->isAtomic() || load->isVolatile() ||
+//       load->getPointerOperand() != CGF.GetAddrOfLocalVar(self).getPointer())
+//     return nullptr;
 
-  // Okay!  Burn it all down.  This relies for correctness on the
-  // assumption that the retain is emitted as part of the return and
-  // that thereafter everything is used "linearly".
-  llvm::Type *resultType = result->getType();
-  eraseUnusedBitCasts(cast<llvm::Instruction>(result));
-  assert(retainCall->use_empty());
-  retainCall->eraseFromParent();
-  eraseUnusedBitCasts(cast<llvm::Instruction>(retainedValue));
+//   // Okay!  Burn it all down.  This relies for correctness on the
+//   // assumption that the retain is emitted as part of the return and
+//   // that thereafter everything is used "linearly".
+//   llvm::Type *resultType = result->getType();
+//   eraseUnusedBitCasts(cast<llvm::Instruction>(result));
+//   assert(retainCall->use_empty());
+//   retainCall->eraseFromParent();
+//   eraseUnusedBitCasts(cast<llvm::Instruction>(retainedValue));
 
-  return CGF.Builder.CreateBitCast(load, resultType);
-}
+//   return CGF.Builder.CreateBitCast(load, resultType);
+// }
 
 /// Emit an ARC autorelease of the result of a function.
 ///
@@ -3234,8 +3234,8 @@ void CodeGenFunction::EmitFunctionEpilog(const CGFunctionInfo &FI,
 
       if (auto *FD = dyn_cast<FunctionDecl>(CurCodeDecl))
         RT = FD->getReturnType();
-      else if (auto *MD = dyn_cast<ObjCMethodDecl>(CurCodeDecl))
-        RT = MD->getReturnType();
+      // else if (auto *MD = dyn_cast<ObjCMethodDecl>(CurCodeDecl))
+      //   RT = MD->getReturnType();
       else if (isa<BlockDecl>(CurCodeDecl))
         RT = BlockInfo->BlockExpression->getFunctionType()->getReturnType();
       else
@@ -3809,9 +3809,9 @@ void CodeGenFunction::EmitCallArgs(
     // the argument and parameter match or the objc method is parameterized.
     assert((!isa<ObjCIndirectCopyRestoreExpr>(*Arg) ||
             getContext().hasSameUnqualifiedType((*Arg)->getType(),
-                                                ArgTypes[Idx]) ||
+                                                ArgTypes[Idx]) /*||
             (isa<ObjCMethodDecl>(AC.getDecl()) &&
-             isObjCMethodWithTypeParams(cast<ObjCMethodDecl>(AC.getDecl())))) &&
+             isObjCMethodWithTypeParams(cast<ObjCMethodDecl>(AC.getDecl())))*/) &&
            "Argument and parameter types don't match");
     EmitCallArg(Args, *Arg, ArgTypes[Idx]);
     // In particular, we depend on it being the last arg in Args, and the

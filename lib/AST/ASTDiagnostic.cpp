@@ -14,7 +14,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/TemplateBase.h"
@@ -182,16 +182,16 @@ break; \
   if (const PointerType *Ty = QT->getAs<PointerType>()) {
     QT = Context.getPointerType(Desugar(Context, Ty->getPointeeType(),
                                         ShouldAKA));
-  } else if (const auto *Ty = QT->getAs<ObjCObjectPointerType>()) {
+  } /*else if (const auto *Ty = QT->getAs<ObjCObjectPointerType>()) {
     QT = Context.getObjCObjectPointerType(Desugar(Context, Ty->getPointeeType(),
                                                   ShouldAKA));
-  } else if (const LValueReferenceType *Ty = QT->getAs<LValueReferenceType>()) {
+  } */else if (const LValueReferenceType *Ty = QT->getAs<LValueReferenceType>()) {
     QT = Context.getLValueReferenceType(Desugar(Context, Ty->getPointeeType(),
                                                 ShouldAKA));
   } else if (const RValueReferenceType *Ty = QT->getAs<RValueReferenceType>()) {
     QT = Context.getRValueReferenceType(Desugar(Context, Ty->getPointeeType(),
                                                 ShouldAKA));
-  } else if (const auto *Ty = QT->getAs<ObjCObjectType>()) {
+  } /*else if (const auto *Ty = QT->getAs<ObjCObjectType>()) {
     if (Ty->getBaseType().getTypePtr() != Ty && !ShouldAKA) {
       QualType BaseType = Desugar(Context, Ty->getBaseType(), ShouldAKA);
       QT = Context.getObjCObjectType(BaseType, Ty->getTypeArgsAsWritten(),
@@ -199,7 +199,7 @@ break; \
                                                         Ty->getNumProtocols()),
                                      Ty->isKindOfTypeAsWritten());
     }
-  }
+  }*/
 
   return QC.apply(Context, QT);
 }
@@ -458,8 +458,8 @@ void latino::FormatASTNodeDiagnosticArgument(
         NamedDecl *ND = cast<NamedDecl>(DC);
         if (isa<NamespaceDecl>(ND))
           OS << "namespace ";
-        else if (isa<ObjCMethodDecl>(ND))
-          OS << "method ";
+        // else if (isa<ObjCMethodDecl>(ND))
+        //   OS << "method ";
         else if (isa<FunctionDecl>(ND))
           OS << "function ";
 

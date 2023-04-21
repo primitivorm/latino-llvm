@@ -19,7 +19,7 @@
 #include "InputInfo.h"
 #include "latino/Basic/CharInfo.h"
 #include "latino/Basic/LangOptions.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
 #include "latino/Basic/Version.h"
 #include "latino/Config/config.h"
 #include "latino/Driver/Action.h"

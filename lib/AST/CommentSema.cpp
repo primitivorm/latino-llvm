@@ -840,9 +840,9 @@ bool Sema::isFunctionOrMethodVariadic() {
   if (const FunctionTemplateDecl *FTD =
         dyn_cast<FunctionTemplateDecl>(ThisDeclInfo->CurrentDecl))
     return FTD->getTemplatedDecl()->isVariadic();
-  if (const ObjCMethodDecl *MD =
-        dyn_cast<ObjCMethodDecl>(ThisDeclInfo->CurrentDecl))
-    return MD->isVariadic();
+  // if (const ObjCMethodDecl *MD =
+  //       dyn_cast<ObjCMethodDecl>(ThisDeclInfo->CurrentDecl))
+  //   return MD->isVariadic();
   if (const TypedefNameDecl *TD =
           dyn_cast<TypedefNameDecl>(ThisDeclInfo->CurrentDecl)) {
     QualType Type = TD->getUnderlyingType();
@@ -854,10 +854,10 @@ bool Sema::isFunctionOrMethodVariadic() {
   return false;
 }
 
-bool Sema::isObjCMethodDecl() {
-  return isFunctionDecl() && ThisDeclInfo->CurrentDecl &&
-         isa<ObjCMethodDecl>(ThisDeclInfo->CurrentDecl);
-}
+// bool Sema::isObjCMethodDecl() {
+//   return isFunctionDecl() && ThisDeclInfo->CurrentDecl &&
+//          isa<ObjCMethodDecl>(ThisDeclInfo->CurrentDecl);
+// }
 
 bool Sema::isFunctionPointerVarDecl() {
   if (!ThisDeclInfo)
@@ -1002,23 +1002,23 @@ bool Sema::isFunctionTemplateDecl() {
          (isa<FunctionTemplateDecl>(ThisDeclInfo->CurrentDecl));
 }
 
-bool Sema::isObjCInterfaceDecl() {
-  if (!ThisDeclInfo)
-    return false;
-  if (!ThisDeclInfo->IsFilled)
-    inspectThisDecl();
-  return ThisDeclInfo->CurrentDecl &&
-         isa<ObjCInterfaceDecl>(ThisDeclInfo->CurrentDecl);
-}
+// bool Sema::isObjCInterfaceDecl() {
+//   if (!ThisDeclInfo)
+//     return false;
+//   if (!ThisDeclInfo->IsFilled)
+//     inspectThisDecl();
+//   return ThisDeclInfo->CurrentDecl &&
+//          isa<ObjCInterfaceDecl>(ThisDeclInfo->CurrentDecl);
+// }
 
-bool Sema::isObjCProtocolDecl() {
-  if (!ThisDeclInfo)
-    return false;
-  if (!ThisDeclInfo->IsFilled)
-    inspectThisDecl();
-  return ThisDeclInfo->CurrentDecl &&
-         isa<ObjCProtocolDecl>(ThisDeclInfo->CurrentDecl);
-}
+// bool Sema::isObjCProtocolDecl() {
+//   if (!ThisDeclInfo)
+//     return false;
+//   if (!ThisDeclInfo->IsFilled)
+//     inspectThisDecl();
+//   return ThisDeclInfo->CurrentDecl &&
+//          isa<ObjCProtocolDecl>(ThisDeclInfo->CurrentDecl);
+// }
 
 ArrayRef<const ParmVarDecl *> Sema::getParamVars() {
   if (!ThisDeclInfo->IsFilled)

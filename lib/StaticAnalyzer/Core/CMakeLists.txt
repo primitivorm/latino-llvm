@@ -28,7 +28,7 @@ add_latino_library(latinoStaticAnalyzerCore
   ExprEngineC.cpp
   ExprEngineCXX.cpp
   ExprEngineCallAndReturn.cpp
-  ExprEngineObjC.cpp
+  # ExprEngineObjC.cpp
   FunctionSummary.cpp
   HTMLDiagnostics.cpp
   IssueHash.cpp

@@ -16,7 +16,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
@@ -354,7 +354,7 @@ private:
   void
   mangleTemplateInstantiationName(const TemplateDecl *TD,
                                   const TemplateArgumentList &TemplateArgs);
-  void mangleObjCMethodName(const ObjCMethodDecl *MD);
+  // void mangleObjCMethodName(const ObjCMethodDecl *MD);
 
   void mangleFunctionArgumentType(QualType T, SourceRange Range);
   void manglePassObjectSizeArg(const PassObjectSizeAttr *POSA);
@@ -387,11 +387,11 @@ private:
   void mangleTemplateArg(const TemplateDecl *TD, const TemplateArgument &TA,
                          const NamedDecl *Parm);
 
-  void mangleObjCProtocol(const ObjCProtocolDecl *PD);
-  void mangleObjCLifetime(const QualType T, Qualifiers Quals,
-                          SourceRange Range);
-  void mangleObjCKindOfType(const ObjCObjectType *T, Qualifiers Quals,
-                            SourceRange Range);
+  // void mangleObjCProtocol(const ObjCProtocolDecl *PD);
+  // void mangleObjCLifetime(const QualType T, Qualifiers Quals,
+  //                         SourceRange Range);
+  // void mangleObjCKindOfType(const ObjCObjectType *T, Qualifiers Quals,
+  //                           SourceRange Range);
 };
 }
 
@@ -1131,9 +1131,9 @@ void MicrosoftCXXNameMangler::mangleNestedName(const NamedDecl *ND) {
       if (isa<RecordDecl>(DC))
         break;
       continue;
-    } else if (const ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(DC)) {
+    } /*else if (const ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(DC)) {
       mangleObjCMethodName(Method);
-    } else if (isa<NamedDecl>(DC)) {
+    }*/ else if (isa<NamedDecl>(DC)) {
       ND = cast<NamedDecl>(DC);
       if (const FunctionDecl *FD = dyn_cast<FunctionDecl>(ND)) {
         mangle(FD, "?");
@@ -1320,9 +1320,9 @@ void MicrosoftCXXNameMangler::mangleSourceName(StringRef Name) {
   }
 }
 
-void MicrosoftCXXNameMangler::mangleObjCMethodName(const ObjCMethodDecl *MD) {
-  Context.mangleObjCMethodName(MD, Out);
-}
+// void MicrosoftCXXNameMangler::mangleObjCMethodName(const ObjCMethodDecl *MD) {
+//   Context.mangleObjCMethodName(MD, Out);
+// }
 
 void MicrosoftCXXNameMangler::mangleTemplateInstantiationName(
     const TemplateDecl *TD, const TemplateArgumentList &TemplateArgs) {
@@ -1521,17 +1521,17 @@ void MicrosoftCXXNameMangler::mangleTemplateArg(const TemplateDecl *TD,
   }
 }
 
-void MicrosoftCXXNameMangler::mangleObjCProtocol(const ObjCProtocolDecl *PD) {
-  llvm::SmallString<64> TemplateMangling;
-  llvm::raw_svector_ostream Stream(TemplateMangling);
-  MicrosoftCXXNameMangler Extra(Context, Stream);
+// void MicrosoftCXXNameMangler::mangleObjCProtocol(const ObjCProtocolDecl *PD) {
+//   llvm::SmallString<64> TemplateMangling;
+//   llvm::raw_svector_ostream Stream(TemplateMangling);
+//   MicrosoftCXXNameMangler Extra(Context, Stream);
 
-  Stream << "?$";
-  Extra.mangleSourceName("Protocol");
-  Extra.mangleArtificialTagType(TTK_Struct, PD->getName());
+//   Stream << "?$";
+//   Extra.mangleSourceName("Protocol");
+//   Extra.mangleArtificialTagType(TTK_Struct, PD->getName());
 
-  mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
-}
+//   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
+// }
 
 void MicrosoftCXXNameMangler::mangleObjCLifetime(const QualType Type,
                                                  Qualifiers Quals,
@@ -1562,22 +1562,22 @@ void MicrosoftCXXNameMangler::mangleObjCLifetime(const QualType Type,
   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
 }
 
-void MicrosoftCXXNameMangler::mangleObjCKindOfType(const ObjCObjectType *T,
-                                                   Qualifiers Quals,
-                                                   SourceRange Range) {
-  llvm::SmallString<64> TemplateMangling;
-  llvm::raw_svector_ostream Stream(TemplateMangling);
-  MicrosoftCXXNameMangler Extra(Context, Stream);
+// void MicrosoftCXXNameMangler::mangleObjCKindOfType(const ObjCObjectType *T,
+//                                                    Qualifiers Quals,
+//                                                    SourceRange Range) {
+//   llvm::SmallString<64> TemplateMangling;
+//   llvm::raw_svector_ostream Stream(TemplateMangling);
+//   MicrosoftCXXNameMangler Extra(Context, Stream);
 
-  Stream << "?$";
-  Extra.mangleSourceName("KindOf");
-  Extra.mangleType(QualType(T, 0)
-                       .stripObjCKindOfType(getASTContext())
-                       ->getAs<ObjCObjectType>(),
-                   Quals, Range);
+//   Stream << "?$";
+//   Extra.mangleSourceName("KindOf");
+//   Extra.mangleType(QualType(T, 0)
+//                        .stripObjCKindOfType(getASTContext())
+//                        ->getAs<ObjCObjectType>(),
+//                    Quals, Range);
 
-  mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
-}
+//   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
+// }
 
 void MicrosoftCXXNameMangler::mangleQualifiers(Qualifiers Quals,
                                                bool IsMember) {
@@ -2034,46 +2034,46 @@ void MicrosoftCXXNameMangler::mangleType(const BuiltinType *T, Qualifiers,
   case BuiltinType::Dependent:
     llvm_unreachable("placeholder types shouldn't get to name mangling");
 
-  case BuiltinType::ObjCId:
-    mangleArtificialTagType(TTK_Struct, "objc_object");
-    break;
-  case BuiltinType::ObjCClass:
-    mangleArtificialTagType(TTK_Struct, "objc_class");
-    break;
-  case BuiltinType::ObjCSel:
-    mangleArtificialTagType(TTK_Struct, "objc_selector");
-    break;
+  // case BuiltinType::ObjCId:
+  //   mangleArtificialTagType(TTK_Struct, "objc_object");
+  //   break;
+  // case BuiltinType::ObjCClass:
+  //   mangleArtificialTagType(TTK_Struct, "objc_class");
+  //   break;
+  // case BuiltinType::ObjCSel:
+  //   mangleArtificialTagType(TTK_Struct, "objc_selector");
+  //   break;
 
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id: \
-    Out << "PAUocl_" #ImgType "_" #Suffix "@@"; \
-    break;
-#include "latino/Basic/OpenCLImageTypes.def"
-  case BuiltinType::OCLSampler:
-    Out << "PA";
-    mangleArtificialTagType(TTK_Struct, "ocl_sampler");
-    break;
-  case BuiltinType::OCLEvent:
-    Out << "PA";
-    mangleArtificialTagType(TTK_Struct, "ocl_event");
-    break;
-  case BuiltinType::OCLClkEvent:
-    Out << "PA";
-    mangleArtificialTagType(TTK_Struct, "ocl_clkevent");
-    break;
-  case BuiltinType::OCLQueue:
-    Out << "PA";
-    mangleArtificialTagType(TTK_Struct, "ocl_queue");
-    break;
-  case BuiltinType::OCLReserveID:
-    Out << "PA";
-    mangleArtificialTagType(TTK_Struct, "ocl_reserveid");
-    break;
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id: \
-    mangleArtificialTagType(TTK_Struct, "ocl_" #ExtType); \
-    break;
-#include "latino/Basic/OpenCLExtensionTypes.def"
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id: \
+//     Out << "PAUocl_" #ImgType "_" #Suffix "@@"; \
+//     break;
+// #include "latino/Basic/OpenCLImageTypes.def"
+  // case BuiltinType::OCLSampler:
+  //   Out << "PA";
+  //   mangleArtificialTagType(TTK_Struct, "ocl_sampler");
+  //   break;
+  // case BuiltinType::OCLEvent:
+  //   Out << "PA";
+  //   mangleArtificialTagType(TTK_Struct, "ocl_event");
+  //   break;
+  // case BuiltinType::OCLClkEvent:
+  //   Out << "PA";
+  //   mangleArtificialTagType(TTK_Struct, "ocl_clkevent");
+  //   break;
+  // case BuiltinType::OCLQueue:
+  //   Out << "PA";
+  //   mangleArtificialTagType(TTK_Struct, "ocl_queue");
+  //   break;
+  // case BuiltinType::OCLReserveID:
+  //   Out << "PA";
+  //   mangleArtificialTagType(TTK_Struct, "ocl_reserveid");
+  //   break;
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id: \
+//     mangleArtificialTagType(TTK_Struct, "ocl_" #ExtType); \
+//     break;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
 
   case BuiltinType::NullPtr:
     Out << "$$T";
@@ -2591,22 +2591,22 @@ void MicrosoftCXXNameMangler::mangleType(const PointerType *T, Qualifiers Quals,
     mangleAddressSpaceType(PointeeType, PointeeType.getQualifiers(), Range);
 }
 
-void MicrosoftCXXNameMangler::mangleType(const ObjCObjectPointerType *T,
-                                         Qualifiers Quals, SourceRange Range) {
-  QualType PointeeType = T->getPointeeType();
-  switch (Quals.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-  case Qualifiers::OCL_ExplicitNone:
-    break;
-  case Qualifiers::OCL_Autoreleasing:
-  case Qualifiers::OCL_Strong:
-  case Qualifiers::OCL_Weak:
-    return mangleObjCLifetime(PointeeType, Quals, Range);
-  }
-  manglePointerCVQualifiers(Quals);
-  manglePointerExtQualifiers(Quals, PointeeType);
-  mangleType(PointeeType, Range);
-}
+// void MicrosoftCXXNameMangler::mangleType(const ObjCObjectPointerType *T,
+//                                          Qualifiers Quals, SourceRange Range) {
+//   QualType PointeeType = T->getPointeeType();
+//   switch (Quals.getObjCLifetime()) {
+//   case Qualifiers::OCL_None:
+//   case Qualifiers::OCL_ExplicitNone:
+//     break;
+//   case Qualifiers::OCL_Autoreleasing:
+//   case Qualifiers::OCL_Strong:
+//   case Qualifiers::OCL_Weak:
+//     return mangleObjCLifetime(PointeeType, Quals, Range);
+//   }
+//   manglePointerCVQualifiers(Quals);
+//   manglePointerExtQualifiers(Quals, PointeeType);
+//   mangleType(PointeeType, Range);
+// }
 
 // <type> ::= <reference-type>
 // <reference-type> ::= A E? <cvr-qualifiers> <type>
@@ -2764,47 +2764,47 @@ void MicrosoftCXXNameMangler::mangleType(const ObjCInterfaceType *T, Qualifiers,
   mangleName(T->getDecl());
 }
 
-void MicrosoftCXXNameMangler::mangleType(const ObjCObjectType *T,
-                                         Qualifiers Quals, SourceRange Range) {
-  if (T->isKindOfType())
-    return mangleObjCKindOfType(T, Quals, Range);
+// void MicrosoftCXXNameMangler::mangleType(const ObjCObjectType *T,
+//                                          Qualifiers Quals, SourceRange Range) {
+//   if (T->isKindOfType())
+//     return mangleObjCKindOfType(T, Quals, Range);
 
-  if (T->qual_empty() && !T->isSpecialized())
-    return mangleType(T->getBaseType(), Range, QMM_Drop);
+//   if (T->qual_empty() && !T->isSpecialized())
+//     return mangleType(T->getBaseType(), Range, QMM_Drop);
 
-  ArgBackRefMap OuterFunArgsContext;
-  ArgBackRefMap OuterTemplateArgsContext;
-  BackRefVec OuterTemplateContext;
+//   ArgBackRefMap OuterFunArgsContext;
+//   ArgBackRefMap OuterTemplateArgsContext;
+//   BackRefVec OuterTemplateContext;
 
-  FunArgBackReferences.swap(OuterFunArgsContext);
-  TemplateArgBackReferences.swap(OuterTemplateArgsContext);
-  NameBackReferences.swap(OuterTemplateContext);
+//   FunArgBackReferences.swap(OuterFunArgsContext);
+//   TemplateArgBackReferences.swap(OuterTemplateArgsContext);
+//   NameBackReferences.swap(OuterTemplateContext);
 
-  mangleTagTypeKind(TTK_Struct);
+//   mangleTagTypeKind(TTK_Struct);
 
-  Out << "?$";
-  if (T->isObjCId())
-    mangleSourceName("objc_object");
-  else if (T->isObjCClass())
-    mangleSourceName("objc_class");
-  else
-    mangleSourceName(T->getInterface()->getName());
+//   Out << "?$";
+//   if (T->isObjCId())
+//     mangleSourceName("objc_object");
+//   else if (T->isObjCClass())
+//     mangleSourceName("objc_class");
+//   else
+//     mangleSourceName(T->getInterface()->getName());
 
-  for (const auto &Q : T->quals())
-    mangleObjCProtocol(Q);
+//   for (const auto &Q : T->quals())
+//     mangleObjCProtocol(Q);
 
-  if (T->isSpecialized())
-    for (const auto &TA : T->getTypeArgs())
-      mangleType(TA, Range, QMM_Drop);
+//   if (T->isSpecialized())
+//     for (const auto &TA : T->getTypeArgs())
+//       mangleType(TA, Range, QMM_Drop);
 
-  Out << '@';
+//   Out << '@';
 
-  Out << '@';
+//   Out << '@';
 
-  FunArgBackReferences.swap(OuterFunArgsContext);
-  TemplateArgBackReferences.swap(OuterTemplateArgsContext);
-  NameBackReferences.swap(OuterTemplateContext);
-}
+//   FunArgBackReferences.swap(OuterFunArgsContext);
+//   TemplateArgBackReferences.swap(OuterTemplateArgsContext);
+//   NameBackReferences.swap(OuterTemplateContext);
+// }
 
 void MicrosoftCXXNameMangler::mangleType(const BlockPointerType *T,
                                          Qualifiers Quals, SourceRange Range) {

@@ -3327,7 +3327,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
     return (Left.is(TT_TemplateOpener) &&
             (Style.Standard < FormatStyle::LS_Cpp11 || Style.SpacesInAngles)) ||
            !(Left.isOneOf(tok::l_paren, tok::r_paren, tok::l_square,
-                          tok::kw___super, TT_TemplateOpener,
+                          tok::kw_base, TT_TemplateOpener,
                           TT_TemplateCloser)) ||
            (Left.is(tok::l_paren) && Style.SpacesInParentheses);
   if ((Left.is(TT_TemplateOpener)) != (Right.is(TT_TemplateCloser)))

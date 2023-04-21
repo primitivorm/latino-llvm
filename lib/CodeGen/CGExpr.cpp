@@ -14,7 +14,7 @@
 #include "CGCall.h"
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGOpenMPRuntime.h"
 #include "CGRecordLayout.h"
 #include "CodeGenFunction.h"
@@ -23,7 +23,7 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/NSAPI.h"
 #include "latino/Basic/Builtins.h"
 #include "latino/Basic/CodeGenOptions.h"
@@ -1067,8 +1067,8 @@ Address CodeGenFunction::EmitPointerWithAlignment(const Expr *E,
                                                   LValueBaseInfo *BaseInfo,
                                                   TBAAAccessInfo *TBAAInfo) {
   // We allow this with ObjC object pointers because of fragile ABIs.
-  assert(E->getType()->isPointerType() ||
-         E->getType()->isObjCObjectPointerType());
+  assert(E->getType()->isPointerType() /*||
+         E->getType()->isObjCObjectPointerType()*/);
   E = E->IgnoreParens();
 
   // Casts:
@@ -1277,8 +1277,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
   case Expr::ObjCPropertyRefExprClass:
     llvm_unreachable("cannot emit a property reference directly");
 
-  case Expr::ObjCSelectorExprClass:
-    return EmitObjCSelectorLValue(cast<ObjCSelectorExpr>(E));
+  // case Expr::ObjCSelectorExprClass:
+  //   return EmitObjCSelectorLValue(cast<ObjCSelectorExpr>(E));
   case Expr::ObjCIsaExprClass:
     return EmitObjCIsaExpr(cast<ObjCIsaExpr>(E));
   case Expr::BinaryOperatorClass:
@@ -1319,8 +1319,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
     return EmitPredefinedLValue(cast<PredefinedExpr>(E));
   case Expr::StringLiteralClass:
     return EmitStringLiteralLValue(cast<StringLiteral>(E));
-  case Expr::ObjCEncodeExprClass:
-    return EmitObjCEncodeExprLValue(cast<ObjCEncodeExpr>(E));
+  // case Expr::ObjCEncodeExprClass:
+  //   return EmitObjCEncodeExprLValue(cast<ObjCEncodeExpr>(E));
   case Expr::PseudoObjectExprClass:
     return EmitPseudoObjectLValue(cast<PseudoObjectExpr>(E));
   case Expr::InitListExprClass:
@@ -1365,10 +1365,10 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
   case Expr::CXXTypeidExprClass:
     return EmitCXXTypeidLValue(cast<CXXTypeidExpr>(E));
 
-  case Expr::ObjCMessageExprClass:
-    return EmitObjCMessageExprLValue(cast<ObjCMessageExpr>(E));
-  case Expr::ObjCIvarRefExprClass:
-    return EmitObjCIvarRefLValue(cast<ObjCIvarRefExpr>(E));
+  // case Expr::ObjCMessageExprClass:
+  //   return EmitObjCMessageExprLValue(cast<ObjCMessageExpr>(E));
+  // case Expr::ObjCIvarRefExprClass:
+  //   return EmitObjCIvarRefLValue(cast<ObjCIvarRefExpr>(E));
   case Expr::StmtExprClass:
     return EmitStmtExprLValue(cast<StmtExpr>(E));
   case Expr::UnaryOperatorClass:
@@ -1402,7 +1402,7 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
   case Expr::CXXDynamicCastExprClass:
   case Expr::CXXReinterpretCastExprClass:
   case Expr::CXXConstCastExprClass:
-  case Expr::CXXAddrspaceCastExprClass:
+  // case Expr::CXXAddrspaceCastExprClass:
   case Expr::ObjCBridgedCastExprClass:
     return EmitCastLValue(cast<CastExpr>(E));
 
@@ -1629,8 +1629,8 @@ bool CodeGenFunction::EmitScalarRangeCheck(llvm::Value *Value, QualType Ty,
   if (!HasBoolCheck && !HasEnumCheck)
     return false;
 
-  bool IsBool = hasBooleanRepresentation(Ty) ||
-                NSAPI(CGM.getContext()).isObjCBOOLType(Ty);
+  bool IsBool = hasBooleanRepresentation(Ty) /*||
+                NSAPI(CGM.getContext()).isObjCBOOLType(Ty)*/;
   bool NeedsBoolCheck = HasBoolCheck && IsBool;
   bool NeedsEnumCheck = HasEnumCheck && Ty->getAs<EnumType>();
   if (!NeedsBoolCheck && !NeedsEnumCheck)
@@ -2881,10 +2881,10 @@ LValue CodeGenFunction::EmitStringLiteralLValue(const StringLiteral *E) {
                         E->getType(), AlignmentSource::Decl);
 }
 
-LValue CodeGenFunction::EmitObjCEncodeExprLValue(const ObjCEncodeExpr *E) {
-  return MakeAddrLValue(CGM.GetAddrOfConstantStringFromObjCEncode(E),
-                        E->getType(), AlignmentSource::Decl);
-}
+// LValue CodeGenFunction::EmitObjCEncodeExprLValue(const ObjCEncodeExpr *E) {
+//   return MakeAddrLValue(CGM.GetAddrOfConstantStringFromObjCEncode(E),
+//                         E->getType(), AlignmentSource::Decl);
+// }
 
 LValue CodeGenFunction::EmitPredefinedLValue(const PredefinedExpr *E) {
   auto SL = E->getFunctionName();
@@ -3709,37 +3709,39 @@ LValue CodeGenFunction::EmitArraySubscriptExpr(const ArraySubscriptExpr *E,
                                  !getLangOpts().isSignedOverflowDefined(),
                                  SignedIndices, E->getExprLoc());
 
-  } else if (const ObjCObjectType *OIT = E->getType()->getAs<ObjCObjectType>()){
-    // Indexing over an interface, as in "NSString *P; P[4];"
+  } 
+  // else if (const ObjCObjectType *OIT = E->getType()->getAs<ObjCObjectType>()){
+  //   // Indexing over an interface, as in "NSString *P; P[4];"
 
-    // Emit the base pointer.
-    Addr = EmitPointerWithAlignment(E->getBase(), &EltBaseInfo, &EltTBAAInfo);
-    auto *Idx = EmitIdxAfterBase(/*Promote*/true);
+  //   // Emit the base pointer.
+  //   Addr = EmitPointerWithAlignment(E->getBase(), &EltBaseInfo, &EltTBAAInfo);
+  //   auto *Idx = EmitIdxAfterBase(/*Promote*/true);
 
-    CharUnits InterfaceSize = getContext().getTypeSizeInChars(OIT);
-    llvm::Value *InterfaceSizeVal =
-        llvm::ConstantInt::get(Idx->getType(), InterfaceSize.getQuantity());
+  //   CharUnits InterfaceSize = getContext().getTypeSizeInChars(OIT);
+  //   llvm::Value *InterfaceSizeVal =
+  //       llvm::ConstantInt::get(Idx->getType(), InterfaceSize.getQuantity());
 
-    llvm::Value *ScaledIdx = Builder.CreateMul(Idx, InterfaceSizeVal);
+  //   llvm::Value *ScaledIdx = Builder.CreateMul(Idx, InterfaceSizeVal);
 
-    // We don't necessarily build correct LLVM struct types for ObjC
-    // interfaces, so we can't rely on GEP to do this scaling
-    // correctly, so we need to cast to i8*.  FIXME: is this actually
-    // true?  A lot of other things in the fragile ABI would break...
-    llvm::Type *OrigBaseTy = Addr.getType();
-    Addr = Builder.CreateElementBitCast(Addr, Int8Ty);
+  //   // We don't necessarily build correct LLVM struct types for ObjC
+  //   // interfaces, so we can't rely on GEP to do this scaling
+  //   // correctly, so we need to cast to i8*.  FIXME: is this actually
+  //   // true?  A lot of other things in the fragile ABI would break...
+  //   llvm::Type *OrigBaseTy = Addr.getType();
+  //   Addr = Builder.CreateElementBitCast(Addr, Int8Ty);
 
-    // Do the GEP.
-    CharUnits EltAlign =
-      getArrayElementAlign(Addr.getAlignment(), Idx, InterfaceSize);
-    llvm::Value *EltPtr =
-        emitArraySubscriptGEP(*this, Addr.getPointer(), ScaledIdx, false,
-                              SignedIndices, E->getExprLoc());
-    Addr = Address(EltPtr, EltAlign);
+  //   // Do the GEP.
+  //   CharUnits EltAlign =
+  //     getArrayElementAlign(Addr.getAlignment(), Idx, InterfaceSize);
+  //   llvm::Value *EltPtr =
+  //       emitArraySubscriptGEP(*this, Addr.getPointer(), ScaledIdx, false,
+  //                             SignedIndices, E->getExprLoc());
+  //   Addr = Address(EltPtr, EltAlign);
 
-    // Cast back.
-    Addr = Builder.CreateBitCast(Addr, OrigBaseTy);
-  } else if (const Expr *Array = isSimpleArrayDecayOperand(E->getBase())) {
+  //   // Cast back.
+  //   Addr = Builder.CreateBitCast(Addr, OrigBaseTy);
+  // } 
+  else if (const Expr *Array = isSimpleArrayDecayOperand(E->getBase())) {
     // If this is A[i] where A is an array, the frontend will have decayed the
     // base to be a ArrayToPointerDecay implicit cast.  While correct, it is
     // inefficient at -O0 to emit a "gep A, 0, 0" when codegen'ing it, then a
@@ -4554,7 +4556,7 @@ LValue CodeGenFunction::EmitCastLValue(const CastExpr *E) {
   case CK_ARCReclaimReturnedObject:
   case CK_ARCExtendBlockObject:
   case CK_CopyAndAutoreleaseBlockObject:
-  case CK_IntToOCLSampler:
+  // case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:
@@ -4581,8 +4583,8 @@ LValue CodeGenFunction::EmitCastLValue(const CastExpr *E) {
 
   case CK_ConstructorConversion:
   case CK_UserDefinedConversion:
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_NoOp:
   case CK_LValueToRValue:
     return EmitLValue(E->getSubExpr());
@@ -4661,13 +4663,13 @@ LValue CodeGenFunction::EmitCastLValue(const CastExpr *E) {
     return MakeAddrLValue(Address(V, LV.getAddress(*this).getAlignment()),
                           E->getType(), LV.getBaseInfo(), LV.getTBAAInfo());
   }
-  case CK_ObjCObjectLValueCast: {
-    LValue LV = EmitLValue(E->getSubExpr());
-    Address V = Builder.CreateElementBitCast(LV.getAddress(*this),
-                                             ConvertType(E->getType()));
-    return MakeAddrLValue(V, E->getType(), LV.getBaseInfo(),
-                          CGM.getTBAAInfoForSubobject(LV, E->getType()));
-  }
+  // case CK_ObjCObjectLValueCast: {
+  //   LValue LV = EmitLValue(E->getSubExpr());
+  //   Address V = Builder.CreateElementBitCast(LV.getAddress(*this),
+  //                                            ConvertType(E->getType()));
+  //   return MakeAddrLValue(V, E->getType(), LV.getBaseInfo(),
+  //                         CGM.getTBAAInfoForSubobject(LV, E->getType()));
+  // }
   case CK_ZeroToOCLOpaqueType:
     llvm_unreachable("NULL to OpenCL opaque type lvalue cast is not valid");
   }
@@ -4947,62 +4949,62 @@ CodeGenFunction::EmitCXXBindTemporaryLValue(const CXXBindTemporaryExpr *E) {
   return MakeAddrLValue(Slot.getAddress(), E->getType(), AlignmentSource::Decl);
 }
 
-LValue CodeGenFunction::EmitObjCMessageExprLValue(const ObjCMessageExpr *E) {
-  RValue RV = EmitObjCMessageExpr(E);
+// LValue CodeGenFunction::EmitObjCMessageExprLValue(const ObjCMessageExpr *E) {
+//   RValue RV = EmitObjCMessageExpr(E);
 
-  if (!RV.isScalar())
-    return MakeAddrLValue(RV.getAggregateAddress(), E->getType(),
-                          AlignmentSource::Decl);
+//   if (!RV.isScalar())
+//     return MakeAddrLValue(RV.getAggregateAddress(), E->getType(),
+//                           AlignmentSource::Decl);
 
-  assert(E->getMethodDecl()->getReturnType()->isReferenceType() &&
-         "Can't have a scalar return unless the return type is a "
-         "reference type!");
+//   assert(E->getMethodDecl()->getReturnType()->isReferenceType() &&
+//          "Can't have a scalar return unless the return type is a "
+//          "reference type!");
 
-  return MakeNaturalAlignPointeeAddrLValue(RV.getScalarVal(), E->getType());
-}
+//   return MakeNaturalAlignPointeeAddrLValue(RV.getScalarVal(), E->getType());
+// }
 
-LValue CodeGenFunction::EmitObjCSelectorLValue(const ObjCSelectorExpr *E) {
-  Address V =
-    CGM.getObjCRuntime().GetAddrOfSelector(*this, E->getSelector());
-  return MakeAddrLValue(V, E->getType(), AlignmentSource::Decl);
-}
+// LValue CodeGenFunction::EmitObjCSelectorLValue(const ObjCSelectorExpr *E) {
+//   Address V =
+//     CGM.getObjCRuntime().GetAddrOfSelector(*this, E->getSelector());
+//   return MakeAddrLValue(V, E->getType(), AlignmentSource::Decl);
+// }
 
-llvm::Value *CodeGenFunction::EmitIvarOffset(const ObjCInterfaceDecl *Interface,
-                                             const ObjCIvarDecl *Ivar) {
-  return CGM.getObjCRuntime().EmitIvarOffset(*this, Interface, Ivar);
-}
+// llvm::Value *CodeGenFunction::EmitIvarOffset(const ObjCInterfaceDecl *Interface,
+//                                              const ObjCIvarDecl *Ivar) {
+//   return CGM.getObjCRuntime().EmitIvarOffset(*this, Interface, Ivar);
+// }
 
-LValue CodeGenFunction::EmitLValueForIvar(QualType ObjectTy,
-                                          llvm::Value *BaseValue,
-                                          const ObjCIvarDecl *Ivar,
-                                          unsigned CVRQualifiers) {
-  return CGM.getObjCRuntime().EmitObjCValueForIvar(*this, ObjectTy, BaseValue,
-                                                   Ivar, CVRQualifiers);
-}
+// LValue CodeGenFunction::EmitLValueForIvar(QualType ObjectTy,
+//                                           llvm::Value *BaseValue,
+//                                           const ObjCIvarDecl *Ivar,
+//                                           unsigned CVRQualifiers) {
+//   return CGM.getObjCRuntime().EmitObjCValueForIvar(*this, ObjectTy, BaseValue,
+//                                                    Ivar, CVRQualifiers);
+// }
 
-LValue CodeGenFunction::EmitObjCIvarRefLValue(const ObjCIvarRefExpr *E) {
-  // FIXME: A lot of the code below could be shared with EmitMemberExpr.
-  llvm::Value *BaseValue = nullptr;
-  const Expr *BaseExpr = E->getBase();
-  Qualifiers BaseQuals;
-  QualType ObjectTy;
-  if (E->isArrow()) {
-    BaseValue = EmitScalarExpr(BaseExpr);
-    ObjectTy = BaseExpr->getType()->getPointeeType();
-    BaseQuals = ObjectTy.getQualifiers();
-  } else {
-    LValue BaseLV = EmitLValue(BaseExpr);
-    BaseValue = BaseLV.getPointer(*this);
-    ObjectTy = BaseExpr->getType();
-    BaseQuals = ObjectTy.getQualifiers();
-  }
+// LValue CodeGenFunction::EmitObjCIvarRefLValue(const ObjCIvarRefExpr *E) {
+//   // FIXME: A lot of the code below could be shared with EmitMemberExpr.
+//   llvm::Value *BaseValue = nullptr;
+//   const Expr *BaseExpr = E->getBase();
+//   Qualifiers BaseQuals;
+//   QualType ObjectTy;
+//   if (E->isArrow()) {
+//     BaseValue = EmitScalarExpr(BaseExpr);
+//     ObjectTy = BaseExpr->getType()->getPointeeType();
+//     BaseQuals = ObjectTy.getQualifiers();
+//   } else {
+//     LValue BaseLV = EmitLValue(BaseExpr);
+//     BaseValue = BaseLV.getPointer(*this);
+//     ObjectTy = BaseExpr->getType();
+//     BaseQuals = ObjectTy.getQualifiers();
+//   }
 
-  LValue LV =
-    EmitLValueForIvar(ObjectTy, BaseValue, E->getDecl(),
-                      BaseQuals.getCVRQualifiers());
-  setObjCGCLValueClass(getContext(), E, LV);
-  return LV;
-}
+//   LValue LV =
+//     EmitLValueForIvar(ObjectTy, BaseValue, E->getDecl(),
+//                       BaseQuals.getCVRQualifiers());
+//   setObjCGCLValueClass(getContext(), E, LV);
+//   return LV;
+// }
 
 LValue CodeGenFunction::EmitStmtExprLValue(const StmtExpr *E) {
   // Can only get l-value for message expression returning aggregate type

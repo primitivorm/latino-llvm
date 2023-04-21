@@ -89,11 +89,11 @@ public:
   void VisitNamespaceAliasDecl(const NamespaceAliasDecl *D);
   void VisitFunctionTemplateDecl(const FunctionTemplateDecl *D);
   void VisitClassTemplateDecl(const ClassTemplateDecl *D);
-  void VisitObjCContainerDecl(const ObjCContainerDecl *CD,
-                              const ObjCCategoryDecl *CatD = nullptr);
-  void VisitObjCMethodDecl(const ObjCMethodDecl *MD);
-  void VisitObjCPropertyDecl(const ObjCPropertyDecl *D);
-  void VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D);
+  // void VisitObjCContainerDecl(const ObjCContainerDecl *CD,
+  //                             const ObjCCategoryDecl *CatD = nullptr);
+  // void VisitObjCMethodDecl(const ObjCMethodDecl *MD);
+  // void VisitObjCPropertyDecl(const ObjCPropertyDecl *D);
+  // void VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D);
   void VisitTagDecl(const TagDecl *D);
   void VisitTypedefDecl(const TypedefDecl *D);
   void VisitTemplateTypeParmDecl(const TemplateTypeParmDecl *D);
@@ -206,11 +206,11 @@ void USRGenerator::VisitDeclContext(const DeclContext *DC) {
 void USRGenerator::VisitFieldDecl(const FieldDecl *D) {
   // The USR for an ivar declared in a class extension is based on the
   // ObjCInterfaceDecl, not the ObjCCategoryDecl.
-  if (const ObjCInterfaceDecl *ID = Context->getObjContainingInterface(D))
-    Visit(ID);
-  else
+  // if (const ObjCInterfaceDecl *ID = Context->getObjContainingInterface(D))
+  //   Visit(ID);
+  // else
     VisitDeclContext(D->getDeclContext());
-  Out << (isa<ObjCIvarDecl>(D) ? "@" : "@FI@");
+  // Out << (isa<ObjCIvarDecl>(D) ? "@" : "@FI@");
   if (EmitDeclName(D)) {
     // Bit fields can be anonymous.
     IgnoreResults = true;
@@ -383,113 +383,113 @@ void USRGenerator::VisitNamespaceAliasDecl(const NamespaceAliasDecl *D) {
     Out << "@NA@" << D->getName();
 }
 
-static const ObjCCategoryDecl *getCategoryContext(const NamedDecl *D) {
-  if (auto *CD = dyn_cast<ObjCCategoryDecl>(D->getDeclContext()))
-    return CD;
-  if (auto *ICD = dyn_cast<ObjCCategoryImplDecl>(D->getDeclContext()))
-    return ICD->getCategoryDecl();
-  return nullptr;
-}
+// static const ObjCCategoryDecl *getCategoryContext(const NamedDecl *D) {
+//   if (auto *CD = dyn_cast<ObjCCategoryDecl>(D->getDeclContext()))
+//     return CD;
+//   if (auto *ICD = dyn_cast<ObjCCategoryImplDecl>(D->getDeclContext()))
+//     return ICD->getCategoryDecl();
+//   return nullptr;
+// }
 
-void USRGenerator::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
-  const DeclContext *container = D->getDeclContext();
-  if (const ObjCProtocolDecl *pd = dyn_cast<ObjCProtocolDecl>(container)) {
-    Visit(pd);
-  }
-  else {
-    // The USR for a method declared in a class extension or category is based on
-    // the ObjCInterfaceDecl, not the ObjCCategoryDecl.
-    const ObjCInterfaceDecl *ID = D->getClassInterface();
-    if (!ID) {
-      IgnoreResults = true;
-      return;
-    }
-    auto *CD = getCategoryContext(D);
-    VisitObjCContainerDecl(ID, CD);
-  }
-  // Ideally we would use 'GenObjCMethod', but this is such a hot path
-  // for Objective-C code that we don't want to use
-  // DeclarationName::getAsString().
-  Out << (D->isInstanceMethod() ? "(im)" : "(cm)")
-      << DeclarationName(D->getSelector());
-}
+// void USRGenerator::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
+//   const DeclContext *container = D->getDeclContext();
+//   if (const ObjCProtocolDecl *pd = dyn_cast<ObjCProtocolDecl>(container)) {
+//     Visit(pd);
+//   }
+//   else {
+//     // The USR for a method declared in a class extension or category is based on
+//     // the ObjCInterfaceDecl, not the ObjCCategoryDecl.
+//     const ObjCInterfaceDecl *ID = D->getClassInterface();
+//     if (!ID) {
+//       IgnoreResults = true;
+//       return;
+//     }
+//     auto *CD = getCategoryContext(D);
+//     VisitObjCContainerDecl(ID, CD);
+//   }
+//   // Ideally we would use 'GenObjCMethod', but this is such a hot path
+//   // for Objective-C code that we don't want to use
+//   // DeclarationName::getAsString().
+//   Out << (D->isInstanceMethod() ? "(im)" : "(cm)")
+//       << DeclarationName(D->getSelector());
+// }
 
-void USRGenerator::VisitObjCContainerDecl(const ObjCContainerDecl *D,
-                                          const ObjCCategoryDecl *CatD) {
-  switch (D->getKind()) {
-    default:
-      llvm_unreachable("Invalid ObjC container.");
-    case Decl::ObjCInterface:
-    case Decl::ObjCImplementation:
-      GenObjCClass(D->getName(), GetExternalSourceContainer(D),
-                   GetExternalSourceContainer(CatD));
-      break;
-    case Decl::ObjCCategory: {
-      const ObjCCategoryDecl *CD = cast<ObjCCategoryDecl>(D);
-      const ObjCInterfaceDecl *ID = CD->getClassInterface();
-      if (!ID) {
-        // Handle invalid code where the @interface might not
-        // have been specified.
-        // FIXME: We should be able to generate this USR even if the
-        // @interface isn't available.
-        IgnoreResults = true;
-        return;
-      }
-      // Specially handle class extensions, which are anonymous categories.
-      // We want to mangle in the location to uniquely distinguish them.
-      if (CD->IsClassExtension()) {
-        Out << "objc(ext)" << ID->getName() << '@';
-        GenLoc(CD, /*IncludeOffset=*/true);
-      }
-      else
-        GenObjCCategory(ID->getName(), CD->getName(),
-                        GetExternalSourceContainer(ID),
-                        GetExternalSourceContainer(CD));
+// void USRGenerator::VisitObjCContainerDecl(const ObjCContainerDecl *D,
+//                                           const ObjCCategoryDecl *CatD) {
+//   switch (D->getKind()) {
+//     default:
+//       llvm_unreachable("Invalid ObjC container.");
+//     case Decl::ObjCInterface:
+//     case Decl::ObjCImplementation:
+//       GenObjCClass(D->getName(), GetExternalSourceContainer(D),
+//                    GetExternalSourceContainer(CatD));
+//       break;
+//     case Decl::ObjCCategory: {
+//       const ObjCCategoryDecl *CD = cast<ObjCCategoryDecl>(D);
+//       const ObjCInterfaceDecl *ID = CD->getClassInterface();
+//       if (!ID) {
+//         // Handle invalid code where the @interface might not
+//         // have been specified.
+//         // FIXME: We should be able to generate this USR even if the
+//         // @interface isn't available.
+//         IgnoreResults = true;
+//         return;
+//       }
+//       // Specially handle class extensions, which are anonymous categories.
+//       // We want to mangle in the location to uniquely distinguish them.
+//       if (CD->IsClassExtension()) {
+//         Out << "objc(ext)" << ID->getName() << '@';
+//         GenLoc(CD, /*IncludeOffset=*/true);
+//       }
+//       else
+//         GenObjCCategory(ID->getName(), CD->getName(),
+//                         GetExternalSourceContainer(ID),
+//                         GetExternalSourceContainer(CD));
 
-      break;
-    }
-    case Decl::ObjCCategoryImpl: {
-      const ObjCCategoryImplDecl *CD = cast<ObjCCategoryImplDecl>(D);
-      const ObjCInterfaceDecl *ID = CD->getClassInterface();
-      if (!ID) {
-        // Handle invalid code where the @interface might not
-        // have been specified.
-        // FIXME: We should be able to generate this USR even if the
-        // @interface isn't available.
-        IgnoreResults = true;
-        return;
-      }
-      GenObjCCategory(ID->getName(), CD->getName(),
-                      GetExternalSourceContainer(ID),
-                      GetExternalSourceContainer(CD));
-      break;
-    }
-    case Decl::ObjCProtocol: {
-      const ObjCProtocolDecl *PD = cast<ObjCProtocolDecl>(D);
-      GenObjCProtocol(PD->getName(), GetExternalSourceContainer(PD));
-      break;
-    }
-  }
-}
+//       break;
+//     }
+//     case Decl::ObjCCategoryImpl: {
+//       const ObjCCategoryImplDecl *CD = cast<ObjCCategoryImplDecl>(D);
+//       const ObjCInterfaceDecl *ID = CD->getClassInterface();
+//       if (!ID) {
+//         // Handle invalid code where the @interface might not
+//         // have been specified.
+//         // FIXME: We should be able to generate this USR even if the
+//         // @interface isn't available.
+//         IgnoreResults = true;
+//         return;
+//       }
+//       GenObjCCategory(ID->getName(), CD->getName(),
+//                       GetExternalSourceContainer(ID),
+//                       GetExternalSourceContainer(CD));
+//       break;
+//     }
+//     case Decl::ObjCProtocol: {
+//       const ObjCProtocolDecl *PD = cast<ObjCProtocolDecl>(D);
+//       GenObjCProtocol(PD->getName(), GetExternalSourceContainer(PD));
+//       break;
+//     }
+//   }
+// }
 
-void USRGenerator::VisitObjCPropertyDecl(const ObjCPropertyDecl *D) {
-  // The USR for a property declared in a class extension or category is based
-  // on the ObjCInterfaceDecl, not the ObjCCategoryDecl.
-  if (const ObjCInterfaceDecl *ID = Context->getObjContainingInterface(D))
-    VisitObjCContainerDecl(ID, getCategoryContext(D));
-  else
-    Visit(cast<Decl>(D->getDeclContext()));
-  GenObjCProperty(D->getName(), D->isClassProperty());
-}
+// void USRGenerator::VisitObjCPropertyDecl(const ObjCPropertyDecl *D) {
+//   // The USR for a property declared in a class extension or category is based
+//   // on the ObjCInterfaceDecl, not the ObjCCategoryDecl.
+//   if (const ObjCInterfaceDecl *ID = Context->getObjContainingInterface(D))
+//     VisitObjCContainerDecl(ID, getCategoryContext(D));
+//   else
+//     Visit(cast<Decl>(D->getDeclContext()));
+//   GenObjCProperty(D->getName(), D->isClassProperty());
+// }
 
-void USRGenerator::VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D) {
-  if (ObjCPropertyDecl *PD = D->getPropertyDecl()) {
-    VisitObjCPropertyDecl(PD);
-    return;
-  }
+// void USRGenerator::VisitObjCPropertyImplDecl(const ObjCPropertyImplDecl *D) {
+//   if (ObjCPropertyDecl *PD = D->getPropertyDecl()) {
+//     VisitObjCPropertyDecl(PD);
+//     return;
+//   }
 
-  IgnoreResults = true;
-}
+//   IgnoreResults = true;
+// }
 
 void USRGenerator::VisitTagDecl(const TagDecl *D) {
   // Add the location of the tag decl to handle resolution across
@@ -715,17 +715,17 @@ void USRGenerator::VisitType(QualType T) {
 #define PLACEHOLDER_TYPE(Id, SingletonId) case BuiltinType::Id:
 #include "latino/AST/BuiltinTypes.def"
         case BuiltinType::Dependent:
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-        case BuiltinType::Id:
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-        case BuiltinType::Id:
-#include "latino/Basic/OpenCLExtensionTypes.def"
-        case BuiltinType::OCLEvent:
-        case BuiltinType::OCLClkEvent:
-        case BuiltinType::OCLQueue:
-        case BuiltinType::OCLReserveID:
-        case BuiltinType::OCLSampler:
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//         case BuiltinType::Id:
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//         case BuiltinType::Id:
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+        // case BuiltinType::OCLEvent:
+        // case BuiltinType::OCLClkEvent:
+        // case BuiltinType::OCLQueue:
+        // case BuiltinType::OCLReserveID:
+        // case BuiltinType::OCLSampler:
 #define SVE_TYPE(Name, Id, SingletonId) \
         case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -756,12 +756,12 @@ void USRGenerator::VisitType(QualType T) {
         case BuiltinType::BFloat16:
           IgnoreResults = true;
           return;
-        case BuiltinType::ObjCId:
-          c = 'o'; break;
-        case BuiltinType::ObjCClass:
-          c = 'O'; break;
-        case BuiltinType::ObjCSel:
-          c = 'e'; break;
+        // case BuiltinType::ObjCId:
+        //   c = 'o'; break;
+        // case BuiltinType::ObjCClass:
+        //   c = 'O'; break;
+        // case BuiltinType::ObjCSel:
+        //   c = 'e'; break;
       }
       Out << c;
       return;
@@ -785,11 +785,11 @@ void USRGenerator::VisitType(QualType T) {
       T = PT->getPointeeType();
       continue;
     }
-    if (const ObjCObjectPointerType *OPT = T->getAs<ObjCObjectPointerType>()) {
-      Out << '*';
-      T = OPT->getPointeeType();
-      continue;
-    }
+    // if (const ObjCObjectPointerType *OPT = T->getAs<ObjCObjectPointerType>()) {
+    //   Out << '*';
+    //   T = OPT->getPointeeType();
+    //   continue;
+    // }
     if (const RValueReferenceType *RT = T->getAs<RValueReferenceType>()) {
       Out << "&&";
       T = RT->getPointeeType();
@@ -828,18 +828,18 @@ void USRGenerator::VisitType(QualType T) {
       VisitTagDecl(TT->getDecl());
       return;
     }
-    if (const ObjCInterfaceType *OIT = T->getAs<ObjCInterfaceType>()) {
-      Out << '$';
-      VisitObjCInterfaceDecl(OIT->getDecl());
-      return;
-    }
-    if (const ObjCObjectType *OIT = T->getAs<ObjCObjectType>()) {
-      Out << 'Q';
-      VisitType(OIT->getBaseType());
-      for (auto *Prot : OIT->getProtocols())
-        VisitObjCProtocolDecl(Prot);
-      return;
-    }
+    // if (const ObjCInterfaceType *OIT = T->getAs<ObjCInterfaceType>()) {
+    //   Out << '$';
+    //   VisitObjCInterfaceDecl(OIT->getDecl());
+    //   return;
+    // }
+    // if (const ObjCObjectType *OIT = T->getAs<ObjCObjectType>()) {
+    //   Out << 'Q';
+    //   VisitType(OIT->getBaseType());
+    //   for (auto *Prot : OIT->getProtocols())
+    //     VisitObjCProtocolDecl(Prot);
+    //   return;
+    // }
     if (const TemplateTypeParmType *TTP = T->getAs<TemplateTypeParmType>()) {
       Out << 't' << TTP->getDepth() << '.' << TTP->getIndex();
       return;

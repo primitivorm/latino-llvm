@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "latino/Frontend/PrecompiledPreamble.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Basic/FileManager.h"
 #include "latino/Basic/LangStandard.h"
 #include "latino/Basic/TargetInfo.h"

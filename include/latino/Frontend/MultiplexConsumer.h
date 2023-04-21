@@ -62,7 +62,7 @@ public:
   void HandleTagDeclDefinition(TagDecl *D) override;
   void HandleTagDeclRequiredDefinition(const TagDecl *D) override;
   void HandleCXXImplicitFunctionInstantiation(FunctionDecl *D) override;
-  void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override;
+  // void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override;
   void HandleImplicitImportDecl(ImportDecl *D) override;
   void CompleteTentativeDefinition(VarDecl *D) override;
   void CompleteExternalDeclaration(VarDecl *D) override;

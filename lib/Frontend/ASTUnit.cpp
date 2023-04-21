@@ -18,7 +18,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclGroup.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/ExternalASTSource.h"
@@ -294,13 +294,13 @@ static uint64_t getDeclShowContexts(const NamedDecl *ND,
     return 0;
 
   uint64_t Contexts = 0;
-  if (isa<TypeDecl>(ND) || isa<ObjCInterfaceDecl>(ND) ||
+  if (isa<TypeDecl>(ND) || /*isa<ObjCInterfaceDecl>(ND) ||*/
       isa<ClassTemplateDecl>(ND) || isa<TemplateTemplateParmDecl>(ND) ||
       isa<TypeAliasTemplateDecl>(ND)) {
     // Types can appear in these contexts.
     if (LangOpts.CPlusPlus || !isa<TagDecl>(ND))
       Contexts |= (1LL << CodeCompletionContext::CCC_TopLevel)
-               |  (1LL << CodeCompletionContext::CCC_ObjCIvarList)
+              //  |  (1LL << CodeCompletionContext::CCC_ObjCIvarList)
                |  (1LL << CodeCompletionContext::CCC_ClassStructUnion)
                |  (1LL << CodeCompletionContext::CCC_Statement)
                |  (1LL << CodeCompletionContext::CCC_Type)
@@ -312,16 +312,16 @@ static uint64_t getDeclShowContexts(const NamedDecl *ND,
 
     // In Objective-C, message sends can send interfaces. In Objective-C++,
     // all types are available due to functional casts.
-    if (LangOpts.CPlusPlus || isa<ObjCInterfaceDecl>(ND))
-      Contexts |= (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver);
+    // if (LangOpts.CPlusPlus || isa<ObjCInterfaceDecl>(ND))
+    //   Contexts |= (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver);
 
     // In Objective-C, you can only be a subclass of another Objective-C class
-    if (const auto *ID = dyn_cast<ObjCInterfaceDecl>(ND)) {
-      // Objective-C interfaces can be used in a class property expression.
-      if (ID->getDefinition())
-        Contexts |= (1LL << CodeCompletionContext::CCC_Expression);
-      Contexts |= (1LL << CodeCompletionContext::CCC_ObjCInterfaceName);
-    }
+    // if (const auto *ID = dyn_cast<ObjCInterfaceDecl>(ND)) {
+    //   // Objective-C interfaces can be used in a class property expression.
+    //   if (ID->getDefinition())
+    //     Contexts |= (1LL << CodeCompletionContext::CCC_Expression);
+    //   Contexts |= (1LL << CodeCompletionContext::CCC_ObjCInterfaceName);
+    // }
 
     // Deal with tag names.
     if (isa<EnumDecl>(ND)) {
@@ -345,12 +345,13 @@ static uint64_t getDeclShowContexts(const NamedDecl *ND,
     Contexts = (1LL << CodeCompletionContext::CCC_Statement)
              | (1LL << CodeCompletionContext::CCC_Expression)
              | (1LL << CodeCompletionContext::CCC_ParenthesizedExpression)
-             | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver);
-  } else if (isa<ObjCProtocolDecl>(ND)) {
+            //  | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
+             ;
+  } /*else if (isa<ObjCProtocolDecl>(ND)) {
     Contexts = (1LL << CodeCompletionContext::CCC_ObjCProtocolName);
   } else if (isa<ObjCCategoryDecl>(ND)) {
     Contexts = (1LL << CodeCompletionContext::CCC_ObjCCategoryName);
-  } else if (isa<NamespaceDecl>(ND) || isa<NamespaceAliasDecl>(ND)) {
+  } */else if (isa<NamespaceDecl>(ND) || isa<NamespaceAliasDecl>(ND)) {
     Contexts = (1LL << CodeCompletionContext::CCC_Namespace);
 
     // Part of the nested-name-specifier.
@@ -428,11 +429,11 @@ void ASTUnit::CacheCodeCompletionResults() {
         // The contexts in which a nested-name-specifier can appear in C++.
         uint64_t NNSContexts
           = (1LL << CodeCompletionContext::CCC_TopLevel)
-          | (1LL << CodeCompletionContext::CCC_ObjCIvarList)
+          // | (1LL << CodeCompletionContext::CCC_ObjCIvarList)
           | (1LL << CodeCompletionContext::CCC_ClassStructUnion)
           | (1LL << CodeCompletionContext::CCC_Statement)
           | (1LL << CodeCompletionContext::CCC_Expression)
-          | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
+          // | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
           | (1LL << CodeCompletionContext::CCC_EnumTag)
           | (1LL << CodeCompletionContext::CCC_UnionTag)
           | (1LL << CodeCompletionContext::CCC_ClassOrStructTag)
@@ -476,13 +477,13 @@ void ASTUnit::CacheCodeCompletionResults() {
           IncludeBriefCommentsInCodeCompletion);
       CachedResult.ShowInContexts
         = (1LL << CodeCompletionContext::CCC_TopLevel)
-        | (1LL << CodeCompletionContext::CCC_ObjCInterface)
-        | (1LL << CodeCompletionContext::CCC_ObjCImplementation)
-        | (1LL << CodeCompletionContext::CCC_ObjCIvarList)
+        // | (1LL << CodeCompletionContext::CCC_ObjCInterface)
+        // | (1LL << CodeCompletionContext::CCC_ObjCImplementation)
+        // | (1LL << CodeCompletionContext::CCC_ObjCIvarList)
         | (1LL << CodeCompletionContext::CCC_ClassStructUnion)
         | (1LL << CodeCompletionContext::CCC_Statement)
         | (1LL << CodeCompletionContext::CCC_Expression)
-        | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
+        // | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
         | (1LL << CodeCompletionContext::CCC_MacroNameUse)
         | (1LL << CodeCompletionContext::CCC_PreprocessorExpression)
         | (1LL << CodeCompletionContext::CCC_ParenthesizedExpression)
@@ -953,8 +954,8 @@ public:
     // reported as top-level declarations, even though their DeclContext
     // is the containing ObjC @interface/@implementation.  This is a
     // fundamental problem in the parser right now.
-    if (isa<ObjCMethodDecl>(D))
-      return;
+    // if (isa<ObjCMethodDecl>(D))
+    //   return;
 
     AddTopLevelDeclarationToHash(D, Hash);
     Unit.addTopLevelDecl(D);
@@ -979,10 +980,10 @@ public:
   // We're not interested in "interesting" decls.
   void HandleInterestingDecl(DeclGroupRef) override {}
 
-  void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override {
-    for (auto *TopLevelDecl : D)
-      handleTopLevelDecl(TopLevelDecl);
-  }
+  // void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override {
+  //   for (auto *TopLevelDecl : D)
+  //     handleTopLevelDecl(TopLevelDecl);
+  // }
 
   ASTMutationListener *GetASTMutationListener() override {
     return Unit.getASTMutationListener();
@@ -1042,8 +1043,8 @@ public:
       // reported as top-level declarations, even though their DeclContext
       // is the containing ObjC @interface/@implementation.  This is a
       // fundamental problem in the parser right now.
-      if (isa<ObjCMethodDecl>(D))
-        continue;
+      // if (isa<ObjCMethodDecl>(D))
+      //   continue;
       AddTopLevelDeclarationToHash(D, Hash);
       TopLevelDecls.push_back(D);
     }
@@ -1918,16 +1919,16 @@ namespace {
       // any information about the specific context.
       NormalContexts
         = (1LL << CodeCompletionContext::CCC_TopLevel)
-        | (1LL << CodeCompletionContext::CCC_ObjCInterface)
-        | (1LL << CodeCompletionContext::CCC_ObjCImplementation)
-        | (1LL << CodeCompletionContext::CCC_ObjCIvarList)
+        // | (1LL << CodeCompletionContext::CCC_ObjCInterface)
+        // | (1LL << CodeCompletionContext::CCC_ObjCImplementation)
+        // | (1LL << CodeCompletionContext::CCC_ObjCIvarList)
         | (1LL << CodeCompletionContext::CCC_Statement)
         | (1LL << CodeCompletionContext::CCC_Expression)
-        | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
+        // | (1LL << CodeCompletionContext::CCC_ObjCMessageReceiver)
         | (1LL << CodeCompletionContext::CCC_DotMemberAccess)
         | (1LL << CodeCompletionContext::CCC_ArrowMemberAccess)
-        | (1LL << CodeCompletionContext::CCC_ObjCPropertyAccess)
-        | (1LL << CodeCompletionContext::CCC_ObjCProtocolName)
+        // | (1LL << CodeCompletionContext::CCC_ObjCPropertyAccess)
+        // | (1LL << CodeCompletionContext::CCC_ObjCProtocolName)
         | (1LL << CodeCompletionContext::CCC_ParenthesizedExpression)
         | (1LL << CodeCompletionContext::CCC_Recovery);
 
@@ -1971,22 +1972,22 @@ static void CalculateHiddenNames(const CodeCompletionContext &Context,
   switch (Context.getKind()) {
   case CodeCompletionContext::CCC_Recovery:
   case CodeCompletionContext::CCC_TopLevel:
-  case CodeCompletionContext::CCC_ObjCInterface:
-  case CodeCompletionContext::CCC_ObjCImplementation:
-  case CodeCompletionContext::CCC_ObjCIvarList:
+  // case CodeCompletionContext::CCC_ObjCInterface:
+  // case CodeCompletionContext::CCC_ObjCImplementation:
+  // case CodeCompletionContext::CCC_ObjCIvarList:
   case CodeCompletionContext::CCC_ClassStructUnion:
   case CodeCompletionContext::CCC_Statement:
   case CodeCompletionContext::CCC_Expression:
-  case CodeCompletionContext::CCC_ObjCMessageReceiver:
+  // case CodeCompletionContext::CCC_ObjCMessageReceiver:
   case CodeCompletionContext::CCC_DotMemberAccess:
   case CodeCompletionContext::CCC_ArrowMemberAccess:
-  case CodeCompletionContext::CCC_ObjCPropertyAccess:
+  // case CodeCompletionContext::CCC_ObjCPropertyAccess:
   case CodeCompletionContext::CCC_Namespace:
   case CodeCompletionContext::CCC_Type:
   case CodeCompletionContext::CCC_Symbol:
   case CodeCompletionContext::CCC_SymbolOrNewName:
   case CodeCompletionContext::CCC_ParenthesizedExpression:
-  case CodeCompletionContext::CCC_ObjCInterfaceName:
+  // case CodeCompletionContext::CCC_ObjCInterfaceName:
     break;
 
   case CodeCompletionContext::CCC_EnumTag:
@@ -1995,7 +1996,7 @@ static void CalculateHiddenNames(const CodeCompletionContext &Context,
     OnlyTagNames = true;
     break;
 
-  case CodeCompletionContext::CCC_ObjCProtocolName:
+  // case CodeCompletionContext::CCC_ObjCProtocolName:
   case CodeCompletionContext::CCC_MacroName:
   case CodeCompletionContext::CCC_MacroNameUse:
   case CodeCompletionContext::CCC_PreprocessorExpression:
@@ -2005,9 +2006,9 @@ static void CalculateHiddenNames(const CodeCompletionContext &Context,
   case CodeCompletionContext::CCC_TypeQualifiers:
   case CodeCompletionContext::CCC_Other:
   case CodeCompletionContext::CCC_OtherWithMacros:
-  case CodeCompletionContext::CCC_ObjCInstanceMessage:
-  case CodeCompletionContext::CCC_ObjCClassMessage:
-  case CodeCompletionContext::CCC_ObjCCategoryName:
+  // case CodeCompletionContext::CCC_ObjCInstanceMessage:
+  // case CodeCompletionContext::CCC_ObjCClassMessage:
+  // case CodeCompletionContext::CCC_ObjCCategoryName:
   case CodeCompletionContext::CCC_IncludedFile:
   case CodeCompletionContext::CCC_NewName:
     // We're looking for nothing, or we're looking for names that cannot
@@ -2676,9 +2677,9 @@ InputKind ASTUnit::getInputKind() const {
   else if (LangOpts.RenderScript)
     Lang = Language::RenderScript;
   else if (LangOpts.CPlusPlus)
-    Lang = LangOpts.ObjC ? Language::ObjCXX : Language::CXX;
+    Lang = /*LangOpts.ObjC ? Language::ObjCXX :*/ Language::CXX;
   else
-    Lang = LangOpts.ObjC ? Language::ObjC : Language::C;
+    Lang = /*LangOpts.ObjC ? Language::ObjC :*/ Language::C;
 
   InputKind::Format Fmt = InputKind::Source;
   if (LangOpts.getCompilingModule() == LangOptions::CMK_ModuleMap)

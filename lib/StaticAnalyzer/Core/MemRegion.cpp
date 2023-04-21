@@ -18,7 +18,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/RecordLayout.h"
@@ -159,10 +159,10 @@ const StackFrameContext *VarRegion::getStackFrame() const {
   return SSR ? SSR->getStackFrame() : nullptr;
 }
 
-ObjCIvarRegion::ObjCIvarRegion(const ObjCIvarDecl *ivd, const SubRegion *sReg)
-    : DeclRegion(sReg, ObjCIvarRegionKind), IVD(ivd) {}
+// ObjCIvarRegion::ObjCIvarRegion(const ObjCIvarDecl *ivd, const SubRegion *sReg)
+//     : DeclRegion(sReg, ObjCIvarRegionKind), IVD(ivd) {}
 
-const ObjCIvarDecl *ObjCIvarRegion::getDecl() const { return IVD; }
+// const ObjCIvarDecl *ObjCIvarRegion::getDecl() const { return IVD; }
 
 QualType ObjCIvarRegion::getValueType() const {
   return getDecl()->getType();
@@ -192,10 +192,10 @@ const ParmVarDecl *ParamVarRegion::getDecl() const {
   } else if (const auto *BD = dyn_cast<BlockDecl>(D)) {
     assert(Index < BD->param_size());
     return BD->parameters()[Index];
-  } else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  } /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
     assert(Index < MD->param_size());
     return MD->parameters()[Index];
-  } else if (const auto *CD = dyn_cast<CXXConstructorDecl>(D)) {
+  }*/ else if (const auto *CD = dyn_cast<CXXConstructorDecl>(D)) {
     assert(Index < CD->param_size());
     return CD->parameters()[Index];
   } else {
@@ -278,13 +278,13 @@ void FieldRegion::Profile(llvm::FoldingSetNodeID &ID) const {
   ProfileRegion(ID, getDecl(), superRegion);
 }
 
-void ObjCIvarRegion::ProfileRegion(llvm::FoldingSetNodeID& ID,
-                                   const ObjCIvarDecl *ivd,
-                                   const MemRegion* superRegion) {
-  ID.AddInteger(static_cast<unsigned>(ObjCIvarRegionKind));
-  ID.AddPointer(ivd);
-  ID.AddPointer(superRegion);
-}
+// void ObjCIvarRegion::ProfileRegion(llvm::FoldingSetNodeID& ID,
+//                                    const ObjCIvarDecl *ivd,
+//                                    const MemRegion* superRegion) {
+//   ID.AddInteger(static_cast<unsigned>(ObjCIvarRegionKind));
+//   ID.AddPointer(ivd);
+//   ID.AddPointer(superRegion);
+// }
 
 void ObjCIvarRegion::Profile(llvm::FoldingSetNodeID &ID) const {
   ProfileRegion(ID, getDecl(), superRegion);
@@ -999,7 +999,7 @@ const VarRegion *MemRegionManager::getVarRegion(const VarDecl *D,
       else {
         assert(D->isStaticLocal());
         const Decl *STCD = STC->getDecl();
-        if (isa<FunctionDecl>(STCD) || isa<ObjCMethodDecl>(STCD))
+        if (isa<FunctionDecl>(STCD) /*|| isa<ObjCMethodDecl>(STCD)*/)
           sReg = getGlobalsRegion(MemRegion::StaticGlobalSpaceRegionKind,
                                   getFunctionCodeRegion(cast<NamedDecl>(STCD)));
         else if (const auto *BD = dyn_cast<BlockDecl>(STCD)) {
@@ -1147,11 +1147,11 @@ MemRegionManager::getFieldRegion(const FieldDecl *d,
   return getSubRegion<FieldRegion>(d, superRegion);
 }
 
-const ObjCIvarRegion*
-MemRegionManager::getObjCIvarRegion(const ObjCIvarDecl *d,
-                                    const SubRegion* superRegion) {
-  return getSubRegion<ObjCIvarRegion>(d, superRegion);
-}
+// const ObjCIvarRegion*
+// MemRegionManager::getObjCIvarRegion(const ObjCIvarDecl *d,
+//                                     const SubRegion* superRegion) {
+//   return getSubRegion<ObjCIvarRegion>(d, superRegion);
+// }
 
 const CXXTempObjectRegion*
 MemRegionManager::getCXXTempObjectRegion(Expr const *E,

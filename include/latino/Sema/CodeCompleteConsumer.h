@@ -200,15 +200,15 @@ public:
 
     /// Code completion occurred within an Objective-C interface,
     /// protocol, or category interface.
-    CCC_ObjCInterface,
+    // CCC_ObjCInterface,
 
     /// Code completion occurred within an Objective-C implementation
     /// or category implementation.
-    CCC_ObjCImplementation,
+    // CCC_ObjCImplementation,
 
     /// Code completion occurred within the instance variable list of
     /// an Objective-C interface, implementation, or category implementation.
-    CCC_ObjCIvarList,
+    // CCC_ObjCIvarList,
 
     /// Code completion occurred within a class, struct, or union.
     CCC_ClassStructUnion,
@@ -222,7 +222,7 @@ public:
 
     /// Code completion occurred where an Objective-C message receiver
     /// is expected.
-    CCC_ObjCMessageReceiver,
+    // CCC_ObjCMessageReceiver,
 
     /// Code completion occurred on the right-hand side of a member
     /// access expression using the dot operator.
@@ -246,7 +246,7 @@ public:
     /// The results of this completion are the members of the type being
     /// accessed. The type itself is available via
     /// \c CodeCompletionContext::getType().
-    CCC_ObjCPropertyAccess,
+    // CCC_ObjCPropertyAccess,
 
     /// Code completion occurred after the "enum" keyword, to indicate
     /// an enumeration name.
@@ -261,7 +261,7 @@ public:
     CCC_ClassOrStructTag,
 
     /// Code completion occurred where a protocol name is expected.
-    CCC_ObjCProtocolName,
+    // CCC_ObjCProtocolName,
 
     /// Code completion occurred where a namespace or namespace alias
     /// is expected.
@@ -314,17 +314,17 @@ public:
 
     /// Code completion where an Objective-C instance message is
     /// expected.
-    CCC_ObjCInstanceMessage,
+    // CCC_ObjCInstanceMessage,
 
     /// Code completion where an Objective-C class message is expected.
-    CCC_ObjCClassMessage,
+    // CCC_ObjCClassMessage,
 
     /// Code completion where the name of an Objective-C class is
     /// expected.
-    CCC_ObjCInterfaceName,
+    // CCC_ObjCInterfaceName,
 
     /// Code completion where an Objective-C category name is expected.
-    CCC_ObjCCategoryName,
+    // CCC_ObjCCategoryName,
 
     /// Code completion inside the filename part of a #include directive.
     CCC_IncludedFile,
@@ -371,9 +371,9 @@ public:
   CodeCompletionContext(Kind CCKind, QualType T,
                         ArrayRef<IdentifierInfo *> SelIdents = None)
       : CCKind(CCKind), IsUsingDeclaration(false), SelIdents(SelIdents) {
-    if (CCKind == CCC_DotMemberAccess || CCKind == CCC_ArrowMemberAccess ||
+    if (CCKind == CCC_DotMemberAccess || CCKind == CCC_ArrowMemberAccess /*||
         CCKind == CCC_ObjCPropertyAccess || CCKind == CCC_ObjCClassMessage ||
-        CCKind == CCC_ObjCInstanceMessage)
+        CCKind == CCC_ObjCInstanceMessage*/)
       BaseType = T;
     else
       PreferredType = T;

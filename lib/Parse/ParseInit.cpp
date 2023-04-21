@@ -246,89 +246,89 @@ ExprResult Parser::ParseInitializerWithPotentialDesignator(
     // send) or send to 'super', parse this as a message send
     // expression.  We handle C++ and C separately, since C++ requires
     // much more complicated parsing.
-    if  (getLangOpts().ObjC && getLangOpts().CPlusPlus) {
-      // Send to 'super'.
-      if (Tok.is(tok::identifier) && Tok.getIdentifierInfo() == Ident_super &&
-          NextToken().isNot(tok::period) &&
-          getCurScope()->isInObjcMethodScope()) {
-        CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
-        return ParseAssignmentExprWithObjCMessageExprStart(
-            StartLoc, ConsumeToken(), nullptr, nullptr);
-      }
+    // if  (getLangOpts().ObjC && getLangOpts().CPlusPlus) {
+    //   // Send to 'super'.
+    //   if (Tok.is(tok::identifier) && Tok.getIdentifierInfo() == Ident_super &&
+    //       NextToken().isNot(tok::period) &&
+    //       getCurScope()->isInObjcMethodScope()) {
+    //     CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
+    //     return ParseAssignmentExprWithObjCMessageExprStart(
+    //         StartLoc, ConsumeToken(), nullptr, nullptr);
+    //   }
 
-      // Parse the receiver, which is either a type or an expression.
-      bool IsExpr;
-      void *TypeOrExpr;
-      if (ParseObjCXXMessageReceiver(IsExpr, TypeOrExpr)) {
-        SkipUntil(tok::r_square, StopAtSemi);
-        return ExprError();
-      }
+    //   // Parse the receiver, which is either a type or an expression.
+    //   bool IsExpr;
+    //   void *TypeOrExpr;
+    //   if (ParseObjCXXMessageReceiver(IsExpr, TypeOrExpr)) {
+    //     SkipUntil(tok::r_square, StopAtSemi);
+    //     return ExprError();
+    //   }
 
-      // If the receiver was a type, we have a class message; parse
-      // the rest of it.
-      if (!IsExpr) {
-        CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
-        return ParseAssignmentExprWithObjCMessageExprStart(StartLoc,
-                                                           SourceLocation(),
-                                   ParsedType::getFromOpaquePtr(TypeOrExpr),
-                                                           nullptr);
-      }
+    //   // If the receiver was a type, we have a class message; parse
+    //   // the rest of it.
+    //   if (!IsExpr) {
+    //     CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
+    //     return ParseAssignmentExprWithObjCMessageExprStart(StartLoc,
+    //                                                        SourceLocation(),
+    //                                ParsedType::getFromOpaquePtr(TypeOrExpr),
+    //                                                        nullptr);
+    //   }
 
-      // If the receiver was an expression, we still don't know
-      // whether we have a message send or an array designator; just
-      // adopt the expression for further analysis below.
-      // FIXME: potentially-potentially evaluated expression above?
-      Idx = ExprResult(static_cast<Expr*>(TypeOrExpr));
-    } else if (getLangOpts().ObjC && Tok.is(tok::identifier)) {
-      IdentifierInfo *II = Tok.getIdentifierInfo();
-      SourceLocation IILoc = Tok.getLocation();
-      ParsedType ReceiverType;
-      // Three cases. This is a message send to a type: [type foo]
-      // This is a message send to super:  [super foo]
-      // This is a message sent to an expr:  [super.bar foo]
-      switch (Actions.getObjCMessageKind(
-          getCurScope(), II, IILoc, II == Ident_super,
-          NextToken().is(tok::period), ReceiverType)) {
-      case Sema::ObjCSuperMessage:
-        CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
-        return ParseAssignmentExprWithObjCMessageExprStart(
-            StartLoc, ConsumeToken(), nullptr, nullptr);
+    //   // If the receiver was an expression, we still don't know
+    //   // whether we have a message send or an array designator; just
+    //   // adopt the expression for further analysis below.
+    //   // FIXME: potentially-potentially evaluated expression above?
+    //   Idx = ExprResult(static_cast<Expr*>(TypeOrExpr));
+    // } else if (getLangOpts().ObjC && Tok.is(tok::identifier)) {
+    //   IdentifierInfo *II = Tok.getIdentifierInfo();
+    //   SourceLocation IILoc = Tok.getLocation();
+    //   ParsedType ReceiverType;
+    //   // Three cases. This is a message send to a type: [type foo]
+    //   // This is a message send to super:  [super foo]
+    //   // This is a message sent to an expr:  [super.bar foo]
+    //   switch (Actions.getObjCMessageKind(
+    //       getCurScope(), II, IILoc, II == Ident_super,
+    //       NextToken().is(tok::period), ReceiverType)) {
+    //   case Sema::ObjCSuperMessage:
+    //     CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
+    //     return ParseAssignmentExprWithObjCMessageExprStart(
+    //         StartLoc, ConsumeToken(), nullptr, nullptr);
 
-      case Sema::ObjCClassMessage:
-        CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
-        ConsumeToken(); // the identifier
-        if (!ReceiverType) {
-          SkipUntil(tok::r_square, StopAtSemi);
-          return ExprError();
-        }
+    //   case Sema::ObjCClassMessage:
+    //     CheckArrayDesignatorSyntax(*this, StartLoc, Desig);
+    //     ConsumeToken(); // the identifier
+    //     if (!ReceiverType) {
+    //       SkipUntil(tok::r_square, StopAtSemi);
+    //       return ExprError();
+    //     }
 
-        // Parse type arguments and protocol qualifiers.
-        if (Tok.is(tok::less)) {
-          SourceLocation NewEndLoc;
-          TypeResult NewReceiverType
-            = parseObjCTypeArgsAndProtocolQualifiers(IILoc, ReceiverType,
-                                                     /*consumeLastToken=*/true,
-                                                     NewEndLoc);
-          if (!NewReceiverType.isUsable()) {
-            SkipUntil(tok::r_square, StopAtSemi);
-            return ExprError();
-          }
+    //     // Parse type arguments and protocol qualifiers.
+    //     if (Tok.is(tok::less)) {
+    //       SourceLocation NewEndLoc;
+    //       TypeResult NewReceiverType
+    //         = parseObjCTypeArgsAndProtocolQualifiers(IILoc, ReceiverType,
+    //                                                  /*consumeLastToken=*/true,
+    //                                                  NewEndLoc);
+    //       if (!NewReceiverType.isUsable()) {
+    //         SkipUntil(tok::r_square, StopAtSemi);
+    //         return ExprError();
+    //       }
 
-          ReceiverType = NewReceiverType.get();
-        }
+    //       ReceiverType = NewReceiverType.get();
+    //     }
 
-        return ParseAssignmentExprWithObjCMessageExprStart(StartLoc,
-                                                           SourceLocation(),
-                                                           ReceiverType,
-                                                           nullptr);
+    //     return ParseAssignmentExprWithObjCMessageExprStart(StartLoc,
+    //                                                        SourceLocation(),
+    //                                                        ReceiverType,
+    //                                                        nullptr);
 
-      case Sema::ObjCInstanceMessage:
-        // Fall through; we'll just parse the expression and
-        // (possibly) treat this like an Objective-C message send
-        // later.
-        break;
-      }
-    }
+    //   case Sema::ObjCInstanceMessage:
+    //     // Fall through; we'll just parse the expression and
+    //     // (possibly) treat this like an Objective-C message send
+    //     // later.
+    //     break;
+    //   }
+    // }
 
     // Parse the index expression, if we haven't already gotten one
     // above (which can only happen in Objective-C++).
@@ -349,12 +349,12 @@ ExprResult Parser::ParseInitializerWithPotentialDesignator(
     // tokens are '...' or ']' or an objc message send.  If this is an objc
     // message send, handle it now.  An objc-message send is the start of
     // an assignment-expression production.
-    if (getLangOpts().ObjC && Tok.isNot(tok::ellipsis) &&
-        Tok.isNot(tok::r_square)) {
-      CheckArrayDesignatorSyntax(*this, Tok.getLocation(), Desig);
-      return ParseAssignmentExprWithObjCMessageExprStart(
-          StartLoc, SourceLocation(), nullptr, Idx.get());
-    }
+    // if (getLangOpts().ObjC && Tok.isNot(tok::ellipsis) &&
+    //     Tok.isNot(tok::r_square)) {
+    //   CheckArrayDesignatorSyntax(*this, Tok.getLocation(), Desig);
+    //   return ParseAssignmentExprWithObjCMessageExprStart(
+    //       StartLoc, SourceLocation(), nullptr, Idx.get());
+    // }
 
     // If this is a normal array designator, remember it.
     if (Tok.isNot(tok::ellipsis)) {

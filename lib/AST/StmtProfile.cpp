@@ -12,11 +12,11 @@
 //===----------------------------------------------------------------------===//
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/ODRHash.h"
 #include "latino/AST/OpenMPClause.h"
@@ -2079,79 +2079,79 @@ void StmtProfiler::VisitSourceLocExpr(const SourceLocExpr *E) {
 
 void StmtProfiler::VisitRecoveryExpr(const RecoveryExpr *E) { VisitExpr(E); }
 
-void StmtProfiler::VisitObjCStringLiteral(const ObjCStringLiteral *S) {
-  VisitExpr(S);
-}
+// void StmtProfiler::VisitObjCStringLiteral(const ObjCStringLiteral *S) {
+//   VisitExpr(S);
+// }
 
-void StmtProfiler::VisitObjCBoxedExpr(const ObjCBoxedExpr *E) {
-  VisitExpr(E);
-}
+// void StmtProfiler::VisitObjCBoxedExpr(const ObjCBoxedExpr *E) {
+//   VisitExpr(E);
+// }
 
-void StmtProfiler::VisitObjCArrayLiteral(const ObjCArrayLiteral *E) {
-  VisitExpr(E);
-}
+// void StmtProfiler::VisitObjCArrayLiteral(const ObjCArrayLiteral *E) {
+//   VisitExpr(E);
+// }
 
-void StmtProfiler::VisitObjCDictionaryLiteral(const ObjCDictionaryLiteral *E) {
-  VisitExpr(E);
-}
+// void StmtProfiler::VisitObjCDictionaryLiteral(const ObjCDictionaryLiteral *E) {
+//   VisitExpr(E);
+// }
 
-void StmtProfiler::VisitObjCEncodeExpr(const ObjCEncodeExpr *S) {
-  VisitExpr(S);
-  VisitType(S->getEncodedType());
-}
+// void StmtProfiler::VisitObjCEncodeExpr(const ObjCEncodeExpr *S) {
+//   VisitExpr(S);
+//   VisitType(S->getEncodedType());
+// }
 
-void StmtProfiler::VisitObjCSelectorExpr(const ObjCSelectorExpr *S) {
-  VisitExpr(S);
-  VisitName(S->getSelector());
-}
+// void StmtProfiler::VisitObjCSelectorExpr(const ObjCSelectorExpr *S) {
+//   VisitExpr(S);
+//   VisitName(S->getSelector());
+// }
 
-void StmtProfiler::VisitObjCProtocolExpr(const ObjCProtocolExpr *S) {
-  VisitExpr(S);
-  VisitDecl(S->getProtocol());
-}
+// void StmtProfiler::VisitObjCProtocolExpr(const ObjCProtocolExpr *S) {
+//   VisitExpr(S);
+//   VisitDecl(S->getProtocol());
+// }
 
-void StmtProfiler::VisitObjCIvarRefExpr(const ObjCIvarRefExpr *S) {
-  VisitExpr(S);
-  VisitDecl(S->getDecl());
-  ID.AddBoolean(S->isArrow());
-  ID.AddBoolean(S->isFreeIvar());
-}
+// void StmtProfiler::VisitObjCIvarRefExpr(const ObjCIvarRefExpr *S) {
+//   VisitExpr(S);
+//   VisitDecl(S->getDecl());
+//   ID.AddBoolean(S->isArrow());
+//   ID.AddBoolean(S->isFreeIvar());
+// }
 
-void StmtProfiler::VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *S) {
-  VisitExpr(S);
-  if (S->isImplicitProperty()) {
-    VisitDecl(S->getImplicitPropertyGetter());
-    VisitDecl(S->getImplicitPropertySetter());
-  } else {
-    VisitDecl(S->getExplicitProperty());
-  }
-  if (S->isSuperReceiver()) {
-    ID.AddBoolean(S->isSuperReceiver());
-    VisitType(S->getSuperReceiverType());
-  }
-}
+// void StmtProfiler::VisitObjCPropertyRefExpr(const ObjCPropertyRefExpr *S) {
+//   VisitExpr(S);
+//   if (S->isImplicitProperty()) {
+//     VisitDecl(S->getImplicitPropertyGetter());
+//     VisitDecl(S->getImplicitPropertySetter());
+//   } else {
+//     VisitDecl(S->getExplicitProperty());
+//   }
+//   if (S->isSuperReceiver()) {
+//     ID.AddBoolean(S->isSuperReceiver());
+//     VisitType(S->getSuperReceiverType());
+//   }
+// }
 
-void StmtProfiler::VisitObjCSubscriptRefExpr(const ObjCSubscriptRefExpr *S) {
-  VisitExpr(S);
-  VisitDecl(S->getAtIndexMethodDecl());
-  VisitDecl(S->setAtIndexMethodDecl());
-}
+// void StmtProfiler::VisitObjCSubscriptRefExpr(const ObjCSubscriptRefExpr *S) {
+//   VisitExpr(S);
+//   VisitDecl(S->getAtIndexMethodDecl());
+//   VisitDecl(S->setAtIndexMethodDecl());
+// }
 
-void StmtProfiler::VisitObjCMessageExpr(const ObjCMessageExpr *S) {
-  VisitExpr(S);
-  VisitName(S->getSelector());
-  VisitDecl(S->getMethodDecl());
-}
+// void StmtProfiler::VisitObjCMessageExpr(const ObjCMessageExpr *S) {
+//   VisitExpr(S);
+//   VisitName(S->getSelector());
+//   VisitDecl(S->getMethodDecl());
+// }
 
 void StmtProfiler::VisitObjCIsaExpr(const ObjCIsaExpr *S) {
   VisitExpr(S);
   ID.AddBoolean(S->isArrow());
 }
 
-void StmtProfiler::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *S) {
-  VisitExpr(S);
-  ID.AddBoolean(S->getValue());
-}
+// void StmtProfiler::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *S) {
+//   VisitExpr(S);
+//   ID.AddBoolean(S->getValue());
+// }
 
 void StmtProfiler::VisitObjCIndirectCopyRestoreExpr(
     const ObjCIndirectCopyRestoreExpr *S) {

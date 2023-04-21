@@ -13,7 +13,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/Mangle.h"
@@ -174,9 +174,9 @@ void MangleContext::mangleName(GlobalDecl GD, raw_ostream &Out) {
   bool MCXX = shouldMangleCXXName(D);
   const TargetInfo &TI = Context.getTargetInfo();
   if (CC == CCM_Other || (MCXX && TI.getCXXABI() == TargetCXXABI::Microsoft)) {
-    if (const ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(D))
-      mangleObjCMethodName(OMD, Out);
-    else
+    // if (const ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(D))
+    //   mangleObjCMethodName(OMD, Out);
+    // else
       mangleCXXName(GD, Out);
     return;
   }
@@ -191,8 +191,8 @@ void MangleContext::mangleName(GlobalDecl GD, raw_ostream &Out) {
 
   if (!MCXX)
     Out << D->getIdentifier()->getName();
-  else if (const ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(D))
-    mangleObjCMethodName(OMD, Out);
+  // else if (const ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(D))
+  //   mangleObjCMethodName(OMD, Out);
   else
     mangleCXXName(GD, Out);
 
@@ -274,9 +274,9 @@ void MangleContext::mangleBlock(const DeclContext *DC, const BlockDecl *BD,
 
   SmallString<64> Buffer;
   llvm::raw_svector_ostream Stream(Buffer);
-  if (const ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(DC)) {
-    mangleObjCMethodName(Method, Stream);
-  } else {
+  // if (const ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(DC)) {
+  //   mangleObjCMethodName(Method, Stream);
+  // } else {
     assert((isa<NamedDecl>(DC) || isa<BlockDecl>(DC)) &&
            "expected a NamedDecl or BlockDecl");
     if (isa<BlockDecl>(DC))
@@ -300,35 +300,35 @@ void MangleContext::mangleBlock(const DeclContext *DC, const BlockDecl *BD,
         mangleName(ND, Stream);
       }
     }
-  }
+  // }
   mangleFunctionBlock(*this, Buffer, BD, Out);
 }
 
-void MangleContext::mangleObjCMethodNameWithoutSize(const ObjCMethodDecl *MD,
-                                                    raw_ostream &OS) {
-  const ObjCContainerDecl *CD =
-  dyn_cast<ObjCContainerDecl>(MD->getDeclContext());
-  assert (CD && "Missing container decl in GetNameForMethod");
-  OS << (MD->isInstanceMethod() ? '-' : '+') << '[';
-  if (const ObjCCategoryImplDecl *CID = dyn_cast<ObjCCategoryImplDecl>(CD)) {
-    OS << CID->getClassInterface()->getName();
-    OS << '(' << *CID << ')';
-  } else {
-    OS << CD->getName();
-  }
-  OS << ' ';
-  MD->getSelector().print(OS);
-  OS << ']';
-}
+// void MangleContext::mangleObjCMethodNameWithoutSize(const ObjCMethodDecl *MD,
+//                                                     raw_ostream &OS) {
+//   const ObjCContainerDecl *CD =
+//   dyn_cast<ObjCContainerDecl>(MD->getDeclContext());
+//   assert (CD && "Missing container decl in GetNameForMethod");
+//   OS << (MD->isInstanceMethod() ? '-' : '+') << '[';
+//   if (const ObjCCategoryImplDecl *CID = dyn_cast<ObjCCategoryImplDecl>(CD)) {
+//     OS << CID->getClassInterface()->getName();
+//     OS << '(' << *CID << ')';
+//   } else {
+//     OS << CD->getName();
+//   }
+//   OS << ' ';
+//   MD->getSelector().print(OS);
+//   OS << ']';
+// }
 
-void MangleContext::mangleObjCMethodName(const ObjCMethodDecl *MD,
-                                         raw_ostream &Out) {
-  SmallString<64> Name;
-  llvm::raw_svector_ostream OS(Name);
+// void MangleContext::mangleObjCMethodName(const ObjCMethodDecl *MD,
+//                                          raw_ostream &Out) {
+//   SmallString<64> Name;
+//   llvm::raw_svector_ostream OS(Name);
 
-  mangleObjCMethodNameWithoutSize(MD, OS);
-  Out << OS.str().size() << OS.str();
-}
+//   mangleObjCMethodNameWithoutSize(MD, OS);
+//   Out << OS.str().size() << OS.str();
+// }
 
 class ASTNameGenerator::Implementation {
   std::unique_ptr<MangleContext> MC;
@@ -351,12 +351,12 @@ public:
     } else if (auto *VD = dyn_cast<VarDecl>(D)) {
       if (writeFuncOrVarName(VD, FrontendBufOS))
         return true;
-    } else if (auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+    } /*else if (auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
       MC->mangleObjCMethodNameWithoutSize(MD, OS);
       return false;
     } else if (auto *ID = dyn_cast<ObjCInterfaceDecl>(D)) {
       writeObjCClassName(ID, FrontendBufOS);
-    } else {
+    } */else {
       return true;
     }
 
@@ -374,44 +374,44 @@ public:
     return Name;
   }
 
-  enum ObjCKind {
-    ObjCClass,
-    ObjCMetaclass,
-  };
+  // enum ObjCKind {
+  //   ObjCClass,
+  //   ObjCMetaclass,
+  // };
 
-  static StringRef getClassSymbolPrefix(ObjCKind Kind,
-                                        const ASTContext &Context) {
-    if (Context.getLangOpts().ObjCRuntime.isGNUFamily())
-      return Kind == ObjCMetaclass ? "_OBJC_METACLASS_" : "_OBJC_CLASS_";
-    return Kind == ObjCMetaclass ? "OBJC_METACLASS_$_" : "OBJC_CLASS_$_";
-  }
+  // static StringRef getClassSymbolPrefix(ObjCKind Kind,
+  //                                       const ASTContext &Context) {
+  //   if (Context.getLangOpts().ObjCRuntime.isGNUFamily())
+  //     return Kind == ObjCMetaclass ? "_OBJC_METACLASS_" : "_OBJC_CLASS_";
+  //   return Kind == ObjCMetaclass ? "OBJC_METACLASS_$_" : "OBJC_CLASS_$_";
+  // }
 
-  std::vector<std::string> getAllManglings(const ObjCContainerDecl *OCD) {
-    StringRef ClassName;
-    if (const auto *OID = dyn_cast<ObjCInterfaceDecl>(OCD))
-      ClassName = OID->getObjCRuntimeNameAsString();
-    else if (const auto *OID = dyn_cast<ObjCImplementationDecl>(OCD))
-      ClassName = OID->getObjCRuntimeNameAsString();
+  // std::vector<std::string> getAllManglings(const ObjCContainerDecl *OCD) {
+  //   StringRef ClassName;
+  //   if (const auto *OID = dyn_cast<ObjCInterfaceDecl>(OCD))
+  //     ClassName = OID->getObjCRuntimeNameAsString();
+  //   else if (const auto *OID = dyn_cast<ObjCImplementationDecl>(OCD))
+  //     ClassName = OID->getObjCRuntimeNameAsString();
 
-    if (ClassName.empty())
-      return {};
+  //   if (ClassName.empty())
+  //     return {};
 
-    auto Mangle = [&](ObjCKind Kind, StringRef ClassName) -> std::string {
-      SmallString<40> Mangled;
-      auto Prefix = getClassSymbolPrefix(Kind, OCD->getASTContext());
-      llvm::Mangler::getNameWithPrefix(Mangled, Prefix + ClassName, DL);
-      return std::string(Mangled.str());
-    };
+  //   auto Mangle = [&](ObjCKind Kind, StringRef ClassName) -> std::string {
+  //     SmallString<40> Mangled;
+  //     auto Prefix = getClassSymbolPrefix(Kind, OCD->getASTContext());
+  //     llvm::Mangler::getNameWithPrefix(Mangled, Prefix + ClassName, DL);
+  //     return std::string(Mangled.str());
+  //   };
 
-    return {
-        Mangle(ObjCClass, ClassName),
-        Mangle(ObjCMetaclass, ClassName),
-    };
-  }
+  //   return {
+  //       Mangle(ObjCClass, ClassName),
+  //       Mangle(ObjCMetaclass, ClassName),
+  //   };
+  // }
 
   std::vector<std::string> getAllManglings(const Decl *D) {
-    if (const auto *OCD = dyn_cast<ObjCContainerDecl>(D))
-      return getAllManglings(OCD);
+    // if (const auto *OCD = dyn_cast<ObjCContainerDecl>(D))
+    //   return getAllManglings(OCD);
 
     if (!(isa<CXXRecordDecl>(D) || isa<CXXMethodDecl>(D)))
       return {};
@@ -482,10 +482,10 @@ private:
     }
   }
 
-  void writeObjCClassName(const ObjCInterfaceDecl *D, raw_ostream &OS) {
-    OS << getClassSymbolPrefix(ObjCClass, D->getASTContext());
-    OS << D->getObjCRuntimeNameAsString();
-  }
+  // void writeObjCClassName(const ObjCInterfaceDecl *D, raw_ostream &OS) {
+  //   OS << getClassSymbolPrefix(ObjCClass, D->getASTContext());
+  //   OS << D->getObjCRuntimeNameAsString();
+  // }
 
   std::string getMangledStructor(const NamedDecl *ND, unsigned StructorType) {
     std::string FrontendBuf;

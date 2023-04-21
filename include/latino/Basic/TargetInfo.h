@@ -1422,7 +1422,7 @@ public:
   }
 
   /// Get address space for OpenCL type.
-  virtual LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const;
+  // virtual LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const;
 
   /// \returns Target specific vtbl ptr address space.
   virtual unsigned getVtblPtrAddressSpace() const {

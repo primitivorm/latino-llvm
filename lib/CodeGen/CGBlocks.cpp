@@ -13,14 +13,14 @@
 #include "CGBlocks.h"
 #include "CGCXXABI.h"
 #include "CGDebugInfo.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGOpenCLRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
 #include "TargetInfo.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/CodeGen/ConstantInitBuilder.h"
 #include "llvm/ADT/SmallSet.h"
 #include "llvm/IR/DataLayout.h"
@@ -2606,15 +2606,15 @@ CodeGenFunction::buildByrefHelpers(llvm::StructType &byrefType,
   BlockFieldFlags flags;
   if (type->isBlockPointerType()) {
     flags |= BLOCK_FIELD_IS_BLOCK;
-  } else if (CGM.getContext().isObjCNSObjectType(type) ||
+  } /*else if (CGM.getContext().isObjCNSObjectType(type) ||
              type->isObjCObjectPointerType()) {
     flags |= BLOCK_FIELD_IS_OBJECT;
-  } else {
+  }*/ else {
     return nullptr;
   }
 
-  if (type.isObjCGCWeak())
-    flags |= BLOCK_FIELD_IS_WEAK;
+  // if (type.isObjCGCWeak())
+  //   flags |= BLOCK_FIELD_IS_WEAK;
 
   return ::buildByrefHelpers(CGM, byrefInfo,
                              ObjectByrefHelpers(valueAlignment, flags));
@@ -2803,7 +2803,7 @@ void CodeGenFunction::emitByrefStructureInit(const AutoVarEmission &emission) {
           flags |= BLOCK_BYREF_LAYOUT_UNRETAINED;
           break;
         case Qualifiers::OCL_None:
-          if (!type->isObjCObjectPointerType() && !type->isBlockPointerType())
+          if (/*!type->isObjCObjectPointerType()*/ && !type->isBlockPointerType())
             flags |= BLOCK_BYREF_LAYOUT_NON_OBJECT;
           break;
         default:

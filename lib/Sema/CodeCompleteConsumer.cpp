@@ -14,7 +14,7 @@
 #include "clang-c/Index.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Type.h"
@@ -47,24 +47,24 @@ bool CodeCompletionContext::wantConstructorResults() const {
   case CCC_Recovery:
   case CCC_Statement:
   case CCC_Expression:
-  case CCC_ObjCMessageReceiver:
+  // case CCC_ObjCMessageReceiver:
   case CCC_ParenthesizedExpression:
   case CCC_Symbol:
   case CCC_SymbolOrNewName:
     return true;
 
   case CCC_TopLevel:
-  case CCC_ObjCInterface:
-  case CCC_ObjCImplementation:
-  case CCC_ObjCIvarList:
+  // case CCC_ObjCInterface:
+  // case CCC_ObjCImplementation:
+  // case CCC_ObjCIvarList:
   case CCC_ClassStructUnion:
   case CCC_DotMemberAccess:
   case CCC_ArrowMemberAccess:
-  case CCC_ObjCPropertyAccess:
+  // case CCC_ObjCPropertyAccess:
   case CCC_EnumTag:
   case CCC_UnionTag:
   case CCC_ClassOrStructTag:
-  case CCC_ObjCProtocolName:
+  // case CCC_ObjCProtocolName:
   case CCC_Namespace:
   case CCC_Type:
   case CCC_NewName:
@@ -77,10 +77,10 @@ bool CodeCompletionContext::wantConstructorResults() const {
   case CCC_TypeQualifiers:
   case CCC_Other:
   case CCC_OtherWithMacros:
-  case CCC_ObjCInstanceMessage:
-  case CCC_ObjCClassMessage:
-  case CCC_ObjCInterfaceName:
-  case CCC_ObjCCategoryName:
+  // case CCC_ObjCInstanceMessage:
+  // case CCC_ObjCClassMessage:
+  // case CCC_ObjCInterfaceName:
+  // case CCC_ObjCCategoryName:
   case CCC_IncludedFile:
     return false;
   }
@@ -97,34 +97,34 @@ StringRef latino::getCompletionKindString(CodeCompletionContext::Kind Kind) {
     return "OtherWithMacros";
   case CCKind::CCC_TopLevel:
     return "TopLevel";
-  case CCKind::CCC_ObjCInterface:
-    return "ObjCInterface";
-  case CCKind::CCC_ObjCImplementation:
-    return "ObjCImplementation";
-  case CCKind::CCC_ObjCIvarList:
-    return "ObjCIvarList";
+  // case CCKind::CCC_ObjCInterface:
+    // return "ObjCInterface";
+  // case CCKind::CCC_ObjCImplementation:
+  //   return "ObjCImplementation";
+  // case CCKind::CCC_ObjCIvarList:
+  //   return "ObjCIvarList";
   case CCKind::CCC_ClassStructUnion:
     return "ClassStructUnion";
   case CCKind::CCC_Statement:
     return "Statement";
   case CCKind::CCC_Expression:
     return "Expression";
-  case CCKind::CCC_ObjCMessageReceiver:
-    return "ObjCMessageReceiver";
+  // case CCKind::CCC_ObjCMessageReceiver:
+  //   return "ObjCMessageReceiver";
   case CCKind::CCC_DotMemberAccess:
     return "DotMemberAccess";
   case CCKind::CCC_ArrowMemberAccess:
     return "ArrowMemberAccess";
-  case CCKind::CCC_ObjCPropertyAccess:
-    return "ObjCPropertyAccess";
+  // case CCKind::CCC_ObjCPropertyAccess:
+  //   return "ObjCPropertyAccess";
   case CCKind::CCC_EnumTag:
     return "EnumTag";
   case CCKind::CCC_UnionTag:
     return "UnionTag";
   case CCKind::CCC_ClassOrStructTag:
     return "ClassOrStructTag";
-  case CCKind::CCC_ObjCProtocolName:
-    return "ObjCProtocolName";
+  // case CCKind::CCC_ObjCProtocolName:
+    // return "ObjCProtocolName";
   case CCKind::CCC_Namespace:
     return "Namespace";
   case CCKind::CCC_Type:
@@ -151,14 +151,14 @@ StringRef latino::getCompletionKindString(CodeCompletionContext::Kind Kind) {
     return "TypeQualifiers";
   case CCKind::CCC_ParenthesizedExpression:
     return "ParenthesizedExpression";
-  case CCKind::CCC_ObjCInstanceMessage:
-    return "ObjCInstanceMessage";
-  case CCKind::CCC_ObjCClassMessage:
-    return "ObjCClassMessage";
-  case CCKind::CCC_ObjCInterfaceName:
-    return "ObjCInterfaceName";
-  case CCKind::CCC_ObjCCategoryName:
-    return "ObjCCategoryName";
+  // case CCKind::CCC_ObjCInstanceMessage:
+  //   return "ObjCInstanceMessage";
+  // case CCKind::CCC_ObjCClassMessage:
+  //   return "ObjCClassMessage";
+  // case CCKind::CCC_ObjCInterfaceName:
+    // return "ObjCInterfaceName";
+  // case CCKind::CCC_ObjCCategoryName:
+  //   return "ObjCCategoryName";
   case CCKind::CCC_IncludedFile:
     return "IncludedFile";
   case CCKind::CCC_Recovery:
@@ -393,22 +393,22 @@ StringRef CodeCompletionTUInfo::getParentName(const DeclContext *DC) {
       }
 
       const DeclContext *CurDC = Contexts[I - 1];
-      if (const auto *CatImpl = dyn_cast<ObjCCategoryImplDecl>(CurDC))
-        CurDC = CatImpl->getCategoryDecl();
+      // if (const auto *CatImpl = dyn_cast<ObjCCategoryImplDecl>(CurDC))
+      //   CurDC = CatImpl->getCategoryDecl();
 
-      if (const auto *Cat = dyn_cast<ObjCCategoryDecl>(CurDC)) {
-        const ObjCInterfaceDecl *Interface = Cat->getClassInterface();
-        if (!Interface) {
-          // Assign an empty StringRef but with non-null data to distinguish
-          // between empty because we didn't process the DeclContext yet.
-          CachedParentName = StringRef((const char *)(uintptr_t)~0U, 0);
-          return {};
-        }
+      // if (const auto *Cat = dyn_cast<ObjCCategoryDecl>(CurDC)) {
+      //   const ObjCInterfaceDecl *Interface = Cat->getClassInterface();
+      //   if (!Interface) {
+      //     // Assign an empty StringRef but with non-null data to distinguish
+      //     // between empty because we didn't process the DeclContext yet.
+      //     CachedParentName = StringRef((const char *)(uintptr_t)~0U, 0);
+      //     return {};
+      //   }
 
-        OS << Interface->getName() << '(' << Cat->getName() << ')';
-      } else {
+      //   OS << Interface->getName() << '(' << Cat->getName() << ')';
+      // } else {
         OS << cast<NamedDecl>(CurDC)->getName();
-      }
+      // }
     }
 
     CachedParentName = AllocatorRef->CopyString(OS.str());
@@ -702,11 +702,11 @@ void CodeCompletionResult::computeCursorKindAndAvailability(bool Accessible) {
       // FIXME: Forward declarations of Objective-C classes and protocols
       // are not directly exposed, but we want code completion to treat them
       // like a definition.
-      if (isa<ObjCInterfaceDecl>(Declaration))
-        CursorKind = CXCursor_ObjCInterfaceDecl;
-      else if (isa<ObjCProtocolDecl>(Declaration))
-        CursorKind = CXCursor_ObjCProtocolDecl;
-      else
+      // if (isa<ObjCInterfaceDecl>(Declaration))
+      //   CursorKind = CXCursor_ObjCInterfaceDecl;
+      // else if (isa<ObjCProtocolDecl>(Declaration))
+      //   CursorKind = CXCursor_ObjCProtocolDecl;
+      // else
         CursorKind = CXCursor_NotImplemented;
     }
     break;

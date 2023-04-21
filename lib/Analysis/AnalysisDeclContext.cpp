@@ -16,7 +16,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/LambdaCapture.h"
@@ -105,7 +105,7 @@ Stmt *AnalysisDeclContext::getBody(bool &IsAutosynthesized) const {
     }
     return Body;
   }
-  else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  /*else if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
     Stmt *Body = MD->getBody();
     if (ADCMgr && ADCMgr->synthesizeBodies()) {
       Stmt *SynthesizedBody = ADCMgr->getBodyFarm().getBody(MD);
@@ -115,7 +115,7 @@ Stmt *AnalysisDeclContext::getBody(bool &IsAutosynthesized) const {
       }
     }
     return Body;
-  } else if (const auto *BD = dyn_cast<BlockDecl>(D))
+  }*/ else if (const auto *BD = dyn_cast<BlockDecl>(D))
     return BD->getBody();
   else if (const auto *FunTmpl = dyn_cast_or_null<FunctionTemplateDecl>(D))
     return FunTmpl->getTemplatedDecl()->getBody();
@@ -146,8 +146,8 @@ static bool isSelfDecl(const VarDecl *VD) {
 }
 
 const ImplicitParamDecl *AnalysisDeclContext::getSelfDecl() const {
-  if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
-    return MD->getSelfDecl();
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D))
+  //   return MD->getSelfDecl();
   if (const auto *BD = dyn_cast<BlockDecl>(D)) {
     // See if 'self' was captured by the block.
     for (const auto &I : BD->captures()) {

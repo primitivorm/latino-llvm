@@ -13,8 +13,8 @@ add_latino_library(latinoParse
   ParseExpr.cpp
   ParseExprCXX.cpp
   ParseInit.cpp
-  ParseObjc.cpp
-  # ParseOpenMP.cpp
+  # ParseObjc.cpp
+  ParseOpenMP.cpp
   # ParsePragma.cpp
   ParseStmt.cpp
   ParseStmtAsm.cpp

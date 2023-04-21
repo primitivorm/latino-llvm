@@ -15,7 +15,7 @@
 
 namespace latino {
   class ASTContext;
-  class ObjCInterfaceDecl;
+  // class ObjCInterfaceDecl;
   class QualType;
   class Expr;
 
@@ -28,7 +28,7 @@ public:
 
   enum NSClassIdKindKind {
     ClassId_NSObject,
-    ClassId_NSString,
+    // ClassId_NSString,
     ClassId_NSArray,
     ClassId_NSMutableArray,
     ClassId_NSDictionary,
@@ -57,15 +57,15 @@ public:
 
   /// Returns true if the expression \param E is a reference of
   /// "NSUTF8StringEncoding" enum constant.
-  bool isNSUTF8StringEncodingConstant(const Expr *E) const {
-    return isObjCEnumerator(E, "NSUTF8StringEncoding", NSUTF8StringEncodingId);
-  }
+  // bool isNSUTF8StringEncodingConstant(const Expr *E) const {
+  //   return isObjCEnumerator(E, "NSUTF8StringEncoding", NSUTF8StringEncodingId);
+  // }
 
   /// Returns true if the expression \param E is a reference of
   /// "NSASCIIStringEncoding" enum constant.
-  bool isNSASCIIStringEncodingConstant(const Expr *E) const {
-    return isObjCEnumerator(E, "NSASCIIStringEncoding",NSASCIIStringEncodingId);
-  }
+  // bool isNSASCIIStringEncodingConstant(const Expr *E) const {
+  //   return isObjCEnumerator(E, "NSASCIIStringEncoding",NSASCIIStringEncodingId);
+  // }
 
   /// Enumerates the NSArray/NSMutableArray methods used to generate
   /// literals and to apply some checks.
@@ -212,11 +212,11 @@ public:
       getNSNumberFactoryMethodKind(QualType T) const;
 
   /// Returns true if \param T is a typedef of "BOOL" in objective-c.
-  bool isObjCBOOLType(QualType T) const;
+  // bool isObjCBOOLType(QualType T) const;
   /// Returns true if \param T is a typedef of "NSInteger" in objective-c.
-  bool isObjCNSIntegerType(QualType T) const;
+  // bool isObjCNSIntegerType(QualType T) const;
   /// Returns true if \param T is a typedef of "NSUInteger" in objective-c.
-  bool isObjCNSUIntegerType(QualType T) const;
+  // bool isObjCNSUIntegerType(QualType T) const;
   /// Returns one of NSIntegral typedef names if \param T is a typedef
   /// of that name in objective-c.
   StringRef GetNSIntegralKind(QualType T) const;
@@ -225,13 +225,13 @@ public:
   bool isMacroDefined(StringRef Id) const;
 
   /// Returns \c true if \p InterfaceDecl is subclass of \p NSClassKind
-  bool isSubclassOfNSClass(ObjCInterfaceDecl *InterfaceDecl,
-                           NSClassIdKindKind NSClassKind) const;
+  // bool isSubclassOfNSClass(ObjCInterfaceDecl *InterfaceDecl,
+  //                          NSClassIdKindKind NSClassKind) const;
 
 private:
-  bool isObjCTypedef(QualType T, StringRef name, IdentifierInfo *&II) const;
-  bool isObjCEnumerator(const Expr *E,
-                        StringRef name, IdentifierInfo *&II) const;
+  // bool isObjCTypedef(QualType T, StringRef name, IdentifierInfo *&II) const;
+  // bool isObjCEnumerator(const Expr *E,
+  //                       StringRef name, IdentifierInfo *&II) const;
   Selector getOrInitSelector(ArrayRef<StringRef> Ids, Selector &Sel) const;
   Selector getOrInitNullarySelector(StringRef Id, Selector &Sel) const;
 

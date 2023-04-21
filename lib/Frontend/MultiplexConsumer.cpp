@@ -99,8 +99,8 @@ public:
   void FunctionDefinitionInstantiated(const FunctionDecl *D) override;
   void DefaultArgumentInstantiated(const ParmVarDecl *D) override;
   void DefaultMemberInitializerInstantiated(const FieldDecl *D) override;
-  void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
-                                    const ObjCInterfaceDecl *IFD) override;
+  // void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
+  //                                   const ObjCInterfaceDecl *IFD) override;
   void DeclarationMarkedUsed(const Decl *D) override;
   void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
   void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
@@ -194,12 +194,12 @@ void MultiplexASTMutationListener::DefaultMemberInitializerInstantiated(
   for (size_t i = 0, e = Listeners.size(); i != e; ++i)
     Listeners[i]->DefaultMemberInitializerInstantiated(D);
 }
-void MultiplexASTMutationListener::AddedObjCCategoryToInterface(
-                                                 const ObjCCategoryDecl *CatD,
-                                                 const ObjCInterfaceDecl *IFD) {
-  for (size_t i = 0, e = Listeners.size(); i != e; ++i)
-    Listeners[i]->AddedObjCCategoryToInterface(CatD, IFD);
-}
+// void MultiplexASTMutationListener::AddedObjCCategoryToInterface(
+//                                                  const ObjCCategoryDecl *CatD,
+//                                                  const ObjCInterfaceDecl *IFD) {
+//   for (size_t i = 0, e = Listeners.size(); i != e; ++i)
+//     Listeners[i]->AddedObjCCategoryToInterface(CatD, IFD);
+// }
 void MultiplexASTMutationListener::DeclarationMarkedUsed(const Decl *D) {
   for (size_t i = 0, e = Listeners.size(); i != e; ++i)
     Listeners[i]->DeclarationMarkedUsed(D);
@@ -307,10 +307,10 @@ void MultiplexConsumer::HandleCXXImplicitFunctionInstantiation(FunctionDecl *D){
     Consumer->HandleCXXImplicitFunctionInstantiation(D);
 }
 
-void MultiplexConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef D) {
-  for (auto &Consumer : Consumers)
-    Consumer->HandleTopLevelDeclInObjCContainer(D);
-}
+// void MultiplexConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef D) {
+//   for (auto &Consumer : Consumers)
+//     Consumer->HandleTopLevelDeclInObjCContainer(D);
+// }
 
 void MultiplexConsumer::HandleImplicitImportDecl(ImportDecl *D) {
   for (auto &Consumer : Consumers)

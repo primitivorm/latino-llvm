@@ -214,9 +214,9 @@ void IdentifierTable::AddKeywords(const LangOptions &LangOpts) {
 // #define CXX_KEYWORD_OPERATOR(NAME, ALIAS) \
 //   if (LangOpts.CXXOperatorNames)          \
 //     AddCXXOperatorKeyword(StringRef(#NAME), tok::ALIAS, *this);
-#define OBJC_AT_KEYWORD(NAME)  \
-  if (LangOpts.ObjC)           \
-    AddObjCKeyword(StringRef(#NAME), tok::objc_##NAME, *this);
+// #define OBJC_AT_KEYWORD(NAME)  \
+//   if (LangOpts.ObjC)           \
+//     AddObjCKeyword(StringRef(#NAME), tok::objc_##NAME, *this);
 #define TESTING_KEYWORD(NAME, FLAGS)
 #include "latino/Basic/TokenKinds.def"
 

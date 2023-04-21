@@ -36,7 +36,7 @@ namespace latino {
 class ASTContext;
 class Decl;
 class FunctionDecl;
-class ObjCMethodDecl;
+// class ObjCMethodDecl;
 class VarDecl;
 
 namespace CodeGen {

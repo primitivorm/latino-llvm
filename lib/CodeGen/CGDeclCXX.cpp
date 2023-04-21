@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "CGCXXABI.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "TargetInfo.h"

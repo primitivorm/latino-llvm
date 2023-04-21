@@ -16,7 +16,7 @@
 #include "latino/AST/ASTDiagnostic.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/PrettyDeclStackTrace.h"
@@ -33,7 +33,7 @@
 #include "latino/Sema/ExternalSemaSource.h"
 #include "latino/Sema/Initialization.h"
 #include "latino/Sema/MultiplexExternalSemaSource.h"
-#include "latino/Sema/ObjCMethodList.h"
+// #include "latino/Sema/ObjCMethodList.h"
 #include "latino/Sema/Scope.h"
 #include "latino/Sema/ScopeInfo.h"
 #include "latino/Sema/SemaConsumer.h"
@@ -249,29 +249,29 @@ void Sema::Initialize() {
 
 
   // Initialize predefined Objective-C types:
-  if (getLangOpts().ObjC) {
-    // If 'SEL' does not yet refer to any declarations, make it refer to the
-    // predefined 'SEL'.
-    DeclarationName SEL = &Context.Idents.get("SEL");
-    if (IdResolver.begin(SEL) == IdResolver.end())
-      PushOnScopeChains(Context.getObjCSelDecl(), TUScope);
+  // if (getLangOpts().ObjC) {
+  //   // If 'SEL' does not yet refer to any declarations, make it refer to the
+  //   // predefined 'SEL'.
+  //   // DeclarationName SEL = &Context.Idents.get("SEL");
+  //   // if (IdResolver.begin(SEL) == IdResolver.end())
+  //   //   PushOnScopeChains(Context.getObjCSelDecl(), TUScope);
 
-    // If 'id' does not yet refer to any declarations, make it refer to the
-    // predefined 'id'.
-    DeclarationName Id = &Context.Idents.get("id");
-    if (IdResolver.begin(Id) == IdResolver.end())
-      PushOnScopeChains(Context.getObjCIdDecl(), TUScope);
+  //   // If 'id' does not yet refer to any declarations, make it refer to the
+  //   // predefined 'id'.
+  //   // DeclarationName Id = &Context.Idents.get("id");
+  //   // if (IdResolver.begin(Id) == IdResolver.end())
+  //   //   PushOnScopeChains(Context.getObjCIdDecl(), TUScope);
 
-    // Create the built-in typedef for 'Class'.
-    DeclarationName Class = &Context.Idents.get("Class");
-    if (IdResolver.begin(Class) == IdResolver.end())
-      PushOnScopeChains(Context.getObjCClassDecl(), TUScope);
+  //   // Create the built-in typedef for 'Class'.
+  //   // DeclarationName Class = &Context.Idents.get("Class");
+  //   // if (IdResolver.begin(Class) == IdResolver.end())
+  //   //   PushOnScopeChains(Context.getObjCClassDecl(), TUScope);
 
-    // Create the built-in forward declaratino for 'Protocol'.
-    DeclarationName Protocol = &Context.Idents.get("Protocol");
-    if (IdResolver.begin(Protocol) == IdResolver.end())
-      PushOnScopeChains(Context.getObjCProtocolDecl(), TUScope);
-  }
+  //   // Create the built-in forward declaratino for 'Protocol'.
+  //   DeclarationName Protocol = &Context.Idents.get("Protocol");
+  //   if (IdResolver.begin(Protocol) == IdResolver.end())
+  //     PushOnScopeChains(Context.getObjCProtocolDecl(), TUScope);
+  // }
 
   // Create the internal type for the *StringMakeConstantString builtins.
   DeclarationName ConstantString = &Context.Idents.get("__NSConstantString");
@@ -290,77 +290,77 @@ void Sema::Initialize() {
 
   // Initialize predefined OpenCL types and supported extensions and (optional)
   // core features.
-  if (getLangOpts().OpenCL) {
-    getOpenCLOptions().addSupport(
-        Context.getTargetInfo().getSupportedOpenCLOpts());
-    getOpenCLOptions().enableSupportedCore(getLangOpts());
-    addImplicitTypedef("sampler_t", Context.OCLSamplerTy);
-    addImplicitTypedef("event_t", Context.OCLEventTy);
-    if (getLangOpts().OpenCLCPlusPlus || getLangOpts().OpenCLVersion >= 200) {
-      addImplicitTypedef("clk_event_t", Context.OCLClkEventTy);
-      addImplicitTypedef("queue_t", Context.OCLQueueTy);
-      addImplicitTypedef("reserve_id_t", Context.OCLReserveIDTy);
-      addImplicitTypedef("atomic_int", Context.getAtomicType(Context.IntTy));
-      addImplicitTypedef("atomic_uint",
-                         Context.getAtomicType(Context.UnsignedIntTy));
-      auto AtomicLongT = Context.getAtomicType(Context.LongTy);
-      addImplicitTypedef("atomic_long", AtomicLongT);
-      auto AtomicULongT = Context.getAtomicType(Context.UnsignedLongTy);
-      addImplicitTypedef("atomic_ulong", AtomicULongT);
-      addImplicitTypedef("atomic_float",
-                         Context.getAtomicType(Context.FloatTy));
-      auto AtomicDoubleT = Context.getAtomicType(Context.DoubleTy);
-      addImplicitTypedef("atomic_double", AtomicDoubleT);
-      // OpenCLC v2.0, s6.13.11.6 requires that atomic_flag is implemented as
-      // 32-bit integer and OpenCLC v2.0, s6.1.1 int is always 32-bit wide.
-      addImplicitTypedef("atomic_flag", Context.getAtomicType(Context.IntTy));
-      auto AtomicIntPtrT = Context.getAtomicType(Context.getIntPtrType());
-      addImplicitTypedef("atomic_intptr_t", AtomicIntPtrT);
-      auto AtomicUIntPtrT = Context.getAtomicType(Context.getUIntPtrType());
-      addImplicitTypedef("atomic_uintptr_t", AtomicUIntPtrT);
-      auto AtomicSizeT = Context.getAtomicType(Context.getSizeType());
-      addImplicitTypedef("atomic_size_t", AtomicSizeT);
-      auto AtomicPtrDiffT = Context.getAtomicType(Context.getPointerDiffType());
-      addImplicitTypedef("atomic_ptrdiff_t", AtomicPtrDiffT);
+//   if (getLangOpts().OpenCL) {
+//     getOpenCLOptions().addSupport(
+//         Context.getTargetInfo().getSupportedOpenCLOpts());
+//     getOpenCLOptions().enableSupportedCore(getLangOpts());
+//     // addImplicitTypedef("sampler_t", Context.OCLSamplerTy);
+//     // addImplicitTypedef("event_t", Context.OCLEventTy);
+//     if (getLangOpts().OpenCLCPlusPlus || getLangOpts().OpenCLVersion >= 200) {
+//       // addImplicitTypedef("clk_event_t", Context.OCLClkEventTy);
+//       // addImplicitTypedef("queue_t", Context.OCLQueueTy);
+//       // addImplicitTypedef("reserve_id_t", Context.OCLReserveIDTy);
+//       addImplicitTypedef("atomic_int", Context.getAtomicType(Context.IntTy));
+//       addImplicitTypedef("atomic_uint",
+//                          Context.getAtomicType(Context.UnsignedIntTy));
+//       auto AtomicLongT = Context.getAtomicType(Context.LongTy);
+//       addImplicitTypedef("atomic_long", AtomicLongT);
+//       auto AtomicULongT = Context.getAtomicType(Context.UnsignedLongTy);
+//       addImplicitTypedef("atomic_ulong", AtomicULongT);
+//       addImplicitTypedef("atomic_float",
+//                          Context.getAtomicType(Context.FloatTy));
+//       auto AtomicDoubleT = Context.getAtomicType(Context.DoubleTy);
+//       addImplicitTypedef("atomic_double", AtomicDoubleT);
+//       // OpenCLC v2.0, s6.13.11.6 requires that atomic_flag is implemented as
+//       // 32-bit integer and OpenCLC v2.0, s6.1.1 int is always 32-bit wide.
+//       addImplicitTypedef("atomic_flag", Context.getAtomicType(Context.IntTy));
+//       auto AtomicIntPtrT = Context.getAtomicType(Context.getIntPtrType());
+//       addImplicitTypedef("atomic_intptr_t", AtomicIntPtrT);
+//       auto AtomicUIntPtrT = Context.getAtomicType(Context.getUIntPtrType());
+//       addImplicitTypedef("atomic_uintptr_t", AtomicUIntPtrT);
+//       auto AtomicSizeT = Context.getAtomicType(Context.getSizeType());
+//       addImplicitTypedef("atomic_size_t", AtomicSizeT);
+//       auto AtomicPtrDiffT = Context.getAtomicType(Context.getPointerDiffType());
+//       addImplicitTypedef("atomic_ptrdiff_t", AtomicPtrDiffT);
 
-      // OpenCL v2.0 s6.13.11.6:
-      // - The atomic_long and atomic_ulong types are supported if the
-      //   cl_khr_int64_base_atomics and cl_khr_int64_extended_atomics
-      //   extensions are supported.
-      // - The atomic_double type is only supported if double precision
-      //   is supported and the cl_khr_int64_base_atomics and
-      //   cl_khr_int64_extended_atomics extensions are supported.
-      // - If the device address space is 64-bits, the data types
-      //   atomic_intptr_t, atomic_uintptr_t, atomic_size_t and
-      //   atomic_ptrdiff_t are supported if the cl_khr_int64_base_atomics and
-      //   cl_khr_int64_extended_atomics extensions are supported.
-      std::vector<QualType> Atomic64BitTypes;
-      Atomic64BitTypes.push_back(AtomicLongT);
-      Atomic64BitTypes.push_back(AtomicULongT);
-      Atomic64BitTypes.push_back(AtomicDoubleT);
-      if (Context.getTypeSize(AtomicSizeT) == 64) {
-        Atomic64BitTypes.push_back(AtomicSizeT);
-        Atomic64BitTypes.push_back(AtomicIntPtrT);
-        Atomic64BitTypes.push_back(AtomicUIntPtrT);
-        Atomic64BitTypes.push_back(AtomicPtrDiffT);
-      }
-      for (auto &I : Atomic64BitTypes)
-        setOpenCLExtensionForType(I,
-            "cl_khr_int64_base_atomics cl_khr_int64_extended_atomics");
+//       // OpenCL v2.0 s6.13.11.6:
+//       // - The atomic_long and atomic_ulong types are supported if the
+//       //   cl_khr_int64_base_atomics and cl_khr_int64_extended_atomics
+//       //   extensions are supported.
+//       // - The atomic_double type is only supported if double precision
+//       //   is supported and the cl_khr_int64_base_atomics and
+//       //   cl_khr_int64_extended_atomics extensions are supported.
+//       // - If the device address space is 64-bits, the data types
+//       //   atomic_intptr_t, atomic_uintptr_t, atomic_size_t and
+//       //   atomic_ptrdiff_t are supported if the cl_khr_int64_base_atomics and
+//       //   cl_khr_int64_extended_atomics extensions are supported.
+//       std::vector<QualType> Atomic64BitTypes;
+//       Atomic64BitTypes.push_back(AtomicLongT);
+//       Atomic64BitTypes.push_back(AtomicULongT);
+//       Atomic64BitTypes.push_back(AtomicDoubleT);
+//       if (Context.getTypeSize(AtomicSizeT) == 64) {
+//         Atomic64BitTypes.push_back(AtomicSizeT);
+//         Atomic64BitTypes.push_back(AtomicIntPtrT);
+//         Atomic64BitTypes.push_back(AtomicUIntPtrT);
+//         Atomic64BitTypes.push_back(AtomicPtrDiffT);
+//       }
+//       for (auto &I : Atomic64BitTypes)
+//         setOpenCLExtensionForType(I,
+//             "cl_khr_int64_base_atomics cl_khr_int64_extended_atomics");
 
-      setOpenCLExtensionForType(AtomicDoubleT, "cl_khr_fp64");
-    }
+//       setOpenCLExtensionForType(AtomicDoubleT, "cl_khr_fp64");
+//     }
 
-    setOpenCLExtensionForType(Context.DoubleTy, "cl_khr_fp64");
+//     setOpenCLExtensionForType(Context.DoubleTy, "cl_khr_fp64");
 
-#define GENERIC_IMAGE_TYPE_EXT(Type, Id, Ext) \
-    setOpenCLExtensionForType(Context.Id, Ext);
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-    addImplicitTypedef(#ExtType, Context.Id##Ty); \
-    setOpenCLExtensionForType(Context.Id##Ty, #Ext);
-#include "latino/Basic/OpenCLExtensionTypes.def"
-  }
+// // #define GENERIC_IMAGE_TYPE_EXT(Type, Id, Ext) \
+// //     setOpenCLExtensionForType(Context.Id, Ext);
+// // #include "latino/Basic/OpenCLImageTypes.def"
+// // #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+// //     addImplicitTypedef(#ExtType, Context.Id##Ty); \
+// //     setOpenCLExtensionForType(Context.Id##Ty, #Ext);
+// // #include "latino/Basic/OpenCLExtensionTypes.def"
+//   }
 
   if (Context.getTargetInfo().hasAArch64SVETypes()) {
 #define SVE_TYPE(Name, Id, SingletonId) \
@@ -1314,16 +1314,16 @@ FunctionDecl *Sema::getCurFunctionDecl() {
   return dyn_cast<FunctionDecl>(DC);
 }
 
-ObjCMethodDecl *Sema::getCurMethodDecl() {
-  DeclContext *DC = getFunctionLevelDeclContext();
-  while (isa<RecordDecl>(DC))
-    DC = DC->getParent();
-  return dyn_cast<ObjCMethodDecl>(DC);
-}
+// ObjCMethodDecl *Sema::getCurMethodDecl() {
+//   DeclContext *DC = getFunctionLevelDeclContext();
+//   while (isa<RecordDecl>(DC))
+//     DC = DC->getParent();
+//   return dyn_cast<ObjCMethodDecl>(DC);
+// }
 
 NamedDecl *Sema::getCurFunctionOrMethodDecl() {
   DeclContext *DC = getFunctionLevelDeclContext();
-  if (isa<ObjCMethodDecl>(DC) || isa<FunctionDecl>(DC))
+  if (/*isa<ObjCMethodDecl>(DC) ||*/ isa<FunctionDecl>(DC))
     return cast<NamedDecl>(DC);
   return nullptr;
 }

@@ -19,9 +19,9 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/CharUnits.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/AST/TypeLoc.h"
 #include "latino/Basic/AlignedAllocation.h"
@@ -4222,10 +4222,10 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
             << From->getType() << ToType << Action << From->getSourceRange()
             << 0;
 
-      if (From->getType()->isObjCObjectPointerType() &&
-          ToType->isObjCObjectPointerType())
-        EmitRelatedResultTypeNote(From);
-    } else if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
+      // if (From->getType()->isObjCObjectPointerType() &&
+      //     ToType->isObjCObjectPointerType())
+      //   EmitRelatedResultTypeNote(From);
+    } /*else if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
                !CheckObjCARCUnavailableWeakConversion(ToType,
                                                       From->getType())) {
       if (Action == AA_Initializing)
@@ -4234,7 +4234,7 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
         Diag(From->getBeginLoc(), diag::err_arc_convesion_of_weak_unavailable)
             << (Action == AA_Casting) << From->getType() << ToType
             << From->getSourceRange();
-    }
+    }*/
 
     // Defer address space conversion to the third conversion.
     QualType FromPteeType = From->getType()->getPointeeType();
@@ -4245,9 +4245,9 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
       NewToType = Context.removeAddrSpaceQualType(ToPteeType);
       NewToType = Context.getAddrSpaceQualType(NewToType,
                                                FromPteeType.getAddressSpace());
-      if (ToType->isObjCObjectPointerType())
+      /*if (ToType->isObjCObjectPointerType())
         NewToType = Context.getObjCObjectPointerType(NewToType);
-      else if (ToType->isBlockPointerType())
+      else*/ if (ToType->isBlockPointerType())
         NewToType = Context.getBlockPointerType(NewToType);
       else
         NewToType = Context.getPointerType(NewToType);
@@ -4260,11 +4260,11 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
 
     // Make sure we extend blocks if necessary.
     // FIXME: doing this here is really ugly.
-    if (Kind == CK_BlockPointerToObjCPointerCast) {
-      ExprResult E = From;
-      (void) PrepareCastToObjCObjectPointer(E);
-      From = E.get();
-    }
+    // if (Kind == CK_BlockPointerToObjCPointerCast) {
+    //   ExprResult E = From;
+    //   (void) PrepareCastToObjCObjectPointer(E);
+    //   From = E.get();
+    // }
     if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers())
       CheckObjCConversion(SourceRange(), NewToType, From, CCK);
     From = ImpCastExprToType(From, NewToType, Kind, VK_RValue, &BasePath, CCK)
@@ -5239,15 +5239,15 @@ static bool EvaluateBinaryTypeTrait(Sema &Self, TypeTrait BTT, QualType LhsT,
     const RecordType *lhsRecord = LhsT->getAs<RecordType>();
     const RecordType *rhsRecord = RhsT->getAs<RecordType>();
     if (!rhsRecord || !lhsRecord) {
-      const ObjCObjectType *LHSObjTy = LhsT->getAs<ObjCObjectType>();
-      const ObjCObjectType *RHSObjTy = RhsT->getAs<ObjCObjectType>();
-      if (!LHSObjTy || !RHSObjTy)
-        return false;
+      // const ObjCObjectType *LHSObjTy = LhsT->getAs<ObjCObjectType>();
+      // const ObjCObjectType *RHSObjTy = RhsT->getAs<ObjCObjectType>();
+      // if (!LHSObjTy || !RHSObjTy)
+      //   return false;
 
-      ObjCInterfaceDecl *BaseInterface = LHSObjTy->getInterface();
-      ObjCInterfaceDecl *DerivedInterface = RHSObjTy->getInterface();
-      if (!BaseInterface || !DerivedInterface)
-        return false;
+      // ObjCInterfaceDecl *BaseInterface = LHSObjTy->getInterface();
+      // ObjCInterfaceDecl *DerivedInterface = RHSObjTy->getInterface();
+      // if (!BaseInterface || !DerivedInterface)
+      //   return false;
 
       if (Self.RequireCompleteType(
               KeyLoc, RhsT, diag::err_incomplete_type_used_in_type_trait_expr))
@@ -6303,9 +6303,9 @@ QualType Sema::CXXCheckConditionalOperands(ExprResult &Cond, ExprResult &LHS,
     return Composite;
 
   // Similarly, attempt to find composite type of two objective-c pointers.
-  Composite = FindCompositeObjCPointerType(LHS, RHS, QuestionLoc);
-  if (!Composite.isNull())
-    return Composite;
+  // Composite = FindCompositeObjCPointerType(LHS, RHS, QuestionLoc);
+  // if (!Composite.isNull())
+  //   return Composite;
 
   // Check if we are using a null with a non-pointer type.
   if (DiagnoseConditionalForNull(LHS.get(), RHS.get(), QuestionLoc))
@@ -6553,14 +6553,14 @@ QualType Sema::FindCompositePointerType(SourceLocation Loc,
       continue;
     }
 
-    const ObjCObjectPointerType *ObjPtr1, *ObjPtr2;
-    if ((ObjPtr1 = Composite1->getAs<ObjCObjectPointerType>()) &&
-        (ObjPtr2 = Composite2->getAs<ObjCObjectPointerType>())) {
-      Composite1 = ObjPtr1->getPointeeType();
-      Composite2 = ObjPtr2->getPointeeType();
-      Steps.emplace_back(Step::ObjCPointer);
-      continue;
-    }
+    // const ObjCObjectPointerType *ObjPtr1, *ObjPtr2;
+    // if ((ObjPtr1 = Composite1->getAs<ObjCObjectPointerType>()) &&
+    //     (ObjPtr2 = Composite2->getAs<ObjCObjectPointerType>())) {
+    //   Composite1 = ObjPtr1->getPointeeType();
+    //   Composite2 = ObjPtr2->getPointeeType();
+    //   Steps.emplace_back(Step::ObjCPointer);
+    //   continue;
+    // }
 
     const MemberPointerType *MemPtr1, *MemPtr2;
     if ((MemPtr1 = Composite1->getAs<MemberPointerType>()) &&
@@ -6594,15 +6594,15 @@ QualType Sema::FindCompositePointerType(SourceLocation Loc,
 
     // Special case: at the top level, we can decompose an Objective-C pointer
     // and a 'cv void *'. Unify the qualifiers.
-    if (Steps.empty() && ((Composite1->isVoidPointerType() &&
-                           Composite2->isObjCObjectPointerType()) ||
-                          (Composite1->isObjCObjectPointerType() &&
-                           Composite2->isVoidPointerType()))) {
-      Composite1 = Composite1->getPointeeType();
-      Composite2 = Composite2->getPointeeType();
-      Steps.emplace_back(Step::Pointer);
-      continue;
-    }
+    // if (Steps.empty() && ((Composite1->isVoidPointerType() &&
+    //                        Composite2->isObjCObjectPointerType()) ||
+    //                       (Composite1->isObjCObjectPointerType() &&
+    //                        Composite2->isVoidPointerType()))) {
+    //   Composite1 = Composite1->getPointeeType();
+    //   Composite2 = Composite2->getPointeeType();
+    //   Steps.emplace_back(Step::Pointer);
+    //   continue;
+    // }
 
     // FIXME: arrays
 
@@ -6789,40 +6789,41 @@ ExprResult Sema::MaybeBindToTemporary(Expr *E) {
     // For message sends and property references, we try to find an
     // actual method.  FIXME: we should infer retention by selector in
     // cases where we don't have an actual method.
-    } else {
-      ObjCMethodDecl *D = nullptr;
-      if (ObjCMessageExpr *Send = dyn_cast<ObjCMessageExpr>(E)) {
-        D = Send->getMethodDecl();
-      } else if (ObjCBoxedExpr *BoxedExpr = dyn_cast<ObjCBoxedExpr>(E)) {
-        D = BoxedExpr->getBoxingMethod();
-      } else if (ObjCArrayLiteral *ArrayLit = dyn_cast<ObjCArrayLiteral>(E)) {
-        // Don't do reclaims if we're using the zero-element array
-        // constant.
-        if (ArrayLit->getNumElements() == 0 &&
-            Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
-          return E;
+    } 
+    // else {
+    //   ObjCMethodDecl *D = nullptr;
+    //   if (ObjCMessageExpr *Send = dyn_cast<ObjCMessageExpr>(E)) {
+    //     D = Send->getMethodDecl();
+    //   } else if (ObjCBoxedExpr *BoxedExpr = dyn_cast<ObjCBoxedExpr>(E)) {
+    //     D = BoxedExpr->getBoxingMethod();
+    //   } else if (ObjCArrayLiteral *ArrayLit = dyn_cast<ObjCArrayLiteral>(E)) {
+    //     // Don't do reclaims if we're using the zero-element array
+    //     // constant.
+    //     if (ArrayLit->getNumElements() == 0 &&
+    //         Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
+    //       return E;
 
-        D = ArrayLit->getArrayWithObjectsMethod();
-      } else if (ObjCDictionaryLiteral *DictLit
-                                        = dyn_cast<ObjCDictionaryLiteral>(E)) {
-        // Don't do reclaims if we're using the zero-element dictionary
-        // constant.
-        if (DictLit->getNumElements() == 0 &&
-            Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
-          return E;
+    //     D = ArrayLit->getArrayWithObjectsMethod();
+    //   } else if (ObjCDictionaryLiteral *DictLit
+    //                                     = dyn_cast<ObjCDictionaryLiteral>(E)) {
+    //     // Don't do reclaims if we're using the zero-element dictionary
+    //     // constant.
+    //     if (DictLit->getNumElements() == 0 &&
+    //         Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
+    //       return E;
 
-        D = DictLit->getDictWithObjectsMethod();
-      }
+    //     D = DictLit->getDictWithObjectsMethod();
+    //   }
 
-      ReturnsRetained = (D && D->hasAttr<NSReturnsRetainedAttr>());
+    //   ReturnsRetained = (D && D->hasAttr<NSReturnsRetainedAttr>());
 
-      // Don't do reclaims on performSelector calls; despite their
-      // return type, the invoked method doesn't necessarily actually
-      // return an object.
-      if (!ReturnsRetained &&
-          D && D->getMethodFamily() == OMF_performSelector)
-        return E;
-    }
+    //   // Don't do reclaims on performSelector calls; despite their
+    //   // return type, the invoked method doesn't necessarily actually
+    //   // return an object.
+    //   if (!ReturnsRetained &&
+    //       D && D->getMethodFamily() == OMF_performSelector)
+    //     return E;
+    // }
 
     // Don't reclaim an object of Class type.
     if (!ReturnsRetained && E->getType()->isObjCARCImplicitlyUnretainedType())
@@ -7187,8 +7188,8 @@ ExprResult Sema::ActOnStartCXXMemberReference(Scope *S, Expr *Base,
 
   // Objective-C properties allow "." access on Objective-C pointer types,
   // so adjust the base type to the object type itself.
-  if (BaseType->isObjCObjectPointerType())
-    BaseType = BaseType->getPointeeType();
+  // if (BaseType->isObjCObjectPointerType())
+  //   BaseType = BaseType->getPointeeType();
 
   // C++ [basic.lookup.classref]p2:
   //   [...] If the type of the object expression is of pointer to scalar
@@ -7911,10 +7912,10 @@ static ExprResult attemptRecovery(Sema &SemaRef,
         return SemaRef.BuildPossibleImplicitMemberExpr(
             NewSS, /*TemplateKWLoc*/ SourceLocation(), R,
             /*TemplateArgs*/ nullptr, /*S*/ nullptr);
-    } else if (auto *Ivar = dyn_cast<ObjCIvarDecl>(ND)) {
+    } /*else if (auto *Ivar = dyn_cast<ObjCIvarDecl>(ND)) {
       return SemaRef.LookupInObjCMethod(R, Consumer.getScope(),
                                         Ivar->getIdentifier());
-    }
+    }*/
   }
 
   return SemaRef.BuildDeclarationNameExpr(NewSS, R, /*NeedsADL*/ false,

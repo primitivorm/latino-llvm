@@ -4,7 +4,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/FormatString.h"
 #include "latino/Basic/Builtins.h"
 #include "llvm/ADT/SmallBitVector.h"

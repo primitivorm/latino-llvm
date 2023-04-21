@@ -490,7 +490,7 @@ public:
   void VisitDeclStmt(DeclStmt *ds);
   void VisitGCCAsmStmt(GCCAsmStmt *as);
   void VisitObjCForCollectionStmt(ObjCForCollectionStmt *FS);
-  void VisitObjCMessageExpr(ObjCMessageExpr *ME);
+  // void VisitObjCMessageExpr(ObjCMessageExpr *ME);
   void VisitOMPExecutableDirective(OMPExecutableDirective *ED);
 
   bool isTrackedVar(const VarDecl *vd) {
@@ -819,13 +819,13 @@ void TransferFunctions::VisitGCCAsmStmt(GCCAsmStmt *as) {
         vals[VD] = MayUninitialized;
 }
 
-void TransferFunctions::VisitObjCMessageExpr(ObjCMessageExpr *ME) {
-  // If the Objective-C message expression is an implicit no-return that
-  // is not modeled in the CFG, set the tracked dataflow values to Unknown.
-  if (objCNoRet.isImplicitNoReturn(ME)) {
-    vals.setAllScratchValues(Unknown);
-  }
-}
+// void TransferFunctions::VisitObjCMessageExpr(ObjCMessageExpr *ME) {
+//   // If the Objective-C message expression is an implicit no-return that
+//   // is not modeled in the CFG, set the tracked dataflow values to Unknown.
+//   if (objCNoRet.isImplicitNoReturn(ME)) {
+//     vals.setAllScratchValues(Unknown);
+//   }
+// }
 
 //------------------------------------------------------------------------====//
 // High-level "driver" logic for uninitialized values analysis.

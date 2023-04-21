@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "CGCXXABI.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
@@ -161,10 +161,10 @@ public:
     Visit(E->getSemanticForm());
   }
 
-  void VisitObjCMessageExpr(ObjCMessageExpr *E);
-  void VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
-    EmitAggLoadOfLValue(E);
-  }
+  // void VisitObjCMessageExpr(ObjCMessageExpr *E);
+  // void VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
+  //   EmitAggLoadOfLValue(E);
+  // }
 
   void VisitDesignatedInitUpdateExpr(DesignatedInitUpdateExpr *E);
   void VisitAbstractConditionalOperator(const AbstractConditionalOperator *CO);
@@ -880,10 +880,10 @@ void AggExprEmitter::VisitCastExpr(CastExpr *E) {
   case CK_FloatingToIntegral:
   case CK_FloatingToBoolean:
   case CK_FloatingCast:
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_AnyPointerToBlockPointerCast:
-  case CK_ObjCObjectLValueCast:
+  // case CK_ObjCObjectLValueCast:
   case CK_FloatingRealToComplex:
   case CK_FloatingComplexToReal:
   case CK_FloatingComplexToBoolean:
@@ -902,7 +902,7 @@ void AggExprEmitter::VisitCastExpr(CastExpr *E) {
   case CK_BuiltinFnToFnPtr:
   case CK_ZeroToOCLOpaqueType:
 
-  case CK_IntToOCLSampler:
+  // case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:
@@ -922,11 +922,11 @@ void AggExprEmitter::VisitCallExpr(const CallExpr *E) {
   });
 }
 
-void AggExprEmitter::VisitObjCMessageExpr(ObjCMessageExpr *E) {
-  withReturnValueSlot(E, [&](ReturnValueSlot Slot) {
-    return CGF.EmitObjCMessageExpr(E, Slot);
-  });
-}
+// void AggExprEmitter::VisitObjCMessageExpr(ObjCMessageExpr *E) {
+//   withReturnValueSlot(E, [&](ReturnValueSlot Slot) {
+//     return CGF.EmitObjCMessageExpr(E, Slot);
+//   });
+// }
 
 void AggExprEmitter::VisitBinComma(const BinaryOperator *E) {
   CGF.EmitIgnoredExpr(E->getLHS());

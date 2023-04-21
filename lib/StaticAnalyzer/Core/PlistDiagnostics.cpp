@@ -719,9 +719,9 @@ void PlistDiagnostics::FlushDiagnosticsImpl(
           case Decl::CXXMethod:
             declKind = "C++ method";
             break;
-          case Decl::ObjCMethod:
-            declKind = "Objective-C method";
-            break;
+          // case Decl::ObjCMethod:
+          //   declKind = "Objective-C method";
+          //   break;
           case Decl::Function:
             declKind = "function";
             break;

@@ -12,7 +12,7 @@
 
 #include "ASTCommon.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Serialization/ASTDeserializationListener.h"
 #include "llvm/Support/DJB.h"
@@ -186,9 +186,9 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::BoundMember:
     ID = PREDEF_TYPE_BOUND_MEMBER;
     break;
-  case BuiltinType::PseudoObject:
-    ID = PREDEF_TYPE_PSEUDO_OBJECT;
-    break;
+  // case BuiltinType::PseudoObject:
+  //   ID = PREDEF_TYPE_PSEUDO_OBJECT;
+  //   break;
   case BuiltinType::Dependent:
     ID = PREDEF_TYPE_DEPENDENT_ID;
     break;
@@ -198,40 +198,40 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::ARCUnbridgedCast:
     ID = PREDEF_TYPE_ARC_UNBRIDGED_CAST;
     break;
-  case BuiltinType::ObjCId:
-    ID = PREDEF_TYPE_OBJC_ID;
-    break;
-  case BuiltinType::ObjCClass:
-    ID = PREDEF_TYPE_OBJC_CLASS;
-    break;
-  case BuiltinType::ObjCSel:
-    ID = PREDEF_TYPE_OBJC_SEL;
-    break;
-#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-  case BuiltinType::Id: \
-    ID = PREDEF_TYPE_##Id##_ID; \
-    break;
-#include "latino/Basic/OpenCLImageTypes.def"
-#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-  case BuiltinType::Id: \
-    ID = PREDEF_TYPE_##Id##_ID; \
-    break;
-#include "latino/Basic/OpenCLExtensionTypes.def"
-  case BuiltinType::OCLSampler:
-    ID = PREDEF_TYPE_SAMPLER_ID;
-    break;
-  case BuiltinType::OCLEvent:
-    ID = PREDEF_TYPE_EVENT_ID;
-    break;
-  case BuiltinType::OCLClkEvent:
-    ID = PREDEF_TYPE_CLK_EVENT_ID;
-    break;
-  case BuiltinType::OCLQueue:
-    ID = PREDEF_TYPE_QUEUE_ID;
-    break;
-  case BuiltinType::OCLReserveID:
-    ID = PREDEF_TYPE_RESERVE_ID_ID;
-    break;
+  // case BuiltinType::ObjCId:
+  //   ID = PREDEF_TYPE_OBJC_ID;
+  //   break;
+  // case BuiltinType::ObjCClass:
+  //   ID = PREDEF_TYPE_OBJC_CLASS;
+  //   break;
+  // case BuiltinType::ObjCSel:
+  //   ID = PREDEF_TYPE_OBJC_SEL;
+  //   break;
+// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//   case BuiltinType::Id: \
+//     ID = PREDEF_TYPE_##Id##_ID; \
+//     break;
+// #include "latino/Basic/OpenCLImageTypes.def"
+// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+//   case BuiltinType::Id: \
+//     ID = PREDEF_TYPE_##Id##_ID; \
+//     break;
+// #include "latino/Basic/OpenCLExtensionTypes.def"
+  // case BuiltinType::OCLSampler:
+  //   ID = PREDEF_TYPE_SAMPLER_ID;
+  //   break;
+  // case BuiltinType::OCLEvent:
+  //   ID = PREDEF_TYPE_EVENT_ID;
+  //   break;
+  // case BuiltinType::OCLClkEvent:
+  //   ID = PREDEF_TYPE_CLK_EVENT_ID;
+  //   break;
+  // case BuiltinType::OCLQueue:
+  //   ID = PREDEF_TYPE_QUEUE_ID;
+  //   break;
+  // case BuiltinType::OCLReserveID:
+  //   ID = PREDEF_TYPE_RESERVE_ID_ID;
+  //   break;
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id: \
     ID = PREDEF_TYPE_##Id##_ID; \
@@ -302,27 +302,27 @@ serialization::getDefinitiveDeclContext(const DeclContext *DC) {
   case Decl::CXXConstructor:
   case Decl::CXXDestructor:
   case Decl::CXXConversion:
-  case Decl::ObjCMethod:
+  // case Decl::ObjCMethod:
   case Decl::Block:
   case Decl::Captured:
     // Objective C categories, category implementations, and class
     // implementations can only be defined in one place.
-  case Decl::ObjCCategory:
-  case Decl::ObjCCategoryImpl:
-  case Decl::ObjCImplementation:
+  // case Decl::ObjCCategory:
+  // case Decl::ObjCCategoryImpl:
+  // case Decl::ObjCImplementation:
     return DC;
 
-  case Decl::ObjCProtocol:
-    if (const ObjCProtocolDecl *Def
-          = cast<ObjCProtocolDecl>(DC)->getDefinition())
-      return Def;
-    return nullptr;
+  // case Decl::ObjCProtocol:
+  //   if (const ObjCProtocolDecl *Def
+  //         = cast<ObjCProtocolDecl>(DC)->getDefinition())
+  //     return Def;
+  //   return nullptr;
 
   // FIXME: These are defined in one place, but properties in class extensions
   // end up being back-patched into the main interface. See
   // Sema::HandlePropertyInClassExtension for the offending code.
-  case Decl::ObjCInterface:
-    return nullptr;
+  // case Decl::ObjCInterface:
+  //   return nullptr;
 
   default:
     llvm_unreachable("Unhandled DeclContext in AST reader");
@@ -362,8 +362,8 @@ bool serialization::isRedeclarableDeclKind(unsigned Kind) {
   case Decl::ClassTemplate:
   case Decl::VarTemplate:
   case Decl::TypeAliasTemplate:
-  case Decl::ObjCProtocol:
-  case Decl::ObjCInterface:
+  // case Decl::ObjCProtocol:
+  // case Decl::ObjCInterface:
   case Decl::Empty:
     return true;
 
@@ -378,21 +378,21 @@ bool serialization::isRedeclarableDeclKind(unsigned Kind) {
   case Decl::Field:
   case Decl::MSProperty:
   case Decl::MSGuid:
-  case Decl::ObjCIvar:
-  case Decl::ObjCAtDefsField:
+  // case Decl::ObjCIvar:
+  // case Decl::ObjCAtDefsField:
   case Decl::NonTypeTemplateParm:
   case Decl::TemplateTemplateParm:
   case Decl::Using:
   case Decl::UsingPack:
-  case Decl::ObjCMethod:
-  case Decl::ObjCCategory:
-  case Decl::ObjCCategoryImpl:
-  case Decl::ObjCImplementation:
-  case Decl::ObjCProperty:
-  case Decl::ObjCCompatibleAlias:
+  // case Decl::ObjCMethod:
+  // case Decl::ObjCCategory:
+  // case Decl::ObjCCategoryImpl:
+  // case Decl::ObjCImplementation:
+  // case Decl::ObjCProperty:
+  // case Decl::ObjCCompatibleAlias:
   case Decl::LinkageSpec:
   case Decl::Export:
-  case Decl::ObjCPropertyImpl:
+  // case Decl::ObjCPropertyImpl:
   case Decl::PragmaComment:
   case Decl::PragmaDetectMismatch:
   case Decl::FileScopeAsm:
@@ -422,7 +422,7 @@ bool serialization::isRedeclarableDeclKind(unsigned Kind) {
   // redeclarable.
   case Decl::ImplicitParam:
   case Decl::ParmVar:
-  case Decl::ObjCTypeParam:
+  // case Decl::ObjCTypeParam:
     return false;
   }
 

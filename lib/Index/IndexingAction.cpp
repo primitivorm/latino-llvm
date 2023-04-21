@@ -88,9 +88,9 @@ protected:
     // Ignore deserialized decls.
   }
 
-  void HandleTopLevelDeclInObjCContainer(DeclGroupRef DG) override {
-    IndexCtx->indexDeclGroupRef(DG);
-  }
+  // void HandleTopLevelDeclInObjCContainer(DeclGroupRef DG) override {
+  //   IndexCtx->indexDeclGroupRef(DG);
+  // }
 
   void HandleTranslationUnit(ASTContext &Ctx) override {
     DataConsumer->finish();

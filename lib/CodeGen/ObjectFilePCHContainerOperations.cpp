@@ -10,7 +10,7 @@
 #include "CGDebugInfo.h"
 #include "CodeGenModule.h"
 #include "latino/AST/ASTContext.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/Basic/CodeGenOptions.h"
@@ -88,12 +88,12 @@ class PCHContainerGenerator : public ASTConsumer {
       return true;
     }
 
-    bool VisitObjCInterfaceDecl(ObjCInterfaceDecl *D) {
-      QualType QualTy(D->getTypeForDecl(), 0);
-      if (!QualTy.isNull() && CanRepresent(QualTy.getTypePtr()))
-        DI.getOrCreateStandaloneType(QualTy, D->getLocation());
-      return true;
-    }
+    // bool VisitObjCInterfaceDecl(ObjCInterfaceDecl *D) {
+    //   QualType QualTy(D->getTypeForDecl(), 0);
+    //   if (!QualTy.isNull() && CanRepresent(QualTy.getTypePtr()))
+    //     DI.getOrCreateStandaloneType(QualTy, D->getLocation());
+    //   return true;
+    // }
 
     bool VisitFunctionDecl(FunctionDecl *D) {
       if (isa<CXXMethodDecl>(D))
@@ -112,24 +112,24 @@ class PCHContainerGenerator : public ASTConsumer {
       return true;
     }
 
-    bool VisitObjCMethodDecl(ObjCMethodDecl *D) {
-      if (!D->getClassInterface())
-        return true;
+    // bool VisitObjCMethodDecl(ObjCMethodDecl *D) {
+    //   if (!D->getClassInterface())
+    //     return true;
 
-      bool selfIsPseudoStrong, selfIsConsumed;
-      SmallVector<QualType, 16> ArgTypes;
-      ArgTypes.push_back(D->getSelfType(Ctx, D->getClassInterface(),
-                                        selfIsPseudoStrong, selfIsConsumed));
-      ArgTypes.push_back(Ctx.getObjCSelType());
-      for (auto i : D->parameters())
-        ArgTypes.push_back(i->getType());
-      QualType RetTy = D->getReturnType();
-      QualType FnTy = Ctx.getFunctionType(RetTy, ArgTypes,
-                                          FunctionProtoType::ExtProtoInfo());
-      if (CanRepresent(FnTy.getTypePtr()))
-        DI.EmitFunctionDecl(D, D->getLocation(), FnTy);
-      return true;
-    }
+    //   bool selfIsPseudoStrong, selfIsConsumed;
+    //   SmallVector<QualType, 16> ArgTypes;
+    //   ArgTypes.push_back(D->getSelfType(Ctx, D->getClassInterface(),
+    //                                     selfIsPseudoStrong, selfIsConsumed));
+    //   ArgTypes.push_back(Ctx.getObjCSelType());
+    //   for (auto i : D->parameters())
+    //     ArgTypes.push_back(i->getType());
+    //   QualType RetTy = D->getReturnType();
+    //   QualType FnTy = Ctx.getFunctionType(RetTy, ArgTypes,
+    //                                       FunctionProtoType::ExtProtoInfo());
+    //   if (CanRepresent(FnTy.getTypePtr()))
+    //     DI.EmitFunctionDecl(D, D->getLocation(), FnTy);
+    //   return true;
+    // }
   };
 
 public:
@@ -191,9 +191,9 @@ public:
     return true;
   }
 
-  void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override {
-    HandleTopLevelDecl(D);
-  }
+  // void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override {
+  //   HandleTopLevelDecl(D);
+  // }
 
   void HandleTagDeclDefinition(TagDecl *D) override {
     if (Diags.hasErrorOccurred())

@@ -185,7 +185,7 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
     case Decl::CXXConstructor:
     case Decl::CXXDestructor:
     case Decl::CXXConversion:
-    case Decl::ObjCMethod:
+    // case Decl::ObjCMethod:
     case Decl::Block:
     case Decl::Captured:
       CounterMap[D->getBody()] = NextCounter++;
@@ -409,12 +409,12 @@ struct ComputeRegionCounts : public ConstStmtVisitor<ComputeRegionCounts> {
     Visit(D->getBody());
   }
 
-  void VisitObjCMethodDecl(const ObjCMethodDecl *D) {
-    // Counter tracks entry to the method body.
-    uint64_t BodyCount = setCount(PGO.getRegionCount(D->getBody()));
-    CountMap[D->getBody()] = BodyCount;
-    Visit(D->getBody());
-  }
+  // void VisitObjCMethodDecl(const ObjCMethodDecl *D) {
+  //   // Counter tracks entry to the method body.
+  //   uint64_t BodyCount = setCount(PGO.getRegionCount(D->getBody()));
+  //   CountMap[D->getBody()] = BodyCount;
+  //   Visit(D->getBody());
+  // }
 
   void VisitBlockDecl(const BlockDecl *D) {
     // Counter tracks entry to the block body.
@@ -816,8 +816,8 @@ void CodeGenPGO::mapRegionCounters(const Decl *D) {
   MapRegionCounters Walker(HashVersion, *RegionCounterMap);
   if (const FunctionDecl *FD = dyn_cast_or_null<FunctionDecl>(D))
     Walker.TraverseDecl(const_cast<FunctionDecl *>(FD));
-  else if (const ObjCMethodDecl *MD = dyn_cast_or_null<ObjCMethodDecl>(D))
-    Walker.TraverseDecl(const_cast<ObjCMethodDecl *>(MD));
+  // else if (const ObjCMethodDecl *MD = dyn_cast_or_null<ObjCMethodDecl>(D))
+  //   Walker.TraverseDecl(const_cast<ObjCMethodDecl *>(MD));
   else if (const BlockDecl *BD = dyn_cast_or_null<BlockDecl>(D))
     Walker.TraverseDecl(const_cast<BlockDecl *>(BD));
   else if (const CapturedDecl *CD = dyn_cast_or_null<CapturedDecl>(D))
@@ -883,8 +883,8 @@ void CodeGenPGO::computeRegionCounts(const Decl *D) {
   ComputeRegionCounts Walker(*StmtCountMap, *this);
   if (const FunctionDecl *FD = dyn_cast_or_null<FunctionDecl>(D))
     Walker.VisitFunctionDecl(FD);
-  else if (const ObjCMethodDecl *MD = dyn_cast_or_null<ObjCMethodDecl>(D))
-    Walker.VisitObjCMethodDecl(MD);
+  // else if (const ObjCMethodDecl *MD = dyn_cast_or_null<ObjCMethodDecl>(D))
+  //   Walker.VisitObjCMethodDecl(MD);
   else if (const BlockDecl *BD = dyn_cast_or_null<BlockDecl>(D))
     Walker.VisitBlockDecl(BD);
   else if (const CapturedDecl *CD = dyn_cast_or_null<CapturedDecl>(D))

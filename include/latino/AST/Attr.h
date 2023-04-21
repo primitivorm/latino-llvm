@@ -35,7 +35,7 @@ namespace latino {
 class ASTContext;
 class AttributeCommonInfo;
 class IdentifierInfo;
-class ObjCInterfaceDecl;
+// class ObjCInterfaceDecl;
 class Expr;
 class QualType;
 class FunctionDecl;

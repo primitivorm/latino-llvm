@@ -87,10 +87,10 @@ public:
                                      CastKind CK = CK_LValueToRValue);
 
   /// Create an Objective-C bool literal.
-  ObjCBoolLiteralExpr *makeObjCBool(bool Val);
+  // ObjCBoolLiteralExpr *makeObjCBool(bool Val);
 
   /// Create an Objective-C ivar reference.
-  ObjCIvarRefExpr *makeObjCIvarRef(const Expr *Base, const ObjCIvarDecl *IVar);
+  // ObjCIvarRefExpr *makeObjCIvarRef(const Expr *Base, const ObjCIvarDecl *IVar);
 
   /// Create a Return statement.
   ReturnStmt *makeReturn(const Expr *RetVal);
@@ -190,13 +190,13 @@ ObjCBoolLiteralExpr *ASTMaker::makeObjCBool(bool Val) {
   return new (C) ObjCBoolLiteralExpr(Val, Ty, SourceLocation());
 }
 
-ObjCIvarRefExpr *ASTMaker::makeObjCIvarRef(const Expr *Base,
-                                           const ObjCIvarDecl *IVar) {
-  return new (C) ObjCIvarRefExpr(const_cast<ObjCIvarDecl*>(IVar),
-                                 IVar->getType(), SourceLocation(),
-                                 SourceLocation(), const_cast<Expr*>(Base),
-                                 /*arrow=*/true, /*free=*/false);
-}
+// ObjCIvarRefExpr *ASTMaker::makeObjCIvarRef(const Expr *Base,
+//                                            const ObjCIvarDecl *IVar) {
+//   return new (C) ObjCIvarRefExpr(const_cast<ObjCIvarDecl*>(IVar),
+//                                  IVar->getType(), SourceLocation(),
+//                                  SourceLocation(), const_cast<Expr*>(Base),
+//                                  /*arrow=*/true, /*free=*/false);
+// }
 
 ReturnStmt *ASTMaker::makeReturn(const Expr *RetVal) {
   return ReturnStmt::Create(C, SourceLocation(), const_cast<Expr *>(RetVal),
@@ -697,165 +697,166 @@ Stmt *BodyFarm::getBody(const FunctionDecl *D) {
   return Val.getValue();
 }
 
-static const ObjCIvarDecl *findBackingIvar(const ObjCPropertyDecl *Prop) {
-  const ObjCIvarDecl *IVar = Prop->getPropertyIvarDecl();
+// static const ObjCIvarDecl *findBackingIvar(const ObjCPropertyDecl *Prop) {
+//   const ObjCIvarDecl *IVar = Prop->getPropertyIvarDecl();
 
-  if (IVar)
-    return IVar;
+//   if (IVar)
+//     return IVar;
 
-  // When a readonly property is shadowed in a class extensions with a
-  // a readwrite property, the instance variable belongs to the shadowing
-  // property rather than the shadowed property. If there is no instance
-  // variable on a readonly property, check to see whether the property is
-  // shadowed and if so try to get the instance variable from shadowing
-  // property.
-  if (!Prop->isReadOnly())
-    return nullptr;
+//   // When a readonly property is shadowed in a class extensions with a
+//   // a readwrite property, the instance variable belongs to the shadowing
+//   // property rather than the shadowed property. If there is no instance
+//   // variable on a readonly property, check to see whether the property is
+//   // shadowed and if so try to get the instance variable from shadowing
+//   // property.
+//   if (!Prop->isReadOnly())
+//     return nullptr;
 
-  auto *Container = cast<ObjCContainerDecl>(Prop->getDeclContext());
-  const ObjCInterfaceDecl *PrimaryInterface = nullptr;
-  if (auto *InterfaceDecl = dyn_cast<ObjCInterfaceDecl>(Container)) {
-    PrimaryInterface = InterfaceDecl;
-  } else if (auto *CategoryDecl = dyn_cast<ObjCCategoryDecl>(Container)) {
-    PrimaryInterface = CategoryDecl->getClassInterface();
-  } else if (auto *ImplDecl = dyn_cast<ObjCImplDecl>(Container)) {
-    PrimaryInterface = ImplDecl->getClassInterface();
-  } else {
-    return nullptr;
-  }
+//   auto *Container = cast<ObjCContainerDecl>(Prop->getDeclContext());
+//   const ObjCInterfaceDecl *PrimaryInterface = nullptr;
+//   if (auto *InterfaceDecl = dyn_cast<ObjCInterfaceDecl>(Container)) {
+//     PrimaryInterface = InterfaceDecl;
+//   } else if (auto *CategoryDecl = dyn_cast<ObjCCategoryDecl>(Container)) {
+//     PrimaryInterface = CategoryDecl->getClassInterface();
+//   } else if (auto *ImplDecl = dyn_cast<ObjCImplDecl>(Container)) {
+//     PrimaryInterface = ImplDecl->getClassInterface();
+//   } else {
+//     return nullptr;
+//   }
 
-  // FindPropertyVisibleInPrimaryClass() looks first in class extensions, so it
-  // is guaranteed to find the shadowing property, if it exists, rather than
-  // the shadowed property.
-  auto *ShadowingProp = PrimaryInterface->FindPropertyVisibleInPrimaryClass(
-      Prop->getIdentifier(), Prop->getQueryKind());
-  if (ShadowingProp && ShadowingProp != Prop) {
-    IVar = ShadowingProp->getPropertyIvarDecl();
-  }
+//   // FindPropertyVisibleInPrimaryClass() looks first in class extensions, so it
+//   // is guaranteed to find the shadowing property, if it exists, rather than
+//   // the shadowed property.
+//   auto *ShadowingProp = PrimaryInterface->FindPropertyVisibleInPrimaryClass(
+//       Prop->getIdentifier(), Prop->getQueryKind());
+//   if (ShadowingProp && ShadowingProp != Prop) {
+//     IVar = ShadowingProp->getPropertyIvarDecl();
+//   }
 
-  return IVar;
-}
+//   return IVar;
+// }
 
-static Stmt *createObjCPropertyGetter(ASTContext &Ctx,
-                                      const ObjCMethodDecl *MD) {
-    // First, find the backing ivar.
-  const ObjCIvarDecl *IVar = nullptr;
+// static Stmt *createObjCPropertyGetter(ASTContext &Ctx,
+//                                       const ObjCMethodDecl *MD) {
+//     // First, find the backing ivar.
+//   const ObjCIvarDecl *IVar = nullptr;
 
-  // Property accessor stubs sometimes do not correspond to any property decl
-  // in the current interface (but in a superclass). They still have a
-  // corresponding property impl decl in this case.
-  if (MD->isSynthesizedAccessorStub()) {
-    const ObjCInterfaceDecl *IntD = MD->getClassInterface();
-    const ObjCImplementationDecl *ImpD = IntD->getImplementation();
-    for (const auto *PI: ImpD->property_impls()) {
-      if (const ObjCPropertyDecl *P = PI->getPropertyDecl()) {
-        if (P->getGetterName() == MD->getSelector())
-          IVar = P->getPropertyIvarDecl();
-      }
-    }
-  }
+//   // Property accessor stubs sometimes do not correspond to any property decl
+//   // in the current interface (but in a superclass). They still have a
+//   // corresponding property impl decl in this case.
+//   if (MD->isSynthesizedAccessorStub()) {
+//     const ObjCInterfaceDecl *IntD = MD->getClassInterface();
+//     const ObjCImplementationDecl *ImpD = IntD->getImplementation();
+//     for (const auto *PI: ImpD->property_impls()) {
+//       if (const ObjCPropertyDecl *P = PI->getPropertyDecl()) {
+//         if (P->getGetterName() == MD->getSelector())
+//           IVar = P->getPropertyIvarDecl();
+//       }
+//     }
+//   }
 
-  if (!IVar) {
-    const ObjCPropertyDecl *Prop = MD->findPropertyDecl();
-    IVar = findBackingIvar(Prop);
-    if (!IVar)
-      return nullptr;
+//   if (!IVar) {
+//     const ObjCPropertyDecl *Prop = MD->findPropertyDecl();
+//     IVar = findBackingIvar(Prop);
+//     if (!IVar)
+//       return nullptr;
 
-    // Ignore weak variables, which have special behavior.
-    if (Prop->getPropertyAttributes() & ObjCPropertyAttribute::kind_weak)
-      return nullptr;
+//     // Ignore weak variables, which have special behavior.
+//     if (Prop->getPropertyAttributes() & ObjCPropertyAttribute::kind_weak)
+//       return nullptr;
 
-    // Look to see if Sema has synthesized a body for us. This happens in
-    // Objective-C++ because the return value may be a C++ class type with a
-    // non-trivial copy constructor. We can only do this if we can find the
-    // @synthesize for this property, though (or if we know it's been auto-
-    // synthesized).
-    const ObjCImplementationDecl *ImplDecl =
-      IVar->getContainingInterface()->getImplementation();
-    if (ImplDecl) {
-      for (const auto *I : ImplDecl->property_impls()) {
-        if (I->getPropertyDecl() != Prop)
-          continue;
+//     // Look to see if Sema has synthesized a body for us. This happens in
+//     // Objective-C++ because the return value may be a C++ class type with a
+//     // non-trivial copy constructor. We can only do this if we can find the
+//     // @synthesize for this property, though (or if we know it's been auto-
+//     // synthesized).
+//     const ObjCImplementationDecl *ImplDecl =
+//       IVar->getContainingInterface()->getImplementation();
+//     if (ImplDecl) {
+//       for (const auto *I : ImplDecl->property_impls()) {
+//         if (I->getPropertyDecl() != Prop)
+//           continue;
 
-        if (I->getGetterCXXConstructor()) {
-          ASTMaker M(Ctx);
-          return M.makeReturn(I->getGetterCXXConstructor());
-        }
-      }
-    }
+//         if (I->getGetterCXXConstructor()) {
+//           ASTMaker M(Ctx);
+//           return M.makeReturn(I->getGetterCXXConstructor());
+//         }
+//       }
+//     }
 
-    // Sanity check that the property is the same type as the ivar, or a
-    // reference to it, and that it is either an object pointer or trivially
-    // copyable.
-    if (!Ctx.hasSameUnqualifiedType(IVar->getType(),
-                                    Prop->getType().getNonReferenceType()))
-      return nullptr;
-    if (!IVar->getType()->isObjCLifetimeType() &&
-        !IVar->getType().isTriviallyCopyableType(Ctx))
-      return nullptr;
-  }
+//     // Sanity check that the property is the same type as the ivar, or a
+//     // reference to it, and that it is either an object pointer or trivially
+//     // copyable.
+//     if (!Ctx.hasSameUnqualifiedType(IVar->getType(),
+//                                     Prop->getType().getNonReferenceType()))
+//       return nullptr;
+//     if (!IVar->getType()->isObjCLifetimeType() &&
+//         !IVar->getType().isTriviallyCopyableType(Ctx))
+//       return nullptr;
+//   }
 
-  // Generate our body:
-  //   return self->_ivar;
-  ASTMaker M(Ctx);
+//   // Generate our body:
+//   //   return self->_ivar;
+//   ASTMaker M(Ctx);
 
-  const VarDecl *selfVar = MD->getSelfDecl();
-  if (!selfVar)
-    return nullptr;
+//   const VarDecl *selfVar = MD->getSelfDecl();
+//   if (!selfVar)
+//     return nullptr;
 
-  Expr *loadedIVar =
-    M.makeObjCIvarRef(
-      M.makeLvalueToRvalue(
-        M.makeDeclRefExpr(selfVar),
-        selfVar->getType()),
-      IVar);
+//   Expr *loadedIVar =
+//     M.makeObjCIvarRef(
+//       M.makeLvalueToRvalue(
+//         M.makeDeclRefExpr(selfVar),
+//         selfVar->getType()),
+//       IVar);
 
-  if (!MD->getReturnType()->isReferenceType())
-    loadedIVar = M.makeLvalueToRvalue(loadedIVar, IVar->getType());
+//   if (!MD->getReturnType()->isReferenceType())
+//     loadedIVar = M.makeLvalueToRvalue(loadedIVar, IVar->getType());
 
-  return M.makeReturn(loadedIVar);
-}
+//   return M.makeReturn(loadedIVar);
+// }
 
-Stmt *BodyFarm::getBody(const ObjCMethodDecl *D) {
-  // We currently only know how to synthesize property accessors.
-  if (!D->isPropertyAccessor())
-    return nullptr;
+// Stmt *BodyFarm::getBody(const ObjCMethodDecl *D) {
+//   // We currently only know how to synthesize property accessors.
+//   if (!D->isPropertyAccessor())
+//     return nullptr;
 
-  D = D->getCanonicalDecl();
+//   D = D->getCanonicalDecl();
 
-  // We should not try to synthesize explicitly redefined accessors.
-  // We do not know for sure how they behave.
-  if (!D->isImplicit())
-    return nullptr;
+//   // We should not try to synthesize explicitly redefined accessors.
+//   // We do not know for sure how they behave.
+//   if (!D->isImplicit())
+//     return nullptr;
 
-  Optional<Stmt *> &Val = Bodies[D];
-  if (Val.hasValue())
-    return Val.getValue();
-  Val = nullptr;
+//   Optional<Stmt *> &Val = Bodies[D];
+//   if (Val.hasValue())
+//     return Val.getValue();
+//   Val = nullptr;
 
-  // For now, we only synthesize getters.
-  // Synthesizing setters would cause false negatives in the
-  // RetainCountChecker because the method body would bind the parameter
-  // to an instance variable, causing it to escape. This would prevent
-  // warning in the following common scenario:
-  //
-  //  id foo = [[NSObject alloc] init];
-  //  self.foo = foo; // We should warn that foo leaks here.
-  //
-  if (D->param_size() != 0)
-    return nullptr;
+//   // For now, we only synthesize getters.
+//   // Synthesizing setters would cause false negatives in the
+//   // RetainCountChecker because the method body would bind the parameter
+//   // to an instance variable, causing it to escape. This would prevent
+//   // warning in the following common scenario:
+//   //
+//   //  id foo = [[NSObject alloc] init];
+//   //  self.foo = foo; // We should warn that foo leaks here.
+//   //
+//   if (D->param_size() != 0)
+//     return nullptr;
 
-  // If the property was defined in an extension, search the extensions for
-  // overrides.
-  const ObjCInterfaceDecl *OID = D->getClassInterface();
-  if (dyn_cast<ObjCInterfaceDecl>(D->getParent()) != OID)
-    for (auto *Ext : OID->known_extensions()) {
-      auto *OMD = Ext->getInstanceMethod(D->getSelector());
-      if (OMD && !OMD->isImplicit())
-        return nullptr;
-    }
+//   // If the property was defined in an extension, search the extensions for
+//   // overrides.
+//   // const ObjCInterfaceDecl *OID = D->getClassInterface();
+//   // if (dyn_cast<ObjCInterfaceDecl>(D->getParent()) != OID)
+//   //   for (auto *Ext : OID->known_extensions()) {
+//   //     auto *OMD = Ext->getInstanceMethod(D->getSelector());
+//   //     if (OMD && !OMD->isImplicit())
+//   //       return nullptr;
+//   //   }
 
-  Val = createObjCPropertyGetter(C, D);
+//   // Val = createObjCPropertyGetter(C, D);
 
-  return Val.getValue();
-}
+//   // return Val.getValue();
+//   return nullptr;
+// }

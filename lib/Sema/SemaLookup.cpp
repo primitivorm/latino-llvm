@@ -16,7 +16,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclLookups.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -1292,21 +1292,21 @@ bool Sema::CppLookupName(LookupResult &R, Scope *S) {
         if (Ctx->isFunctionOrMethod()) {
           // If we have an Objective-C instance method, look for ivars
           // in the corresponding interface.
-          if (ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(Ctx)) {
-            if (Method->isInstanceMethod() && Name.getAsIdentifierInfo())
-              if (ObjCInterfaceDecl *Class = Method->getClassInterface()) {
-                ObjCInterfaceDecl *ClassDeclared;
-                if (ObjCIvarDecl *Ivar = Class->lookupInstanceVariable(
-                                                 Name.getAsIdentifierInfo(),
-                                                             ClassDeclared)) {
-                  if (NamedDecl *ND = R.getAcceptableDecl(Ivar)) {
-                    R.addDecl(ND);
-                    R.resolveKind();
-                    return true;
-                  }
-                }
-              }
-          }
+          // if (ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(Ctx)) {
+          //   if (Method->isInstanceMethod() && Name.getAsIdentifierInfo())
+          //     if (ObjCInterfaceDecl *Class = Method->getClassInterface()) {
+          //       ObjCInterfaceDecl *ClassDeclared;
+          //       if (ObjCIvarDecl *Ivar = Class->lookupInstanceVariable(
+          //                                        Name.getAsIdentifierInfo(),
+          //                                                    ClassDeclared)) {
+          //         if (NamedDecl *ND = R.getAcceptableDecl(Ivar)) {
+          //           R.addDecl(ND);
+          //           R.resolveKind();
+          //           return true;
+          //         }
+          //       }
+          //     }
+          // }
 
           continue;
         }
@@ -2887,11 +2887,11 @@ addAssociatedClassesAndNamespaces(AssociatedLookup &Result, QualType Ty) {
     // If T is an Objective-C object or interface type, or a pointer to an
     // object or interface type, the associated namespace is the global
     // namespace.
-    case Type::ObjCObject:
-    case Type::ObjCInterface:
-    case Type::ObjCObjectPointer:
-      Result.Namespaces.insert(Result.S.Context.getTranslationUnitDecl());
-      break;
+    // case Type::ObjCObject:
+    // case Type::ObjCInterface:
+    // case Type::ObjCObjectPointer:
+    //   Result.Namespaces.insert(Result.S.Context.getTranslationUnitDecl());
+    //   break;
 
     // Atomic types are just wrappers; use the associations of the
     // contained type.
@@ -2971,13 +2971,13 @@ NamedDecl *Sema::LookupSingleName(Scope *S, DeclarationName Name,
 }
 
 /// Find the protocol with the given name, if any.
-ObjCProtocolDecl *Sema::LookupProtocol(IdentifierInfo *II,
-                                       SourceLocation IdLoc,
-                                       RedeclarationKind Redecl) {
-  Decl *D = LookupSingleName(TUScope, II, IdLoc,
-                             LookupObjCProtocolName, Redecl);
-  return cast_or_null<ObjCProtocolDecl>(D);
-}
+// ObjCProtocolDecl *Sema::LookupProtocol(IdentifierInfo *II,
+//                                        SourceLocation IdLoc,
+//                                        RedeclarationKind Redecl) {
+//   Decl *D = LookupSingleName(TUScope, II, IdLoc,
+//                              LookupObjCProtocolName, Redecl);
+//   return cast_or_null<ObjCProtocolDecl>(D);
+// }
 
 void Sema::LookupOverloadedOperatorName(OverloadedOperatorKind Op, Scope *S,
                                         QualType T1, QualType T2,
@@ -3826,55 +3826,56 @@ private:
     }
 
     // Traverse the contexts of Objective-C classes.
-    if (ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(Ctx)) {
-      // Traverse categories.
-      for (auto *Cat : IFace->visible_categories()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(Cat, Result, QualifiedNameLookup,
-                            /*InBaseClass=*/false);
-      }
+    // if (ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(Ctx)) {
+    //   // Traverse categories.
+    //   for (auto *Cat : IFace->visible_categories()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(Cat, Result, QualifiedNameLookup,
+    //                         /*InBaseClass=*/false);
+    //   }
 
-      // Traverse protocols.
-      for (auto *I : IFace->all_referenced_protocols()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(I, Result, QualifiedNameLookup,
-                            /*InBaseClass=*/false);
-      }
+    //   // Traverse protocols.
+    //   for (auto *I : IFace->all_referenced_protocols()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(I, Result, QualifiedNameLookup,
+    //                         /*InBaseClass=*/false);
+    //   }
 
-      // Traverse the superclass.
-      if (IFace->getSuperClass()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(IFace->getSuperClass(), Result, QualifiedNameLookup,
-                            /*InBaseClass=*/true);
-      }
+    //   // Traverse the superclass.
+    //   if (IFace->getSuperClass()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(IFace->getSuperClass(), Result, QualifiedNameLookup,
+    //                         /*InBaseClass=*/true);
+    //   }
 
-      // If there is an implementation, traverse it. We do this to find
-      // synthesized ivars.
-      if (IFace->getImplementation()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(IFace->getImplementation(), Result,
-                            QualifiedNameLookup, InBaseClass);
-      }
-    } else if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Ctx)) {
-      for (auto *I : Protocol->protocols()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(I, Result, QualifiedNameLookup,
-                            /*InBaseClass=*/false);
-      }
-    } else if (ObjCCategoryDecl *Category = dyn_cast<ObjCCategoryDecl>(Ctx)) {
-      for (auto *I : Category->protocols()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(I, Result, QualifiedNameLookup,
-                            /*InBaseClass=*/false);
-      }
+    //   // If there is an implementation, traverse it. We do this to find
+    //   // synthesized ivars.
+    //   if (IFace->getImplementation()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(IFace->getImplementation(), Result,
+    //                         QualifiedNameLookup, InBaseClass);
+    //   }
+    // } 
+    // else if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Ctx)) {
+    //   for (auto *I : Protocol->protocols()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(I, Result, QualifiedNameLookup,
+    //                         /*InBaseClass=*/false);
+    //   }
+    // } else if (ObjCCategoryDecl *Category = dyn_cast<ObjCCategoryDecl>(Ctx)) {
+    //   for (auto *I : Category->protocols()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(I, Result, QualifiedNameLookup,
+    //                         /*InBaseClass=*/false);
+    //   }
 
-      // If there is an implementation, traverse it.
-      if (Category->getImplementation()) {
-        ShadowContextRAII Shadow(Visited);
-        lookupInDeclContext(Category->getImplementation(), Result,
-                            QualifiedNameLookup, /*InBaseClass=*/true);
-      }
-    }
+    //   // If there is an implementation, traverse it.
+    //   if (Category->getImplementation()) {
+    //     ShadowContextRAII Shadow(Visited);
+    //     lookupInDeclContext(Category->getImplementation(), Result,
+    //                         QualifiedNameLookup, /*InBaseClass=*/true);
+    //   }
+    // }
   }
 
   void lookupInScope(Scope *S, LookupResult &Result,
@@ -3911,24 +3912,24 @@ private:
 
       for (DeclContext *Ctx = Entity; Ctx && !Ctx->Equals(OuterCtx);
            Ctx = Ctx->getLookupParent()) {
-        if (ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(Ctx)) {
-          if (Method->isInstanceMethod()) {
-            // For instance methods, look for ivars in the method's interface.
-            LookupResult IvarResult(Result.getSema(), Result.getLookupName(),
-                                    Result.getNameLoc(),
-                                    Sema::LookupMemberName);
-            if (ObjCInterfaceDecl *IFace = Method->getClassInterface()) {
-              lookupInDeclContext(IFace, IvarResult,
-                                  /*QualifiedNameLookup=*/false,
-                                  /*InBaseClass=*/false);
-            }
-          }
+        // if (ObjCMethodDecl *Method = dyn_cast<ObjCMethodDecl>(Ctx)) {
+        //   if (Method->isInstanceMethod()) {
+        //     // For instance methods, look for ivars in the method's interface.
+        //     LookupResult IvarResult(Result.getSema(), Result.getLookupName(),
+        //                             Result.getNameLoc(),
+        //                             Sema::LookupMemberName);
+        //     // if (ObjCInterfaceDecl *IFace = Method->getClassInterface()) {
+        //     //   lookupInDeclContext(IFace, IvarResult,
+        //     //                       /*QualifiedNameLookup=*/false,
+        //     //                       /*InBaseClass=*/false);
+        //     // }
+        //   }
 
-          // We've already performed all of the name lookup that we need
-          // to for Objective-C methods; the next context will be the
-          // outer scope.
-          break;
-        }
+        //   // We've already performed all of the name lookup that we need
+        //   // to for Objective-C methods; the next context will be the
+        //   // outer scope.
+        //   break;
+        // }
 
         if (Ctx->isFunctionOrMethod())
           continue;
@@ -4542,44 +4543,44 @@ static void LookupPotentialTypoResult(Sema &SemaRef,
   Res.setLookupName(Name);
   Res.setAllowHidden(FindHidden);
   if (MemberContext) {
-    if (ObjCInterfaceDecl *Class = dyn_cast<ObjCInterfaceDecl>(MemberContext)) {
-      if (isObjCIvarLookup) {
-        if (ObjCIvarDecl *Ivar = Class->lookupInstanceVariable(Name)) {
-          Res.addDecl(Ivar);
-          Res.resolveKind();
-          return;
-        }
-      }
+    // if (ObjCInterfaceDecl *Class = dyn_cast<ObjCInterfaceDecl>(MemberContext)) {
+    //   if (isObjCIvarLookup) {
+    //     if (ObjCIvarDecl *Ivar = Class->lookupInstanceVariable(Name)) {
+    //       Res.addDecl(Ivar);
+    //       Res.resolveKind();
+    //       return;
+    //     }
+    //   }
 
-      if (ObjCPropertyDecl *Prop = Class->FindPropertyDeclaration(
-              Name, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
-        Res.addDecl(Prop);
-        Res.resolveKind();
-        return;
-      }
-    }
+    //   if (ObjCPropertyDecl *Prop = Class->FindPropertyDeclaration(
+    //           Name, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
+    //     Res.addDecl(Prop);
+    //     Res.resolveKind();
+    //     return;
+    //   }
+    // }
 
     SemaRef.LookupQualifiedName(Res, MemberContext);
     return;
   }
 
-  SemaRef.LookupParsedName(Res, S, SS, /*AllowBuiltinCreation=*/false,
-                           EnteringContext);
+  // SemaRef.LookupParsedName(Res, S, SS, /*AllowBuiltinCreation=*/false,
+  //                          EnteringContext);
 
   // Fake ivar lookup; this should really be part of
   // LookupParsedName.
-  if (ObjCMethodDecl *Method = SemaRef.getCurMethodDecl()) {
-    if (Method->isInstanceMethod() && Method->getClassInterface() &&
-        (Res.empty() ||
-         (Res.isSingleResult() &&
-          Res.getFoundDecl()->isDefinedOutsideFunctionOrMethod()))) {
-       if (ObjCIvarDecl *IV
-             = Method->getClassInterface()->lookupInstanceVariable(Name)) {
-         Res.addDecl(IV);
-         Res.resolveKind();
-       }
-     }
-  }
+  // if (ObjCMethodDecl *Method = SemaRef.getCurMethodDecl()) {
+  //   if (Method->isInstanceMethod() && Method->getClassInterface() &&
+  //       (Res.empty() ||
+  //        (Res.isSingleResult() &&
+  //         Res.getFoundDecl()->isDefinedOutsideFunctionOrMethod()))) {
+  //      if (ObjCIvarDecl *IV
+  //            = Method->getClassInterface()->lookupInstanceVariable(Name)) {
+  //        Res.addDecl(IV);
+  //        Res.resolveKind();
+  //      }
+  //    }
+  // }
 }
 
 /// Add keywords to the consumer as possible typo corrections.
@@ -5225,10 +5226,10 @@ static NamedDecl *getDefinitionToImport(NamedDecl *D) {
   // The first definition for this ObjCInterfaceDecl might be in the TU
   // and not associated with any module. Use the one we know to be complete
   // and have just seen in a module.
-  if (ObjCInterfaceDecl *ID = dyn_cast<ObjCInterfaceDecl>(D))
-    return ID;
-  if (ObjCProtocolDecl *PD = dyn_cast<ObjCProtocolDecl>(D))
-    return PD->getDefinition();
+  // if (ObjCInterfaceDecl *ID = dyn_cast<ObjCInterfaceDecl>(D))
+  //   return ID;
+  // if (ObjCProtocolDecl *PD = dyn_cast<ObjCProtocolDecl>(D))
+  //   return PD->getDefinition();
   if (TemplateDecl *TD = dyn_cast<TemplateDecl>(D))
     if (NamedDecl *TTD = TD->getTemplatedDecl())
       return getDefinitionToImport(TTD);

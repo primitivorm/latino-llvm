@@ -775,32 +775,32 @@ const internal::VariadicDynCastAllOfMatcher<Stmt, CallExpr> callExpr;
 const internal::VariadicDynCastAllOfMatcher<Stmt, LambdaExpr> lambdaExpr;
 const internal::VariadicDynCastAllOfMatcher<Stmt, CXXMemberCallExpr>
     cxxMemberCallExpr;
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCMessageExpr>
-    objcMessageExpr;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCInterfaceDecl>
-    objcInterfaceDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCImplementationDecl>
-    objcImplementationDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCProtocolDecl>
-    objcProtocolDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryDecl>
-    objcCategoryDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryImplDecl>
-    objcCategoryImplDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCMethodDecl>
-    objcMethodDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, BlockDecl>
-    blockDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCIvarDecl> objcIvarDecl;
-const internal::VariadicDynCastAllOfMatcher<Decl, ObjCPropertyDecl>
-    objcPropertyDecl;
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtThrowStmt>
-    objcThrowStmt;
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtTryStmt> objcTryStmt;
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtCatchStmt>
-    objcCatchStmt;
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtFinallyStmt>
-    objcFinallyStmt;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCMessageExpr>
+//     objcMessageExpr;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCInterfaceDecl>
+//     objcInterfaceDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCImplementationDecl>
+//     objcImplementationDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCProtocolDecl>
+//     objcProtocolDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryDecl>
+//     objcCategoryDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryImplDecl>
+//     objcCategoryImplDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCMethodDecl>
+//     objcMethodDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, BlockDecl>
+//     blockDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCIvarDecl> objcIvarDecl;
+// const internal::VariadicDynCastAllOfMatcher<Decl, ObjCPropertyDecl>
+//     objcPropertyDecl;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtThrowStmt>
+//     objcThrowStmt;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtTryStmt> objcTryStmt;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtCatchStmt>
+//     objcCatchStmt;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtFinallyStmt>
+//     objcFinallyStmt;
 const internal::VariadicDynCastAllOfMatcher<Stmt, ExprWithCleanups>
     exprWithCleanups;
 const internal::VariadicDynCastAllOfMatcher<Stmt, InitListExpr> initListExpr;
@@ -988,7 +988,7 @@ const AstTypeMatcher<ParenType> parenType;
 const AstTypeMatcher<BlockPointerType> blockPointerType;
 const AstTypeMatcher<MemberPointerType> memberPointerType;
 const AstTypeMatcher<PointerType> pointerType;
-const AstTypeMatcher<ObjCObjectPointerType> objcObjectPointerType;
+// const AstTypeMatcher<ObjCObjectPointerType> objcObjectPointerType;
 const AstTypeMatcher<ReferenceType> referenceType;
 const AstTypeMatcher<LValueReferenceType> lValueReferenceType;
 const AstTypeMatcher<RValueReferenceType> rValueReferenceType;

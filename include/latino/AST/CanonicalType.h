@@ -34,7 +34,7 @@ class CXXRecordDecl;
 class EnumDecl;
 class Expr;
 class IdentifierInfo;
-class ObjCInterfaceDecl;
+// class ObjCInterfaceDecl;
 class RecordDecl;
 class TagDecl;
 class TemplateTypeParmDecl;
@@ -575,43 +575,43 @@ struct CanProxyAdaptor<TemplateTypeParmType>
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(IdentifierInfo *, getIdentifier)
 };
 
-template<>
-struct CanProxyAdaptor<ObjCObjectType>
-  : public CanProxyBase<ObjCObjectType> {
-  LLVM_LATINO_CANPROXY_TYPE_ACCESSOR(getBaseType)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(const ObjCInterfaceDecl *,
-                                      getInterface)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCUnqualifiedId)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCUnqualifiedClass)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedId)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedClass)
+// template<>
+// struct CanProxyAdaptor<ObjCObjectType>
+//   : public CanProxyBase<ObjCObjectType> {
+//   LLVM_LATINO_CANPROXY_TYPE_ACCESSOR(getBaseType)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(const ObjCInterfaceDecl *,
+//                                       getInterface)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCUnqualifiedId)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCUnqualifiedClass)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedId)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedClass)
 
-  using qual_iterator = ObjCObjectPointerType::qual_iterator;
+//   using qual_iterator = ObjCObjectPointerType::qual_iterator;
 
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_begin)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_end)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, qual_empty)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(unsigned, getNumProtocols)
-};
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_begin)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_end)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, qual_empty)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(unsigned, getNumProtocols)
+// };
 
-template<>
-struct CanProxyAdaptor<ObjCObjectPointerType>
-  : public CanProxyBase<ObjCObjectPointerType> {
-  LLVM_LATINO_CANPROXY_TYPE_ACCESSOR(getPointeeType)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(const ObjCInterfaceType *,
-                                      getInterfaceType)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCIdType)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCClassType)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedIdType)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedClassType)
+// template<>
+// struct CanProxyAdaptor<ObjCObjectPointerType>
+//   : public CanProxyBase<ObjCObjectPointerType> {
+//   LLVM_LATINO_CANPROXY_TYPE_ACCESSOR(getPointeeType)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(const ObjCInterfaceType *,
+//                                       getInterfaceType)
+//   // LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCIdType)
+//   // LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCClassType)
+//   // LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedIdType)
+//   // LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isObjCQualifiedClassType)
 
-  using qual_iterator = ObjCObjectPointerType::qual_iterator;
+//   using qual_iterator = ObjCObjectPointerType::qual_iterator;
 
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_begin)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_end)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, qual_empty)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(unsigned, getNumProtocols)
-};
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_begin)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(qual_iterator, qual_end)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, qual_empty)
+//   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(unsigned, getNumProtocols)
+// };
 
 //----------------------------------------------------------------------------//
 // Method and function definitions

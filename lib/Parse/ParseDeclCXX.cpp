@@ -594,7 +594,7 @@ bool Parser::ParseUsingDeclarator(DeclaratorContext Context,
   // FIXME: This is wrong; we should parse this as a typename-specifier.
   TryConsumeToken(tok::kw_typename, D.TypenameLoc);
 
-  if (Tok.is(tok::kw___super)) {
+  if (Tok.is(tok::kw_base)) {
     Diag(Tok.getLocation(), diag::err_super_in_using_declaration);
     return true;
   }
@@ -2488,7 +2488,7 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
   // Access declarations.
   bool MalformedTypeSpec = false;
   if (!TemplateInfo.Kind &&
-      Tok.isOneOf(tok::identifier, tok::coloncolon, tok::kw___super)) {
+      Tok.isOneOf(tok::identifier, tok::coloncolon, tok::kw_base)) {
     if (TryAnnotateCXXScopeToken())
       MalformedTypeSpec = true;
 

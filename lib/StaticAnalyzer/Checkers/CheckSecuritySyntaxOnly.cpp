@@ -85,7 +85,7 @@ public:
 
   // Statement visitor methods.
   void VisitCallExpr(CallExpr *CE);
-  void VisitObjCMessageExpr(ObjCMessageExpr *CE);
+  // void VisitObjCMessageExpr(ObjCMessageExpr *CE);
   void VisitForStmt(ForStmt *S);
   void VisitCompoundStmt (CompoundStmt *S);
   void VisitStmt(Stmt *S) { VisitChildren(S); }
@@ -187,19 +187,19 @@ void WalkAST::VisitCallExpr(CallExpr *CE) {
   VisitChildren(CE);
 }
 
-void WalkAST::VisitObjCMessageExpr(ObjCMessageExpr *ME) {
-  MsgCheck evalFunction =
-      llvm::StringSwitch<MsgCheck>(ME->getSelector().getAsString())
-          .Case("decodeValueOfObjCType:at:",
-                &WalkAST::checkMsg_decodeValueOfObjCType)
-          .Default(nullptr);
+// void WalkAST::VisitObjCMessageExpr(ObjCMessageExpr *ME) {
+//   MsgCheck evalFunction =
+//       llvm::StringSwitch<MsgCheck>(ME->getSelector().getAsString())
+//           .Case("decodeValueOfObjCType:at:",
+//                 &WalkAST::checkMsg_decodeValueOfObjCType)
+//           .Default(nullptr);
 
-  if (evalFunction)
-    (this->*evalFunction)(ME);
+//   if (evalFunction)
+//     (this->*evalFunction)(ME);
 
-  // Recurse and check children.
-  VisitChildren(ME);
-}
+//   // Recurse and check children.
+//   VisitChildren(ME);
+// }
 
 void WalkAST::VisitCompoundStmt(CompoundStmt *S) {
   for (Stmt *Child : S->children())

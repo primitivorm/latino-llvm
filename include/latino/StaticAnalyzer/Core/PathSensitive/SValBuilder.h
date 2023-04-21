@@ -17,7 +17,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"

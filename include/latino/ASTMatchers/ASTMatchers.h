@@ -51,11 +51,11 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/OpenMPClause.h"
@@ -63,7 +63,7 @@
 #include "latino/AST/ParentMapContext.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/TemplateBase.h"
 #include "latino/AST/TemplateName.h"
@@ -1464,8 +1464,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCMessageExpr>
 ///   @interface Foo
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCInterfaceDecl>
-    objcInterfaceDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCInterfaceDecl>
+//     objcInterfaceDecl;
 
 /// Matches Objective-C implementation declarations.
 ///
@@ -1484,8 +1484,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCImplementationDecl>
 ///   @protocol FooDelegate
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCProtocolDecl>
-    objcProtocolDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCProtocolDecl>
+//     objcProtocolDecl;
 
 /// Matches Objective-C category declarations.
 ///
@@ -1494,8 +1494,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCProtocolDecl>
 ///   @interface Foo (Additions)
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryDecl>
-    objcCategoryDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryDecl>
+//     objcCategoryDecl;
 
 /// Matches Objective-C category definitions.
 ///
@@ -1504,8 +1504,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryDecl>
 ///   @implementation Foo (Additions)
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryImplDecl>
-    objcCategoryImplDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryImplDecl>
+//     objcCategoryImplDecl;
 
 /// Matches Objective-C method declarations.
 ///
@@ -1519,7 +1519,7 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCCategoryImplDecl>
 ///   - (void)method {}
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCMethodDecl>
+extern const internal::VariadicDynCastAllOfMatcher<Decl/*, ObjCMethodDecl*/>
     objcMethodDecl;
 
 /// Matches block declarations.
@@ -1544,8 +1544,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, BlockDecl>
 ///   }
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCIvarDecl>
-    objcIvarDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCIvarDecl>
+//     objcIvarDecl;
 
 /// Matches Objective-C property declarations.
 ///
@@ -1555,8 +1555,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCIvarDecl>
 ///   @property BOOL enabled;
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCPropertyDecl>
-    objcPropertyDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCPropertyDecl>
+//     objcPropertyDecl;
 
 /// Matches Objective-C \@throw statements.
 ///
@@ -2829,22 +2829,22 @@ extern const internal::VariadicFunction<
 /// Usable as: Matcher<CXXRecordDecl>, Matcher<ObjCInterfaceDecl>
 AST_POLYMORPHIC_MATCHER_P(
     isDerivedFrom,
-    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl, ObjCInterfaceDecl),
+    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl/*, ObjCInterfaceDecl*/),
     internal::Matcher<NamedDecl>, Base) {
   // Check if the node is a C++ struct/union/class.
   if (const auto *RD = dyn_cast<CXXRecordDecl>(&Node))
     return Finder->classIsDerivedFrom(RD, Base, Builder, /*Directly=*/false);
 
   // The node must be an Objective-C class.
-  const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
-  return Finder->objcClassIsDerivedFrom(InterfaceDecl, Base, Builder,
-                                        /*Directly=*/false);
+  // const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
+  // return Finder->objcClassIsDerivedFrom(InterfaceDecl, Base, Builder,
+  //                                       /*Directly=*/false);
 }
 
 /// Overloaded method as shortcut for \c isDerivedFrom(hasName(...)).
 AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
     isDerivedFrom,
-    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl, ObjCInterfaceDecl),
+    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl/*, ObjCInterfaceDecl*/),
     std::string, BaseName, 1) {
   if (BaseName.empty())
     return false;
@@ -2854,8 +2854,8 @@ AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
   if (const auto *RD = dyn_cast<CXXRecordDecl>(&Node))
     return Matcher<CXXRecordDecl>(M).matches(*RD, Finder, Builder);
 
-  const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
-  return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
+  // const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
+  // return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
 }
 
 /// Matches C++ classes that have a direct or indirect base matching \p
@@ -2902,22 +2902,22 @@ AST_MATCHER_P(CXXRecordDecl, hasDirectBase, internal::Matcher<CXXBaseSpecifier>,
 /// match \c Base.
 AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
     isSameOrDerivedFrom,
-    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl, ObjCInterfaceDecl),
+    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl/*, ObjCInterfaceDecl*/),
     internal::Matcher<NamedDecl>, Base, 0) {
   const auto M = anyOf(Base, isDerivedFrom(Base));
 
   if (const auto *RD = dyn_cast<CXXRecordDecl>(&Node))
     return Matcher<CXXRecordDecl>(M).matches(*RD, Finder, Builder);
 
-  const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
-  return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
+  // const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
+  // return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
 }
 
 /// Overloaded method as shortcut for
 /// \c isSameOrDerivedFrom(hasName(...)).
 AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
     isSameOrDerivedFrom,
-    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl, ObjCInterfaceDecl),
+    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl/*, ObjCInterfaceDecl*/),
     std::string, BaseName, 1) {
   if (BaseName.empty())
     return false;
@@ -2927,8 +2927,8 @@ AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
   if (const auto *RD = dyn_cast<CXXRecordDecl>(&Node))
     return Matcher<CXXRecordDecl>(M).matches(*RD, Finder, Builder);
 
-  const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
-  return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
+  // const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
+  // return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
 }
 
 /// Matches C++ or Objective-C classes that are directly derived from a class
@@ -2954,22 +2954,22 @@ AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
 /// \endcode
 AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
     isDirectlyDerivedFrom,
-    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl, ObjCInterfaceDecl),
+    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl/*, ObjCInterfaceDecl*/),
     internal::Matcher<NamedDecl>, Base, 0) {
   // Check if the node is a C++ struct/union/class.
   if (const auto *RD = dyn_cast<CXXRecordDecl>(&Node))
     return Finder->classIsDerivedFrom(RD, Base, Builder, /*Directly=*/true);
 
   // The node must be an Objective-C class.
-  const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
-  return Finder->objcClassIsDerivedFrom(InterfaceDecl, Base, Builder,
-                                        /*Directly=*/true);
+  // const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
+  // return Finder->objcClassIsDerivedFrom(InterfaceDecl, Base, Builder,
+  //                                       /*Directly=*/true);
 }
 
 /// Overloaded method as shortcut for \c isDirectlyDerivedFrom(hasName(...)).
 AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
     isDirectlyDerivedFrom,
-    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl, ObjCInterfaceDecl),
+    AST_POLYMORPHIC_SUPPORTED_TYPES(CXXRecordDecl/*, ObjCInterfaceDecl*/),
     std::string, BaseName, 1) {
   if (BaseName.empty())
     return false;
@@ -2978,8 +2978,8 @@ AST_POLYMORPHIC_MATCHER_P_OVERLOAD(
   if (const auto *RD = dyn_cast<CXXRecordDecl>(&Node))
     return Matcher<CXXRecordDecl>(M).matches(*RD, Finder, Builder);
 
-  const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
-  return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
+  // const auto *InterfaceDecl = cast<ObjCInterfaceDecl>(&Node);
+  // return Matcher<ObjCInterfaceDecl>(M).matches(*InterfaceDecl, Finder, Builder);
 }
 /// Matches the first method of a class or struct that satisfies \c
 /// InnerMatcher.
@@ -3283,9 +3283,9 @@ AST_MATCHER_P(ObjCMessageExpr, hasReceiverType, internal::Matcher<QualType>,
 /// \code
 /// @interface I - (void)bar; @end
 /// \endcode
-AST_MATCHER(ObjCMethodDecl, isClassMethod) {
-  return Node.isClassMethod();
-}
+// AST_MATCHER(ObjCMethodDecl, isClassMethod) {
+//   return Node.isClassMethod();
+// }
 
 /// Returns true when the Objective-C method declaration is an instance method.
 ///
@@ -3299,9 +3299,9 @@ AST_MATCHER(ObjCMethodDecl, isClassMethod) {
 /// \code
 /// @interface I + (void)foo; @end
 /// \endcode
-AST_MATCHER(ObjCMethodDecl, isInstanceMethod) {
-  return Node.isInstanceMethod();
-}
+// AST_MATCHER(ObjCMethodDecl, isInstanceMethod) {
+//   return Node.isInstanceMethod();
+// }
 
 /// Returns true when the Objective-C message is sent to a class.
 ///
@@ -4262,7 +4262,7 @@ AST_MATCHER(CXXConstructExpr, requiresZeroInitialization) {
 /// matching y.
 AST_POLYMORPHIC_MATCHER_P2(hasParameter,
                            AST_POLYMORPHIC_SUPPORTED_TYPES(FunctionDecl,
-                                                           ObjCMethodDecl,
+                                                          //  ObjCMethodDecl,
                                                            BlockDecl),
                            unsigned, N, internal::Matcher<ParmVarDecl>,
                            InnerMatcher) {
@@ -4346,8 +4346,8 @@ AST_MATCHER_P(ParmVarDecl, isAtPosition, unsigned, N) {
     return N < Decl->param_size() && Decl->getParamDecl(N) == &Node;
   if (const auto *Decl = dyn_cast_or_null<BlockDecl>(Context))
     return N < Decl->param_size() && Decl->getParamDecl(N) == &Node;
-  if (const auto *Decl = dyn_cast_or_null<ObjCMethodDecl>(Context))
-    return N < Decl->param_size() && Decl->getParamDecl(N) == &Node;
+  // if (const auto *Decl = dyn_cast_or_null<ObjCMethodDecl>(Context))
+  //   return N < Decl->param_size() && Decl->getParamDecl(N) == &Node;
 
   return false;
 }
@@ -4385,7 +4385,7 @@ AST_MATCHER_P(ParmVarDecl, isAtPosition, unsigned, N) {
 /// matching y.
 AST_POLYMORPHIC_MATCHER_P(hasAnyParameter,
                           AST_POLYMORPHIC_SUPPORTED_TYPES(FunctionDecl,
-                                                          ObjCMethodDecl,
+                                                          // ObjCMethodDecl,
                                                           BlockDecl),
                           internal::Matcher<ParmVarDecl>,
                           InnerMatcher) {
@@ -5160,7 +5160,7 @@ AST_MATCHER_P(AbstractConditionalOperator, hasFalseExpression,
 ///   Matcher<ObjCMethodDecl>
 AST_POLYMORPHIC_MATCHER(isDefinition,
                         AST_POLYMORPHIC_SUPPORTED_TYPES(TagDecl, VarDecl,
-                                                        ObjCMethodDecl,
+                                                        // ObjCMethodDecl,
                                                         FunctionDecl)) {
   return Node.isThisDeclarationADefinition();
 }
@@ -6105,7 +6105,7 @@ extern const AstTypeMatcher<PointerType> pointerType;
 /// \endcode
 /// pointerType()
 ///   matches "Foo *f", but does not match "int *a".
-extern const AstTypeMatcher<ObjCObjectPointerType> objcObjectPointerType;
+// extern const AstTypeMatcher<ObjCObjectPointerType> objcObjectPointerType;
 
 /// Matches both lvalue and rvalue reference types.
 ///

@@ -16,7 +16,8 @@
 
 #include "latino/Basic/CommentOptions.h"
 #include "latino/Basic/LLVM.h"
-#include "latino/Basic/ObjCRuntime.h"
+// #include "latino/Basic/ObjCRuntime.h"
+#include "llvm/Support/VersionTuple.h"
 #include "latino/Basic/Sanitizers.h"
 #include "latino/Basic/Visibility.h"
 #include "llvm/ADT/FloatingPointMode.h"
@@ -251,7 +252,7 @@ public:
   /// attribute(s).
   std::vector<std::string> XRayAttrListFiles;
 
-  latino::ObjCRuntime ObjCRuntime;
+  // latino::ObjCRuntime ObjCRuntime;
 
   CoreFoundationABI CFRuntime = CoreFoundationABI::Unspecified;
 
@@ -320,10 +321,10 @@ public:
     return getSignedOverflowBehavior() == SOB_Defined;
   }
 
-  bool isSubscriptPointerArithmetic() const {
-    return ObjCRuntime.isSubscriptPointerArithmetic() &&
-           !ObjCSubscriptingLegacyRuntime;
-  }
+  // bool isSubscriptPointerArithmetic() const {
+  //   return ObjCRuntime.isSubscriptPointerArithmetic() &&
+  //          !ObjCSubscriptingLegacyRuntime;
+  // }
 
   bool isCompatibleWithMSVC(MSVCMajorVersion MajorVersion) const {
     return MSCompatibilityVersion >= MajorVersion * 100000U;

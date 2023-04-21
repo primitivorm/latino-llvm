@@ -9,7 +9,7 @@
 #include "latino/AST/Comment.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/Basic/CharInfo.h"
 #include "llvm/Support/ErrorHandling.h"
@@ -249,16 +249,16 @@ void DeclInfo::fill() {
     }
     break;
   }
-  case Decl::ObjCMethod: {
-    const ObjCMethodDecl *MD = cast<ObjCMethodDecl>(CommentDecl);
-    Kind = FunctionKind;
-    ParamVars = MD->parameters();
-    ReturnType = MD->getReturnType();
-    IsObjCMethod = true;
-    IsInstanceMethod = MD->isInstanceMethod();
-    IsClassMethod = !IsInstanceMethod;
-    break;
-  }
+  // case Decl::ObjCMethod: {
+  //   const ObjCMethodDecl *MD = cast<ObjCMethodDecl>(CommentDecl);
+  //   Kind = FunctionKind;
+  //   ParamVars = MD->parameters();
+  //   ReturnType = MD->getReturnType();
+  //   IsObjCMethod = true;
+  //   IsInstanceMethod = MD->isInstanceMethod();
+  //   IsClassMethod = !IsInstanceMethod;
+  //   break;
+  // }
   case Decl::FunctionTemplate: {
     const FunctionTemplateDecl *FTD = cast<FunctionTemplateDecl>(CommentDecl);
     Kind = FunctionKind;
@@ -295,9 +295,10 @@ void DeclInfo::fill() {
   case Decl::Var:
   case Decl::Field:
   case Decl::EnumConstant:
-  case Decl::ObjCIvar:
-  case Decl::ObjCAtDefsField:
-  case Decl::ObjCProperty: {
+  // case Decl::ObjCIvar:
+  // case Decl::ObjCAtDefsField:
+  // case Decl::ObjCProperty: 
+  {
     const TypeSourceInfo *TSI;
     if (const auto *VD = dyn_cast<DeclaratorDecl>(CommentDecl))
       TSI = VD->getTypeSourceInfo();

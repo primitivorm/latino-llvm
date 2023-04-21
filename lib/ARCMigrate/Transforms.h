@@ -18,7 +18,7 @@ namespace latino {
   class Decl;
   class Stmt;
   class BlockDecl;
-  class ObjCMethodDecl;
+  // class ObjCMethodDecl;
   class FunctionDecl;
 
 namespace arcmt {
@@ -36,7 +36,7 @@ void rewriteAutoreleasePool(MigrationPass &pass);
 void rewriteUnbridgedCasts(MigrationPass &pass);
 void makeAssignARCSafe(MigrationPass &pass);
 void removeRetainReleaseDeallocFinalize(MigrationPass &pass);
-void removeZeroOutPropsInDeallocFinalize(MigrationPass &pass);
+// void removeZeroOutPropsInDeallocFinalize(MigrationPass &pass);
 void rewriteUnusedInitDelegate(MigrationPass &pass);
 void checkAPIUses(MigrationPass &pass);
 
@@ -196,10 +196,10 @@ public:
     return true;
   }
 
-  bool TraverseObjCMethodDecl(ObjCMethodDecl *D) {
-    SaveAndRestore<Decl *> SetParent(ParentD, D);
-    return base::TraverseObjCMethodDecl(D);
-  }
+  // bool TraverseObjCMethodDecl(ObjCMethodDecl *D) {
+  //   SaveAndRestore<Decl *> SetParent(ParentD, D);
+  //   return base::TraverseObjCMethodDecl(D);
+  // }
 };
 
 typedef llvm::DenseSet<Expr *> ExprSet;

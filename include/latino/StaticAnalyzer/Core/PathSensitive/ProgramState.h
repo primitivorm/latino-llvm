@@ -319,7 +319,7 @@ public:
                 const LocationContext *LC) const;
 
   /// Get the lvalue for an ivar reference.
-  SVal getLValue(const ObjCIvarDecl *decl, SVal base) const;
+  // SVal getLValue(const ObjCIvarDecl *decl, SVal base) const;
 
   /// Get the lvalue for a field reference.
   SVal getLValue(const FieldDecl *decl, SVal Base) const;
@@ -738,9 +738,9 @@ inline Loc ProgramState::getLValue(const CompoundLiteralExpr *literal,
   return getStateManager().StoreMgr->getLValueCompoundLiteral(literal, LC);
 }
 
-inline SVal ProgramState::getLValue(const ObjCIvarDecl *D, SVal Base) const {
-  return getStateManager().StoreMgr->getLValueIvar(D, Base);
-}
+// inline SVal ProgramState::getLValue(const ObjCIvarDecl *D, SVal Base) const {
+//   return getStateManager().StoreMgr->getLValueIvar(D, Base);
+// }
 
 inline SVal ProgramState::getLValue(const FieldDecl *D, SVal Base) const {
   return getStateManager().StoreMgr->getLValueField(D, Base);

@@ -13,7 +13,7 @@
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/VTableBuilder.h"
 #include "latino/Basic/TargetInfo.h"
@@ -692,7 +692,7 @@ protected:
 
   void Layout(const RecordDecl *D);
   void Layout(const CXXRecordDecl *D);
-  void Layout(const ObjCInterfaceDecl *D);
+  // void Layout(const ObjCInterfaceDecl *D);
 
   void LayoutFields(const RecordDecl *D);
   void LayoutField(const FieldDecl *D, bool InsertExtraPadding);
@@ -1349,28 +1349,28 @@ void ItaniumRecordLayoutBuilder::Layout(const CXXRecordDecl *RD) {
 #endif
 }
 
-void ItaniumRecordLayoutBuilder::Layout(const ObjCInterfaceDecl *D) {
-  if (ObjCInterfaceDecl *SD = D->getSuperClass()) {
-    const ASTRecordLayout &SL = Context.getASTObjCInterfaceLayout(SD);
+// void ItaniumRecordLayoutBuilder::Layout(const ObjCInterfaceDecl *D) {
+//   if (ObjCInterfaceDecl *SD = D->getSuperClass()) {
+//     const ASTRecordLayout &SL = Context.getASTObjCInterfaceLayout(SD);
 
-    UpdateAlignment(SL.getAlignment());
+//     UpdateAlignment(SL.getAlignment());
 
-    // We start laying out ivars not at the end of the superclass
-    // structure, but at the next byte following the last field.
-    setDataSize(SL.getDataSize());
-    setSize(getDataSize());
-  }
+//     // We start laying out ivars not at the end of the superclass
+//     // structure, but at the next byte following the last field.
+//     setDataSize(SL.getDataSize());
+//     setSize(getDataSize());
+//   }
 
-  InitializeLayout(D);
-  // Layout each ivar sequentially.
-  for (const ObjCIvarDecl *IVD = D->all_declared_ivar_begin(); IVD;
-       IVD = IVD->getNextIvar())
-    LayoutField(IVD, false);
+//   InitializeLayout(D);
+//   // Layout each ivar sequentially.
+//   for (const ObjCIvarDecl *IVD = D->all_declared_ivar_begin(); IVD;
+//        IVD = IVD->getNextIvar())
+//     LayoutField(IVD, false);
 
-  // Finally, round the size of the total struct up to the alignment of the
-  // struct itself.
-  FinishLayout(D);
-}
+//   // Finally, round the size of the total struct up to the alignment of the
+//   // struct itself.
+//   FinishLayout(D);
+// }
 
 void ItaniumRecordLayoutBuilder::LayoutFields(const RecordDecl *D) {
   // Layout each field, for now, just sequentially, respecting alignment.  In
@@ -2035,8 +2035,8 @@ void ItaniumRecordLayoutBuilder::CheckFieldPadding(
     unsigned UnpackedAlign, bool isPacked, const FieldDecl *D) {
   // We let objc ivars without warning, objc interfaces generally are not used
   // for padding tricks.
-  if (isa<ObjCIvarDecl>(D))
-    return;
+  // if (isa<ObjCIvarDecl>(D))
+  //   return;
 
   // Don't warn about structs created without a SourceLocation.  This can
   // be done by clients of the AST, such as codegen.
@@ -3190,89 +3190,89 @@ uint64_t ASTContext::getFieldOffset(const ValueDecl *VD) const {
   return OffsetInBits;
 }
 
-uint64_t ASTContext::lookupFieldBitOffset(const ObjCInterfaceDecl *OID,
-                                          const ObjCImplementationDecl *ID,
-                                          const ObjCIvarDecl *Ivar) const {
-  const ObjCInterfaceDecl *Container = Ivar->getContainingInterface();
+// uint64_t ASTContext::lookupFieldBitOffset(const ObjCInterfaceDecl *OID,
+//                                           const ObjCImplementationDecl *ID,
+//                                           const ObjCIvarDecl *Ivar) const {
+//   const ObjCInterfaceDecl *Container = Ivar->getContainingInterface();
 
-  // FIXME: We should eliminate the need to have ObjCImplementationDecl passed
-  // in here; it should never be necessary because that should be the lexical
-  // decl context for the ivar.
+//   // FIXME: We should eliminate the need to have ObjCImplementationDecl passed
+//   // in here; it should never be necessary because that should be the lexical
+//   // decl context for the ivar.
 
-  // If we know have an implementation (and the ivar is in it) then
-  // look up in the implementation layout.
-  const ASTRecordLayout *RL;
-  if (ID && declaresSameEntity(ID->getClassInterface(), Container))
-    RL = &getASTObjCImplementationLayout(ID);
-  else
-    RL = &getASTObjCInterfaceLayout(Container);
+//   // If we know have an implementation (and the ivar is in it) then
+//   // look up in the implementation layout.
+//   const ASTRecordLayout *RL;
+//   if (ID && declaresSameEntity(ID->getClassInterface(), Container))
+//     RL = &getASTObjCImplementationLayout(ID);
+//   else
+//     RL = &getASTObjCInterfaceLayout(Container);
 
-  // Compute field index.
-  //
-  // FIXME: The index here is closely tied to how ASTContext::getObjCLayout is
-  // implemented. This should be fixed to get the information from the layout
-  // directly.
-  unsigned Index = 0;
+//   // Compute field index.
+//   //
+//   // FIXME: The index here is closely tied to how ASTContext::getObjCLayout is
+//   // implemented. This should be fixed to get the information from the layout
+//   // directly.
+//   unsigned Index = 0;
 
-  for (const ObjCIvarDecl *IVD = Container->all_declared_ivar_begin();
-       IVD; IVD = IVD->getNextIvar()) {
-    if (Ivar == IVD)
-      break;
-    ++Index;
-  }
-  assert(Index < RL->getFieldCount() && "Ivar is not inside record layout!");
+//   for (const ObjCIvarDecl *IVD = Container->all_declared_ivar_begin();
+//        IVD; IVD = IVD->getNextIvar()) {
+//     if (Ivar == IVD)
+//       break;
+//     ++Index;
+//   }
+//   assert(Index < RL->getFieldCount() && "Ivar is not inside record layout!");
 
-  return RL->getFieldOffset(Index);
-}
+//   return RL->getFieldOffset(Index);
+// }
 
 /// getObjCLayout - Get or compute information about the layout of the
 /// given interface.
 ///
 /// \param Impl - If given, also include the layout of the interface's
 /// implementation. This may differ by including synthesized ivars.
-const ASTRecordLayout &
-ASTContext::getObjCLayout(const ObjCInterfaceDecl *D,
-                          const ObjCImplementationDecl *Impl) const {
-  // Retrieve the definition
-  if (D->hasExternalLexicalStorage() && !D->getDefinition())
-    getExternalSource()->CompleteType(const_cast<ObjCInterfaceDecl*>(D));
-  D = D->getDefinition();
-  assert(D && !D->isInvalidDecl() && D->isThisDeclarationADefinition() &&
-         "Invalid interface decl!");
+// const ASTRecordLayout &
+// ASTContext::getObjCLayout(const ObjCInterfaceDecl *D,
+//                           const ObjCImplementationDecl *Impl) const {
+//   // Retrieve the definition
+//   if (D->hasExternalLexicalStorage() && !D->getDefinition())
+//     getExternalSource()->CompleteType(const_cast<ObjCInterfaceDecl*>(D));
+//   D = D->getDefinition();
+//   assert(D && !D->isInvalidDecl() && D->isThisDeclarationADefinition() &&
+//          "Invalid interface decl!");
 
-  // Look up this layout, if already laid out, return what we have.
-  const ObjCContainerDecl *Key =
-    Impl ? (const ObjCContainerDecl*) Impl : (const ObjCContainerDecl*) D;
-  if (const ASTRecordLayout *Entry = ObjCLayouts[Key])
-    return *Entry;
+//   // Look up this layout, if already laid out, return what we have.
+//   const ObjCContainerDecl *Key =
+//     Impl ? (const ObjCContainerDecl*) Impl : (const ObjCContainerDecl*) D;
+//   if (const ASTRecordLayout *Entry = ObjCLayouts[Key])
+//     return *Entry;
 
-  // Add in synthesized ivar count if laying out an implementation.
-  if (Impl) {
-    unsigned SynthCount = CountNonClassIvars(D);
-    // If there aren't any synthesized ivars then reuse the interface
-    // entry. Note we can't cache this because we simply free all
-    // entries later; however we shouldn't look up implementations
-    // frequently.
-    if (SynthCount == 0)
-      return getObjCLayout(D, nullptr);
-  }
+//   // Add in synthesized ivar count if laying out an implementation.
+//   if (Impl) {
+//     unsigned SynthCount = CountNonClassIvars(D);
+//     // If there aren't any synthesized ivars then reuse the interface
+//     // entry. Note we can't cache this because we simply free all
+//     // entries later; however we shouldn't look up implementations
+//     // frequently.
+//     if (SynthCount == 0)
+//       return getObjCLayout(D, nullptr);
+//   }
 
-  ItaniumRecordLayoutBuilder Builder(*this, /*EmptySubobjects=*/nullptr);
-  Builder.Layout(D);
+//   ItaniumRecordLayoutBuilder Builder(*this, /*EmptySubobjects=*/nullptr);
+//   Builder.Layout(D);
 
-  const ASTRecordLayout *NewEntry =
-    new (*this) ASTRecordLayout(*this, Builder.getSize(),
-                                Builder.Alignment,
-                                Builder.UnadjustedAlignment,
-                                /*RequiredAlignment : used by MS-ABI)*/
-                                Builder.Alignment,
-                                Builder.getDataSize(),
-                                Builder.FieldOffsets);
+//   const ASTRecordLayout *NewEntry =
+//     new (*this) ASTRecordLayout(*this, Builder.getSize(),
+//                                 Builder.Alignment,
+//                                 Builder.UnadjustedAlignment,
+//                                 /*RequiredAlignment : used by MS-ABI)*/
+//                                 Builder.Alignment,
+//                                 Builder.getDataSize(),
+//                                 Builder.FieldOffsets);
 
-  ObjCLayouts[Key] = NewEntry;
+//   ObjCLayouts[Key] = NewEntry;
 
-  return *NewEntry;
-}
+//   return *NewEntry;
+// }
 
 static void PrintOffset(raw_ostream &OS,
                         CharUnits Offset, unsigned IndentLevel) {

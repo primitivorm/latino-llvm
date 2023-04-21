@@ -190,52 +190,52 @@ static bool isBodyEmpty(CompoundStmt *body, ASTContext &Ctx,
   return true;
 }
 
-static void cleanupDeallocOrFinalize(MigrationPass &pass) {
-  ASTContext &Ctx = pass.Ctx;
-  TransformActions &TA = pass.TA;
-  DeclContext *DC = Ctx.getTranslationUnitDecl();
-  Selector FinalizeSel =
-      Ctx.Selectors.getNullarySelector(&pass.Ctx.Idents.get("finalize"));
+// static void cleanupDeallocOrFinalize(MigrationPass &pass) {
+//   ASTContext &Ctx = pass.Ctx;
+//   TransformActions &TA = pass.TA;
+//   DeclContext *DC = Ctx.getTranslationUnitDecl();
+//   Selector FinalizeSel =
+//       Ctx.Selectors.getNullarySelector(&pass.Ctx.Idents.get("finalize"));
 
-  typedef DeclContext::specific_decl_iterator<ObjCImplementationDecl>
-    impl_iterator;
-  for (impl_iterator I = impl_iterator(DC->decls_begin()),
-                     E = impl_iterator(DC->decls_end()); I != E; ++I) {
-    ObjCMethodDecl *DeallocM = nullptr;
-    ObjCMethodDecl *FinalizeM = nullptr;
-    for (auto *MD : I->instance_methods()) {
-      if (!MD->hasBody())
-        continue;
+//   typedef DeclContext::specific_decl_iterator<ObjCImplementationDecl>
+//     impl_iterator;
+//   for (impl_iterator I = impl_iterator(DC->decls_begin()),
+//                      E = impl_iterator(DC->decls_end()); I != E; ++I) {
+//     ObjCMethodDecl *DeallocM = nullptr;
+//     ObjCMethodDecl *FinalizeM = nullptr;
+//     for (auto *MD : I->instance_methods()) {
+//       if (!MD->hasBody())
+//         continue;
 
-      if (MD->getMethodFamily() == OMF_dealloc) {
-        DeallocM = MD;
-      } else if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
-        FinalizeM = MD;
-      }
-    }
+//       if (MD->getMethodFamily() == OMF_dealloc) {
+//         DeallocM = MD;
+//       } else if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
+//         FinalizeM = MD;
+//       }
+//     }
 
-    if (DeallocM) {
-      if (isBodyEmpty(DeallocM->getCompoundBody(), Ctx, pass.ARCMTMacroLocs)) {
-        Transaction Trans(TA);
-        TA.remove(DeallocM->getSourceRange());
-      }
+//     if (DeallocM) {
+//       if (isBodyEmpty(DeallocM->getCompoundBody(), Ctx, pass.ARCMTMacroLocs)) {
+//         Transaction Trans(TA);
+//         TA.remove(DeallocM->getSourceRange());
+//       }
 
-      if (FinalizeM) {
-        Transaction Trans(TA);
-        TA.remove(FinalizeM->getSourceRange());
-      }
+//       if (FinalizeM) {
+//         Transaction Trans(TA);
+//         TA.remove(FinalizeM->getSourceRange());
+//       }
 
-    } else if (FinalizeM) {
-      if (isBodyEmpty(FinalizeM->getCompoundBody(), Ctx, pass.ARCMTMacroLocs)) {
-        Transaction Trans(TA);
-        TA.remove(FinalizeM->getSourceRange());
-      } else {
-        Transaction Trans(TA);
-        TA.replaceText(FinalizeM->getSelectorStartLoc(), "finalize", "dealloc");
-      }
-    }
-  }
-}
+//     } else if (FinalizeM) {
+//       if (isBodyEmpty(FinalizeM->getCompoundBody(), Ctx, pass.ARCMTMacroLocs)) {
+//         Transaction Trans(TA);
+//         TA.remove(FinalizeM->getSourceRange());
+//       } else {
+//         Transaction Trans(TA);
+//         TA.replaceText(FinalizeM->getSelectorStartLoc(), "finalize", "dealloc");
+//       }
+//     }
+//   }
+// }
 
 void trans::removeEmptyStatementsAndDeallocFinalize(MigrationPass &pass) {
   EmptyStatementsRemover(pass).TraverseDecl(pass.Ctx.getTranslationUnitDecl());

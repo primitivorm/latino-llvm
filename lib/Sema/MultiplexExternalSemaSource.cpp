@@ -135,10 +135,10 @@ void MultiplexExternalSemaSource::CompleteType(TagDecl *Tag) {
     Sources[i]->CompleteType(Tag);
 }
 
-void MultiplexExternalSemaSource::CompleteType(ObjCInterfaceDecl *Class) {
-  for(size_t i = 0; i < Sources.size(); ++i)
-    Sources[i]->CompleteType(Class);
-}
+// void MultiplexExternalSemaSource::CompleteType(ObjCInterfaceDecl *Class) {
+//   for(size_t i = 0; i < Sources.size(); ++i)
+//     Sources[i]->CompleteType(Class);
+// }
 
 void MultiplexExternalSemaSource::ReadComments() {
   for(size_t i = 0; i < Sources.size(); ++i)

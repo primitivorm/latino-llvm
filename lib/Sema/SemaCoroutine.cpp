@@ -195,9 +195,9 @@ static bool isValidCoroutineContext(Sema &S, SourceLocation Loc,
   // allowed.
   auto *FD = dyn_cast<FunctionDecl>(S.CurContext);
   if (!FD) {
-    S.Diag(Loc, isa<ObjCMethodDecl>(S.CurContext)
+    S.Diag(Loc, /*isa<ObjCMethodDecl>(S.CurContext)
                     ? diag::err_coroutine_objc_method
-                    : diag::err_coroutine_outside_function) << Keyword;
+                    :*/ diag::err_coroutine_outside_function) << Keyword;
     return false;
   }
 

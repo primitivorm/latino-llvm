@@ -31,7 +31,7 @@ static int SelectDigraphErrorMessage(tok::TokenKind Kind) {
     // template name
     case tok::unknown:             return 0;
     // casts
-    case tok::kw_addrspace_cast:   return 1;
+    // case tok::kw_addrspace_cast:   return 1;
     case tok::kw_const_cast:       return 2;
     case tok::kw_dynamic_cast:     return 3;
     case tok::kw_reinterpret_cast: return 4;
@@ -199,7 +199,7 @@ bool Parser::ParseOptionalCXXScopeSpecifier(
     }
   }
 
-  if (Tok.is(tok::kw___super)) {
+  if (Tok.is(tok::kw_base)) {
     SourceLocation SuperLoc = ConsumeToken();
     if (!Tok.is(tok::coloncolon)) {
       Diag(Tok.getLocation(), diag::err_expected_coloncolon_after_super);
@@ -893,9 +893,9 @@ bool Parser::ParseLambdaIntroducer(LambdaIntroducer &Intro,
     if (Tok.is(tok::code_completion)) {
       // If we're in Objective-C++ and we have a bare '[', then this is more
       // likely to be a message receiver.
-      if (getLangOpts().ObjC && Tentative && First)
-        Actions.CodeCompleteObjCMessageReceiver(getCurScope());
-      else
+      // if (getLangOpts().ObjC && Tentative && First)
+      //   Actions.CodeCompleteObjCMessageReceiver(getCurScope());
+      // else
         Actions.CodeCompleteLambdaIntroducer(getCurScope(), Intro,
                                              /*AfterAmpersand=*/false);
       cutOffParsing();
@@ -1356,11 +1356,11 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
     MaybeParseCXX11Attributes(Attr, &DeclEndLoc);
 
     // Parse OpenCL addr space attribute.
-    if (Tok.isOneOf(tok::kw___private, tok::kw___global, tok::kw___local,
-                    tok::kw___constant, tok::kw___generic)) {
-      ParseOpenCLQualifiers(DS.getAttributes());
-      ConsumeToken();
-    }
+    // if (Tok.isOneOf(/*tok::kw___private, tok::kw___global, tok::kw___local,
+    //                 tok::kw___constant,*/ tok::kw___generic)) {
+    //   ParseOpenCLQualifiers(DS.getAttributes());
+    //   ConsumeToken();
+    // }
 
     SourceLocation FunLocalRangeEnd = DeclEndLoc;
 
@@ -1398,8 +1398,8 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
     WarnIfHasCUDATargetAttr();
   } else if (Tok.isOneOf(tok::kw_mutable, tok::arrow, tok::kw___attribute,
                          tok::kw_constexpr, tok::kw_consteval,
-                         tok::kw___private, tok::kw___global, tok::kw___local,
-                         tok::kw___constant, tok::kw___generic,
+                         /*tok::kw___private, tok::kw___global, tok::kw___local,
+                         tok::kw___constant, tok::kw___generic,*/
                          tok::kw_requires) ||
              (Tok.is(tok::l_square) && NextToken().is(tok::l_square))) {
     // It's common to forget that one needs '()' before 'mutable', an attribute
@@ -1409,11 +1409,11 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
     case tok::kw_mutable: TokKind = 0; break;
     case tok::arrow: TokKind = 1; break;
     case tok::kw___attribute:
-    case tok::kw___private:
-    case tok::kw___global:
-    case tok::kw___local:
-    case tok::kw___constant:
-    case tok::kw___generic:
+    // case tok::kw___private:
+    // case tok::kw___global:
+    // case tok::kw___local:
+    // case tok::kw___constant:
+    // case tok::kw___generic:
     case tok::l_square: TokKind = 2; break;
     case tok::kw_constexpr: TokKind = 3; break;
     case tok::kw_consteval: TokKind = 4; break;
@@ -1520,7 +1520,7 @@ ExprResult Parser::ParseCXXCasts() {
 
   switch (Kind) {
   default: llvm_unreachable("Unknown C++ cast!");
-  case tok::kw_addrspace_cast:   CastName = "addrspace_cast";   break;
+  // case tok::kw_addrspace_cast:   CastName = "addrspace_cast";   break;
   case tok::kw_const_cast:       CastName = "const_cast";       break;
   case tok::kw_dynamic_cast:     CastName = "dynamic_cast";     break;
   case tok::kw_reinterpret_cast: CastName = "reinterpret_cast"; break;
@@ -2203,9 +2203,9 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   // case tok::kw___bf16:
   //   DS.SetTypeSpecType(DeclSpec::TST_BFloat16, Loc, PrevSpec, DiagID, Policy);
   //   break;
-  case tok::kw_half:
-    DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec, DiagID, Policy);
-    break;
+  // case tok::kw_half:
+  //   DS.SetTypeSpecType(DeclSpec::TST_half, Loc, PrevSpec, DiagID, Policy);
+  //   break;
   case tok::kw_float:
     DS.SetTypeSpecType(DeclSpec::TST_float, Loc, PrevSpec, DiagID, Policy);
     break;
@@ -2233,12 +2233,12 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   case tok::kw_bool:
     DS.SetTypeSpecType(DeclSpec::TST_bool, Loc, PrevSpec, DiagID, Policy);
     break;
-#define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
-  case tok::kw_##ImgType##_t:                                                  \
-    DS.SetTypeSpecType(DeclSpec::TST_##ImgType##_t, Loc, PrevSpec, DiagID,     \
-                       Policy);                                                \
-    break;
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
+//   case tok::kw_##ImgType##_t:                                                  \
+//     DS.SetTypeSpecType(DeclSpec::TST_##ImgType##_t, Loc, PrevSpec, DiagID,     \
+//                        Policy);                                                \
+//     break;
+// #include "latino/Basic/OpenCLImageTypes.def"
 
   case tok::annot_decltype:
   case tok::kw_decltype:

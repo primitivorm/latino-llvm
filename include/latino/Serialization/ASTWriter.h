@@ -75,7 +75,7 @@ class InMemoryModuleCache;
 class ModuleFileExtension;
 class ModuleFileExtensionWriter;
 class NamedDecl;
-class ObjCInterfaceDecl;
+// class ObjCInterfaceDecl;
 class PreprocessingRecord;
 class Preprocessor;
 struct QualifierInfo;
@@ -420,7 +420,7 @@ private:
 
   /// The set of Objective-C class that have categories we
   /// should serialize.
-  llvm::SetVector<ObjCInterfaceDecl *> ObjCClassesWithCategories;
+  // llvm::SetVector<ObjCInterfaceDecl *> ObjCClassesWithCategories;
 
   /// The set of declarations that may have redeclaration chains that
   /// need to be serialized.
@@ -512,7 +512,7 @@ private:
   void WriteOpenCLExtensionTypes(Sema &SemaRef);
   void WriteOpenCLExtensionDecls(Sema &SemaRef);
   void WriteCUDAPragmas(Sema &SemaRef);
-  void WriteObjCCategories();
+  // void WriteObjCCategories();
   void WriteLateParsedTemplates(Sema &SemaRef);
   void WriteOptimizePragmaOptions(Sema &SemaRef);
   void WriteMSStructPragmaOptions(Sema &SemaRef);
@@ -740,8 +740,8 @@ private:
   void FunctionDefinitionInstantiated(const FunctionDecl *D) override;
   void DefaultArgumentInstantiated(const ParmVarDecl *D) override;
   void DefaultMemberInitializerInstantiated(const FieldDecl *D) override;
-  void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
-                                    const ObjCInterfaceDecl *IFD) override;
+  // void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
+  //                                   const ObjCInterfaceDecl *IFD) override;
   void DeclarationMarkedUsed(const Decl *D) override;
   void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
   void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,

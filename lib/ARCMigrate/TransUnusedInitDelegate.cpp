@@ -46,22 +46,22 @@ public:
     TraverseStmt(body);
   }
 
-  bool VisitObjCMessageExpr(ObjCMessageExpr *ME) {
-    if (ME->isDelegateInitCall() &&
-        isRemovable(ME) &&
-        Pass.TA.hasDiagnostic(diag::err_arc_unused_init_message,
-                              ME->getExprLoc())) {
-      Transaction Trans(Pass.TA);
-      Pass.TA.clearDiagnostic(diag::err_arc_unused_init_message,
-                              ME->getExprLoc());
-      SourceRange ExprRange = ME->getSourceRange();
-      Pass.TA.insert(ExprRange.getBegin(), "if (!(self = ");
-      std::string retStr = ")) return ";
-      retStr += getNilString(Pass);
-      Pass.TA.insertAfterToken(ExprRange.getEnd(), retStr);
-    }
-    return true;
-  }
+  // bool VisitObjCMessageExpr(ObjCMessageExpr *ME) {
+  //   if (ME->isDelegateInitCall() &&
+  //       isRemovable(ME) &&
+  //       Pass.TA.hasDiagnostic(diag::err_arc_unused_init_message,
+  //                             ME->getExprLoc())) {
+  //     Transaction Trans(Pass.TA);
+  //     Pass.TA.clearDiagnostic(diag::err_arc_unused_init_message,
+  //                             ME->getExprLoc());
+  //     SourceRange ExprRange = ME->getSourceRange();
+  //     Pass.TA.insert(ExprRange.getBegin(), "if (!(self = ");
+  //     std::string retStr = ")) return ";
+  //     retStr += getNilString(Pass);
+  //     Pass.TA.insertAfterToken(ExprRange.getEnd(), retStr);
+  //   }
+  //   return true;
+  // }
 
 private:
   bool isRemovable(Expr *E) const {

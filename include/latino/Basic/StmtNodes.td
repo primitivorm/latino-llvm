@@ -171,24 +171,24 @@ def ConceptSpecializationExpr : StmtNode<Expr>;
 def RequiresExpr : StmtNode<Expr>;
 
 // Obj-C Expressions.
-def ObjCStringLiteral : StmtNode<Expr>;
-def ObjCBoxedExpr : StmtNode<Expr>;
-def ObjCArrayLiteral : StmtNode<Expr>;
-def ObjCDictionaryLiteral : StmtNode<Expr>;
-def ObjCEncodeExpr : StmtNode<Expr>;
-def ObjCMessageExpr : StmtNode<Expr>;
-def ObjCSelectorExpr : StmtNode<Expr>;
-def ObjCProtocolExpr : StmtNode<Expr>;
-def ObjCIvarRefExpr : StmtNode<Expr>;
-def ObjCPropertyRefExpr : StmtNode<Expr>;
-def ObjCIsaExpr : StmtNode<Expr>;
-def ObjCIndirectCopyRestoreExpr : StmtNode<Expr>;
-def ObjCBoolLiteralExpr : StmtNode<Expr>;
-def ObjCSubscriptRefExpr : StmtNode<Expr>;
-def ObjCAvailabilityCheckExpr : StmtNode<Expr>;
+// def ObjCStringLiteral : StmtNode<Expr>;
+// def ObjCBoxedExpr : StmtNode<Expr>;
+// def ObjCArrayLiteral : StmtNode<Expr>;
+// def ObjCDictionaryLiteral : StmtNode<Expr>;
+// def ObjCEncodeExpr : StmtNode<Expr>;
+// def ObjCMessageExpr : StmtNode<Expr>;
+// def ObjCSelectorExpr : StmtNode<Expr>;
+// def ObjCProtocolExpr : StmtNode<Expr>;
+// def ObjCIvarRefExpr : StmtNode<Expr>;
+// def ObjCPropertyRefExpr : StmtNode<Expr>;
+// def ObjCIsaExpr : StmtNode<Expr>;
+// def ObjCIndirectCopyRestoreExpr : StmtNode<Expr>;
+// def ObjCBoolLiteralExpr : StmtNode<Expr>;
+// def ObjCSubscriptRefExpr : StmtNode<Expr>;
+// def ObjCAvailabilityCheckExpr : StmtNode<Expr>;
 
 // Obj-C ARC Expressions.
-def ObjCBridgedCastExpr : StmtNode<ExplicitCastExpr>;
+// def ObjCBridgedCastExpr : StmtNode<ExplicitCastExpr>;
 
 // CUDA Expressions.
 def CUDAKernelCallExpr : StmtNode<CallExpr>;

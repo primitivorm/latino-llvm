@@ -36,8 +36,8 @@ class CXXMethodDecl;
 class CodeGenOptions;
 class FieldDecl;
 class FunctionProtoType;
-class ObjCInterfaceDecl;
-class ObjCIvarDecl;
+// class ObjCInterfaceDecl;
+// class ObjCIvarDecl;
 class PointerType;
 class QualType;
 class RecordDecl;
@@ -221,9 +221,9 @@ public:
                                                    const CallArgList &args);
 
   /// Objective-C methods are C functions with some implicit parameters.
-  const CGFunctionInfo &arrangeObjCMethodDeclaration(const ObjCMethodDecl *MD);
-  const CGFunctionInfo &arrangeObjCMessageSendSignature(const ObjCMethodDecl *MD,
-                                                        QualType receiverType);
+  // const CGFunctionInfo &arrangeObjCMethodDeclaration(const ObjCMethodDecl *MD);
+  // const CGFunctionInfo &arrangeObjCMessageSendSignature(const ObjCMethodDecl *MD,
+  //                                                       QualType receiverType);
   const CGFunctionInfo &arrangeUnprototypedObjCMessageSend(
                                                      QualType returnType,
                                                      const CallArgList &args);

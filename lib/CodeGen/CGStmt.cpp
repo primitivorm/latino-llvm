@@ -176,12 +176,12 @@ void CodeGenFunction::EmitStmt(const Stmt *S, ArrayRef<const Attr *> Attrs) {
   case Stmt::ObjCAtSynchronizedStmtClass:
     EmitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(*S));
     break;
-  case Stmt::ObjCForCollectionStmtClass:
-    EmitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(*S));
-    break;
-  case Stmt::ObjCAutoreleasePoolStmtClass:
-    EmitObjCAutoreleasePoolStmt(cast<ObjCAutoreleasePoolStmt>(*S));
-    break;
+  // case Stmt::ObjCForCollectionStmtClass:
+  //   EmitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(*S));
+  //   break;
+  // case Stmt::ObjCAutoreleasePoolStmtClass:
+  //   EmitObjCAutoreleasePoolStmt(cast<ObjCAutoreleasePoolStmt>(*S));
+  //   break;
 
   case Stmt::CXXTryStmtClass:
     EmitCXXTryStmt(cast<CXXTryStmt>(*S));

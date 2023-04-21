@@ -14,7 +14,7 @@
 #include "ModelInjector.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/Analysis/Analyses/LiveVariables.h"
 #include "latino/Analysis/CFG.h"
@@ -219,7 +219,7 @@ public:
   /// Store the top level decls in the set to be processed later on.
   /// (Doing this pre-processing avoids deserialization of data from PCH.)
   bool HandleTopLevelDecl(DeclGroupRef D) override;
-  void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override;
+  // void HandleTopLevelDeclInObjCContainer(DeclGroupRef D) override;
 
   void HandleTranslationUnit(ASTContext &C) override;
 
@@ -307,13 +307,13 @@ public:
     return true;
   }
 
-  bool VisitObjCMethodDecl(ObjCMethodDecl *MD) {
-    if (MD->isThisDeclarationADefinition()) {
-      assert(RecVisitorMode == AM_Syntax || Mgr->shouldInlineCall() == false);
-      HandleCode(MD, RecVisitorMode);
-    }
-    return true;
-  }
+  // bool VisitObjCMethodDecl(ObjCMethodDecl *MD) {
+  //   if (MD->isThisDeclarationADefinition()) {
+  //     assert(RecVisitorMode == AM_Syntax || Mgr->shouldInlineCall() == false);
+  //     HandleCode(MD, RecVisitorMode);
+  //   }
+  //   return true;
+  // }
 
   bool VisitBlockDecl(BlockDecl *BD) {
     if (BD->hasBody()) {
@@ -357,17 +357,17 @@ bool AnalysisConsumer::HandleTopLevelDecl(DeclGroupRef DG) {
   return true;
 }
 
-void AnalysisConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef DG) {
-  storeTopLevelDecls(DG);
-}
+// void AnalysisConsumer::HandleTopLevelDeclInObjCContainer(DeclGroupRef DG) {
+//   storeTopLevelDecls(DG);
+// }
 
 void AnalysisConsumer::storeTopLevelDecls(DeclGroupRef DG) {
   for (DeclGroupRef::iterator I = DG.begin(), E = DG.end(); I != E; ++I) {
 
     // Skip ObjCMethodDecl, wait for the objc container to avoid
     // analyzing twice.
-    if (isa<ObjCMethodDecl>(*I))
-      continue;
+    // if (isa<ObjCMethodDecl>(*I))
+    //   continue;
 
     LocalTUDecls.push_back(*I);
   }
@@ -393,8 +393,8 @@ static bool shouldSkipFunction(const Decl *D,
   //   not catch errors within defensive code.
   // - We want to reanalyze all ObjC methods as top level to report Retain
   //   Count naming convention errors more aggressively.
-  if (isa<ObjCMethodDecl>(D))
-    return false;
+  // if (isa<ObjCMethodDecl>(D))
+  //   return false;
   // We also want to reanalyze all C++ copy and move assignment operators to
   // separately check the two cases where 'this' aliases with the parameter and
   // where it may not. (cplusplus.SelfAssignmentChecker)
@@ -413,11 +413,11 @@ AnalysisConsumer::getInliningModeForFunction(const Decl *D,
   // We want to reanalyze all ObjC methods as top level to report Retain
   // Count naming convention errors more aggressively. But we should tune down
   // inlining when reanalyzing an already inlined function.
-  if (Visited.count(D) && isa<ObjCMethodDecl>(D)) {
-    const ObjCMethodDecl *ObjCM = cast<ObjCMethodDecl>(D);
-    if (ObjCM->getMethodFamily() != OMF_init)
-      return ExprEngine::Inline_Minimal;
-  }
+  // if (Visited.count(D) && isa<ObjCMethodDecl>(D)) {
+  //   const ObjCMethodDecl *ObjCM = cast<ObjCMethodDecl>(D);
+  //   if (ObjCM->getMethodFamily() != OMF_init)
+  //     return ExprEngine::Inline_Minimal;
+  // }
 
   return ExprEngine::Inline_Regular;
 }
@@ -467,8 +467,8 @@ void AnalysisConsumer::HandleDeclsCallGraph(const unsigned LocalTUDeclsSize) {
     for (const Decl *Callee : VisitedCallees)
       // Decls from CallGraph are already canonical. But Decls coming from
       // CallExprs may be not. We should canonicalize them manually.
-      Visited.insert(isa<ObjCMethodDecl>(Callee) ? Callee
-                                                 : Callee->getCanonicalDecl());
+      Visited.insert(/*isa<ObjCMethodDecl>(Callee) ? Callee
+                                                 :*/ Callee->getCanonicalDecl());
     VisitedAsTopLevel.insert(D);
   }
 }
@@ -586,29 +586,30 @@ std::string AnalysisConsumer::getFunctionName(const Decl *D) {
          << ')';
     }
 
-  } else if (const ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(D)) {
+  } 
+  // else if (const ObjCMethodDecl *OMD = dyn_cast<ObjCMethodDecl>(D)) {
 
-    // FIXME: copy-pasted from CGDebugInfo.cpp.
-    OS << (OMD->isInstanceMethod() ? '-' : '+') << '[';
-    const DeclContext *DC = OMD->getDeclContext();
-    if (const auto *OID = dyn_cast<ObjCImplementationDecl>(DC)) {
-      OS << OID->getName();
-    } else if (const auto *OID = dyn_cast<ObjCInterfaceDecl>(DC)) {
-      OS << OID->getName();
-    } else if (const auto *OC = dyn_cast<ObjCCategoryDecl>(DC)) {
-      if (OC->IsClassExtension()) {
-        OS << OC->getClassInterface()->getName();
-      } else {
-        OS << OC->getIdentifier()->getNameStart() << '('
-           << OC->getIdentifier()->getNameStart() << ')';
-      }
-    } else if (const auto *OCD = dyn_cast<ObjCCategoryImplDecl>(DC)) {
-      OS << OCD->getClassInterface()->getName() << '('
-         << OCD->getName() << ')';
-    }
-    OS << ' ' << OMD->getSelector().getAsString() << ']';
+  //   // FIXME: copy-pasted from CGDebugInfo.cpp.
+  //   OS << (OMD->isInstanceMethod() ? '-' : '+') << '[';
+  //   const DeclContext *DC = OMD->getDeclContext();
+  //   /*if (const auto *OID = dyn_cast<ObjCImplementationDecl>(DC)) {
+  //     OS << OID->getName();
+  //   } else if (const auto *OID = dyn_cast<ObjCInterfaceDecl>(DC)) {
+  //     OS << OID->getName();
+  //   } else if (const auto *OC = dyn_cast<ObjCCategoryDecl>(DC)) {
+  //     if (OC->IsClassExtension()) {
+  //       OS << OC->getClassInterface()->getName();
+  //     } else {
+  //       OS << OC->getIdentifier()->getNameStart() << '('
+  //          << OC->getIdentifier()->getNameStart() << ')';
+  //     }
+  //   } else if (const auto *OCD = dyn_cast<ObjCCategoryImplDecl>(DC)) {
+  //     OS << OCD->getClassInterface()->getName() << '('
+  //        << OCD->getName() << ')';
+  //   }*/
+  //   OS << ' ' << OMD->getSelector().getAsString() << ']';
 
-  }
+  // }
 
   return OS.str();
 }

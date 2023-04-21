@@ -1185,18 +1185,18 @@ def MissingInvalidationMethod : Checker<"MissingInvalidationMethod">,
   Dependencies<[IvarInvalidationModeling]>,
   Documentation<HasAlphaDocumentation>;
 
-def DirectIvarAssignment : Checker<"DirectIvarAssignment">,
-  HelpText<"Check for direct assignments to instance variables">,
-  CheckerOptions<[
-    CmdLineOption<Boolean,
-                  "AnnotatedFunctions",
-                  "Check for direct assignments to instance variables in the "
-                  "methods annotated with "
-                  "objc_no_direct_instance_variable_assignment",
-                  "false",
-                  InAlpha>
-  ]>,
-  Documentation<HasAlphaDocumentation>;
+// def DirectIvarAssignment : Checker<"DirectIvarAssignment">,
+//   HelpText<"Check for direct assignments to instance variables">,
+//   CheckerOptions<[
+//     CmdLineOption<Boolean,
+//                   "AnnotatedFunctions",
+//                   "Check for direct assignments to instance variables in the "
+//                   "methods annotated with "
+//                   "objc_no_direct_instance_variable_assignment",
+//                   "false",
+//                   InAlpha>
+//   ]>,
+//   Documentation<HasAlphaDocumentation>;
 
 } // end "alpha.osx.cocoa"
 
@@ -1250,10 +1250,10 @@ def NonLocalizedStringChecker : Checker<"NonLocalizedStringChecker">,
   ]>,
   Documentation<HasDocumentation>;
 
-def EmptyLocalizationContextChecker :
-  Checker<"EmptyLocalizationContextChecker">,
-  HelpText<"Check that NSLocalizedString macros include a comment for context">,
-  Documentation<HasDocumentation>;
+// def EmptyLocalizationContextChecker :
+//   Checker<"EmptyLocalizationContextChecker">,
+//   HelpText<"Check that NSLocalizedString macros include a comment for context">,
+//   Documentation<HasDocumentation>;
 
 } // end "optin.osx.cocoa.localizability"
 

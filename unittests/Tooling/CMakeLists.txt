@@ -14,7 +14,7 @@ if (MSVC)
 endif()
 
 add_latino_unittest(ToolingTests
-  ASTSelectionTest.cpp
+  # ASTSelectionTest.cpp
   CastExprTest.cpp
   CommentHandlerTest.cpp
   CompilationDatabaseTest.cpp

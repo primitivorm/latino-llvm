@@ -15,7 +15,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclGroup.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/OperationKinds.h"
@@ -280,8 +280,8 @@ til::SExpr *SExprBuilder::translateDeclRefExpr(const DeclRefExpr *DRE,
     if (Ctx && Ctx->FunArgs) {
       const Decl *Canonical = Ctx->AttrDecl->getCanonicalDecl();
       if (isa<FunctionDecl>(D)
-              ? (cast<FunctionDecl>(D)->getCanonicalDecl() == Canonical)
-              : (cast<ObjCMethodDecl>(D)->getCanonicalDecl() == Canonical)) {
+              ? (cast<FunctionDecl>(D)->getCanonicalDecl() == Canonical) : false
+              /*: (cast<ObjCMethodDecl>(D)->getCanonicalDecl() == Canonical)*/) {
         // Substitute call arguments for references to function parameters
         assert(I < Ctx->NumArgs);
         return translate(Ctx->FunArgs[I], Ctx->Prev);
@@ -289,9 +289,9 @@ til::SExpr *SExprBuilder::translateDeclRefExpr(const DeclRefExpr *DRE,
     }
     // Map the param back to the param of the original function declaration
     // for consistent comparisons.
-    VD = isa<FunctionDecl>(D)
+    VD = cast<FunctionDecl>(D)->getCanonicalDecl()->getParamDecl(I) /* isa<FunctionDecl>(D)
              ? cast<FunctionDecl>(D)->getCanonicalDecl()->getParamDecl(I)
-             : cast<ObjCMethodDecl>(D)->getCanonicalDecl()->getParamDecl(I);
+             : cast<ObjCMethodDecl>(D)->getCanonicalDecl()->getParamDecl(I)*/;
   }
 
   // For non-local variables, treat it as a reference to a named object.
@@ -357,18 +357,18 @@ til::SExpr *SExprBuilder::translateMemberExpr(const MemberExpr *ME,
   return P;
 }
 
-til::SExpr *SExprBuilder::translateObjCIVarRefExpr(const ObjCIvarRefExpr *IVRE,
-                                                   CallingContext *Ctx) {
-  til::SExpr *BE = translate(IVRE->getBase(), Ctx);
-  til::SExpr *E = new (Arena) til::SApply(BE);
+// til::SExpr *SExprBuilder::translateObjCIVarRefExpr(const ObjCIvarRefExpr *IVRE,
+//                                                    CallingContext *Ctx) {
+//   til::SExpr *BE = translate(IVRE->getBase(), Ctx);
+//   til::SExpr *E = new (Arena) til::SApply(BE);
 
-  const auto *D = cast<ObjCIvarDecl>(IVRE->getDecl()->getCanonicalDecl());
+//   const auto *D = cast<ObjCIvarDecl>(IVRE->getDecl()->getCanonicalDecl());
 
-  til::Project *P = new (Arena) til::Project(E, D);
-  if (hasAnyPointerType(BE))
-    P->setArrow(true);
-  return P;
-}
+//   til::Project *P = new (Arena) til::Project(E, D);
+//   if (hasAnyPointerType(BE))
+//     P->setArrow(true);
+//   return P;
+// }
 
 til::SExpr *SExprBuilder::translateCallExpr(const CallExpr *CE,
                                             CallingContext *Ctx,
@@ -823,8 +823,8 @@ void SExprBuilder::enterCFG(CFG *Cfg, const NamedDecl *D,
   }
 
   CurrentBB = lookupBlock(&Cfg->getEntry());
-  auto Parms = isa<ObjCMethodDecl>(D) ? cast<ObjCMethodDecl>(D)->parameters()
-                                      : cast<FunctionDecl>(D)->parameters();
+  auto Parms = cast<FunctionDecl>(D)->parameters() /*isa<ObjCMethodDecl>(D) ? cast<ObjCMethodDecl>(D)->parameters()
+                                      : cast<FunctionDecl>(D)->parameters()*/;
   for (auto *Pm : Parms) {
     QualType T = Pm->getType();
     if (!T.isTrivialType(Pm->getASTContext()))

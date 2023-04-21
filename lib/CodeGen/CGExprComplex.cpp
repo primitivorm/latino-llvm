@@ -145,12 +145,12 @@ public:
       return emitConstant(Constant, E);
     return EmitLoadOfLValue(E);
   }
-  ComplexPairTy VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
-    return EmitLoadOfLValue(E);
-  }
-  ComplexPairTy VisitObjCMessageExpr(ObjCMessageExpr *E) {
-    return CGF.EmitObjCMessageExpr(E).getComplexVal();
-  }
+  // ComplexPairTy VisitObjCIvarRefExpr(ObjCIvarRefExpr *E) {
+  //   return EmitLoadOfLValue(E);
+  // }
+  // ComplexPairTy VisitObjCMessageExpr(ObjCMessageExpr *E) {
+  //   return CGF.EmitObjCMessageExpr(E).getComplexVal();
+  // }
   ComplexPairTy VisitArraySubscriptExpr(Expr *E) { return EmitLoadOfLValue(E); }
   ComplexPairTy VisitMemberExpr(MemberExpr *ME) {
     if (CodeGenFunction::ConstantEmission Constant =
@@ -510,10 +510,10 @@ ComplexPairTy ComplexExprEmitter::EmitCast(CastKind CK, Expr *Op,
   case CK_FloatingToIntegral:
   case CK_FloatingToBoolean:
   case CK_FloatingCast:
-  case CK_CPointerToObjCPointerCast:
-  case CK_BlockPointerToObjCPointerCast:
+  // case CK_CPointerToObjCPointerCast:
+  // case CK_BlockPointerToObjCPointerCast:
   case CK_AnyPointerToBlockPointerCast:
-  case CK_ObjCObjectLValueCast:
+  // case CK_ObjCObjectLValueCast:
   case CK_FloatingComplexToReal:
   case CK_FloatingComplexToBoolean:
   case CK_IntegralComplexToReal:
@@ -526,7 +526,7 @@ ComplexPairTy ComplexExprEmitter::EmitCast(CastKind CK, Expr *Op,
   case CK_BuiltinFnToFnPtr:
   case CK_ZeroToOCLOpaqueType:
   case CK_AddressSpaceConversion:
-  case CK_IntToOCLSampler:
+  // case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:

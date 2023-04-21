@@ -245,8 +245,8 @@ TypeEvaluationKind CodeGenFunction::getEvaluationKind(QualType type) {
     case Type::IncompleteArray:
     case Type::VariableArray:
     case Type::Record:
-    case Type::ObjCObject:
-    case Type::ObjCInterface:
+    // case Type::ObjCObject:
+    // case Type::ObjCInterface:
       return TEK_Aggregate;
 
     // We operate on atomic values according to their underlying type.
@@ -615,8 +615,8 @@ static bool endsWithReturn(const Decl* F) {
   const Stmt *Body = nullptr;
   if (auto *FD = dyn_cast_or_null<FunctionDecl>(F))
     Body = FD->getBody();
-  else if (auto *OMD = dyn_cast_or_null<ObjCMethodDecl>(F))
-    Body = OMD->getBody();
+  // else if (auto *OMD = dyn_cast_or_null<ObjCMethodDecl>(F))
+  //   Body = OMD->getBody();
 
   if (auto *CS = dyn_cast_or_null<CompoundStmt>(Body)) {
     auto LastStmt = CS->body_rbegin();
@@ -743,16 +743,16 @@ void CodeGenFunction::StartFunction(GlobalDecl GD, QualType RetTy,
 
   // Ignore TSan memory acesses from within ObjC/ObjC++ dealloc, initialize,
   // .cxx_destruct, __destroy_helper_block_ and all of their calees at run time.
-  if (SanOpts.has(SanitizerKind::Thread)) {
-    if (const auto *OMD = dyn_cast_or_null<ObjCMethodDecl>(D)) {
-      IdentifierInfo *II = OMD->getSelector().getIdentifierInfoForSlot(0);
-      if (OMD->getMethodFamily() == OMF_dealloc ||
-          OMD->getMethodFamily() == OMF_initialize ||
-          (OMD->getSelector().isUnarySelector() && II->isStr(".cxx_destruct"))) {
-        markAsIgnoreThreadCheckingAtRuntime(Fn);
-      }
-    }
-  }
+  // if (SanOpts.has(SanitizerKind::Thread)) {
+  //   if (const auto *OMD = dyn_cast_or_null<ObjCMethodDecl>(D)) {
+  //     IdentifierInfo *II = OMD->getSelector().getIdentifierInfoForSlot(0);
+  //     if (OMD->getMethodFamily() == OMF_dealloc ||
+  //         OMD->getMethodFamily() == OMF_initialize ||
+  //         (OMD->getSelector().isUnarySelector() && II->isStr(".cxx_destruct"))) {
+  //       markAsIgnoreThreadCheckingAtRuntime(Fn);
+  //     }
+  //   }
+  // }
 
   // Ignore unrelated casts in STL allocate() since the allocator must cast
   // from void* to T* before object initialization completes. Don't match on the
@@ -1989,10 +1989,10 @@ void CodeGenFunction::EmitVariablyModifiedType(QualType type) {
     case Type::Enum:
     case Type::Elaborated:
     case Type::TemplateSpecialization:
-    case Type::ObjCTypeParam:
-    case Type::ObjCObject:
-    case Type::ObjCInterface:
-    case Type::ObjCObjectPointer:
+    // case Type::ObjCTypeParam:
+    // case Type::ObjCObject:
+    // case Type::ObjCInterface:
+    // case Type::ObjCObjectPointer:
     case Type::ExtInt:
       llvm_unreachable("type class is never variably-modified!");
 

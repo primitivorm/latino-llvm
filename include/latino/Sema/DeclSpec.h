@@ -23,7 +23,7 @@
 #define LLVM_LATINO_SEMA_DECLSPEC_H
 
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjCCommon.h"
+// #include "latino/AST/DeclObjCCommon.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/Basic/ExceptionSpecificationType.h"
 #include "latino/Basic/Lambda.h"
@@ -280,7 +280,7 @@ public:
   static const TST TST_int = latino::TST_int;
   static const TST TST_int128 = latino::TST_int128;
   static const TST TST_extint = latino::TST_extint;
-  static const TST TST_half = latino::TST_half;
+  // static const TST TST_half = latino::TST_half;
   static const TST TST_BFloat16 = latino::TST_BFloat16;
   static const TST TST_float = latino::TST_float;
   static const TST TST_double = latino::TST_double;
@@ -307,9 +307,9 @@ public:
   static const TST TST_auto_type = latino::TST_auto_type;
   static const TST TST_unknown_anytype = latino::TST_unknown_anytype;
   static const TST TST_atomic = latino::TST_atomic;
-#define GENERIC_IMAGE_TYPE(ImgType, Id) \
-  static const TST TST_##ImgType##_t = latino::TST_##ImgType##_t;
-#include "latino/Basic/OpenCLImageTypes.def"
+// #define GENERIC_IMAGE_TYPE(ImgType, Id) \
+//   static const TST TST_##ImgType##_t = latino::TST_##ImgType##_t;
+// #include "latino/Basic/OpenCLImageTypes.def"
   static const TST TST_error = latino::TST_error;
 
   // type-qualifiers
@@ -695,15 +695,15 @@ public:
   bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, Expr *Rep,
                        const PrintingPolicy &policy);
-  bool SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
-                       const char *&PrevSpec, unsigned &DiagID,
-                       const PrintingPolicy &Policy);
-  bool SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
-                       const char *&PrevSpec, unsigned &DiagID,
-                       const PrintingPolicy &Policy);
-  bool SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
-                       const char *&PrevSpec, unsigned &DiagID,
-                       const PrintingPolicy &Policy);
+  // bool SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
+  //                      const char *&PrevSpec, unsigned &DiagID,
+  //                      const PrintingPolicy &Policy);
+  // bool SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
+  //                      const char *&PrevSpec, unsigned &DiagID,
+  //                      const PrintingPolicy &Policy);
+  // bool SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
+  //                      const char *&PrevSpec, unsigned &DiagID,
+  //                      const PrintingPolicy &Policy);
   bool SetTypePipe(bool isPipe, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID,
                        const PrintingPolicy &Policy);

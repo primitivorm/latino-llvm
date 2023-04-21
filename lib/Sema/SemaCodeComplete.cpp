@@ -13,12 +13,12 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/ExprConcepts.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/AST/QualTypeNames.h"
 #include "latino/AST/RecursiveASTVisitor.h"
@@ -198,7 +198,7 @@ private:
 
   /// If we are in an instance method definition, the \@implementation
   /// object.
-  ObjCImplementationDecl *ObjCImplementation;
+  // ObjCImplementationDecl *ObjCImplementation;
 
   void AdjustResultPriorityForDecl(Result &R);
 
@@ -211,21 +211,21 @@ public:
                          LookupFilter Filter = nullptr)
       : SemaRef(SemaRef), Allocator(Allocator), CCTUInfo(CCTUInfo),
         Filter(Filter), AllowNestedNameSpecifiers(false),
-        HasObjectTypeQualifiers(false), CompletionContext(CompletionContext),
-        ObjCImplementation(nullptr) {
+        HasObjectTypeQualifiers(false), CompletionContext(CompletionContext)/*,
+        ObjCImplementation(nullptr)*/ {
     // If this is an Objective-C instance method definition, dig out the
     // corresponding implementation.
     switch (CompletionContext.getKind()) {
-    case CodeCompletionContext::CCC_Expression:
-    case CodeCompletionContext::CCC_ObjCMessageReceiver:
-    case CodeCompletionContext::CCC_ParenthesizedExpression:
-    case CodeCompletionContext::CCC_Statement:
-    case CodeCompletionContext::CCC_Recovery:
-      if (ObjCMethodDecl *Method = SemaRef.getCurMethodDecl())
-        if (Method->isInstanceMethod())
-          if (ObjCInterfaceDecl *Interface = Method->getClassInterface())
-            ObjCImplementation = Interface->getImplementation();
-      break;
+    // case CodeCompletionContext::CCC_Expression:
+    // // case CodeCompletionContext::CCC_ObjCMessageReceiver:
+    // case CodeCompletionContext::CCC_ParenthesizedExpression:
+    // case CodeCompletionContext::CCC_Statement:
+    // case CodeCompletionContext::CCC_Recovery:
+    //   if (ObjCMethodDecl *Method = SemaRef.getCurMethodDecl())
+    //     if (Method->isInstanceMethod())
+    //       if (ObjCInterfaceDecl *Interface = Method->getClassInterface())
+    //         ObjCImplementation = Interface->getImplementation();
+    //   break;
 
     default:
       break;
@@ -371,10 +371,10 @@ public:
   bool IsNamespaceOrAlias(const NamedDecl *ND) const;
   bool IsType(const NamedDecl *ND) const;
   bool IsMember(const NamedDecl *ND) const;
-  bool IsObjCIvar(const NamedDecl *ND) const;
-  bool IsObjCMessageReceiver(const NamedDecl *ND) const;
-  bool IsObjCMessageReceiverOrLambdaCapture(const NamedDecl *ND) const;
-  bool IsObjCCollection(const NamedDecl *ND) const;
+  // bool IsObjCIvar(const NamedDecl *ND) const;
+  // bool IsObjCMessageReceiver(const NamedDecl *ND) const;
+  // bool IsObjCMessageReceiverOrLambdaCapture(const NamedDecl *ND) const;
+  // bool IsObjCCollection(const NamedDecl *ND) const;
   bool IsImpossibleToSatisfy(const NamedDecl *ND) const;
   //@}
 };
@@ -391,11 +391,12 @@ void PreferredTypeBuilder::enterReturn(Sema &S, SourceLocation Tok) {
     ComputeType = nullptr;
     Type = Function->getReturnType();
     ExpectedLoc = Tok;
-  } else if (const auto *Method = dyn_cast<ObjCMethodDecl>(S.CurContext)) {
-    ComputeType = nullptr;
-    Type = Method->getReturnType();
-    ExpectedLoc = Tok;
-  }
+  } 
+  // else if (const auto *Method = dyn_cast<ObjCMethodDecl>(S.CurContext)) {
+  //   ComputeType = nullptr;
+  //   Type = Method->getReturnType();
+  //   ExpectedLoc = Tok;
+  // }
 }
 
 void PreferredTypeBuilder::enterVariableInit(SourceLocation Tok, Decl *D) {
@@ -823,10 +824,10 @@ SimplifiedTypeClass latino::getSimplifiedTypeClass(CanQualType T) {
     case BuiltinType::Dependent:
       return STC_Other;
 
-    case BuiltinType::ObjCId:
-    case BuiltinType::ObjCClass:
-    case BuiltinType::ObjCSel:
-      return STC_ObjectiveC;
+    // case BuiltinType::ObjCId:
+    // case BuiltinType::ObjCClass:
+    // case BuiltinType::ObjCSel:
+    //   return STC_ObjectiveC;
 
     default:
       return STC_Arithmetic;
@@ -866,10 +867,10 @@ SimplifiedTypeClass latino::getSimplifiedTypeClass(CanQualType T) {
   case Type::Enum:
     return STC_Arithmetic;
 
-  case Type::ObjCObject:
-  case Type::ObjCInterface:
-  case Type::ObjCObjectPointer:
-    return STC_ObjectiveC;
+  // case Type::ObjCObject:
+  // case Type::ObjCInterface:
+  // case Type::ObjCObjectPointer:
+  //   return STC_ObjectiveC;
 
   default:
     return STC_Other;
@@ -883,14 +884,14 @@ QualType latino::getDeclUsageType(ASTContext &C, const NamedDecl *ND) {
 
   if (const auto *Type = dyn_cast<TypeDecl>(ND))
     return C.getTypeDeclType(Type);
-  if (const auto *Iface = dyn_cast<ObjCInterfaceDecl>(ND))
-    return C.getObjCInterfaceType(Iface);
+  // if (const auto *Iface = dyn_cast<ObjCInterfaceDecl>(ND))
+  //   return C.getObjCInterfaceType(Iface);
 
   QualType T;
   if (const FunctionDecl *Function = ND->getAsFunction())
     T = Function->getCallResultType();
-  else if (const auto *Method = dyn_cast<ObjCMethodDecl>(ND))
-    T = Method->getSendResultType();
+  // else if (const auto *Method = dyn_cast<ObjCMethodDecl>(ND))
+  //   T = Method->getSendResultType();
   else if (const auto *Enumerator = dyn_cast<EnumConstantDecl>(ND))
     T = C.getTypeDeclType(cast<EnumDecl>(Enumerator->getDeclContext()));
   else if (const auto *Property = dyn_cast<ObjCPropertyDecl>(ND))
@@ -972,10 +973,10 @@ unsigned ResultBuilder::getBasePriority(const NamedDecl *ND) {
   // Use CCP_Type for type declarations unless we're in a statement, Objective-C
   // message receiver, or parenthesized expression context. There, it's as
   // likely that the user will want to write a type as other declarations.
-  if ((isa<TypeDecl>(ND) || isa<ObjCInterfaceDecl>(ND)) &&
+  if ((isa<TypeDecl>(ND) /*|| isa<ObjCInterfaceDecl>(ND)*/) &&
       !(CompletionContext.getKind() == CodeCompletionContext::CCC_Statement ||
-        CompletionContext.getKind() ==
-            CodeCompletionContext::CCC_ObjCMessageReceiver ||
+        // CompletionContext.getKind() ==
+        //     CodeCompletionContext::CCC_ObjCMessageReceiver ||
         CompletionContext.getKind() ==
             CodeCompletionContext::CCC_ParenthesizedExpression))
     return CCP_Type;
@@ -986,10 +987,10 @@ unsigned ResultBuilder::getBasePriority(const NamedDecl *ND) {
 void ResultBuilder::AdjustResultPriorityForDecl(Result &R) {
   // If this is an Objective-C method declaration whose selector matches our
   // preferred selector, give it a priority boost.
-  if (!PreferredSelector.isNull())
-    if (const auto *Method = dyn_cast<ObjCMethodDecl>(R.Declaration))
-      if (PreferredSelector == Method->getSelector())
-        R.Priority += CCD_SelectorMatch;
+  // if (!PreferredSelector.isNull())
+  //   if (const auto *Method = dyn_cast<ObjCMethodDecl>(R.Declaration))
+  //     if (PreferredSelector == Method->getSelector())
+  //       R.Priority += CCD_SelectorMatch;
 
   // If we have a preferred type, adjust the priority for results with exactly-
   // matching or nearly-matching types.
@@ -1374,10 +1375,10 @@ bool ResultBuilder::IsOrdinaryName(const NamedDecl *ND) const {
   unsigned IDNS = Decl::IDNS_Ordinary | Decl::IDNS_LocalExtern;
   if (SemaRef.getLangOpts().CPlusPlus)
     IDNS |= Decl::IDNS_Tag | Decl::IDNS_Namespace | Decl::IDNS_Member;
-  else if (SemaRef.getLangOpts().ObjC) {
+  else /*if (SemaRef.getLangOpts().ObjC) {
     if (isa<ObjCIvarDecl>(ND))
       return true;
-  }
+  }*/
 
   return ND->getIdentifierNamespace() & IDNS;
 }
@@ -1391,18 +1392,18 @@ bool ResultBuilder::IsOrdinaryNonTypeName(const NamedDecl *ND) const {
   // Objective-C interfaces names are not filtered by this method because they
   // can be used in a class property expression. We can still filter out
   // @class declarations though.
-  if (const auto *ID = dyn_cast<ObjCInterfaceDecl>(ND)) {
-    if (!ID->getDefinition())
-      return false;
-  }
+  // if (const auto *ID = dyn_cast<ObjCInterfaceDecl>(ND)) {
+  //   if (!ID->getDefinition())
+  //     return false;
+  // }
 
   unsigned IDNS = Decl::IDNS_Ordinary | Decl::IDNS_LocalExtern;
   if (SemaRef.getLangOpts().CPlusPlus)
     IDNS |= Decl::IDNS_Tag | Decl::IDNS_Namespace | Decl::IDNS_Member;
-  else if (SemaRef.getLangOpts().ObjC) {
-    if (isa<ObjCIvarDecl>(ND))
-      return true;
-  }
+  // else if (SemaRef.getLangOpts().ObjC) {
+  //   if (isa<ObjCIvarDecl>(ND))
+  //     return true;
+  // }
 
   return ND->getIdentifierNamespace() & IDNS;
 }
@@ -1486,7 +1487,7 @@ bool ResultBuilder::IsNamespaceOrAlias(const NamedDecl *ND) const {
 /// Determines whether the given declaration is a type.
 bool ResultBuilder::IsType(const NamedDecl *ND) const {
   ND = ND->getUnderlyingDecl();
-  return isa<TypeDecl>(ND) || isa<ObjCInterfaceDecl>(ND);
+  return isa<TypeDecl>(ND) /*|| isa<ObjCInterfaceDecl>(ND)*/;
 }
 
 /// Determines which members of a class should be visible via
@@ -1495,77 +1496,77 @@ bool ResultBuilder::IsType(const NamedDecl *ND) const {
 bool ResultBuilder::IsMember(const NamedDecl *ND) const {
   ND = ND->getUnderlyingDecl();
   return isa<ValueDecl>(ND) || isa<FunctionTemplateDecl>(ND) ||
-         isa<ObjCPropertyDecl>(ND);
+         /*isa<ObjCPropertyDecl>(ND)*/;
 }
 
-static bool isObjCReceiverType(ASTContext &C, QualType T) {
-  T = C.getCanonicalType(T);
-  switch (T->getTypeClass()) {
-  case Type::ObjCObject:
-  case Type::ObjCInterface:
-  case Type::ObjCObjectPointer:
-    return true;
+// static bool isObjCReceiverType(ASTContext &C, QualType T) {
+//   T = C.getCanonicalType(T);
+//   switch (T->getTypeClass()) {
+//   // case Type::ObjCObject:
+//   // case Type::ObjCInterface:
+//   // case Type::ObjCObjectPointer:
+//   //   return true;
 
-  case Type::Builtin:
-    switch (cast<BuiltinType>(T)->getKind()) {
-    case BuiltinType::ObjCId:
-    case BuiltinType::ObjCClass:
-    case BuiltinType::ObjCSel:
-      return true;
+//   case Type::Builtin:
+//     switch (cast<BuiltinType>(T)->getKind()) {
+//     case BuiltinType::ObjCId:
+//     case BuiltinType::ObjCClass:
+//     case BuiltinType::ObjCSel:
+//       return true;
 
-    default:
-      break;
-    }
-    return false;
+//     default:
+//       break;
+//     }
+//     return false;
 
-  default:
-    break;
-  }
+//   default:
+//     break;
+//   }
 
-  if (!C.getLangOpts().CPlusPlus)
-    return false;
+//   if (!C.getLangOpts().CPlusPlus)
+//     return false;
 
-  // FIXME: We could perform more analysis here to determine whether a
-  // particular class type has any conversions to Objective-C types. For now,
-  // just accept all class types.
-  return T->isDependentType() || T->isRecordType();
-}
+//   // FIXME: We could perform more analysis here to determine whether a
+//   // particular class type has any conversions to Objective-C types. For now,
+//   // just accept all class types.
+//   return T->isDependentType() || T->isRecordType();
+// }
 
-bool ResultBuilder::IsObjCMessageReceiver(const NamedDecl *ND) const {
-  QualType T = getDeclUsageType(SemaRef.Context, ND);
-  if (T.isNull())
-    return false;
+// bool ResultBuilder::IsObjCMessageReceiver(const NamedDecl *ND) const {
+//   QualType T = getDeclUsageType(SemaRef.Context, ND);
+//   if (T.isNull())
+//     return false;
 
-  T = SemaRef.Context.getBaseElementType(T);
-  return isObjCReceiverType(SemaRef.Context, T);
-}
+//   T = SemaRef.Context.getBaseElementType(T);
+//   return isObjCReceiverType(SemaRef.Context, T);
+// }
 
-bool ResultBuilder::IsObjCMessageReceiverOrLambdaCapture(
-    const NamedDecl *ND) const {
-  if (IsObjCMessageReceiver(ND))
-    return true;
+// bool ResultBuilder::IsObjCMessageReceiverOrLambdaCapture(
+//     const NamedDecl *ND) const {
+//   if (IsObjCMessageReceiver(ND))
+//     return true;
 
-  const auto *Var = dyn_cast<VarDecl>(ND);
-  if (!Var)
-    return false;
+//   const auto *Var = dyn_cast<VarDecl>(ND);
+//   if (!Var)
+//     return false;
 
-  return Var->hasLocalStorage() && !Var->hasAttr<BlocksAttr>();
-}
+//   return Var->hasLocalStorage() && !Var->hasAttr<BlocksAttr>();
+// }
 
-bool ResultBuilder::IsObjCCollection(const NamedDecl *ND) const {
-  if ((SemaRef.getLangOpts().CPlusPlus && !IsOrdinaryName(ND)) ||
-      (!SemaRef.getLangOpts().CPlusPlus && !IsOrdinaryNonTypeName(ND)))
-    return false;
+// bool ResultBuilder::IsObjCCollection(const NamedDecl *ND) const {
+//   if ((SemaRef.getLangOpts().CPlusPlus && !IsOrdinaryName(ND)) ||
+//       (!SemaRef.getLangOpts().CPlusPlus && !IsOrdinaryNonTypeName(ND)))
+//     return false;
 
-  QualType T = getDeclUsageType(SemaRef.Context, ND);
-  if (T.isNull())
-    return false;
+//   QualType T = getDeclUsageType(SemaRef.Context, ND);
+//   if (T.isNull())
+//     return false;
 
-  T = SemaRef.Context.getBaseElementType(T);
-  return T->isObjCObjectType() || T->isObjCObjectPointerType() ||
-         T->isObjCIdType() ||
-         (SemaRef.getLangOpts().CPlusPlus && T->isRecordType());
-}
+//   T = SemaRef.Context.getBaseElementType(T);
+//   return T->isObjCObjectType() || T->isObjCObjectPointerType() ||
+//          T->isObjCIdType() ||
+//          (SemaRef.getLangOpts().CPlusPlus && T->isRecordType());
+// }
 
 bool ResultBuilder::IsImpossibleToSatisfy(const NamedDecl *ND) const {
   return false;
@@ -1573,9 +1574,9 @@ bool ResultBuilder::IsImpossibleToSatisfy(const NamedDecl *ND) const {
 
 /// Determines whether the given declaration is an Objective-C
 /// instance variable.
-bool ResultBuilder::IsObjCIvar(const NamedDecl *ND) const {
-  return isa<ObjCIvarDecl>(ND);
-}
+// bool ResultBuilder::IsObjCIvar(const NamedDecl *ND) const {
+//   return isa<ObjCIvarDecl>(ND);
+// }
 
 namespace {
 
@@ -1685,7 +1686,7 @@ static void AddTypeSpecifierResults(const LangOptions &LangOpts,
   if (LangOpts.CPlusPlus) {
     // C++-specific
     Results.AddResult(
-        Result("bool", CCP_Type + (LangOpts.ObjC ? CCD_bool_in_ObjC : 0)));
+        Result("bool", CCP_Type + (/*LangOpts.ObjC ? CCD_bool_in_ObjC :*/ 0)));
     Results.AddResult(Result("class", CCP_Type));
     Results.AddResult(Result("wchar_t", CCP_Type));
 
@@ -1775,15 +1776,15 @@ static void AddFunctionSpecifiers(Sema::ParserCompletionContext CCC,
     }
     LLVM_FALLTHROUGH;
 
-  case Sema::PCC_ObjCInterface:
-  case Sema::PCC_ObjCImplementation:
+  // case Sema::PCC_ObjCInterface:
+  // case Sema::PCC_ObjCImplementation:
   case Sema::PCC_Namespace:
   case Sema::PCC_Template:
     if (LangOpts.CPlusPlus || LangOpts.C99)
       Results.AddResult(Result("inline"));
     break;
 
-  case Sema::PCC_ObjCInstanceVariableList:
+  // case Sema::PCC_ObjCInstanceVariableList:
   case Sema::PCC_Expression:
   case Sema::PCC_Statement:
   case Sema::PCC_ForInit:
@@ -1798,12 +1799,12 @@ static void AddFunctionSpecifiers(Sema::ParserCompletionContext CCC,
 
 static void AddObjCExpressionResults(ResultBuilder &Results, bool NeedAt);
 static void AddObjCStatementResults(ResultBuilder &Results, bool NeedAt);
-static void AddObjCVisibilityResults(const LangOptions &LangOpts,
-                                     ResultBuilder &Results, bool NeedAt);
-static void AddObjCImplementationResults(const LangOptions &LangOpts,
-                                         ResultBuilder &Results, bool NeedAt);
-static void AddObjCInterfaceResults(const LangOptions &LangOpts,
-                                    ResultBuilder &Results, bool NeedAt);
+// static void AddObjCVisibilityResults(const LangOptions &LangOpts,
+//                                      ResultBuilder &Results, bool NeedAt);
+// static void AddObjCImplementationResults(const LangOptions &LangOpts,
+//                                          ResultBuilder &Results, bool NeedAt);
+// static void AddObjCInterfaceResults(const LangOptions &LangOpts,
+//                                     ResultBuilder &Results, bool NeedAt);
 static void AddObjCTopLevelResults(ResultBuilder &Results, bool NeedAt);
 
 static void AddTypedefResult(ResultBuilder &Results) {
@@ -1835,7 +1836,7 @@ static bool WantTypesInContext(Sema::ParserCompletionContext CCC,
   switch (CCC) {
   case Sema::PCC_Namespace:
   case Sema::PCC_Class:
-  case Sema::PCC_ObjCInstanceVariableList:
+  // case Sema::PCC_ObjCInstanceVariableList:
   case Sema::PCC_Template:
   case Sema::PCC_MemberTemplate:
   case Sema::PCC_Statement:
@@ -1849,12 +1850,12 @@ static bool WantTypesInContext(Sema::ParserCompletionContext CCC,
   case Sema::PCC_Condition:
     return LangOpts.CPlusPlus;
 
-  case Sema::PCC_ObjCInterface:
-  case Sema::PCC_ObjCImplementation:
-    return false;
+  // case Sema::PCC_ObjCInterface:
+  // case Sema::PCC_ObjCImplementation:
+  //   return false;
 
   case Sema::PCC_ForInit:
-    return LangOpts.CPlusPlus || LangOpts.ObjC || LangOpts.C99;
+    return LangOpts.CPlusPlus || /*LangOpts.ObjC ||*/ LangOpts.C99;
   }
 
   llvm_unreachable("Invalid ParserCompletionContext!");
@@ -2138,21 +2139,21 @@ static void AddOrdinaryNameResults(Sema::ParserCompletionContext CCC, Scope *S,
     AddFunctionSpecifiers(CCC, SemaRef.getLangOpts(), Results);
     break;
 
-  case Sema::PCC_ObjCInterface:
-    AddObjCInterfaceResults(SemaRef.getLangOpts(), Results, true);
-    AddStorageSpecifiers(CCC, SemaRef.getLangOpts(), Results);
-    AddFunctionSpecifiers(CCC, SemaRef.getLangOpts(), Results);
-    break;
+  // case Sema::PCC_ObjCInterface:
+  //   AddObjCInterfaceResults(SemaRef.getLangOpts(), Results, true);
+  //   AddStorageSpecifiers(CCC, SemaRef.getLangOpts(), Results);
+  //   AddFunctionSpecifiers(CCC, SemaRef.getLangOpts(), Results);
+  //   break;
 
-  case Sema::PCC_ObjCImplementation:
-    AddObjCImplementationResults(SemaRef.getLangOpts(), Results, true);
-    AddStorageSpecifiers(CCC, SemaRef.getLangOpts(), Results);
-    AddFunctionSpecifiers(CCC, SemaRef.getLangOpts(), Results);
-    break;
+  // case Sema::PCC_ObjCImplementation:
+  //   AddObjCImplementationResults(SemaRef.getLangOpts(), Results, true);
+  //   AddStorageSpecifiers(CCC, SemaRef.getLangOpts(), Results);
+  //   AddFunctionSpecifiers(CCC, SemaRef.getLangOpts(), Results);
+  //   break;
 
-  case Sema::PCC_ObjCInstanceVariableList:
-    AddObjCVisibilityResults(SemaRef.getLangOpts(), Results, true);
-    break;
+  // case Sema::PCC_ObjCInstanceVariableList:
+  //   AddObjCVisibilityResults(SemaRef.getLangOpts(), Results, true);
+  //   break;
 
   case Sema::PCC_RecoveryInFunction:
   case Sema::PCC_Statement: {
@@ -2314,8 +2315,8 @@ static void AddOrdinaryNameResults(Sema::ParserCompletionContext CCC, Scope *S,
     QualType ReturnType;
     if (const auto *Function = dyn_cast<FunctionDecl>(SemaRef.CurContext))
       ReturnType = Function->getReturnType();
-    else if (const auto *Method = dyn_cast<ObjCMethodDecl>(SemaRef.CurContext))
-      ReturnType = Method->getReturnType();
+    // else if (const auto *Method = dyn_cast<ObjCMethodDecl>(SemaRef.CurContext))
+    //   ReturnType = Method->getReturnType();
     else if (SemaRef.getCurBlock() &&
              !SemaRef.getCurBlock()->ReturnType.isNull())
       ReturnType = SemaRef.getCurBlock()->ReturnType;;
@@ -2555,20 +2556,20 @@ static void AddOrdinaryNameResults(Sema::ParserCompletionContext CCC, Scope *S,
 
     if (SemaRef.getLangOpts().ObjC) {
       // Add "super", if we're in an Objective-C class with a superclass.
-      if (ObjCMethodDecl *Method = SemaRef.getCurMethodDecl()) {
-        // The interface can be NULL.
-        if (ObjCInterfaceDecl *ID = Method->getClassInterface())
-          if (ID->getSuperClass()) {
-            std::string SuperType;
-            SuperType = ID->getSuperClass()->getNameAsString();
-            if (Method->isInstanceMethod())
-              SuperType += " *";
+      // if (ObjCMethodDecl *Method = SemaRef.getCurMethodDecl()) {
+      //   // The interface can be NULL.
+      //   if (ObjCInterfaceDecl *ID = Method->getClassInterface())
+      //     if (ID->getSuperClass()) {
+      //       std::string SuperType;
+      //       SuperType = ID->getSuperClass()->getNameAsString();
+      //       if (Method->isInstanceMethod())
+      //         SuperType += " *";
 
-            Builder.AddResultTypeChunk(Allocator.CopyString(SuperType));
-            Builder.AddTypedTextChunk("super");
-            Results.AddResult(Result(Builder.TakeString()));
-          }
-      }
+      //       Builder.AddResultTypeChunk(Allocator.CopyString(SuperType));
+      //       Builder.AddTypedTextChunk("super");
+      //       Results.AddResult(Result(Builder.TakeString()));
+      //     }
+      // }
 
       AddObjCExpressionResults(Results, true);
     }
@@ -2626,22 +2627,23 @@ static void AddResultTypeChunk(ASTContext &Context,
   QualType T;
   if (const FunctionDecl *Function = ND->getAsFunction())
     T = Function->getReturnType();
-  else if (const auto *Method = dyn_cast<ObjCMethodDecl>(ND)) {
-    if (!BaseType.isNull())
-      T = Method->getSendResultType(BaseType);
-    else
-      T = Method->getReturnType();
-  } else if (const auto *Enumerator = dyn_cast<EnumConstantDecl>(ND)) {
+  // else if (const auto *Method = dyn_cast<ObjCMethodDecl>(ND)) {
+  //   if (!BaseType.isNull())
+  //     T = Method->getSendResultType(BaseType);
+  //   else
+  //     T = Method->getReturnType();
+  // } 
+  else if (const auto *Enumerator = dyn_cast<EnumConstantDecl>(ND)) {
     T = Context.getTypeDeclType(cast<TypeDecl>(Enumerator->getDeclContext()));
     T = latino::TypeName::getFullyQualifiedType(T, Context);
   } else if (isa<UnresolvedUsingValueDecl>(ND)) {
     /* Do nothing: ignore unresolved using declarations*/
-  } else if (const auto *Ivar = dyn_cast<ObjCIvarDecl>(ND)) {
+  } /*else if (const auto *Ivar = dyn_cast<ObjCIvarDecl>(ND)) {
     if (!BaseType.isNull())
       T = Ivar->getUsageType(BaseType);
     else
       T = Ivar->getType();
-  } else if (const auto *Value = dyn_cast<ValueDecl>(ND)) {
+  } */else if (const auto *Value = dyn_cast<ValueDecl>(ND)) {
     T = Value->getType();
   } else if (const auto *Property = dyn_cast<ObjCPropertyDecl>(ND)) {
     if (!BaseType.isNull())
@@ -2769,29 +2771,29 @@ FormatFunctionParameter(const PrintingPolicy &Policy, const ParmVarDecl *Param,
   // But this case is rare, so just pretend we fell back to int as elsewhere.
   if (!Param)
     return "int";
-  bool ObjCMethodParam = isa<ObjCMethodDecl>(Param->getDeclContext());
+  // bool ObjCMethodParam = isa<ObjCMethodDecl>(Param->getDeclContext());
   if (Param->getType()->isDependentType() ||
       !Param->getType()->isBlockPointerType()) {
     // The argument for a dependent or non-block parameter is a placeholder
     // containing that parameter's type.
     std::string Result;
 
-    if (Param->getIdentifier() && !ObjCMethodParam && !SuppressName)
+    if (Param->getIdentifier() && /*!ObjCMethodParam &&*/ !SuppressName)
       Result = std::string(Param->getIdentifier()->getName());
 
     QualType Type = Param->getType();
     if (ObjCSubsts)
       Type = Type.substObjCTypeArgs(Param->getASTContext(), *ObjCSubsts,
                                     ObjCSubstitutionContext::Parameter);
-    if (ObjCMethodParam) {
-      Result =
-          "(" + formatObjCParamQualifiers(Param->getObjCDeclQualifier(), Type);
-      Result += Type.getAsString(Policy) + ")";
-      if (Param->getIdentifier() && !SuppressName)
-        Result += Param->getIdentifier()->getName();
-    } else {
+    // if (ObjCMethodParam) {
+    //   Result =
+    //       "(" + formatObjCParamQualifiers(Param->getObjCDeclQualifier(), Type);
+    //   Result += Type.getAsString(Policy) + ")";
+    //   if (Param->getIdentifier() && !SuppressName)
+    //     Result += Param->getIdentifier()->getName();
+    // } else {
       Type.getAsStringInternal(Result, Policy);
-    }
+    // }
     return Result;
   }
 
@@ -2803,13 +2805,13 @@ FormatFunctionParameter(const PrintingPolicy &Policy, const ParmVarDecl *Param,
                                SuppressBlock);
   // Try to retrieve the block type information from the property if this is a
   // parameter in a setter.
-  if (!Block && ObjCMethodParam &&
-      cast<ObjCMethodDecl>(Param->getDeclContext())->isPropertyAccessor()) {
-    if (const auto *PD = cast<ObjCMethodDecl>(Param->getDeclContext())
-                             ->findPropertyDecl(/*CheckOverrides=*/false))
-      findTypeLocationForBlockDecl(PD->getTypeSourceInfo(), Block, BlockProto,
-                                   SuppressBlock);
-  }
+  // if (!Block && ObjCMethodParam &&
+  //     cast<ObjCMethodDecl>(Param->getDeclContext())->isPropertyAccessor()) {
+  //   if (const auto *PD = cast<ObjCMethodDecl>(Param->getDeclContext())
+  //                            ->findPropertyDecl(/*CheckOverrides=*/false))
+  //     findTypeLocationForBlockDecl(PD->getTypeSourceInfo(), Block, BlockProto,
+  //                                  SuppressBlock);
+  // }
 
   if (!Block) {
     // We were unable to find a FunctionProtoTypeLoc with parameter names
@@ -3481,94 +3483,94 @@ CodeCompletionString *CodeCompletionResult::createCodeCompletionStringForDecl(
     return Result.TakeString();
   }
 
-  if (const auto *Method = dyn_cast<ObjCMethodDecl>(ND)) {
-    Selector Sel = Method->getSelector();
-    if (Sel.isUnarySelector()) {
-      Result.AddTypedTextChunk(
-          Result.getAllocator().CopyString(Sel.getNameForSlot(0)));
-      return Result.TakeString();
-    }
+  // if (const auto *Method = dyn_cast<ObjCMethodDecl>(ND)) {
+  //   Selector Sel = Method->getSelector();
+  //   if (Sel.isUnarySelector()) {
+  //     Result.AddTypedTextChunk(
+  //         Result.getAllocator().CopyString(Sel.getNameForSlot(0)));
+  //     return Result.TakeString();
+  //   }
 
-    std::string SelName = Sel.getNameForSlot(0).str();
-    SelName += ':';
-    if (StartParameter == 0)
-      Result.AddTypedTextChunk(Result.getAllocator().CopyString(SelName));
-    else {
-      Result.AddInformativeChunk(Result.getAllocator().CopyString(SelName));
+  //   std::string SelName = Sel.getNameForSlot(0).str();
+  //   SelName += ':';
+  //   if (StartParameter == 0)
+  //     Result.AddTypedTextChunk(Result.getAllocator().CopyString(SelName));
+  //   else {
+  //     Result.AddInformativeChunk(Result.getAllocator().CopyString(SelName));
 
-      // If there is only one parameter, and we're past it, add an empty
-      // typed-text chunk since there is nothing to type.
-      if (Method->param_size() == 1)
-        Result.AddTypedTextChunk("");
-    }
-    unsigned Idx = 0;
-    for (ObjCMethodDecl::param_const_iterator P = Method->param_begin(),
-                                              PEnd = Method->param_end();
-         P != PEnd; (void)++P, ++Idx) {
-      if (Idx > 0) {
-        std::string Keyword;
-        if (Idx > StartParameter)
-          Result.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-        if (IdentifierInfo *II = Sel.getIdentifierInfoForSlot(Idx))
-          Keyword += II->getName();
-        Keyword += ":";
-        if (Idx < StartParameter || AllParametersAreInformative)
-          Result.AddInformativeChunk(Result.getAllocator().CopyString(Keyword));
-        else
-          Result.AddTypedTextChunk(Result.getAllocator().CopyString(Keyword));
-      }
+  //     // If there is only one parameter, and we're past it, add an empty
+  //     // typed-text chunk since there is nothing to type.
+  //     if (Method->param_size() == 1)
+  //       Result.AddTypedTextChunk("");
+  //   }
+  //   unsigned Idx = 0;
+  //   for (ObjCMethodDecl::param_const_iterator P = Method->param_begin(),
+  //                                             PEnd = Method->param_end();
+  //        P != PEnd; (void)++P, ++Idx) {
+  //     if (Idx > 0) {
+  //       std::string Keyword;
+  //       if (Idx > StartParameter)
+  //         Result.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+  //       if (IdentifierInfo *II = Sel.getIdentifierInfoForSlot(Idx))
+  //         Keyword += II->getName();
+  //       Keyword += ":";
+  //       if (Idx < StartParameter || AllParametersAreInformative)
+  //         Result.AddInformativeChunk(Result.getAllocator().CopyString(Keyword));
+  //       else
+  //         Result.AddTypedTextChunk(Result.getAllocator().CopyString(Keyword));
+  //     }
 
-      // If we're before the starting parameter, skip the placeholder.
-      if (Idx < StartParameter)
-        continue;
+  //     // If we're before the starting parameter, skip the placeholder.
+  //     if (Idx < StartParameter)
+  //       continue;
 
-      std::string Arg;
-      QualType ParamType = (*P)->getType();
-      Optional<ArrayRef<QualType>> ObjCSubsts;
-      if (!CCContext.getBaseType().isNull())
-        ObjCSubsts = CCContext.getBaseType()->getObjCSubstitutions(Method);
+  //     std::string Arg;
+  //     QualType ParamType = (*P)->getType();
+  //     Optional<ArrayRef<QualType>> ObjCSubsts;
+  //     if (!CCContext.getBaseType().isNull())
+  //       ObjCSubsts = CCContext.getBaseType()->getObjCSubstitutions(Method);
 
-      if (ParamType->isBlockPointerType() && !DeclaringEntity)
-        Arg = FormatFunctionParameter(Policy, *P, true,
-                                      /*SuppressBlock=*/false, ObjCSubsts);
-      else {
-        if (ObjCSubsts)
-          ParamType = ParamType.substObjCTypeArgs(
-              Ctx, *ObjCSubsts, ObjCSubstitutionContext::Parameter);
-        Arg = "(" + formatObjCParamQualifiers((*P)->getObjCDeclQualifier(),
-                                              ParamType);
-        Arg += ParamType.getAsString(Policy) + ")";
-        if (IdentifierInfo *II = (*P)->getIdentifier())
-          if (DeclaringEntity || AllParametersAreInformative)
-            Arg += II->getName();
-      }
+  //     if (ParamType->isBlockPointerType() && !DeclaringEntity)
+  //       Arg = FormatFunctionParameter(Policy, *P, true,
+  //                                     /*SuppressBlock=*/false, ObjCSubsts);
+  //     else {
+  //       if (ObjCSubsts)
+  //         ParamType = ParamType.substObjCTypeArgs(
+  //             Ctx, *ObjCSubsts, ObjCSubstitutionContext::Parameter);
+  //       Arg = "(" + formatObjCParamQualifiers((*P)->getObjCDeclQualifier(),
+  //                                             ParamType);
+  //       Arg += ParamType.getAsString(Policy) + ")";
+  //       if (IdentifierInfo *II = (*P)->getIdentifier())
+  //         if (DeclaringEntity || AllParametersAreInformative)
+  //           Arg += II->getName();
+  //     }
 
-      if (Method->isVariadic() && (P + 1) == PEnd)
-        Arg += ", ...";
+  //     if (Method->isVariadic() && (P + 1) == PEnd)
+  //       Arg += ", ...";
 
-      if (DeclaringEntity)
-        Result.AddTextChunk(Result.getAllocator().CopyString(Arg));
-      else if (AllParametersAreInformative)
-        Result.AddInformativeChunk(Result.getAllocator().CopyString(Arg));
-      else
-        Result.AddPlaceholderChunk(Result.getAllocator().CopyString(Arg));
-    }
+  //     if (DeclaringEntity)
+  //       Result.AddTextChunk(Result.getAllocator().CopyString(Arg));
+  //     else if (AllParametersAreInformative)
+  //       Result.AddInformativeChunk(Result.getAllocator().CopyString(Arg));
+  //     else
+  //       Result.AddPlaceholderChunk(Result.getAllocator().CopyString(Arg));
+  //   }
 
-    if (Method->isVariadic()) {
-      if (Method->param_size() == 0) {
-        if (DeclaringEntity)
-          Result.AddTextChunk(", ...");
-        else if (AllParametersAreInformative)
-          Result.AddInformativeChunk(", ...");
-        else
-          Result.AddPlaceholderChunk(", ...");
-      }
+  //   if (Method->isVariadic()) {
+  //     if (Method->param_size() == 0) {
+  //       if (DeclaringEntity)
+  //         Result.AddTextChunk(", ...");
+  //       else if (AllParametersAreInformative)
+  //         Result.AddInformativeChunk(", ...");
+  //       else
+  //         Result.AddPlaceholderChunk(", ...");
+  //     }
 
-      MaybeAddSentinel(PP, Method, Result);
-    }
+  //     MaybeAddSentinel(PP, Method, Result);
+  //   }
 
-    return Result.TakeString();
-  }
+  //   return Result.TakeString();
+  // }
 
   if (Qualifier)
     AddQualifierToCompletionString(Result, Qualifier, QualifierIsInformative,
@@ -3587,36 +3589,36 @@ const RawComment *latino::getCompletionComment(const ASTContext &Ctx,
     return RC;
 
   // Try to find comment from a property for ObjC methods.
-  const auto *M = dyn_cast<ObjCMethodDecl>(ND);
-  if (!M)
-    return nullptr;
-  const ObjCPropertyDecl *PDecl = M->findPropertyDecl();
-  if (!PDecl)
-    return nullptr;
+  // const auto *M = dyn_cast<ObjCMethodDecl>(ND);
+  // if (!M)
+  //   return nullptr;
+  // const ObjCPropertyDecl *PDecl = M->findPropertyDecl();
+  // if (!PDecl)
+  //   return nullptr;
 
   return Ctx.getRawCommentForAnyRedecl(PDecl);
 }
 
 const RawComment *latino::getPatternCompletionComment(const ASTContext &Ctx,
                                                      const NamedDecl *ND) {
-  const auto *M = dyn_cast_or_null<ObjCMethodDecl>(ND);
-  if (!M || !M->isPropertyAccessor())
-    return nullptr;
+  // const auto *M = dyn_cast_or_null<ObjCMethodDecl>(ND);
+  // if (!M || !M->isPropertyAccessor())
+  //   return nullptr;
 
   // Provide code completion comment for self.GetterName where
   // GetterName is the getter method for a property with name
   // different from the property name (declared via a property
   // getter attribute.
-  const ObjCPropertyDecl *PDecl = M->findPropertyDecl();
-  if (!PDecl)
-    return nullptr;
-  if (PDecl->getGetterName() == M->getSelector() &&
-      PDecl->getIdentifier() != M->getIdentifier()) {
-    if (auto *RC = Ctx.getRawCommentForAnyRedecl(M))
-      return RC;
-    if (auto *RC = Ctx.getRawCommentForAnyRedecl(PDecl))
-      return RC;
-  }
+  // const ObjCPropertyDecl *PDecl = M->findPropertyDecl();
+  // if (!PDecl)
+  //   return nullptr;
+  // if (PDecl->getGetterName() == M->getSelector() &&
+  //     PDecl->getIdentifier() != M->getIdentifier()) {
+  //   if (auto *RC = Ctx.getRawCommentForAnyRedecl(M))
+  //     return RC;
+  //   if (auto *RC = Ctx.getRawCommentForAnyRedecl(PDecl))
+  //     return RC;
+  // }
   return nullptr;
 }
 
@@ -3770,7 +3772,7 @@ unsigned latino::getMacroUsagePriority(StringRef MacroName,
     Priority = CCP_Constant;
   // Treat "bool" as a type.
   else if (MacroName.equals("bool"))
-    Priority = CCP_Type + (LangOpts.ObjC ? CCD_bool_in_ObjC : 0);
+    Priority = CCP_Type + (/*LangOpts.ObjC ? CCD_bool_in_ObjC :*/ 0);
 
   return Priority;
 }
@@ -3788,21 +3790,21 @@ CXCursorKind latino::getCursorKindForDecl(const Decl *D) {
     return CXCursor_FieldDecl;
   case Decl::Function:
     return CXCursor_FunctionDecl;
-  case Decl::ObjCCategory:
-    return CXCursor_ObjCCategoryDecl;
-  case Decl::ObjCCategoryImpl:
-    return CXCursor_ObjCCategoryImplDecl;
-  case Decl::ObjCImplementation:
-    return CXCursor_ObjCImplementationDecl;
+  // case Decl::ObjCCategory:
+  //   return CXCursor_ObjCCategoryDecl;
+  // case Decl::ObjCCategoryImpl:
+  //   return CXCursor_ObjCCategoryImplDecl;
+  // case Decl::ObjCImplementation:
+  //   return CXCursor_ObjCImplementationDecl;
 
-  case Decl::ObjCInterface:
-    return CXCursor_ObjCInterfaceDecl;
-  case Decl::ObjCIvar:
-    return CXCursor_ObjCIvarDecl;
-  case Decl::ObjCMethod:
-    return cast<ObjCMethodDecl>(D)->isInstanceMethod()
-               ? CXCursor_ObjCInstanceMethodDecl
-               : CXCursor_ObjCClassMethodDecl;
+  // case Decl::ObjCInterface:
+  //   return CXCursor_ObjCInterfaceDecl;
+  // case Decl::ObjCIvar:
+  //   return CXCursor_ObjCIvarDecl;
+  // case Decl::ObjCMethod:
+  //   return cast<ObjCMethodDecl>(D)->isInstanceMethod()
+  //              ? CXCursor_ObjCInstanceMethodDecl
+  //              : CXCursor_ObjCClassMethodDecl;
   case Decl::CXXMethod:
     return CXCursor_CXXMethod;
   case Decl::CXXConstructor:
@@ -3811,10 +3813,10 @@ CXCursorKind latino::getCursorKindForDecl(const Decl *D) {
     return CXCursor_Destructor;
   case Decl::CXXConversion:
     return CXCursor_ConversionFunction;
-  case Decl::ObjCProperty:
-    return CXCursor_ObjCPropertyDecl;
-  case Decl::ObjCProtocol:
-    return CXCursor_ObjCProtocolDecl;
+  // case Decl::ObjCProperty:
+  //   return CXCursor_ObjCPropertyDecl;
+  // case Decl::ObjCProtocol:
+  //   return CXCursor_ObjCProtocolDecl;
   case Decl::ParmVar:
     return CXCursor_ParmDecl;
   case Decl::Typedef:
@@ -3857,21 +3859,21 @@ CXCursorKind latino::getCursorKindForDecl(const Decl *D) {
   case Decl::UnresolvedUsingTypename:
     return CXCursor_UsingDeclaration;
 
-  case Decl::ObjCPropertyImpl:
-    switch (cast<ObjCPropertyImplDecl>(D)->getPropertyImplementation()) {
-    case ObjCPropertyImplDecl::Dynamic:
-      return CXCursor_ObjCDynamicDecl;
+  // case Decl::ObjCPropertyImpl:
+  //   switch (cast<ObjCPropertyImplDecl>(D)->getPropertyImplementation()) {
+  //   case ObjCPropertyImplDecl::Dynamic:
+  //     return CXCursor_ObjCDynamicDecl;
 
-    case ObjCPropertyImplDecl::Synthesize:
-      return CXCursor_ObjCSynthesizeDecl;
-    }
-    llvm_unreachable("Unexpected Kind!");
+  //   case ObjCPropertyImplDecl::Synthesize:
+  //     return CXCursor_ObjCSynthesizeDecl;
+  //   }
+  //   llvm_unreachable("Unexpected Kind!");
 
   case Decl::Import:
     return CXCursor_ModuleImportDecl;
 
-  case Decl::ObjCTypeParam:
-    return CXCursor_TemplateTypeParameter;
+  // case Decl::ObjCTypeParam:
+  //   return CXCursor_TemplateTypeParameter;
 
   default:
     if (const auto *TD = dyn_cast<TagDecl>(D)) {
@@ -3949,14 +3951,14 @@ mapCodeCompletionContext(Sema &S, Sema::ParserCompletionContext PCC) {
   case Sema::PCC_Class:
     return CodeCompletionContext::CCC_ClassStructUnion;
 
-  case Sema::PCC_ObjCInterface:
-    return CodeCompletionContext::CCC_ObjCInterface;
+  // case Sema::PCC_ObjCInterface:
+  //   return CodeCompletionContext::CCC_ObjCInterface;
 
-  case Sema::PCC_ObjCImplementation:
-    return CodeCompletionContext::CCC_ObjCImplementation;
+  // case Sema::PCC_ObjCImplementation:
+  //   return CodeCompletionContext::CCC_ObjCImplementation;
 
-  case Sema::PCC_ObjCInstanceVariableList:
-    return CodeCompletionContext::CCC_ObjCIvarList;
+  // case Sema::PCC_ObjCInstanceVariableList:
+  //   return CodeCompletionContext::CCC_ObjCIvarList;
 
   case Sema::PCC_Template:
   case Sema::PCC_MemberTemplate:
@@ -4199,11 +4201,11 @@ void Sema::CodeCompleteOrdinaryName(Scope *S,
                             Results.data(), Results.size());
 }
 
-static void AddClassMessageCompletions(Sema &SemaRef, Scope *S,
-                                       ParsedType Receiver,
-                                       ArrayRef<IdentifierInfo *> SelIdents,
-                                       bool AtArgumentExpression, bool IsSuper,
-                                       ResultBuilder &Results);
+// static void AddClassMessageCompletions(Sema &SemaRef, Scope *S,
+//                                        ParsedType Receiver,
+//                                        ArrayRef<IdentifierInfo *> SelIdents,
+//                                        bool AtArgumentExpression, bool IsSuper,
+//                                        ResultBuilder &Results);
 
 void Sema::CodeCompleteDeclSpec(Scope *S, DeclSpec &DS,
                                 bool AllowNonIdentifiers,
@@ -4263,8 +4265,8 @@ void Sema::CodeCompleteDeclSpec(Scope *S, DeclSpec &DS,
                         Scope::FunctionPrototypeScope | Scope::AtCatchScope)) ==
           0) {
     ParsedType T = DS.getRepAsType();
-    if (!T.get().isNull() && T.get()->isObjCObjectOrInterfaceType())
-      AddClassMessageCompletions(*this, S, T, None, false, false, Results);
+    // if (!T.get().isNull() && T.get()->isObjCObjectOrInterfaceType())
+    //   AddClassMessageCompletions(*this, S, T, None, false, false, Results);
   }
 
   // Note that we intentionally suppress macro results here, since we do not
@@ -4399,8 +4401,8 @@ void Sema::CodeCompleteExpression(Scope *S,
           Data.PreferredType));
   auto PCC =
       Data.IsParenthesized ? PCC_ParenthesizedExpression : PCC_Expression;
-  if (Data.ObjCCollection)
-    Results.setFilter(&ResultBuilder::IsObjCCollection);
+  // if (Data.ObjCCollection)
+  //   Results.setFilter(&ResultBuilder::IsObjCCollection);
   else if (Data.IntegralConstantExpression)
     Results.setFilter(&ResultBuilder::IsIntegralConstantValue);
   else if (WantTypesInContext(PCC, getLangOpts()))
@@ -4468,8 +4470,8 @@ void Sema::CodeCompletePostfixExpression(Scope *S, ExprResult E,
                                          QualType PreferredType) {
   if (E.isInvalid())
     CodeCompleteExpression(S, PreferredType);
-  else if (getLangOpts().ObjC)
-    CodeCompleteObjCInstanceMessage(S, E.get(), None, false);
+  // else if (getLangOpts().ObjC)
+  //   CodeCompleteObjCInstanceMessage(S, E.get(), None, false);
 }
 
 /// The set of properties that have already been added, referenced by
@@ -4477,22 +4479,22 @@ void Sema::CodeCompletePostfixExpression(Scope *S, ExprResult E,
 typedef llvm::SmallPtrSet<IdentifierInfo *, 16> AddedPropertiesSet;
 
 /// Retrieve the container definition, if any?
-static ObjCContainerDecl *getContainerDef(ObjCContainerDecl *Container) {
-  if (ObjCInterfaceDecl *Interface = dyn_cast<ObjCInterfaceDecl>(Container)) {
-    if (Interface->hasDefinition())
-      return Interface->getDefinition();
+// static ObjCContainerDecl *getContainerDef(ObjCContainerDecl *Container) {
+//   if (ObjCInterfaceDecl *Interface = dyn_cast<ObjCInterfaceDecl>(Container)) {
+//     if (Interface->hasDefinition())
+//       return Interface->getDefinition();
 
-    return Interface;
-  }
+//     return Interface;
+//   }
 
-  if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
-    if (Protocol->hasDefinition())
-      return Protocol->getDefinition();
+//   // if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
+//   //   if (Protocol->hasDefinition())
+//   //     return Protocol->getDefinition();
 
-    return Protocol;
-  }
-  return Container;
-}
+//   //   return Protocol;
+//   // }
+//   return Container;
+// }
 
 /// Adds a block invocation code completion result for the given block
 /// declaration \p BD.
@@ -4532,186 +4534,186 @@ static void AddObjCBlockCall(ASTContext &Context, const PrintingPolicy &Policy,
   Builder.AddChunk(CodeCompletionString::CK_RightParen);
 }
 
-static void
-AddObjCProperties(const CodeCompletionContext &CCContext,
-                  ObjCContainerDecl *Container, bool AllowCategories,
-                  bool AllowNullaryMethods, DeclContext *CurContext,
-                  AddedPropertiesSet &AddedProperties, ResultBuilder &Results,
-                  bool IsBaseExprStatement = false,
-                  bool IsClassProperty = false, bool InOriginalClass = true) {
-  typedef CodeCompletionResult Result;
+// static void
+// AddObjCProperties(const CodeCompletionContext &CCContext,
+//                   ObjCContainerDecl *Container, bool AllowCategories,
+//                   bool AllowNullaryMethods, DeclContext *CurContext,
+//                   AddedPropertiesSet &AddedProperties, ResultBuilder &Results,
+//                   bool IsBaseExprStatement = false,
+//                   bool IsClassProperty = false, bool InOriginalClass = true) {
+//   typedef CodeCompletionResult Result;
 
-  // Retrieve the definition.
-  Container = getContainerDef(Container);
+//   // Retrieve the definition.
+//   Container = getContainerDef(Container);
 
-  // Add properties in this container.
-  const auto AddProperty = [&](const ObjCPropertyDecl *P) {
-    if (!AddedProperties.insert(P->getIdentifier()).second)
-      return;
+//   // Add properties in this container.
+//   const auto AddProperty = [&](const ObjCPropertyDecl *P) {
+//     if (!AddedProperties.insert(P->getIdentifier()).second)
+//       return;
 
-    // FIXME: Provide block invocation completion for non-statement
-    // expressions.
-    if (!P->getType().getTypePtr()->isBlockPointerType() ||
-        !IsBaseExprStatement) {
-      Result R = Result(P, Results.getBasePriority(P), nullptr);
-      if (!InOriginalClass)
-        setInBaseClass(R);
-      Results.MaybeAddResult(R, CurContext);
-      return;
-    }
+//     // FIXME: Provide block invocation completion for non-statement
+//     // expressions.
+//     if (!P->getType().getTypePtr()->isBlockPointerType() ||
+//         !IsBaseExprStatement) {
+//       Result R = Result(P, Results.getBasePriority(P), nullptr);
+//       if (!InOriginalClass)
+//         setInBaseClass(R);
+//       Results.MaybeAddResult(R, CurContext);
+//       return;
+//     }
 
-    // Block setter and invocation completion is provided only when we are able
-    // to find the FunctionProtoTypeLoc with parameter names for the block.
-    FunctionTypeLoc BlockLoc;
-    FunctionProtoTypeLoc BlockProtoLoc;
-    findTypeLocationForBlockDecl(P->getTypeSourceInfo(), BlockLoc,
-                                 BlockProtoLoc);
-    if (!BlockLoc) {
-      Result R = Result(P, Results.getBasePriority(P), nullptr);
-      if (!InOriginalClass)
-        setInBaseClass(R);
-      Results.MaybeAddResult(R, CurContext);
-      return;
-    }
+//     // Block setter and invocation completion is provided only when we are able
+//     // to find the FunctionProtoTypeLoc with parameter names for the block.
+//     FunctionTypeLoc BlockLoc;
+//     FunctionProtoTypeLoc BlockProtoLoc;
+//     findTypeLocationForBlockDecl(P->getTypeSourceInfo(), BlockLoc,
+//                                  BlockProtoLoc);
+//     if (!BlockLoc) {
+//       Result R = Result(P, Results.getBasePriority(P), nullptr);
+//       if (!InOriginalClass)
+//         setInBaseClass(R);
+//       Results.MaybeAddResult(R, CurContext);
+//       return;
+//     }
 
-    // The default completion result for block properties should be the block
-    // invocation completion when the base expression is a statement.
-    CodeCompletionBuilder Builder(Results.getAllocator(),
-                                  Results.getCodeCompletionTUInfo());
-    AddObjCBlockCall(Container->getASTContext(),
-                     getCompletionPrintingPolicy(Results.getSema()), Builder, P,
-                     BlockLoc, BlockProtoLoc);
-    Result R = Result(Builder.TakeString(), P, Results.getBasePriority(P));
-    if (!InOriginalClass)
-      setInBaseClass(R);
-    Results.MaybeAddResult(R, CurContext);
+//     // The default completion result for block properties should be the block
+//     // invocation completion when the base expression is a statement.
+//     CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                   Results.getCodeCompletionTUInfo());
+//     AddObjCBlockCall(Container->getASTContext(),
+//                      getCompletionPrintingPolicy(Results.getSema()), Builder, P,
+//                      BlockLoc, BlockProtoLoc);
+//     Result R = Result(Builder.TakeString(), P, Results.getBasePriority(P));
+//     if (!InOriginalClass)
+//       setInBaseClass(R);
+//     Results.MaybeAddResult(R, CurContext);
 
-    // Provide additional block setter completion iff the base expression is a
-    // statement and the block property is mutable.
-    if (!P->isReadOnly()) {
-      CodeCompletionBuilder Builder(Results.getAllocator(),
-                                    Results.getCodeCompletionTUInfo());
-      AddResultTypeChunk(Container->getASTContext(),
-                         getCompletionPrintingPolicy(Results.getSema()), P,
-                         CCContext.getBaseType(), Builder);
-      Builder.AddTypedTextChunk(
-          Results.getAllocator().CopyString(P->getName()));
-      Builder.AddChunk(CodeCompletionString::CK_Equal);
+//     // Provide additional block setter completion iff the base expression is a
+//     // statement and the block property is mutable.
+//     if (!P->isReadOnly()) {
+//       CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                     Results.getCodeCompletionTUInfo());
+//       AddResultTypeChunk(Container->getASTContext(),
+//                          getCompletionPrintingPolicy(Results.getSema()), P,
+//                          CCContext.getBaseType(), Builder);
+//       Builder.AddTypedTextChunk(
+//           Results.getAllocator().CopyString(P->getName()));
+//       Builder.AddChunk(CodeCompletionString::CK_Equal);
 
-      std::string PlaceholderStr = formatBlockPlaceholder(
-          getCompletionPrintingPolicy(Results.getSema()), P, BlockLoc,
-          BlockProtoLoc, /*SuppressBlockName=*/true);
-      // Add the placeholder string.
-      Builder.AddPlaceholderChunk(
-          Builder.getAllocator().CopyString(PlaceholderStr));
+//       std::string PlaceholderStr = formatBlockPlaceholder(
+//           getCompletionPrintingPolicy(Results.getSema()), P, BlockLoc,
+//           BlockProtoLoc, /*SuppressBlockName=*/true);
+//       // Add the placeholder string.
+//       Builder.AddPlaceholderChunk(
+//           Builder.getAllocator().CopyString(PlaceholderStr));
 
-      // When completing blocks properties that return void the default
-      // property completion result should show up before the setter,
-      // otherwise the setter completion should show up before the default
-      // property completion, as we normally want to use the result of the
-      // call.
-      Result R =
-          Result(Builder.TakeString(), P,
-                 Results.getBasePriority(P) +
-                     (BlockLoc.getTypePtr()->getReturnType()->isVoidType()
-                          ? CCD_BlockPropertySetter
-                          : -CCD_BlockPropertySetter));
-      if (!InOriginalClass)
-        setInBaseClass(R);
-      Results.MaybeAddResult(R, CurContext);
-    }
-  };
+//       // When completing blocks properties that return void the default
+//       // property completion result should show up before the setter,
+//       // otherwise the setter completion should show up before the default
+//       // property completion, as we normally want to use the result of the
+//       // call.
+//       Result R =
+//           Result(Builder.TakeString(), P,
+//                  Results.getBasePriority(P) +
+//                      (BlockLoc.getTypePtr()->getReturnType()->isVoidType()
+//                           ? CCD_BlockPropertySetter
+//                           : -CCD_BlockPropertySetter));
+//       if (!InOriginalClass)
+//         setInBaseClass(R);
+//       Results.MaybeAddResult(R, CurContext);
+//     }
+//   };
 
-  if (IsClassProperty) {
-    for (const auto *P : Container->class_properties())
-      AddProperty(P);
-  } else {
-    for (const auto *P : Container->instance_properties())
-      AddProperty(P);
-  }
+//   if (IsClassProperty) {
+//     for (const auto *P : Container->class_properties())
+//       AddProperty(P);
+//   } else {
+//     for (const auto *P : Container->instance_properties())
+//       AddProperty(P);
+//   }
 
-  // Add nullary methods or implicit class properties
-  if (AllowNullaryMethods) {
-    ASTContext &Context = Container->getASTContext();
-    PrintingPolicy Policy = getCompletionPrintingPolicy(Results.getSema());
-    // Adds a method result
-    const auto AddMethod = [&](const ObjCMethodDecl *M) {
-      IdentifierInfo *Name = M->getSelector().getIdentifierInfoForSlot(0);
-      if (!Name)
-        return;
-      if (!AddedProperties.insert(Name).second)
-        return;
-      CodeCompletionBuilder Builder(Results.getAllocator(),
-                                    Results.getCodeCompletionTUInfo());
-      AddResultTypeChunk(Context, Policy, M, CCContext.getBaseType(), Builder);
-      Builder.AddTypedTextChunk(
-          Results.getAllocator().CopyString(Name->getName()));
-      Result R = Result(Builder.TakeString(), M,
-                        CCP_MemberDeclaration + CCD_MethodAsProperty);
-      if (!InOriginalClass)
-        setInBaseClass(R);
-      Results.MaybeAddResult(R, CurContext);
-    };
+//   // Add nullary methods or implicit class properties
+//   if (AllowNullaryMethods) {
+//     ASTContext &Context = Container->getASTContext();
+//     PrintingPolicy Policy = getCompletionPrintingPolicy(Results.getSema());
+//     // Adds a method result
+//     const auto AddMethod = [&](const ObjCMethodDecl *M) {
+//       IdentifierInfo *Name = M->getSelector().getIdentifierInfoForSlot(0);
+//       if (!Name)
+//         return;
+//       if (!AddedProperties.insert(Name).second)
+//         return;
+//       CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                     Results.getCodeCompletionTUInfo());
+//       AddResultTypeChunk(Context, Policy, M, CCContext.getBaseType(), Builder);
+//       Builder.AddTypedTextChunk(
+//           Results.getAllocator().CopyString(Name->getName()));
+//       Result R = Result(Builder.TakeString(), M,
+//                         CCP_MemberDeclaration + CCD_MethodAsProperty);
+//       if (!InOriginalClass)
+//         setInBaseClass(R);
+//       Results.MaybeAddResult(R, CurContext);
+//     };
 
-    if (IsClassProperty) {
-      for (const auto *M : Container->methods()) {
-        // Gather the class method that can be used as implicit property
-        // getters. Methods with arguments or methods that return void aren't
-        // added to the results as they can't be used as a getter.
-        if (!M->getSelector().isUnarySelector() ||
-            M->getReturnType()->isVoidType() || M->isInstanceMethod())
-          continue;
-        AddMethod(M);
-      }
-    } else {
-      for (auto *M : Container->methods()) {
-        if (M->getSelector().isUnarySelector())
-          AddMethod(M);
-      }
-    }
-  }
+//     if (IsClassProperty) {
+//       for (const auto *M : Container->methods()) {
+//         // Gather the class method that can be used as implicit property
+//         // getters. Methods with arguments or methods that return void aren't
+//         // added to the results as they can't be used as a getter.
+//         if (!M->getSelector().isUnarySelector() ||
+//             M->getReturnType()->isVoidType() || M->isInstanceMethod())
+//           continue;
+//         AddMethod(M);
+//       }
+//     } else {
+//       for (auto *M : Container->methods()) {
+//         if (M->getSelector().isUnarySelector())
+//           AddMethod(M);
+//       }
+//     }
+//   }
 
-  // Add properties in referenced protocols.
-  if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
-    for (auto *P : Protocol->protocols())
-      AddObjCProperties(CCContext, P, AllowCategories, AllowNullaryMethods,
-                        CurContext, AddedProperties, Results,
-                        IsBaseExprStatement, IsClassProperty,
-                        /*InOriginalClass*/ false);
-  } else if (ObjCInterfaceDecl *IFace =
-                 dyn_cast<ObjCInterfaceDecl>(Container)) {
-    if (AllowCategories) {
-      // Look through categories.
-      for (auto *Cat : IFace->known_categories())
-        AddObjCProperties(CCContext, Cat, AllowCategories, AllowNullaryMethods,
-                          CurContext, AddedProperties, Results,
-                          IsBaseExprStatement, IsClassProperty,
-                          InOriginalClass);
-    }
+//   // Add properties in referenced protocols.
+//   if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
+//     for (auto *P : Protocol->protocols())
+//       AddObjCProperties(CCContext, P, AllowCategories, AllowNullaryMethods,
+//                         CurContext, AddedProperties, Results,
+//                         IsBaseExprStatement, IsClassProperty,
+//                         /*InOriginalClass*/ false);
+//   } else if (ObjCInterfaceDecl *IFace =
+//                  dyn_cast<ObjCInterfaceDecl>(Container)) {
+//     if (AllowCategories) {
+//       // Look through categories.
+//       for (auto *Cat : IFace->known_categories())
+//         AddObjCProperties(CCContext, Cat, AllowCategories, AllowNullaryMethods,
+//                           CurContext, AddedProperties, Results,
+//                           IsBaseExprStatement, IsClassProperty,
+//                           InOriginalClass);
+//     }
 
-    // Look through protocols.
-    for (auto *I : IFace->all_referenced_protocols())
-      AddObjCProperties(CCContext, I, AllowCategories, AllowNullaryMethods,
-                        CurContext, AddedProperties, Results,
-                        IsBaseExprStatement, IsClassProperty,
-                        /*InOriginalClass*/ false);
+//     // Look through protocols.
+//     for (auto *I : IFace->all_referenced_protocols())
+//       AddObjCProperties(CCContext, I, AllowCategories, AllowNullaryMethods,
+//                         CurContext, AddedProperties, Results,
+//                         IsBaseExprStatement, IsClassProperty,
+//                         /*InOriginalClass*/ false);
 
-    // Look in the superclass.
-    if (IFace->getSuperClass())
-      AddObjCProperties(CCContext, IFace->getSuperClass(), AllowCategories,
-                        AllowNullaryMethods, CurContext, AddedProperties,
-                        Results, IsBaseExprStatement, IsClassProperty,
-                        /*InOriginalClass*/ false);
-  } else if (const auto *Category =
-                 dyn_cast<ObjCCategoryDecl>(Container)) {
-    // Look through protocols.
-    for (auto *P : Category->protocols())
-      AddObjCProperties(CCContext, P, AllowCategories, AllowNullaryMethods,
-                        CurContext, AddedProperties, Results,
-                        IsBaseExprStatement, IsClassProperty,
-                        /*InOriginalClass*/ false);
-  }
-}
+//     // Look in the superclass.
+//     if (IFace->getSuperClass())
+//       AddObjCProperties(CCContext, IFace->getSuperClass(), AllowCategories,
+//                         AllowNullaryMethods, CurContext, AddedProperties,
+//                         Results, IsBaseExprStatement, IsClassProperty,
+//                         /*InOriginalClass*/ false);
+//   } else if (const auto *Category =
+//                  dyn_cast<ObjCCategoryDecl>(Container)) {
+//     // Look through protocols.
+//     for (auto *P : Category->protocols())
+//       AddObjCProperties(CCContext, P, AllowCategories, AllowNullaryMethods,
+//                         CurContext, AddedProperties, Results,
+//                         IsBaseExprStatement, IsClassProperty,
+//                         /*InOriginalClass*/ false);
+//   }
+// }
 
 static void AddRecordMembersCompletionResults(
     Sema &SemaRef, ResultBuilder &Results, Scope *S, QualType BaseType,
@@ -5154,12 +5156,12 @@ void Sema::CodeCompleteMemberReferenceExpr(Scope *S, Expr *Base,
   if (IsArrow) {
     contextKind = CodeCompletionContext::CCC_ArrowMemberAccess;
   } else {
-    if (ConvertedBaseType->isObjCObjectPointerType() ||
-        ConvertedBaseType->isObjCObjectOrInterfaceType()) {
-      contextKind = CodeCompletionContext::CCC_ObjCPropertyAccess;
-    } else {
+    // if (ConvertedBaseType->isObjCObjectPointerType() ||
+    //     ConvertedBaseType->isObjCObjectOrInterfaceType()) {
+    //   contextKind = CodeCompletionContext::CCC_ObjCPropertyAccess;
+    // } else {
       contextKind = CodeCompletionContext::CCC_DotMemberAccess;
-    }
+    // }
   }
 
   CodeCompletionContext CCContext(contextKind, ConvertedBaseType);
@@ -5187,7 +5189,7 @@ void Sema::CodeCompleteMemberReferenceExpr(Scope *S, Expr *Base,
       if (const PointerType *Ptr = BaseType->getAs<PointerType>()) {
         BaseType = Ptr->getPointeeType();
         BaseKind = VK_LValue;
-      } else if (BaseType->isObjCObjectPointerType() ||
+      } else if (/*BaseType->isObjCObjectPointerType() ||*/
                  BaseType->isTemplateTypeParmType()) {
         // Both cases (dot/arrow) handled below.
       } else {
@@ -5212,54 +5214,56 @@ void Sema::CodeCompleteMemberReferenceExpr(Scope *S, Expr *Base,
           Result.FixIts.push_back(*AccessOpFixIt);
         Results.AddResult(std::move(Result));
       }
-    } else if (!IsArrow && BaseType->isObjCObjectPointerType()) {
-      // Objective-C property reference. Bail if we're performing fix-it code
-      // completion since Objective-C properties are normally backed by ivars,
-      // most Objective-C fix-its here would have little value.
-      if (AccessOpFixIt.hasValue()) {
-        return false;
-      }
-      AddedPropertiesSet AddedProperties;
+    } 
+    // else if (!IsArrow && BaseType->isObjCObjectPointerType()) {
+    //   // Objective-C property reference. Bail if we're performing fix-it code
+    //   // completion since Objective-C properties are normally backed by ivars,
+    //   // most Objective-C fix-its here would have little value.
+    //   if (AccessOpFixIt.hasValue()) {
+    //     return false;
+    //   }
+    //   AddedPropertiesSet AddedProperties;
 
-      if (const ObjCObjectPointerType *ObjCPtr =
-              BaseType->getAsObjCInterfacePointerType()) {
-        // Add property results based on our interface.
-        assert(ObjCPtr && "Non-NULL pointer guaranteed above!");
-        AddObjCProperties(CCContext, ObjCPtr->getInterfaceDecl(), true,
-                          /*AllowNullaryMethods=*/true, CurContext,
-                          AddedProperties, Results, IsBaseExprStatement);
-      }
+    //   // if (const ObjCObjectPointerType *ObjCPtr =
+    //   //         BaseType->getAsObjCInterfacePointerType()) {
+    //   //   // Add property results based on our interface.
+    //   //   assert(ObjCPtr && "Non-NULL pointer guaranteed above!");
+    //   //   AddObjCProperties(CCContext, ObjCPtr->getInterfaceDecl(), true,
+    //   //                     /*AllowNullaryMethods=*/true, CurContext,
+    //   //                     AddedProperties, Results, IsBaseExprStatement);
+    //   // }
 
-      // Add properties from the protocols in a qualified interface.
-      for (auto *I : BaseType->castAs<ObjCObjectPointerType>()->quals())
-        AddObjCProperties(CCContext, I, true, /*AllowNullaryMethods=*/true,
-                          CurContext, AddedProperties, Results,
-                          IsBaseExprStatement, /*IsClassProperty*/ false,
-                          /*InOriginalClass*/ false);
-    } else if ((IsArrow && BaseType->isObjCObjectPointerType()) ||
-               (!IsArrow && BaseType->isObjCObjectType())) {
-      // Objective-C instance variable access. Bail if we're performing fix-it
-      // code completion since Objective-C properties are normally backed by
-      // ivars, most Objective-C fix-its here would have little value.
-      if (AccessOpFixIt.hasValue()) {
-        return false;
-      }
-      ObjCInterfaceDecl *Class = nullptr;
-      if (const ObjCObjectPointerType *ObjCPtr =
-              BaseType->getAs<ObjCObjectPointerType>())
-        Class = ObjCPtr->getInterfaceDecl();
-      else
-        Class = BaseType->castAs<ObjCObjectType>()->getInterface();
+    //   // Add properties from the protocols in a qualified interface.
+    //   for (auto *I : BaseType->castAs<ObjCObjectPointerType>()->quals())
+    //     AddObjCProperties(CCContext, I, true, /*AllowNullaryMethods=*/true,
+    //                       CurContext, AddedProperties, Results,
+    //                       IsBaseExprStatement, /*IsClassProperty*/ false,
+    //                       /*InOriginalClass*/ false);
+    // } 
+    // else if ((IsArrow && BaseType->isObjCObjectPointerType()) ||
+    //            (!IsArrow && BaseType->isObjCObjectType())) {
+    //   // Objective-C instance variable access. Bail if we're performing fix-it
+    //   // code completion since Objective-C properties are normally backed by
+    //   // ivars, most Objective-C fix-its here would have little value.
+    //   if (AccessOpFixIt.hasValue()) {
+    //     return false;
+    //   }
+    //   ObjCInterfaceDecl *Class = nullptr;
+    //   if (const ObjCObjectPointerType *ObjCPtr =
+    //           BaseType->getAs<ObjCObjectPointerType>())
+    //     Class = ObjCPtr->getInterfaceDecl();
+    //   else
+    //     Class = BaseType->castAs<ObjCObjectType>()->getInterface();
 
-      // Add all ivars from this class and its superclasses.
-      if (Class) {
-        CodeCompletionDeclConsumer Consumer(Results, Class, BaseType);
-        Results.setFilter(&ResultBuilder::IsObjCIvar);
-        LookupVisibleDecls(
-            Class, LookupMemberName, Consumer, CodeCompleter->includeGlobals(),
-            /*IncludeDependentBases=*/false, CodeCompleter->loadExternal());
-      }
-    }
+    //   // Add all ivars from this class and its superclasses.
+    //   if (Class) {
+    //     CodeCompletionDeclConsumer Consumer(Results, Class, BaseType);
+    //     Results.setFilter(&ResultBuilder::IsObjCIvar);
+    //     LookupVisibleDecls(
+    //         Class, LookupMemberName, Consumer, CodeCompleter->includeGlobals(),
+    //         /*IncludeDependentBases=*/false, CodeCompleter->loadExternal());
+    //   }
+    // }
 
     // FIXME: How do we cope with isa?
     return true;
@@ -5286,29 +5290,29 @@ void Sema::CodeCompleteMemberReferenceExpr(Scope *S, Expr *Base,
                             Results.data(), Results.size());
 }
 
-void Sema::CodeCompleteObjCClassPropertyRefExpr(Scope *S,
-                                                IdentifierInfo &ClassName,
-                                                SourceLocation ClassNameLoc,
-                                                bool IsBaseExprStatement) {
-  IdentifierInfo *ClassNamePtr = &ClassName;
-  ObjCInterfaceDecl *IFace = getObjCInterfaceDecl(ClassNamePtr, ClassNameLoc);
-  if (!IFace)
-    return;
-  CodeCompletionContext CCContext(
-      CodeCompletionContext::CCC_ObjCPropertyAccess);
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(), CCContext,
-                        &ResultBuilder::IsMember);
-  Results.EnterNewScope();
-  AddedPropertiesSet AddedProperties;
-  AddObjCProperties(CCContext, IFace, true,
-                    /*AllowNullaryMethods=*/true, CurContext, AddedProperties,
-                    Results, IsBaseExprStatement,
-                    /*IsClassProperty=*/true);
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+// void Sema::CodeCompleteObjCClassPropertyRefExpr(Scope *S,
+//                                                 IdentifierInfo &ClassName,
+//                                                 SourceLocation ClassNameLoc,
+//                                                 bool IsBaseExprStatement) {
+//   IdentifierInfo *ClassNamePtr = &ClassName;
+//   ObjCInterfaceDecl *IFace = getObjCInterfaceDecl(ClassNamePtr, ClassNameLoc);
+//   if (!IFace)
+//     return;
+//   CodeCompletionContext CCContext(
+//       CodeCompletionContext::CCC_ObjCPropertyAccess);
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(), CCContext,
+//                         &ResultBuilder::IsMember);
+//   Results.EnterNewScope();
+//   AddedPropertiesSet AddedProperties;
+//   AddObjCProperties(CCContext, IFace, true,
+//                     /*AllowNullaryMethods=*/true, CurContext, AddedProperties,
+//                     Results, IsBaseExprStatement,
+//                     /*IsClassProperty=*/true);
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 void Sema::CodeCompleteTag(Scope *S, unsigned TagSpec) {
   if (!CodeCompleter)
@@ -6319,47 +6323,47 @@ void Sema::CodeCompleteAfterFunctionEquals(Declarator &D) {
 /// Keyword, depending on whether NeedAt is true or false.
 #define OBJC_AT_KEYWORD_NAME(NeedAt, Keyword) ((NeedAt) ? "@" Keyword : Keyword)
 
-static void AddObjCImplementationResults(const LangOptions &LangOpts,
-                                         ResultBuilder &Results, bool NeedAt) {
-  typedef CodeCompletionResult Result;
-  // Since we have an implementation, we can end it.
-  Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "end")));
+// static void AddObjCImplementationResults(const LangOptions &LangOpts,
+//                                          ResultBuilder &Results, bool NeedAt) {
+//   typedef CodeCompletionResult Result;
+//   // Since we have an implementation, we can end it.
+//   Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "end")));
 
-  CodeCompletionBuilder Builder(Results.getAllocator(),
-                                Results.getCodeCompletionTUInfo());
-  if (LangOpts.ObjC) {
-    // @dynamic
-    Builder.AddTypedTextChunk(OBJC_AT_KEYWORD_NAME(NeedAt, "dynamic"));
-    Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-    Builder.AddPlaceholderChunk("property");
-    Results.AddResult(Result(Builder.TakeString()));
+//   CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                 Results.getCodeCompletionTUInfo());
+//   if (LangOpts.ObjC) {
+//     // @dynamic
+//     Builder.AddTypedTextChunk(OBJC_AT_KEYWORD_NAME(NeedAt, "dynamic"));
+//     Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//     Builder.AddPlaceholderChunk("property");
+//     Results.AddResult(Result(Builder.TakeString()));
 
-    // @synthesize
-    Builder.AddTypedTextChunk(OBJC_AT_KEYWORD_NAME(NeedAt, "synthesize"));
-    Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-    Builder.AddPlaceholderChunk("property");
-    Results.AddResult(Result(Builder.TakeString()));
-  }
-}
+//     // @synthesize
+//     Builder.AddTypedTextChunk(OBJC_AT_KEYWORD_NAME(NeedAt, "synthesize"));
+//     Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//     Builder.AddPlaceholderChunk("property");
+//     Results.AddResult(Result(Builder.TakeString()));
+//   }
+// }
 
-static void AddObjCInterfaceResults(const LangOptions &LangOpts,
-                                    ResultBuilder &Results, bool NeedAt) {
-  typedef CodeCompletionResult Result;
+// static void AddObjCInterfaceResults(const LangOptions &LangOpts,
+//                                     ResultBuilder &Results, bool NeedAt) {
+//   typedef CodeCompletionResult Result;
 
-  // Since we have an interface or protocol, we can end it.
-  Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "end")));
+//   // Since we have an interface or protocol, we can end it.
+//   Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "end")));
 
-  if (LangOpts.ObjC) {
-    // @property
-    Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "property")));
+//   if (LangOpts.ObjC) {
+//     // @property
+//     Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "property")));
 
-    // @required
-    Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "required")));
+//     // @required
+//     Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "required")));
 
-    // @optional
-    Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "optional")));
-  }
-}
+//     // @optional
+//     Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "optional")));
+//   }
+// }
 
 static void AddObjCTopLevelResults(ResultBuilder &Results, bool NeedAt) {
   typedef CodeCompletionResult Result;
@@ -6412,21 +6416,21 @@ static void AddObjCTopLevelResults(ResultBuilder &Results, bool NeedAt) {
   }
 }
 
-void Sema::CodeCompleteObjCAtDirective(Scope *S) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
-  if (isa<ObjCImplDecl>(CurContext))
-    AddObjCImplementationResults(getLangOpts(), Results, false);
-  else if (CurContext->isObjCContainer())
-    AddObjCInterfaceResults(getLangOpts(), Results, false);
-  else
-    AddObjCTopLevelResults(Results, false);
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+// void Sema::CodeCompleteObjCAtDirective(Scope *S) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
+//   if (isa<ObjCImplDecl>(CurContext))
+//     AddObjCImplementationResults(getLangOpts(), Results, false);
+//   else if (CurContext->isObjCContainer())
+//     AddObjCInterfaceResults(getLangOpts(), Results, false);
+//   else
+//     AddObjCTopLevelResults(Results, false);
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 static void AddObjCExpressionResults(ResultBuilder &Results, bool NeedAt) {
   typedef CodeCompletionResult Result;
@@ -6539,49 +6543,49 @@ static void AddObjCStatementResults(ResultBuilder &Results, bool NeedAt) {
   }
 }
 
-static void AddObjCVisibilityResults(const LangOptions &LangOpts,
-                                     ResultBuilder &Results, bool NeedAt) {
-  typedef CodeCompletionResult Result;
-  Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "private")));
-  Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "protected")));
-  Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "public")));
-  if (LangOpts.ObjC)
-    Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "package")));
-}
+// static void AddObjCVisibilityResults(const LangOptions &LangOpts,
+//                                      ResultBuilder &Results, bool NeedAt) {
+//   typedef CodeCompletionResult Result;
+//   Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "private")));
+//   Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "protected")));
+//   Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "public")));
+//   if (LangOpts.ObjC)
+//     Results.AddResult(Result(OBJC_AT_KEYWORD_NAME(NeedAt, "package")));
+// }
 
-void Sema::CodeCompleteObjCAtVisibility(Scope *S) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
-  AddObjCVisibilityResults(getLangOpts(), Results, false);
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+// void Sema::CodeCompleteObjCAtVisibility(Scope *S) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
+//   AddObjCVisibilityResults(getLangOpts(), Results, false);
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCAtStatement(Scope *S) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
-  AddObjCStatementResults(Results, false);
-  AddObjCExpressionResults(Results, false);
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+// void Sema::CodeCompleteObjCAtStatement(Scope *S) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
+//   AddObjCStatementResults(Results, false);
+//   AddObjCExpressionResults(Results, false);
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCAtExpression(Scope *S) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
-  AddObjCExpressionResults(Results, false);
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+// void Sema::CodeCompleteObjCAtExpression(Scope *S) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
+//   AddObjCExpressionResults(Results, false);
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 /// Determine whether the addition of the given flag to an Objective-C
 /// property's attributes will cause a conflict.
@@ -6616,78 +6620,78 @@ static bool ObjCPropertyFlagConflicts(unsigned Attributes, unsigned NewFlag) {
   return false;
 }
 
-void Sema::CodeCompleteObjCPropertyFlags(Scope *S, ObjCDeclSpec &ODS) {
-  if (!CodeCompleter)
-    return;
+// void Sema::CodeCompleteObjCPropertyFlags(Scope *S, ObjCDeclSpec &ODS) {
+//   if (!CodeCompleter)
+//     return;
 
-  unsigned Attributes = ODS.getPropertyAttributes();
+//   unsigned Attributes = ODS.getPropertyAttributes();
 
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_readonly))
-    Results.AddResult(CodeCompletionResult("readonly"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_assign))
-    Results.AddResult(CodeCompletionResult("assign"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_unsafe_unretained))
-    Results.AddResult(CodeCompletionResult("unsafe_unretained"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_readwrite))
-    Results.AddResult(CodeCompletionResult("readwrite"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_retain))
-    Results.AddResult(CodeCompletionResult("retain"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_strong))
-    Results.AddResult(CodeCompletionResult("strong"));
-  if (!ObjCPropertyFlagConflicts(Attributes, ObjCPropertyAttribute::kind_copy))
-    Results.AddResult(CodeCompletionResult("copy"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_nonatomic))
-    Results.AddResult(CodeCompletionResult("nonatomic"));
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_atomic))
-    Results.AddResult(CodeCompletionResult("atomic"));
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_readonly))
+//     Results.AddResult(CodeCompletionResult("readonly"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_assign))
+//     Results.AddResult(CodeCompletionResult("assign"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_unsafe_unretained))
+//     Results.AddResult(CodeCompletionResult("unsafe_unretained"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_readwrite))
+//     Results.AddResult(CodeCompletionResult("readwrite"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_retain))
+//     Results.AddResult(CodeCompletionResult("retain"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_strong))
+//     Results.AddResult(CodeCompletionResult("strong"));
+//   if (!ObjCPropertyFlagConflicts(Attributes, ObjCPropertyAttribute::kind_copy))
+//     Results.AddResult(CodeCompletionResult("copy"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_nonatomic))
+//     Results.AddResult(CodeCompletionResult("nonatomic"));
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_atomic))
+//     Results.AddResult(CodeCompletionResult("atomic"));
 
-  // Only suggest "weak" if we're compiling for ARC-with-weak-references or GC.
-  if (getLangOpts().ObjCWeak || getLangOpts().getGC() != LangOptions::NonGC)
-    if (!ObjCPropertyFlagConflicts(Attributes,
-                                   ObjCPropertyAttribute::kind_weak))
-      Results.AddResult(CodeCompletionResult("weak"));
+//   // Only suggest "weak" if we're compiling for ARC-with-weak-references or GC.
+//   if (getLangOpts().ObjCWeak || getLangOpts().getGC() != LangOptions::NonGC)
+//     if (!ObjCPropertyFlagConflicts(Attributes,
+//                                    ObjCPropertyAttribute::kind_weak))
+//       Results.AddResult(CodeCompletionResult("weak"));
 
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_setter)) {
-    CodeCompletionBuilder Setter(Results.getAllocator(),
-                                 Results.getCodeCompletionTUInfo());
-    Setter.AddTypedTextChunk("setter");
-    Setter.AddTextChunk("=");
-    Setter.AddPlaceholderChunk("method");
-    Results.AddResult(CodeCompletionResult(Setter.TakeString()));
-  }
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_getter)) {
-    CodeCompletionBuilder Getter(Results.getAllocator(),
-                                 Results.getCodeCompletionTUInfo());
-    Getter.AddTypedTextChunk("getter");
-    Getter.AddTextChunk("=");
-    Getter.AddPlaceholderChunk("method");
-    Results.AddResult(CodeCompletionResult(Getter.TakeString()));
-  }
-  if (!ObjCPropertyFlagConflicts(Attributes,
-                                 ObjCPropertyAttribute::kind_nullability)) {
-    Results.AddResult(CodeCompletionResult("nonnull"));
-    Results.AddResult(CodeCompletionResult("nullable"));
-    Results.AddResult(CodeCompletionResult("null_unspecified"));
-    Results.AddResult(CodeCompletionResult("null_resettable"));
-  }
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_setter)) {
+//     CodeCompletionBuilder Setter(Results.getAllocator(),
+//                                  Results.getCodeCompletionTUInfo());
+//     Setter.AddTypedTextChunk("setter");
+//     Setter.AddTextChunk("=");
+//     Setter.AddPlaceholderChunk("method");
+//     Results.AddResult(CodeCompletionResult(Setter.TakeString()));
+//   }
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_getter)) {
+//     CodeCompletionBuilder Getter(Results.getAllocator(),
+//                                  Results.getCodeCompletionTUInfo());
+//     Getter.AddTypedTextChunk("getter");
+//     Getter.AddTextChunk("=");
+//     Getter.AddPlaceholderChunk("method");
+//     Results.AddResult(CodeCompletionResult(Getter.TakeString()));
+//   }
+//   if (!ObjCPropertyFlagConflicts(Attributes,
+//                                  ObjCPropertyAttribute::kind_nullability)) {
+//     Results.AddResult(CodeCompletionResult("nonnull"));
+//     Results.AddResult(CodeCompletionResult("nullable"));
+//     Results.AddResult(CodeCompletionResult("null_unspecified"));
+//     Results.AddResult(CodeCompletionResult("null_resettable"));
+//   }
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 /// Describes the kind of Objective-C method that we want to find
 /// via code completion.
@@ -6723,13 +6727,13 @@ static bool isAcceptableObjCSelector(Selector Sel, ObjCMethodKind WantKind,
   return true;
 }
 
-static bool isAcceptableObjCMethod(ObjCMethodDecl *Method,
-                                   ObjCMethodKind WantKind,
-                                   ArrayRef<IdentifierInfo *> SelIdents,
-                                   bool AllowSameLength = true) {
-  return isAcceptableObjCSelector(Method->getSelector(), WantKind, SelIdents,
-                                  AllowSameLength);
-}
+// static bool isAcceptableObjCMethod(ObjCMethodDecl *Method,
+//                                    ObjCMethodKind WantKind,
+//                                    ArrayRef<IdentifierInfo *> SelIdents,
+//                                    bool AllowSameLength = true) {
+//   return isAcceptableObjCSelector(Method->getSelector(), WantKind, SelIdents,
+//                                   AllowSameLength);
+// }
 
 /// A set of selectors, which is used to avoid introducing multiple
 /// completions with the same selector into the result set.
@@ -6755,296 +6759,296 @@ typedef llvm::SmallPtrSet<Selector, 16> VisitedSelectorSet;
 /// when it has the same number of parameters as we have selector identifiers.
 ///
 /// \param Results the structure into which we'll add results.
-static void AddObjCMethods(ObjCContainerDecl *Container,
-                           bool WantInstanceMethods, ObjCMethodKind WantKind,
-                           ArrayRef<IdentifierInfo *> SelIdents,
-                           DeclContext *CurContext,
-                           VisitedSelectorSet &Selectors, bool AllowSameLength,
-                           ResultBuilder &Results, bool InOriginalClass = true,
-                           bool IsRootClass = false) {
-  typedef CodeCompletionResult Result;
-  Container = getContainerDef(Container);
-  ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(Container);
-  IsRootClass = IsRootClass || (IFace && !IFace->getSuperClass());
-  for (ObjCMethodDecl *M : Container->methods()) {
-    // The instance methods on the root class can be messaged via the
-    // metaclass.
-    if (M->isInstanceMethod() == WantInstanceMethods ||
-        (IsRootClass && !WantInstanceMethods)) {
-      // Check whether the selector identifiers we've been given are a
-      // subset of the identifiers for this particular method.
-      if (!isAcceptableObjCMethod(M, WantKind, SelIdents, AllowSameLength))
-        continue;
+// static void AddObjCMethods(ObjCContainerDecl *Container,
+//                            bool WantInstanceMethods, ObjCMethodKind WantKind,
+//                            ArrayRef<IdentifierInfo *> SelIdents,
+//                            DeclContext *CurContext,
+//                            VisitedSelectorSet &Selectors, bool AllowSameLength,
+//                            ResultBuilder &Results, bool InOriginalClass = true,
+//                            bool IsRootClass = false) {
+//   typedef CodeCompletionResult Result;
+//   Container = getContainerDef(Container);
+//   ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(Container);
+//   IsRootClass = IsRootClass || (IFace && !IFace->getSuperClass());
+//   for (ObjCMethodDecl *M : Container->methods()) {
+//     // The instance methods on the root class can be messaged via the
+//     // metaclass.
+//     if (M->isInstanceMethod() == WantInstanceMethods ||
+//         (IsRootClass && !WantInstanceMethods)) {
+//       // Check whether the selector identifiers we've been given are a
+//       // subset of the identifiers for this particular method.
+//       if (!isAcceptableObjCMethod(M, WantKind, SelIdents, AllowSameLength))
+//         continue;
 
-      if (!Selectors.insert(M->getSelector()).second)
-        continue;
+//       if (!Selectors.insert(M->getSelector()).second)
+//         continue;
 
-      Result R = Result(M, Results.getBasePriority(M), nullptr);
-      R.StartParameter = SelIdents.size();
-      R.AllParametersAreInformative = (WantKind != MK_Any);
-      if (!InOriginalClass)
-        setInBaseClass(R);
-      Results.MaybeAddResult(R, CurContext);
-    }
-  }
+//       Result R = Result(M, Results.getBasePriority(M), nullptr);
+//       R.StartParameter = SelIdents.size();
+//       R.AllParametersAreInformative = (WantKind != MK_Any);
+//       if (!InOriginalClass)
+//         setInBaseClass(R);
+//       Results.MaybeAddResult(R, CurContext);
+//     }
+//   }
 
-  // Visit the protocols of protocols.
-  if (const auto *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
-    if (Protocol->hasDefinition()) {
-      const ObjCList<ObjCProtocolDecl> &Protocols =
-          Protocol->getReferencedProtocols();
-      for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
-                                                E = Protocols.end();
-           I != E; ++I)
-        AddObjCMethods(*I, WantInstanceMethods, WantKind, SelIdents, CurContext,
-                       Selectors, AllowSameLength, Results, false, IsRootClass);
-    }
-  }
+//   // Visit the protocols of protocols.
+//   if (const auto *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
+//     if (Protocol->hasDefinition()) {
+//       const ObjCList<ObjCProtocolDecl> &Protocols =
+//           Protocol->getReferencedProtocols();
+//       for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
+//                                                 E = Protocols.end();
+//            I != E; ++I)
+//         AddObjCMethods(*I, WantInstanceMethods, WantKind, SelIdents, CurContext,
+//                        Selectors, AllowSameLength, Results, false, IsRootClass);
+//     }
+//   }
 
-  if (!IFace || !IFace->hasDefinition())
-    return;
+//   if (!IFace || !IFace->hasDefinition())
+//     return;
 
-  // Add methods in protocols.
-  for (ObjCProtocolDecl *I : IFace->protocols())
-    AddObjCMethods(I, WantInstanceMethods, WantKind, SelIdents, CurContext,
-                   Selectors, AllowSameLength, Results, false, IsRootClass);
+//   // Add methods in protocols.
+//   for (ObjCProtocolDecl *I : IFace->protocols())
+//     AddObjCMethods(I, WantInstanceMethods, WantKind, SelIdents, CurContext,
+//                    Selectors, AllowSameLength, Results, false, IsRootClass);
 
-  // Add methods in categories.
-  for (ObjCCategoryDecl *CatDecl : IFace->known_categories()) {
-    AddObjCMethods(CatDecl, WantInstanceMethods, WantKind, SelIdents,
-                   CurContext, Selectors, AllowSameLength, Results,
-                   InOriginalClass, IsRootClass);
+//   // Add methods in categories.
+//   for (ObjCCategoryDecl *CatDecl : IFace->known_categories()) {
+//     AddObjCMethods(CatDecl, WantInstanceMethods, WantKind, SelIdents,
+//                    CurContext, Selectors, AllowSameLength, Results,
+//                    InOriginalClass, IsRootClass);
 
-    // Add a categories protocol methods.
-    const ObjCList<ObjCProtocolDecl> &Protocols =
-        CatDecl->getReferencedProtocols();
-    for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
-                                              E = Protocols.end();
-         I != E; ++I)
-      AddObjCMethods(*I, WantInstanceMethods, WantKind, SelIdents, CurContext,
-                     Selectors, AllowSameLength, Results, false, IsRootClass);
+//     // Add a categories protocol methods.
+//     const ObjCList<ObjCProtocolDecl> &Protocols =
+//         CatDecl->getReferencedProtocols();
+//     for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
+//                                               E = Protocols.end();
+//          I != E; ++I)
+//       AddObjCMethods(*I, WantInstanceMethods, WantKind, SelIdents, CurContext,
+//                      Selectors, AllowSameLength, Results, false, IsRootClass);
 
-    // Add methods in category implementations.
-    if (ObjCCategoryImplDecl *Impl = CatDecl->getImplementation())
-      AddObjCMethods(Impl, WantInstanceMethods, WantKind, SelIdents, CurContext,
-                     Selectors, AllowSameLength, Results, InOriginalClass,
-                     IsRootClass);
-  }
+//     // Add methods in category implementations.
+//     if (ObjCCategoryImplDecl *Impl = CatDecl->getImplementation())
+//       AddObjCMethods(Impl, WantInstanceMethods, WantKind, SelIdents, CurContext,
+//                      Selectors, AllowSameLength, Results, InOriginalClass,
+//                      IsRootClass);
+//   }
 
-  // Add methods in superclass.
-  // Avoid passing in IsRootClass since root classes won't have super classes.
-  if (IFace->getSuperClass())
-    AddObjCMethods(IFace->getSuperClass(), WantInstanceMethods, WantKind,
-                   SelIdents, CurContext, Selectors, AllowSameLength, Results,
-                   /*IsRootClass=*/false);
+//   // Add methods in superclass.
+//   // Avoid passing in IsRootClass since root classes won't have super classes.
+//   if (IFace->getSuperClass())
+//     AddObjCMethods(IFace->getSuperClass(), WantInstanceMethods, WantKind,
+//                    SelIdents, CurContext, Selectors, AllowSameLength, Results,
+//                    /*IsRootClass=*/false);
 
-  // Add methods in our implementation, if any.
-  if (ObjCImplementationDecl *Impl = IFace->getImplementation())
-    AddObjCMethods(Impl, WantInstanceMethods, WantKind, SelIdents, CurContext,
-                   Selectors, AllowSameLength, Results, InOriginalClass,
-                   IsRootClass);
-}
+//   // Add methods in our implementation, if any.
+//   if (ObjCImplementationDecl *Impl = IFace->getImplementation())
+//     AddObjCMethods(Impl, WantInstanceMethods, WantKind, SelIdents, CurContext,
+//                    Selectors, AllowSameLength, Results, InOriginalClass,
+//                    IsRootClass);
+// }
 
-void Sema::CodeCompleteObjCPropertyGetter(Scope *S) {
-  // Try to find the interface where getters might live.
-  ObjCInterfaceDecl *Class = dyn_cast_or_null<ObjCInterfaceDecl>(CurContext);
-  if (!Class) {
-    if (ObjCCategoryDecl *Category =
-            dyn_cast_or_null<ObjCCategoryDecl>(CurContext))
-      Class = Category->getClassInterface();
+// void Sema::CodeCompleteObjCPropertyGetter(Scope *S) {
+//   // Try to find the interface where getters might live.
+//   ObjCInterfaceDecl *Class = dyn_cast_or_null<ObjCInterfaceDecl>(CurContext);
+//   if (!Class) {
+//     if (ObjCCategoryDecl *Category =
+//             dyn_cast_or_null<ObjCCategoryDecl>(CurContext))
+//       Class = Category->getClassInterface();
 
-    if (!Class)
-      return;
-  }
+//     if (!Class)
+//       return;
+//   }
 
-  // Find all of the potential getters.
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
+//   // Find all of the potential getters.
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
 
-  VisitedSelectorSet Selectors;
-  AddObjCMethods(Class, true, MK_ZeroArgSelector, None, CurContext, Selectors,
-                 /*AllowSameLength=*/true, Results);
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   VisitedSelectorSet Selectors;
+//   AddObjCMethods(Class, true, MK_ZeroArgSelector, None, CurContext, Selectors,
+//                  /*AllowSameLength=*/true, Results);
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCPropertySetter(Scope *S) {
-  // Try to find the interface where setters might live.
-  ObjCInterfaceDecl *Class = dyn_cast_or_null<ObjCInterfaceDecl>(CurContext);
-  if (!Class) {
-    if (ObjCCategoryDecl *Category =
-            dyn_cast_or_null<ObjCCategoryDecl>(CurContext))
-      Class = Category->getClassInterface();
+// void Sema::CodeCompleteObjCPropertySetter(Scope *S) {
+//   // Try to find the interface where setters might live.
+//   ObjCInterfaceDecl *Class = dyn_cast_or_null<ObjCInterfaceDecl>(CurContext);
+//   if (!Class) {
+//     if (ObjCCategoryDecl *Category =
+//             dyn_cast_or_null<ObjCCategoryDecl>(CurContext))
+//       Class = Category->getClassInterface();
 
-    if (!Class)
-      return;
-  }
+//     if (!Class)
+//       return;
+//   }
 
-  // Find all of the potential getters.
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
+//   // Find all of the potential getters.
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
 
-  VisitedSelectorSet Selectors;
-  AddObjCMethods(Class, true, MK_OneArgSelector, None, CurContext, Selectors,
-                 /*AllowSameLength=*/true, Results);
+//   VisitedSelectorSet Selectors;
+//   AddObjCMethods(Class, true, MK_OneArgSelector, None, CurContext, Selectors,
+//                  /*AllowSameLength=*/true, Results);
 
-  Results.ExitScope();
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   Results.ExitScope();
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCPassingType(Scope *S, ObjCDeclSpec &DS,
-                                       bool IsParameter) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Type);
-  Results.EnterNewScope();
+// void Sema::CodeCompleteObjCPassingType(Scope *S, ObjCDeclSpec &DS,
+//                                        bool IsParameter) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Type);
+//   Results.EnterNewScope();
 
-  // Add context-sensitive, Objective-C parameter-passing keywords.
-  bool AddedInOut = false;
-  if ((DS.getObjCDeclQualifier() &
-       (ObjCDeclSpec::DQ_In | ObjCDeclSpec::DQ_Inout)) == 0) {
-    Results.AddResult("in");
-    Results.AddResult("inout");
-    AddedInOut = true;
-  }
-  if ((DS.getObjCDeclQualifier() &
-       (ObjCDeclSpec::DQ_Out | ObjCDeclSpec::DQ_Inout)) == 0) {
-    Results.AddResult("out");
-    if (!AddedInOut)
-      Results.AddResult("inout");
-  }
-  if ((DS.getObjCDeclQualifier() &
-       (ObjCDeclSpec::DQ_Bycopy | ObjCDeclSpec::DQ_Byref |
-        ObjCDeclSpec::DQ_Oneway)) == 0) {
-    Results.AddResult("bycopy");
-    Results.AddResult("byref");
-    Results.AddResult("oneway");
-  }
-  if ((DS.getObjCDeclQualifier() & ObjCDeclSpec::DQ_CSNullability) == 0) {
-    Results.AddResult("nonnull");
-    Results.AddResult("nullable");
-    Results.AddResult("null_unspecified");
-  }
+//   // Add context-sensitive, Objective-C parameter-passing keywords.
+//   bool AddedInOut = false;
+//   if ((DS.getObjCDeclQualifier() &
+//        (ObjCDeclSpec::DQ_In | ObjCDeclSpec::DQ_Inout)) == 0) {
+//     Results.AddResult("in");
+//     Results.AddResult("inout");
+//     AddedInOut = true;
+//   }
+//   if ((DS.getObjCDeclQualifier() &
+//        (ObjCDeclSpec::DQ_Out | ObjCDeclSpec::DQ_Inout)) == 0) {
+//     Results.AddResult("out");
+//     if (!AddedInOut)
+//       Results.AddResult("inout");
+//   }
+//   if ((DS.getObjCDeclQualifier() &
+//        (ObjCDeclSpec::DQ_Bycopy | ObjCDeclSpec::DQ_Byref |
+//         ObjCDeclSpec::DQ_Oneway)) == 0) {
+//     Results.AddResult("bycopy");
+//     Results.AddResult("byref");
+//     Results.AddResult("oneway");
+//   }
+//   if ((DS.getObjCDeclQualifier() & ObjCDeclSpec::DQ_CSNullability) == 0) {
+//     Results.AddResult("nonnull");
+//     Results.AddResult("nullable");
+//     Results.AddResult("null_unspecified");
+//   }
 
-  // If we're completing the return type of an Objective-C method and the
-  // identifier IBAction refers to a macro, provide a completion item for
-  // an action, e.g.,
-  //   IBAction)<#selector#>:(id)sender
-  if (DS.getObjCDeclQualifier() == 0 && !IsParameter &&
-      PP.isMacroDefined("IBAction")) {
-    CodeCompletionBuilder Builder(Results.getAllocator(),
-                                  Results.getCodeCompletionTUInfo(),
-                                  CCP_CodePattern, CXAvailability_Available);
-    Builder.AddTypedTextChunk("IBAction");
-    Builder.AddChunk(CodeCompletionString::CK_RightParen);
-    Builder.AddPlaceholderChunk("selector");
-    Builder.AddChunk(CodeCompletionString::CK_Colon);
-    Builder.AddChunk(CodeCompletionString::CK_LeftParen);
-    Builder.AddTextChunk("id");
-    Builder.AddChunk(CodeCompletionString::CK_RightParen);
-    Builder.AddTextChunk("sender");
-    Results.AddResult(CodeCompletionResult(Builder.TakeString()));
-  }
+//   // If we're completing the return type of an Objective-C method and the
+//   // identifier IBAction refers to a macro, provide a completion item for
+//   // an action, e.g.,
+//   //   IBAction)<#selector#>:(id)sender
+//   if (DS.getObjCDeclQualifier() == 0 && !IsParameter &&
+//       PP.isMacroDefined("IBAction")) {
+//     CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                   Results.getCodeCompletionTUInfo(),
+//                                   CCP_CodePattern, CXAvailability_Available);
+//     Builder.AddTypedTextChunk("IBAction");
+//     Builder.AddChunk(CodeCompletionString::CK_RightParen);
+//     Builder.AddPlaceholderChunk("selector");
+//     Builder.AddChunk(CodeCompletionString::CK_Colon);
+//     Builder.AddChunk(CodeCompletionString::CK_LeftParen);
+//     Builder.AddTextChunk("id");
+//     Builder.AddChunk(CodeCompletionString::CK_RightParen);
+//     Builder.AddTextChunk("sender");
+//     Results.AddResult(CodeCompletionResult(Builder.TakeString()));
+//   }
 
-  // If we're completing the return type, provide 'instancetype'.
-  if (!IsParameter) {
-    Results.AddResult(CodeCompletionResult("instancetype"));
-  }
+//   // If we're completing the return type, provide 'instancetype'.
+//   if (!IsParameter) {
+//     Results.AddResult(CodeCompletionResult("instancetype"));
+//   }
 
-  // Add various builtin type names and specifiers.
-  AddOrdinaryNameResults(PCC_Type, S, *this, Results);
-  Results.ExitScope();
+//   // Add various builtin type names and specifiers.
+//   AddOrdinaryNameResults(PCC_Type, S, *this, Results);
+//   Results.ExitScope();
 
-  // Add the various type names
-  Results.setFilter(&ResultBuilder::IsOrdinaryNonValueName);
-  CodeCompletionDeclConsumer Consumer(Results, CurContext);
-  LookupVisibleDecls(S, LookupOrdinaryName, Consumer,
-                     CodeCompleter->includeGlobals(),
-                     CodeCompleter->loadExternal());
+//   // Add the various type names
+//   Results.setFilter(&ResultBuilder::IsOrdinaryNonValueName);
+//   CodeCompletionDeclConsumer Consumer(Results, CurContext);
+//   LookupVisibleDecls(S, LookupOrdinaryName, Consumer,
+//                      CodeCompleter->includeGlobals(),
+//                      CodeCompleter->loadExternal());
 
-  if (CodeCompleter->includeMacros())
-    AddMacroResults(PP, Results, CodeCompleter->loadExternal(), false);
+//   if (CodeCompleter->includeMacros())
+//     AddMacroResults(PP, Results, CodeCompleter->loadExternal(), false);
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 /// When we have an expression with type "id", we may assume
 /// that it has some more-specific class type based on knowledge of
 /// common uses of Objective-C. This routine returns that class type,
 /// or NULL if no better result could be determined.
-static ObjCInterfaceDecl *GetAssumedMessageSendExprType(Expr *E) {
-  auto *Msg = dyn_cast_or_null<ObjCMessageExpr>(E);
-  if (!Msg)
-    return nullptr;
+// static ObjCInterfaceDecl *GetAssumedMessageSendExprType(Expr *E) {
+//   auto *Msg = dyn_cast_or_null<ObjCMessageExpr>(E);
+//   if (!Msg)
+//     return nullptr;
 
-  Selector Sel = Msg->getSelector();
-  if (Sel.isNull())
-    return nullptr;
+//   Selector Sel = Msg->getSelector();
+//   if (Sel.isNull())
+//     return nullptr;
 
-  IdentifierInfo *Id = Sel.getIdentifierInfoForSlot(0);
-  if (!Id)
-    return nullptr;
+//   IdentifierInfo *Id = Sel.getIdentifierInfoForSlot(0);
+//   if (!Id)
+//     return nullptr;
 
-  ObjCMethodDecl *Method = Msg->getMethodDecl();
-  if (!Method)
-    return nullptr;
+//   ObjCMethodDecl *Method = Msg->getMethodDecl();
+//   if (!Method)
+//     return nullptr;
 
-  // Determine the class that we're sending the message to.
-  ObjCInterfaceDecl *IFace = nullptr;
-  switch (Msg->getReceiverKind()) {
-  case ObjCMessageExpr::Class:
-    if (const ObjCObjectType *ObjType =
-            Msg->getClassReceiver()->getAs<ObjCObjectType>())
-      IFace = ObjType->getInterface();
-    break;
+//   // Determine the class that we're sending the message to.
+//   ObjCInterfaceDecl *IFace = nullptr;
+//   switch (Msg->getReceiverKind()) {
+//   case ObjCMessageExpr::Class:
+//     if (const ObjCObjectType *ObjType =
+//             Msg->getClassReceiver()->getAs<ObjCObjectType>())
+//       IFace = ObjType->getInterface();
+//     break;
 
-  case ObjCMessageExpr::Instance: {
-    QualType T = Msg->getInstanceReceiver()->getType();
-    if (const ObjCObjectPointerType *Ptr = T->getAs<ObjCObjectPointerType>())
-      IFace = Ptr->getInterfaceDecl();
-    break;
-  }
+//   case ObjCMessageExpr::Instance: {
+//     QualType T = Msg->getInstanceReceiver()->getType();
+//     if (const ObjCObjectPointerType *Ptr = T->getAs<ObjCObjectPointerType>())
+//       IFace = Ptr->getInterfaceDecl();
+//     break;
+//   }
 
-  case ObjCMessageExpr::SuperInstance:
-  case ObjCMessageExpr::SuperClass:
-    break;
-  }
+//   case ObjCMessageExpr::SuperInstance:
+//   case ObjCMessageExpr::SuperClass:
+//     break;
+//   }
 
-  if (!IFace)
-    return nullptr;
+//   if (!IFace)
+//     return nullptr;
 
-  ObjCInterfaceDecl *Super = IFace->getSuperClass();
-  if (Method->isInstanceMethod())
-    return llvm::StringSwitch<ObjCInterfaceDecl *>(Id->getName())
-        .Case("retain", IFace)
-        .Case("strong", IFace)
-        .Case("autorelease", IFace)
-        .Case("copy", IFace)
-        .Case("copyWithZone", IFace)
-        .Case("mutableCopy", IFace)
-        .Case("mutableCopyWithZone", IFace)
-        .Case("awakeFromCoder", IFace)
-        .Case("replacementObjectFromCoder", IFace)
-        .Case("class", IFace)
-        .Case("classForCoder", IFace)
-        .Case("superclass", Super)
-        .Default(nullptr);
+//   ObjCInterfaceDecl *Super = IFace->getSuperClass();
+//   if (Method->isInstanceMethod())
+//     return llvm::StringSwitch<ObjCInterfaceDecl *>(Id->getName())
+//         .Case("retain", IFace)
+//         .Case("strong", IFace)
+//         .Case("autorelease", IFace)
+//         .Case("copy", IFace)
+//         .Case("copyWithZone", IFace)
+//         .Case("mutableCopy", IFace)
+//         .Case("mutableCopyWithZone", IFace)
+//         .Case("awakeFromCoder", IFace)
+//         .Case("replacementObjectFromCoder", IFace)
+//         .Case("class", IFace)
+//         .Case("classForCoder", IFace)
+//         .Case("superclass", Super)
+//         .Default(nullptr);
 
-  return llvm::StringSwitch<ObjCInterfaceDecl *>(Id->getName())
-      .Case("new", IFace)
-      .Case("alloc", IFace)
-      .Case("allocWithZone", IFace)
-      .Case("class", IFace)
-      .Case("superclass", Super)
-      .Default(nullptr);
-}
+//   return llvm::StringSwitch<ObjCInterfaceDecl *>(Id->getName())
+//       .Case("new", IFace)
+//       .Case("alloc", IFace)
+//       .Case("allocWithZone", IFace)
+//       .Case("class", IFace)
+//       .Case("superclass", Super)
+//       .Default(nullptr);
+// }
 
 // Add a special completion for a message send to "super", which fills in the
 // most likely case of forwarding all of our arguments to the superclass
@@ -7062,1021 +7066,1021 @@ static ObjCInterfaceDecl *GetAssumedMessageSendExprType(Expr *E) {
 ///
 /// \returns the Objective-C method declaration that would be invoked by
 /// this "super" completion. If NULL, no completion was added.
-static ObjCMethodDecl *
-AddSuperSendCompletion(Sema &S, bool NeedSuperKeyword,
-                       ArrayRef<IdentifierInfo *> SelIdents,
-                       ResultBuilder &Results) {
-  ObjCMethodDecl *CurMethod = S.getCurMethodDecl();
-  if (!CurMethod)
-    return nullptr;
+// static ObjCMethodDecl *
+// AddSuperSendCompletion(Sema &S, bool NeedSuperKeyword,
+//                        ArrayRef<IdentifierInfo *> SelIdents,
+//                        ResultBuilder &Results) {
+//   ObjCMethodDecl *CurMethod = S.getCurMethodDecl();
+//   if (!CurMethod)
+//     return nullptr;
 
-  ObjCInterfaceDecl *Class = CurMethod->getClassInterface();
-  if (!Class)
-    return nullptr;
+//   ObjCInterfaceDecl *Class = CurMethod->getClassInterface();
+//   if (!Class)
+//     return nullptr;
 
-  // Try to find a superclass method with the same selector.
-  ObjCMethodDecl *SuperMethod = nullptr;
-  while ((Class = Class->getSuperClass()) && !SuperMethod) {
-    // Check in the class
-    SuperMethod = Class->getMethod(CurMethod->getSelector(),
-                                   CurMethod->isInstanceMethod());
+//   // Try to find a superclass method with the same selector.
+//   ObjCMethodDecl *SuperMethod = nullptr;
+//   while ((Class = Class->getSuperClass()) && !SuperMethod) {
+//     // Check in the class
+//     SuperMethod = Class->getMethod(CurMethod->getSelector(),
+//                                    CurMethod->isInstanceMethod());
 
-    // Check in categories or class extensions.
-    if (!SuperMethod) {
-      for (const auto *Cat : Class->known_categories()) {
-        if ((SuperMethod = Cat->getMethod(CurMethod->getSelector(),
-                                          CurMethod->isInstanceMethod())))
-          break;
-      }
-    }
-  }
+//     // Check in categories or class extensions.
+//     if (!SuperMethod) {
+//       for (const auto *Cat : Class->known_categories()) {
+//         if ((SuperMethod = Cat->getMethod(CurMethod->getSelector(),
+//                                           CurMethod->isInstanceMethod())))
+//           break;
+//       }
+//     }
+//   }
 
-  if (!SuperMethod)
-    return nullptr;
+//   if (!SuperMethod)
+//     return nullptr;
 
-  // Check whether the superclass method has the same signature.
-  if (CurMethod->param_size() != SuperMethod->param_size() ||
-      CurMethod->isVariadic() != SuperMethod->isVariadic())
-    return nullptr;
+//   // Check whether the superclass method has the same signature.
+//   if (CurMethod->param_size() != SuperMethod->param_size() ||
+//       CurMethod->isVariadic() != SuperMethod->isVariadic())
+//     return nullptr;
 
-  for (ObjCMethodDecl::param_iterator CurP = CurMethod->param_begin(),
-                                      CurPEnd = CurMethod->param_end(),
-                                      SuperP = SuperMethod->param_begin();
-       CurP != CurPEnd; ++CurP, ++SuperP) {
-    // Make sure the parameter types are compatible.
-    if (!S.Context.hasSameUnqualifiedType((*CurP)->getType(),
-                                          (*SuperP)->getType()))
-      return nullptr;
+//   for (ObjCMethodDecl::param_iterator CurP = CurMethod->param_begin(),
+//                                       CurPEnd = CurMethod->param_end(),
+//                                       SuperP = SuperMethod->param_begin();
+//        CurP != CurPEnd; ++CurP, ++SuperP) {
+//     // Make sure the parameter types are compatible.
+//     if (!S.Context.hasSameUnqualifiedType((*CurP)->getType(),
+//                                           (*SuperP)->getType()))
+//       return nullptr;
 
-    // Make sure we have a parameter name to forward!
-    if (!(*CurP)->getIdentifier())
-      return nullptr;
-  }
+//     // Make sure we have a parameter name to forward!
+//     if (!(*CurP)->getIdentifier())
+//       return nullptr;
+//   }
 
-  // We have a superclass method. Now, form the send-to-super completion.
-  CodeCompletionBuilder Builder(Results.getAllocator(),
-                                Results.getCodeCompletionTUInfo());
+//   // We have a superclass method. Now, form the send-to-super completion.
+//   CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                 Results.getCodeCompletionTUInfo());
 
-  // Give this completion a return type.
-  AddResultTypeChunk(S.Context, getCompletionPrintingPolicy(S), SuperMethod,
-                     Results.getCompletionContext().getBaseType(), Builder);
+//   // Give this completion a return type.
+//   AddResultTypeChunk(S.Context, getCompletionPrintingPolicy(S), SuperMethod,
+//                      Results.getCompletionContext().getBaseType(), Builder);
 
-  // If we need the "super" keyword, add it (plus some spacing).
-  if (NeedSuperKeyword) {
-    Builder.AddTypedTextChunk("super");
-    Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-  }
+//   // If we need the "super" keyword, add it (plus some spacing).
+//   if (NeedSuperKeyword) {
+//     Builder.AddTypedTextChunk("super");
+//     Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//   }
 
-  Selector Sel = CurMethod->getSelector();
-  if (Sel.isUnarySelector()) {
-    if (NeedSuperKeyword)
-      Builder.AddTextChunk(
-          Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
-    else
-      Builder.AddTypedTextChunk(
-          Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
-  } else {
-    ObjCMethodDecl::param_iterator CurP = CurMethod->param_begin();
-    for (unsigned I = 0, N = Sel.getNumArgs(); I != N; ++I, ++CurP) {
-      if (I > SelIdents.size())
-        Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//   Selector Sel = CurMethod->getSelector();
+//   if (Sel.isUnarySelector()) {
+//     if (NeedSuperKeyword)
+//       Builder.AddTextChunk(
+//           Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
+//     else
+//       Builder.AddTypedTextChunk(
+//           Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
+//   } else {
+//     ObjCMethodDecl::param_iterator CurP = CurMethod->param_begin();
+//     for (unsigned I = 0, N = Sel.getNumArgs(); I != N; ++I, ++CurP) {
+//       if (I > SelIdents.size())
+//         Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
 
-      if (I < SelIdents.size())
-        Builder.AddInformativeChunk(
-            Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
-      else if (NeedSuperKeyword || I > SelIdents.size()) {
-        Builder.AddTextChunk(
-            Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
-        Builder.AddPlaceholderChunk(Builder.getAllocator().CopyString(
-            (*CurP)->getIdentifier()->getName()));
-      } else {
-        Builder.AddTypedTextChunk(
-            Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
-        Builder.AddPlaceholderChunk(Builder.getAllocator().CopyString(
-            (*CurP)->getIdentifier()->getName()));
-      }
-    }
-  }
+//       if (I < SelIdents.size())
+//         Builder.AddInformativeChunk(
+//             Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
+//       else if (NeedSuperKeyword || I > SelIdents.size()) {
+//         Builder.AddTextChunk(
+//             Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
+//         Builder.AddPlaceholderChunk(Builder.getAllocator().CopyString(
+//             (*CurP)->getIdentifier()->getName()));
+//       } else {
+//         Builder.AddTypedTextChunk(
+//             Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
+//         Builder.AddPlaceholderChunk(Builder.getAllocator().CopyString(
+//             (*CurP)->getIdentifier()->getName()));
+//       }
+//     }
+//   }
 
-  Results.AddResult(CodeCompletionResult(Builder.TakeString(), SuperMethod,
-                                         CCP_SuperCompletion));
-  return SuperMethod;
-}
+//   Results.AddResult(CodeCompletionResult(Builder.TakeString(), SuperMethod,
+//                                          CCP_SuperCompletion));
+//   return SuperMethod;
+// }
 
-void Sema::CodeCompleteObjCMessageReceiver(Scope *S) {
-  typedef CodeCompletionResult Result;
-  ResultBuilder Results(
-      *this, CodeCompleter->getAllocator(),
-      CodeCompleter->getCodeCompletionTUInfo(),
-      CodeCompletionContext::CCC_ObjCMessageReceiver,
-      getLangOpts().CPlusPlus11
-          ? &ResultBuilder::IsObjCMessageReceiverOrLambdaCapture
-          : &ResultBuilder::IsObjCMessageReceiver);
+// void Sema::CodeCompleteObjCMessageReceiver(Scope *S) {
+//   typedef CodeCompletionResult Result;
+//   ResultBuilder Results(
+//       *this, CodeCompleter->getAllocator(),
+//       CodeCompleter->getCodeCompletionTUInfo(),
+//       CodeCompletionContext::CCC_ObjCMessageReceiver,
+//       getLangOpts().CPlusPlus11
+//           ? &ResultBuilder::IsObjCMessageReceiverOrLambdaCapture
+//           : &ResultBuilder::IsObjCMessageReceiver);
 
-  CodeCompletionDeclConsumer Consumer(Results, CurContext);
-  Results.EnterNewScope();
-  LookupVisibleDecls(S, LookupOrdinaryName, Consumer,
-                     CodeCompleter->includeGlobals(),
-                     CodeCompleter->loadExternal());
+//   CodeCompletionDeclConsumer Consumer(Results, CurContext);
+//   Results.EnterNewScope();
+//   LookupVisibleDecls(S, LookupOrdinaryName, Consumer,
+//                      CodeCompleter->includeGlobals(),
+//                      CodeCompleter->loadExternal());
 
-  // If we are in an Objective-C method inside a class that has a superclass,
-  // add "super" as an option.
-  if (ObjCMethodDecl *Method = getCurMethodDecl())
-    if (ObjCInterfaceDecl *Iface = Method->getClassInterface())
-      if (Iface->getSuperClass()) {
-        Results.AddResult(Result("super"));
+//   // If we are in an Objective-C method inside a class that has a superclass,
+//   // add "super" as an option.
+//   if (ObjCMethodDecl *Method = getCurMethodDecl())
+//     if (ObjCInterfaceDecl *Iface = Method->getClassInterface())
+//       if (Iface->getSuperClass()) {
+//         Results.AddResult(Result("super"));
 
-        AddSuperSendCompletion(*this, /*NeedSuperKeyword=*/true, None, Results);
-      }
+//         AddSuperSendCompletion(*this, /*NeedSuperKeyword=*/true, None, Results);
+//       }
 
-  if (getLangOpts().CPlusPlus11)
-    addThisCompletion(*this, Results);
+//   if (getLangOpts().CPlusPlus11)
+//     addThisCompletion(*this, Results);
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  if (CodeCompleter->includeMacros())
-    AddMacroResults(PP, Results, CodeCompleter->loadExternal(), false);
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   if (CodeCompleter->includeMacros())
+//     AddMacroResults(PP, Results, CodeCompleter->loadExternal(), false);
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCSuperMessage(Scope *S, SourceLocation SuperLoc,
-                                        ArrayRef<IdentifierInfo *> SelIdents,
-                                        bool AtArgumentExpression) {
-  ObjCInterfaceDecl *CDecl = nullptr;
-  if (ObjCMethodDecl *CurMethod = getCurMethodDecl()) {
-    // Figure out which interface we're in.
-    CDecl = CurMethod->getClassInterface();
-    if (!CDecl)
-      return;
+// void Sema::CodeCompleteObjCSuperMessage(Scope *S, SourceLocation SuperLoc,
+//                                         ArrayRef<IdentifierInfo *> SelIdents,
+//                                         bool AtArgumentExpression) {
+//   ObjCInterfaceDecl *CDecl = nullptr;
+//   if (ObjCMethodDecl *CurMethod = getCurMethodDecl()) {
+//     // Figure out which interface we're in.
+//     CDecl = CurMethod->getClassInterface();
+//     if (!CDecl)
+//       return;
 
-    // Find the superclass of this class.
-    CDecl = CDecl->getSuperClass();
-    if (!CDecl)
-      return;
+//     // Find the superclass of this class.
+//     CDecl = CDecl->getSuperClass();
+//     if (!CDecl)
+//       return;
 
-    if (CurMethod->isInstanceMethod()) {
-      // We are inside an instance method, which means that the message
-      // send [super ...] is actually calling an instance method on the
-      // current object.
-      return CodeCompleteObjCInstanceMessage(S, nullptr, SelIdents,
-                                             AtArgumentExpression, CDecl);
-    }
+//     if (CurMethod->isInstanceMethod()) {
+//       // We are inside an instance method, which means that the message
+//       // send [super ...] is actually calling an instance method on the
+//       // current object.
+//       return CodeCompleteObjCInstanceMessage(S, nullptr, SelIdents,
+//                                              AtArgumentExpression, CDecl);
+//     }
 
-    // Fall through to send to the superclass in CDecl.
-  } else {
-    // "super" may be the name of a type or variable. Figure out which
-    // it is.
-    IdentifierInfo *Super = getSuperIdentifier();
-    NamedDecl *ND = LookupSingleName(S, Super, SuperLoc, LookupOrdinaryName);
-    if ((CDecl = dyn_cast_or_null<ObjCInterfaceDecl>(ND))) {
-      // "super" names an interface. Use it.
-    } else if (TypeDecl *TD = dyn_cast_or_null<TypeDecl>(ND)) {
-      if (const ObjCObjectType *Iface =
-              Context.getTypeDeclType(TD)->getAs<ObjCObjectType>())
-        CDecl = Iface->getInterface();
-    } else if (ND && isa<UnresolvedUsingTypenameDecl>(ND)) {
-      // "super" names an unresolved type; we can't be more specific.
-    } else {
-      // Assume that "super" names some kind of value and parse that way.
-      CXXScopeSpec SS;
-      SourceLocation TemplateKWLoc;
-      UnqualifiedId id;
-      id.setIdentifier(Super, SuperLoc);
-      ExprResult SuperExpr = ActOnIdExpression(S, SS, TemplateKWLoc, id,
-                                               /*HasTrailingLParen=*/false,
-                                               /*IsAddressOfOperand=*/false);
-      return CodeCompleteObjCInstanceMessage(S, (Expr *)SuperExpr.get(),
-                                             SelIdents, AtArgumentExpression);
-    }
+//     // Fall through to send to the superclass in CDecl.
+//   } else {
+//     // "super" may be the name of a type or variable. Figure out which
+//     // it is.
+//     IdentifierInfo *Super = getSuperIdentifier();
+//     NamedDecl *ND = LookupSingleName(S, Super, SuperLoc, LookupOrdinaryName);
+//     if ((CDecl = dyn_cast_or_null<ObjCInterfaceDecl>(ND))) {
+//       // "super" names an interface. Use it.
+//     } else if (TypeDecl *TD = dyn_cast_or_null<TypeDecl>(ND)) {
+//       if (const ObjCObjectType *Iface =
+//               Context.getTypeDeclType(TD)->getAs<ObjCObjectType>())
+//         CDecl = Iface->getInterface();
+//     } else if (ND && isa<UnresolvedUsingTypenameDecl>(ND)) {
+//       // "super" names an unresolved type; we can't be more specific.
+//     } else {
+//       // Assume that "super" names some kind of value and parse that way.
+//       CXXScopeSpec SS;
+//       SourceLocation TemplateKWLoc;
+//       UnqualifiedId id;
+//       id.setIdentifier(Super, SuperLoc);
+//       ExprResult SuperExpr = ActOnIdExpression(S, SS, TemplateKWLoc, id,
+//                                                /*HasTrailingLParen=*/false,
+//                                                /*IsAddressOfOperand=*/false);
+//       return CodeCompleteObjCInstanceMessage(S, (Expr *)SuperExpr.get(),
+//                                              SelIdents, AtArgumentExpression);
+//     }
 
-    // Fall through
-  }
+//     // Fall through
+//   }
 
-  ParsedType Receiver;
-  if (CDecl)
-    Receiver = ParsedType::make(Context.getObjCInterfaceType(CDecl));
-  return CodeCompleteObjCClassMessage(S, Receiver, SelIdents,
-                                      AtArgumentExpression,
-                                      /*IsSuper=*/true);
-}
+//   ParsedType Receiver;
+//   if (CDecl)
+//     Receiver = ParsedType::make(Context.getObjCInterfaceType(CDecl));
+//   return CodeCompleteObjCClassMessage(S, Receiver, SelIdents,
+//                                       AtArgumentExpression,
+//                                       /*IsSuper=*/true);
+// }
 
 /// Given a set of code-completion results for the argument of a message
 /// send, determine the preferred type (if any) for that argument expression.
-static QualType getPreferredArgumentTypeForMessageSend(ResultBuilder &Results,
-                                                       unsigned NumSelIdents) {
-  typedef CodeCompletionResult Result;
-  ASTContext &Context = Results.getSema().Context;
+// static QualType getPreferredArgumentTypeForMessageSend(ResultBuilder &Results,
+//                                                        unsigned NumSelIdents) {
+//   typedef CodeCompletionResult Result;
+//   ASTContext &Context = Results.getSema().Context;
 
-  QualType PreferredType;
-  unsigned BestPriority = CCP_Unlikely * 2;
-  Result *ResultsData = Results.data();
-  for (unsigned I = 0, N = Results.size(); I != N; ++I) {
-    Result &R = ResultsData[I];
-    if (R.Kind == Result::RK_Declaration &&
-        isa<ObjCMethodDecl>(R.Declaration)) {
-      if (R.Priority <= BestPriority) {
-        const ObjCMethodDecl *Method = cast<ObjCMethodDecl>(R.Declaration);
-        if (NumSelIdents <= Method->param_size()) {
-          QualType MyPreferredType =
-              Method->parameters()[NumSelIdents - 1]->getType();
-          if (R.Priority < BestPriority || PreferredType.isNull()) {
-            BestPriority = R.Priority;
-            PreferredType = MyPreferredType;
-          } else if (!Context.hasSameUnqualifiedType(PreferredType,
-                                                     MyPreferredType)) {
-            PreferredType = QualType();
-          }
-        }
-      }
-    }
-  }
+//   QualType PreferredType;
+//   unsigned BestPriority = CCP_Unlikely * 2;
+//   Result *ResultsData = Results.data();
+//   // for (unsigned I = 0, N = Results.size(); I != N; ++I) {
+//   //   Result &R = ResultsData[I];
+//   //   if (R.Kind == Result::RK_Declaration &&
+//   //       isa<ObjCMethodDecl>(R.Declaration)) {
+//   //     if (R.Priority <= BestPriority) {
+//   //       const ObjCMethodDecl *Method = cast<ObjCMethodDecl>(R.Declaration);
+//   //       if (NumSelIdents <= Method->param_size()) {
+//   //         QualType MyPreferredType =
+//   //             Method->parameters()[NumSelIdents - 1]->getType();
+//   //         if (R.Priority < BestPriority || PreferredType.isNull()) {
+//   //           BestPriority = R.Priority;
+//   //           PreferredType = MyPreferredType;
+//   //         } else if (!Context.hasSameUnqualifiedType(PreferredType,
+//   //                                                    MyPreferredType)) {
+//   //           PreferredType = QualType();
+//   //         }
+//   //       }
+//   //     }
+//   //   }
+//   // }
 
-  return PreferredType;
-}
+//   return PreferredType;
+// }
 
-static void AddClassMessageCompletions(Sema &SemaRef, Scope *S,
-                                       ParsedType Receiver,
-                                       ArrayRef<IdentifierInfo *> SelIdents,
-                                       bool AtArgumentExpression, bool IsSuper,
-                                       ResultBuilder &Results) {
-  typedef CodeCompletionResult Result;
-  ObjCInterfaceDecl *CDecl = nullptr;
+// static void AddClassMessageCompletions(Sema &SemaRef, Scope *S,
+//                                        ParsedType Receiver,
+//                                        ArrayRef<IdentifierInfo *> SelIdents,
+//                                        bool AtArgumentExpression, bool IsSuper,
+//                                        ResultBuilder &Results) {
+//   typedef CodeCompletionResult Result;
+//   ObjCInterfaceDecl *CDecl = nullptr;
 
-  // If the given name refers to an interface type, retrieve the
-  // corresponding declaration.
-  if (Receiver) {
-    QualType T = SemaRef.GetTypeFromParser(Receiver, nullptr);
-    if (!T.isNull())
-      if (const ObjCObjectType *Interface = T->getAs<ObjCObjectType>())
-        CDecl = Interface->getInterface();
-  }
+//   // If the given name refers to an interface type, retrieve the
+//   // corresponding declaration.
+//   if (Receiver) {
+//     QualType T = SemaRef.GetTypeFromParser(Receiver, nullptr);
+//     if (!T.isNull())
+//       if (const ObjCObjectType *Interface = T->getAs<ObjCObjectType>())
+//         CDecl = Interface->getInterface();
+//   }
 
-  // Add all of the factory methods in this Objective-C class, its protocols,
-  // superclasses, categories, implementation, etc.
-  Results.EnterNewScope();
+//   // Add all of the factory methods in this Objective-C class, its protocols,
+//   // superclasses, categories, implementation, etc.
+//   Results.EnterNewScope();
 
-  // If this is a send-to-super, try to add the special "super" send
-  // completion.
-  if (IsSuper) {
-    if (ObjCMethodDecl *SuperMethod =
-            AddSuperSendCompletion(SemaRef, false, SelIdents, Results))
-      Results.Ignore(SuperMethod);
-  }
+//   // If this is a send-to-super, try to add the special "super" send
+//   // completion.
+//   if (IsSuper) {
+//     if (ObjCMethodDecl *SuperMethod =
+//             AddSuperSendCompletion(SemaRef, false, SelIdents, Results))
+//       Results.Ignore(SuperMethod);
+//   }
 
-  // If we're inside an Objective-C method definition, prefer its selector to
-  // others.
-  if (ObjCMethodDecl *CurMethod = SemaRef.getCurMethodDecl())
-    Results.setPreferredSelector(CurMethod->getSelector());
+//   // If we're inside an Objective-C method definition, prefer its selector to
+//   // others.
+//   if (ObjCMethodDecl *CurMethod = SemaRef.getCurMethodDecl())
+//     Results.setPreferredSelector(CurMethod->getSelector());
 
-  VisitedSelectorSet Selectors;
-  if (CDecl)
-    AddObjCMethods(CDecl, false, MK_Any, SelIdents, SemaRef.CurContext,
-                   Selectors, AtArgumentExpression, Results);
-  else {
-    // We're messaging "id" as a type; provide all class/factory methods.
+//   VisitedSelectorSet Selectors;
+//   if (CDecl)
+//     AddObjCMethods(CDecl, false, MK_Any, SelIdents, SemaRef.CurContext,
+//                    Selectors, AtArgumentExpression, Results);
+//   else {
+//     // We're messaging "id" as a type; provide all class/factory methods.
 
-    // If we have an external source, load the entire class method
-    // pool from the AST file.
-    if (SemaRef.getExternalSource()) {
-      for (uint32_t I = 0,
-                    N = SemaRef.getExternalSource()->GetNumExternalSelectors();
-           I != N; ++I) {
-        Selector Sel = SemaRef.getExternalSource()->GetExternalSelector(I);
-        if (Sel.isNull() || SemaRef.MethodPool.count(Sel))
-          continue;
+//     // If we have an external source, load the entire class method
+//     // pool from the AST file.
+//     if (SemaRef.getExternalSource()) {
+//       for (uint32_t I = 0,
+//                     N = SemaRef.getExternalSource()->GetNumExternalSelectors();
+//            I != N; ++I) {
+//         Selector Sel = SemaRef.getExternalSource()->GetExternalSelector(I);
+//         if (Sel.isNull() || SemaRef.MethodPool.count(Sel))
+//           continue;
 
-        SemaRef.ReadMethodPool(Sel);
-      }
-    }
+//         SemaRef.ReadMethodPool(Sel);
+//       }
+//     }
 
-    for (Sema::GlobalMethodPool::iterator M = SemaRef.MethodPool.begin(),
-                                          MEnd = SemaRef.MethodPool.end();
-         M != MEnd; ++M) {
-      for (ObjCMethodList *MethList = &M->second.second;
-           MethList && MethList->getMethod(); MethList = MethList->getNext()) {
-        if (!isAcceptableObjCMethod(MethList->getMethod(), MK_Any, SelIdents))
-          continue;
+//     for (Sema::GlobalMethodPool::iterator M = SemaRef.MethodPool.begin(),
+//                                           MEnd = SemaRef.MethodPool.end();
+//          M != MEnd; ++M) {
+//       for (ObjCMethodList *MethList = &M->second.second;
+//            MethList && MethList->getMethod(); MethList = MethList->getNext()) {
+//         if (!isAcceptableObjCMethod(MethList->getMethod(), MK_Any, SelIdents))
+//           continue;
 
-        Result R(MethList->getMethod(),
-                 Results.getBasePriority(MethList->getMethod()), nullptr);
-        R.StartParameter = SelIdents.size();
-        R.AllParametersAreInformative = false;
-        Results.MaybeAddResult(R, SemaRef.CurContext);
-      }
-    }
-  }
+//         Result R(MethList->getMethod(),
+//                  Results.getBasePriority(MethList->getMethod()), nullptr);
+//         R.StartParameter = SelIdents.size();
+//         R.AllParametersAreInformative = false;
+//         Results.MaybeAddResult(R, SemaRef.CurContext);
+//       }
+//     }
+//   }
 
-  Results.ExitScope();
-}
+//   Results.ExitScope();
+// }
 
-void Sema::CodeCompleteObjCClassMessage(Scope *S, ParsedType Receiver,
-                                        ArrayRef<IdentifierInfo *> SelIdents,
-                                        bool AtArgumentExpression,
-                                        bool IsSuper) {
+// void Sema::CodeCompleteObjCClassMessage(Scope *S, ParsedType Receiver,
+//                                         ArrayRef<IdentifierInfo *> SelIdents,
+//                                         bool AtArgumentExpression,
+//                                         bool IsSuper) {
 
-  QualType T = this->GetTypeFromParser(Receiver);
+//   QualType T = this->GetTypeFromParser(Receiver);
 
-  ResultBuilder Results(
-      *this, CodeCompleter->getAllocator(),
-      CodeCompleter->getCodeCompletionTUInfo(),
-      CodeCompletionContext(CodeCompletionContext::CCC_ObjCClassMessage, T,
-                            SelIdents));
+//   ResultBuilder Results(
+//       *this, CodeCompleter->getAllocator(),
+//       CodeCompleter->getCodeCompletionTUInfo(),
+//       CodeCompletionContext(CodeCompletionContext::CCC_ObjCClassMessage, T,
+//                             SelIdents));
 
-  AddClassMessageCompletions(*this, S, Receiver, SelIdents,
-                             AtArgumentExpression, IsSuper, Results);
+//   AddClassMessageCompletions(*this, S, Receiver, SelIdents,
+//                              AtArgumentExpression, IsSuper, Results);
 
-  // If we're actually at the argument expression (rather than prior to the
-  // selector), we're actually performing code completion for an expression.
-  // Determine whether we have a single, best method. If so, we can
-  // code-complete the expression using the corresponding parameter type as
-  // our preferred type, improving completion results.
-  if (AtArgumentExpression) {
-    QualType PreferredType =
-        getPreferredArgumentTypeForMessageSend(Results, SelIdents.size());
-    if (PreferredType.isNull())
-      CodeCompleteOrdinaryName(S, PCC_Expression);
-    else
-      CodeCompleteExpression(S, PreferredType);
-    return;
-  }
+//   // If we're actually at the argument expression (rather than prior to the
+//   // selector), we're actually performing code completion for an expression.
+//   // Determine whether we have a single, best method. If so, we can
+//   // code-complete the expression using the corresponding parameter type as
+//   // our preferred type, improving completion results.
+//   if (AtArgumentExpression) {
+//     QualType PreferredType =
+//         getPreferredArgumentTypeForMessageSend(Results, SelIdents.size());
+//     if (PreferredType.isNull())
+//       CodeCompleteOrdinaryName(S, PCC_Expression);
+//     else
+//       CodeCompleteExpression(S, PreferredType);
+//     return;
+//   }
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCInstanceMessage(Scope *S, Expr *Receiver,
-                                           ArrayRef<IdentifierInfo *> SelIdents,
-                                           bool AtArgumentExpression,
-                                           ObjCInterfaceDecl *Super) {
-  typedef CodeCompletionResult Result;
+// void Sema::CodeCompleteObjCInstanceMessage(Scope *S, Expr *Receiver,
+//                                            ArrayRef<IdentifierInfo *> SelIdents,
+//                                            bool AtArgumentExpression,
+//                                            ObjCInterfaceDecl *Super) {
+//   typedef CodeCompletionResult Result;
 
-  Expr *RecExpr = static_cast<Expr *>(Receiver);
+//   Expr *RecExpr = static_cast<Expr *>(Receiver);
 
-  // If necessary, apply function/array conversion to the receiver.
-  // C99 6.7.5.3p[7,8].
-  if (RecExpr) {
-    ExprResult Conv = DefaultFunctionArrayLvalueConversion(RecExpr);
-    if (Conv.isInvalid()) // conversion failed. bail.
-      return;
-    RecExpr = Conv.get();
-  }
-  QualType ReceiverType = RecExpr
-                              ? RecExpr->getType()
-                              : Super ? Context.getObjCObjectPointerType(
-                                            Context.getObjCInterfaceType(Super))
-                                      : Context.getObjCIdType();
+//   // If necessary, apply function/array conversion to the receiver.
+//   // C99 6.7.5.3p[7,8].
+//   if (RecExpr) {
+//     ExprResult Conv = DefaultFunctionArrayLvalueConversion(RecExpr);
+//     if (Conv.isInvalid()) // conversion failed. bail.
+//       return;
+//     RecExpr = Conv.get();
+//   }
+//   QualType ReceiverType = RecExpr
+//                               ? RecExpr->getType()
+//                               : Super ? Context.getObjCObjectPointerType(
+//                                             Context.getObjCInterfaceType(Super))
+//                                       : Context.getObjCIdType();
 
-  // If we're messaging an expression with type "id" or "Class", check
-  // whether we know something special about the receiver that allows
-  // us to assume a more-specific receiver type.
-  if (ReceiverType->isObjCIdType() || ReceiverType->isObjCClassType()) {
-    if (ObjCInterfaceDecl *IFace = GetAssumedMessageSendExprType(RecExpr)) {
-      if (ReceiverType->isObjCClassType())
-        return CodeCompleteObjCClassMessage(
-            S, ParsedType::make(Context.getObjCInterfaceType(IFace)), SelIdents,
-            AtArgumentExpression, Super);
+//   // If we're messaging an expression with type "id" or "Class", check
+//   // whether we know something special about the receiver that allows
+//   // us to assume a more-specific receiver type.
+//   if (ReceiverType->isObjCIdType() || ReceiverType->isObjCClassType()) {
+//     if (ObjCInterfaceDecl *IFace = GetAssumedMessageSendExprType(RecExpr)) {
+//       if (ReceiverType->isObjCClassType())
+//         return CodeCompleteObjCClassMessage(
+//             S, ParsedType::make(Context.getObjCInterfaceType(IFace)), SelIdents,
+//             AtArgumentExpression, Super);
 
-      ReceiverType =
-          Context.getObjCObjectPointerType(Context.getObjCInterfaceType(IFace));
-    }
-  } else if (RecExpr && getLangOpts().CPlusPlus) {
-    ExprResult Conv = PerformContextuallyConvertToObjCPointer(RecExpr);
-    if (Conv.isUsable()) {
-      RecExpr = Conv.get();
-      ReceiverType = RecExpr->getType();
-    }
-  }
+//       ReceiverType =
+//           Context.getObjCObjectPointerType(Context.getObjCInterfaceType(IFace));
+//     }
+//   } else if (RecExpr && getLangOpts().CPlusPlus) {
+//     ExprResult Conv = PerformContextuallyConvertToObjCPointer(RecExpr);
+//     if (Conv.isUsable()) {
+//       RecExpr = Conv.get();
+//       ReceiverType = RecExpr->getType();
+//     }
+//   }
 
-  // Build the set of methods we can see.
-  ResultBuilder Results(
-      *this, CodeCompleter->getAllocator(),
-      CodeCompleter->getCodeCompletionTUInfo(),
-      CodeCompletionContext(CodeCompletionContext::CCC_ObjCInstanceMessage,
-                            ReceiverType, SelIdents));
+//   // Build the set of methods we can see.
+//   ResultBuilder Results(
+//       *this, CodeCompleter->getAllocator(),
+//       CodeCompleter->getCodeCompletionTUInfo(),
+//       CodeCompletionContext(CodeCompletionContext::CCC_ObjCInstanceMessage,
+//                             ReceiverType, SelIdents));
 
-  Results.EnterNewScope();
+//   Results.EnterNewScope();
 
-  // If this is a send-to-super, try to add the special "super" send
-  // completion.
-  if (Super) {
-    if (ObjCMethodDecl *SuperMethod =
-            AddSuperSendCompletion(*this, false, SelIdents, Results))
-      Results.Ignore(SuperMethod);
-  }
+//   // If this is a send-to-super, try to add the special "super" send
+//   // completion.
+//   if (Super) {
+//     if (ObjCMethodDecl *SuperMethod =
+//             AddSuperSendCompletion(*this, false, SelIdents, Results))
+//       Results.Ignore(SuperMethod);
+//   }
 
-  // If we're inside an Objective-C method definition, prefer its selector to
-  // others.
-  if (ObjCMethodDecl *CurMethod = getCurMethodDecl())
-    Results.setPreferredSelector(CurMethod->getSelector());
+//   // If we're inside an Objective-C method definition, prefer its selector to
+//   // others.
+//   if (ObjCMethodDecl *CurMethod = getCurMethodDecl())
+//     Results.setPreferredSelector(CurMethod->getSelector());
 
-  // Keep track of the selectors we've already added.
-  VisitedSelectorSet Selectors;
+//   // Keep track of the selectors we've already added.
+//   VisitedSelectorSet Selectors;
 
-  // Handle messages to Class. This really isn't a message to an instance
-  // method, so we treat it the same way we would treat a message send to a
-  // class method.
-  if (ReceiverType->isObjCClassType() ||
-      ReceiverType->isObjCQualifiedClassType()) {
-    if (ObjCMethodDecl *CurMethod = getCurMethodDecl()) {
-      if (ObjCInterfaceDecl *ClassDecl = CurMethod->getClassInterface())
-        AddObjCMethods(ClassDecl, false, MK_Any, SelIdents, CurContext,
-                       Selectors, AtArgumentExpression, Results);
-    }
-  }
-  // Handle messages to a qualified ID ("id<foo>").
-  else if (const ObjCObjectPointerType *QualID =
-               ReceiverType->getAsObjCQualifiedIdType()) {
-    // Search protocols for instance methods.
-    for (auto *I : QualID->quals())
-      AddObjCMethods(I, true, MK_Any, SelIdents, CurContext, Selectors,
-                     AtArgumentExpression, Results);
-  }
-  // Handle messages to a pointer to interface type.
-  else if (const ObjCObjectPointerType *IFacePtr =
-               ReceiverType->getAsObjCInterfacePointerType()) {
-    // Search the class, its superclasses, etc., for instance methods.
-    AddObjCMethods(IFacePtr->getInterfaceDecl(), true, MK_Any, SelIdents,
-                   CurContext, Selectors, AtArgumentExpression, Results);
+//   // Handle messages to Class. This really isn't a message to an instance
+//   // method, so we treat it the same way we would treat a message send to a
+//   // class method.
+//   if (ReceiverType->isObjCClassType() ||
+//       ReceiverType->isObjCQualifiedClassType()) {
+//     if (ObjCMethodDecl *CurMethod = getCurMethodDecl()) {
+//       if (ObjCInterfaceDecl *ClassDecl = CurMethod->getClassInterface())
+//         AddObjCMethods(ClassDecl, false, MK_Any, SelIdents, CurContext,
+//                        Selectors, AtArgumentExpression, Results);
+//     }
+//   }
+//   // Handle messages to a qualified ID ("id<foo>").
+//   else if (const ObjCObjectPointerType *QualID =
+//                ReceiverType->getAsObjCQualifiedIdType()) {
+//     // Search protocols for instance methods.
+//     for (auto *I : QualID->quals())
+//       AddObjCMethods(I, true, MK_Any, SelIdents, CurContext, Selectors,
+//                      AtArgumentExpression, Results);
+//   }
+//   // Handle messages to a pointer to interface type.
+//   else if (const ObjCObjectPointerType *IFacePtr =
+//                ReceiverType->getAsObjCInterfacePointerType()) {
+//     // Search the class, its superclasses, etc., for instance methods.
+//     AddObjCMethods(IFacePtr->getInterfaceDecl(), true, MK_Any, SelIdents,
+//                    CurContext, Selectors, AtArgumentExpression, Results);
 
-    // Search protocols for instance methods.
-    for (auto *I : IFacePtr->quals())
-      AddObjCMethods(I, true, MK_Any, SelIdents, CurContext, Selectors,
-                     AtArgumentExpression, Results);
-  }
-  // Handle messages to "id".
-  else if (ReceiverType->isObjCIdType()) {
-    // We're messaging "id", so provide all instance methods we know
-    // about as code-completion results.
+//     // Search protocols for instance methods.
+//     for (auto *I : IFacePtr->quals())
+//       AddObjCMethods(I, true, MK_Any, SelIdents, CurContext, Selectors,
+//                      AtArgumentExpression, Results);
+//   }
+//   // Handle messages to "id".
+//   else if (ReceiverType->isObjCIdType()) {
+//     // We're messaging "id", so provide all instance methods we know
+//     // about as code-completion results.
 
-    // If we have an external source, load the entire class method
-    // pool from the AST file.
-    if (ExternalSource) {
-      for (uint32_t I = 0, N = ExternalSource->GetNumExternalSelectors();
-           I != N; ++I) {
-        Selector Sel = ExternalSource->GetExternalSelector(I);
-        if (Sel.isNull() || MethodPool.count(Sel))
-          continue;
+//     // If we have an external source, load the entire class method
+//     // pool from the AST file.
+//     if (ExternalSource) {
+//       for (uint32_t I = 0, N = ExternalSource->GetNumExternalSelectors();
+//            I != N; ++I) {
+//         Selector Sel = ExternalSource->GetExternalSelector(I);
+//         if (Sel.isNull() || MethodPool.count(Sel))
+//           continue;
 
-        ReadMethodPool(Sel);
-      }
-    }
+//         ReadMethodPool(Sel);
+//       }
+//     }
 
-    for (GlobalMethodPool::iterator M = MethodPool.begin(),
-                                    MEnd = MethodPool.end();
-         M != MEnd; ++M) {
-      for (ObjCMethodList *MethList = &M->second.first;
-           MethList && MethList->getMethod(); MethList = MethList->getNext()) {
-        if (!isAcceptableObjCMethod(MethList->getMethod(), MK_Any, SelIdents))
-          continue;
+//     for (GlobalMethodPool::iterator M = MethodPool.begin(),
+//                                     MEnd = MethodPool.end();
+//          M != MEnd; ++M) {
+//       for (ObjCMethodList *MethList = &M->second.first;
+//            MethList && MethList->getMethod(); MethList = MethList->getNext()) {
+//         if (!isAcceptableObjCMethod(MethList->getMethod(), MK_Any, SelIdents))
+//           continue;
 
-        if (!Selectors.insert(MethList->getMethod()->getSelector()).second)
-          continue;
+//         if (!Selectors.insert(MethList->getMethod()->getSelector()).second)
+//           continue;
 
-        Result R(MethList->getMethod(),
-                 Results.getBasePriority(MethList->getMethod()), nullptr);
-        R.StartParameter = SelIdents.size();
-        R.AllParametersAreInformative = false;
-        Results.MaybeAddResult(R, CurContext);
-      }
-    }
-  }
-  Results.ExitScope();
+//         Result R(MethList->getMethod(),
+//                  Results.getBasePriority(MethList->getMethod()), nullptr);
+//         R.StartParameter = SelIdents.size();
+//         R.AllParametersAreInformative = false;
+//         Results.MaybeAddResult(R, CurContext);
+//       }
+//     }
+//   }
+//   Results.ExitScope();
 
-  // If we're actually at the argument expression (rather than prior to the
-  // selector), we're actually performing code completion for an expression.
-  // Determine whether we have a single, best method. If so, we can
-  // code-complete the expression using the corresponding parameter type as
-  // our preferred type, improving completion results.
-  if (AtArgumentExpression) {
-    QualType PreferredType =
-        getPreferredArgumentTypeForMessageSend(Results, SelIdents.size());
-    if (PreferredType.isNull())
-      CodeCompleteOrdinaryName(S, PCC_Expression);
-    else
-      CodeCompleteExpression(S, PreferredType);
-    return;
-  }
+//   // If we're actually at the argument expression (rather than prior to the
+//   // selector), we're actually performing code completion for an expression.
+//   // Determine whether we have a single, best method. If so, we can
+//   // code-complete the expression using the corresponding parameter type as
+//   // our preferred type, improving completion results.
+//   if (AtArgumentExpression) {
+//     QualType PreferredType =
+//         getPreferredArgumentTypeForMessageSend(Results, SelIdents.size());
+//     if (PreferredType.isNull())
+//       CodeCompleteOrdinaryName(S, PCC_Expression);
+//     else
+//       CodeCompleteExpression(S, PreferredType);
+//     return;
+//   }
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCForCollection(Scope *S,
-                                         DeclGroupPtrTy IterationVar) {
-  CodeCompleteExpressionData Data;
-  Data.ObjCCollection = true;
+// void Sema::CodeCompleteObjCForCollection(Scope *S,
+//                                          DeclGroupPtrTy IterationVar) {
+//   CodeCompleteExpressionData Data;
+//   Data.ObjCCollection = true;
 
-  if (IterationVar.getAsOpaquePtr()) {
-    DeclGroupRef DG = IterationVar.get();
-    for (DeclGroupRef::iterator I = DG.begin(), End = DG.end(); I != End; ++I) {
-      if (*I)
-        Data.IgnoreDecls.push_back(*I);
-    }
-  }
+//   if (IterationVar.getAsOpaquePtr()) {
+//     DeclGroupRef DG = IterationVar.get();
+//     for (DeclGroupRef::iterator I = DG.begin(), End = DG.end(); I != End; ++I) {
+//       if (*I)
+//         Data.IgnoreDecls.push_back(*I);
+//     }
+//   }
 
-  CodeCompleteExpression(S, Data);
-}
+//   CodeCompleteExpression(S, Data);
+// }
 
-void Sema::CodeCompleteObjCSelector(Scope *S,
-                                    ArrayRef<IdentifierInfo *> SelIdents) {
-  // If we have an external source, load the entire class method
-  // pool from the AST file.
-  if (ExternalSource) {
-    for (uint32_t I = 0, N = ExternalSource->GetNumExternalSelectors(); I != N;
-         ++I) {
-      Selector Sel = ExternalSource->GetExternalSelector(I);
-      if (Sel.isNull() || MethodPool.count(Sel))
-        continue;
+// void Sema::CodeCompleteObjCSelector(Scope *S,
+//                                     ArrayRef<IdentifierInfo *> SelIdents) {
+//   // If we have an external source, load the entire class method
+//   // pool from the AST file.
+//   if (ExternalSource) {
+//     for (uint32_t I = 0, N = ExternalSource->GetNumExternalSelectors(); I != N;
+//          ++I) {
+//       Selector Sel = ExternalSource->GetExternalSelector(I);
+//       if (Sel.isNull() || MethodPool.count(Sel))
+//         continue;
 
-      ReadMethodPool(Sel);
-    }
-  }
+//       ReadMethodPool(Sel);
+//     }
+//   }
 
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_SelectorName);
-  Results.EnterNewScope();
-  for (GlobalMethodPool::iterator M = MethodPool.begin(),
-                                  MEnd = MethodPool.end();
-       M != MEnd; ++M) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_SelectorName);
+//   Results.EnterNewScope();
+//   for (GlobalMethodPool::iterator M = MethodPool.begin(),
+//                                   MEnd = MethodPool.end();
+//        M != MEnd; ++M) {
 
-    Selector Sel = M->first;
-    if (!isAcceptableObjCSelector(Sel, MK_Any, SelIdents))
-      continue;
+//     Selector Sel = M->first;
+//     if (!isAcceptableObjCSelector(Sel, MK_Any, SelIdents))
+//       continue;
 
-    CodeCompletionBuilder Builder(Results.getAllocator(),
-                                  Results.getCodeCompletionTUInfo());
-    if (Sel.isUnarySelector()) {
-      Builder.AddTypedTextChunk(
-          Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
-      Results.AddResult(Builder.TakeString());
-      continue;
-    }
+//     CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                   Results.getCodeCompletionTUInfo());
+//     if (Sel.isUnarySelector()) {
+//       Builder.AddTypedTextChunk(
+//           Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
+//       Results.AddResult(Builder.TakeString());
+//       continue;
+//     }
 
-    std::string Accumulator;
-    for (unsigned I = 0, N = Sel.getNumArgs(); I != N; ++I) {
-      if (I == SelIdents.size()) {
-        if (!Accumulator.empty()) {
-          Builder.AddInformativeChunk(
-              Builder.getAllocator().CopyString(Accumulator));
-          Accumulator.clear();
-        }
-      }
+//     std::string Accumulator;
+//     for (unsigned I = 0, N = Sel.getNumArgs(); I != N; ++I) {
+//       if (I == SelIdents.size()) {
+//         if (!Accumulator.empty()) {
+//           Builder.AddInformativeChunk(
+//               Builder.getAllocator().CopyString(Accumulator));
+//           Accumulator.clear();
+//         }
+//       }
 
-      Accumulator += Sel.getNameForSlot(I);
-      Accumulator += ':';
-    }
-    Builder.AddTypedTextChunk(Builder.getAllocator().CopyString(Accumulator));
-    Results.AddResult(Builder.TakeString());
-  }
-  Results.ExitScope();
+//       Accumulator += Sel.getNameForSlot(I);
+//       Accumulator += ':';
+//     }
+//     Builder.AddTypedTextChunk(Builder.getAllocator().CopyString(Accumulator));
+//     Results.AddResult(Builder.TakeString());
+//   }
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 /// Add all of the protocol declarations that we find in the given
 /// (translation unit) context.
-static void AddProtocolResults(DeclContext *Ctx, DeclContext *CurContext,
-                               bool OnlyForwardDeclarations,
-                               ResultBuilder &Results) {
-  typedef CodeCompletionResult Result;
+// static void AddProtocolResults(DeclContext *Ctx, DeclContext *CurContext,
+//                                bool OnlyForwardDeclarations,
+//                                ResultBuilder &Results) {
+//   typedef CodeCompletionResult Result;
 
-  for (const auto *D : Ctx->decls()) {
-    // Record any protocols we find.
-    if (const auto *Proto = dyn_cast<ObjCProtocolDecl>(D))
-      if (!OnlyForwardDeclarations || !Proto->hasDefinition())
-        Results.AddResult(
-            Result(Proto, Results.getBasePriority(Proto), nullptr), CurContext,
-            nullptr, false);
-  }
-}
+//   for (const auto *D : Ctx->decls()) {
+//     // Record any protocols we find.
+//     if (const auto *Proto = dyn_cast<ObjCProtocolDecl>(D))
+//       if (!OnlyForwardDeclarations || !Proto->hasDefinition())
+//         Results.AddResult(
+//             Result(Proto, Results.getBasePriority(Proto), nullptr), CurContext,
+//             nullptr, false);
+//   }
+// }
 
-void Sema::CodeCompleteObjCProtocolReferences(
-    ArrayRef<IdentifierLocPair> Protocols) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCProtocolName);
+// void Sema::CodeCompleteObjCProtocolReferences(
+//     ArrayRef<IdentifierLocPair> Protocols) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCProtocolName);
 
-  if (CodeCompleter->includeGlobals()) {
-    Results.EnterNewScope();
+//   if (CodeCompleter->includeGlobals()) {
+//     Results.EnterNewScope();
 
-    // Tell the result set to ignore all of the protocols we have
-    // already seen.
-    // FIXME: This doesn't work when caching code-completion results.
-    for (const IdentifierLocPair &Pair : Protocols)
-      if (ObjCProtocolDecl *Protocol = LookupProtocol(Pair.first, Pair.second))
-        Results.Ignore(Protocol);
+//     // Tell the result set to ignore all of the protocols we have
+//     // already seen.
+//     // FIXME: This doesn't work when caching code-completion results.
+//     for (const IdentifierLocPair &Pair : Protocols)
+//       if (ObjCProtocolDecl *Protocol = LookupProtocol(Pair.first, Pair.second))
+//         Results.Ignore(Protocol);
 
-    // Add all protocols.
-    AddProtocolResults(Context.getTranslationUnitDecl(), CurContext, false,
-                       Results);
+//     // Add all protocols.
+//     AddProtocolResults(Context.getTranslationUnitDecl(), CurContext, false,
+//                        Results);
 
-    Results.ExitScope();
-  }
+//     Results.ExitScope();
+//   }
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCProtocolDecl(Scope *) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCProtocolName);
+// void Sema::CodeCompleteObjCProtocolDecl(Scope *) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCProtocolName);
 
-  if (CodeCompleter->includeGlobals()) {
-    Results.EnterNewScope();
+//   if (CodeCompleter->includeGlobals()) {
+//     Results.EnterNewScope();
 
-    // Add all protocols.
-    AddProtocolResults(Context.getTranslationUnitDecl(), CurContext, true,
-                       Results);
+//     // Add all protocols.
+//     AddProtocolResults(Context.getTranslationUnitDecl(), CurContext, true,
+//                        Results);
 
-    Results.ExitScope();
-  }
+//     Results.ExitScope();
+//   }
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 /// Add all of the Objective-C interface declarations that we find in
 /// the given (translation unit) context.
-static void AddInterfaceResults(DeclContext *Ctx, DeclContext *CurContext,
-                                bool OnlyForwardDeclarations,
-                                bool OnlyUnimplemented,
-                                ResultBuilder &Results) {
-  typedef CodeCompletionResult Result;
+// static void AddInterfaceResults(DeclContext *Ctx, DeclContext *CurContext,
+//                                 bool OnlyForwardDeclarations,
+//                                 bool OnlyUnimplemented,
+//                                 ResultBuilder &Results) {
+//   typedef CodeCompletionResult Result;
 
-  for (const auto *D : Ctx->decls()) {
-    // Record any interfaces we find.
-    if (const auto *Class = dyn_cast<ObjCInterfaceDecl>(D))
-      if ((!OnlyForwardDeclarations || !Class->hasDefinition()) &&
-          (!OnlyUnimplemented || !Class->getImplementation()))
-        Results.AddResult(
-            Result(Class, Results.getBasePriority(Class), nullptr), CurContext,
-            nullptr, false);
-  }
-}
+//   for (const auto *D : Ctx->decls()) {
+//     // Record any interfaces we find.
+//     if (const auto *Class = dyn_cast<ObjCInterfaceDecl>(D))
+//       if ((!OnlyForwardDeclarations || !Class->hasDefinition()) &&
+//           (!OnlyUnimplemented || !Class->getImplementation()))
+//         Results.AddResult(
+//             Result(Class, Results.getBasePriority(Class), nullptr), CurContext,
+//             nullptr, false);
+//   }
+// }
 
-void Sema::CodeCompleteObjCInterfaceDecl(Scope *S) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCInterfaceName);
-  Results.EnterNewScope();
+// void Sema::CodeCompleteObjCInterfaceDecl(Scope *S) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCInterfaceName);
+//   Results.EnterNewScope();
 
-  if (CodeCompleter->includeGlobals()) {
-    // Add all classes.
-    AddInterfaceResults(Context.getTranslationUnitDecl(), CurContext, false,
-                        false, Results);
-  }
+//   if (CodeCompleter->includeGlobals()) {
+//     // Add all classes.
+//     AddInterfaceResults(Context.getTranslationUnitDecl(), CurContext, false,
+//                         false, Results);
+//   }
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCSuperclass(Scope *S, IdentifierInfo *ClassName,
-                                      SourceLocation ClassNameLoc) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCInterfaceName);
-  Results.EnterNewScope();
+// void Sema::CodeCompleteObjCSuperclass(Scope *S, IdentifierInfo *ClassName,
+//                                       SourceLocation ClassNameLoc) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCInterfaceName);
+//   Results.EnterNewScope();
 
-  // Make sure that we ignore the class we're currently defining.
-  NamedDecl *CurClass =
-      LookupSingleName(TUScope, ClassName, ClassNameLoc, LookupOrdinaryName);
-  if (CurClass && isa<ObjCInterfaceDecl>(CurClass))
-    Results.Ignore(CurClass);
+//   // Make sure that we ignore the class we're currently defining.
+//   NamedDecl *CurClass =
+//       LookupSingleName(TUScope, ClassName, ClassNameLoc, LookupOrdinaryName);
+//   if (CurClass && isa<ObjCInterfaceDecl>(CurClass))
+//     Results.Ignore(CurClass);
 
-  if (CodeCompleter->includeGlobals()) {
-    // Add all classes.
-    AddInterfaceResults(Context.getTranslationUnitDecl(), CurContext, false,
-                        false, Results);
-  }
+//   if (CodeCompleter->includeGlobals()) {
+//     // Add all classes.
+//     AddInterfaceResults(Context.getTranslationUnitDecl(), CurContext, false,
+//                         false, Results);
+//   }
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCImplementationDecl(Scope *S) {
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCImplementation);
-  Results.EnterNewScope();
+// void Sema::CodeCompleteObjCImplementationDecl(Scope *S) {
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCImplementation);
+//   Results.EnterNewScope();
 
-  if (CodeCompleter->includeGlobals()) {
-    // Add all unimplemented classes.
-    AddInterfaceResults(Context.getTranslationUnitDecl(), CurContext, false,
-                        true, Results);
-  }
+//   if (CodeCompleter->includeGlobals()) {
+//     // Add all unimplemented classes.
+//     AddInterfaceResults(Context.getTranslationUnitDecl(), CurContext, false,
+//                         true, Results);
+//   }
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCInterfaceCategory(Scope *S,
-                                             IdentifierInfo *ClassName,
-                                             SourceLocation ClassNameLoc) {
-  typedef CodeCompletionResult Result;
+// void Sema::CodeCompleteObjCInterfaceCategory(Scope *S,
+//                                              IdentifierInfo *ClassName,
+//                                              SourceLocation ClassNameLoc) {
+//   typedef CodeCompletionResult Result;
 
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCCategoryName);
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCCategoryName);
 
-  // Ignore any categories we find that have already been implemented by this
-  // interface.
-  llvm::SmallPtrSet<IdentifierInfo *, 16> CategoryNames;
-  NamedDecl *CurClass =
-      LookupSingleName(TUScope, ClassName, ClassNameLoc, LookupOrdinaryName);
-  if (ObjCInterfaceDecl *Class =
-          dyn_cast_or_null<ObjCInterfaceDecl>(CurClass)) {
-    for (const auto *Cat : Class->visible_categories())
-      CategoryNames.insert(Cat->getIdentifier());
-  }
+//   // Ignore any categories we find that have already been implemented by this
+//   // interface.
+//   llvm::SmallPtrSet<IdentifierInfo *, 16> CategoryNames;
+//   NamedDecl *CurClass =
+//       LookupSingleName(TUScope, ClassName, ClassNameLoc, LookupOrdinaryName);
+//   if (ObjCInterfaceDecl *Class =
+//           dyn_cast_or_null<ObjCInterfaceDecl>(CurClass)) {
+//     for (const auto *Cat : Class->visible_categories())
+//       CategoryNames.insert(Cat->getIdentifier());
+//   }
 
-  // Add all of the categories we know about.
-  Results.EnterNewScope();
-  TranslationUnitDecl *TU = Context.getTranslationUnitDecl();
-  for (const auto *D : TU->decls())
-    if (const auto *Category = dyn_cast<ObjCCategoryDecl>(D))
-      if (CategoryNames.insert(Category->getIdentifier()).second)
-        Results.AddResult(
-            Result(Category, Results.getBasePriority(Category), nullptr),
-            CurContext, nullptr, false);
-  Results.ExitScope();
+//   // Add all of the categories we know about.
+//   Results.EnterNewScope();
+//   TranslationUnitDecl *TU = Context.getTranslationUnitDecl();
+//   for (const auto *D : TU->decls())
+//     if (const auto *Category = dyn_cast<ObjCCategoryDecl>(D))
+//       if (CategoryNames.insert(Category->getIdentifier()).second)
+//         Results.AddResult(
+//             Result(Category, Results.getBasePriority(Category), nullptr),
+//             CurContext, nullptr, false);
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCImplementationCategory(Scope *S,
-                                                  IdentifierInfo *ClassName,
-                                                  SourceLocation ClassNameLoc) {
-  typedef CodeCompletionResult Result;
+// void Sema::CodeCompleteObjCImplementationCategory(Scope *S,
+//                                                   IdentifierInfo *ClassName,
+//                                                   SourceLocation ClassNameLoc) {
+//   typedef CodeCompletionResult Result;
 
-  // Find the corresponding interface. If we couldn't find the interface, the
-  // program itself is ill-formed. However, we'll try to be helpful still by
-  // providing the list of all of the categories we know about.
-  NamedDecl *CurClass =
-      LookupSingleName(TUScope, ClassName, ClassNameLoc, LookupOrdinaryName);
-  ObjCInterfaceDecl *Class = dyn_cast_or_null<ObjCInterfaceDecl>(CurClass);
-  if (!Class)
-    return CodeCompleteObjCInterfaceCategory(S, ClassName, ClassNameLoc);
+//   // Find the corresponding interface. If we couldn't find the interface, the
+//   // program itself is ill-formed. However, we'll try to be helpful still by
+//   // providing the list of all of the categories we know about.
+//   NamedDecl *CurClass =
+//       LookupSingleName(TUScope, ClassName, ClassNameLoc, LookupOrdinaryName);
+//   ObjCInterfaceDecl *Class = dyn_cast_or_null<ObjCInterfaceDecl>(CurClass);
+//   if (!Class)
+//     return CodeCompleteObjCInterfaceCategory(S, ClassName, ClassNameLoc);
 
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_ObjCCategoryName);
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_ObjCCategoryName);
 
-  // Add all of the categories that have have corresponding interface
-  // declarations in this class and any of its superclasses, except for
-  // already-implemented categories in the class itself.
-  llvm::SmallPtrSet<IdentifierInfo *, 16> CategoryNames;
-  Results.EnterNewScope();
-  bool IgnoreImplemented = true;
-  while (Class) {
-    for (const auto *Cat : Class->visible_categories()) {
-      if ((!IgnoreImplemented || !Cat->getImplementation()) &&
-          CategoryNames.insert(Cat->getIdentifier()).second)
-        Results.AddResult(Result(Cat, Results.getBasePriority(Cat), nullptr),
-                          CurContext, nullptr, false);
-    }
+//   // Add all of the categories that have have corresponding interface
+//   // declarations in this class and any of its superclasses, except for
+//   // already-implemented categories in the class itself.
+//   llvm::SmallPtrSet<IdentifierInfo *, 16> CategoryNames;
+//   Results.EnterNewScope();
+//   bool IgnoreImplemented = true;
+//   while (Class) {
+//     for (const auto *Cat : Class->visible_categories()) {
+//       if ((!IgnoreImplemented || !Cat->getImplementation()) &&
+//           CategoryNames.insert(Cat->getIdentifier()).second)
+//         Results.AddResult(Result(Cat, Results.getBasePriority(Cat), nullptr),
+//                           CurContext, nullptr, false);
+//     }
 
-    Class = Class->getSuperClass();
-    IgnoreImplemented = false;
-  }
-  Results.ExitScope();
+//     Class = Class->getSuperClass();
+//     IgnoreImplemented = false;
+//   }
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCPropertyDefinition(Scope *S) {
-  CodeCompletionContext CCContext(CodeCompletionContext::CCC_Other);
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(), CCContext);
+// void Sema::CodeCompleteObjCPropertyDefinition(Scope *S) {
+//   CodeCompletionContext CCContext(CodeCompletionContext::CCC_Other);
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(), CCContext);
 
-  // Figure out where this @synthesize lives.
-  ObjCContainerDecl *Container =
-      dyn_cast_or_null<ObjCContainerDecl>(CurContext);
-  if (!Container || (!isa<ObjCImplementationDecl>(Container) &&
-                     !isa<ObjCCategoryImplDecl>(Container)))
-    return;
+//   // Figure out where this @synthesize lives.
+//   ObjCContainerDecl *Container =
+//       dyn_cast_or_null<ObjCContainerDecl>(CurContext);
+//   if (!Container || (!isa<ObjCImplementationDecl>(Container) &&
+//                      !isa<ObjCCategoryImplDecl>(Container)))
+//     return;
 
-  // Ignore any properties that have already been implemented.
-  Container = getContainerDef(Container);
-  for (const auto *D : Container->decls())
-    if (const auto *PropertyImpl = dyn_cast<ObjCPropertyImplDecl>(D))
-      Results.Ignore(PropertyImpl->getPropertyDecl());
+//   // Ignore any properties that have already been implemented.
+//   Container = getContainerDef(Container);
+//   for (const auto *D : Container->decls())
+//     if (const auto *PropertyImpl = dyn_cast<ObjCPropertyImplDecl>(D))
+//       Results.Ignore(PropertyImpl->getPropertyDecl());
 
-  // Add any properties that we find.
-  AddedPropertiesSet AddedProperties;
-  Results.EnterNewScope();
-  if (ObjCImplementationDecl *ClassImpl =
-          dyn_cast<ObjCImplementationDecl>(Container))
-    AddObjCProperties(CCContext, ClassImpl->getClassInterface(), false,
-                      /*AllowNullaryMethods=*/false, CurContext,
-                      AddedProperties, Results);
-  else
-    AddObjCProperties(CCContext,
-                      cast<ObjCCategoryImplDecl>(Container)->getCategoryDecl(),
-                      false, /*AllowNullaryMethods=*/false, CurContext,
-                      AddedProperties, Results);
-  Results.ExitScope();
+//   // Add any properties that we find.
+//   AddedPropertiesSet AddedProperties;
+//   Results.EnterNewScope();
+//   if (ObjCImplementationDecl *ClassImpl =
+//           dyn_cast<ObjCImplementationDecl>(Container))
+//     AddObjCProperties(CCContext, ClassImpl->getClassInterface(), false,
+//                       /*AllowNullaryMethods=*/false, CurContext,
+//                       AddedProperties, Results);
+//   else
+//     AddObjCProperties(CCContext,
+//                       cast<ObjCCategoryImplDecl>(Container)->getCategoryDecl(),
+//                       false, /*AllowNullaryMethods=*/false, CurContext,
+//                       AddedProperties, Results);
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCPropertySynthesizeIvar(
-    Scope *S, IdentifierInfo *PropertyName) {
-  typedef CodeCompletionResult Result;
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
+// void Sema::CodeCompleteObjCPropertySynthesizeIvar(
+//     Scope *S, IdentifierInfo *PropertyName) {
+//   typedef CodeCompletionResult Result;
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
 
-  // Figure out where this @synthesize lives.
-  ObjCContainerDecl *Container =
-      dyn_cast_or_null<ObjCContainerDecl>(CurContext);
-  if (!Container || (!isa<ObjCImplementationDecl>(Container) &&
-                     !isa<ObjCCategoryImplDecl>(Container)))
-    return;
+//   // Figure out where this @synthesize lives.
+//   ObjCContainerDecl *Container =
+//       dyn_cast_or_null<ObjCContainerDecl>(CurContext);
+//   if (!Container || (!isa<ObjCImplementationDecl>(Container) &&
+//                      !isa<ObjCCategoryImplDecl>(Container)))
+//     return;
 
-  // Figure out which interface we're looking into.
-  ObjCInterfaceDecl *Class = nullptr;
-  if (ObjCImplementationDecl *ClassImpl =
-          dyn_cast<ObjCImplementationDecl>(Container))
-    Class = ClassImpl->getClassInterface();
-  else
-    Class = cast<ObjCCategoryImplDecl>(Container)
-                ->getCategoryDecl()
-                ->getClassInterface();
+//   // Figure out which interface we're looking into.
+//   ObjCInterfaceDecl *Class = nullptr;
+//   if (ObjCImplementationDecl *ClassImpl =
+//           dyn_cast<ObjCImplementationDecl>(Container))
+//     Class = ClassImpl->getClassInterface();
+//   else
+//     Class = cast<ObjCCategoryImplDecl>(Container)
+//                 ->getCategoryDecl()
+//                 ->getClassInterface();
 
-  // Determine the type of the property we're synthesizing.
-  QualType PropertyType = Context.getObjCIdType();
-  if (Class) {
-    if (ObjCPropertyDecl *Property = Class->FindPropertyDeclaration(
-            PropertyName, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
-      PropertyType =
-          Property->getType().getNonReferenceType().getUnqualifiedType();
+//   // Determine the type of the property we're synthesizing.
+//   QualType PropertyType = Context.getObjCIdType();
+//   if (Class) {
+//     if (ObjCPropertyDecl *Property = Class->FindPropertyDeclaration(
+//             PropertyName, ObjCPropertyQueryKind::OBJC_PR_query_instance)) {
+//       PropertyType =
+//           Property->getType().getNonReferenceType().getUnqualifiedType();
 
-      // Give preference to ivars
-      Results.setPreferredType(PropertyType);
-    }
-  }
+//       // Give preference to ivars
+//       Results.setPreferredType(PropertyType);
+//     }
+//   }
 
-  // Add all of the instance variables in this class and its superclasses.
-  Results.EnterNewScope();
-  bool SawSimilarlyNamedIvar = false;
-  std::string NameWithPrefix;
-  NameWithPrefix += '_';
-  NameWithPrefix += PropertyName->getName();
-  std::string NameWithSuffix = PropertyName->getName().str();
-  NameWithSuffix += '_';
-  for (; Class; Class = Class->getSuperClass()) {
-    for (ObjCIvarDecl *Ivar = Class->all_declared_ivar_begin(); Ivar;
-         Ivar = Ivar->getNextIvar()) {
-      Results.AddResult(Result(Ivar, Results.getBasePriority(Ivar), nullptr),
-                        CurContext, nullptr, false);
+//   // Add all of the instance variables in this class and its superclasses.
+//   Results.EnterNewScope();
+//   bool SawSimilarlyNamedIvar = false;
+//   std::string NameWithPrefix;
+//   NameWithPrefix += '_';
+//   NameWithPrefix += PropertyName->getName();
+//   std::string NameWithSuffix = PropertyName->getName().str();
+//   NameWithSuffix += '_';
+//   for (; Class; Class = Class->getSuperClass()) {
+//     for (ObjCIvarDecl *Ivar = Class->all_declared_ivar_begin(); Ivar;
+//          Ivar = Ivar->getNextIvar()) {
+//       Results.AddResult(Result(Ivar, Results.getBasePriority(Ivar), nullptr),
+//                         CurContext, nullptr, false);
 
-      // Determine whether we've seen an ivar with a name similar to the
-      // property.
-      if ((PropertyName == Ivar->getIdentifier() ||
-           NameWithPrefix == Ivar->getName() ||
-           NameWithSuffix == Ivar->getName())) {
-        SawSimilarlyNamedIvar = true;
+//       // Determine whether we've seen an ivar with a name similar to the
+//       // property.
+//       if ((PropertyName == Ivar->getIdentifier() ||
+//            NameWithPrefix == Ivar->getName() ||
+//            NameWithSuffix == Ivar->getName())) {
+//         SawSimilarlyNamedIvar = true;
 
-        // Reduce the priority of this result by one, to give it a slight
-        // advantage over other results whose names don't match so closely.
-        if (Results.size() &&
-            Results.data()[Results.size() - 1].Kind ==
-                CodeCompletionResult::RK_Declaration &&
-            Results.data()[Results.size() - 1].Declaration == Ivar)
-          Results.data()[Results.size() - 1].Priority--;
-      }
-    }
-  }
+//         // Reduce the priority of this result by one, to give it a slight
+//         // advantage over other results whose names don't match so closely.
+//         if (Results.size() &&
+//             Results.data()[Results.size() - 1].Kind ==
+//                 CodeCompletionResult::RK_Declaration &&
+//             Results.data()[Results.size() - 1].Declaration == Ivar)
+//           Results.data()[Results.size() - 1].Priority--;
+//       }
+//     }
+//   }
 
-  if (!SawSimilarlyNamedIvar) {
-    // Create ivar result _propName, that the user can use to synthesize
-    // an ivar of the appropriate type.
-    unsigned Priority = CCP_MemberDeclaration + 1;
-    typedef CodeCompletionResult Result;
-    CodeCompletionAllocator &Allocator = Results.getAllocator();
-    CodeCompletionBuilder Builder(Allocator, Results.getCodeCompletionTUInfo(),
-                                  Priority, CXAvailability_Available);
+//   if (!SawSimilarlyNamedIvar) {
+//     // Create ivar result _propName, that the user can use to synthesize
+//     // an ivar of the appropriate type.
+//     unsigned Priority = CCP_MemberDeclaration + 1;
+//     typedef CodeCompletionResult Result;
+//     CodeCompletionAllocator &Allocator = Results.getAllocator();
+//     CodeCompletionBuilder Builder(Allocator, Results.getCodeCompletionTUInfo(),
+//                                   Priority, CXAvailability_Available);
 
-    PrintingPolicy Policy = getCompletionPrintingPolicy(*this);
-    Builder.AddResultTypeChunk(
-        GetCompletionTypeString(PropertyType, Context, Policy, Allocator));
-    Builder.AddTypedTextChunk(Allocator.CopyString(NameWithPrefix));
-    Results.AddResult(
-        Result(Builder.TakeString(), Priority, CXCursor_ObjCIvarDecl));
-  }
+//     PrintingPolicy Policy = getCompletionPrintingPolicy(*this);
+//     Builder.AddResultTypeChunk(
+//         GetCompletionTypeString(PropertyType, Context, Policy, Allocator));
+//     Builder.AddTypedTextChunk(Allocator.CopyString(NameWithPrefix));
+//     Results.AddResult(
+//         Result(Builder.TakeString(), Priority, CXCursor_ObjCIvarDecl));
+//   }
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 // Mapping from selectors to the methods that implement that selector, along
 // with the "in original class" flag.
-typedef llvm::DenseMap<Selector,
-                       llvm::PointerIntPair<ObjCMethodDecl *, 1, bool>>
-    KnownMethodsMap;
+// typedef llvm::DenseMap<Selector,
+//                        llvm::PointerIntPair<ObjCMethodDecl *, 1, bool>>
+//     KnownMethodsMap;
 
 /// Find all of the methods that reside in the given container
 /// (and its superclasses, protocols, etc.) that meet the given
 /// criteria. Insert those methods into the map of known methods,
 /// indexed by selector so they can be easily found.
-static void FindImplementableMethods(ASTContext &Context,
-                                     ObjCContainerDecl *Container,
-                                     Optional<bool> WantInstanceMethods,
-                                     QualType ReturnType,
-                                     KnownMethodsMap &KnownMethods,
-                                     bool InOriginalClass = true) {
-  if (ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(Container)) {
-    // Make sure we have a definition; that's what we'll walk.
-    if (!IFace->hasDefinition())
-      return;
+// static void FindImplementableMethods(ASTContext &Context,
+//                                      ObjCContainerDecl *Container,
+//                                      Optional<bool> WantInstanceMethods,
+//                                      QualType ReturnType,
+//                                      KnownMethodsMap &KnownMethods,
+//                                      bool InOriginalClass = true) {
+//   if (ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(Container)) {
+//     // Make sure we have a definition; that's what we'll walk.
+//     if (!IFace->hasDefinition())
+//       return;
 
-    IFace = IFace->getDefinition();
-    Container = IFace;
+//     IFace = IFace->getDefinition();
+//     Container = IFace;
 
-    const ObjCList<ObjCProtocolDecl> &Protocols =
-        IFace->getReferencedProtocols();
-    for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
-                                              E = Protocols.end();
-         I != E; ++I)
-      FindImplementableMethods(Context, *I, WantInstanceMethods, ReturnType,
-                               KnownMethods, InOriginalClass);
+//     // const ObjCList<ObjCProtocolDecl> &Protocols =
+//     //     IFace->getReferencedProtocols();
+//     // for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
+//     //                                           E = Protocols.end();
+//     //      I != E; ++I)
+//     //   FindImplementableMethods(Context, *I, WantInstanceMethods, ReturnType,
+//     //                            KnownMethods, InOriginalClass);
 
-    // Add methods from any class extensions and categories.
-    for (auto *Cat : IFace->visible_categories()) {
-      FindImplementableMethods(Context, Cat, WantInstanceMethods, ReturnType,
-                               KnownMethods, false);
-    }
+//     // Add methods from any class extensions and categories.
+//     for (auto *Cat : IFace->visible_categories()) {
+//       FindImplementableMethods(Context, Cat, WantInstanceMethods, ReturnType,
+//                                KnownMethods, false);
+//     }
 
-    // Visit the superclass.
-    if (IFace->getSuperClass())
-      FindImplementableMethods(Context, IFace->getSuperClass(),
-                               WantInstanceMethods, ReturnType, KnownMethods,
-                               false);
-  }
+//     // Visit the superclass.
+//     if (IFace->getSuperClass())
+//       FindImplementableMethods(Context, IFace->getSuperClass(),
+//                                WantInstanceMethods, ReturnType, KnownMethods,
+//                                false);
+//   }
 
-  if (ObjCCategoryDecl *Category = dyn_cast<ObjCCategoryDecl>(Container)) {
-    // Recurse into protocols.
-    const ObjCList<ObjCProtocolDecl> &Protocols =
-        Category->getReferencedProtocols();
-    for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
-                                              E = Protocols.end();
-         I != E; ++I)
-      FindImplementableMethods(Context, *I, WantInstanceMethods, ReturnType,
-                               KnownMethods, InOriginalClass);
+//   if (ObjCCategoryDecl *Category = dyn_cast<ObjCCategoryDecl>(Container)) {
+//     // Recurse into protocols.
+//     // const ObjCList<ObjCProtocolDecl> &Protocols =
+//     //     Category->getReferencedProtocols();
+//     // for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
+//     //                                           E = Protocols.end();
+//     //      I != E; ++I)
+//     //   FindImplementableMethods(Context, *I, WantInstanceMethods, ReturnType,
+//     //                            KnownMethods, InOriginalClass);
 
-    // If this category is the original class, jump to the interface.
-    if (InOriginalClass && Category->getClassInterface())
-      FindImplementableMethods(Context, Category->getClassInterface(),
-                               WantInstanceMethods, ReturnType, KnownMethods,
-                               false);
-  }
+//     // If this category is the original class, jump to the interface.
+//     if (InOriginalClass && Category->getClassInterface())
+//       FindImplementableMethods(Context, Category->getClassInterface(),
+//                                WantInstanceMethods, ReturnType, KnownMethods,
+//                                false);
+//   }
 
-  if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
-    // Make sure we have a definition; that's what we'll walk.
-    if (!Protocol->hasDefinition())
-      return;
-    Protocol = Protocol->getDefinition();
-    Container = Protocol;
+//   // if (ObjCProtocolDecl *Protocol = dyn_cast<ObjCProtocolDecl>(Container)) {
+//   //   // Make sure we have a definition; that's what we'll walk.
+//   //   if (!Protocol->hasDefinition())
+//   //     return;
+//   //   Protocol = Protocol->getDefinition();
+//   //   Container = Protocol;
 
-    // Recurse into protocols.
-    const ObjCList<ObjCProtocolDecl> &Protocols =
-        Protocol->getReferencedProtocols();
-    for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
-                                              E = Protocols.end();
-         I != E; ++I)
-      FindImplementableMethods(Context, *I, WantInstanceMethods, ReturnType,
-                               KnownMethods, false);
-  }
+//   //   // Recurse into protocols.
+//   //   const ObjCList<ObjCProtocolDecl> &Protocols =
+//   //       Protocol->getReferencedProtocols();
+//   //   for (ObjCList<ObjCProtocolDecl>::iterator I = Protocols.begin(),
+//   //                                             E = Protocols.end();
+//   //        I != E; ++I)
+//   //     FindImplementableMethods(Context, *I, WantInstanceMethods, ReturnType,
+//   //                              KnownMethods, false);
+//   // }
 
-  // Add methods in this container. This operation occurs last because
-  // we want the methods from this container to override any methods
-  // we've previously seen with the same selector.
-  for (auto *M : Container->methods()) {
-    if (!WantInstanceMethods || M->isInstanceMethod() == *WantInstanceMethods) {
-      if (!ReturnType.isNull() &&
-          !Context.hasSameUnqualifiedType(ReturnType, M->getReturnType()))
-        continue;
+//   // Add methods in this container. This operation occurs last because
+//   // we want the methods from this container to override any methods
+//   // we've previously seen with the same selector.
+//   for (auto *M : Container->methods()) {
+//     if (!WantInstanceMethods || M->isInstanceMethod() == *WantInstanceMethods) {
+//       if (!ReturnType.isNull() &&
+//           !Context.hasSameUnqualifiedType(ReturnType, M->getReturnType()))
+//         continue;
 
-      KnownMethods[M->getSelector()] =
-          KnownMethodsMap::mapped_type(M, InOriginalClass);
-    }
-  }
-}
+//       KnownMethods[M->getSelector()] =
+//           KnownMethodsMap::mapped_type(M, InOriginalClass);
+//     }
+//   }
+// }
 
 /// Add the parenthesized return or parameter type chunk to a code
 /// completion string.
@@ -8095,15 +8099,15 @@ static void AddObjCPassingTypeChunk(QualType Type, unsigned ObjCDeclQuals,
 
 /// Determine whether the given class is or inherits from a class by
 /// the given name.
-static bool InheritsFromClassNamed(ObjCInterfaceDecl *Class, StringRef Name) {
-  if (!Class)
-    return false;
+// static bool InheritsFromClassNamed(ObjCInterfaceDecl *Class, StringRef Name) {
+//   if (!Class)
+//     return false;
 
-  if (Class->getIdentifier() && Class->getIdentifier()->getName() == Name)
-    return true;
+//   if (Class->getIdentifier() && Class->getIdentifier()->getName() == Name)
+//     return true;
 
-  return InheritsFromClassNamed(Class->getSuperClass(), Name);
-}
+//   return InheritsFromClassNamed(Class->getSuperClass(), Name);
+// }
 
 /// Add code completions for Objective-C Key-Value Coding (KVC) and
 /// Key-Value Observing (KVO).
@@ -8218,29 +8222,29 @@ static void AddObjCKeyValueCompletions(ObjCPropertyDecl *Property,
   unsigned IndexedSetterPriority = CCP_CodePattern;
   unsigned UnorderedGetterPriority = CCP_CodePattern;
   unsigned UnorderedSetterPriority = CCP_CodePattern;
-  if (const auto *ObjCPointer =
-          Property->getType()->getAs<ObjCObjectPointerType>()) {
-    if (ObjCInterfaceDecl *IFace = ObjCPointer->getInterfaceDecl()) {
-      // If this interface type is not provably derived from a known
-      // collection, penalize the corresponding completions.
-      if (!InheritsFromClassNamed(IFace, "NSMutableArray")) {
-        IndexedSetterPriority += CCD_ProbablyNotObjCCollection;
-        if (!InheritsFromClassNamed(IFace, "NSArray"))
-          IndexedGetterPriority += CCD_ProbablyNotObjCCollection;
-      }
+  // if (const auto *ObjCPointer =
+  //         Property->getType()->getAs<ObjCObjectPointerType>()) {
+  //   if (ObjCInterfaceDecl *IFace = ObjCPointer->getInterfaceDecl()) {
+  //     // If this interface type is not provably derived from a known
+  //     // collection, penalize the corresponding completions.
+  //     if (!InheritsFromClassNamed(IFace, "NSMutableArray")) {
+  //       IndexedSetterPriority += CCD_ProbablyNotObjCCollection;
+  //       if (!InheritsFromClassNamed(IFace, "NSArray"))
+  //         IndexedGetterPriority += CCD_ProbablyNotObjCCollection;
+  //     }
 
-      if (!InheritsFromClassNamed(IFace, "NSMutableSet")) {
-        UnorderedSetterPriority += CCD_ProbablyNotObjCCollection;
-        if (!InheritsFromClassNamed(IFace, "NSSet"))
-          UnorderedGetterPriority += CCD_ProbablyNotObjCCollection;
-      }
-    }
-  } else {
+  //     if (!InheritsFromClassNamed(IFace, "NSMutableSet")) {
+  //       UnorderedSetterPriority += CCD_ProbablyNotObjCCollection;
+  //       if (!InheritsFromClassNamed(IFace, "NSSet"))
+  //         UnorderedGetterPriority += CCD_ProbablyNotObjCCollection;
+  //     }
+  //   }
+  // } else {
     IndexedGetterPriority += CCD_ProbablyNotObjCCollection;
     IndexedSetterPriority += CCD_ProbablyNotObjCCollection;
     UnorderedGetterPriority += CCD_ProbablyNotObjCCollection;
     UnorderedSetterPriority += CCD_ProbablyNotObjCCollection;
-  }
+  // }
 
   // Add -(NSUInteger)countOf<key>
   if (IsInstanceMethod &&
@@ -8266,7 +8270,7 @@ static void AddObjCKeyValueCompletions(ObjCPropertyDecl *Property,
   // Indexed getters
   // Add -(id)objectInKeyAtIndex:(NSUInteger)index
   if (IsInstanceMethod &&
-      (ReturnType.isNull() || ReturnType->isObjCObjectPointerType())) {
+      (ReturnType.isNull() /*|| ReturnType->isObjCObjectPointerType()*/)) {
     std::string SelectorName = (Twine("objectIn") + UpperKey + "AtIndex").str();
     IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
     if (KnownSelectors.insert(Selectors.getUnarySelector(SelectorId)).second) {
@@ -8287,31 +8291,31 @@ static void AddObjCKeyValueCompletions(ObjCPropertyDecl *Property,
   }
 
   // Add -(NSArray *)keyAtIndexes:(NSIndexSet *)indexes
-  if (IsInstanceMethod &&
-      (ReturnType.isNull() ||
-       (ReturnType->isObjCObjectPointerType() &&
-        ReturnType->castAs<ObjCObjectPointerType>()->getInterfaceDecl() &&
-        ReturnType->castAs<ObjCObjectPointerType>()
-                ->getInterfaceDecl()
-                ->getName() == "NSArray"))) {
-    std::string SelectorName = (Twine(Property->getName()) + "AtIndexes").str();
-    IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
-    if (KnownSelectors.insert(Selectors.getUnarySelector(SelectorId)).second) {
-      if (ReturnType.isNull()) {
-        Builder.AddChunk(CodeCompletionString::CK_LeftParen);
-        Builder.AddTextChunk("NSArray *");
-        Builder.AddChunk(CodeCompletionString::CK_RightParen);
-      }
+  // if (IsInstanceMethod &&
+  //     (ReturnType.isNull() ||
+  //      (ReturnType->isObjCObjectPointerType() &&
+  //       ReturnType->castAs<ObjCObjectPointerType>()->getInterfaceDecl() &&
+  //       ReturnType->castAs<ObjCObjectPointerType>()
+  //               ->getInterfaceDecl()
+  //               ->getName() == "NSArray"))) {
+  //   std::string SelectorName = (Twine(Property->getName()) + "AtIndexes").str();
+  //   IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
+  //   if (KnownSelectors.insert(Selectors.getUnarySelector(SelectorId)).second) {
+  //     if (ReturnType.isNull()) {
+  //       Builder.AddChunk(CodeCompletionString::CK_LeftParen);
+  //       Builder.AddTextChunk("NSArray *");
+  //       Builder.AddChunk(CodeCompletionString::CK_RightParen);
+  //     }
 
-      Builder.AddTypedTextChunk(Allocator.CopyString(SelectorName + ":"));
-      Builder.AddChunk(CodeCompletionString::CK_LeftParen);
-      Builder.AddTextChunk("NSIndexSet *");
-      Builder.AddChunk(CodeCompletionString::CK_RightParen);
-      Builder.AddTextChunk("indexes");
-      Results.AddResult(Result(Builder.TakeString(), IndexedGetterPriority,
-                               CXCursor_ObjCInstanceMethodDecl));
-    }
-  }
+  //     Builder.AddTypedTextChunk(Allocator.CopyString(SelectorName + ":"));
+  //     Builder.AddChunk(CodeCompletionString::CK_LeftParen);
+  //     Builder.AddTextChunk("NSIndexSet *");
+  //     Builder.AddChunk(CodeCompletionString::CK_RightParen);
+  //     Builder.AddTextChunk("indexes");
+  //     Results.AddResult(Result(Builder.TakeString(), IndexedGetterPriority,
+  //                              CXCursor_ObjCInstanceMethodDecl));
+  //   }
+  // }
 
   // Add -(void)getKey:(type **)buffer range:(NSRange)inRange
   if (IsInstanceMethod && ReturnTypeMatchesVoid) {
@@ -8510,32 +8514,32 @@ static void AddObjCKeyValueCompletions(ObjCPropertyDecl *Property,
 
   // Unordered getters
   // - (NSEnumerator *)enumeratorOfKey
-  if (IsInstanceMethod &&
-      (ReturnType.isNull() ||
-       (ReturnType->isObjCObjectPointerType() &&
-        ReturnType->getAs<ObjCObjectPointerType>()->getInterfaceDecl() &&
-        ReturnType->getAs<ObjCObjectPointerType>()
-                ->getInterfaceDecl()
-                ->getName() == "NSEnumerator"))) {
-    std::string SelectorName = (Twine("enumeratorOf") + UpperKey).str();
-    IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
-    if (KnownSelectors.insert(Selectors.getNullarySelector(SelectorId))
-            .second) {
-      if (ReturnType.isNull()) {
-        Builder.AddChunk(CodeCompletionString::CK_LeftParen);
-        Builder.AddTextChunk("NSEnumerator *");
-        Builder.AddChunk(CodeCompletionString::CK_RightParen);
-      }
+  // if (IsInstanceMethod &&
+  //     (ReturnType.isNull() ||
+  //      (ReturnType->isObjCObjectPointerType() &&
+  //       ReturnType->getAs<ObjCObjectPointerType>()->getInterfaceDecl() &&
+  //       ReturnType->getAs<ObjCObjectPointerType>()
+  //               ->getInterfaceDecl()
+  //               ->getName() == "NSEnumerator"))) {
+  //   std::string SelectorName = (Twine("enumeratorOf") + UpperKey).str();
+  //   IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
+  //   if (KnownSelectors.insert(Selectors.getNullarySelector(SelectorId))
+  //           .second) {
+  //     if (ReturnType.isNull()) {
+  //       Builder.AddChunk(CodeCompletionString::CK_LeftParen);
+  //       Builder.AddTextChunk("NSEnumerator *");
+  //       Builder.AddChunk(CodeCompletionString::CK_RightParen);
+  //     }
 
-      Builder.AddTypedTextChunk(Allocator.CopyString(SelectorName));
-      Results.AddResult(Result(Builder.TakeString(), UnorderedGetterPriority,
-                               CXCursor_ObjCInstanceMethodDecl));
-    }
-  }
+  //     Builder.AddTypedTextChunk(Allocator.CopyString(SelectorName));
+  //     Results.AddResult(Result(Builder.TakeString(), UnorderedGetterPriority,
+  //                              CXCursor_ObjCInstanceMethodDecl));
+  //   }
+  // }
 
   // - (type *)memberOfKey:(type *)object
   if (IsInstanceMethod &&
-      (ReturnType.isNull() || ReturnType->isObjCObjectPointerType())) {
+      (ReturnType.isNull() /*|| ReturnType->isObjCObjectPointerType()*/)) {
     std::string SelectorName = (Twine("memberOf") + UpperKey).str();
     IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
     if (KnownSelectors.insert(Selectors.getUnarySelector(SelectorId)).second) {
@@ -8674,29 +8678,29 @@ static void AddObjCKeyValueCompletions(ObjCPropertyDecl *Property,
 
   // Key-Value Observing
   // + (NSSet *)keyPathsForValuesAffectingKey
-  if (!IsInstanceMethod &&
-      (ReturnType.isNull() ||
-       (ReturnType->isObjCObjectPointerType() &&
-        ReturnType->castAs<ObjCObjectPointerType>()->getInterfaceDecl() &&
-        ReturnType->castAs<ObjCObjectPointerType>()
-                ->getInterfaceDecl()
-                ->getName() == "NSSet"))) {
-    std::string SelectorName =
-        (Twine("keyPathsForValuesAffecting") + UpperKey).str();
-    IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
-    if (KnownSelectors.insert(Selectors.getNullarySelector(SelectorId))
-            .second) {
-      if (ReturnType.isNull()) {
-        Builder.AddChunk(CodeCompletionString::CK_LeftParen);
-        Builder.AddTextChunk("NSSet<NSString *> *");
-        Builder.AddChunk(CodeCompletionString::CK_RightParen);
-      }
+  // if (!IsInstanceMethod &&
+  //     (ReturnType.isNull() ||
+  //      (ReturnType->isObjCObjectPointerType() &&
+  //       ReturnType->castAs<ObjCObjectPointerType>()->getInterfaceDecl() &&
+  //       ReturnType->castAs<ObjCObjectPointerType>()
+  //               ->getInterfaceDecl()
+  //               ->getName() == "NSSet"))) {
+  //   std::string SelectorName =
+  //       (Twine("keyPathsForValuesAffecting") + UpperKey).str();
+  //   IdentifierInfo *SelectorId = &Context.Idents.get(SelectorName);
+  //   if (KnownSelectors.insert(Selectors.getNullarySelector(SelectorId))
+  //           .second) {
+  //     if (ReturnType.isNull()) {
+  //       Builder.AddChunk(CodeCompletionString::CK_LeftParen);
+  //       Builder.AddTextChunk("NSSet<NSString *> *");
+  //       Builder.AddChunk(CodeCompletionString::CK_RightParen);
+  //     }
 
-      Builder.AddTypedTextChunk(Allocator.CopyString(SelectorName));
-      Results.AddResult(Result(Builder.TakeString(), CCP_CodePattern,
-                               CXCursor_ObjCClassMethodDecl));
-    }
-  }
+  //     Builder.AddTypedTextChunk(Allocator.CopyString(SelectorName));
+  //     Results.AddResult(Result(Builder.TakeString(), CCP_CodePattern,
+  //                              CXCursor_ObjCClassMethodDecl));
+  //   }
+  // }
 
   // + (BOOL)automaticallyNotifiesObserversForKey
   if (!IsInstanceMethod &&
@@ -8720,267 +8724,267 @@ static void AddObjCKeyValueCompletions(ObjCPropertyDecl *Property,
   }
 }
 
-void Sema::CodeCompleteObjCMethodDecl(Scope *S, Optional<bool> IsInstanceMethod,
-                                      ParsedType ReturnTy) {
-  // Determine the return type of the method we're declaring, if
-  // provided.
-  QualType ReturnType = GetTypeFromParser(ReturnTy);
-  Decl *IDecl = nullptr;
-  if (CurContext->isObjCContainer()) {
-    ObjCContainerDecl *OCD = dyn_cast<ObjCContainerDecl>(CurContext);
-    IDecl = OCD;
-  }
-  // Determine where we should start searching for methods.
-  ObjCContainerDecl *SearchDecl = nullptr;
-  bool IsInImplementation = false;
-  if (Decl *D = IDecl) {
-    if (ObjCImplementationDecl *Impl = dyn_cast<ObjCImplementationDecl>(D)) {
-      SearchDecl = Impl->getClassInterface();
-      IsInImplementation = true;
-    } else if (ObjCCategoryImplDecl *CatImpl =
-                   dyn_cast<ObjCCategoryImplDecl>(D)) {
-      SearchDecl = CatImpl->getCategoryDecl();
-      IsInImplementation = true;
-    } else
-      SearchDecl = dyn_cast<ObjCContainerDecl>(D);
-  }
+// void Sema::CodeCompleteObjCMethodDecl(Scope *S, Optional<bool> IsInstanceMethod,
+//                                       ParsedType ReturnTy) {
+//   // Determine the return type of the method we're declaring, if
+//   // provided.
+//   QualType ReturnType = GetTypeFromParser(ReturnTy);
+//   Decl *IDecl = nullptr;
+//   if (CurContext->isObjCContainer()) {
+//     ObjCContainerDecl *OCD = dyn_cast<ObjCContainerDecl>(CurContext);
+//     IDecl = OCD;
+//   }
+//   // Determine where we should start searching for methods.
+//   ObjCContainerDecl *SearchDecl = nullptr;
+//   bool IsInImplementation = false;
+//   if (Decl *D = IDecl) {
+//     if (ObjCImplementationDecl *Impl = dyn_cast<ObjCImplementationDecl>(D)) {
+//       SearchDecl = Impl->getClassInterface();
+//       IsInImplementation = true;
+//     } else if (ObjCCategoryImplDecl *CatImpl =
+//                    dyn_cast<ObjCCategoryImplDecl>(D)) {
+//       SearchDecl = CatImpl->getCategoryDecl();
+//       IsInImplementation = true;
+//     } else
+//       SearchDecl = dyn_cast<ObjCContainerDecl>(D);
+//   }
 
-  if (!SearchDecl && S) {
-    if (DeclContext *DC = S->getEntity())
-      SearchDecl = dyn_cast<ObjCContainerDecl>(DC);
-  }
+//   if (!SearchDecl && S) {
+//     if (DeclContext *DC = S->getEntity())
+//       SearchDecl = dyn_cast<ObjCContainerDecl>(DC);
+//   }
 
-  if (!SearchDecl) {
-    HandleCodeCompleteResults(this, CodeCompleter,
-                              CodeCompletionContext::CCC_Other, nullptr, 0);
-    return;
-  }
+//   if (!SearchDecl) {
+//     HandleCodeCompleteResults(this, CodeCompleter,
+//                               CodeCompletionContext::CCC_Other, nullptr, 0);
+//     return;
+//   }
 
-  // Find all of the methods that we could declare/implement here.
-  KnownMethodsMap KnownMethods;
-  FindImplementableMethods(Context, SearchDecl, IsInstanceMethod, ReturnType,
-                           KnownMethods);
+//   // Find all of the methods that we could declare/implement here.
+//   KnownMethodsMap KnownMethods;
+//   FindImplementableMethods(Context, SearchDecl, IsInstanceMethod, ReturnType,
+//                            KnownMethods);
 
-  // Add declarations or definitions for each of the known methods.
-  typedef CodeCompletionResult Result;
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
-  Results.EnterNewScope();
-  PrintingPolicy Policy = getCompletionPrintingPolicy(*this);
-  for (KnownMethodsMap::iterator M = KnownMethods.begin(),
-                                 MEnd = KnownMethods.end();
-       M != MEnd; ++M) {
-    ObjCMethodDecl *Method = M->second.getPointer();
-    CodeCompletionBuilder Builder(Results.getAllocator(),
-                                  Results.getCodeCompletionTUInfo());
+//   // Add declarations or definitions for each of the known methods.
+//   typedef CodeCompletionResult Result;
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
+//   Results.EnterNewScope();
+//   PrintingPolicy Policy = getCompletionPrintingPolicy(*this);
+//   for (KnownMethodsMap::iterator M = KnownMethods.begin(),
+//                                  MEnd = KnownMethods.end();
+//        M != MEnd; ++M) {
+//     ObjCMethodDecl *Method = M->second.getPointer();
+//     CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                   Results.getCodeCompletionTUInfo());
 
-    // Add the '-'/'+' prefix if it wasn't provided yet.
-    if (!IsInstanceMethod) {
-      Builder.AddTextChunk(Method->isInstanceMethod() ? "-" : "+");
-      Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-    }
+//     // Add the '-'/'+' prefix if it wasn't provided yet.
+//     if (!IsInstanceMethod) {
+//       Builder.AddTextChunk(Method->isInstanceMethod() ? "-" : "+");
+//       Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//     }
 
-    // If the result type was not already provided, add it to the
-    // pattern as (type).
-    if (ReturnType.isNull()) {
-      QualType ResTy = Method->getSendResultType().stripObjCKindOfType(Context);
-      AttributedType::stripOuterNullability(ResTy);
-      AddObjCPassingTypeChunk(ResTy, Method->getObjCDeclQualifier(), Context,
-                              Policy, Builder);
-    }
+//     // If the result type was not already provided, add it to the
+//     // pattern as (type).
+//     if (ReturnType.isNull()) {
+//       QualType ResTy = Method->getSendResultType().stripObjCKindOfType(Context);
+//       AttributedType::stripOuterNullability(ResTy);
+//       AddObjCPassingTypeChunk(ResTy, Method->getObjCDeclQualifier(), Context,
+//                               Policy, Builder);
+//     }
 
-    Selector Sel = Method->getSelector();
+//     Selector Sel = Method->getSelector();
 
-    if (Sel.isUnarySelector()) {
-      // Unary selectors have no arguments.
-      Builder.AddTypedTextChunk(
-          Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
-    } else {
-      // Add all parameters to the pattern.
-      unsigned I = 0;
-      for (ObjCMethodDecl::param_iterator P = Method->param_begin(),
-                                          PEnd = Method->param_end();
-           P != PEnd; (void)++P, ++I) {
-        // Add the part of the selector name.
-        if (I == 0)
-          Builder.AddTypedTextChunk(
-              Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
-        else if (I < Sel.getNumArgs()) {
-          Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-          Builder.AddTypedTextChunk(
-              Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
-        } else
-          break;
+//     if (Sel.isUnarySelector()) {
+//       // Unary selectors have no arguments.
+//       Builder.AddTypedTextChunk(
+//           Builder.getAllocator().CopyString(Sel.getNameForSlot(0)));
+//     } else {
+//       // Add all parameters to the pattern.
+//       unsigned I = 0;
+//       for (ObjCMethodDecl::param_iterator P = Method->param_begin(),
+//                                           PEnd = Method->param_end();
+//            P != PEnd; (void)++P, ++I) {
+//         // Add the part of the selector name.
+//         if (I == 0)
+//           Builder.AddTypedTextChunk(
+//               Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
+//         else if (I < Sel.getNumArgs()) {
+//           Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//           Builder.AddTypedTextChunk(
+//               Builder.getAllocator().CopyString(Sel.getNameForSlot(I) + ":"));
+//         } else
+//           break;
 
-        // Add the parameter type.
-        QualType ParamType;
-        if ((*P)->getObjCDeclQualifier() & Decl::OBJC_TQ_CSNullability)
-          ParamType = (*P)->getType();
-        else
-          ParamType = (*P)->getOriginalType();
-        ParamType = ParamType.substObjCTypeArgs(
-            Context, {}, ObjCSubstitutionContext::Parameter);
-        AttributedType::stripOuterNullability(ParamType);
-        AddObjCPassingTypeChunk(ParamType, (*P)->getObjCDeclQualifier(),
-                                Context, Policy, Builder);
+//         // Add the parameter type.
+//         QualType ParamType;
+//         if ((*P)->getObjCDeclQualifier() & Decl::OBJC_TQ_CSNullability)
+//           ParamType = (*P)->getType();
+//         else
+//           ParamType = (*P)->getOriginalType();
+//         ParamType = ParamType.substObjCTypeArgs(
+//             Context, {}, ObjCSubstitutionContext::Parameter);
+//         AttributedType::stripOuterNullability(ParamType);
+//         AddObjCPassingTypeChunk(ParamType, (*P)->getObjCDeclQualifier(),
+//                                 Context, Policy, Builder);
 
-        if (IdentifierInfo *Id = (*P)->getIdentifier())
-          Builder.AddTextChunk(
-              Builder.getAllocator().CopyString(Id->getName()));
-      }
-    }
+//         if (IdentifierInfo *Id = (*P)->getIdentifier())
+//           Builder.AddTextChunk(
+//               Builder.getAllocator().CopyString(Id->getName()));
+//       }
+//     }
 
-    if (Method->isVariadic()) {
-      if (Method->param_size() > 0)
-        Builder.AddChunk(CodeCompletionString::CK_Comma);
-      Builder.AddTextChunk("...");
-    }
+//     if (Method->isVariadic()) {
+//       if (Method->param_size() > 0)
+//         Builder.AddChunk(CodeCompletionString::CK_Comma);
+//       Builder.AddTextChunk("...");
+//     }
 
-    if (IsInImplementation && Results.includeCodePatterns()) {
-      // We will be defining the method here, so add a compound statement.
-      Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-      Builder.AddChunk(CodeCompletionString::CK_LeftBrace);
-      Builder.AddChunk(CodeCompletionString::CK_VerticalSpace);
-      if (!Method->getReturnType()->isVoidType()) {
-        // If the result type is not void, add a return clause.
-        Builder.AddTextChunk("return");
-        Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-        Builder.AddPlaceholderChunk("expression");
-        Builder.AddChunk(CodeCompletionString::CK_SemiColon);
-      } else
-        Builder.AddPlaceholderChunk("statements");
+//     if (IsInImplementation && Results.includeCodePatterns()) {
+//       // We will be defining the method here, so add a compound statement.
+//       Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//       Builder.AddChunk(CodeCompletionString::CK_LeftBrace);
+//       Builder.AddChunk(CodeCompletionString::CK_VerticalSpace);
+//       if (!Method->getReturnType()->isVoidType()) {
+//         // If the result type is not void, add a return clause.
+//         Builder.AddTextChunk("return");
+//         Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+//         Builder.AddPlaceholderChunk("expression");
+//         Builder.AddChunk(CodeCompletionString::CK_SemiColon);
+//       } else
+//         Builder.AddPlaceholderChunk("statements");
 
-      Builder.AddChunk(CodeCompletionString::CK_VerticalSpace);
-      Builder.AddChunk(CodeCompletionString::CK_RightBrace);
-    }
+//       Builder.AddChunk(CodeCompletionString::CK_VerticalSpace);
+//       Builder.AddChunk(CodeCompletionString::CK_RightBrace);
+//     }
 
-    unsigned Priority = CCP_CodePattern;
-    auto R = Result(Builder.TakeString(), Method, Priority);
-    if (!M->second.getInt())
-      setInBaseClass(R);
-    Results.AddResult(std::move(R));
-  }
+//     unsigned Priority = CCP_CodePattern;
+//     auto R = Result(Builder.TakeString(), Method, Priority);
+//     if (!M->second.getInt())
+//       setInBaseClass(R);
+//     Results.AddResult(std::move(R));
+//   }
 
-  // Add Key-Value-Coding and Key-Value-Observing accessor methods for all of
-  // the properties in this class and its categories.
-  if (Context.getLangOpts().ObjC) {
-    SmallVector<ObjCContainerDecl *, 4> Containers;
-    Containers.push_back(SearchDecl);
+//   // Add Key-Value-Coding and Key-Value-Observing accessor methods for all of
+//   // the properties in this class and its categories.
+//   if (Context.getLangOpts().ObjC) {
+//     SmallVector<ObjCContainerDecl *, 4> Containers;
+//     Containers.push_back(SearchDecl);
 
-    VisitedSelectorSet KnownSelectors;
-    for (KnownMethodsMap::iterator M = KnownMethods.begin(),
-                                   MEnd = KnownMethods.end();
-         M != MEnd; ++M)
-      KnownSelectors.insert(M->first);
+//     VisitedSelectorSet KnownSelectors;
+//     for (KnownMethodsMap::iterator M = KnownMethods.begin(),
+//                                    MEnd = KnownMethods.end();
+//          M != MEnd; ++M)
+//       KnownSelectors.insert(M->first);
 
-    ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(SearchDecl);
-    if (!IFace)
-      if (ObjCCategoryDecl *Category = dyn_cast<ObjCCategoryDecl>(SearchDecl))
-        IFace = Category->getClassInterface();
+//     ObjCInterfaceDecl *IFace = dyn_cast<ObjCInterfaceDecl>(SearchDecl);
+//     if (!IFace)
+//       if (ObjCCategoryDecl *Category = dyn_cast<ObjCCategoryDecl>(SearchDecl))
+//         IFace = Category->getClassInterface();
 
-    if (IFace)
-      for (auto *Cat : IFace->visible_categories())
-        Containers.push_back(Cat);
+//     if (IFace)
+//       for (auto *Cat : IFace->visible_categories())
+//         Containers.push_back(Cat);
 
-    if (IsInstanceMethod) {
-      for (unsigned I = 0, N = Containers.size(); I != N; ++I)
-        for (auto *P : Containers[I]->instance_properties())
-          AddObjCKeyValueCompletions(P, *IsInstanceMethod, ReturnType, Context,
-                                     KnownSelectors, Results);
-    }
-  }
+//     if (IsInstanceMethod) {
+//       for (unsigned I = 0, N = Containers.size(); I != N; ++I)
+//         for (auto *P : Containers[I]->instance_properties())
+//           AddObjCKeyValueCompletions(P, *IsInstanceMethod, ReturnType, Context,
+//                                      KnownSelectors, Results);
+//     }
+//   }
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
-void Sema::CodeCompleteObjCMethodDeclSelector(
-    Scope *S, bool IsInstanceMethod, bool AtParameterName, ParsedType ReturnTy,
-    ArrayRef<IdentifierInfo *> SelIdents) {
-  // If we have an external source, load the entire class method
-  // pool from the AST file.
-  if (ExternalSource) {
-    for (uint32_t I = 0, N = ExternalSource->GetNumExternalSelectors(); I != N;
-         ++I) {
-      Selector Sel = ExternalSource->GetExternalSelector(I);
-      if (Sel.isNull() || MethodPool.count(Sel))
-        continue;
+// void Sema::CodeCompleteObjCMethodDeclSelector(
+//     Scope *S, bool IsInstanceMethod, bool AtParameterName, ParsedType ReturnTy,
+//     ArrayRef<IdentifierInfo *> SelIdents) {
+//   // If we have an external source, load the entire class method
+//   // pool from the AST file.
+//   if (ExternalSource) {
+//     for (uint32_t I = 0, N = ExternalSource->GetNumExternalSelectors(); I != N;
+//          ++I) {
+//       Selector Sel = ExternalSource->GetExternalSelector(I);
+//       if (Sel.isNull() || MethodPool.count(Sel))
+//         continue;
 
-      ReadMethodPool(Sel);
-    }
-  }
+//       ReadMethodPool(Sel);
+//     }
+//   }
 
-  // Build the set of methods we can see.
-  typedef CodeCompletionResult Result;
-  ResultBuilder Results(*this, CodeCompleter->getAllocator(),
-                        CodeCompleter->getCodeCompletionTUInfo(),
-                        CodeCompletionContext::CCC_Other);
+//   // Build the set of methods we can see.
+//   typedef CodeCompletionResult Result;
+//   ResultBuilder Results(*this, CodeCompleter->getAllocator(),
+//                         CodeCompleter->getCodeCompletionTUInfo(),
+//                         CodeCompletionContext::CCC_Other);
 
-  if (ReturnTy)
-    Results.setPreferredType(GetTypeFromParser(ReturnTy).getNonReferenceType());
+//   if (ReturnTy)
+//     Results.setPreferredType(GetTypeFromParser(ReturnTy).getNonReferenceType());
 
-  Results.EnterNewScope();
-  for (GlobalMethodPool::iterator M = MethodPool.begin(),
-                                  MEnd = MethodPool.end();
-       M != MEnd; ++M) {
-    for (ObjCMethodList *MethList = IsInstanceMethod ? &M->second.first
-                                                     : &M->second.second;
-         MethList && MethList->getMethod(); MethList = MethList->getNext()) {
-      if (!isAcceptableObjCMethod(MethList->getMethod(), MK_Any, SelIdents))
-        continue;
+//   Results.EnterNewScope();
+//   for (GlobalMethodPool::iterator M = MethodPool.begin(),
+//                                   MEnd = MethodPool.end();
+//        M != MEnd; ++M) {
+//     for (ObjCMethodList *MethList = IsInstanceMethod ? &M->second.first
+//                                                      : &M->second.second;
+//          MethList && MethList->getMethod(); MethList = MethList->getNext()) {
+//       if (!isAcceptableObjCMethod(MethList->getMethod(), MK_Any, SelIdents))
+//         continue;
 
-      if (AtParameterName) {
-        // Suggest parameter names we've seen before.
-        unsigned NumSelIdents = SelIdents.size();
-        if (NumSelIdents &&
-            NumSelIdents <= MethList->getMethod()->param_size()) {
-          ParmVarDecl *Param =
-              MethList->getMethod()->parameters()[NumSelIdents - 1];
-          if (Param->getIdentifier()) {
-            CodeCompletionBuilder Builder(Results.getAllocator(),
-                                          Results.getCodeCompletionTUInfo());
-            Builder.AddTypedTextChunk(Builder.getAllocator().CopyString(
-                Param->getIdentifier()->getName()));
-            Results.AddResult(Builder.TakeString());
-          }
-        }
+//       if (AtParameterName) {
+//         // Suggest parameter names we've seen before.
+//         unsigned NumSelIdents = SelIdents.size();
+//         if (NumSelIdents &&
+//             NumSelIdents <= MethList->getMethod()->param_size()) {
+//           ParmVarDecl *Param =
+//               MethList->getMethod()->parameters()[NumSelIdents - 1];
+//           if (Param->getIdentifier()) {
+//             CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                           Results.getCodeCompletionTUInfo());
+//             Builder.AddTypedTextChunk(Builder.getAllocator().CopyString(
+//                 Param->getIdentifier()->getName()));
+//             Results.AddResult(Builder.TakeString());
+//           }
+//         }
 
-        continue;
-      }
+//         continue;
+//       }
 
-      Result R(MethList->getMethod(),
-               Results.getBasePriority(MethList->getMethod()), nullptr);
-      R.StartParameter = SelIdents.size();
-      R.AllParametersAreInformative = false;
-      R.DeclaringEntity = true;
-      Results.MaybeAddResult(R, CurContext);
-    }
-  }
+//       Result R(MethList->getMethod(),
+//                Results.getBasePriority(MethList->getMethod()), nullptr);
+//       R.StartParameter = SelIdents.size();
+//       R.AllParametersAreInformative = false;
+//       R.DeclaringEntity = true;
+//       Results.MaybeAddResult(R, CurContext);
+//     }
+//   }
 
-  Results.ExitScope();
+//   Results.ExitScope();
 
-  if (!AtParameterName && !SelIdents.empty() &&
-      SelIdents.front()->getName().startswith("init")) {
-    for (const auto &M : PP.macros()) {
-      if (M.first->getName() != "NS_DESIGNATED_INITIALIZER")
-        continue;
-      Results.EnterNewScope();
-      CodeCompletionBuilder Builder(Results.getAllocator(),
-                                    Results.getCodeCompletionTUInfo());
-      Builder.AddTypedTextChunk(
-          Builder.getAllocator().CopyString(M.first->getName()));
-      Results.AddResult(CodeCompletionResult(Builder.TakeString(), CCP_Macro,
-                                             CXCursor_MacroDefinition));
-      Results.ExitScope();
-    }
-  }
+//   if (!AtParameterName && !SelIdents.empty() &&
+//       SelIdents.front()->getName().startswith("init")) {
+//     for (const auto &M : PP.macros()) {
+//       if (M.first->getName() != "NS_DESIGNATED_INITIALIZER")
+//         continue;
+//       Results.EnterNewScope();
+//       CodeCompletionBuilder Builder(Results.getAllocator(),
+//                                     Results.getCodeCompletionTUInfo());
+//       Builder.AddTypedTextChunk(
+//           Builder.getAllocator().CopyString(M.first->getName()));
+//       Results.AddResult(CodeCompletionResult(Builder.TakeString(), CCP_Macro,
+//                                              CXCursor_MacroDefinition));
+//       Results.ExitScope();
+//     }
+//   }
 
-  HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
-                            Results.data(), Results.size());
-}
+//   HandleCodeCompleteResults(this, CodeCompleter, Results.getCompletionContext(),
+//                             Results.data(), Results.size());
+// }
 
 void Sema::CodeCompletePreprocessorDirective(bool InConditional) {
   ResultBuilder Results(*this, CodeCompleter->getAllocator(),

@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "CGCXXABI.h"
-#include "CGObjCRuntime.h"
+// #include "CGObjCRuntime.h"
 #include "CGOpenCLRuntime.h"
 #include "CGRecordLayout.h"
 #include "CodeGenFunction.h"
@@ -2289,7 +2289,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     // FIXME: The allowance for Obj-C pointers and block pointers is historical
     // and likely a mistake.
     if (!ArgType->isIntegralOrEnumerationType() && !ArgType->isFloatingType() &&
-        !ArgType->isObjCObjectPointerType() && !ArgType->isBlockPointerType())
+        /*!ArgType->isObjCObjectPointerType()*/ && !ArgType->isBlockPointerType())
       // Per the GCC documentation, only numeric constants are recognized after
       // inlining.
       return RValue::get(ConstantInt::get(ResultType, 0));
@@ -2300,12 +2300,12 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
       return RValue::get(ConstantInt::get(ResultType, 0));
 
     Value *ArgValue = EmitScalarExpr(Arg);
-    if (ArgType->isObjCObjectPointerType()) {
-      // Convert Objective-C objects to id because we cannot distinguish between
-      // LLVM types for Obj-C classes as they are opaque.
-      ArgType = CGM.getContext().getObjCIdType();
-      ArgValue = Builder.CreateBitCast(ArgValue, ConvertType(ArgType));
-    }
+    // if (ArgType->isObjCObjectPointerType()) {
+    //   // Convert Objective-C objects to id because we cannot distinguish between
+    //   // LLVM types for Obj-C classes as they are opaque.
+    //   ArgType = CGM.getContext().getObjCIdType();
+    //   ArgValue = Builder.CreateBitCast(ArgValue, ConvertType(ArgType));
+    // }
     Function *F =
         CGM.getIntrinsic(Intrinsic::is_constant, ConvertType(ArgType));
     Value *Result = Builder.CreateCall(F, ArgValue);
@@ -3815,381 +3815,381 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     return EmitCoroutineIntrinsic(E, Intrinsic::coro_param);
 
   // OpenCL v2.0 s6.13.16.2, Built-in pipe read and write functions
-  case Builtin::BIread_pipe:
-  case Builtin::BIwrite_pipe: {
-    Value *Arg0 = EmitScalarExpr(E->getArg(0)),
-          *Arg1 = EmitScalarExpr(E->getArg(1));
-    CGOpenCLRuntime OpenCLRT(CGM);
-    Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
-    Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
+  // case Builtin::BIread_pipe:
+  // case Builtin::BIwrite_pipe: {
+  //   Value *Arg0 = EmitScalarExpr(E->getArg(0)),
+  //         *Arg1 = EmitScalarExpr(E->getArg(1));
+  //   CGOpenCLRuntime OpenCLRT(CGM);
+  //   Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
+  //   Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
 
-    // Type of the generic packet parameter.
-    unsigned GenericAS =
-        getContext().getTargetAddressSpace(LangAS::opencl_generic);
-    llvm::Type *I8PTy = llvm::PointerType::get(
-        llvm::Type::getInt8Ty(getLLVMContext()), GenericAS);
+  //   // Type of the generic packet parameter.
+  //   unsigned GenericAS =
+  //       getContext().getTargetAddressSpace(LangAS::opencl_generic);
+  //   llvm::Type *I8PTy = llvm::PointerType::get(
+  //       llvm::Type::getInt8Ty(getLLVMContext()), GenericAS);
 
-    // Testing which overloaded version we should generate the call for.
-    if (2U == E->getNumArgs()) {
-      const char *Name = (BuiltinID == Builtin::BIread_pipe) ? "__read_pipe_2"
-                                                             : "__write_pipe_2";
-      // Creating a generic function type to be able to call with any builtin or
-      // user defined type.
-      llvm::Type *ArgTys[] = {Arg0->getType(), I8PTy, Int32Ty, Int32Ty};
-      llvm::FunctionType *FTy = llvm::FunctionType::get(
-          Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
-      Value *BCast = Builder.CreatePointerCast(Arg1, I8PTy);
-      return RValue::get(
-          Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
-                             {Arg0, BCast, PacketSize, PacketAlign}));
-    } else {
-      assert(4 == E->getNumArgs() &&
-             "Illegal number of parameters to pipe function");
-      const char *Name = (BuiltinID == Builtin::BIread_pipe) ? "__read_pipe_4"
-                                                             : "__write_pipe_4";
+  //   // Testing which overloaded version we should generate the call for.
+  //   if (2U == E->getNumArgs()) {
+  //     const char *Name = (BuiltinID == Builtin::BIread_pipe) ? "__read_pipe_2"
+  //                                                            : "__write_pipe_2";
+  //     // Creating a generic function type to be able to call with any builtin or
+  //     // user defined type.
+  //     llvm::Type *ArgTys[] = {Arg0->getType(), I8PTy, Int32Ty, Int32Ty};
+  //     llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //         Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //     Value *BCast = Builder.CreatePointerCast(Arg1, I8PTy);
+  //     return RValue::get(
+  //         Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
+  //                            {Arg0, BCast, PacketSize, PacketAlign}));
+  //   } else {
+  //     assert(4 == E->getNumArgs() &&
+  //            "Illegal number of parameters to pipe function");
+  //     const char *Name = (BuiltinID == Builtin::BIread_pipe) ? "__read_pipe_4"
+  //                                                            : "__write_pipe_4";
 
-      llvm::Type *ArgTys[] = {Arg0->getType(), Arg1->getType(), Int32Ty, I8PTy,
-                              Int32Ty, Int32Ty};
-      Value *Arg2 = EmitScalarExpr(E->getArg(2)),
-            *Arg3 = EmitScalarExpr(E->getArg(3));
-      llvm::FunctionType *FTy = llvm::FunctionType::get(
-          Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
-      Value *BCast = Builder.CreatePointerCast(Arg3, I8PTy);
-      // We know the third argument is an integer type, but we may need to cast
-      // it to i32.
-      if (Arg2->getType() != Int32Ty)
-        Arg2 = Builder.CreateZExtOrTrunc(Arg2, Int32Ty);
-      return RValue::get(Builder.CreateCall(
-          CGM.CreateRuntimeFunction(FTy, Name),
-          {Arg0, Arg1, Arg2, BCast, PacketSize, PacketAlign}));
-    }
-  }
+  //     llvm::Type *ArgTys[] = {Arg0->getType(), Arg1->getType(), Int32Ty, I8PTy,
+  //                             Int32Ty, Int32Ty};
+  //     Value *Arg2 = EmitScalarExpr(E->getArg(2)),
+  //           *Arg3 = EmitScalarExpr(E->getArg(3));
+  //     llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //         Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //     Value *BCast = Builder.CreatePointerCast(Arg3, I8PTy);
+  //     // We know the third argument is an integer type, but we may need to cast
+  //     // it to i32.
+  //     if (Arg2->getType() != Int32Ty)
+  //       Arg2 = Builder.CreateZExtOrTrunc(Arg2, Int32Ty);
+  //     return RValue::get(Builder.CreateCall(
+  //         CGM.CreateRuntimeFunction(FTy, Name),
+  //         {Arg0, Arg1, Arg2, BCast, PacketSize, PacketAlign}));
+  //   }
+  // }
   // OpenCL v2.0 s6.13.16 ,s9.17.3.5 - Built-in pipe reserve read and write
   // functions
-  case Builtin::BIreserve_read_pipe:
-  case Builtin::BIreserve_write_pipe:
-  case Builtin::BIwork_group_reserve_read_pipe:
-  case Builtin::BIwork_group_reserve_write_pipe:
-  case Builtin::BIsub_group_reserve_read_pipe:
-  case Builtin::BIsub_group_reserve_write_pipe: {
-    // Composing the mangled name for the function.
-    const char *Name;
-    if (BuiltinID == Builtin::BIreserve_read_pipe)
-      Name = "__reserve_read_pipe";
-    else if (BuiltinID == Builtin::BIreserve_write_pipe)
-      Name = "__reserve_write_pipe";
-    else if (BuiltinID == Builtin::BIwork_group_reserve_read_pipe)
-      Name = "__work_group_reserve_read_pipe";
-    else if (BuiltinID == Builtin::BIwork_group_reserve_write_pipe)
-      Name = "__work_group_reserve_write_pipe";
-    else if (BuiltinID == Builtin::BIsub_group_reserve_read_pipe)
-      Name = "__sub_group_reserve_read_pipe";
-    else
-      Name = "__sub_group_reserve_write_pipe";
+  // case Builtin::BIreserve_read_pipe:
+  // case Builtin::BIreserve_write_pipe:
+  // case Builtin::BIwork_group_reserve_read_pipe:
+  // case Builtin::BIwork_group_reserve_write_pipe:
+  // case Builtin::BIsub_group_reserve_read_pipe:
+  // case Builtin::BIsub_group_reserve_write_pipe: {
+  //   // Composing the mangled name for the function.
+  //   const char *Name;
+  //   if (BuiltinID == Builtin::BIreserve_read_pipe)
+  //     Name = "__reserve_read_pipe";
+  //   else if (BuiltinID == Builtin::BIreserve_write_pipe)
+  //     Name = "__reserve_write_pipe";
+  //   else if (BuiltinID == Builtin::BIwork_group_reserve_read_pipe)
+  //     Name = "__work_group_reserve_read_pipe";
+  //   else if (BuiltinID == Builtin::BIwork_group_reserve_write_pipe)
+  //     Name = "__work_group_reserve_write_pipe";
+  //   else if (BuiltinID == Builtin::BIsub_group_reserve_read_pipe)
+  //     Name = "__sub_group_reserve_read_pipe";
+  //   else
+  //     Name = "__sub_group_reserve_write_pipe";
 
-    Value *Arg0 = EmitScalarExpr(E->getArg(0)),
-          *Arg1 = EmitScalarExpr(E->getArg(1));
-    llvm::Type *ReservedIDTy = ConvertType(getContext().OCLReserveIDTy);
-    CGOpenCLRuntime OpenCLRT(CGM);
-    Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
-    Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
+  //   Value *Arg0 = EmitScalarExpr(E->getArg(0)),
+  //         *Arg1 = EmitScalarExpr(E->getArg(1));
+  //   llvm::Type *ReservedIDTy = ConvertType(getContext().OCLReserveIDTy);
+  //   CGOpenCLRuntime OpenCLRT(CGM);
+  //   Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
+  //   Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
 
-    // Building the generic function prototype.
-    llvm::Type *ArgTys[] = {Arg0->getType(), Int32Ty, Int32Ty, Int32Ty};
-    llvm::FunctionType *FTy = llvm::FunctionType::get(
-        ReservedIDTy, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
-    // We know the second argument is an integer type, but we may need to cast
-    // it to i32.
-    if (Arg1->getType() != Int32Ty)
-      Arg1 = Builder.CreateZExtOrTrunc(Arg1, Int32Ty);
-    return RValue::get(
-        Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
-                           {Arg0, Arg1, PacketSize, PacketAlign}));
-  }
+  //   // Building the generic function prototype.
+  //   llvm::Type *ArgTys[] = {Arg0->getType(), Int32Ty, Int32Ty, Int32Ty};
+  //   llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //       ReservedIDTy, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //   // We know the second argument is an integer type, but we may need to cast
+  //   // it to i32.
+  //   if (Arg1->getType() != Int32Ty)
+  //     Arg1 = Builder.CreateZExtOrTrunc(Arg1, Int32Ty);
+  //   return RValue::get(
+  //       Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
+  //                          {Arg0, Arg1, PacketSize, PacketAlign}));
+  // }
   // OpenCL v2.0 s6.13.16, s9.17.3.5 - Built-in pipe commit read and write
   // functions
-  case Builtin::BIcommit_read_pipe:
-  case Builtin::BIcommit_write_pipe:
-  case Builtin::BIwork_group_commit_read_pipe:
-  case Builtin::BIwork_group_commit_write_pipe:
-  case Builtin::BIsub_group_commit_read_pipe:
-  case Builtin::BIsub_group_commit_write_pipe: {
-    const char *Name;
-    if (BuiltinID == Builtin::BIcommit_read_pipe)
-      Name = "__commit_read_pipe";
-    else if (BuiltinID == Builtin::BIcommit_write_pipe)
-      Name = "__commit_write_pipe";
-    else if (BuiltinID == Builtin::BIwork_group_commit_read_pipe)
-      Name = "__work_group_commit_read_pipe";
-    else if (BuiltinID == Builtin::BIwork_group_commit_write_pipe)
-      Name = "__work_group_commit_write_pipe";
-    else if (BuiltinID == Builtin::BIsub_group_commit_read_pipe)
-      Name = "__sub_group_commit_read_pipe";
-    else
-      Name = "__sub_group_commit_write_pipe";
+  // case Builtin::BIcommit_read_pipe:
+  // case Builtin::BIcommit_write_pipe:
+  // case Builtin::BIwork_group_commit_read_pipe:
+  // case Builtin::BIwork_group_commit_write_pipe:
+  // case Builtin::BIsub_group_commit_read_pipe:
+  // case Builtin::BIsub_group_commit_write_pipe: {
+  //   const char *Name;
+  //   if (BuiltinID == Builtin::BIcommit_read_pipe)
+  //     Name = "__commit_read_pipe";
+  //   else if (BuiltinID == Builtin::BIcommit_write_pipe)
+  //     Name = "__commit_write_pipe";
+  //   else if (BuiltinID == Builtin::BIwork_group_commit_read_pipe)
+  //     Name = "__work_group_commit_read_pipe";
+  //   else if (BuiltinID == Builtin::BIwork_group_commit_write_pipe)
+  //     Name = "__work_group_commit_write_pipe";
+  //   else if (BuiltinID == Builtin::BIsub_group_commit_read_pipe)
+  //     Name = "__sub_group_commit_read_pipe";
+  //   else
+  //     Name = "__sub_group_commit_write_pipe";
 
-    Value *Arg0 = EmitScalarExpr(E->getArg(0)),
-          *Arg1 = EmitScalarExpr(E->getArg(1));
-    CGOpenCLRuntime OpenCLRT(CGM);
-    Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
-    Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
+  //   Value *Arg0 = EmitScalarExpr(E->getArg(0)),
+  //         *Arg1 = EmitScalarExpr(E->getArg(1));
+  //   CGOpenCLRuntime OpenCLRT(CGM);
+  //   Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
+  //   Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
 
-    // Building the generic function prototype.
-    llvm::Type *ArgTys[] = {Arg0->getType(), Arg1->getType(), Int32Ty, Int32Ty};
-    llvm::FunctionType *FTy =
-        llvm::FunctionType::get(llvm::Type::getVoidTy(getLLVMContext()),
-                                llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //   // Building the generic function prototype.
+  //   llvm::Type *ArgTys[] = {Arg0->getType(), Arg1->getType(), Int32Ty, Int32Ty};
+  //   llvm::FunctionType *FTy =
+  //       llvm::FunctionType::get(llvm::Type::getVoidTy(getLLVMContext()),
+  //                               llvm::ArrayRef<llvm::Type *>(ArgTys), false);
 
-    return RValue::get(
-        Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
-                           {Arg0, Arg1, PacketSize, PacketAlign}));
-  }
+  //   return RValue::get(
+  //       Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
+  //                          {Arg0, Arg1, PacketSize, PacketAlign}));
+  // }
   // OpenCL v2.0 s6.13.16.4 Built-in pipe query functions
-  case Builtin::BIget_pipe_num_packets:
-  case Builtin::BIget_pipe_max_packets: {
-    const char *BaseName;
-    const auto *PipeTy = E->getArg(0)->getType()->castAs<PipeType>();
-    if (BuiltinID == Builtin::BIget_pipe_num_packets)
-      BaseName = "__get_pipe_num_packets";
-    else
-      BaseName = "__get_pipe_max_packets";
-    std::string Name = std::string(BaseName) +
-                       std::string(PipeTy->isReadOnly() ? "_ro" : "_wo");
+  // case Builtin::BIget_pipe_num_packets:
+  // case Builtin::BIget_pipe_max_packets: {
+  //   const char *BaseName;
+  //   const auto *PipeTy = E->getArg(0)->getType()->castAs<PipeType>();
+  //   if (BuiltinID == Builtin::BIget_pipe_num_packets)
+  //     BaseName = "__get_pipe_num_packets";
+  //   else
+  //     BaseName = "__get_pipe_max_packets";
+  //   std::string Name = std::string(BaseName) +
+  //                      std::string(PipeTy->isReadOnly() ? "_ro" : "_wo");
 
-    // Building the generic function prototype.
-    Value *Arg0 = EmitScalarExpr(E->getArg(0));
-    CGOpenCLRuntime OpenCLRT(CGM);
-    Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
-    Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
-    llvm::Type *ArgTys[] = {Arg0->getType(), Int32Ty, Int32Ty};
-    llvm::FunctionType *FTy = llvm::FunctionType::get(
-        Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //   // Building the generic function prototype.
+  //   Value *Arg0 = EmitScalarExpr(E->getArg(0));
+  //   CGOpenCLRuntime OpenCLRT(CGM);
+  //   Value *PacketSize = OpenCLRT.getPipeElemSize(E->getArg(0));
+  //   Value *PacketAlign = OpenCLRT.getPipeElemAlign(E->getArg(0));
+  //   llvm::Type *ArgTys[] = {Arg0->getType(), Int32Ty, Int32Ty};
+  //   llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //       Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
 
-    return RValue::get(Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
-                                          {Arg0, PacketSize, PacketAlign}));
-  }
+  //   return RValue::get(Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
+  //                                         {Arg0, PacketSize, PacketAlign}));
+  // }
 
   // OpenCL v2.0 s6.13.9 - Address space qualifier functions.
-  case Builtin::BIto_global:
-  case Builtin::BIto_local:
-  case Builtin::BIto_private: {
-    auto Arg0 = EmitScalarExpr(E->getArg(0));
-    auto NewArgT = llvm::PointerType::get(Int8Ty,
-      CGM.getContext().getTargetAddressSpace(LangAS::opencl_generic));
-    auto NewRetT = llvm::PointerType::get(Int8Ty,
-      CGM.getContext().getTargetAddressSpace(
-        E->getType()->getPointeeType().getAddressSpace()));
-    auto FTy = llvm::FunctionType::get(NewRetT, {NewArgT}, false);
-    llvm::Value *NewArg;
-    if (Arg0->getType()->getPointerAddressSpace() !=
-        NewArgT->getPointerAddressSpace())
-      NewArg = Builder.CreateAddrSpaceCast(Arg0, NewArgT);
-    else
-      NewArg = Builder.CreateBitOrPointerCast(Arg0, NewArgT);
-    auto NewName = std::string("__") + E->getDirectCallee()->getName().str();
-    auto NewCall =
-        Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, NewName), {NewArg});
-    return RValue::get(Builder.CreateBitOrPointerCast(NewCall,
-      ConvertType(E->getType())));
-  }
+  // case Builtin::BIto_global:
+  // case Builtin::BIto_local:
+  // case Builtin::BIto_private: {
+  //   auto Arg0 = EmitScalarExpr(E->getArg(0));
+  //   auto NewArgT = llvm::PointerType::get(Int8Ty,
+  //     CGM.getContext().getTargetAddressSpace(LangAS::opencl_generic));
+  //   auto NewRetT = llvm::PointerType::get(Int8Ty,
+  //     CGM.getContext().getTargetAddressSpace(
+  //       E->getType()->getPointeeType().getAddressSpace()));
+  //   auto FTy = llvm::FunctionType::get(NewRetT, {NewArgT}, false);
+  //   llvm::Value *NewArg;
+  //   if (Arg0->getType()->getPointerAddressSpace() !=
+  //       NewArgT->getPointerAddressSpace())
+  //     NewArg = Builder.CreateAddrSpaceCast(Arg0, NewArgT);
+  //   else
+  //     NewArg = Builder.CreateBitOrPointerCast(Arg0, NewArgT);
+  //   auto NewName = std::string("__") + E->getDirectCallee()->getName().str();
+  //   auto NewCall =
+  //       Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, NewName), {NewArg});
+  //   return RValue::get(Builder.CreateBitOrPointerCast(NewCall,
+  //     ConvertType(E->getType())));
+  // }
 
   // OpenCL v2.0, s6.13.17 - Enqueue kernel function.
   // It contains four different overload formats specified in Table 6.13.17.1.
-  case Builtin::BIenqueue_kernel: {
-    StringRef Name; // Generated function call name
-    unsigned NumArgs = E->getNumArgs();
+  // case Builtin::BIenqueue_kernel: {
+  //   StringRef Name; // Generated function call name
+  //   unsigned NumArgs = E->getNumArgs();
 
-    llvm::Type *QueueTy = ConvertType(getContext().OCLQueueTy);
-    llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
-        getContext().getTargetAddressSpace(LangAS::opencl_generic));
+  //   llvm::Type *QueueTy = ConvertType(getContext().OCLQueueTy);
+  //   llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
+  //       getContext().getTargetAddressSpace(LangAS::opencl_generic));
 
-    llvm::Value *Queue = EmitScalarExpr(E->getArg(0));
-    llvm::Value *Flags = EmitScalarExpr(E->getArg(1));
-    LValue NDRangeL = EmitAggExprToLValue(E->getArg(2));
-    llvm::Value *Range = NDRangeL.getAddress(*this).getPointer();
-    llvm::Type *RangeTy = NDRangeL.getAddress(*this).getType();
+  //   llvm::Value *Queue = EmitScalarExpr(E->getArg(0));
+  //   llvm::Value *Flags = EmitScalarExpr(E->getArg(1));
+  //   LValue NDRangeL = EmitAggExprToLValue(E->getArg(2));
+  //   llvm::Value *Range = NDRangeL.getAddress(*this).getPointer();
+  //   llvm::Type *RangeTy = NDRangeL.getAddress(*this).getType();
 
-    if (NumArgs == 4) {
-      // The most basic form of the call with parameters:
-      // queue_t, kernel_enqueue_flags_t, ndrange_t, block(void)
-      Name = "__enqueue_kernel_basic";
-      llvm::Type *ArgTys[] = {QueueTy, Int32Ty, RangeTy, GenericVoidPtrTy,
-                              GenericVoidPtrTy};
-      llvm::FunctionType *FTy = llvm::FunctionType::get(
-          Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //   if (NumArgs == 4) {
+  //     // The most basic form of the call with parameters:
+  //     // queue_t, kernel_enqueue_flags_t, ndrange_t, block(void)
+  //     Name = "__enqueue_kernel_basic";
+  //     llvm::Type *ArgTys[] = {QueueTy, Int32Ty, RangeTy, GenericVoidPtrTy,
+  //                             GenericVoidPtrTy};
+  //     llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //         Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
 
-      auto Info =
-          CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(3));
-      llvm::Value *Kernel =
-          Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
-      llvm::Value *Block =
-          Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
+  //     auto Info =
+  //         CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(3));
+  //     llvm::Value *Kernel =
+  //         Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
+  //     llvm::Value *Block =
+  //         Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
 
-      AttrBuilder B;
-      B.addByValAttr(NDRangeL.getAddress(*this).getElementType());
-      llvm::AttributeList ByValAttrSet =
-          llvm::AttributeList::get(CGM.getModule().getContext(), 3U, B);
+  //     AttrBuilder B;
+  //     B.addByValAttr(NDRangeL.getAddress(*this).getElementType());
+  //     llvm::AttributeList ByValAttrSet =
+  //         llvm::AttributeList::get(CGM.getModule().getContext(), 3U, B);
 
-      auto RTCall =
-          Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name, ByValAttrSet),
-                             {Queue, Flags, Range, Kernel, Block});
-      RTCall->setAttributes(ByValAttrSet);
-      return RValue::get(RTCall);
-    }
-    assert(NumArgs >= 5 && "Invalid enqueue_kernel signature");
+  //     auto RTCall =
+  //         Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name, ByValAttrSet),
+  //                            {Queue, Flags, Range, Kernel, Block});
+  //     RTCall->setAttributes(ByValAttrSet);
+  //     return RValue::get(RTCall);
+  //   }
+  //   assert(NumArgs >= 5 && "Invalid enqueue_kernel signature");
 
-    // Create a temporary array to hold the sizes of local pointer arguments
-    // for the block. \p First is the position of the first size argument.
-    auto CreateArrayForSizeVar = [=](unsigned First)
-        -> std::tuple<llvm::Value *, llvm::Value *, llvm::Value *> {
-      llvm::APInt ArraySize(32, NumArgs - First);
-      QualType SizeArrayTy = getContext().getConstantArrayType(
-          getContext().getSizeType(), ArraySize, nullptr, ArrayType::Normal,
-          /*IndexTypeQuals=*/0);
-      auto Tmp = CreateMemTemp(SizeArrayTy, "block_sizes");
-      llvm::Value *TmpPtr = Tmp.getPointer();
-      llvm::Value *TmpSize = EmitLifetimeStart(
-          CGM.getDataLayout().getTypeAllocSize(Tmp.getElementType()), TmpPtr);
-      llvm::Value *ElemPtr;
-      // Each of the following arguments specifies the size of the corresponding
-      // argument passed to the enqueued block.
-      auto *Zero = llvm::ConstantInt::get(IntTy, 0);
-      for (unsigned I = First; I < NumArgs; ++I) {
-        auto *Index = llvm::ConstantInt::get(IntTy, I - First);
-        auto *GEP = Builder.CreateGEP(TmpPtr, {Zero, Index});
-        if (I == First)
-          ElemPtr = GEP;
-        auto *V =
-            Builder.CreateZExtOrTrunc(EmitScalarExpr(E->getArg(I)), SizeTy);
-        Builder.CreateAlignedStore(
-            V, GEP, CGM.getDataLayout().getPrefTypeAlign(SizeTy));
-      }
-      return std::tie(ElemPtr, TmpSize, TmpPtr);
-    };
+  //   // Create a temporary array to hold the sizes of local pointer arguments
+  //   // for the block. \p First is the position of the first size argument.
+  //   auto CreateArrayForSizeVar = [=](unsigned First)
+  //       -> std::tuple<llvm::Value *, llvm::Value *, llvm::Value *> {
+  //     llvm::APInt ArraySize(32, NumArgs - First);
+  //     QualType SizeArrayTy = getContext().getConstantArrayType(
+  //         getContext().getSizeType(), ArraySize, nullptr, ArrayType::Normal,
+  //         /*IndexTypeQuals=*/0);
+  //     auto Tmp = CreateMemTemp(SizeArrayTy, "block_sizes");
+  //     llvm::Value *TmpPtr = Tmp.getPointer();
+  //     llvm::Value *TmpSize = EmitLifetimeStart(
+  //         CGM.getDataLayout().getTypeAllocSize(Tmp.getElementType()), TmpPtr);
+  //     llvm::Value *ElemPtr;
+  //     // Each of the following arguments specifies the size of the corresponding
+  //     // argument passed to the enqueued block.
+  //     auto *Zero = llvm::ConstantInt::get(IntTy, 0);
+  //     for (unsigned I = First; I < NumArgs; ++I) {
+  //       auto *Index = llvm::ConstantInt::get(IntTy, I - First);
+  //       auto *GEP = Builder.CreateGEP(TmpPtr, {Zero, Index});
+  //       if (I == First)
+  //         ElemPtr = GEP;
+  //       auto *V =
+  //           Builder.CreateZExtOrTrunc(EmitScalarExpr(E->getArg(I)), SizeTy);
+  //       Builder.CreateAlignedStore(
+  //           V, GEP, CGM.getDataLayout().getPrefTypeAlign(SizeTy));
+  //     }
+  //     return std::tie(ElemPtr, TmpSize, TmpPtr);
+  //   };
 
-    // Could have events and/or varargs.
-    if (E->getArg(3)->getType()->isBlockPointerType()) {
-      // No events passed, but has variadic arguments.
-      Name = "__enqueue_kernel_varargs";
-      auto Info =
-          CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(3));
-      llvm::Value *Kernel =
-          Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
-      auto *Block = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
-      llvm::Value *ElemPtr, *TmpSize, *TmpPtr;
-      std::tie(ElemPtr, TmpSize, TmpPtr) = CreateArrayForSizeVar(4);
+  //   // Could have events and/or varargs.
+  //   if (E->getArg(3)->getType()->isBlockPointerType()) {
+  //     // No events passed, but has variadic arguments.
+  //     Name = "__enqueue_kernel_varargs";
+  //     auto Info =
+  //         CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(3));
+  //     llvm::Value *Kernel =
+  //         Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
+  //     auto *Block = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
+  //     llvm::Value *ElemPtr, *TmpSize, *TmpPtr;
+  //     std::tie(ElemPtr, TmpSize, TmpPtr) = CreateArrayForSizeVar(4);
 
-      // Create a vector of the arguments, as well as a constant value to
-      // express to the runtime the number of variadic arguments.
-      llvm::Value *const Args[] = {Queue,  Flags,
-                                   Range,  Kernel,
-                                   Block,  ConstantInt::get(IntTy, NumArgs - 4),
-                                   ElemPtr};
-      llvm::Type *const ArgTys[] = {
-          QueueTy,          IntTy, RangeTy,           GenericVoidPtrTy,
-          GenericVoidPtrTy, IntTy, ElemPtr->getType()};
+  //     // Create a vector of the arguments, as well as a constant value to
+  //     // express to the runtime the number of variadic arguments.
+  //     llvm::Value *const Args[] = {Queue,  Flags,
+  //                                  Range,  Kernel,
+  //                                  Block,  ConstantInt::get(IntTy, NumArgs - 4),
+  //                                  ElemPtr};
+  //     llvm::Type *const ArgTys[] = {
+  //         QueueTy,          IntTy, RangeTy,           GenericVoidPtrTy,
+  //         GenericVoidPtrTy, IntTy, ElemPtr->getType()};
 
-      llvm::FunctionType *FTy = llvm::FunctionType::get(Int32Ty, ArgTys, false);
-      auto Call = RValue::get(
-          Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name), Args));
-      if (TmpSize)
-        EmitLifetimeEnd(TmpSize, TmpPtr);
-      return Call;
-    }
-    // Any calls now have event arguments passed.
-    if (NumArgs >= 7) {
-      llvm::Type *EventTy = ConvertType(getContext().OCLClkEventTy);
-      llvm::PointerType *EventPtrTy = EventTy->getPointerTo(
-          CGM.getContext().getTargetAddressSpace(LangAS::opencl_generic));
+  //     llvm::FunctionType *FTy = llvm::FunctionType::get(Int32Ty, ArgTys, false);
+  //     auto Call = RValue::get(
+  //         Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name), Args));
+  //     if (TmpSize)
+  //       EmitLifetimeEnd(TmpSize, TmpPtr);
+  //     return Call;
+  //   }
+  //   // Any calls now have event arguments passed.
+  //   if (NumArgs >= 7) {
+  //     llvm::Type *EventTy = ConvertType(getContext().OCLClkEventTy);
+  //     llvm::PointerType *EventPtrTy = EventTy->getPointerTo(
+  //         CGM.getContext().getTargetAddressSpace(LangAS::opencl_generic));
 
-      llvm::Value *NumEvents =
-          Builder.CreateZExtOrTrunc(EmitScalarExpr(E->getArg(3)), Int32Ty);
+  //     llvm::Value *NumEvents =
+  //         Builder.CreateZExtOrTrunc(EmitScalarExpr(E->getArg(3)), Int32Ty);
 
-      // Since SemaOpenCLBuiltinEnqueueKernel allows fifth and sixth arguments
-      // to be a null pointer constant (including `0` literal), we can take it
-      // into account and emit null pointer directly.
-      llvm::Value *EventWaitList = nullptr;
-      if (E->getArg(4)->isNullPointerConstant(
-              getContext(), Expr::NPC_ValueDependentIsNotNull)) {
-        EventWaitList = llvm::ConstantPointerNull::get(EventPtrTy);
-      } else {
-        EventWaitList = E->getArg(4)->getType()->isArrayType()
-                        ? EmitArrayToPointerDecay(E->getArg(4)).getPointer()
-                        : EmitScalarExpr(E->getArg(4));
-        // Convert to generic address space.
-        EventWaitList = Builder.CreatePointerCast(EventWaitList, EventPtrTy);
-      }
-      llvm::Value *EventRet = nullptr;
-      if (E->getArg(5)->isNullPointerConstant(
-              getContext(), Expr::NPC_ValueDependentIsNotNull)) {
-        EventRet = llvm::ConstantPointerNull::get(EventPtrTy);
-      } else {
-        EventRet =
-            Builder.CreatePointerCast(EmitScalarExpr(E->getArg(5)), EventPtrTy);
-      }
+  //     // Since SemaOpenCLBuiltinEnqueueKernel allows fifth and sixth arguments
+  //     // to be a null pointer constant (including `0` literal), we can take it
+  //     // into account and emit null pointer directly.
+  //     llvm::Value *EventWaitList = nullptr;
+  //     if (E->getArg(4)->isNullPointerConstant(
+  //             getContext(), Expr::NPC_ValueDependentIsNotNull)) {
+  //       EventWaitList = llvm::ConstantPointerNull::get(EventPtrTy);
+  //     } else {
+  //       EventWaitList = E->getArg(4)->getType()->isArrayType()
+  //                       ? EmitArrayToPointerDecay(E->getArg(4)).getPointer()
+  //                       : EmitScalarExpr(E->getArg(4));
+  //       // Convert to generic address space.
+  //       EventWaitList = Builder.CreatePointerCast(EventWaitList, EventPtrTy);
+  //     }
+  //     llvm::Value *EventRet = nullptr;
+  //     if (E->getArg(5)->isNullPointerConstant(
+  //             getContext(), Expr::NPC_ValueDependentIsNotNull)) {
+  //       EventRet = llvm::ConstantPointerNull::get(EventPtrTy);
+  //     } else {
+  //       EventRet =
+  //           Builder.CreatePointerCast(EmitScalarExpr(E->getArg(5)), EventPtrTy);
+  //     }
 
-      auto Info =
-          CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(6));
-      llvm::Value *Kernel =
-          Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
-      llvm::Value *Block =
-          Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
+  //     auto Info =
+  //         CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(6));
+  //     llvm::Value *Kernel =
+  //         Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
+  //     llvm::Value *Block =
+  //         Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
 
-      std::vector<llvm::Type *> ArgTys = {
-          QueueTy,    Int32Ty,    RangeTy,          Int32Ty,
-          EventPtrTy, EventPtrTy, GenericVoidPtrTy, GenericVoidPtrTy};
+  //     std::vector<llvm::Type *> ArgTys = {
+  //         QueueTy,    Int32Ty,    RangeTy,          Int32Ty,
+  //         EventPtrTy, EventPtrTy, GenericVoidPtrTy, GenericVoidPtrTy};
 
-      std::vector<llvm::Value *> Args = {Queue,     Flags,         Range,
-                                         NumEvents, EventWaitList, EventRet,
-                                         Kernel,    Block};
+  //     std::vector<llvm::Value *> Args = {Queue,     Flags,         Range,
+  //                                        NumEvents, EventWaitList, EventRet,
+  //                                        Kernel,    Block};
 
-      if (NumArgs == 7) {
-        // Has events but no variadics.
-        Name = "__enqueue_kernel_basic_events";
-        llvm::FunctionType *FTy = llvm::FunctionType::get(
-            Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
-        return RValue::get(
-            Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
-                               llvm::ArrayRef<llvm::Value *>(Args)));
-      }
-      // Has event info and variadics
-      // Pass the number of variadics to the runtime function too.
-      Args.push_back(ConstantInt::get(Int32Ty, NumArgs - 7));
-      ArgTys.push_back(Int32Ty);
-      Name = "__enqueue_kernel_events_varargs";
+  //     if (NumArgs == 7) {
+  //       // Has events but no variadics.
+  //       Name = "__enqueue_kernel_basic_events";
+  //       llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //           Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //       return RValue::get(
+  //           Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
+  //                              llvm::ArrayRef<llvm::Value *>(Args)));
+  //     }
+  //     // Has event info and variadics
+  //     // Pass the number of variadics to the runtime function too.
+  //     Args.push_back(ConstantInt::get(Int32Ty, NumArgs - 7));
+  //     ArgTys.push_back(Int32Ty);
+  //     Name = "__enqueue_kernel_events_varargs";
 
-      llvm::Value *ElemPtr, *TmpSize, *TmpPtr;
-      std::tie(ElemPtr, TmpSize, TmpPtr) = CreateArrayForSizeVar(7);
-      Args.push_back(ElemPtr);
-      ArgTys.push_back(ElemPtr->getType());
+  //     llvm::Value *ElemPtr, *TmpSize, *TmpPtr;
+  //     std::tie(ElemPtr, TmpSize, TmpPtr) = CreateArrayForSizeVar(7);
+  //     Args.push_back(ElemPtr);
+  //     ArgTys.push_back(ElemPtr->getType());
 
-      llvm::FunctionType *FTy = llvm::FunctionType::get(
-          Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
-      auto Call =
-          RValue::get(Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
-                                         llvm::ArrayRef<llvm::Value *>(Args)));
-      if (TmpSize)
-        EmitLifetimeEnd(TmpSize, TmpPtr);
-      return Call;
-    }
-    LLVM_FALLTHROUGH;
-  }
+  //     llvm::FunctionType *FTy = llvm::FunctionType::get(
+  //         Int32Ty, llvm::ArrayRef<llvm::Type *>(ArgTys), false);
+  //     auto Call =
+  //         RValue::get(Builder.CreateCall(CGM.CreateRuntimeFunction(FTy, Name),
+  //                                        llvm::ArrayRef<llvm::Value *>(Args)));
+  //     if (TmpSize)
+  //       EmitLifetimeEnd(TmpSize, TmpPtr);
+  //     return Call;
+  //   }
+  //   LLVM_FALLTHROUGH;
+  // }
   // OpenCL v2.0 s6.13.17.6 - Kernel query functions need bitcast of block
   // parameter.
-  case Builtin::BIget_kernel_work_group_size: {
-    llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
-        getContext().getTargetAddressSpace(LangAS::opencl_generic));
-    auto Info =
-        CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(0));
-    Value *Kernel = Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
-    Value *Arg = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
-    return RValue::get(Builder.CreateCall(
-        CGM.CreateRuntimeFunction(
-            llvm::FunctionType::get(IntTy, {GenericVoidPtrTy, GenericVoidPtrTy},
-                                    false),
-            "__get_kernel_work_group_size_impl"),
-        {Kernel, Arg}));
-  }
+  // case Builtin::BIget_kernel_work_group_size: {
+  //   llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
+  //       getContext().getTargetAddressSpace(LangAS::opencl_generic));
+  //   auto Info =
+  //       CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(0));
+  //   Value *Kernel = Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
+  //   Value *Arg = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
+  //   return RValue::get(Builder.CreateCall(
+  //       CGM.CreateRuntimeFunction(
+  //           llvm::FunctionType::get(IntTy, {GenericVoidPtrTy, GenericVoidPtrTy},
+  //                                   false),
+  //           "__get_kernel_work_group_size_impl"),
+  //       {Kernel, Arg}));
+  // }
   case Builtin::BIget_kernel_preferred_work_group_size_multiple: {
     llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
         getContext().getTargetAddressSpace(LangAS::opencl_generic));

@@ -32,12 +32,12 @@ void CodeGen::addDefaultFunctionDefinitionAttributes(CodeGenModule &CGM,
   CGM.addDefaultFunctionDefinitionAttributes(attrs);
 }
 
-const CGFunctionInfo &
-CodeGen::arrangeObjCMessageSendSignature(CodeGenModule &CGM,
-                                         const ObjCMethodDecl *MD,
-                                         QualType receiverType) {
-  return CGM.getTypes().arrangeObjCMessageSendSignature(MD, receiverType);
-}
+// const CGFunctionInfo &
+// CodeGen::arrangeObjCMessageSendSignature(CodeGenModule &CGM,
+//                                          const ObjCMethodDecl *MD,
+//                                          QualType receiverType) {
+//   return CGM.getTypes().arrangeObjCMessageSendSignature(MD, receiverType);
+// }
 
 const CGFunctionInfo &
 CodeGen::arrangeFreeFunctionType(CodeGenModule &CGM,

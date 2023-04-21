@@ -142,13 +142,13 @@ PathDiagnosticPieceRef DynamicTypeChecker::DynamicTypeBugVisitor::VisitNode(
   return std::make_shared<PathDiagnosticEventPiece>(Pos, OS.str(), true);
 }
 
-static bool hasDefinition(const ObjCObjectPointerType *ObjPtr) {
-  const ObjCInterfaceDecl *Decl = ObjPtr->getInterfaceDecl();
-  if (!Decl)
-    return false;
+// static bool hasDefinition(const ObjCObjectPointerType *ObjPtr) {
+//   const ObjCInterfaceDecl *Decl = ObjPtr->getInterfaceDecl();
+//   if (!Decl)
+//     return false;
 
-  return Decl->getDefinition();
-}
+//   return Decl->getDefinition();
+// }
 
 // TODO: consider checking explicit casts?
 void DynamicTypeChecker::checkPostStmt(const ImplicitCastExpr *CE,
@@ -170,31 +170,31 @@ void DynamicTypeChecker::checkPostStmt(const ImplicitCastExpr *CE,
   QualType DynType = DynTypeInfo.getType();
   QualType StaticType = CE->getType();
 
-  const auto *DynObjCType = DynType->getAs<ObjCObjectPointerType>();
-  const auto *StaticObjCType = StaticType->getAs<ObjCObjectPointerType>();
+  // const auto *DynObjCType = DynType->getAs<ObjCObjectPointerType>();
+  // const auto *StaticObjCType = StaticType->getAs<ObjCObjectPointerType>();
 
-  if (!DynObjCType || !StaticObjCType)
-    return;
+  // if (!DynObjCType || !StaticObjCType)
+  //   return;
 
-  if (!hasDefinition(DynObjCType) || !hasDefinition(StaticObjCType))
-    return;
+  // if (!hasDefinition(DynObjCType) || !hasDefinition(StaticObjCType))
+  //   return;
 
-  ASTContext &ASTCtxt = C.getASTContext();
+  // ASTContext &ASTCtxt = C.getASTContext();
 
-  // Strip kindeofness to correctly detect subtyping relationships.
-  DynObjCType = DynObjCType->stripObjCKindOfTypeAndQuals(ASTCtxt);
-  StaticObjCType = StaticObjCType->stripObjCKindOfTypeAndQuals(ASTCtxt);
+  // // Strip kindeofness to correctly detect subtyping relationships.
+  // DynObjCType = DynObjCType->stripObjCKindOfTypeAndQuals(ASTCtxt);
+  // StaticObjCType = StaticObjCType->stripObjCKindOfTypeAndQuals(ASTCtxt);
 
-  // Specialized objects are handled by the generics checker.
-  if (StaticObjCType->isSpecialized())
-    return;
+  // // Specialized objects are handled by the generics checker.
+  // if (StaticObjCType->isSpecialized())
+  //   return;
 
-  if (ASTCtxt.canAssignObjCInterfaces(StaticObjCType, DynObjCType))
-    return;
+  // if (ASTCtxt.canAssignObjCInterfaces(StaticObjCType, DynObjCType))
+  //   return;
 
-  if (DynTypeInfo.canBeASubClass() &&
-      ASTCtxt.canAssignObjCInterfaces(DynObjCType, StaticObjCType))
-    return;
+  // if (DynTypeInfo.canBeASubClass() &&
+  //     ASTCtxt.canAssignObjCInterfaces(DynObjCType, StaticObjCType))
+  //   return;
 
   reportTypeError(DynType, StaticType, Region, CE, C);
 }

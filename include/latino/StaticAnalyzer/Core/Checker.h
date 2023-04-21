@@ -116,50 +116,50 @@ public:
   }
 };
 
-class PreObjCMessage {
-  template <typename CHECKER>
-  static void _checkObjCMessage(void *checker, const ObjCMethodCall &msg,
-                                CheckerContext &C) {
-    ((const CHECKER *)checker)->checkPreObjCMessage(msg, C);
-  }
+// class PreObjCMessage {
+//   template <typename CHECKER>
+//   static void _checkObjCMessage(void *checker, const ObjCMethodCall &msg,
+//                                 CheckerContext &C) {
+//     ((const CHECKER *)checker)->checkPreObjCMessage(msg, C);
+//   }
 
-public:
-  template <typename CHECKER>
-  static void _register(CHECKER *checker, CheckerManager &mgr) {
-    mgr._registerForPreObjCMessage(
-     CheckerManager::CheckObjCMessageFunc(checker, _checkObjCMessage<CHECKER>));
-  }
-};
+// public:
+//   template <typename CHECKER>
+//   static void _register(CHECKER *checker, CheckerManager &mgr) {
+//     mgr._registerForPreObjCMessage(
+//      CheckerManager::CheckObjCMessageFunc(checker, _checkObjCMessage<CHECKER>));
+//   }
+// };
 
-class ObjCMessageNil {
-  template <typename CHECKER>
-  static void _checkObjCMessage(void *checker, const ObjCMethodCall &msg,
-                                CheckerContext &C) {
-    ((const CHECKER *)checker)->checkObjCMessageNil(msg, C);
-  }
+// class ObjCMessageNil {
+//   template <typename CHECKER>
+//   static void _checkObjCMessage(void *checker, const ObjCMethodCall &msg,
+//                                 CheckerContext &C) {
+//     ((const CHECKER *)checker)->checkObjCMessageNil(msg, C);
+//   }
 
-public:
-  template <typename CHECKER>
-  static void _register(CHECKER *checker, CheckerManager &mgr) {
-    mgr._registerForObjCMessageNil(
-     CheckerManager::CheckObjCMessageFunc(checker, _checkObjCMessage<CHECKER>));
-  }
-};
+// public:
+//   template <typename CHECKER>
+//   static void _register(CHECKER *checker, CheckerManager &mgr) {
+//     mgr._registerForObjCMessageNil(
+//      CheckerManager::CheckObjCMessageFunc(checker, _checkObjCMessage<CHECKER>));
+//   }
+// };
 
-class PostObjCMessage {
-  template <typename CHECKER>
-  static void _checkObjCMessage(void *checker, const ObjCMethodCall &msg,
-                                CheckerContext &C) {
-    ((const CHECKER *)checker)->checkPostObjCMessage(msg, C);
-  }
+// class PostObjCMessage {
+//   template <typename CHECKER>
+//   static void _checkObjCMessage(void *checker, const ObjCMethodCall &msg,
+//                                 CheckerContext &C) {
+//     ((const CHECKER *)checker)->checkPostObjCMessage(msg, C);
+//   }
 
-public:
-  template <typename CHECKER>
-  static void _register(CHECKER *checker, CheckerManager &mgr) {
-    mgr._registerForPostObjCMessage(
-     CheckerManager::CheckObjCMessageFunc(checker, _checkObjCMessage<CHECKER>));
-  }
-};
+// public:
+//   template <typename CHECKER>
+//   static void _register(CHECKER *checker, CheckerManager &mgr) {
+//     mgr._registerForPostObjCMessage(
+//      CheckerManager::CheckObjCMessageFunc(checker, _checkObjCMessage<CHECKER>));
+//   }
+// };
 
 class PreCall {
   template <typename CHECKER>

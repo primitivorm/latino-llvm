@@ -131,7 +131,7 @@ public:
 
   bool ValidateCandidate(const TypoCorrection &candidate) override {
     if (FieldDecl *FD = candidate.getCorrectionDeclAs<FieldDecl>())
-      return !candidate.getCorrectionSpecifier() || isa<ObjCIvarDecl>(FD);
+      return !candidate.getCorrectionSpecifier() /*|| isa<ObjCIvarDecl>(FD)*/;
     if (NextToken.is(tok::equal))
       return candidate.getCorrectionDeclAs<VarDecl>();
     if (NextToken.is(tok::period) &&
@@ -163,12 +163,12 @@ Retry:
   tok::TokenKind Kind  = Tok.getKind();
   SourceLocation AtLoc;
   switch (Kind) {
-  case tok::at: // May be a @try or @throw statement
-    {
-      ProhibitAttributes(Attrs); // TODO: is it correct?
-      AtLoc = ConsumeToken();  // consume @
-      return ParseObjCAtStatement(AtLoc, StmtCtx);
-    }
+  // case tok::at: // May be a @try or @throw statement
+  //   {
+  //     ProhibitAttributes(Attrs); // TODO: is it correct?
+  //     AtLoc = ConsumeToken();  // consume @
+  //     return ParseObjCAtStatement(AtLoc, StmtCtx);
+  //   }
 
   case tok::code_completion:
     Actions.CodeCompleteOrdinaryName(getCurScope(), Sema::PCC_Statement);
@@ -1864,11 +1864,11 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
       // ObjC: for (id x in expr)
       ConsumeToken(); // consume 'in'
 
-      if (Tok.is(tok::code_completion)) {
-        Actions.CodeCompleteObjCForCollection(getCurScope(), DG);
-        cutOffParsing();
-        return StmtError();
-      }
+      // if (Tok.is(tok::code_completion)) {
+      //   Actions.CodeCompleteObjCForCollection(getCurScope(), DG);
+      //   cutOffParsing();
+      //   return StmtError();
+      // }
       Collection = ParseExpression();
     } else {
       Diag(Tok, diag::err_expected_semi_for);
@@ -1900,11 +1900,11 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
     } else if (ForEach) {
       ConsumeToken(); // consume 'in'
 
-      if (Tok.is(tok::code_completion)) {
-        Actions.CodeCompleteObjCForCollection(getCurScope(), nullptr);
-        cutOffParsing();
-        return StmtError();
-      }
+      // if (Tok.is(tok::code_completion)) {
+      //   Actions.CodeCompleteObjCForCollection(getCurScope(), nullptr);
+      //   cutOffParsing();
+      //   return StmtError();
+      // }
       Collection = ParseExpression();
     } else if (getLangOpts().CPlusPlus11 && Tok.is(tok::colon) && FirstPart.get()) {
       // User tried to write the reasonable, but ill-formed, for-range-statement
@@ -2017,12 +2017,12 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
 
   // Similarly, we need to do the semantic analysis for a for-range
   // statement immediately in order to close over temporaries correctly.
-  } else if (ForEach) {
+  } /*else if (ForEach) {
     ForEachStmt = Actions.ActOnObjCForCollectionStmt(ForLoc,
                                                      FirstPart.get(),
                                                      Collection.get(),
                                                      T.getCloseLocation());
-  } else {
+  } */else {
     // In OpenMP loop region loop control variable must be captured and be
     // private. Perform analysis of first part (if any).
     if (getLangOpts().OpenMP && FirstPart.isUsable()) {
@@ -2068,9 +2068,9 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
   if (Body.isInvalid())
     return StmtError();
 
-  if (ForEach)
-   return Actions.FinishObjCForCollectionStmt(ForEachStmt.get(),
-                                              Body.get());
+  // if (ForEach)
+  //  return Actions.FinishObjCForCollectionStmt(ForEachStmt.get(),
+  //                                             Body.get());
 
   if (ForRangeInfo.ParsedForRangeDecl())
     return Actions.FinishCXXForRangeStmt(ForRangeStmt.get(), Body.get());
