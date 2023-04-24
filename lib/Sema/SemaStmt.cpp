@@ -340,9 +340,9 @@ void Sema::DiagnoseUnusedExprResult(const Stmt *S) {
         POE->getNumSemanticExprs() == 1 &&
         isa<CallExpr>(POE->getSemanticExpr(0)))
       return DiagnoseUnusedExprResult(POE->getSemanticExpr(0));
-    if (isa<ObjCSubscriptRefExpr>(Source))
-      DiagID = diag::warn_unused_container_subscript_expr;
-    else
+    // if (isa<ObjCSubscriptRefExpr>(Source))
+    //   DiagID = diag::warn_unused_container_subscript_expr;
+    // else
       DiagID = diag::warn_unused_property_expr;
   } else if (const CXXFunctionalCastExpr *FC
                                        = dyn_cast<CXXFunctionalCastExpr>(E)) {
@@ -1701,14 +1701,14 @@ namespace {
         Visit(End);
     }
 
-    void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
-      // Only visit the initialization of a for loop; the body
-      // has a different break/continue scope.
-      if (const Stmt *Element = S->getElement())
-        Visit(Element);
-      if (const Stmt *Collection = S->getCollection())
-        Visit(Collection);
-    }
+    // void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
+    //   // Only visit the initialization of a for loop; the body
+    //   // has a different break/continue scope.
+    //   if (const Stmt *Element = S->getElement())
+    //     Visit(Element);
+    //   if (const Stmt *Collection = S->getCollection())
+    //     Visit(Collection);
+    // }
 
     bool ContinueFound() { return ContinueLoc.isValid(); }
     bool BreakFound() { return BreakLoc.isValid(); }

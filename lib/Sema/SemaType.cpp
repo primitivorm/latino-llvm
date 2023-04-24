@@ -8761,9 +8761,9 @@ static QualType getDecltypeForExpr(Sema &S, Expr *E) {
     if (const ValueDecl *VD = ME->getMemberDecl())
       if (isa<FieldDecl>(VD) || isa<VarDecl>(VD))
         return VD->getType();
-  } else if (const ObjCIvarRefExpr *IR = dyn_cast<ObjCIvarRefExpr>(E)) {
+  } /*else if (const ObjCIvarRefExpr *IR = dyn_cast<ObjCIvarRefExpr>(E)) {
     return IR->getDecl()->getType();
-  } /*else if (const ObjCPropertyRefExpr *PR = dyn_cast<ObjCPropertyRefExpr>(E)) {
+  } else if (const ObjCPropertyRefExpr *PR = dyn_cast<ObjCPropertyRefExpr>(E)) {
     if (PR->isExplicitProperty())
       return PR->getExplicitProperty()->getType();
   } */else if (auto *PE = dyn_cast<PredefinedExpr>(E)) {

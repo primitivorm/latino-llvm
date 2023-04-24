@@ -758,8 +758,8 @@ Matcher<NamedDecl> hasAnyNameFunc(ArrayRef<const StringRef *> NameRefs);
 
 /// Trampoline function to use VariadicFunction<> to construct a
 ///        hasAnySelector matcher.
-Matcher<ObjCMessageExpr> hasAnySelectorFunc(
-    ArrayRef<const StringRef *> NameRefs);
+// Matcher<ObjCMessageExpr> hasAnySelectorFunc(
+//     ArrayRef<const StringRef *> NameRefs);
 
 /// Matches declarations for QualType and CallExpr.
 ///
@@ -887,11 +887,11 @@ private:
     return matchesDecl(Node.getConstructor(), Finder, Builder);
   }
 
-  bool matchesSpecialized(const ObjCIvarRefExpr &Node,
-                          ASTMatchFinder *Finder,
-                          BoundNodesTreeBuilder *Builder) const {
-    return matchesDecl(Node.getDecl(), Finder, Builder);
-  }
+  // bool matchesSpecialized(const ObjCIvarRefExpr &Node,
+  //                         ASTMatchFinder *Finder,
+  //                         BoundNodesTreeBuilder *Builder) const {
+  //   return matchesDecl(Node.getDecl(), Finder, Builder);
+  // }
 
   /// Extracts the operator new of the new call and returns whether the
   /// inner matcher matches on it.
@@ -1135,7 +1135,7 @@ using HasDeclarationSupportedTypes =
              ElaboratedType, InjectedClassNameType, LabelStmt, AddrLabelExpr,
              MemberExpr, QualType, RecordType, TagType,
              TemplateSpecializationType, TemplateTypeParmType, TypedefType,
-             UnresolvedUsingType, ObjCIvarRefExpr>;
+             UnresolvedUsingType/*, ObjCIvarRefExpr*/>;
 
 template <template <typename ToArg, typename FromArg> class ArgumentAdapterT,
           typename T, typename ToTypes>

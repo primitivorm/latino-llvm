@@ -332,17 +332,17 @@ void StmtPrinter::VisitForStmt(ForStmt *Node) {
   PrintControlledStmt(Node->getBody());
 }
 
-void StmtPrinter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *Node) {
-  Indent() << "for (";
-  if (auto *DS = dyn_cast<DeclStmt>(Node->getElement()))
-    PrintRawDeclStmt(DS);
-  else
-    PrintExpr(cast<Expr>(Node->getElement()));
-  OS << " in ";
-  PrintExpr(Node->getCollection());
-  OS << ")";
-  PrintControlledStmt(Node->getBody());
-}
+// void StmtPrinter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *Node) {
+//   Indent() << "for (";
+//   if (auto *DS = dyn_cast<DeclStmt>(Node->getElement()))
+//     PrintRawDeclStmt(DS);
+//   else
+//     PrintExpr(cast<Expr>(Node->getElement()));
+//   OS << " in ";
+//   PrintExpr(Node->getCollection());
+//   OS << ")";
+//   PrintControlledStmt(Node->getBody());
+// }
 
 void StmtPrinter::VisitCXXForRangeStmt(CXXForRangeStmt *Node) {
   Indent() << "for (";
@@ -498,33 +498,33 @@ void StmtPrinter::VisitCapturedStmt(CapturedStmt *Node) {
   PrintStmt(Node->getCapturedDecl()->getBody());
 }
 
-void StmtPrinter::VisitObjCAtTryStmt(ObjCAtTryStmt *Node) {
-  Indent() << "@try";
-  if (auto *TS = dyn_cast<CompoundStmt>(Node->getTryBody())) {
-    PrintRawCompoundStmt(TS);
-    OS << NL;
-  }
+// void StmtPrinter::VisitObjCAtTryStmt(ObjCAtTryStmt *Node) {
+//   Indent() << "@try";
+//   if (auto *TS = dyn_cast<CompoundStmt>(Node->getTryBody())) {
+//     PrintRawCompoundStmt(TS);
+//     OS << NL;
+//   }
 
-  for (unsigned I = 0, N = Node->getNumCatchStmts(); I != N; ++I) {
-    ObjCAtCatchStmt *catchStmt = Node->getCatchStmt(I);
-    Indent() << "@catch(";
-    if (catchStmt->getCatchParamDecl()) {
-      if (Decl *DS = catchStmt->getCatchParamDecl())
-        PrintRawDecl(DS);
-    }
-    OS << ")";
-    if (auto *CS = dyn_cast<CompoundStmt>(catchStmt->getCatchBody())) {
-      PrintRawCompoundStmt(CS);
-      OS << NL;
-    }
-  }
+//   for (unsigned I = 0, N = Node->getNumCatchStmts(); I != N; ++I) {
+//     ObjCAtCatchStmt *catchStmt = Node->getCatchStmt(I);
+//     Indent() << "@catch(";
+//     if (catchStmt->getCatchParamDecl()) {
+//       if (Decl *DS = catchStmt->getCatchParamDecl())
+//         PrintRawDecl(DS);
+//     }
+//     OS << ")";
+//     if (auto *CS = dyn_cast<CompoundStmt>(catchStmt->getCatchBody())) {
+//       PrintRawCompoundStmt(CS);
+//       OS << NL;
+//     }
+//   }
 
-  if (auto *FS = static_cast<ObjCAtFinallyStmt *>(Node->getFinallyStmt())) {
-    Indent() << "@finally";
-    PrintRawCompoundStmt(dyn_cast<CompoundStmt>(FS->getFinallyBody()));
-    OS << NL;
-  }
-}
+//   if (auto *FS = static_cast<ObjCAtFinallyStmt *>(Node->getFinallyStmt())) {
+//     Indent() << "@finally";
+//     PrintRawCompoundStmt(dyn_cast<CompoundStmt>(FS->getFinallyBody()));
+//     OS << NL;
+//   }
+// }
 
 void StmtPrinter::VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *Node) {
 }
@@ -547,19 +547,19 @@ void StmtPrinter::VisitObjCAvailabilityCheckExpr(
   OS << "@available(...)";
 }
 
-void StmtPrinter::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *Node) {
-  Indent() << "@synchronized (";
-  PrintExpr(Node->getSynchExpr());
-  OS << ")";
-  PrintRawCompoundStmt(Node->getSynchBody());
-  OS << NL;
-}
+// void StmtPrinter::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *Node) {
+//   Indent() << "@synchronized (";
+//   PrintExpr(Node->getSynchExpr());
+//   OS << ")";
+//   PrintRawCompoundStmt(Node->getSynchBody());
+//   OS << NL;
+// }
 
-void StmtPrinter::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *Node) {
-  Indent() << "@autoreleasepool";
-  PrintRawCompoundStmt(dyn_cast<CompoundStmt>(Node->getSubStmt()));
-  OS << NL;
-}
+// void StmtPrinter::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *Node) {
+//   Indent() << "@autoreleasepool";
+//   PrintRawCompoundStmt(dyn_cast<CompoundStmt>(Node->getSubStmt()));
+//   OS << NL;
+// }
 
 void StmtPrinter::PrintRawCXXCatchStmt(CXXCatchStmt *Node) {
   OS << "catch (";
@@ -1438,10 +1438,10 @@ void StmtPrinter::VisitMemberExpr(MemberExpr *Node) {
     printTemplateArgumentList(OS, Node->template_arguments(), Policy);
 }
 
-void StmtPrinter::VisitObjCIsaExpr(ObjCIsaExpr *Node) {
-  PrintExpr(Node->getBase());
-  OS << (Node->isArrow() ? "->isa" : ".isa");
-}
+// void StmtPrinter::VisitObjCIsaExpr(ObjCIsaExpr *Node) {
+//   PrintExpr(Node->getBase());
+//   OS << (Node->isArrow() ? "->isa" : ".isa");
+// }
 
 void StmtPrinter::VisitExtVectorElementExpr(ExtVectorElementExpr *Node) {
   PrintExpr(Node->getBase());
@@ -2469,18 +2469,18 @@ void StmtPrinter::VisitCoyieldExpr(CoyieldExpr *S) {
 //   OS << (Node->getValue() ? "__objc_yes" : "__objc_no");
 // }
 
-void
-StmtPrinter::VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
-  PrintExpr(E->getSubExpr());
-}
+// void
+// StmtPrinter::VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
+//   PrintExpr(E->getSubExpr());
+// }
 
-void
-StmtPrinter::VisitObjCBridgedCastExpr(ObjCBridgedCastExpr *E) {
-  OS << '(' << E->getBridgeKindName();
-  E->getType().print(OS, Policy);
-  OS << ')';
-  PrintExpr(E->getSubExpr());
-}
+// void
+// StmtPrinter::VisitObjCBridgedCastExpr(ObjCBridgedCastExpr *E) {
+//   OS << '(' << E->getBridgeKindName();
+//   E->getType().print(OS, Policy);
+//   OS << ')';
+//   PrintExpr(E->getSubExpr());
+// }
 
 void StmtPrinter::VisitBlockExpr(BlockExpr *Node) {
   BlockDecl *BD = Node->getBlockDecl();

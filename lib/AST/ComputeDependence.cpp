@@ -331,17 +331,17 @@ ExprDependence latino::computeDependence(DependentCoawaitExpr *E) {
          ExprDependence::TypeValueInstantiation;
 }
 
-ExprDependence latino::computeDependence(ObjCBoxedExpr *E) {
-  return E->getSubExpr()->getDependence();
-}
+// ExprDependence latino::computeDependence(ObjCBoxedExpr *E) {
+//   return E->getSubExpr()->getDependence();
+// }
 
-ExprDependence latino::computeDependence(ObjCEncodeExpr *E) {
-  return toExprDependence(E->getEncodedType()->getDependence());
-}
+// ExprDependence latino::computeDependence(ObjCEncodeExpr *E) {
+//   return toExprDependence(E->getEncodedType()->getDependence());
+// }
 
-ExprDependence latino::computeDependence(ObjCIvarRefExpr *E) {
-  return turnTypeToValueDependence(E->getBase()->getDependence());
-}
+// ExprDependence latino::computeDependence(ObjCIvarRefExpr *E) {
+//   return turnTypeToValueDependence(E->getBase()->getDependence());
+// }
 
 // ExprDependence latino::computeDependence(ObjCPropertyRefExpr *E) {
 //   if (E->isObjectReceiver())
@@ -353,18 +353,18 @@ ExprDependence latino::computeDependence(ObjCIvarRefExpr *E) {
 //   return ExprDependence::None;
 // }
 
-ExprDependence latino::computeDependence(ObjCSubscriptRefExpr *E) {
-  return E->getBaseExpr()->getDependence() | E->getKeyExpr()->getDependence();
-}
+// ExprDependence latino::computeDependence(ObjCSubscriptRefExpr *E) {
+//   return E->getBaseExpr()->getDependence() | E->getKeyExpr()->getDependence();
+// }
 
-ExprDependence latino::computeDependence(ObjCIsaExpr *E) {
-  return E->getBase()->getDependence() & ~ExprDependence::Type &
-         ~ExprDependence::UnexpandedPack;
-}
+// ExprDependence latino::computeDependence(ObjCIsaExpr *E) {
+//   return E->getBase()->getDependence() & ~ExprDependence::Type &
+//          ~ExprDependence::UnexpandedPack;
+// }
 
-ExprDependence latino::computeDependence(ObjCIndirectCopyRestoreExpr *E) {
-  return E->getSubExpr()->getDependence();
-}
+// ExprDependence latino::computeDependence(ObjCIndirectCopyRestoreExpr *E) {
+//   return E->getSubExpr()->getDependence();
+// }
 
 ExprDependence latino::computeDependence(OMPArraySectionExpr *E) {
   auto D = E->getBase()->getDependence();
@@ -763,34 +763,34 @@ ExprDependence latino::computeDependence(ConceptSpecializationExpr *E,
   return D | toExprDependence(TA);
 }
 
-ExprDependence latino::computeDependence(ObjCArrayLiteral *E) {
-  auto D = ExprDependence::None;
-  Expr **Elements = E->getElements();
-  for (unsigned I = 0, N = E->getNumElements(); I != N; ++I)
-    D |= turnTypeToValueDependence(Elements[I]->getDependence());
-  return D;
-}
+// ExprDependence latino::computeDependence(ObjCArrayLiteral *E) {
+//   auto D = ExprDependence::None;
+//   Expr **Elements = E->getElements();
+//   for (unsigned I = 0, N = E->getNumElements(); I != N; ++I)
+//     D |= turnTypeToValueDependence(Elements[I]->getDependence());
+//   return D;
+// }
 
-ExprDependence latino::computeDependence(ObjCDictionaryLiteral *E) {
-  auto Deps = ExprDependence::None;
-  for (unsigned I = 0, N = E->getNumElements(); I < N; ++I) {
-    auto KV = E->getKeyValueElement(I);
-    auto KVDeps = turnTypeToValueDependence(KV.Key->getDependence() |
-                                            KV.Value->getDependence());
-    if (KV.EllipsisLoc.isValid())
-      KVDeps &= ~ExprDependence::UnexpandedPack;
-    Deps |= KVDeps;
-  }
-  return Deps;
-}
+// ExprDependence latino::computeDependence(ObjCDictionaryLiteral *E) {
+//   auto Deps = ExprDependence::None;
+//   for (unsigned I = 0, N = E->getNumElements(); I < N; ++I) {
+//     auto KV = E->getKeyValueElement(I);
+//     auto KVDeps = turnTypeToValueDependence(KV.Key->getDependence() |
+//                                             KV.Value->getDependence());
+//     if (KV.EllipsisLoc.isValid())
+//       KVDeps &= ~ExprDependence::UnexpandedPack;
+//     Deps |= KVDeps;
+//   }
+//   return Deps;
+// }
 
-ExprDependence latino::computeDependence(ObjCMessageExpr *E) {
-  auto D = ExprDependence::None;
-  if (auto *R = E->getInstanceReceiver())
-    D |= R->getDependence();
-  else
-    D |= toExprDependence(E->getType()->getDependence());
-  for (auto *A : E->arguments())
-    D |= A->getDependence();
-  return D;
-}
+// ExprDependence latino::computeDependence(ObjCMessageExpr *E) {
+//   auto D = ExprDependence::None;
+//   if (auto *R = E->getInstanceReceiver())
+//     D |= R->getDependence();
+//   else
+//     D |= toExprDependence(E->getType()->getDependence());
+//   for (auto *A : E->arguments())
+//     D |= A->getDependence();
+//   return D;
+// }

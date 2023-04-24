@@ -4134,10 +4134,10 @@ DiagnoseCStringFormatDirectiveInCFAPI(Sema &S,
   if (const CStyleCastExpr *CSCE = dyn_cast<CStyleCastExpr>(FormatExpr))
     FormatExpr = CSCE->getSubExpr();
   const StringLiteral *FormatString;
-  if (const ObjCStringLiteral *OSL =
-      dyn_cast<ObjCStringLiteral>(FormatExpr->IgnoreParenImpCasts()))
-    FormatString = OSL->getString();
-  else
+  // if (const ObjCStringLiteral *OSL =
+  //     dyn_cast<ObjCStringLiteral>(FormatExpr->IgnoreParenImpCasts()))
+  //   FormatString = OSL->getString();
+  // else
     FormatString = dyn_cast<StringLiteral>(FormatExpr->IgnoreParenImpCasts());
   if (!FormatString)
     return;
@@ -5470,11 +5470,11 @@ bool Sema::CheckObjCString(Expr *Arg) {
 ExprResult Sema::CheckOSLogFormatStringArg(Expr *Arg) {
   Arg = Arg->IgnoreParenCasts();
   auto *Literal = dyn_cast<StringLiteral>(Arg);
-  if (!Literal) {
-    if (auto *ObjcLiteral = dyn_cast<ObjCStringLiteral>(Arg)) {
-      Literal = ObjcLiteral->getString();
-    }
-  }
+  // if (!Literal) {
+  //   if (auto *ObjcLiteral = dyn_cast<ObjCStringLiteral>(Arg)) {
+  //     Literal = ObjcLiteral->getString();
+  //   }
+  // }
 
   if (!Literal || (!Literal->isAscii() && !Literal->isUTF8())) {
     return ExprError(
@@ -7013,13 +7013,13 @@ checkFormatStringExpr(Sema &S, const Expr *E, ArrayRef<const Expr *> Args,
 
   //   return SLCT_NotALiteral;
   // }
-  case Stmt::ObjCStringLiteralClass:
+  // case Stmt::ObjCStringLiteralClass:
   case Stmt::StringLiteralClass: {
     const StringLiteral *StrE = nullptr;
 
-    if (const ObjCStringLiteral *ObjCFExpr = dyn_cast<ObjCStringLiteral>(E))
-      StrE = ObjCFExpr->getString();
-    else
+    // if (const ObjCStringLiteral *ObjCFExpr = dyn_cast<ObjCStringLiteral>(E))
+    //   StrE = ObjCFExpr->getString();
+    // else
       StrE = cast<StringLiteral>(E);
 
     if (StrE) {
@@ -7458,13 +7458,13 @@ void CheckFormatHandler::HandleZeroPosition(const char *startPos,
 }
 
 void CheckFormatHandler::HandleNullChar(const char *nullCharacter) {
-  if (!isa<ObjCStringLiteral>(OrigFormatExpr)) {
+  // if (!isa<ObjCStringLiteral>(OrigFormatExpr)) {
     // The presence of a null character is likely an error.
     EmitFormatDiagnostic(
       S.PDiag(diag::warn_printf_format_string_contains_null_char),
       getLocationOfByte(nullCharacter), /*IsStringLocation*/true,
       getFormatStringRange());
-  }
+  // }
 }
 
 // Note that this may return NULL if there was an error parsing or building
@@ -8182,16 +8182,16 @@ static bool requiresParensToAddCast(const Expr *E) {
   case Stmt::FloatingLiteralClass:
   case Stmt::IntegerLiteralClass:
   case Stmt::MemberExprClass:
-  case Stmt::ObjCArrayLiteralClass:
-  case Stmt::ObjCBoolLiteralExprClass:
-  case Stmt::ObjCBoxedExprClass:
-  case Stmt::ObjCDictionaryLiteralClass:
-  case Stmt::ObjCEncodeExprClass:
-  case Stmt::ObjCIvarRefExprClass:
+  // case Stmt::ObjCArrayLiteralClass:
+  // case Stmt::ObjCBoolLiteralExprClass:
+  // case Stmt::ObjCBoxedExprClass:
+  // case Stmt::ObjCDictionaryLiteralClass:
+  // case Stmt::ObjCEncodeExprClass:
+  // case Stmt::ObjCIvarRefExprClass:
   // case Stmt::ObjCMessageExprClass:
-  case Stmt::ObjCPropertyRefExprClass:
-  case Stmt::ObjCStringLiteralClass:
-  case Stmt::ObjCSubscriptRefExprClass:
+  // case Stmt::ObjCPropertyRefExprClass:
+  // case Stmt::ObjCStringLiteralClass:
+  // case Stmt::ObjCSubscriptRefExprClass:
   case Stmt::ParenExprClass:
   case Stmt::StringLiteralClass:
   case Stmt::UnaryOperatorClass:
@@ -11543,13 +11543,13 @@ static void CheckImplicitConversion(Sema &S, Expr *E, QualType T,
       // prevented by a check in AnalyzeImplicitConversions().
       return DiagnoseImpCast(S, E, T, CC,
                              diag::warn_impcast_string_literal_to_bool);
-    if (isa<ObjCStringLiteral>(E) || isa<ObjCArrayLiteral>(E) ||
-        isa<ObjCDictionaryLiteral>(E) || isa<ObjCBoxedExpr>(E)) {
-      // This covers the literal expressions that evaluate to Objective-C
-      // objects.
-      return DiagnoseImpCast(S, E, T, CC,
-                             diag::warn_impcast_objective_c_literal_to_bool);
-    }
+    // if (isa<ObjCStringLiteral>(E) || isa<ObjCArrayLiteral>(E) ||
+    //     isa<ObjCDictionaryLiteral>(E) || isa<ObjCBoxedExpr>(E)) {
+    //   // This covers the literal expressions that evaluate to Objective-C
+    //   // objects.
+    //   return DiagnoseImpCast(S, E, T, CC,
+    //                          diag::warn_impcast_objective_c_literal_to_bool);
+    // }
     if (Source->isPointerType() || Source->canDecayToPointerType()) {
       // Warn on pointer to bool conversion that is always true.
       S.DiagnoseAlwaysNonNullPointer(E, Expr::NPCK_NotNull, /*IsEqual*/ false,
@@ -12459,12 +12459,12 @@ void Sema::CheckForIntOverflow (Expr *E) {
 
     if (auto InitList = dyn_cast<InitListExpr>(OriginalE))
       Exprs.append(InitList->inits().begin(), InitList->inits().end());
-    else if (isa<ObjCBoxedExpr>(OriginalE))
-      E->EvaluateForOverflow(Context);
+    // else if (isa<ObjCBoxedExpr>(OriginalE))
+    //   E->EvaluateForOverflow(Context);
     else if (auto Call = dyn_cast<CallExpr>(E))
       Exprs.append(Call->arg_begin(), Call->arg_end());
-    else if (auto Message = dyn_cast<ObjCMessageExpr>(E))
-      Exprs.append(Message->arg_begin(), Message->arg_end());
+    // else if (auto Message = dyn_cast<ObjCMessageExpr>(E))
+    //   Exprs.append(Message->arg_begin(), Message->arg_end());
   } while (!Exprs.empty());
 }
 
@@ -14151,15 +14151,16 @@ static Expr *findCapturingExpr(Sema &S, Expr *e, RetainCycleOwner &owner) {
   e = e->IgnoreParenCasts();
 
   // Look through [^{...} copy] and Block_copy(^{...}).
-  if (ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(e)) {
-    Selector Cmd = ME->getSelector();
-    if (Cmd.isUnarySelector() && Cmd.getNameForSlot(0) == "copy") {
-      e = ME->getInstanceReceiver();
-      if (!e)
-        return nullptr;
-      e = e->IgnoreParenCasts();
-    }
-  } else if (CallExpr *CE = dyn_cast<CallExpr>(e)) {
+  // if (ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(e)) {
+  //   Selector Cmd = ME->getSelector();
+  //   if (Cmd.isUnarySelector() && Cmd.getNameForSlot(0) == "copy") {
+  //     e = ME->getInstanceReceiver();
+  //     if (!e)
+  //       return nullptr;
+  //     e = e->IgnoreParenCasts();
+  //   }
+  // } else 
+  if (CallExpr *CE = dyn_cast<CallExpr>(e)) {
     if (CE->getNumArgs() == 1) {
       FunctionDecl *Fn = dyn_cast_or_null<FunctionDecl>(CE->getCalleeDecl());
       if (Fn) {
@@ -14442,14 +14443,14 @@ static bool checkUnsafeAssignLiteral(Sema &S, SourceLocation Loc,
 
   // This enum needs to match with the 'select' in
   // warn_objc_arc_literal_assign (off-by-1).
-  Sema::ObjCLiteralKind Kind = S.CheckLiteralKind(RHS);
-  if (Kind == Sema::LK_String || Kind == Sema::LK_None)
-    return false;
+  // Sema::ObjCLiteralKind Kind = S.CheckLiteralKind(RHS);
+  // if (Kind == Sema::LK_String || Kind == Sema::LK_None)
+  //   return false;
 
-  S.Diag(Loc, diag::warn_arc_literal_assign)
-    << (unsigned) Kind
-    << (isProperty ? 0 : 1)
-    << RHS->getSourceRange();
+  // S.Diag(Loc, diag::warn_arc_literal_assign)
+  //   << (unsigned) Kind
+  //   << (isProperty ? 0 : 1)
+  //   << RHS->getSourceRange();
 
   return true;
 }

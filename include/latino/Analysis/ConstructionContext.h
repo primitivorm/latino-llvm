@@ -113,14 +113,14 @@ public:
   ConstructionContextItem(const CXXInheritedCtorInitExpr *CE, unsigned Index)
       : Data(CE), Kind(ArgumentKind), Index(Index) {}
 
-  ConstructionContextItem(const ObjCMessageExpr *ME, unsigned Index)
-      : Data(ME), Kind(ArgumentKind), Index(Index) {}
+  // ConstructionContextItem(const ObjCMessageExpr *ME, unsigned Index)
+  //     : Data(ME), Kind(ArgumentKind), Index(Index) {}
 
   // A polymorphic version of the previous calls with dynamic type check.
   ConstructionContextItem(const Expr *E, unsigned Index)
       : Data(E), Kind(ArgumentKind), Index(Index) {
     assert(isa<CallExpr>(E) || isa<CXXConstructExpr>(E) ||
-           isa<CXXInheritedCtorInitExpr>(E) || isa<ObjCMessageExpr>(E));
+           isa<CXXInheritedCtorInitExpr>(E) /*|| isa<ObjCMessageExpr>(E)*/);
   }
 
   ConstructionContextItem(const CXXCtorInitializer *Init)
@@ -643,8 +643,8 @@ class ArgumentConstructionContext : public ConstructionContext {
                                        const CXXBindTemporaryExpr *BTE)
       : ConstructionContext(ArgumentKind), CE(CE),
         Index(Index), BTE(BTE) {
-    assert(isa<CallExpr>(CE) || isa<CXXConstructExpr>(CE) ||
-           isa<ObjCMessageExpr>(CE));
+    assert(isa<CallExpr>(CE) || isa<CXXConstructExpr>(CE) /*||
+           isa<ObjCMessageExpr>(CE)*/);
     // BTE is optional.
   }
 

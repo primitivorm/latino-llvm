@@ -1882,137 +1882,137 @@ private:
   std::set<FormatToken *, FormatTokenLess> DeletedTokens;
 };
 
-class ObjCHeaderStyleGuesser : public TokenAnalyzer {
-public:
-  ObjCHeaderStyleGuesser(const Environment &Env, const FormatStyle &Style)
-      : TokenAnalyzer(Env, Style), IsObjC(false) {}
+// class ObjCHeaderStyleGuesser : public TokenAnalyzer {
+// public:
+//   ObjCHeaderStyleGuesser(const Environment &Env, const FormatStyle &Style)
+//       : TokenAnalyzer(Env, Style), IsObjC(false) {}
 
-  std::pair<tooling::Replacements, unsigned>
-  analyze(TokenAnnotator &Annotator,
-          SmallVectorImpl<AnnotatedLine *> &AnnotatedLines,
-          FormatTokenLexer &Tokens) override {
-    assert(Style.Language == FormatStyle::LK_Cpp);
-    IsObjC = guessIsObjC(Env.getSourceManager(), AnnotatedLines,
-                         Tokens.getKeywords());
-    tooling::Replacements Result;
-    return {Result, 0};
-  }
+//   std::pair<tooling::Replacements, unsigned>
+//   analyze(TokenAnnotator &Annotator,
+//           SmallVectorImpl<AnnotatedLine *> &AnnotatedLines,
+//           FormatTokenLexer &Tokens) override {
+//     assert(Style.Language == FormatStyle::LK_Cpp);
+//     IsObjC = guessIsObjC(Env.getSourceManager(), AnnotatedLines,
+//                          Tokens.getKeywords());
+//     tooling::Replacements Result;
+//     return {Result, 0};
+//   }
 
-  bool isObjC() { return IsObjC; }
+//   // bool isObjC() { return IsObjC; }
 
-private:
-  static bool
-  guessIsObjC(const SourceManager &SourceManager,
-              const SmallVectorImpl<AnnotatedLine *> &AnnotatedLines,
-              const AdditionalKeywords &Keywords) {
-    // Keep this array sorted, since we are binary searching over it.
-    static constexpr llvm::StringLiteral FoundationIdentifiers[] = {
-        "CGFloat",
-        "CGPoint",
-        "CGPointMake",
-        "CGPointZero",
-        "CGRect",
-        "CGRectEdge",
-        "CGRectInfinite",
-        "CGRectMake",
-        "CGRectNull",
-        "CGRectZero",
-        "CGSize",
-        "CGSizeMake",
-        "CGVector",
-        "CGVectorMake",
-        "NSAffineTransform",
-        "NSArray",
-        "NSAttributedString",
-        "NSBlockOperation",
-        "NSBundle",
-        "NSCache",
-        "NSCalendar",
-        "NSCharacterSet",
-        "NSCountedSet",
-        "NSData",
-        "NSDataDetector",
-        "NSDecimal",
-        "NSDecimalNumber",
-        "NSDictionary",
-        "NSEdgeInsets",
-        "NSHashTable",
-        "NSIndexPath",
-        "NSIndexSet",
-        "NSInteger",
-        "NSInvocationOperation",
-        "NSLocale",
-        "NSMapTable",
-        "NSMutableArray",
-        "NSMutableAttributedString",
-        "NSMutableCharacterSet",
-        "NSMutableData",
-        "NSMutableDictionary",
-        "NSMutableIndexSet",
-        "NSMutableOrderedSet",
-        "NSMutableSet",
-        "NSMutableString",
-        "NSNumber",
-        "NSNumberFormatter",
-        "NSObject",
-        "NSOperation",
-        "NSOperationQueue",
-        "NSOperationQueuePriority",
-        "NSOrderedSet",
-        "NSPoint",
-        "NSPointerArray",
-        "NSQualityOfService",
-        "NSRange",
-        "NSRect",
-        "NSRegularExpression",
-        "NSSet",
-        "NSSize",
-        "NSString",
-        "NSTimeZone",
-        "NSUInteger",
-        "NSURL",
-        "NSURLComponents",
-        "NSURLQueryItem",
-        "NSUUID",
-        "NSValue",
-        "UIImage",
-        "UIView",
-    };
+// private:
+//   static bool
+//   guessIsObjC(const SourceManager &SourceManager,
+//               const SmallVectorImpl<AnnotatedLine *> &AnnotatedLines,
+//               const AdditionalKeywords &Keywords) {
+//     // Keep this array sorted, since we are binary searching over it.
+//     static constexpr llvm::StringLiteral FoundationIdentifiers[] = {
+//         "CGFloat",
+//         "CGPoint",
+//         "CGPointMake",
+//         "CGPointZero",
+//         "CGRect",
+//         "CGRectEdge",
+//         "CGRectInfinite",
+//         "CGRectMake",
+//         "CGRectNull",
+//         "CGRectZero",
+//         "CGSize",
+//         "CGSizeMake",
+//         "CGVector",
+//         "CGVectorMake",
+//         "NSAffineTransform",
+//         "NSArray",
+//         "NSAttributedString",
+//         "NSBlockOperation",
+//         "NSBundle",
+//         "NSCache",
+//         "NSCalendar",
+//         "NSCharacterSet",
+//         "NSCountedSet",
+//         "NSData",
+//         "NSDataDetector",
+//         "NSDecimal",
+//         "NSDecimalNumber",
+//         "NSDictionary",
+//         "NSEdgeInsets",
+//         "NSHashTable",
+//         "NSIndexPath",
+//         "NSIndexSet",
+//         "NSInteger",
+//         "NSInvocationOperation",
+//         "NSLocale",
+//         "NSMapTable",
+//         "NSMutableArray",
+//         "NSMutableAttributedString",
+//         "NSMutableCharacterSet",
+//         "NSMutableData",
+//         "NSMutableDictionary",
+//         "NSMutableIndexSet",
+//         "NSMutableOrderedSet",
+//         "NSMutableSet",
+//         "NSMutableString",
+//         "NSNumber",
+//         "NSNumberFormatter",
+//         "NSObject",
+//         "NSOperation",
+//         "NSOperationQueue",
+//         "NSOperationQueuePriority",
+//         "NSOrderedSet",
+//         "NSPoint",
+//         "NSPointerArray",
+//         "NSQualityOfService",
+//         "NSRange",
+//         "NSRect",
+//         "NSRegularExpression",
+//         "NSSet",
+//         "NSSize",
+//         "NSString",
+//         "NSTimeZone",
+//         "NSUInteger",
+//         "NSURL",
+//         "NSURLComponents",
+//         "NSURLQueryItem",
+//         "NSUUID",
+//         "NSValue",
+//         "UIImage",
+//         "UIView",
+//     };
 
-    for (auto Line : AnnotatedLines) {
-      for (const FormatToken *FormatTok = Line->First; FormatTok;
-           FormatTok = FormatTok->Next) {
-        if ((FormatTok->Previous && FormatTok->Previous->is(tok::at) &&
-             (FormatTok->Tok.getObjCKeywordID() != tok::objc_not_keyword ||
-              FormatTok->isOneOf(tok::numeric_constant, tok::l_square,
-                                 tok::l_brace))) ||
-            (FormatTok->Tok.isAnyIdentifier() &&
-             std::binary_search(std::begin(FoundationIdentifiers),
-                                std::end(FoundationIdentifiers),
-                                FormatTok->TokenText)) ||
-            FormatTok->is(TT_ObjCStringLiteral) ||
-            FormatTok->isOneOf(Keywords.kw_NS_CLOSED_ENUM, Keywords.kw_NS_ENUM,
-                               Keywords.kw_NS_OPTIONS, TT_ObjCBlockLBrace,
-                               TT_ObjCBlockLParen, TT_ObjCDecl, TT_ObjCForIn,
-                               TT_ObjCMethodExpr, TT_ObjCMethodSpecifier,
-                               TT_ObjCProperty)) {
-          LLVM_DEBUG(llvm::dbgs()
-                     << "Detected ObjC at location "
-                     << FormatTok->Tok.getLocation().printToString(
-                            SourceManager)
-                     << " token: " << FormatTok->TokenText << " token type: "
-                     << getTokenTypeName(FormatTok->getType()) << "\n");
-          return true;
-        }
-        if (guessIsObjC(SourceManager, Line->Children, Keywords))
-          return true;
-      }
-    }
-    return false;
-  }
+//     for (auto Line : AnnotatedLines) {
+//       for (const FormatToken *FormatTok = Line->First; FormatTok;
+//            FormatTok = FormatTok->Next) {
+//         if ((FormatTok->Previous && FormatTok->Previous->is(tok::at) &&
+//              (/*FormatTok->Tok.getObjCKeywordID() != tok::objc_not_keyword ||*/
+//               FormatTok->isOneOf(tok::numeric_constant, tok::l_square,
+//                                  tok::l_brace))) ||
+//             (FormatTok->Tok.isAnyIdentifier() &&
+//              std::binary_search(std::begin(FoundationIdentifiers),
+//                                 std::end(FoundationIdentifiers),
+//                                 FormatTok->TokenText)) ||
+//             // FormatTok->is(TT_ObjCStringLiteral) ||
+//             FormatTok->isOneOf(Keywords.kw_NS_CLOSED_ENUM, Keywords.kw_NS_ENUM,
+//                                Keywords.kw_NS_OPTIONS, /*TT_ObjCBlockLBrace,
+//                                TT_ObjCBlockLParen,*/ TT_ObjCDecl, TT_ObjCForIn,
+//                                TT_ObjCMethodExpr, TT_ObjCMethodSpecifier,
+//                                TT_ObjCProperty)) {
+//           LLVM_DEBUG(llvm::dbgs()
+//                      << "Detected ObjC at location "
+//                      << FormatTok->Tok.getLocation().printToString(
+//                             SourceManager)
+//                      << " token: " << FormatTok->TokenText << " token type: "
+//                      << getTokenTypeName(FormatTok->getType()) << "\n");
+//           return true;
+//         }
+//         if (guessIsObjC(SourceManager, Line->Children, Keywords))
+//           return true;
+//       }
+//     }
+//     return false;
+//   }
 
-  bool IsObjC;
-};
+//   bool IsObjC;
+// };
 
 struct IncludeDirective {
   StringRef Filename;
@@ -2774,8 +2774,8 @@ FormatStyle::LanguageKind guessLanguage(StringRef FileName, StringRef Code) {
       Environment Env(Code, NonEmptyFileName, /*Ranges=*/{});
       ObjCHeaderStyleGuesser Guesser(Env, getLLVMStyle());
       Guesser.process();
-      if (Guesser.isObjC())
-        return FormatStyle::LK_ObjC;
+      // if (Guesser.isObjC())
+      //   return FormatStyle::LK_ObjC;
     }
   }
   return GuessedLanguage;

@@ -735,9 +735,9 @@ bool RecursiveASTVisitor<Derived>::TraverseDeclarationNameInfo(
     break;
 
   case DeclarationName::Identifier:
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
   case DeclarationName::CXXOperatorName:
   case DeclarationName::CXXLiteralOperatorName:
   case DeclarationName::CXXUsingDirective:
@@ -2217,13 +2217,13 @@ DEF_TRAVERSE_STMT(IndirectGotoStmt, {})
 DEF_TRAVERSE_STMT(LabelStmt, {})
 DEF_TRAVERSE_STMT(AttributedStmt, {})
 DEF_TRAVERSE_STMT(NullStmt, {})
-DEF_TRAVERSE_STMT(ObjCAtCatchStmt, {})
-DEF_TRAVERSE_STMT(ObjCAtFinallyStmt, {})
-DEF_TRAVERSE_STMT(ObjCAtSynchronizedStmt, {})
-DEF_TRAVERSE_STMT(ObjCAtThrowStmt, {})
-DEF_TRAVERSE_STMT(ObjCAtTryStmt, {})
-DEF_TRAVERSE_STMT(ObjCForCollectionStmt, {})
-DEF_TRAVERSE_STMT(ObjCAutoreleasePoolStmt, {})
+// DEF_TRAVERSE_STMT(ObjCAtCatchStmt, {})
+// DEF_TRAVERSE_STMT(ObjCAtFinallyStmt, {})
+// DEF_TRAVERSE_STMT(ObjCAtSynchronizedStmt, {})
+// DEF_TRAVERSE_STMT(ObjCAtThrowStmt, {})
+// DEF_TRAVERSE_STMT(ObjCAtTryStmt, {})
+// DEF_TRAVERSE_STMT(ObjCForCollectionStmt, {})
+// DEF_TRAVERSE_STMT(ObjCAutoreleasePoolStmt, {})
 
 DEF_TRAVERSE_STMT(CXXForRangeStmt, {
   if (!getDerived().shouldVisitImplicitCode()) {
@@ -2583,20 +2583,20 @@ DEF_TRAVERSE_STMT(ArrayInitLoopExpr, {
     TRY_TO_TRAVERSE_OR_ENQUEUE_STMT(OVE->getSourceExpr());
 })
 DEF_TRAVERSE_STMT(ArrayInitIndexExpr, {})
-DEF_TRAVERSE_STMT(ObjCBoolLiteralExpr, {})
+// DEF_TRAVERSE_STMT(ObjCBoolLiteralExpr, {})
 
-DEF_TRAVERSE_STMT(ObjCEncodeExpr, {
-  if (TypeSourceInfo *TInfo = S->getEncodedTypeSourceInfo())
-    TRY_TO(TraverseTypeLoc(TInfo->getTypeLoc()));
-})
+// DEF_TRAVERSE_STMT(ObjCEncodeExpr, {
+//   if (TypeSourceInfo *TInfo = S->getEncodedTypeSourceInfo())
+//     TRY_TO(TraverseTypeLoc(TInfo->getTypeLoc()));
+// })
 
-DEF_TRAVERSE_STMT(ObjCIsaExpr, {})
-DEF_TRAVERSE_STMT(ObjCIvarRefExpr, {})
+// DEF_TRAVERSE_STMT(ObjCIsaExpr, {})
+// DEF_TRAVERSE_STMT(ObjCIvarRefExpr, {})
 
-DEF_TRAVERSE_STMT(ObjCMessageExpr, {
-  if (TypeSourceInfo *TInfo = S->getClassReceiverTypeInfo())
-    TRY_TO(TraverseTypeLoc(TInfo->getTypeLoc()));
-})
+// DEF_TRAVERSE_STMT(ObjCMessageExpr, {
+//   if (TypeSourceInfo *TInfo = S->getClassReceiverTypeInfo())
+//     TRY_TO(TraverseTypeLoc(TInfo->getTypeLoc()));
+// })
 
 // DEF_TRAVERSE_STMT(ObjCPropertyRefExpr, {})
 // DEF_TRAVERSE_STMT(ObjCSubscriptRefExpr, {})
@@ -2744,10 +2744,10 @@ DEF_TRAVERSE_STMT(CharacterLiteral, {})
 DEF_TRAVERSE_STMT(FloatingLiteral, {})
 DEF_TRAVERSE_STMT(ImaginaryLiteral, {})
 DEF_TRAVERSE_STMT(StringLiteral, {})
-DEF_TRAVERSE_STMT(ObjCStringLiteral, {})
-DEF_TRAVERSE_STMT(ObjCBoxedExpr, {})
-DEF_TRAVERSE_STMT(ObjCArrayLiteral, {})
-DEF_TRAVERSE_STMT(ObjCDictionaryLiteral, {})
+// DEF_TRAVERSE_STMT(ObjCStringLiteral, {})
+// DEF_TRAVERSE_STMT(ObjCBoxedExpr, {})
+// DEF_TRAVERSE_STMT(ObjCArrayLiteral, {})
+// DEF_TRAVERSE_STMT(ObjCDictionaryLiteral, {})
 
 // Traverse OpenCL: AsType, Convert.
 DEF_TRAVERSE_STMT(AsTypeExpr, {})
@@ -3373,11 +3373,11 @@ bool RecursiveASTVisitor<Derived>::VisitOMPFlushClause(OMPFlushClause *C) {
   return true;
 }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDepobjClause(OMPDepobjClause *C) {
-  TRY_TO(TraverseStmt(C->getDepobj()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDepobjClause(OMPDepobjClause *C) {
+//   TRY_TO(TraverseStmt(C->getDepobj()));
+//   return true;
+// }
 
 template <typename Derived>
 bool RecursiveASTVisitor<Derived>::VisitOMPDependClause(OMPDependClause *C) {

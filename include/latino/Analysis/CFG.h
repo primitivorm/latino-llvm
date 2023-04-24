@@ -186,7 +186,7 @@ public:
   /// Returns true when call expression \p CE needs to be represented
   /// by CFGCXXRecordTypedCall, as opposed to a regular CFGStmt.
   static bool isCXXRecordTypedCall(Expr *E) {
-    assert(isa<CallExpr>(E) || isa<ObjCMessageExpr>(E));
+    assert(isa<CallExpr>(E) /*|| isa<ObjCMessageExpr>(E)*/);
     // There is no such thing as reference-type expression. If the function
     // returns a reference, it'll return the respective lvalue or xvalue
     // instead, and we're only interested in objects.

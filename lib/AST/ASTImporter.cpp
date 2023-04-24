@@ -567,13 +567,13 @@ namespace latino {
     ExpectedStmt VisitCXXTryStmt(CXXTryStmt *S);
     ExpectedStmt VisitCXXForRangeStmt(CXXForRangeStmt *S);
     // FIXME: MSDependentExistsStmt
-    ExpectedStmt VisitObjCForCollectionStmt(ObjCForCollectionStmt *S);
-    ExpectedStmt VisitObjCAtCatchStmt(ObjCAtCatchStmt *S);
-    ExpectedStmt VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *S);
-    ExpectedStmt VisitObjCAtTryStmt(ObjCAtTryStmt *S);
-    ExpectedStmt VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S);
-    ExpectedStmt VisitObjCAtThrowStmt(ObjCAtThrowStmt *S);
-    ExpectedStmt VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S);
+    // ExpectedStmt VisitObjCForCollectionStmt(ObjCForCollectionStmt *S);
+    // ExpectedStmt VisitObjCAtCatchStmt(ObjCAtCatchStmt *S);
+    // ExpectedStmt VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *S);
+    // ExpectedStmt VisitObjCAtTryStmt(ObjCAtTryStmt *S);
+    // ExpectedStmt VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S);
+    // ExpectedStmt VisitObjCAtThrowStmt(ObjCAtThrowStmt *S);
+    // ExpectedStmt VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S);
 
     // Importing expressions
     ExpectedStmt VisitExpr(Expr *E);
@@ -1678,9 +1678,9 @@ ASTNodeImporter::ImportDeclarationNameLoc(
   // We only have to import To.LocInfo.
   switch (To.getName().getNameKind()) {
   case DeclarationName::Identifier:
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
   case DeclarationName::CXXUsingDirective:
   case DeclarationName::CXXDeductionGuideName:
     return Error::success();
@@ -4051,13 +4051,13 @@ ExpectedDecl ASTNodeImporter::VisitParmVarDecl(ParmVarDecl *D) {
   if (Error Err = ImportDefaultArgOfParmVarDecl(D, ToParm))
     return std::move(Err);
 
-  if (D->isObjCMethodParameter()) {
-    ToParm->setObjCMethodScopeInfo(D->getFunctionScopeIndex());
-    ToParm->setObjCDeclQualifier(D->getObjCDeclQualifier());
-  } else {
+  // if (D->isObjCMethodParameter()) {
+  //   ToParm->setObjCMethodScopeInfo(D->getFunctionScopeIndex());
+  //   ToParm->setObjCDeclQualifier(D->getObjCDeclQualifier());
+  // } else {
     ToParm->setScopeInfo(D->getFunctionScopeDepth(),
                          D->getFunctionScopeIndex());
-  }
+  // }
 
   return ToParm;
 }
@@ -6272,109 +6272,109 @@ ExpectedStmt ASTNodeImporter::VisitCXXForRangeStmt(CXXForRangeStmt *S) {
       ToBody, ToForLoc, ToCoawaitLoc, ToColonLoc, ToRParenLoc);
 }
 
-ExpectedStmt
-ASTNodeImporter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
-  Error Err = Error::success();
-  auto ToElement = importChecked(Err, S->getElement());
-  auto ToCollection = importChecked(Err, S->getCollection());
-  auto ToBody = importChecked(Err, S->getBody());
-  auto ToForLoc = importChecked(Err, S->getForLoc());
-  auto ToRParenLoc = importChecked(Err, S->getRParenLoc());
-  if (Err)
-    return std::move(Err);
+// ExpectedStmt
+// ASTNodeImporter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
+//   Error Err = Error::success();
+//   auto ToElement = importChecked(Err, S->getElement());
+//   auto ToCollection = importChecked(Err, S->getCollection());
+//   auto ToBody = importChecked(Err, S->getBody());
+//   auto ToForLoc = importChecked(Err, S->getForLoc());
+//   auto ToRParenLoc = importChecked(Err, S->getRParenLoc());
+//   if (Err)
+//     return std::move(Err);
 
-  return new (Importer.getToContext()) ObjCForCollectionStmt(ToElement,
-                                                             ToCollection,
-                                                             ToBody,
-                                                             ToForLoc,
-                                                             ToRParenLoc);
-}
+//   return new (Importer.getToContext()) ObjCForCollectionStmt(ToElement,
+//                                                              ToCollection,
+//                                                              ToBody,
+//                                                              ToForLoc,
+//                                                              ToRParenLoc);
+// }
 
-ExpectedStmt ASTNodeImporter::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
+// ExpectedStmt ASTNodeImporter::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
 
-  Error Err = Error::success();
-  auto ToAtCatchLoc = importChecked(Err, S->getAtCatchLoc());
-  auto ToRParenLoc = importChecked(Err, S->getRParenLoc());
-  auto ToCatchParamDecl = importChecked(Err, S->getCatchParamDecl());
-  auto ToCatchBody = importChecked(Err, S->getCatchBody());
-  if (Err)
-    return std::move(Err);
+//   Error Err = Error::success();
+//   auto ToAtCatchLoc = importChecked(Err, S->getAtCatchLoc());
+//   auto ToRParenLoc = importChecked(Err, S->getRParenLoc());
+//   auto ToCatchParamDecl = importChecked(Err, S->getCatchParamDecl());
+//   auto ToCatchBody = importChecked(Err, S->getCatchBody());
+//   if (Err)
+//     return std::move(Err);
 
-  return new (Importer.getToContext()) ObjCAtCatchStmt (
-      ToAtCatchLoc, ToRParenLoc, ToCatchParamDecl, ToCatchBody);
-}
+//   return new (Importer.getToContext()) ObjCAtCatchStmt (
+//       ToAtCatchLoc, ToRParenLoc, ToCatchParamDecl, ToCatchBody);
+// }
 
-ExpectedStmt ASTNodeImporter::VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *S) {
-  ExpectedSLoc ToAtFinallyLocOrErr = import(S->getAtFinallyLoc());
-  if (!ToAtFinallyLocOrErr)
-    return ToAtFinallyLocOrErr.takeError();
-  ExpectedStmt ToAtFinallyStmtOrErr = import(S->getFinallyBody());
-  if (!ToAtFinallyStmtOrErr)
-    return ToAtFinallyStmtOrErr.takeError();
-  return new (Importer.getToContext()) ObjCAtFinallyStmt(*ToAtFinallyLocOrErr,
-                                                         *ToAtFinallyStmtOrErr);
-}
+// ExpectedStmt ASTNodeImporter::VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *S) {
+//   ExpectedSLoc ToAtFinallyLocOrErr = import(S->getAtFinallyLoc());
+//   if (!ToAtFinallyLocOrErr)
+//     return ToAtFinallyLocOrErr.takeError();
+//   ExpectedStmt ToAtFinallyStmtOrErr = import(S->getFinallyBody());
+//   if (!ToAtFinallyStmtOrErr)
+//     return ToAtFinallyStmtOrErr.takeError();
+//   return new (Importer.getToContext()) ObjCAtFinallyStmt(*ToAtFinallyLocOrErr,
+//                                                          *ToAtFinallyStmtOrErr);
+// }
 
-ExpectedStmt ASTNodeImporter::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
+// ExpectedStmt ASTNodeImporter::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
 
-  Error Err = Error::success();
-  auto ToAtTryLoc = importChecked(Err, S->getAtTryLoc());
-  auto ToTryBody = importChecked(Err, S->getTryBody());
-  auto ToFinallyStmt = importChecked(Err, S->getFinallyStmt());
-  if (Err)
-    return std::move(Err);
+//   Error Err = Error::success();
+//   auto ToAtTryLoc = importChecked(Err, S->getAtTryLoc());
+//   auto ToTryBody = importChecked(Err, S->getTryBody());
+//   auto ToFinallyStmt = importChecked(Err, S->getFinallyStmt());
+//   if (Err)
+//     return std::move(Err);
 
-  SmallVector<Stmt *, 1> ToCatchStmts(S->getNumCatchStmts());
-  for (unsigned CI = 0, CE = S->getNumCatchStmts(); CI != CE; ++CI) {
-    ObjCAtCatchStmt *FromCatchStmt = S->getCatchStmt(CI);
-    if (ExpectedStmt ToCatchStmtOrErr = import(FromCatchStmt))
-      ToCatchStmts[CI] = *ToCatchStmtOrErr;
-    else
-      return ToCatchStmtOrErr.takeError();
-  }
+//   SmallVector<Stmt *, 1> ToCatchStmts(S->getNumCatchStmts());
+//   for (unsigned CI = 0, CE = S->getNumCatchStmts(); CI != CE; ++CI) {
+//     ObjCAtCatchStmt *FromCatchStmt = S->getCatchStmt(CI);
+//     if (ExpectedStmt ToCatchStmtOrErr = import(FromCatchStmt))
+//       ToCatchStmts[CI] = *ToCatchStmtOrErr;
+//     else
+//       return ToCatchStmtOrErr.takeError();
+//   }
 
-  return ObjCAtTryStmt::Create(Importer.getToContext(),
-                               ToAtTryLoc, ToTryBody,
-                               ToCatchStmts.begin(), ToCatchStmts.size(),
-                               ToFinallyStmt);
-}
+//   return ObjCAtTryStmt::Create(Importer.getToContext(),
+//                                ToAtTryLoc, ToTryBody,
+//                                ToCatchStmts.begin(), ToCatchStmts.size(),
+//                                ToFinallyStmt);
+// }
 
-ExpectedStmt
-ASTNodeImporter::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
+// ExpectedStmt
+// ASTNodeImporter::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
 
-  Error Err = Error::success();
-  auto ToAtSynchronizedLoc = importChecked(Err, S->getAtSynchronizedLoc());
-  auto ToSynchExpr = importChecked(Err, S->getSynchExpr());
-  auto ToSynchBody = importChecked(Err, S->getSynchBody());
-  if (Err)
-    return std::move(Err);
+//   Error Err = Error::success();
+//   auto ToAtSynchronizedLoc = importChecked(Err, S->getAtSynchronizedLoc());
+//   auto ToSynchExpr = importChecked(Err, S->getSynchExpr());
+//   auto ToSynchBody = importChecked(Err, S->getSynchBody());
+//   if (Err)
+//     return std::move(Err);
 
-  return new (Importer.getToContext()) ObjCAtSynchronizedStmt(
-    ToAtSynchronizedLoc, ToSynchExpr, ToSynchBody);
-}
+//   return new (Importer.getToContext()) ObjCAtSynchronizedStmt(
+//     ToAtSynchronizedLoc, ToSynchExpr, ToSynchBody);
+// }
 
-ExpectedStmt ASTNodeImporter::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
-  ExpectedSLoc ToThrowLocOrErr = import(S->getThrowLoc());
-  if (!ToThrowLocOrErr)
-    return ToThrowLocOrErr.takeError();
-  ExpectedExpr ToThrowExprOrErr = import(S->getThrowExpr());
-  if (!ToThrowExprOrErr)
-    return ToThrowExprOrErr.takeError();
-  return new (Importer.getToContext()) ObjCAtThrowStmt(
-      *ToThrowLocOrErr, *ToThrowExprOrErr);
-}
+// ExpectedStmt ASTNodeImporter::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
+//   ExpectedSLoc ToThrowLocOrErr = import(S->getThrowLoc());
+//   if (!ToThrowLocOrErr)
+//     return ToThrowLocOrErr.takeError();
+//   ExpectedExpr ToThrowExprOrErr = import(S->getThrowExpr());
+//   if (!ToThrowExprOrErr)
+//     return ToThrowExprOrErr.takeError();
+//   return new (Importer.getToContext()) ObjCAtThrowStmt(
+//       *ToThrowLocOrErr, *ToThrowExprOrErr);
+// }
 
-ExpectedStmt ASTNodeImporter::VisitObjCAutoreleasePoolStmt(
-    ObjCAutoreleasePoolStmt *S) {
-  ExpectedSLoc ToAtLocOrErr = import(S->getAtLoc());
-  if (!ToAtLocOrErr)
-    return ToAtLocOrErr.takeError();
-  ExpectedStmt ToSubStmtOrErr = import(S->getSubStmt());
-  if (!ToSubStmtOrErr)
-    return ToSubStmtOrErr.takeError();
-  return new (Importer.getToContext()) ObjCAutoreleasePoolStmt(*ToAtLocOrErr,
-                                                               *ToSubStmtOrErr);
-}
+// ExpectedStmt ASTNodeImporter::VisitObjCAutoreleasePoolStmt(
+//     ObjCAutoreleasePoolStmt *S) {
+//   ExpectedSLoc ToAtLocOrErr = import(S->getAtLoc());
+//   if (!ToAtLocOrErr)
+//     return ToAtLocOrErr.takeError();
+//   ExpectedStmt ToSubStmtOrErr = import(S->getSubStmt());
+//   if (!ToSubStmtOrErr)
+//     return ToSubStmtOrErr.takeError();
+//   return new (Importer.getToContext()) ObjCAutoreleasePoolStmt(*ToAtLocOrErr,
+//                                                                *ToSubStmtOrErr);
+// }
 
 //----------------------------------------------------------------------------
 // Import Expressions
@@ -6969,18 +6969,18 @@ ExpectedStmt ASTNodeImporter::VisitExplicitCastExpr(ExplicitCastExpr *E) {
         *ToRParenLocOrErr);
   }
 
-  case Stmt::ObjCBridgedCastExprClass: {
-    auto *OCE = cast<ObjCBridgedCastExpr>(E);
-    ExpectedSLoc ToLParenLocOrErr = import(OCE->getLParenLoc());
-    if (!ToLParenLocOrErr)
-      return ToLParenLocOrErr.takeError();
-    ExpectedSLoc ToBridgeKeywordLocOrErr = import(OCE->getBridgeKeywordLoc());
-    if (!ToBridgeKeywordLocOrErr)
-      return ToBridgeKeywordLocOrErr.takeError();
-    return new (Importer.getToContext()) ObjCBridgedCastExpr(
-        *ToLParenLocOrErr, OCE->getBridgeKind(), E->getCastKind(),
-        *ToBridgeKeywordLocOrErr, ToTypeInfoAsWritten, ToSubExpr);
-  }
+  // case Stmt::ObjCBridgedCastExprClass: {
+  //   auto *OCE = cast<ObjCBridgedCastExpr>(E);
+  //   ExpectedSLoc ToLParenLocOrErr = import(OCE->getLParenLoc());
+  //   if (!ToLParenLocOrErr)
+  //     return ToLParenLocOrErr.takeError();
+  //   ExpectedSLoc ToBridgeKeywordLocOrErr = import(OCE->getBridgeKeywordLoc());
+  //   if (!ToBridgeKeywordLocOrErr)
+  //     return ToBridgeKeywordLocOrErr.takeError();
+  //   return new (Importer.getToContext()) ObjCBridgedCastExpr(
+  //       *ToLParenLocOrErr, OCE->getBridgeKind(), E->getCastKind(),
+  //       *ToBridgeKeywordLocOrErr, ToTypeInfoAsWritten, ToSubExpr);
+  // }
   default:
     llvm_unreachable("Cast expression of unsupported type!");
     return make_error<ImportError>(ImportError::UnsupportedConstruct);
@@ -8823,13 +8823,13 @@ Expected<DeclarationName> ASTImporter::Import(DeclarationName FromName) {
   case DeclarationName::Identifier:
     return DeclarationName(Import(FromName.getAsIdentifierInfo()));
 
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
-    if (auto ToSelOrErr = Import(FromName.getObjCSelector()))
-      return DeclarationName(*ToSelOrErr);
-    else
-      return ToSelOrErr.takeError();
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  //   if (auto ToSelOrErr = Import(FromName.getObjCSelector()))
+  //     return DeclarationName(*ToSelOrErr);
+  //   else
+  //     return ToSelOrErr.takeError();
 
   case DeclarationName::CXXConstructorName: {
     if (auto ToTyOrErr = Import(FromName.getCXXNameType()))

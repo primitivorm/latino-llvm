@@ -1236,31 +1236,31 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
     return mergeCanThrow(CT, canSubStmtsThrow(*this, BTE));
   }
 
-  case Expr::PseudoObjectExprClass: {
-    auto *POE = cast<PseudoObjectExpr>(S);
-    CanThrowResult CT = CT_Cannot;
-    for (const Expr *E : POE->semantics()) {
-      CT = mergeCanThrow(CT, canThrow(E));
-      if (CT == CT_Can)
-        break;
-    }
-    return CT;
-  }
+  // case Expr::PseudoObjectExprClass: {
+  //   auto *POE = cast<PseudoObjectExpr>(S);
+  //   CanThrowResult CT = CT_Cannot;
+  //   for (const Expr *E : POE->semantics()) {
+  //     CT = mergeCanThrow(CT, canThrow(E));
+  //     if (CT == CT_Can)
+  //       break;
+  //   }
+  //   return CT;
+  // }
 
     // ObjC message sends are like function calls, but never have exception
     // specs.
   // case Expr::ObjCMessageExprClass:
-  case Expr::ObjCPropertyRefExprClass:
-  case Expr::ObjCSubscriptRefExprClass:
-    return CT_Can;
+  // case Expr::ObjCPropertyRefExprClass:
+  // case Expr::ObjCSubscriptRefExprClass:
+  //   return CT_Can;
 
     // All the ObjC literals that are implemented as calls are
     // potentially throwing unless we decide to close off that
     // possibility.
-  case Expr::ObjCArrayLiteralClass:
-  case Expr::ObjCDictionaryLiteralClass:
-  case Expr::ObjCBoxedExprClass:
-    return CT_Can;
+  // case Expr::ObjCArrayLiteralClass:
+  // case Expr::ObjCDictionaryLiteralClass:
+  // case Expr::ObjCBoxedExprClass:
+  //   return CT_Can;
 
     // Many other things have subexpressions, so we have to test those.
     // Some are simple:
@@ -1276,8 +1276,8 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
   case Expr::InitListExprClass:
   case Expr::ArrayInitLoopExprClass:
   case Expr::MemberExprClass:
-  case Expr::ObjCIsaExprClass:
-  case Expr::ObjCIvarRefExprClass:
+  // case Expr::ObjCIsaExprClass:
+  // case Expr::ObjCIvarRefExprClass:
   case Expr::ParenExprClass:
   case Expr::ParenListExprClass:
   case Expr::ShuffleVectorExprClass:
@@ -1352,10 +1352,10 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
   case Expr::CUDAKernelCallExprClass:
   case Expr::DeclRefExprClass:
   case Expr::ObjCBridgedCastExprClass:
-  case Expr::ObjCIndirectCopyRestoreExprClass:
-  case Expr::ObjCProtocolExprClass:
-  case Expr::ObjCSelectorExprClass:
-  case Expr::ObjCAvailabilityCheckExprClass:
+  // case Expr::ObjCIndirectCopyRestoreExprClass:
+  // case Expr::ObjCProtocolExprClass:
+  // case Expr::ObjCSelectorExprClass:
+  // case Expr::ObjCAvailabilityCheckExprClass:
   case Expr::OffsetOfExprClass:
   case Expr::PackExpansionExprClass:
   case Expr::SubstNonTypeTemplateParmExprClass:
@@ -1389,9 +1389,9 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
   case Expr::FixedPointLiteralClass:
   case Expr::ArrayInitIndexExprClass:
   case Expr::NoInitExprClass:
-  case Expr::ObjCEncodeExprClass:
-  case Expr::ObjCStringLiteralClass:
-  case Expr::ObjCBoolLiteralExprClass:
+  // case Expr::ObjCEncodeExprClass:
+  // case Expr::ObjCStringLiteralClass:
+  // case Expr::ObjCBoolLiteralExprClass:
   case Expr::OpaqueValueExprClass:
   case Expr::PredefinedExprClass:
   case Expr::SizeOfPackExprClass:
@@ -1427,11 +1427,11 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
   case Stmt::MSAsmStmtClass:
   case Stmt::MSDependentExistsStmtClass:
   case Stmt::NullStmtClass:
-  case Stmt::ObjCAtCatchStmtClass:
-  case Stmt::ObjCAtFinallyStmtClass:
-  case Stmt::ObjCAtSynchronizedStmtClass:
-  case Stmt::ObjCAutoreleasePoolStmtClass:
-  case Stmt::ObjCForCollectionStmtClass:
+  // case Stmt::ObjCAtCatchStmtClass:
+  // case Stmt::ObjCAtFinallyStmtClass:
+  // case Stmt::ObjCAtSynchronizedStmtClass:
+  // case Stmt::ObjCAutoreleasePoolStmtClass:
+  // case Stmt::ObjCForCollectionStmtClass:
   case Stmt::OMPAtomicDirectiveClass:
   case Stmt::OMPBarrierDirectiveClass:
   case Stmt::OMPCancelDirectiveClass:
@@ -1550,25 +1550,25 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
   case Stmt::ObjCAtThrowStmtClass:
     return CT_Can;
 
-  case Stmt::ObjCAtTryStmtClass: {
-    auto *TS = cast<ObjCAtTryStmt>(S);
+  // case Stmt::ObjCAtTryStmtClass: {
+  //   auto *TS = cast<ObjCAtTryStmt>(S);
 
-    // @catch(...) need not be last in Objective-C. Walk backwards until we
-    // see one or hit the @try.
-    CanThrowResult CT = CT_Cannot;
-    if (const Stmt *Finally = TS->getFinallyStmt())
-      CT = mergeCanThrow(CT, canThrow(Finally));
-    for (unsigned I = TS->getNumCatchStmts(); I != 0; --I) {
-      const ObjCAtCatchStmt *Catch = TS->getCatchStmt(I - 1);
-      CT = mergeCanThrow(CT, canThrow(Catch));
-      // If we reach a @catch(...), no earlier exceptions can escape.
-      if (Catch->hasEllipsis())
-        return CT;
-    }
+  //   // @catch(...) need not be last in Objective-C. Walk backwards until we
+  //   // see one or hit the @try.
+  //   CanThrowResult CT = CT_Cannot;
+  //   if (const Stmt *Finally = TS->getFinallyStmt())
+  //     CT = mergeCanThrow(CT, canThrow(Finally));
+  //   for (unsigned I = TS->getNumCatchStmts(); I != 0; --I) {
+  //     const ObjCAtCatchStmt *Catch = TS->getCatchStmt(I - 1);
+  //     CT = mergeCanThrow(CT, canThrow(Catch));
+  //     // If we reach a @catch(...), no earlier exceptions can escape.
+  //     if (Catch->hasEllipsis())
+  //       return CT;
+  //   }
 
-    // Didn't find an @catch(...). Exceptions from the @try body can escape.
-    return mergeCanThrow(CT, canThrow(TS->getTryBody()));
-  }
+  //   // Didn't find an @catch(...). Exceptions from the @try body can escape.
+  //   return mergeCanThrow(CT, canThrow(TS->getTryBody()));
+  // }
 
   case Stmt::NoStmtClass:
     llvm_unreachable("Invalid class for statement");

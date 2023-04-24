@@ -110,9 +110,9 @@ public:
   /// If {@code E} is a generic call (to ObjC method /function/block/etc),
   /// return a constructed {@code AnyCall} object. Return None otherwise.
   static Optional<AnyCall> forExpr(const Expr *E) {
-    if (const auto *ME = dyn_cast<ObjCMessageExpr>(E)) {
+    /*if (const auto *ME = dyn_cast<ObjCMessageExpr>(E)) {
       return AnyCall(ME);
-    } else if (const auto *CE = dyn_cast<CallExpr>(E)) {
+    } else*/ if (const auto *CE = dyn_cast<CallExpr>(E)) {
       return AnyCall(CE);
     } else if (const auto *CXNE = dyn_cast<CXXNewExpr>(E)) {
       return AnyCall(CXNE);

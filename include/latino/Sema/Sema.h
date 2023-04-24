@@ -3290,25 +3290,25 @@ public:
       SourceLocation Loc, Expr *FromE, ContextualImplicitConverter &Converter);
 
 
-  enum ObjCSubscriptKind {
-    OS_Array,
-    OS_Dictionary,
-    OS_Error
-  };
-  ObjCSubscriptKind CheckSubscriptingKind(Expr *FromE);
+  // enum ObjCSubscriptKind {
+  //   OS_Array,
+  //   OS_Dictionary,
+  //   OS_Error
+  // };
+  // ObjCSubscriptKind CheckSubscriptingKind(Expr *FromE);
 
   // Note that LK_String is intentionally after the other literals, as
   // this is used for diagnostics logic.
-  enum ObjCLiteralKind {
-    LK_Array,
-    LK_Dictionary,
-    LK_Numeric,
-    LK_Boxed,
-    LK_String,
-    LK_Block,
-    LK_None
-  };
-  ObjCLiteralKind CheckLiteralKind(Expr *FromE);
+  // enum ObjCLiteralKind {
+  //   LK_Array,
+  //   LK_Dictionary,
+  //   LK_Numeric,
+  //   LK_Boxed,
+  //   LK_String,
+  //   LK_Block,
+  //   LK_None
+  // };
+  // ObjCLiteralKind CheckLiteralKind(Expr *FromE);
 
   ExprResult PerformObjectMemberConversion(Expr *From,
                                            NestedNameSpecifier *Qualifier,
@@ -3667,9 +3667,9 @@ public:
     /// outside the innermost non-class scope. See C++11 [class.friend]p11.
     LookupLocalFriendName,
     /// Look up the name of an Objective-C protocol.
-    LookupObjCProtocolName,
+    // LookupObjCProtocolName,
     /// Look up implicit 'self' parameter of an objective-c method.
-    LookupObjCImplicitSelfParam,
+    // LookupObjCImplicitSelfParam,
     /// Look up the name of an OpenMP user-defined reduction operation.
     LookupOMPReductionName,
     /// Look up the name of an OpenMP user-defined mapper.
@@ -3871,25 +3871,25 @@ public:
     CTK_ErrorRecovery // CorrectTypo used in normal error recovery.
   };
 
-  TypoCorrection CorrectTypo(const DeclarationNameInfo &Typo,
-                             Sema::LookupNameKind LookupKind,
-                             Scope *S, CXXScopeSpec *SS,
-                             CorrectionCandidateCallback &CCC,
-                             CorrectTypoKind Mode,
-                             DeclContext *MemberContext = nullptr,
-                             bool EnteringContext = false,
-                             const ObjCObjectPointerType *OPT = nullptr,
-                             bool RecordFailure = true);
+  // TypoCorrection CorrectTypo(const DeclarationNameInfo &Typo,
+  //                            Sema::LookupNameKind LookupKind,
+  //                            Scope *S, CXXScopeSpec *SS,
+  //                            CorrectionCandidateCallback &CCC,
+  //                            CorrectTypoKind Mode,
+  //                            DeclContext *MemberContext = nullptr,
+  //                            bool EnteringContext = false,
+  //                            const ObjCObjectPointerType *OPT = nullptr,
+  //                            bool RecordFailure = true);
 
-  TypoExpr *CorrectTypoDelayed(const DeclarationNameInfo &Typo,
-                               Sema::LookupNameKind LookupKind, Scope *S,
-                               CXXScopeSpec *SS,
-                               CorrectionCandidateCallback &CCC,
-                               TypoDiagnosticGenerator TDG,
-                               TypoRecoveryCallback TRC, CorrectTypoKind Mode,
-                               DeclContext *MemberContext = nullptr,
-                               bool EnteringContext = false,
-                               const ObjCObjectPointerType *OPT = nullptr);
+  // TypoExpr *CorrectTypoDelayed(const DeclarationNameInfo &Typo,
+  //                              Sema::LookupNameKind LookupKind, Scope *S,
+  //                              CXXScopeSpec *SS,
+  //                              CorrectionCandidateCallback &CCC,
+  //                              TypoDiagnosticGenerator TDG,
+  //                              TypoRecoveryCallback TRC, CorrectTypoKind Mode,
+  //                              DeclContext *MemberContext = nullptr,
+  //                              bool EnteringContext = false,
+  //                              const ObjCObjectPointerType *OPT = nullptr);
 
   /// Process any TypoExprs in the given Expr and its children,
   /// generating diagnostics as appropriate and returning a new Expr if there
@@ -5004,11 +5004,11 @@ public:
   // changing the access operator from a '.' to a '->' (to see if that is the
   // change needed to fix an error about an unknown member, e.g. when the class
   // defines a custom operator->).
-  struct ActOnMemberAccessExtraArgs {
-    Scope *S;
-    UnqualifiedId &Id;
-    Decl *ObjCImpDecl;
-  };
+  // struct ActOnMemberAccessExtraArgs {
+  //   Scope *S;
+  //   UnqualifiedId &Id;
+  //   Decl *ObjCImpDecl;
+  // };
 
   ExprResult BuildMemberReferenceExpr(
       Expr *Base, QualType BaseType, SourceLocation OpLoc, bool IsArrow,
@@ -5048,13 +5048,13 @@ public:
                                const DeclarationNameInfo &NameInfo,
                                const TemplateArgumentListInfo *TemplateArgs);
 
-  ExprResult ActOnMemberAccessExpr(Scope *S, Expr *Base,
-                                   SourceLocation OpLoc,
-                                   tok::TokenKind OpKind,
-                                   CXXScopeSpec &SS,
-                                   SourceLocation TemplateKWLoc,
-                                   UnqualifiedId &Member,
-                                   Decl *ObjCImpDecl);
+  // ExprResult ActOnMemberAccessExpr(Scope *S, Expr *Base,
+  //                                  SourceLocation OpLoc,
+  //                                  tok::TokenKind OpKind,
+  //                                  CXXScopeSpec &SS,
+  //                                  SourceLocation TemplateKWLoc,
+  //                                  UnqualifiedId &Member,
+  //                                  Decl *ObjCImpDecl);
 
   MemberExpr *
   BuildMemberExpr(Expr *Base, bool IsArrow, SourceLocation OpLoc,
@@ -5916,11 +5916,11 @@ public:
 
 
   /// ActOnObjCBoolLiteral - Parse {__objc_yes,__objc_no} literals.
-  ExprResult ActOnObjCBoolLiteral(SourceLocation OpLoc, tok::TokenKind Kind);
+  // ExprResult ActOnObjCBoolLiteral(SourceLocation OpLoc, tok::TokenKind Kind);
 
-  ExprResult
-  ActOnObjCAvailabilityCheckExpr(llvm::ArrayRef<AvailabilitySpec> AvailSpecs,
-                                 SourceLocation AtLoc, SourceLocation RParen);
+  // ExprResult
+  // ActOnObjCAvailabilityCheckExpr(llvm::ArrayRef<AvailabilitySpec> AvailSpecs,
+  //                                SourceLocation AtLoc, SourceLocation RParen);
 
   /// ActOnCXXNullPtrLiteral - Parse 'nullptr'.
   ExprResult ActOnCXXNullPtrLiteral(SourceLocation Loc);
@@ -6594,30 +6594,30 @@ public:
   // ExprResult ParseObjCStringLiteral(SourceLocation *AtLocs,
   //                                   ArrayRef<Expr *> Strings);
 
-  ExprResult BuildObjCStringLiteral(SourceLocation AtLoc, StringLiteral *S);
+  // ExprResult BuildObjCStringLiteral(SourceLocation AtLoc, StringLiteral *S);
 
   /// BuildObjCNumericLiteral - builds an ObjCBoxedExpr AST node for the
   /// numeric literal expression. Type of the expression will be "NSNumber *"
   /// or "id" if NSNumber is unavailable.
-  ExprResult BuildObjCNumericLiteral(SourceLocation AtLoc, Expr *Number);
-  ExprResult ActOnObjCBoolLiteral(SourceLocation AtLoc, SourceLocation ValueLoc,
-                                  bool Value);
-  ExprResult BuildObjCArrayLiteral(SourceRange SR, MultiExprArg Elements);
+  // ExprResult BuildObjCNumericLiteral(SourceLocation AtLoc, Expr *Number);
+  // ExprResult ActOnObjCBoolLiteral(SourceLocation AtLoc, SourceLocation ValueLoc,
+  //                                 bool Value);
+  // ExprResult BuildObjCArrayLiteral(SourceRange SR, MultiExprArg Elements);
 
   /// BuildObjCBoxedExpr - builds an ObjCBoxedExpr AST node for the
   /// '@' prefixed parenthesized expression. The type of the expression will
   /// either be "NSNumber *", "NSString *" or "NSValue *" depending on the type
   /// of ValueType, which is allowed to be a built-in numeric type, "char *",
   /// "const char *" or C structure with attribute 'objc_boxable'.
-  ExprResult BuildObjCBoxedExpr(SourceRange SR, Expr *ValueExpr);
+  // ExprResult BuildObjCBoxedExpr(SourceRange SR, Expr *ValueExpr);
 
   // ExprResult BuildObjCSubscriptExpression(SourceLocation RB, Expr *BaseExpr,
   //                                         Expr *IndexExpr,
   //                                         ObjCMethodDecl *getterMethod,
   //                                         ObjCMethodDecl *setterMethod);
 
-  ExprResult BuildObjCDictionaryLiteral(SourceRange SR,
-                               MutableArrayRef<ObjCDictionaryElement> Elements);
+  // ExprResult BuildObjCDictionaryLiteral(SourceRange SR,
+  //                              MutableArrayRef<ObjCDictionaryElement> Elements);
 
   // ExprResult BuildObjCEncodeExpression(SourceLocation AtLoc,
   //                                 TypeSourceInfo *EncodedTypeInfo,
@@ -9197,15 +9197,15 @@ public:
       const SourceLocation *ProtoLocs, SourceLocation EndProtoLoc,
       const ParsedAttributesView &AttrList);
 
-  void ActOnSuperClassOfClassInterface(Scope *S,
-                                       SourceLocation AtInterfaceLoc,
-                                       ObjCInterfaceDecl *IDecl,
-                                       IdentifierInfo *ClassName,
-                                       SourceLocation ClassLoc,
-                                       IdentifierInfo *SuperName,
-                                       SourceLocation SuperLoc,
-                                       ArrayRef<ParsedType> SuperTypeArgs,
-                                       SourceRange SuperTypeArgsRange);
+  // void ActOnSuperClassOfClassInterface(Scope *S,
+  //                                      SourceLocation AtInterfaceLoc,
+  //                                      ObjCInterfaceDecl *IDecl,
+  //                                      IdentifierInfo *ClassName,
+  //                                      SourceLocation ClassLoc,
+  //                                      IdentifierInfo *SuperName,
+  //                                      SourceLocation SuperLoc,
+  //                                      ArrayRef<ParsedType> SuperTypeArgs,
+  //                                      SourceRange SuperTypeArgsRange);
 
   void ActOnTypedefedProtocols(SmallVectorImpl<Decl *> &ProtocolRefs,
                                SmallVectorImpl<SourceLocation> &ProtocolLocs,
@@ -9228,13 +9228,13 @@ public:
       unsigned NumProtoRefs, const SourceLocation *ProtoLocs,
       SourceLocation EndProtoLoc, const ParsedAttributesView &AttrList);
 
-  Decl *ActOnStartCategoryInterface(
-      SourceLocation AtInterfaceLoc, IdentifierInfo *ClassName,
-      SourceLocation ClassLoc, ObjCTypeParamList *typeParamList,
-      IdentifierInfo *CategoryName, SourceLocation CategoryLoc,
-      Decl *const *ProtoRefs, unsigned NumProtoRefs,
-      const SourceLocation *ProtoLocs, SourceLocation EndProtoLoc,
-      const ParsedAttributesView &AttrList);
+  // Decl *ActOnStartCategoryInterface(
+  //     SourceLocation AtInterfaceLoc, IdentifierInfo *ClassName,
+  //     SourceLocation ClassLoc, ObjCTypeParamList *typeParamList,
+  //     IdentifierInfo *CategoryName, SourceLocation CategoryLoc,
+  //     Decl *const *ProtoRefs, unsigned NumProtoRefs,
+  //     const SourceLocation *ProtoLocs, SourceLocation EndProtoLoc,
+  //     const ParsedAttributesView &AttrList);
 
   Decl *ActOnStartClassImplementation(SourceLocation AtClassImplLoc,
                                       IdentifierInfo *ClassName,
@@ -9250,23 +9250,23 @@ public:
                                          SourceLocation CatLoc,
                                          const ParsedAttributesView &AttrList);
 
-  DeclGroupPtrTy ActOnFinishObjCImplementation(Decl *ObjCImpDecl,
-                                               ArrayRef<Decl *> Decls);
+  // DeclGroupPtrTy ActOnFinishObjCImplementation(Decl *ObjCImpDecl,
+  //                                              ArrayRef<Decl *> Decls);
 
-  DeclGroupPtrTy ActOnForwardClassDeclaration(SourceLocation Loc,
-                   IdentifierInfo **IdentList,
-                   SourceLocation *IdentLocs,
-                   ArrayRef<ObjCTypeParamList *> TypeParamLists,
-                   unsigned NumElts);
+  // DeclGroupPtrTy ActOnForwardClassDeclaration(SourceLocation Loc,
+  //                  IdentifierInfo **IdentList,
+  //                  SourceLocation *IdentLocs,
+  //                  ArrayRef<ObjCTypeParamList *> TypeParamLists,
+  //                  unsigned NumElts);
 
   DeclGroupPtrTy
   ActOnForwardProtocolDeclaration(SourceLocation AtProtoclLoc,
                                   ArrayRef<IdentifierLocPair> IdentList,
                                   const ParsedAttributesView &attrList);
 
-  void FindProtocolDeclaration(bool WarnOnDeclarations, bool ForObjCContainer,
-                               ArrayRef<IdentifierLocPair> ProtocolId,
-                               SmallVectorImpl<Decl *> &Protocols);
+  // void FindProtocolDeclaration(bool WarnOnDeclarations, bool ForObjCContainer,
+  //                              ArrayRef<IdentifierLocPair> ProtocolId,
+  //                              SmallVectorImpl<Decl *> &Protocols);
 
   void DiagnoseTypeArgsAndProtocols(IdentifierInfo *ProtocolId,
                                     SourceLocation ProtocolLoc,
@@ -9277,41 +9277,41 @@ public:
   /// Given a list of identifiers (and their locations), resolve the
   /// names to either Objective-C protocol qualifiers or type
   /// arguments, as appropriate.
-  void actOnObjCTypeArgsOrProtocolQualifiers(
-         Scope *S,
-         ParsedType baseType,
-         SourceLocation lAngleLoc,
-         ArrayRef<IdentifierInfo *> identifiers,
-         ArrayRef<SourceLocation> identifierLocs,
-         SourceLocation rAngleLoc,
-         SourceLocation &typeArgsLAngleLoc,
-         SmallVectorImpl<ParsedType> &typeArgs,
-         SourceLocation &typeArgsRAngleLoc,
-         SourceLocation &protocolLAngleLoc,
-         SmallVectorImpl<Decl *> &protocols,
-         SourceLocation &protocolRAngleLoc,
-         bool warnOnIncompleteProtocols);
+  // void actOnObjCTypeArgsOrProtocolQualifiers(
+  //        Scope *S,
+  //        ParsedType baseType,
+  //        SourceLocation lAngleLoc,
+  //        ArrayRef<IdentifierInfo *> identifiers,
+  //        ArrayRef<SourceLocation> identifierLocs,
+  //        SourceLocation rAngleLoc,
+  //        SourceLocation &typeArgsLAngleLoc,
+  //        SmallVectorImpl<ParsedType> &typeArgs,
+  //        SourceLocation &typeArgsRAngleLoc,
+  //        SourceLocation &protocolLAngleLoc,
+  //        SmallVectorImpl<Decl *> &protocols,
+  //        SourceLocation &protocolRAngleLoc,
+  //        bool warnOnIncompleteProtocols);
 
   /// Build a an Objective-C protocol-qualified 'id' type where no
   /// base type was specified.
-  TypeResult actOnObjCProtocolQualifierType(
-               SourceLocation lAngleLoc,
-               ArrayRef<Decl *> protocols,
-               ArrayRef<SourceLocation> protocolLocs,
-               SourceLocation rAngleLoc);
+  // TypeResult actOnObjCProtocolQualifierType(
+  //              SourceLocation lAngleLoc,
+  //              ArrayRef<Decl *> protocols,
+  //              ArrayRef<SourceLocation> protocolLocs,
+  //              SourceLocation rAngleLoc);
 
   /// Build a specialized and/or protocol-qualified Objective-C type.
-  TypeResult actOnObjCTypeArgsAndProtocolQualifiers(
-               Scope *S,
-               SourceLocation Loc,
-               ParsedType BaseType,
-               SourceLocation TypeArgsLAngleLoc,
-               ArrayRef<ParsedType> TypeArgs,
-               SourceLocation TypeArgsRAngleLoc,
-               SourceLocation ProtocolLAngleLoc,
-               ArrayRef<Decl *> Protocols,
-               ArrayRef<SourceLocation> ProtocolLocs,
-               SourceLocation ProtocolRAngleLoc);
+  // TypeResult actOnObjCTypeArgsAndProtocolQualifiers(
+  //              Scope *S,
+  //              SourceLocation Loc,
+  //              ParsedType BaseType,
+  //              SourceLocation TypeArgsLAngleLoc,
+  //              ArrayRef<ParsedType> TypeArgs,
+  //              SourceLocation TypeArgsRAngleLoc,
+  //              SourceLocation ProtocolLAngleLoc,
+  //              ArrayRef<Decl *> Protocols,
+  //              ArrayRef<SourceLocation> ProtocolLocs,
+  //              SourceLocation ProtocolRAngleLoc);
 
   /// Build an Objective-C type parameter type.
   // QualType BuildObjCTypeParamType(const ObjCTypeParamDecl *Decl,
@@ -9336,10 +9336,10 @@ public:
   /// Ensure attributes are consistent with type.
   /// \param [in, out] Attributes The attributes to check; they will
   /// be modified to be consistent with \p PropertyTy.
-  void CheckObjCPropertyAttributes(Decl *PropertyPtrTy,
-                                   SourceLocation Loc,
-                                   unsigned &Attributes,
-                                   bool propertyInPrimaryClass);
+  // void CheckObjCPropertyAttributes(Decl *PropertyPtrTy,
+  //                                  SourceLocation Loc,
+  //                                  unsigned &Attributes,
+  //                                  bool propertyInPrimaryClass);
 
   /// Process the specified property declaration and create decls for the
   /// setters and getters as needed.
@@ -9359,42 +9359,42 @@ public:
                    ArrayRef<Decl *> allMethods = None,
                    ArrayRef<DeclGroupPtrTy> allTUVars = None);
 
-  Decl *ActOnProperty(Scope *S, SourceLocation AtLoc,
-                      SourceLocation LParenLoc,
-                      FieldDeclarator &FD, ObjCDeclSpec &ODS,
-                      Selector GetterSel, Selector SetterSel,
-                      tok::ObjCKeywordKind MethodImplKind,
-                      DeclContext *lexicalDC = nullptr);
+  // Decl *ActOnProperty(Scope *S, SourceLocation AtLoc,
+  //                     SourceLocation LParenLoc,
+  //                     FieldDeclarator &FD, ObjCDeclSpec &ODS,
+  //                     Selector GetterSel, Selector SetterSel,
+  //                     tok::ObjCKeywordKind MethodImplKind,
+  //                     DeclContext *lexicalDC = nullptr);
 
-  Decl *ActOnPropertyImplDecl(Scope *S,
-                              SourceLocation AtLoc,
-                              SourceLocation PropertyLoc,
-                              bool ImplKind,
-                              IdentifierInfo *PropertyId,
-                              IdentifierInfo *PropertyIvar,
-                              SourceLocation PropertyIvarLoc,
-                              ObjCPropertyQueryKind QueryKind);
+  // Decl *ActOnPropertyImplDecl(Scope *S,
+  //                             SourceLocation AtLoc,
+  //                             SourceLocation PropertyLoc,
+  //                             bool ImplKind,
+  //                             IdentifierInfo *PropertyId,
+  //                             IdentifierInfo *PropertyIvar,
+  //                             SourceLocation PropertyIvarLoc,
+  //                             ObjCPropertyQueryKind QueryKind);
 
-  enum ObjCSpecialMethodKind {
-    OSMK_None,
-    OSMK_Alloc,
-    OSMK_New,
-    OSMK_Copy,
-    OSMK_RetainingInit,
-    OSMK_NonRetainingInit
-  };
+  // enum ObjCSpecialMethodKind {
+  //   OSMK_None,
+  //   OSMK_Alloc,
+  //   OSMK_New,
+  //   OSMK_Copy,
+  //   OSMK_RetainingInit,
+  //   OSMK_NonRetainingInit
+  // };
 
-  struct ObjCArgInfo {
-    IdentifierInfo *Name;
-    SourceLocation NameLoc;
-    // The Type is null if no type was specified, and the DeclSpec is invalid
-    // in this case.
-    ParsedType Type;
-    ObjCDeclSpec DeclSpec;
+  // struct ObjCArgInfo {
+  //   IdentifierInfo *Name;
+  //   SourceLocation NameLoc;
+  //   // The Type is null if no type was specified, and the DeclSpec is invalid
+  //   // in this case.
+  //   ParsedType Type;
+  //   ObjCDeclSpec DeclSpec;
 
-    /// ArgAttrs - Attribute list for this argument.
-    ParsedAttributesView ArgAttrs;
-  };
+  //   /// ArgAttrs - Attribute list for this argument.
+  //   ParsedAttributesView ArgAttrs;
+  // };
 
   // Decl *ActOnMethodDeclaration(
   //     Scope *S,
@@ -10803,9 +10803,9 @@ public:
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'depobj' pseudo clause.
-  OMPClause *ActOnOpenMPDepobjClause(Expr *Depobj, SourceLocation StartLoc,
-                                     SourceLocation LParenLoc,
-                                     SourceLocation EndLoc);
+  // OMPClause *ActOnOpenMPDepobjClause(Expr *Depobj, SourceLocation StartLoc,
+  //                                    SourceLocation LParenLoc,
+  //                                    SourceLocation EndLoc);
   /// Called on well-formed 'depend' clause.
   OMPClause *
   ActOnOpenMPDependClause(Expr *DepModifier, OpenMPDependClauseKind DepKind,
@@ -11110,11 +11110,11 @@ public:
     /// IncompatibleObjCQualifiedId - The assignment is between a qualified
     /// id type and something else (that is incompatible with it). For example,
     /// "id <XXX>" = "Foo *", where "Foo *" doesn't implement the XXX protocol.
-    IncompatibleObjCQualifiedId,
+    // IncompatibleObjCQualifiedId,
 
     /// IncompatibleObjCWeakRef - Assigning a weak-unavailable object to an
     /// object with __weak qualifier.
-    IncompatibleObjCWeakRef,
+    // IncompatibleObjCWeakRef,
 
     /// Incompatible - We reject this conversion outright, it is invalid to
     /// represent it in the AST.
@@ -11390,23 +11390,23 @@ public:
 
   /// Checks for invalid conversions and casts between
   /// retainable pointers and other pointer kinds for ARC and Weak.
-  ARCConversionResult CheckObjCConversion(SourceRange castRange,
-                                          QualType castType, Expr *&op,
-                                          CheckedConversionKind CCK,
-                                          bool Diagnose = true,
-                                          bool DiagnoseCFAudited = false,
-                                          BinaryOperatorKind Opc = BO_PtrMemD
-                                          );
+  // ARCConversionResult CheckObjCConversion(SourceRange castRange,
+  //                                         QualType castType, Expr *&op,
+  //                                         CheckedConversionKind CCK,
+  //                                         bool Diagnose = true,
+  //                                         bool DiagnoseCFAudited = false,
+  //                                         BinaryOperatorKind Opc = BO_PtrMemD
+  //                                         );
 
   Expr *stripARCUnbridgedCast(Expr *e);
   void diagnoseARCUnbridgedCast(Expr *e);
 
-  bool CheckObjCARCUnavailableWeakConversion(QualType castType,
-                                             QualType ExprType);
+  // bool CheckObjCARCUnavailableWeakConversion(QualType castType,
+  //                                            QualType ExprType);
 
   /// checkRetainCycles - Check whether an Objective-C message send
   /// might create an obvious retain cycle.
-  void checkRetainCycles(ObjCMessageExpr *msg);
+  // void checkRetainCycles(ObjCMessageExpr *msg);
   void checkRetainCycles(Expr *receiver, Expr *argument);
   void checkRetainCycles(VarDecl *Var, Expr *Init);
 
@@ -11540,7 +11540,7 @@ public:
   /// Checks that the Objective-C declaration is declared in the global scope.
   /// Emits an error and marks the declaration as invalid if it's not declared
   /// in the global scope.
-  bool CheckObjCDeclScope(Decl *D);
+  // bool CheckObjCDeclScope(Decl *D);
 
   /// Abstract base class used for diagnosing integer constant
   /// expression violations.
@@ -11906,13 +11906,13 @@ public:
     PCC_Class,
     /// Code completion occurs within an Objective-C interface, protocol,
     /// or category.
-    PCC_ObjCInterface,
+    // PCC_ObjCInterface,
     /// Code completion occurs within an Objective-C implementation or
     /// category implementation
-    PCC_ObjCImplementation,
+    // PCC_ObjCImplementation,
     /// Code completion occurs within the list of instance variables
     /// in an Objective-C interface, protocol, category, or implementation.
-    PCC_ObjCInstanceVariableList,
+    // PCC_ObjCInstanceVariableList,
     /// Code completion occurs following one or more template
     /// headers.
     PCC_Template,

@@ -10,7 +10,7 @@ add_latino_library(latinoARCMigrate
   PlistReporter.cpp
   TransAPIUses.cpp
   TransARCAssign.cpp
-  TransAutoreleasePool.cpp
+  # TransAutoreleasePool.cpp
   # TransBlockObjCVariable.cpp
   TransEmptyStatementsAndDealloc.cpp
   TransGCAttrs.cpp

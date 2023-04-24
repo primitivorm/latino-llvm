@@ -1679,16 +1679,16 @@ TEST(Matcher, HandlesNullQualTypes) {
                                      ))))));
 }
 
-TEST(ObjCIvarRefExprMatcher, IvarExpr) {
-  StringRef ObjCString =
-      "@interface A @end "
-      "@implementation A { A *x; } - (void) func { x = 0; } @end";
-  EXPECT_TRUE(matchesObjC(ObjCString, objcIvarRefExpr()));
-  EXPECT_TRUE(matchesObjC(
-      ObjCString, objcIvarRefExpr(hasDeclaration(namedDecl(hasName("x"))))));
-  EXPECT_FALSE(matchesObjC(
-      ObjCString, objcIvarRefExpr(hasDeclaration(namedDecl(hasName("y"))))));
-}
+// TEST(ObjCIvarRefExprMatcher, IvarExpr) {
+//   StringRef ObjCString =
+//       "@interface A @end "
+//       "@implementation A { A *x; } - (void) func { x = 0; } @end";
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcIvarRefExpr()));
+//   EXPECT_TRUE(matchesObjC(
+//       ObjCString, objcIvarRefExpr(hasDeclaration(namedDecl(hasName("x"))))));
+//   EXPECT_FALSE(matchesObjC(
+//       ObjCString, objcIvarRefExpr(hasDeclaration(namedDecl(hasName("y"))))));
+// }
 
 TEST(BlockExprMatcher, BlockExpr) {
   EXPECT_TRUE(matchesObjC("void f() { ^{}(); }", blockExpr()));

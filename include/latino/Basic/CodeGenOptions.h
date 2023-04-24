@@ -59,11 +59,11 @@ public:
   };
 
 
-  enum ObjCDispatchMethodKind {
-    Legacy = 0,
-    NonLegacy = 1,
-    Mixed = 2
-  };
+  // enum ObjCDispatchMethodKind {
+  //   Legacy = 0,
+  //   NonLegacy = 1,
+  //   Mixed = 2
+  // };
 
   enum TLSModel {
     GeneralDynamicTLSModel,

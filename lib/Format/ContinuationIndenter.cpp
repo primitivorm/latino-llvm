@@ -1014,9 +1014,9 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
          Style.Language == FormatStyle::LK_TextProto) &&
         Current.Next->isOneOf(tok::less, tok::l_brace))))
     return State.Stack.back().Indent;
-  if (NextNonComment->is(TT_ObjCStringLiteral) &&
-      State.StartOfStringLiteral != 0)
-    return State.StartOfStringLiteral - 1;
+  // if (NextNonComment->is(TT_ObjCStringLiteral) &&
+  //     State.StartOfStringLiteral != 0)
+  //   return State.StartOfStringLiteral - 1;
   if (NextNonComment->isStringLiteral() && State.StartOfStringLiteral != 0)
     return State.StartOfStringLiteral;
   if (NextNonComment->is(tok::lessless) &&
@@ -1273,8 +1273,8 @@ unsigned ContinuationIndenter::moveStateToNextToken(LineState &State,
   moveStatePastScopeOpener(State, Newline);
   moveStatePastFakeRParens(State);
 
-  if (Current.is(TT_ObjCStringLiteral) && State.StartOfStringLiteral == 0)
-    State.StartOfStringLiteral = State.Column + 1;
+  // if (Current.is(TT_ObjCStringLiteral) && State.StartOfStringLiteral == 0)
+  //   State.StartOfStringLiteral = State.Column + 1;
   if (Current.is(TT_CSharpStringLiteral) && State.StartOfStringLiteral == 0)
     State.StartOfStringLiteral = State.Column + 1;
   else if (Current.isStringLiteral() && State.StartOfStringLiteral == 0)
@@ -1545,9 +1545,9 @@ void ContinuationIndenter::moveStatePastScopeOpener(LineState &State,
     }
   }
 
-  State.Stack.back().IsInsideObjCArrayLiteral =
-      Current.is(TT_ArrayInitializerLSquare) && Current.Previous &&
-      Current.Previous->is(tok::at);
+  // State.Stack.back().IsInsideObjCArrayLiteral =
+  //     Current.is(TT_ArrayInitializerLSquare) && Current.Previous &&
+  //     Current.Previous->is(tok::at);
 }
 
 void ContinuationIndenter::moveStatePastScopeCloser(LineState &State) {
@@ -1600,9 +1600,9 @@ void ContinuationIndenter::moveStateToNewBlock(LineState &State) {
   unsigned NestedBlockIndent = State.Stack.back().NestedBlockIndent;
   // ObjC block sometimes follow special indentation rules.
   unsigned NewIndent =
-      NestedBlockIndent + (State.NextToken->is(TT_ObjCBlockLBrace)
+      NestedBlockIndent + (/*State.NextToken->is(TT_ObjCBlockLBrace)
                                ? Style.ObjCBlockIndentWidth
-                               : Style.IndentWidth);
+                               :*/ Style.IndentWidth);
   State.Stack.push_back(ParenState(State.NextToken, NewIndent,
                                    State.Stack.back().LastSpace,
                                    /*AvoidBinPacking=*/true,
@@ -1907,9 +1907,9 @@ ContinuationIndenter::createBreakableToken(const FormatToken &Current,
       return nullptr;
     // Don't break string literals inside Objective-C array literals (doing so
     // raises the warning -Wobjc-string-concatenation).
-    if (State.Stack.back().IsInsideObjCArrayLiteral) {
-      return nullptr;
-    }
+    // if (State.Stack.back().IsInsideObjCArrayLiteral) {
+    //   return nullptr;
+    // }
 
     StringRef Text = Current.TokenText;
     StringRef Prefix;

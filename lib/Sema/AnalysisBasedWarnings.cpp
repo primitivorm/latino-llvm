@@ -1332,7 +1332,7 @@ static bool isInLoop(const ASTContext &Ctx, const ParentMap &PM,
     case Stmt::ForStmtClass:
     case Stmt::WhileStmtClass:
     case Stmt::CXXForRangeStmtClass:
-    case Stmt::ObjCForCollectionStmtClass:
+    // case Stmt::ObjCForCollectionStmtClass:
       return true;
     case Stmt::DoStmtClass: {
       Expr::EvalResult Result;

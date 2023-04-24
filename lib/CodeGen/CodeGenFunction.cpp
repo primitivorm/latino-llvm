@@ -1415,7 +1415,7 @@ bool CodeGenFunction::mightAddDeclToScope(const Stmt *S) {
   if (isa<IfStmt>(S) || isa<SwitchStmt>(S) || isa<WhileStmt>(S) ||
       isa<DoStmt>(S) || isa<ForStmt>(S) || isa<CompoundStmt>(S) ||
       isa<CXXForRangeStmt>(S) || isa<CXXTryStmt>(S) ||
-      isa<ObjCForCollectionStmt>(S) || isa<ObjCAtTryStmt>(S))
+      /*isa<ObjCForCollectionStmt>(S) ||*/ isa<ObjCAtTryStmt>(S))
     return false;
 
   if (isa<DeclStmt>(S))

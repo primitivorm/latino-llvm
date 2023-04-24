@@ -911,30 +911,30 @@ void ASTStmtWriter::VisitMemberExpr(MemberExpr *E) {
   Code = serialization::EXPR_MEMBER;
 }
 
-void ASTStmtWriter::VisitObjCIsaExpr(ObjCIsaExpr *E) {
-  VisitExpr(E);
-  Record.AddStmt(E->getBase());
-  Record.AddSourceLocation(E->getIsaMemberLoc());
-  Record.AddSourceLocation(E->getOpLoc());
-  Record.push_back(E->isArrow());
-  Code = serialization::EXPR_OBJC_ISA;
-}
+// void ASTStmtWriter::VisitObjCIsaExpr(ObjCIsaExpr *E) {
+//   VisitExpr(E);
+//   Record.AddStmt(E->getBase());
+//   Record.AddSourceLocation(E->getIsaMemberLoc());
+//   Record.AddSourceLocation(E->getOpLoc());
+//   Record.push_back(E->isArrow());
+//   Code = serialization::EXPR_OBJC_ISA;
+// }
 
-void ASTStmtWriter::
-VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
-  VisitExpr(E);
-  Record.AddStmt(E->getSubExpr());
-  Record.push_back(E->shouldCopy());
-  Code = serialization::EXPR_OBJC_INDIRECT_COPY_RESTORE;
-}
+// void ASTStmtWriter::
+// VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
+//   VisitExpr(E);
+//   Record.AddStmt(E->getSubExpr());
+//   Record.push_back(E->shouldCopy());
+//   Code = serialization::EXPR_OBJC_INDIRECT_COPY_RESTORE;
+// }
 
-void ASTStmtWriter::VisitObjCBridgedCastExpr(ObjCBridgedCastExpr *E) {
-  VisitExplicitCastExpr(E);
-  Record.AddSourceLocation(E->getLParenLoc());
-  Record.AddSourceLocation(E->getBridgeKeywordLoc());
-  Record.push_back(E->getBridgeKind()); // FIXME: Stable encoding
-  Code = serialization::EXPR_OBJC_BRIDGED_CAST;
-}
+// void ASTStmtWriter::VisitObjCBridgedCastExpr(ObjCBridgedCastExpr *E) {
+//   VisitExplicitCastExpr(E);
+//   Record.AddSourceLocation(E->getLParenLoc());
+//   Record.AddSourceLocation(E->getBridgeKeywordLoc());
+//   Record.push_back(E->getBridgeKind()); // FIXME: Stable encoding
+//   Code = serialization::EXPR_OBJC_BRIDGED_CAST;
+// }
 
 void ASTStmtWriter::VisitCastExpr(CastExpr *E) {
   VisitExpr(E);
@@ -1422,15 +1422,15 @@ void ASTStmtWriter::VisitAtomicExpr(AtomicExpr *E) {
 //   Code = serialization::EXPR_OBJC_MESSAGE_EXPR;
 // }
 
-void ASTStmtWriter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
-  VisitStmt(S);
-  Record.AddStmt(S->getElement());
-  Record.AddStmt(S->getCollection());
-  Record.AddStmt(S->getBody());
-  Record.AddSourceLocation(S->getForLoc());
-  Record.AddSourceLocation(S->getRParenLoc());
-  Code = serialization::STMT_OBJC_FOR_COLLECTION;
-}
+// void ASTStmtWriter::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
+//   VisitStmt(S);
+//   Record.AddStmt(S->getElement());
+//   Record.AddStmt(S->getCollection());
+//   Record.AddStmt(S->getBody());
+//   Record.AddSourceLocation(S->getForLoc());
+//   Record.AddSourceLocation(S->getRParenLoc());
+//   Code = serialization::STMT_OBJC_FOR_COLLECTION;
+// }
 
 void ASTStmtWriter::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
   VisitStmt(S);
@@ -1455,33 +1455,33 @@ void ASTStmtWriter::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
   Code = serialization::STMT_OBJC_AUTORELEASE_POOL;
 }
 
-void ASTStmtWriter::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
-  VisitStmt(S);
-  Record.push_back(S->getNumCatchStmts());
-  Record.push_back(S->getFinallyStmt() != nullptr);
-  Record.AddStmt(S->getTryBody());
-  for (unsigned I = 0, N = S->getNumCatchStmts(); I != N; ++I)
-    Record.AddStmt(S->getCatchStmt(I));
-  if (S->getFinallyStmt())
-    Record.AddStmt(S->getFinallyStmt());
-  Record.AddSourceLocation(S->getAtTryLoc());
-  Code = serialization::STMT_OBJC_AT_TRY;
-}
+// void ASTStmtWriter::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
+//   VisitStmt(S);
+//   Record.push_back(S->getNumCatchStmts());
+//   Record.push_back(S->getFinallyStmt() != nullptr);
+//   Record.AddStmt(S->getTryBody());
+//   for (unsigned I = 0, N = S->getNumCatchStmts(); I != N; ++I)
+//     Record.AddStmt(S->getCatchStmt(I));
+//   if (S->getFinallyStmt())
+//     Record.AddStmt(S->getFinallyStmt());
+//   Record.AddSourceLocation(S->getAtTryLoc());
+//   Code = serialization::STMT_OBJC_AT_TRY;
+// }
 
-void ASTStmtWriter::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
-  VisitStmt(S); // FIXME: no test coverage.
-  Record.AddStmt(S->getSynchExpr());
-  Record.AddStmt(S->getSynchBody());
-  Record.AddSourceLocation(S->getAtSynchronizedLoc());
-  Code = serialization::STMT_OBJC_AT_SYNCHRONIZED;
-}
+// void ASTStmtWriter::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
+//   VisitStmt(S); // FIXME: no test coverage.
+//   Record.AddStmt(S->getSynchExpr());
+//   Record.AddStmt(S->getSynchBody());
+//   Record.AddSourceLocation(S->getAtSynchronizedLoc());
+//   Code = serialization::STMT_OBJC_AT_SYNCHRONIZED;
+// }
 
-void ASTStmtWriter::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
-  VisitStmt(S); // FIXME: no test coverage.
-  Record.AddStmt(S->getThrowExpr());
-  Record.AddSourceLocation(S->getThrowLoc());
-  Code = serialization::STMT_OBJC_AT_THROW;
-}
+// void ASTStmtWriter::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
+//   VisitStmt(S); // FIXME: no test coverage.
+//   Record.AddStmt(S->getThrowExpr());
+//   Record.AddSourceLocation(S->getThrowLoc());
+//   Code = serialization::STMT_OBJC_AT_THROW;
+// }
 
 // void ASTStmtWriter::VisitObjCBoolLiteralExpr(ObjCBoolLiteralExpr *E) {
 //   VisitExpr(E);

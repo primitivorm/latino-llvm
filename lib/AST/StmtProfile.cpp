@@ -372,38 +372,38 @@ void StmtProfiler::VisitCapturedStmt(const CapturedStmt *S) {
   VisitStmt(S);
 }
 
-void StmtProfiler::VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
-  VisitStmt(S);
-}
+// void StmtProfiler::VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
+//   VisitStmt(S);
+// }
 
-void StmtProfiler::VisitObjCAtCatchStmt(const ObjCAtCatchStmt *S) {
-  VisitStmt(S);
-  ID.AddBoolean(S->hasEllipsis());
-  if (S->getCatchParamDecl())
-    VisitType(S->getCatchParamDecl()->getType());
-}
+// void StmtProfiler::VisitObjCAtCatchStmt(const ObjCAtCatchStmt *S) {
+//   VisitStmt(S);
+//   ID.AddBoolean(S->hasEllipsis());
+//   if (S->getCatchParamDecl())
+//     VisitType(S->getCatchParamDecl()->getType());
+// }
 
-void StmtProfiler::VisitObjCAtFinallyStmt(const ObjCAtFinallyStmt *S) {
-  VisitStmt(S);
-}
+// void StmtProfiler::VisitObjCAtFinallyStmt(const ObjCAtFinallyStmt *S) {
+//   VisitStmt(S);
+// }
 
-void StmtProfiler::VisitObjCAtTryStmt(const ObjCAtTryStmt *S) {
-  VisitStmt(S);
-}
+// void StmtProfiler::VisitObjCAtTryStmt(const ObjCAtTryStmt *S) {
+//   VisitStmt(S);
+// }
 
-void
-StmtProfiler::VisitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt *S) {
-  VisitStmt(S);
-}
+// void
+// StmtProfiler::VisitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt *S) {
+//   VisitStmt(S);
+// }
 
-void StmtProfiler::VisitObjCAtThrowStmt(const ObjCAtThrowStmt *S) {
-  VisitStmt(S);
-}
+// void StmtProfiler::VisitObjCAtThrowStmt(const ObjCAtThrowStmt *S) {
+//   VisitStmt(S);
+// }
 
-void
-StmtProfiler::VisitObjCAutoreleasePoolStmt(const ObjCAutoreleasePoolStmt *S) {
-  VisitStmt(S);
-}
+// void
+// StmtProfiler::VisitObjCAutoreleasePoolStmt(const ObjCAutoreleasePoolStmt *S) {
+//   VisitStmt(S);
+// }
 
 namespace {
 class OMPClauseProfiler : public ConstOMPClauseVisitor<OMPClauseProfiler> {
@@ -2143,26 +2143,26 @@ void StmtProfiler::VisitRecoveryExpr(const RecoveryExpr *E) { VisitExpr(E); }
 //   VisitDecl(S->getMethodDecl());
 // }
 
-void StmtProfiler::VisitObjCIsaExpr(const ObjCIsaExpr *S) {
-  VisitExpr(S);
-  ID.AddBoolean(S->isArrow());
-}
+// void StmtProfiler::VisitObjCIsaExpr(const ObjCIsaExpr *S) {
+//   VisitExpr(S);
+//   ID.AddBoolean(S->isArrow());
+// }
 
 // void StmtProfiler::VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *S) {
 //   VisitExpr(S);
 //   ID.AddBoolean(S->getValue());
 // }
 
-void StmtProfiler::VisitObjCIndirectCopyRestoreExpr(
-    const ObjCIndirectCopyRestoreExpr *S) {
-  VisitExpr(S);
-  ID.AddBoolean(S->shouldCopy());
-}
+// void StmtProfiler::VisitObjCIndirectCopyRestoreExpr(
+//     const ObjCIndirectCopyRestoreExpr *S) {
+//   VisitExpr(S);
+//   ID.AddBoolean(S->shouldCopy());
+// }
 
-void StmtProfiler::VisitObjCBridgedCastExpr(const ObjCBridgedCastExpr *S) {
-  VisitExplicitCastExpr(S);
-  ID.AddBoolean(S->getBridgeKind());
-}
+// void StmtProfiler::VisitObjCBridgedCastExpr(const ObjCBridgedCastExpr *S) {
+//   VisitExplicitCastExpr(S);
+//   ID.AddBoolean(S->getBridgeKind());
+// }
 
 void StmtProfiler::VisitObjCAvailabilityCheckExpr(
     const ObjCAvailabilityCheckExpr *S) {

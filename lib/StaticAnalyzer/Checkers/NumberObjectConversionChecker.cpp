@@ -104,11 +104,11 @@ void Callback::run(const MatchFinder::MatchResult &Result) {
 
   const Expr *ConvertedCObject = Result.Nodes.getNodeAs<Expr>("c_object");
   const Expr *ConvertedCppObject = Result.Nodes.getNodeAs<Expr>("cpp_object");
-  const Expr *ConvertedObjCObject = Result.Nodes.getNodeAs<Expr>("objc_object");
+  // const Expr *ConvertedObjCObject = Result.Nodes.getNodeAs<Expr>("objc_object");
   bool IsCpp = (ConvertedCppObject != nullptr);
-  bool IsObjC = (ConvertedObjCObject != nullptr);
-  const Expr *Obj = IsObjC ? ConvertedObjCObject
-                  : IsCpp ? ConvertedCppObject
+  // bool IsObjC = (ConvertedObjCObject != nullptr);
+  const Expr *Obj = /*IsObjC ? ConvertedObjCObject
+                  : */IsCpp ? ConvertedCppObject
                   : ConvertedCObject;
   assert(Obj);
 
@@ -146,8 +146,8 @@ void Callback::run(const MatchFinder::MatchResult &Result) {
   OS << "a pointer value of type '" << ObjT.getAsString() << "' to a ";
 
   std::string EuphemismForPlain = "primitive";
-  std::string SuggestedApi = IsObjC ? (IsInteger ? "" : "-boolValue")
-                           : IsCpp ? (IsOSNumber ? "" : "getValue()")
+  std::string SuggestedApi = /*IsObjC ? (IsInteger ? "" : "-boolValue")
+                           :*/ IsCpp ? (IsOSNumber ? "" : "getValue()")
                            : "CFNumberGetValue()";
   if (SuggestedApi.empty()) {
     // A generic message if we're not sure what API should be called.
@@ -173,7 +173,7 @@ void Callback::run(const MatchFinder::MatchResult &Result) {
 
   if (IsPedanticMatch)
     OS << "; instead, either compare the pointer to "
-       << (IsObjC ? "nil" : IsCpp ? "nullptr" : "NULL") << " or ";
+       << (/*IsObjC ? "nil" :*/ IsCpp ? "nullptr" : "NULL") << " or ";
   else
     OS << "; did you mean to ";
 

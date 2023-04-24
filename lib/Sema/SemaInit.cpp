@@ -69,8 +69,8 @@ static StringInitFailureKind IsStringInit(Expr *Init, const ArrayType *AT,
   Init = Init->IgnoreParens();
 
   // Handle @encode, which is a narrow string.
-  if (isa<ObjCEncodeExpr>(Init) && AT->getElementType()->isCharType())
-    return SIF_None;
+  // if (isa<ObjCEncodeExpr>(Init) && AT->getElementType()->isCharType())
+  //   return SIF_None;
 
   // Otherwise we can only handle string literals.
   StringLiteral *SL = dyn_cast<StringLiteral>(Init);
@@ -147,7 +147,7 @@ static void updateStringLiteralType(Expr *E, QualType Ty) {
   while (true) {
     E->setType(Ty);
     E->setValueKind(VK_RValue);
-    if (isa<StringLiteral>(E) || isa<ObjCEncodeExpr>(E)) {
+    if (isa<StringLiteral>(E) /*|| isa<ObjCEncodeExpr>(E)*/) {
       break;
     } else if (ParenExpr *PE = dyn_cast<ParenExpr>(E)) {
       E = PE->getSubExpr();
@@ -3449,9 +3449,9 @@ void InitializationSequence::Step::Destroy() {
   case SK_ArrayInit:
   case SK_GNUArrayInit:
   case SK_ParenthesizedArrayInit:
-  case SK_PassByIndirectCopyRestore:
-  case SK_PassByIndirectRestore:
-  case SK_ProduceObjCObject:
+  // case SK_PassByIndirectCopyRestore:
+  // case SK_PassByIndirectRestore:
+  // case SK_ProduceObjCObject:
   case SK_StdInitializerList:
   case SK_StdInitializerListConstructorCall:
   // case SK_OCLSamplerInit:
@@ -3704,21 +3704,21 @@ void InitializationSequence::AddParenthesizedArrayInitStep(QualType T) {
   Steps.push_back(S);
 }
 
-void InitializationSequence::AddPassByIndirectCopyRestoreStep(QualType type,
-                                                              bool shouldCopy) {
-  Step s;
-  s.Kind = (shouldCopy ? SK_PassByIndirectCopyRestore
-                       : SK_PassByIndirectRestore);
-  s.Type = type;
-  Steps.push_back(s);
-}
+// void InitializationSequence::AddPassByIndirectCopyRestoreStep(QualType type,
+//                                                               bool shouldCopy) {
+//   Step s;
+//   s.Kind = (shouldCopy ? SK_PassByIndirectCopyRestore
+//                        : SK_PassByIndirectRestore);
+//   s.Type = type;
+//   Steps.push_back(s);
+// }
 
-void InitializationSequence::AddProduceObjCObjectStep(QualType T) {
-  Step S;
-  S.Kind = SK_ProduceObjCObject;
-  S.Type = T;
-  Steps.push_back(S);
-}
+// void InitializationSequence::AddProduceObjCObjectStep(QualType T) {
+//   Step S;
+//   S.Kind = SK_ProduceObjCObject;
+//   S.Type = T;
+//   Steps.push_back(S);
+// }
 
 void InitializationSequence::AddStdInitializerListConstructionStep(QualType T) {
   Step S;
@@ -3789,33 +3789,33 @@ maybeRecoverWithZeroInitialization(Sema &S, InitializationSequence &Sequence,
   return false;
 }
 
-static void MaybeProduceObjCObject(Sema &S,
-                                   InitializationSequence &Sequence,
-                                   const InitializedEntity &Entity) {
-  if (!S.getLangOpts().ObjCAutoRefCount) return;
+// static void MaybeProduceObjCObject(Sema &S,
+//                                    InitializationSequence &Sequence,
+//                                    const InitializedEntity &Entity) {
+//   if (!S.getLangOpts().ObjCAutoRefCount) return;
 
-  /// When initializing a parameter, produce the value if it's marked
-  /// __attribute__((ns_consumed)).
-  if (Entity.isParameterKind()) {
-    if (!Entity.isParameterConsumed())
-      return;
+//   /// When initializing a parameter, produce the value if it's marked
+//   /// __attribute__((ns_consumed)).
+//   if (Entity.isParameterKind()) {
+//     if (!Entity.isParameterConsumed())
+//       return;
 
-    assert(Entity.getType()->isObjCRetainableType() &&
-           "consuming an object of unretainable type?");
-    Sequence.AddProduceObjCObjectStep(Entity.getType());
+//     assert(Entity.getType()->isObjCRetainableType() &&
+//            "consuming an object of unretainable type?");
+//     Sequence.AddProduceObjCObjectStep(Entity.getType());
 
-  /// When initializing a return value, if the return type is a
-  /// retainable type, then returns need to immediately retain the
-  /// object.  If an autorelease is required, it will be done at the
-  /// last instant.
-  } else if (Entity.getKind() == InitializedEntity::EK_Result ||
-             Entity.getKind() == InitializedEntity::EK_StmtExprResult) {
-    if (!Entity.getType()->isObjCRetainableType())
-      return;
+//   /// When initializing a return value, if the return type is a
+//   /// retainable type, then returns need to immediately retain the
+//   /// object.  If an autorelease is required, it will be done at the
+//   /// last instant.
+//   } else if (Entity.getKind() == InitializedEntity::EK_Result ||
+//              Entity.getKind() == InitializedEntity::EK_StmtExprResult) {
+//     if (!Entity.getType()->isObjCRetainableType())
+//       return;
 
-    Sequence.AddProduceObjCObjectStep(Entity.getType());
-  }
-}
+//     Sequence.AddProduceObjCObjectStep(Entity.getType());
+//   }
+// }
 
 static void TryListInitialization(Sema &S,
                                   const InitializedEntity &Entity,
@@ -5824,7 +5824,7 @@ void InitializationSequence::InitializeFrom(Sema &S,
 
     // Handle initialization in C
     AddCAssignmentStep(DestType);
-    MaybeProduceObjCObject(S, *this, Entity);
+    // MaybeProduceObjCObject(S, *this, Entity);
     return;
   }
 
@@ -5882,7 +5882,7 @@ void InitializationSequence::InitializeFrom(Sema &S,
 
     TryUserDefinedConversion(S, DestType, Kind, Initializer, *this,
                              TopLevelOfInitList);
-    MaybeProduceObjCObject(S, *this, Entity);
+    // MaybeProduceObjCObject(S, *this, Entity);
     if (!Failed() && NeedAtomicConversion)
       AddAtomicConversionStep(Entity.getType());
     return;
@@ -5953,7 +5953,7 @@ void InitializationSequence::InitializeFrom(Sema &S,
   } else {
     AddConversionSequenceStep(ICS, DestType, TopLevelOfInitList);
 
-    MaybeProduceObjCObject(S, *this, Entity);
+    // MaybeProduceObjCObject(S, *this, Entity);
   }
 }
 
@@ -7943,9 +7943,9 @@ ExprResult InitializationSequence::Perform(Sema &S,
   case SK_ArrayInit:
   case SK_GNUArrayInit:
   case SK_ParenthesizedArrayInit:
-  case SK_PassByIndirectCopyRestore:
-  case SK_PassByIndirectRestore:
-  case SK_ProduceObjCObject:
+  // case SK_PassByIndirectCopyRestore:
+  // case SK_PassByIndirectRestore:
+  // case SK_ProduceObjCObject:
   case SK_StdInitializerList:
   // case SK_OCLSamplerInit:
   case SK_OCLZeroOpaqueType: {
@@ -8488,19 +8488,19 @@ ExprResult InitializationSequence::Perform(Sema &S,
         << CurInit.get()->getSourceRange();
       break;
 
-    case SK_PassByIndirectCopyRestore:
-    case SK_PassByIndirectRestore:
-      checkIndirectCopyRestoreSource(S, CurInit.get());
-      CurInit = new (S.Context) ObjCIndirectCopyRestoreExpr(
-          CurInit.get(), Step->Type,
-          Step->Kind == SK_PassByIndirectCopyRestore);
-      break;
+    // case SK_PassByIndirectCopyRestore:
+    // case SK_PassByIndirectRestore:
+    //   checkIndirectCopyRestoreSource(S, CurInit.get());
+    //   CurInit = new (S.Context) ObjCIndirectCopyRestoreExpr(
+    //       CurInit.get(), Step->Type,
+    //       Step->Kind == SK_PassByIndirectCopyRestore);
+    //   break;
 
-    case SK_ProduceObjCObject:
-      CurInit =
-          ImplicitCastExpr::Create(S.Context, Step->Type, CK_ARCProduceObject,
-                                   CurInit.get(), nullptr, VK_RValue);
-      break;
+    // case SK_ProduceObjCObject:
+    //   CurInit =
+    //       ImplicitCastExpr::Create(S.Context, Step->Type, CK_ARCProduceObject,
+    //                                CurInit.get(), nullptr, VK_RValue);
+    //   break;
 
     case SK_StdInitializerList: {
       S.Diag(CurInit.get()->getExprLoc(),
@@ -9515,17 +9515,17 @@ void InitializationSequence::dump(raw_ostream &OS) const {
       OS << "parenthesized array initialization";
       break;
 
-    case SK_PassByIndirectCopyRestore:
-      OS << "pass by indirect copy and restore";
-      break;
+    // case SK_PassByIndirectCopyRestore:
+    //   OS << "pass by indirect copy and restore";
+    //   break;
 
-    case SK_PassByIndirectRestore:
-      OS << "pass by indirect restore";
-      break;
+    // case SK_PassByIndirectRestore:
+    //   OS << "pass by indirect restore";
+    //   break;
 
-    case SK_ProduceObjCObject:
-      OS << "Objective-C object retension";
-      break;
+    // case SK_ProduceObjCObject:
+    //   OS << "Objective-C object retension";
+    //   break;
 
     case SK_StdInitializerList:
       OS << "std::initializer_list from initializer list";

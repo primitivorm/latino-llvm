@@ -3109,9 +3109,9 @@ public:
   void EmitAsmStmt(const AsmStmt &S);
 
   // void EmitObjCForCollectionStmt(const ObjCForCollectionStmt &S);
-  void EmitObjCAtTryStmt(const ObjCAtTryStmt &S);
-  void EmitObjCAtThrowStmt(const ObjCAtThrowStmt &S);
-  void EmitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt &S);
+  // void EmitObjCAtTryStmt(const ObjCAtTryStmt &S);
+  // void EmitObjCAtThrowStmt(const ObjCAtThrowStmt &S);
+  // void EmitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt &S);
   // void EmitObjCAutoreleasePoolStmt(const ObjCAutoreleasePoolStmt &S);
 
   void EmitCoroutineBody(const CoroutineBodyStmt &S);
@@ -3739,7 +3739,7 @@ public:
                                  bool IsLowerBound = true);
   LValue EmitExtVectorElementExpr(const ExtVectorElementExpr *E);
   LValue EmitMemberExpr(const MemberExpr *E);
-  LValue EmitObjCIsaExpr(const ObjCIsaExpr *E);
+  // LValue EmitObjCIsaExpr(const ObjCIsaExpr *E);
   LValue EmitCompoundLiteralLValue(const CompoundLiteralExpr *E);
   LValue EmitInitListLValue(const InitListExpr *E);
   LValue EmitConditionalOperatorLValue(const AbstractConditionalOperator *E);

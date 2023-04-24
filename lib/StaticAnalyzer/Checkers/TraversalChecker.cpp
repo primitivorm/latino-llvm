@@ -33,23 +33,23 @@ public:
 };
 }
 
-void TraversalDumper::checkBranchCondition(const Stmt *Condition,
-                                           CheckerContext &C) const {
-  // Special-case Objective-C's for-in loop, which uses the entire loop as its
-  // condition. We just print the collection expression.
-  const Stmt *Parent = dyn_cast<ObjCForCollectionStmt>(Condition);
-  if (!Parent) {
-    const ParentMap &Parents = C.getLocationContext()->getParentMap();
-    Parent = Parents.getParent(Condition);
-  }
+// void TraversalDumper::checkBranchCondition(const Stmt *Condition,
+//                                            CheckerContext &C) const {
+//   // Special-case Objective-C's for-in loop, which uses the entire loop as its
+//   // condition. We just print the collection expression.
+//   const Stmt *Parent = dyn_cast<ObjCForCollectionStmt>(Condition);
+//   if (!Parent) {
+//     const ParentMap &Parents = C.getLocationContext()->getParentMap();
+//     Parent = Parents.getParent(Condition);
+//   }
 
-  // It is mildly evil to print directly to llvm::outs() rather than emitting
-  // warnings, but this ensures things do not get filtered out by the rest of
-  // the static analyzer machinery.
-  SourceLocation Loc = Parent->getBeginLoc();
-  llvm::outs() << C.getSourceManager().getSpellingLineNumber(Loc) << " "
-               << Parent->getStmtClassName() << "\n";
-}
+//   // It is mildly evil to print directly to llvm::outs() rather than emitting
+//   // warnings, but this ensures things do not get filtered out by the rest of
+//   // the static analyzer machinery.
+//   SourceLocation Loc = Parent->getBeginLoc();
+//   llvm::outs() << C.getSourceManager().getSpellingLineNumber(Loc) << " "
+//                << Parent->getStmtClassName() << "\n";
+// }
 
 void TraversalDumper::checkBeginFunction(CheckerContext &C) const {
   llvm::outs() << "--BEGIN FUNCTION--\n";

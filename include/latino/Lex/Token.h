@@ -276,10 +276,10 @@ public:
   bool isExpandDisabled() const { return getFlag(DisableExpand); }
 
   /// Return true if we have an ObjC keyword identifier.
-  bool isObjCAtKeyword(tok::ObjCKeywordKind objcKey) const;
+  // bool isObjCAtKeyword(tok::ObjCKeywordKind objcKey) const;
 
   /// Return the ObjC keyword kind.
-  tok::ObjCKeywordKind getObjCKeywordID() const;
+  // tok::ObjCKeywordKind getObjCKeywordID() const;
 
   /// Return true if this token has trigraphs or escaped newlines in it.
   bool needsCleaning() const { return getFlag(NeedsCleaning); }

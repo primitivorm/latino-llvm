@@ -209,7 +209,7 @@ struct ParenState {
         ContainsLineBreak(false), ContainsUnwrappedBuilder(false),
         AlignColons(true), ObjCSelectorNameFound(false),
         HasMultipleNestedBlocks(false), NestedBlockInlined(false),
-        IsInsideObjCArrayLiteral(false), IsCSharpGenericTypeConstraint(false),
+        /*IsInsideObjCArrayLiteral(false),*/ IsCSharpGenericTypeConstraint(false),
         IsChainedConditional(false), IsWrappedConditional(false),
         UnindentOperator(false) {}
 
@@ -333,7 +333,7 @@ struct ParenState {
 
   /// \c true if the current \c ParenState represents an Objective-C
   /// array literal.
-  bool IsInsideObjCArrayLiteral : 1;
+  // bool IsInsideObjCArrayLiteral : 1;
 
   bool IsCSharpGenericTypeConstraint : 1;
 

@@ -297,9 +297,9 @@ protected:
     friend class DesignatedInitExpr; // ctor
     friend class Expr;
     friend class InitListExpr; // ctor
-    friend class ObjCArrayLiteral; // ctor
-    friend class ObjCDictionaryLiteral; // ctor
-    friend class ObjCMessageExpr; // ctor
+    // friend class ObjCArrayLiteral; // ctor
+    // friend class ObjCDictionaryLiteral; // ctor
+    // friend class ObjCMessageExpr; // ctor
     friend class OffsetOfExpr; // ctor
     friend class OpaqueValueExpr; // ctor
     friend class OverloadExpr; // ctor
@@ -969,13 +969,13 @@ protected:
 
   //===--- Obj-C Expression bitfields classes ---===//
 
-  class ObjCIndirectCopyRestoreExprBitfields {
-    friend class ObjCIndirectCopyRestoreExpr;
+  // class ObjCIndirectCopyRestoreExprBitfields {
+  //   friend class ObjCIndirectCopyRestoreExpr;
 
-    unsigned : NumExprBits;
+  //   unsigned : NumExprBits;
 
-    unsigned ShouldCopy : 1;
-  };
+  //   unsigned ShouldCopy : 1;
+  // };
 
   //===--- Clang Extensions bitfields classes ---===//
 
@@ -1065,7 +1065,7 @@ protected:
     CoawaitExprBitfields CoawaitBits;
 
     // Obj-C Expressions
-    ObjCIndirectCopyRestoreExprBitfields ObjCIndirectCopyRestoreExprBits;
+    // ObjCIndirectCopyRestoreExprBitfields ObjCIndirectCopyRestoreExprBits;
 
     // Clang Extensions
     OpaqueValueExprBitfields OpaqueValueExprBits;
@@ -2043,7 +2043,7 @@ public:
   /// Otherwise, or if the condition is value-dependent, returns None.
   Optional<const Stmt*> getNondiscardedCase(const ASTContext &Ctx) const;
 
-  bool isObjCAvailabilityCheck() const;
+  // bool isObjCAvailabilityCheck() const;
 
   SourceLocation getBeginLoc() const { return getIfLoc(); }
   SourceLocation getEndLoc() const LLVM_READONLY {

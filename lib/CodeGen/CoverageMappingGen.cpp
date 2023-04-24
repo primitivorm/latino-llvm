@@ -1092,31 +1092,31 @@ struct CounterCoverageMappingBuilder
       pushRegion(OutCount);
   }
 
-  void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
-    extendRegion(S);
-    Visit(S->getElement());
+  // void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
+  //   extendRegion(S);
+  //   Visit(S->getElement());
 
-    Counter ParentCount = getRegion().getCounter();
-    Counter BodyCount = getRegionCounter(S);
+  //   Counter ParentCount = getRegion().getCounter();
+  //   Counter BodyCount = getRegionCounter(S);
 
-    BreakContinueStack.push_back(BreakContinue());
-    extendRegion(S->getBody());
-    Counter BackedgeCount = propagateCounts(BodyCount, S->getBody());
-    BreakContinue BC = BreakContinueStack.pop_back_val();
+  //   BreakContinueStack.push_back(BreakContinue());
+  //   extendRegion(S->getBody());
+  //   Counter BackedgeCount = propagateCounts(BodyCount, S->getBody());
+  //   BreakContinue BC = BreakContinueStack.pop_back_val();
 
-    // The body count applies to the area immediately after the collection.
-    auto Gap = findGapAreaBetween(getPreciseTokenLocEnd(S->getRParenLoc()),
-                                  getStart(S->getBody()));
-    if (Gap)
-      fillGapAreaWithCount(Gap->getBegin(), Gap->getEnd(), BodyCount);
+  //   // The body count applies to the area immediately after the collection.
+  //   auto Gap = findGapAreaBetween(getPreciseTokenLocEnd(S->getRParenLoc()),
+  //                                 getStart(S->getBody()));
+  //   if (Gap)
+  //     fillGapAreaWithCount(Gap->getBegin(), Gap->getEnd(), BodyCount);
 
-    Counter LoopCount =
-        addCounters(ParentCount, BackedgeCount, BC.ContinueCount);
-    Counter OutCount =
-        addCounters(BC.BreakCount, subtractCounters(LoopCount, BodyCount));
-    if (OutCount != ParentCount)
-      pushRegion(OutCount);
-  }
+  //   Counter LoopCount =
+  //       addCounters(ParentCount, BackedgeCount, BC.ContinueCount);
+  //   Counter OutCount =
+  //       addCounters(BC.BreakCount, subtractCounters(LoopCount, BodyCount));
+  //   if (OutCount != ParentCount)
+  //     pushRegion(OutCount);
+  // }
 
   void VisitSwitchStmt(const SwitchStmt *S) {
     extendRegion(S);

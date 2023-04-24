@@ -819,38 +819,38 @@ public:
 };
 
 /// The region associated with an ObjCStringLiteral.
-class ObjCStringRegion : public TypedValueRegion {
-  friend class MemRegionManager;
+// class ObjCStringRegion : public TypedValueRegion {
+//   friend class MemRegionManager;
 
-  const ObjCStringLiteral *Str;
+//   const ObjCStringLiteral *Str;
 
-  ObjCStringRegion(const ObjCStringLiteral *str,
-                   const GlobalInternalSpaceRegion *sreg)
-      : TypedValueRegion(sreg, ObjCStringRegionKind), Str(str) {
-    assert(str);
-  }
+//   ObjCStringRegion(const ObjCStringLiteral *str,
+//                    const GlobalInternalSpaceRegion *sreg)
+//       : TypedValueRegion(sreg, ObjCStringRegionKind), Str(str) {
+//     assert(str);
+//   }
 
-  static void ProfileRegion(llvm::FoldingSetNodeID &ID,
-                            const ObjCStringLiteral *Str,
-                            const MemRegion *superRegion);
+//   static void ProfileRegion(llvm::FoldingSetNodeID &ID,
+//                             const ObjCStringLiteral *Str,
+//                             const MemRegion *superRegion);
 
-public:
-  const ObjCStringLiteral *getObjCStringLiteral() const { return Str; }
+// public:
+//   const ObjCStringLiteral *getObjCStringLiteral() const { return Str; }
 
-  QualType getValueType() const override { return Str->getType(); }
+//   QualType getValueType() const override { return Str->getType(); }
 
-  bool isBoundable() const override { return false; }
+//   bool isBoundable() const override { return false; }
 
-  void Profile(llvm::FoldingSetNodeID& ID) const override {
-    ProfileRegion(ID, Str, superRegion);
-  }
+//   void Profile(llvm::FoldingSetNodeID& ID) const override {
+//     ProfileRegion(ID, Str, superRegion);
+//   }
 
-  void dumpToStream(raw_ostream &os) const override;
+//   void dumpToStream(raw_ostream &os) const override;
 
-  static bool classof(const MemRegion* R) {
-    return R->getKind() == ObjCStringRegionKind;
-  }
-};
+//   static bool classof(const MemRegion* R) {
+//     return R->getKind() == ObjCStringRegionKind;
+//   }
+// };
 
 /// CompoundLiteralRegion - A memory region representing a compound literal.
 ///   Compound literals are essentially temporaries that are stack allocated
@@ -1382,7 +1382,7 @@ public:
 
   const StringRegion *getStringRegion(const StringLiteral *Str);
 
-  const ObjCStringRegion *getObjCStringRegion(const ObjCStringLiteral *Str);
+  // const ObjCStringRegion *getObjCStringRegion(const ObjCStringLiteral *Str);
 
   /// getVarRegion - Retrieve or create the memory region associated with
   ///  a specified VarDecl and LocationContext.

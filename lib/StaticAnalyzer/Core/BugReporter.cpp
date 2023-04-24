@@ -625,7 +625,7 @@ static const Stmt *getEnclosingParent(const Stmt *S, const ParentMap &PM) {
   case Stmt::ForStmtClass:
   case Stmt::DoStmtClass:
   case Stmt::WhileStmtClass:
-  case Stmt::ObjCForCollectionStmtClass:
+  // case Stmt::ObjCForCollectionStmtClass:
   case Stmt::CXXForRangeStmtClass:
     return Parent;
   default:
@@ -684,10 +684,10 @@ getEnclosingStmtLocation(const Stmt *S, const LocationContext *LC,
         if (cast<IfStmt>(Parent)->getCond() != S)
           return PathDiagnosticLocation(S, SMgr, LC);
         break;
-      case Stmt::ObjCForCollectionStmtClass:
-        if (cast<ObjCForCollectionStmt>(Parent)->getBody() == S)
-          return PathDiagnosticLocation(S, SMgr, LC);
-        break;
+      // case Stmt::ObjCForCollectionStmtClass:
+      //   if (cast<ObjCForCollectionStmt>(Parent)->getBody() == S)
+      //     return PathDiagnosticLocation(S, SMgr, LC);
+      //   break;
       case Stmt::WhileStmtClass:
         if (cast<WhileStmt>(Parent)->getCond() != S)
           return PathDiagnosticLocation(S, SMgr, LC);
@@ -1002,7 +1002,7 @@ static bool isLoop(const Stmt *Term) {
   switch (Term->getStmtClass()) {
     case Stmt::ForStmtClass:
     case Stmt::WhileStmtClass:
-    case Stmt::ObjCForCollectionStmtClass:
+    // case Stmt::ObjCForCollectionStmtClass:
     case Stmt::CXXForRangeStmtClass:
       return true;
     default:
@@ -1060,11 +1060,11 @@ static bool isInLoopBody(const ParentMap &PM, const Stmt *S, const Stmt *Term) {
       LoopBody = FS->getBody();
       break;
     }
-    case Stmt::ObjCForCollectionStmtClass: {
-      const auto *FC = cast<ObjCForCollectionStmt>(Term);
-      LoopBody = FC->getBody();
-      break;
-    }
+    // case Stmt::ObjCForCollectionStmtClass: {
+    //   const auto *FC = cast<ObjCForCollectionStmt>(Term);
+    //   LoopBody = FC->getBody();
+    //   break;
+    // }
     case Stmt::WhileStmtClass:
       LoopBody = cast<WhileStmt>(Term)->getBody();
       break;
@@ -1102,12 +1102,12 @@ static void addEdgeToPath(PathPieces &path,
 
 /// A customized wrapper for CFGBlock::getTerminatorCondition()
 /// which returns the element for ObjCForCollectionStmts.
-static const Stmt *getTerminatorCondition(const CFGBlock *B) {
-  const Stmt *S = B->getTerminatorCondition();
-  if (const auto *FS = dyn_cast_or_null<ObjCForCollectionStmt>(S))
-    return FS->getElement();
-  return S;
-}
+// static const Stmt *getTerminatorCondition(const CFGBlock *B) {
+//   const Stmt *S = B->getTerminatorCondition();
+//   if (const auto *FS = dyn_cast_or_null<ObjCForCollectionStmt>(S))
+//     return FS->getElement();
+//   return S;
+// }
 
 constexpr llvm::StringLiteral StrEnteringLoop = "Entering loop body";
 constexpr llvm::StringLiteral StrLoopBodyZero = "Loop body executed 0 times";
@@ -1224,11 +1224,11 @@ void PathDiagnosticBuilder::generatePathDiagnosticsForNode(
     // Add an edge.  If this is an ObjCForCollectionStmt do
     // not add an edge here as it appears in the CFG both
     // as a terminator and as a terminator condition.
-    if (!isa<ObjCForCollectionStmt>(PS->getStmt())) {
-      PathDiagnosticLocation L =
-          PathDiagnosticLocation(PS->getStmt(), SM, C.getCurrLocationContext());
-      addEdgeToPath(C.getActivePath(), PrevLoc, L);
-    }
+    // if (!isa<ObjCForCollectionStmt>(PS->getStmt())) {
+    //   PathDiagnosticLocation L =
+    //       PathDiagnosticLocation(PS->getStmt(), SM, C.getCurrLocationContext());
+    //   addEdgeToPath(C.getActivePath(), PrevLoc, L);
+    // }
 
   } else if (auto BE = P.getAs<BlockEdge>()) {
 
@@ -1246,9 +1246,9 @@ void PathDiagnosticBuilder::generatePathDiagnosticsForNode(
         Body = FS->getBody();
       else if (const auto *WS = dyn_cast<WhileStmt>(Loop))
         Body = WS->getBody();
-      else if (const auto *OFS = dyn_cast<ObjCForCollectionStmt>(Loop)) {
+      /*else if (const auto *OFS = dyn_cast<ObjCForCollectionStmt>(Loop)) {
         Body = OFS->getBody();
-      } else if (const auto *FRS = dyn_cast<CXXForRangeStmt>(Loop)) {
+      }*/ else if (const auto *FRS = dyn_cast<CXXForRangeStmt>(Loop)) {
         Body = FRS->getBody();
       }
       // do-while statements are explicitly excluded here
@@ -1282,9 +1282,9 @@ void PathDiagnosticBuilder::generatePathDiagnosticsForNode(
 
         if (isJumpToFalseBranch(&*BE)) {
           if (!IsInLoopBody) {
-            if (isa<ObjCForCollectionStmt>(Term)) {
+            /*if (isa<ObjCForCollectionStmt>(Term)) {
               str = StrLoopCollectionEmpty;
-            } else if (isa<CXXForRangeStmt>(Term)) {
+            } else*/ if (isa<CXXForRangeStmt>(Term)) {
               str = StrLoopRangeEmpty;
             } else {
               str = StrLoopBodyZero;
@@ -1383,8 +1383,8 @@ static bool isConditionForTerminator(const Stmt *S, const Stmt *Cond) {
              CO->getLHS() == Cond ||
              CO->getRHS() == Cond;
     }
-    case Stmt::ObjCForCollectionStmtClass:
-      return cast<ObjCForCollectionStmt>(S)->getElement() == Cond;
+    // case Stmt::ObjCForCollectionStmtClass:
+    //   return cast<ObjCForCollectionStmt>(S)->getElement() == Cond;
     case Stmt::CXXForRangeStmtClass: {
       const auto *FRS = cast<CXXForRangeStmt>(S);
       return FRS->getCond() == Cond || FRS->getRangeInit() == Cond;
@@ -1541,7 +1541,7 @@ static void simplifySimpleBranches(PathPieces &pieces) {
     // We only perform this transformation for specific branch kinds.
     // We don't want to do this for do..while, for example.
     if (!(isa<ForStmt>(s1Start) || isa<WhileStmt>(s1Start) ||
-          isa<IfStmt>(s1Start) || isa<ObjCForCollectionStmt>(s1Start) ||
+          isa<IfStmt>(s1Start) || /*isa<ObjCForCollectionStmt>(s1Start) ||*/
           isa<CXXForRangeStmt>(s1Start)))
       continue;
 
@@ -1896,16 +1896,16 @@ static bool optimizeEdges(const PathDiagnosticConstruct &C, PathPieces &path,
     // becomes:
     //
     // (X -> element)
-    if (s1End == s2Start) {
-      const auto *FS = dyn_cast_or_null<ObjCForCollectionStmt>(level3);
-      if (FS && FS->getCollection()->IgnoreParens() == s2Start &&
-          s2End == FS->getElement()) {
-        PieceI->setEndLocation(PieceNextI->getEndLocation());
-        path.erase(NextI);
-        hasChanges = true;
-        continue;
-      }
-    }
+    // if (s1End == s2Start) {
+    //   const auto *FS = dyn_cast_or_null<ObjCForCollectionStmt>(level3);
+    //   if (FS && FS->getCollection()->IgnoreParens() == s2Start &&
+    //       s2End == FS->getElement()) {
+    //     PieceI->setEndLocation(PieceNextI->getEndLocation());
+    //     path.erase(NextI);
+    //     hasChanges = true;
+    //     continue;
+    //   }
+    // }
 
     // No changes at this index?  Move to the next one.
     ++I;

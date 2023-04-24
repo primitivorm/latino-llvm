@@ -546,62 +546,62 @@ static void CheckForNullPointerDereference(Sema &S, Expr *E) {
   }
 }
 
-static void DiagnoseDirectIsaAccess(Sema &S, const ObjCIvarRefExpr *OIRE,
-                                    SourceLocation AssignLoc,
-                                    const Expr* RHS) {
-  // const ObjCIvarDecl *IV = OIRE->getDecl();
-  // if (!IV)
-  //   return;
+// static void DiagnoseDirectIsaAccess(Sema &S, const ObjCIvarRefExpr *OIRE,
+//                                     SourceLocation AssignLoc,
+//                                     const Expr* RHS) {
+//   // const ObjCIvarDecl *IV = OIRE->getDecl();
+//   // if (!IV)
+//   //   return;
 
-  // DeclarationName MemberName = IV->getDeclName();
-  // IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
-  // if (!Member || !Member->isStr("isa"))
-  //   return;
+//   // DeclarationName MemberName = IV->getDeclName();
+//   // IdentifierInfo *Member = MemberName.getAsIdentifierInfo();
+//   // if (!Member || !Member->isStr("isa"))
+//   //   return;
 
-  const Expr *Base = OIRE->getBase();
-  QualType BaseType = Base->getType();
-  if (OIRE->isArrow())
-    BaseType = BaseType->getPointeeType();
-  // if (const ObjCObjectType *OTy = BaseType->getAs<ObjCObjectType>())
-  //   if (ObjCInterfaceDecl *IDecl = OTy->getInterface()) {
-  //     ObjCInterfaceDecl *ClassDeclared = nullptr;
-  //     ObjCIvarDecl *IV = IDecl->lookupInstanceVariable(Member, ClassDeclared);
-  //     if (!ClassDeclared->getSuperClass()
-  //         && (*ClassDeclared->ivar_begin()) == IV) {
-  //       if (RHS) {
-  //         NamedDecl *ObjectSetClass =
-  //           S.LookupSingleName(S.TUScope,
-  //                              &S.Context.Idents.get("object_setClass"),
-  //                              SourceLocation(), S.LookupOrdinaryName);
-  //         if (ObjectSetClass) {
-  //           SourceLocation RHSLocEnd = S.getLocForEndOfToken(RHS->getEndLoc());
-  //           S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_assign)
-  //               << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
-  //                                             "object_setClass(")
-  //               << FixItHint::CreateReplacement(
-  //                      SourceRange(OIRE->getOpLoc(), AssignLoc), ",")
-  //               << FixItHint::CreateInsertion(RHSLocEnd, ")");
-  //         }
-  //         else
-  //           S.Diag(OIRE->getLocation(), diag::warn_objc_isa_assign);
-  //       } else {
-  //         NamedDecl *ObjectGetClass =
-  //           S.LookupSingleName(S.TUScope,
-  //                              &S.Context.Idents.get("object_getClass"),
-  //                              SourceLocation(), S.LookupOrdinaryName);
-  //         if (ObjectGetClass)
-  //           S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_use)
-  //               << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
-  //                                             "object_getClass(")
-  //               << FixItHint::CreateReplacement(
-  //                      SourceRange(OIRE->getOpLoc(), OIRE->getEndLoc()), ")");
-  //         else
-  //           S.Diag(OIRE->getLocation(), diag::warn_objc_isa_use);
-  //       }
-  //       S.Diag(IV->getLocation(), diag::note_ivar_decl);
-  //     }
-  //   }
-}
+//   const Expr *Base = OIRE->getBase();
+//   QualType BaseType = Base->getType();
+//   if (OIRE->isArrow())
+//     BaseType = BaseType->getPointeeType();
+//   // if (const ObjCObjectType *OTy = BaseType->getAs<ObjCObjectType>())
+//   //   if (ObjCInterfaceDecl *IDecl = OTy->getInterface()) {
+//   //     ObjCInterfaceDecl *ClassDeclared = nullptr;
+//   //     ObjCIvarDecl *IV = IDecl->lookupInstanceVariable(Member, ClassDeclared);
+//   //     if (!ClassDeclared->getSuperClass()
+//   //         && (*ClassDeclared->ivar_begin()) == IV) {
+//   //       if (RHS) {
+//   //         NamedDecl *ObjectSetClass =
+//   //           S.LookupSingleName(S.TUScope,
+//   //                              &S.Context.Idents.get("object_setClass"),
+//   //                              SourceLocation(), S.LookupOrdinaryName);
+//   //         if (ObjectSetClass) {
+//   //           SourceLocation RHSLocEnd = S.getLocForEndOfToken(RHS->getEndLoc());
+//   //           S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_assign)
+//   //               << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
+//   //                                             "object_setClass(")
+//   //               << FixItHint::CreateReplacement(
+//   //                      SourceRange(OIRE->getOpLoc(), AssignLoc), ",")
+//   //               << FixItHint::CreateInsertion(RHSLocEnd, ")");
+//   //         }
+//   //         else
+//   //           S.Diag(OIRE->getLocation(), diag::warn_objc_isa_assign);
+//   //       } else {
+//   //         NamedDecl *ObjectGetClass =
+//   //           S.LookupSingleName(S.TUScope,
+//   //                              &S.Context.Idents.get("object_getClass"),
+//   //                              SourceLocation(), S.LookupOrdinaryName);
+//   //         if (ObjectGetClass)
+//   //           S.Diag(OIRE->getExprLoc(), diag::warn_objc_isa_use)
+//   //               << FixItHint::CreateInsertion(OIRE->getBeginLoc(),
+//   //                                             "object_getClass(")
+//   //               << FixItHint::CreateReplacement(
+//   //                      SourceRange(OIRE->getOpLoc(), OIRE->getEndLoc()), ")");
+//   //         else
+//   //           S.Diag(OIRE->getLocation(), diag::warn_objc_isa_use);
+//   //       }
+//   //       S.Diag(IV->getLocation(), diag::note_ivar_decl);
+//   //     }
+//   //   }
+// }
 
 ExprResult Sema::DefaultLvalueConversion(Expr *E) {
   // Handle any placeholder expressions which made it here.
@@ -648,21 +648,21 @@ ExprResult Sema::DefaultLvalueConversion(Expr *E) {
   }
 
   CheckForNullPointerDereference(*this, E);
-  if (const ObjCIsaExpr *OISA = dyn_cast<ObjCIsaExpr>(E->IgnoreParenCasts())) {
-    NamedDecl *ObjectGetClass = LookupSingleName(TUScope,
-                                     &Context.Idents.get("object_getClass"),
-                                     SourceLocation(), LookupOrdinaryName);
-    if (ObjectGetClass)
-      Diag(E->getExprLoc(), diag::warn_objc_isa_use)
-          << FixItHint::CreateInsertion(OISA->getBeginLoc(), "object_getClass(")
-          << FixItHint::CreateReplacement(
-                 SourceRange(OISA->getOpLoc(), OISA->getIsaMemberLoc()), ")");
-    else
-      Diag(E->getExprLoc(), diag::warn_objc_isa_use);
-  }
-  else if (const ObjCIvarRefExpr *OIRE =
-            dyn_cast<ObjCIvarRefExpr>(E->IgnoreParenCasts()))
-    DiagnoseDirectIsaAccess(*this, OIRE, SourceLocation(), /* Expr*/nullptr);
+  // if (const ObjCIsaExpr *OISA = dyn_cast<ObjCIsaExpr>(E->IgnoreParenCasts())) {
+  //   NamedDecl *ObjectGetClass = LookupSingleName(TUScope,
+  //                                    &Context.Idents.get("object_getClass"),
+  //                                    SourceLocation(), LookupOrdinaryName);
+  //   if (ObjectGetClass)
+  //     Diag(E->getExprLoc(), diag::warn_objc_isa_use)
+  //         << FixItHint::CreateInsertion(OISA->getBeginLoc(), "object_getClass(")
+  //         << FixItHint::CreateReplacement(
+  //                SourceRange(OISA->getOpLoc(), OISA->getIsaMemberLoc()), ")");
+  //   else
+  //     Diag(E->getExprLoc(), diag::warn_objc_isa_use);
+  // }
+  // else if (const ObjCIvarRefExpr *OIRE =
+  //           dyn_cast<ObjCIvarRefExpr>(E->IgnoreParenCasts()))
+  //   DiagnoseDirectIsaAccess(*this, OIRE, SourceLocation(), /* Expr*/nullptr);
 
   // C++ [conv.lval]p1:
   //   [...] If T is a non-class type, the type of the prvalue is the
@@ -10853,18 +10853,18 @@ static void diagnoseFunctionPointerToVoidComparison(Sema &S, SourceLocation Loc,
     << LHS.get()->getSourceRange() << RHS.get()->getSourceRange();
 }
 
-static bool isObjCObjectLiteral(ExprResult &E) {
-  switch (E.get()->IgnoreParenImpCasts()->getStmtClass()) {
-  case Stmt::ObjCArrayLiteralClass:
-  case Stmt::ObjCDictionaryLiteralClass:
-  case Stmt::ObjCStringLiteralClass:
-  case Stmt::ObjCBoxedExprClass:
-    return true;
-  default:
-    // Note that ObjCBoolLiteral is NOT an object literal!
-    return false;
-  }
-}
+// static bool isObjCObjectLiteral(ExprResult &E) {
+//   switch (E.get()->IgnoreParenImpCasts()->getStmtClass()) {
+//   case Stmt::ObjCArrayLiteralClass:
+//   case Stmt::ObjCDictionaryLiteralClass:
+//   case Stmt::ObjCStringLiteralClass:
+//   case Stmt::ObjCBoxedExprClass:
+//     return true;
+//   default:
+//     // Note that ObjCBoolLiteral is NOT an object literal!
+//     return false;
+//   }
+// }
 
 // static bool hasIsEqualMethod(Sema &S, const Expr *LHS, const Expr *RHS) {
 //   const ObjCObjectPointerType *Type =
@@ -10912,47 +10912,47 @@ static bool isObjCObjectLiteral(ExprResult &E) {
 //   return true;
 // }
 
-Sema::ObjCLiteralKind Sema::CheckLiteralKind(Expr *FromE) {
-  FromE = FromE->IgnoreParenImpCasts();
-  switch (FromE->getStmtClass()) {
-    default:
-      break;
-    case Stmt::ObjCStringLiteralClass:
-      // "string literal"
-      return LK_String;
-    case Stmt::ObjCArrayLiteralClass:
-      // "array literal"
-      return LK_Array;
-    case Stmt::ObjCDictionaryLiteralClass:
-      // "dictionary literal"
-      return LK_Dictionary;
-    case Stmt::BlockExprClass:
-      return LK_Block;
-    case Stmt::ObjCBoxedExprClass: {
-      Expr *Inner = cast<ObjCBoxedExpr>(FromE)->getSubExpr()->IgnoreParens();
-      switch (Inner->getStmtClass()) {
-        case Stmt::IntegerLiteralClass:
-        case Stmt::FloatingLiteralClass:
-        case Stmt::CharacterLiteralClass:
-        case Stmt::ObjCBoolLiteralExprClass:
-        case Stmt::CXXBoolLiteralExprClass:
-          // "numeric literal"
-          return LK_Numeric;
-        case Stmt::ImplicitCastExprClass: {
-          CastKind CK = cast<CastExpr>(Inner)->getCastKind();
-          // Boolean literals can be represented by implicit casts.
-          if (CK == CK_IntegralToBoolean || CK == CK_IntegralCast)
-            return LK_Numeric;
-          break;
-        }
-        default:
-          break;
-      }
-      return LK_Boxed;
-    }
-  }
-  return LK_None;
-}
+// Sema::ObjCLiteralKind Sema::CheckLiteralKind(Expr *FromE) {
+//   FromE = FromE->IgnoreParenImpCasts();
+//   switch (FromE->getStmtClass()) {
+//     default:
+//       break;
+//     case Stmt::ObjCStringLiteralClass:
+//       // "string literal"
+//       return LK_String;
+//     // case Stmt::ObjCArrayLiteralClass:
+//     //   // "array literal"
+//     //   return LK_Array;
+//     // case Stmt::ObjCDictionaryLiteralClass:
+//     //   // "dictionary literal"
+//     //   return LK_Dictionary;
+//     case Stmt::BlockExprClass:
+//       return LK_Block;
+//     // case Stmt::ObjCBoxedExprClass: {
+//     //   Expr *Inner = cast<ObjCBoxedExpr>(FromE)->getSubExpr()->IgnoreParens();
+//     //   switch (Inner->getStmtClass()) {
+//     //     case Stmt::IntegerLiteralClass:
+//     //     case Stmt::FloatingLiteralClass:
+//     //     case Stmt::CharacterLiteralClass:
+//     //     case Stmt::ObjCBoolLiteralExprClass:
+//     //     case Stmt::CXXBoolLiteralExprClass:
+//     //       // "numeric literal"
+//     //       return LK_Numeric;
+//     //     case Stmt::ImplicitCastExprClass: {
+//     //       CastKind CK = cast<CastExpr>(Inner)->getCastKind();
+//     //       // Boolean literals can be represented by implicit casts.
+//     //       if (CK == CK_IntegralToBoolean || CK == CK_IntegralCast)
+//     //         return LK_Numeric;
+//     //       break;
+//     //     }
+//     //     default:
+//     //       break;
+//     //   }
+//     //   return LK_Boxed;
+//     // }
+//   }
+//   return LK_None;
+// }
 
 // static void diagnoseObjCLiteralComparison(Sema &S, SourceLocation Loc,
 //                                           ExprResult &LHS, ExprResult &RHS,
@@ -11166,13 +11166,13 @@ static void diagnoseTautologicalComparison(Sema &S, SourceLocation Loc,
   // operand is null); the user probably wants string comparison function.
   Expr *LiteralString = nullptr;
   Expr *LiteralStringStripped = nullptr;
-  if ((isa<StringLiteral>(LHSStripped) || isa<ObjCEncodeExpr>(LHSStripped)) &&
+  if ((isa<StringLiteral>(LHSStripped) /*|| isa<ObjCEncodeExpr>(LHSStripped)*/) &&
       !RHSStripped->isNullPointerConstant(S.Context,
                                           Expr::NPC_ValueDependentIsNull)) {
     LiteralString = LHS;
     LiteralStringStripped = LHSStripped;
-  } else if ((isa<StringLiteral>(RHSStripped) ||
-              isa<ObjCEncodeExpr>(RHSStripped)) &&
+  } else if ((isa<StringLiteral>(RHSStripped) /*||
+              isa<ObjCEncodeExpr>(RHSStripped)*/) &&
              !LHSStripped->isNullPointerConstant(S.Context,
                                           Expr::NPC_ValueDependentIsNull)) {
     LiteralString = RHS;
@@ -11182,7 +11182,7 @@ static void diagnoseTautologicalComparison(Sema &S, SourceLocation Loc,
   if (LiteralString) {
     S.DiagRuntimeBehavior(Loc, nullptr,
                           S.PDiag(diag::warn_stringcompare)
-                              << isa<ObjCEncodeExpr>(LiteralStringStripped)
+                              // << isa<ObjCEncodeExpr>(LiteralStringStripped)
                               << LiteralString->getSourceRange());
   }
 }
@@ -12297,10 +12297,10 @@ static bool IsReadonlyMessage(Expr *E, Sema &S) {
   const MemberExpr *ME = dyn_cast<MemberExpr>(E);
   if (!ME) return false;
   if (!isa<FieldDecl>(ME->getMemberDecl())) return false;
-  ObjCMessageExpr *Base = dyn_cast<ObjCMessageExpr>(
-      ME->getBase()->IgnoreImplicit()->IgnoreParenImpCasts());
-  if (!Base) return false;
-  return Base->getMethodDecl() != nullptr;
+  // ObjCMessageExpr *Base = dyn_cast<ObjCMessageExpr>(
+  //     ME->getBase()->IgnoreImplicit()->IgnoreParenImpCasts());
+  // if (!Base) return false;
+  // return Base->getMethodDecl() != nullptr;
 }
 
 /// Is the given expression (which must be 'const') a reference to a
@@ -13589,8 +13589,8 @@ static NamedDecl *getDeclFromExpr(Expr *E) {
     return DRE->getDecl();
   if (auto *ME = dyn_cast<MemberExpr>(E))
     return ME->getMemberDecl();
-  if (auto *IRE = dyn_cast<ObjCIvarRefExpr>(E))
-    return IRE->getDecl();
+  // if (auto *IRE = dyn_cast<ObjCIvarRefExpr>(E))
+  //   return IRE->getDecl();
   return nullptr;
 }
 
@@ -13900,25 +13900,25 @@ ExprResult Sema::CreateBuiltinBinOp(SourceLocation OpLoc,
   CheckArrayAccess(LHS.get());
   CheckArrayAccess(RHS.get());
 
-  if (const ObjCIsaExpr *OISA = dyn_cast<ObjCIsaExpr>(LHS.get()->IgnoreParenCasts())) {
-    NamedDecl *ObjectSetClass = LookupSingleName(TUScope,
-                                                 &Context.Idents.get("object_setClass"),
-                                                 SourceLocation(), LookupOrdinaryName);
-    if (ObjectSetClass && isa<ObjCIsaExpr>(LHS.get())) {
-      SourceLocation RHSLocEnd = getLocForEndOfToken(RHS.get()->getEndLoc());
-      Diag(LHS.get()->getExprLoc(), diag::warn_objc_isa_assign)
-          << FixItHint::CreateInsertion(LHS.get()->getBeginLoc(),
-                                        "object_setClass(")
-          << FixItHint::CreateReplacement(SourceRange(OISA->getOpLoc(), OpLoc),
-                                          ",")
-          << FixItHint::CreateInsertion(RHSLocEnd, ")");
-    }
-    else
-      Diag(LHS.get()->getExprLoc(), diag::warn_objc_isa_assign);
-  }
-  else if (const ObjCIvarRefExpr *OIRE =
-           dyn_cast<ObjCIvarRefExpr>(LHS.get()->IgnoreParenCasts()))
-    DiagnoseDirectIsaAccess(*this, OIRE, OpLoc, RHS.get());
+  // if (const ObjCIsaExpr *OISA = dyn_cast<ObjCIsaExpr>(LHS.get()->IgnoreParenCasts())) {
+  //   NamedDecl *ObjectSetClass = LookupSingleName(TUScope,
+  //                                                &Context.Idents.get("object_setClass"),
+  //                                                SourceLocation(), LookupOrdinaryName);
+  //   if (ObjectSetClass && isa<ObjCIsaExpr>(LHS.get())) {
+  //     SourceLocation RHSLocEnd = getLocForEndOfToken(RHS.get()->getEndLoc());
+  //     Diag(LHS.get()->getExprLoc(), diag::warn_objc_isa_assign)
+  //         << FixItHint::CreateInsertion(LHS.get()->getBeginLoc(),
+  //                                       "object_setClass(")
+  //         << FixItHint::CreateReplacement(SourceRange(OISA->getOpLoc(), OpLoc),
+  //                                         ",")
+  //         << FixItHint::CreateInsertion(RHSLocEnd, ")");
+  //   }
+  //   else
+  //     Diag(LHS.get()->getExprLoc(), diag::warn_objc_isa_assign);
+  // }
+  // else if (const ObjCIvarRefExpr *OIRE =
+  //          dyn_cast<ObjCIvarRefExpr>(LHS.get()->IgnoreParenCasts()))
+  //   DiagnoseDirectIsaAccess(*this, OIRE, OpLoc, RHS.get());
 
   // Opc is not a compound assignment if CompResultTy is null.
   if (CompResultTy.isNull()) {
@@ -18340,18 +18340,18 @@ void Sema::DiagnoseAssignmentAsCondition(Expr *E) {
     IsOrAssign = Op->getOpcode() == BO_OrAssign;
 
     // Greylist some idioms by putting them into a warning subcategory.
-    if (ObjCMessageExpr *ME
-          = dyn_cast<ObjCMessageExpr>(Op->getRHS()->IgnoreParenCasts())) {
-      Selector Sel = ME->getSelector();
+    // if (ObjCMessageExpr *ME
+    //       = dyn_cast<ObjCMessageExpr>(Op->getRHS()->IgnoreParenCasts())) {
+    //   Selector Sel = ME->getSelector();
 
-      // self = [<foo> init...]
-      if (isSelfExpr(Op->getLHS()) && ME->getMethodFamily() == OMF_init)
-        diagnostic = diag::warn_condition_is_idiomatic_assignment;
+    //   // self = [<foo> init...]
+    //   if (isSelfExpr(Op->getLHS()) && ME->getMethodFamily() == OMF_init)
+    //     diagnostic = diag::warn_condition_is_idiomatic_assignment;
 
-      // <foo> = [<bar> nextObject]
-      else if (Sel.isUnarySelector() && Sel.getNameForSlot(0) == "nextObject")
-        diagnostic = diag::warn_condition_is_idiomatic_assignment;
-    }
+    //   // <foo> = [<bar> nextObject]
+    //   else if (Sel.isUnarySelector() && Sel.getNameForSlot(0) == "nextObject")
+    //     diagnostic = diag::warn_condition_is_idiomatic_assignment;
+    // }
 
     Loc = Op->getOperatorLoc();
   } else if (CXXOperatorCallExpr *Op = dyn_cast<CXXOperatorCallExpr>(E)) {
@@ -18977,7 +18977,7 @@ static ExprResult diagnoseUnknownAnyExpr(Sema &S, Expr *E) {
   } else if (MemberExpr *mem = dyn_cast<MemberExpr>(E)) {
     loc = mem->getMemberLoc();
     d = mem->getMemberDecl();
-  } else if (ObjCMessageExpr *msg = dyn_cast<ObjCMessageExpr>(E)) {
+  } /*else if (ObjCMessageExpr *msg = dyn_cast<ObjCMessageExpr>(E)) {
     diagID = diag::err_uncasted_call_of_unknown_any;
     loc = msg->getSelectorStartLoc();
     d = msg->getMethodDecl();
@@ -18987,7 +18987,7 @@ static ExprResult diagnoseUnknownAnyExpr(Sema &S, Expr *E) {
         << orig->getSourceRange();
       return ExprError();
     }
-  } else {
+  }*/ else {
     S.Diag(E->getExprLoc(), diag::err_unsupported_unknown_any_expr)
       << E->getSourceRange();
     return ExprError();

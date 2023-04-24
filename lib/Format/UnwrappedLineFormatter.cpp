@@ -99,7 +99,7 @@ private:
         Style.Language == FormatStyle::LK_JavaScript || Style.isCSharp())
       return 0;
     if (RootToken.isAccessSpecifier(false) ||
-        RootToken.isObjCAccessSpecifier() ||
+        // RootToken.isObjCAccessSpecifier() ||
         (RootToken.isOneOf(Keywords.kw_signals, Keywords.kw_qsignals) &&
          RootToken.Next && RootToken.Next->is(tok::colon)))
       return Style.AccessModifierOffset;
@@ -343,13 +343,13 @@ private:
                  : 0;
     }
     // Don't merge block with left brace wrapped after ObjC special blocks
-    if (TheLine->First->is(tok::l_brace) && I != AnnotatedLines.begin() &&
-        I[-1]->First->is(tok::at) && I[-1]->First->Next) {
-      tok::ObjCKeywordKind kwId = I[-1]->First->Next->Tok.getObjCKeywordID();
-      if (kwId == latino::tok::objc_autoreleasepool ||
-          kwId == latino::tok::objc_synchronized)
-        return 0;
-    }
+    // if (TheLine->First->is(tok::l_brace) && I != AnnotatedLines.begin() &&
+    //     I[-1]->First->is(tok::at) && I[-1]->First->Next) {
+    //   tok::ObjCKeywordKind kwId = I[-1]->First->Next->Tok.getObjCKeywordID();
+    //   if (kwId == latino::tok::objc_autoreleasepool ||
+    //       kwId == latino::tok::objc_synchronized)
+    //     return 0;
+    // }
     // Don't merge block with left brace wrapped after case labels
     if (TheLine->First->is(tok::l_brace) && I != AnnotatedLines.begin() &&
         I[-1]->First->isOneOf(tok::kw_caso, tok::kw_otro))

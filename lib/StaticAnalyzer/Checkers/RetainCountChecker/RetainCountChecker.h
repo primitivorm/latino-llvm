@@ -235,143 +235,143 @@ public:
   void print(raw_ostream &Out) const;
 };
 
-class RetainCountChecker
-  : public Checker< check::Bind,
-                    check::DeadSymbols,
-                    check::BeginFunction,
-                    check::EndFunction,
-                    check::PostStmt<BlockExpr>,
-                    check::PostStmt<CastExpr>,
-                    check::PostStmt<ObjCArrayLiteral>,
-                    check::PostStmt<ObjCDictionaryLiteral>,
-                    check::PostStmt<ObjCBoxedExpr>,
-                    check::PostStmt<ObjCIvarRefExpr>,
-                    check::PostCall,
-                    check::RegionChanges,
-                    eval::Assume,
-                    eval::Call > {
+// class RetainCountChecker
+//   : public Checker< check::Bind,
+//                     check::DeadSymbols,
+//                     check::BeginFunction,
+//                     check::EndFunction,
+//                     check::PostStmt<BlockExpr>,
+//                     check::PostStmt<CastExpr>,
+//                     check::PostStmt<ObjCArrayLiteral>,
+//                     check::PostStmt<ObjCDictionaryLiteral>,
+//                     check::PostStmt<ObjCBoxedExpr>,
+//                     check::PostStmt<ObjCIvarRefExpr>,
+//                     check::PostCall,
+//                     check::RegionChanges,
+//                     eval::Assume,
+//                     eval::Call > {
 
-public:
-  std::unique_ptr<RefCountBug> UseAfterRelease;
-  std::unique_ptr<RefCountBug> ReleaseNotOwned;
-  std::unique_ptr<RefCountBug> DeallocNotOwned;
-  std::unique_ptr<RefCountBug> FreeNotOwned;
-  std::unique_ptr<RefCountBug> OverAutorelease;
-  std::unique_ptr<RefCountBug> ReturnNotOwnedForOwned;
-  std::unique_ptr<RefCountBug> LeakWithinFunction;
-  std::unique_ptr<RefCountBug> LeakAtReturn;
+// public:
+//   std::unique_ptr<RefCountBug> UseAfterRelease;
+//   std::unique_ptr<RefCountBug> ReleaseNotOwned;
+//   std::unique_ptr<RefCountBug> DeallocNotOwned;
+//   std::unique_ptr<RefCountBug> FreeNotOwned;
+//   std::unique_ptr<RefCountBug> OverAutorelease;
+//   std::unique_ptr<RefCountBug> ReturnNotOwnedForOwned;
+//   std::unique_ptr<RefCountBug> LeakWithinFunction;
+//   std::unique_ptr<RefCountBug> LeakAtReturn;
 
-  mutable std::unique_ptr<RetainSummaryManager> Summaries;
+//   mutable std::unique_ptr<RetainSummaryManager> Summaries;
 
-  static std::unique_ptr<CheckerProgramPointTag> DeallocSentTag;
-  static std::unique_ptr<CheckerProgramPointTag> CastFailTag;
+//   static std::unique_ptr<CheckerProgramPointTag> DeallocSentTag;
+//   static std::unique_ptr<CheckerProgramPointTag> CastFailTag;
 
-  /// Track Objective-C and CoreFoundation objects.
-  bool TrackObjCAndCFObjects = false;
+//   /// Track Objective-C and CoreFoundation objects.
+//   bool TrackObjCAndCFObjects = false;
 
-  /// Track sublcasses of OSObject.
-  bool TrackOSObjects = false;
+//   /// Track sublcasses of OSObject.
+//   bool TrackOSObjects = false;
 
-  /// Track initial parameters (for the entry point) for NS/CF objects.
-  bool TrackNSCFStartParam = false;
+//   /// Track initial parameters (for the entry point) for NS/CF objects.
+//   bool TrackNSCFStartParam = false;
 
-  RetainCountChecker() {};
+//   RetainCountChecker() {};
 
-  RetainSummaryManager &getSummaryManager(ASTContext &Ctx) const {
-    if (!Summaries)
-      Summaries.reset(
-          new RetainSummaryManager(Ctx, TrackObjCAndCFObjects, TrackOSObjects));
-    return *Summaries;
-  }
+//   RetainSummaryManager &getSummaryManager(ASTContext &Ctx) const {
+//     if (!Summaries)
+//       Summaries.reset(
+//           new RetainSummaryManager(Ctx, TrackObjCAndCFObjects, TrackOSObjects));
+//     return *Summaries;
+//   }
 
-  RetainSummaryManager &getSummaryManager(CheckerContext &C) const {
-    return getSummaryManager(C.getASTContext());
-  }
+//   RetainSummaryManager &getSummaryManager(CheckerContext &C) const {
+//     return getSummaryManager(C.getASTContext());
+//   }
 
-  void printState(raw_ostream &Out, ProgramStateRef State,
-                  const char *NL, const char *Sep) const override;
+//   void printState(raw_ostream &Out, ProgramStateRef State,
+//                   const char *NL, const char *Sep) const override;
 
-  void checkBind(SVal loc, SVal val, const Stmt *S, CheckerContext &C) const;
-  void checkPostStmt(const BlockExpr *BE, CheckerContext &C) const;
-  void checkPostStmt(const CastExpr *CE, CheckerContext &C) const;
+//   void checkBind(SVal loc, SVal val, const Stmt *S, CheckerContext &C) const;
+//   void checkPostStmt(const BlockExpr *BE, CheckerContext &C) const;
+//   void checkPostStmt(const CastExpr *CE, CheckerContext &C) const;
 
-  void checkPostStmt(const ObjCArrayLiteral *AL, CheckerContext &C) const;
-  void checkPostStmt(const ObjCDictionaryLiteral *DL, CheckerContext &C) const;
-  void checkPostStmt(const ObjCBoxedExpr *BE, CheckerContext &C) const;
+//   void checkPostStmt(const ObjCArrayLiteral *AL, CheckerContext &C) const;
+//   void checkPostStmt(const ObjCDictionaryLiteral *DL, CheckerContext &C) const;
+//   void checkPostStmt(const ObjCBoxedExpr *BE, CheckerContext &C) const;
 
-  void checkPostStmt(const ObjCIvarRefExpr *IRE, CheckerContext &C) const;
+//   void checkPostStmt(const ObjCIvarRefExpr *IRE, CheckerContext &C) const;
 
-  void checkPostCall(const CallEvent &Call, CheckerContext &C) const;
+//   void checkPostCall(const CallEvent &Call, CheckerContext &C) const;
 
-  void checkSummary(const RetainSummary &Summ, const CallEvent &Call,
-                    CheckerContext &C) const;
+//   void checkSummary(const RetainSummary &Summ, const CallEvent &Call,
+//                     CheckerContext &C) const;
 
-  void processSummaryOfInlined(const RetainSummary &Summ,
-                               const CallEvent &Call,
-                               CheckerContext &C) const;
+//   void processSummaryOfInlined(const RetainSummary &Summ,
+//                                const CallEvent &Call,
+//                                CheckerContext &C) const;
 
-  bool evalCall(const CallEvent &Call, CheckerContext &C) const;
+//   bool evalCall(const CallEvent &Call, CheckerContext &C) const;
 
-  ProgramStateRef evalAssume(ProgramStateRef state, SVal Cond,
-                                 bool Assumption) const;
+//   ProgramStateRef evalAssume(ProgramStateRef state, SVal Cond,
+//                                  bool Assumption) const;
 
-  ProgramStateRef
-  checkRegionChanges(ProgramStateRef state,
-                     const InvalidatedSymbols *invalidated,
-                     ArrayRef<const MemRegion *> ExplicitRegions,
-                     ArrayRef<const MemRegion *> Regions,
-                     const LocationContext* LCtx,
-                     const CallEvent *Call) const;
+//   ProgramStateRef
+//   checkRegionChanges(ProgramStateRef state,
+//                      const InvalidatedSymbols *invalidated,
+//                      ArrayRef<const MemRegion *> ExplicitRegions,
+//                      ArrayRef<const MemRegion *> Regions,
+//                      const LocationContext* LCtx,
+//                      const CallEvent *Call) const;
 
-  ExplodedNode* checkReturnWithRetEffect(const ReturnStmt *S, CheckerContext &C,
-                                ExplodedNode *Pred, RetEffect RE, RefVal X,
-                                SymbolRef Sym, ProgramStateRef state) const;
+//   ExplodedNode* checkReturnWithRetEffect(const ReturnStmt *S, CheckerContext &C,
+//                                 ExplodedNode *Pred, RetEffect RE, RefVal X,
+//                                 SymbolRef Sym, ProgramStateRef state) const;
 
-  void checkDeadSymbols(SymbolReaper &SymReaper, CheckerContext &C) const;
-  void checkBeginFunction(CheckerContext &C) const;
-  void checkEndFunction(const ReturnStmt *RS, CheckerContext &C) const;
+//   void checkDeadSymbols(SymbolReaper &SymReaper, CheckerContext &C) const;
+//   void checkBeginFunction(CheckerContext &C) const;
+//   void checkEndFunction(const ReturnStmt *RS, CheckerContext &C) const;
 
-  ProgramStateRef updateSymbol(ProgramStateRef state, SymbolRef sym,
-                               RefVal V, ArgEffect E, RefVal::Kind &hasErr,
-                               CheckerContext &C) const;
+//   ProgramStateRef updateSymbol(ProgramStateRef state, SymbolRef sym,
+//                                RefVal V, ArgEffect E, RefVal::Kind &hasErr,
+//                                CheckerContext &C) const;
 
-  const RefCountBug &errorKindToBugKind(RefVal::Kind ErrorKind,
-                                        SymbolRef Sym) const;
+//   const RefCountBug &errorKindToBugKind(RefVal::Kind ErrorKind,
+//                                         SymbolRef Sym) const;
 
-  void processNonLeakError(ProgramStateRef St, SourceRange ErrorRange,
-                           RefVal::Kind ErrorKind, SymbolRef Sym,
-                           CheckerContext &C) const;
+//   void processNonLeakError(ProgramStateRef St, SourceRange ErrorRange,
+//                            RefVal::Kind ErrorKind, SymbolRef Sym,
+//                            CheckerContext &C) const;
 
-  void processObjCLiterals(CheckerContext &C, const Expr *Ex) const;
+//   void processObjCLiterals(CheckerContext &C, const Expr *Ex) const;
 
-  ProgramStateRef handleSymbolDeath(ProgramStateRef state,
-                                    SymbolRef sid, RefVal V,
-                                    SmallVectorImpl<SymbolRef> &Leaked) const;
+//   ProgramStateRef handleSymbolDeath(ProgramStateRef state,
+//                                     SymbolRef sid, RefVal V,
+//                                     SmallVectorImpl<SymbolRef> &Leaked) const;
 
-  ProgramStateRef
-  handleAutoreleaseCounts(ProgramStateRef state, ExplodedNode *Pred,
-                          const ProgramPointTag *Tag, CheckerContext &Ctx,
-                          SymbolRef Sym,
-                          RefVal V,
-                          const ReturnStmt *S=nullptr) const;
+//   ProgramStateRef
+//   handleAutoreleaseCounts(ProgramStateRef state, ExplodedNode *Pred,
+//                           const ProgramPointTag *Tag, CheckerContext &Ctx,
+//                           SymbolRef Sym,
+//                           RefVal V,
+//                           const ReturnStmt *S=nullptr) const;
 
-  ExplodedNode *processLeaks(ProgramStateRef state,
-                             SmallVectorImpl<SymbolRef> &Leaked,
-                             CheckerContext &Ctx,
-                             ExplodedNode *Pred = nullptr) const;
+//   ExplodedNode *processLeaks(ProgramStateRef state,
+//                              SmallVectorImpl<SymbolRef> &Leaked,
+//                              CheckerContext &Ctx,
+//                              ExplodedNode *Pred = nullptr) const;
 
-  static const CheckerProgramPointTag &getDeallocSentTag() {
-    return *DeallocSentTag;
-  }
+//   static const CheckerProgramPointTag &getDeallocSentTag() {
+//     return *DeallocSentTag;
+//   }
 
-  static const CheckerProgramPointTag &getCastFailTag() { return *CastFailTag; }
+//   static const CheckerProgramPointTag &getCastFailTag() { return *CastFailTag; }
 
-private:
-  /// Perform the necessary checks and state adjustments at the end of the
-  /// function.
-  /// \p S Return statement, may be null.
-  ExplodedNode * processReturn(const ReturnStmt *S, CheckerContext &C) const;
-};
+// private:
+//   /// Perform the necessary checks and state adjustments at the end of the
+//   /// function.
+//   /// \p S Return statement, may be null.
+//   ExplodedNode * processReturn(const ReturnStmt *S, CheckerContext &C) const;
+// };
 
 //===----------------------------------------------------------------------===//
 // RefBindings - State used to track object reference counts.

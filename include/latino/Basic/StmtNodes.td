@@ -37,13 +37,13 @@ def GCCAsmStmt : StmtNode<AsmStmt>;
 def MSAsmStmt : StmtNode<AsmStmt>;
 
 // Obj-C statements
-def ObjCAtTryStmt : StmtNode<Stmt>;
-def ObjCAtCatchStmt : StmtNode<Stmt>;
-def ObjCAtFinallyStmt : StmtNode<Stmt>;
-def ObjCAtThrowStmt : StmtNode<Stmt>;
-def ObjCAtSynchronizedStmt : StmtNode<Stmt>;
-def ObjCForCollectionStmt : StmtNode<Stmt>;
-def ObjCAutoreleasePoolStmt : StmtNode<Stmt>;
+// def ObjCAtTryStmt : StmtNode<Stmt>;
+// def ObjCAtCatchStmt : StmtNode<Stmt>;
+// def ObjCAtFinallyStmt : StmtNode<Stmt>;
+// def ObjCAtThrowStmt : StmtNode<Stmt>;
+// def ObjCAtSynchronizedStmt : StmtNode<Stmt>;
+// def ObjCForCollectionStmt : StmtNode<Stmt>;
+// def ObjCAutoreleasePoolStmt : StmtNode<Stmt>;
 
 // C++ statements
 def CXXCatchStmt : StmtNode<Stmt>;

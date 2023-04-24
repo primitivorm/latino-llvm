@@ -147,18 +147,18 @@ bool types::isAcceptedByClang(ID Id) {
   }
 }
 
-bool types::isObjC(ID Id) {
-  switch (Id) {
-  default:
-    return false;
+// bool types::isObjC(ID Id) {
+//   switch (Id) {
+//   default:
+//     return false;
 
-  case TY_ObjC: case TY_PP_ObjC: case TY_PP_ObjC_Alias:
-  case TY_ObjCXX: case TY_PP_ObjCXX:
-  case TY_ObjCHeader: case TY_PP_ObjCHeader:
-  case TY_ObjCXXHeader: case TY_PP_ObjCXXHeader: case TY_PP_ObjCXX_Alias:
-    return true;
-  }
-}
+//   case TY_ObjC: case TY_PP_ObjC: case TY_PP_ObjC_Alias:
+//   case TY_ObjCXX: case TY_PP_ObjCXX:
+//   case TY_ObjCHeader: case TY_PP_ObjCHeader:
+//   case TY_ObjCXXHeader: case TY_PP_ObjCXXHeader: case TY_PP_ObjCXX_Alias:
+//     return true;
+//   }
+// }
 
 bool types::isCXX(ID Id) {
   switch (Id) {

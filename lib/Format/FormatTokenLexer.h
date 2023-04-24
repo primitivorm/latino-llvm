@@ -50,7 +50,7 @@ private:
   void tryMergePreviousTokens();
 
   bool tryMergeLessLess();
-  bool tryMergeNSStringLiteral();
+  // bool tryMergeNSStringLiteral();
   bool tryMergeJSPrivateIdentifier();
   bool tryMergeCSharpStringLiteral();
   bool tryMergeCSharpKeywordVariables();

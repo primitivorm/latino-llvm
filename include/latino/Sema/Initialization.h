@@ -255,7 +255,7 @@ public:
   static InitializedEntity InitializeParameter(ASTContext &Context,
                                                const ParmVarDecl *Parm,
                                                QualType Type) {
-    bool Consumed = (Context.getLangOpts().ObjCAutoRefCount &&
+    bool Consumed = (/*Context.getLangOpts().ObjCAutoRefCount &&*/
                      Parm->hasAttr<NSConsumedAttr>());
 
     InitializedEntity Entity;
@@ -876,13 +876,13 @@ public:
     SK_ParenthesizedArrayInit,
 
     /// Pass an object by indirect copy-and-restore.
-    SK_PassByIndirectCopyRestore,
+    // SK_PassByIndirectCopyRestore,
 
     /// Pass an object by indirect restore.
-    SK_PassByIndirectRestore,
+    // SK_PassByIndirectRestore,
 
     /// Produce an Objective-C object pointer.
-    SK_ProduceObjCObject,
+    // SK_ProduceObjCObject,
 
     /// Construct a std::initializer_list from an initializer list.
     SK_StdInitializerList,
@@ -1322,7 +1322,7 @@ public:
 
   /// Add a step to "produce" an Objective-C object (by
   /// retaining it).
-  void AddProduceObjCObjectStep(QualType T);
+  // void AddProduceObjCObjectStep(QualType T);
 
   /// Add a step to construct a std::initializer_list object from an
   /// initializer list.

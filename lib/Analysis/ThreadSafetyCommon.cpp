@@ -53,7 +53,7 @@ std::string threadSafety::getSourceLiteralString(const Expr *CE) {
     case Stmt::CXXBoolLiteralExprClass:
     case Stmt::FloatingLiteralClass:
     case Stmt::ImaginaryLiteralClass:
-    case Stmt::ObjCStringLiteralClass:
+    // case Stmt::ObjCStringLiteralClass:
     default:
       return "#lit";
   }
@@ -211,8 +211,8 @@ til::SExpr *SExprBuilder::translate(const Stmt *S, CallingContext *Ctx) {
     return translateCXXThisExpr(cast<CXXThisExpr>(S), Ctx);
   case Stmt::MemberExprClass:
     return translateMemberExpr(cast<MemberExpr>(S), Ctx);
-  case Stmt::ObjCIvarRefExprClass:
-    return translateObjCIVarRefExpr(cast<ObjCIvarRefExpr>(S), Ctx);
+  // case Stmt::ObjCIvarRefExprClass:
+  //   return translateObjCIVarRefExpr(cast<ObjCIvarRefExpr>(S), Ctx);
   case Stmt::CallExprClass:
     return translateCallExpr(cast<CallExpr>(S), Ctx);
   case Stmt::CXXMemberCallExprClass:
@@ -255,8 +255,8 @@ til::SExpr *SExprBuilder::translate(const Stmt *S, CallingContext *Ctx) {
   case Stmt::ImaginaryLiteralClass:
   case Stmt::IntegerLiteralClass:
   case Stmt::StringLiteralClass:
-  case Stmt::ObjCStringLiteralClass:
-    return new (Arena) til::Literal(cast<Expr>(S));
+  // case Stmt::ObjCStringLiteralClass:
+  //   return new (Arena) til::Literal(cast<Expr>(S));
 
   case Stmt::DeclStmtClass:
     return translateDeclStmt(cast<DeclStmt>(S), Ctx);

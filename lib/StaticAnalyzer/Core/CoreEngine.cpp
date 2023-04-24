@@ -370,19 +370,19 @@ void CoreEngine::HandleBlockExit(const CFGBlock * B, ExplodedNode *Pred) {
         return;
       }
 
-      case Stmt::ObjCForCollectionStmtClass:
-        // In the case of ObjCForCollectionStmt, it appears twice in a CFG:
-        //
-        //  (1) inside a basic block, which represents the binding of the
-        //      'element' variable to a value.
-        //  (2) in a terminator, which represents the branch.
-        //
-        // For (1), ExprEngine will bind a value (i.e., 0 or 1) indicating
-        // whether or not collection contains any more elements.  We cannot
-        // just test to see if the element is nil because a container can
-        // contain nil elements.
-        HandleBranch(Term, Term, B, Pred);
-        return;
+      // case Stmt::ObjCForCollectionStmtClass:
+      //   // In the case of ObjCForCollectionStmt, it appears twice in a CFG:
+      //   //
+      //   //  (1) inside a basic block, which represents the binding of the
+      //   //      'element' variable to a value.
+      //   //  (2) in a terminator, which represents the branch.
+      //   //
+      //   // For (1), ExprEngine will bind a value (i.e., 0 or 1) indicating
+      //   // whether or not collection contains any more elements.  We cannot
+      //   // just test to see if the element is nil because a container can
+      //   // contain nil elements.
+      //   HandleBranch(Term, Term, B, Pred);
+      //   return;
 
       case Stmt::SwitchStmtClass: {
         SwitchNodeBuilder builder(Pred, B, cast<SwitchStmt>(Term)->getCond(),

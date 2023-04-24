@@ -42,10 +42,10 @@
 namespace latino {
 namespace ast_matchers {
 
-AST_MATCHER_P(ObjCMessageExpr, hasAnySelectorMatcher, std::vector<std::string>,
-              Matches) {
-  return llvm::is_contained(Matches, Node.getSelector().getAsString());
-}
+// AST_MATCHER_P(ObjCMessageExpr, hasAnySelectorMatcher, std::vector<std::string>,
+//               Matches) {
+//   return llvm::is_contained(Matches, Node.getSelector().getAsString());
+// }
 
 namespace internal {
 
@@ -428,10 +428,10 @@ Matcher<NamedDecl> hasAnyNameFunc(ArrayRef<const StringRef *> NameRefs) {
       new internal::HasNameMatcher(vectorFromRefs(NameRefs)));
 }
 
-Matcher<ObjCMessageExpr> hasAnySelectorFunc(
-    ArrayRef<const StringRef *> NameRefs) {
-  return hasAnySelectorMatcher(vectorFromRefs(NameRefs));
-}
+// Matcher<ObjCMessageExpr> hasAnySelectorFunc(
+//     ArrayRef<const StringRef *> NameRefs) {
+//   return hasAnySelectorMatcher(vectorFromRefs(NameRefs));
+// }
 
 HasOpNameMatcher hasAnyOperatorNameFunc(ArrayRef<const StringRef *> NameRefs) {
   return HasOpNameMatcher(vectorFromRefs(NameRefs));
@@ -843,7 +843,7 @@ const internal::VariadicDynCastAllOfMatcher<Stmt, CXXOperatorCallExpr>
     cxxOperatorCallExpr;
 const internal::VariadicDynCastAllOfMatcher<Stmt, Expr> expr;
 const internal::VariadicDynCastAllOfMatcher<Stmt, DeclRefExpr> declRefExpr;
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCIvarRefExpr> objcIvarRefExpr;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCIvarRefExpr> objcIvarRefExpr;
 const internal::VariadicDynCastAllOfMatcher<Stmt, BlockExpr> blockExpr;
 const internal::VariadicDynCastAllOfMatcher<Stmt, IfStmt> ifStmt;
 const internal::VariadicDynCastAllOfMatcher<Stmt, ForStmt> forStmt;
@@ -943,9 +943,9 @@ const internal::VariadicFunction<internal::HasOpNameMatcher, StringRef,
 const internal::VariadicFunction<internal::HasOverloadOpNameMatcher, StringRef,
                                  internal::hasAnyOverloadedOperatorNameFunc>
     hasAnyOverloadedOperatorName = {};
-const internal::VariadicFunction<internal::Matcher<ObjCMessageExpr>, StringRef,
-                                 internal::hasAnySelectorFunc>
-    hasAnySelector = {};
+// const internal::VariadicFunction<internal::Matcher<ObjCMessageExpr>, StringRef,
+//                                  internal::hasAnySelectorFunc>
+//     hasAnySelector = {};
 const internal::ArgumentAdaptingMatcherFunc<internal::HasMatcher> has = {};
 const internal::ArgumentAdaptingMatcherFunc<internal::HasDescendantMatcher>
     hasDescendant = {};

@@ -2337,10 +2337,10 @@ Decl *Parser::ParseModuleImport(SourceLocation AtLoc) {
   SourceLocation ExportLoc;
   TryConsumeToken(tok::kw_exportar, ExportLoc);
 
-  assert((AtLoc.isInvalid() ? Tok.isOneOf(tok::kw_importar, tok::identifier)
-                            : Tok.isObjCAtKeyword(tok::objc_import)) &&
-         "Improper start to module import");
-  bool IsObjCAtImport = Tok.isObjCAtKeyword(tok::objc_import);
+  // assert((AtLoc.isInvalid() ? Tok.isOneOf(tok::kw_importar, tok::identifier)
+  //                           : Tok.isObjCAtKeyword(tok::objc_import)) &&
+  //        "Improper start to module import");
+  // bool IsObjCAtImport = Tok.isObjCAtKeyword(tok::objc_import);
   SourceLocation ImportLoc = ConsumeToken();
 
   SmallVector<std::pair<IdentifierInfo *, SourceLocation>, 2> Path;

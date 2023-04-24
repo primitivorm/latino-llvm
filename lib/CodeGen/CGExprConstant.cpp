@@ -1939,12 +1939,12 @@ ConstantLValueEmitter::VisitStringLiteral(const StringLiteral *E) {
 //   return CGM.GetAddrOfConstantStringFromObjCEncode(E);
 // }
 
-static ConstantLValue emitConstantObjCStringLiteral(const StringLiteral *S,
-                                                    QualType T,
-                                                    CodeGenModule &CGM) {
-  auto C = CGM.getObjCRuntime().GenerateConstantString(S);
-  return C.getElementBitCast(CGM.getTypes().ConvertTypeForMem(T));
-}
+// static ConstantLValue emitConstantObjCStringLiteral(const StringLiteral *S,
+//                                                     QualType T,
+//                                                     CodeGenModule &CGM) {
+//   auto C = CGM.getObjCRuntime().GenerateConstantString(S);
+//   return C.getElementBitCast(CGM.getTypes().ConvertTypeForMem(T));
+// }
 
 // ConstantLValue
 // ConstantLValueEmitter::VisitObjCStringLiteral(const ObjCStringLiteral *E) {

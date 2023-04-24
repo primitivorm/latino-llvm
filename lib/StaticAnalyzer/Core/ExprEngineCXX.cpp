@@ -326,13 +326,14 @@ SVal ExprEngine::computeObjectUnderConstruction(
           return *V;
         else
           break;
-      } else if (const auto *ME = dyn_cast<ObjCMessageExpr>(E)) {
-        CallEventRef<> Caller = CEMgr.getObjCMethodCall(ME, State, LCtx);
-        if (Optional<SVal> V = getArgLoc(Caller))
-          return *V;
-        else
-          break;
-      }
+      } 
+      // else if (const auto *ME = dyn_cast<ObjCMessageExpr>(E)) {
+      //   CallEventRef<> Caller = CEMgr.getObjCMethodCall(ME, State, LCtx);
+      //   if (Optional<SVal> V = getArgLoc(Caller))
+      //     return *V;
+      //   else
+      //     break;
+      // }
     }
     } // switch (CC->getKind())
   }

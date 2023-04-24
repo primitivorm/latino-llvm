@@ -229,13 +229,13 @@ void StringRegion::ProfileRegion(llvm::FoldingSetNodeID &ID,
   ID.AddPointer(superRegion);
 }
 
-void ObjCStringRegion::ProfileRegion(llvm::FoldingSetNodeID &ID,
-                                     const ObjCStringLiteral *Str,
-                                     const MemRegion *superRegion) {
-  ID.AddInteger(static_cast<unsigned>(ObjCStringRegionKind));
-  ID.AddPointer(Str);
-  ID.AddPointer(superRegion);
-}
+// void ObjCStringRegion::ProfileRegion(llvm::FoldingSetNodeID &ID,
+//                                      const ObjCStringLiteral *Str,
+//                                      const MemRegion *superRegion) {
+//   ID.AddInteger(static_cast<unsigned>(ObjCStringRegionKind));
+//   ID.AddPointer(Str);
+//   ID.AddPointer(superRegion);
+// }
 
 void AllocaRegion::ProfileRegion(llvm::FoldingSetNodeID& ID,
                                  const Expr *Ex, unsigned cnt,
@@ -512,10 +512,10 @@ void StringRegion::dumpToStream(raw_ostream &os) const {
   Str->printPretty(os, nullptr, PrintingPolicy(getContext().getLangOpts()));
 }
 
-void ObjCStringRegion::dumpToStream(raw_ostream &os) const {
-  assert(Str != nullptr && "Expecting non-null ObjCStringLiteral");
-  Str->printPretty(os, nullptr, PrintingPolicy(getContext().getLangOpts()));
-}
+// void ObjCStringRegion::dumpToStream(raw_ostream &os) const {
+//   assert(Str != nullptr && "Expecting non-null ObjCStringLiteral");
+//   Str->printPretty(os, nullptr, PrintingPolicy(getContext().getLangOpts()));
+// }
 
 void SymbolicRegion::dumpToStream(raw_ostream &os) const {
   if (isa<HeapSpaceRegion>(getSuperRegion()))
@@ -758,7 +758,8 @@ DefinedOrUnknownSVal MemRegionManager::getStaticSize(const MemRegion *MR,
   case MemRegion::NonParamVarRegionKind:
   case MemRegion::ParamVarRegionKind:
   case MemRegion::ElementRegionKind:
-  case MemRegion::ObjCStringRegionKind: {
+  // case MemRegion::ObjCStringRegionKind: 
+  {
     QualType Ty = cast<TypedValueRegion>(SR)->getDesugaredValueType(Ctx);
     if (isa<VariableArrayType>(Ty))
       return nonloc::SymbolVal(SymMgr.getExtentSymbol(SR));
@@ -886,11 +887,11 @@ const StringRegion *MemRegionManager::getStringRegion(const StringLiteral *Str){
       Str, cast<GlobalInternalSpaceRegion>(getGlobalsRegion()));
 }
 
-const ObjCStringRegion *
-MemRegionManager::getObjCStringRegion(const ObjCStringLiteral *Str){
-  return getSubRegion<ObjCStringRegion>(
-      Str, cast<GlobalInternalSpaceRegion>(getGlobalsRegion()));
-}
+// const ObjCStringRegion *
+// MemRegionManager::getObjCStringRegion(const ObjCStringLiteral *Str){
+//   return getSubRegion<ObjCStringRegion>(
+//       Str, cast<GlobalInternalSpaceRegion>(getGlobalsRegion()));
+// }
 
 /// Look through a chain of LocationContexts to either find the
 /// StackFrameContext that matches a DeclContext, or find a VarRegion
@@ -1437,7 +1438,7 @@ static RegionOffset calculateOffset(const MemRegion *R) {
     case MemRegion::CompoundLiteralRegionKind:
     case MemRegion::CXXThisRegionKind:
     case MemRegion::StringRegionKind:
-    case MemRegion::ObjCStringRegionKind:
+    // case MemRegion::ObjCStringRegionKind:
     case MemRegion::NonParamVarRegionKind:
     case MemRegion::ParamVarRegionKind:
     case MemRegion::CXXTempObjectRegionKind:

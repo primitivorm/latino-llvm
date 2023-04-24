@@ -1917,11 +1917,11 @@ static bool IsGlobalLValue(APValue::LValueBase B) {
   // A string literal has static storage duration.
   case Expr::StringLiteralClass:
   case Expr::PredefinedExprClass:
-  case Expr::ObjCStringLiteralClass:
-  case Expr::ObjCEncodeExprClass:
+  // case Expr::ObjCStringLiteralClass:
+  // case Expr::ObjCEncodeExprClass:
     return true;
-  case Expr::ObjCBoxedExprClass:
-    return cast<ObjCBoxedExpr>(E)->isExpressibleAsConstantInitializer();
+  // case Expr::ObjCBoxedExprClass:
+  //   return cast<ObjCBoxedExpr>(E)->isExpressibleAsConstantInitializer();
   case Expr::CallExprClass:
     return IsStringLiteralCall(cast<CallExpr>(E));
   // For GCC compatibility, &&label has static storage duration.
@@ -14521,19 +14521,19 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::CXXUnresolvedConstructExprClass:
   case Expr::CXXDependentScopeMemberExprClass:
   case Expr::UnresolvedMemberExprClass:
-  case Expr::ObjCStringLiteralClass:
-  case Expr::ObjCBoxedExprClass:
-  case Expr::ObjCArrayLiteralClass:
-  case Expr::ObjCDictionaryLiteralClass:
-  case Expr::ObjCEncodeExprClass:
+  // case Expr::ObjCStringLiteralClass:
+  // case Expr::ObjCBoxedExprClass:
+  // case Expr::ObjCArrayLiteralClass:
+  // case Expr::ObjCDictionaryLiteralClass:
+  // case Expr::ObjCEncodeExprClass:
   // case Expr::ObjCMessageExprClass:
-  case Expr::ObjCSelectorExprClass:
-  case Expr::ObjCProtocolExprClass:
-  case Expr::ObjCIvarRefExprClass:
-  case Expr::ObjCPropertyRefExprClass:
-  case Expr::ObjCSubscriptRefExprClass:
-  case Expr::ObjCIsaExprClass:
-  case Expr::ObjCAvailabilityCheckExprClass:
+  // case Expr::ObjCSelectorExprClass:
+  // case Expr::ObjCProtocolExprClass:
+  // case Expr::ObjCIvarRefExprClass:
+  // case Expr::ObjCPropertyRefExprClass:
+  // case Expr::ObjCSubscriptRefExprClass:
+  // case Expr::ObjCIsaExprClass:
+  // case Expr::ObjCAvailabilityCheckExprClass:
   case Expr::ShuffleVectorExprClass:
   case Expr::ConvertVectorExprClass:
   case Expr::BlockExprClass:
@@ -14543,9 +14543,9 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::SubstNonTypeTemplateParmPackExprClass:
   case Expr::FunctionParmPackExprClass:
   case Expr::AsTypeExprClass:
-  case Expr::ObjCIndirectCopyRestoreExprClass:
+  // case Expr::ObjCIndirectCopyRestoreExprClass:
   case Expr::MaterializeTemporaryExprClass:
-  case Expr::PseudoObjectExprClass:
+  // case Expr::PseudoObjectExprClass:
   case Expr::AtomicExprClass:
   case Expr::LambdaExprClass:
   case Expr::CXXFoldExprClass:
@@ -14584,7 +14584,7 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::IntegerLiteralClass:
   case Expr::FixedPointLiteralClass:
   case Expr::CharacterLiteralClass:
-  case Expr::ObjCBoolLiteralExprClass:
+  // case Expr::ObjCBoolLiteralExprClass:
   case Expr::CXXBoolLiteralExprClass:
   case Expr::CXXScalarValueInitExprClass:
   case Expr::TypeTraitExprClass:

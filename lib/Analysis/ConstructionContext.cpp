@@ -143,8 +143,8 @@ const ConstructionContext *ConstructionContext::createBoundTemporaryFromLayers(
   case ConstructionContextItem::ArgumentKind: {
     assert(ParentLayer->isLast());
     const auto *E = cast<Expr>(ParentItem.getStmt());
-    assert(isa<CallExpr>(E) || isa<CXXConstructExpr>(E) ||
-           isa<ObjCMessageExpr>(E));
+    assert(isa<CallExpr>(E) || isa<CXXConstructExpr>(E) /*||
+           isa<ObjCMessageExpr>(E)*/);
     return create<ArgumentConstructionContext>(C, E, ParentItem.getIndex(),
                                                BTE);
   }

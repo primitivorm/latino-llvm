@@ -1047,27 +1047,27 @@ void ASTStmtReader::VisitMemberExpr(MemberExpr *E) {
         E->getTrailingObjects<TemplateArgumentLoc>(), NumTemplateArgs);
 }
 
-void ASTStmtReader::VisitObjCIsaExpr(ObjCIsaExpr *E) {
-  VisitExpr(E);
-  E->setBase(Record.readSubExpr());
-  E->setIsaMemberLoc(readSourceLocation());
-  E->setOpLoc(readSourceLocation());
-  E->setArrow(Record.readInt());
-}
+// void ASTStmtReader::VisitObjCIsaExpr(ObjCIsaExpr *E) {
+//   VisitExpr(E);
+//   E->setBase(Record.readSubExpr());
+//   E->setIsaMemberLoc(readSourceLocation());
+//   E->setOpLoc(readSourceLocation());
+//   E->setArrow(Record.readInt());
+// }
 
-void ASTStmtReader::
-VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
-  VisitExpr(E);
-  E->Operand = Record.readSubExpr();
-  E->setShouldCopy(Record.readInt());
-}
+// void ASTStmtReader::
+// VisitObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
+//   VisitExpr(E);
+//   E->Operand = Record.readSubExpr();
+//   E->setShouldCopy(Record.readInt());
+// }
 
-void ASTStmtReader::VisitObjCBridgedCastExpr(ObjCBridgedCastExpr *E) {
-  VisitExplicitCastExpr(E);
-  E->LParenLoc = readSourceLocation();
-  E->BridgeKeywordLoc = readSourceLocation();
-  E->Kind = Record.readInt();
-}
+// void ASTStmtReader::VisitObjCBridgedCastExpr(ObjCBridgedCastExpr *E) {
+//   VisitExplicitCastExpr(E);
+//   E->LParenLoc = readSourceLocation();
+//   E->BridgeKeywordLoc = readSourceLocation();
+//   E->Kind = Record.readInt();
+// }
 
 void ASTStmtReader::VisitCastExpr(CastExpr *E) {
   VisitExpr(E);
@@ -1542,14 +1542,14 @@ void ASTStmtReader::VisitAtomicExpr(AtomicExpr *E) {
 //     Locs[I] = readSourceLocation();
 // }
 
-void ASTStmtReader::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
-  VisitStmt(S);
-  S->setElement(Record.readSubStmt());
-  S->setCollection(Record.readSubExpr());
-  S->setBody(Record.readSubStmt());
-  S->setForLoc(readSourceLocation());
-  S->setRParenLoc(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
+//   VisitStmt(S);
+//   S->setElement(Record.readSubStmt());
+//   S->setCollection(Record.readSubExpr());
+//   S->setBody(Record.readSubStmt());
+//   S->setForLoc(readSourceLocation());
+//   S->setRParenLoc(readSourceLocation());
+// }
 
 void ASTStmtReader::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
   VisitStmt(S);
@@ -1571,26 +1571,26 @@ void ASTStmtReader::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
   S->setAtLoc(readSourceLocation());
 }
 
-void ASTStmtReader::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
-  VisitStmt(S);
-  assert(Record.peekInt() == S->getNumCatchStmts());
-  Record.skipInts(1);
-  bool HasFinally = Record.readInt();
-  S->setTryBody(Record.readSubStmt());
-  for (unsigned I = 0, N = S->getNumCatchStmts(); I != N; ++I)
-    S->setCatchStmt(I, cast_or_null<ObjCAtCatchStmt>(Record.readSubStmt()));
+// void ASTStmtReader::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
+//   VisitStmt(S);
+//   assert(Record.peekInt() == S->getNumCatchStmts());
+//   Record.skipInts(1);
+//   bool HasFinally = Record.readInt();
+//   S->setTryBody(Record.readSubStmt());
+//   for (unsigned I = 0, N = S->getNumCatchStmts(); I != N; ++I)
+//     S->setCatchStmt(I, cast_or_null<ObjCAtCatchStmt>(Record.readSubStmt()));
 
-  if (HasFinally)
-    S->setFinallyStmt(Record.readSubStmt());
-  S->setAtTryLoc(readSourceLocation());
-}
+//   if (HasFinally)
+//     S->setFinallyStmt(Record.readSubStmt());
+//   S->setAtTryLoc(readSourceLocation());
+// }
 
-void ASTStmtReader::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
-  VisitStmt(S); // FIXME: no test coverage.
-  S->setSynchExpr(Record.readSubStmt());
-  S->setSynchBody(Record.readSubStmt());
-  S->setAtSynchronizedLoc(readSourceLocation());
-}
+// void ASTStmtReader::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
+//   VisitStmt(S); // FIXME: no test coverage.
+//   S->setSynchExpr(Record.readSubStmt());
+//   S->setSynchBody(Record.readSubStmt());
+//   S->setAtSynchronizedLoc(readSourceLocation());
+// }
 
 void ASTStmtReader::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
   VisitStmt(S); // FIXME: no test coverage.

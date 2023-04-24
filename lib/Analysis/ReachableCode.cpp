@@ -218,9 +218,9 @@ static bool isConfigurationValue(const Stmt *S,
     }
     case Stmt::DeclRefExprClass:
       return isConfigurationValue(cast<DeclRefExpr>(S)->getDecl(), PP);
-    case Stmt::ObjCBoolLiteralExprClass:
-      IgnoreYES_NO = true;
-      LLVM_FALLTHROUGH;
+    // case Stmt::ObjCBoolLiteralExprClass:
+    //   IgnoreYES_NO = true;
+    //   LLVM_FALLTHROUGH;
     case Stmt::CXXBoolLiteralExprClass:
     case Stmt::IntegerLiteralClass: {
       const Expr *E = cast<Expr>(S);
@@ -597,11 +597,11 @@ static SourceLocation GetUnreachableLoc(const Stmt *S,
     case Stmt::CXXTryStmtClass: {
       return cast<CXXTryStmt>(S)->getHandler(0)->getCatchLoc();
     }
-    case Expr::ObjCBridgedCastExprClass: {
-      const ObjCBridgedCastExpr *CSC = cast<ObjCBridgedCastExpr>(S);
-      R1 = CSC->getSubExpr()->getSourceRange();
-      return CSC->getLParenLoc();
-    }
+    // case Expr::ObjCBridgedCastExprClass: {
+    //   const ObjCBridgedCastExpr *CSC = cast<ObjCBridgedCastExpr>(S);
+    //   R1 = CSC->getSubExpr()->getSourceRange();
+    //   return CSC->getLParenLoc();
+    // }
     default: ;
   }
   R1 = S->getSourceRange();

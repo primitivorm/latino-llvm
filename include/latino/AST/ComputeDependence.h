@@ -179,16 +179,16 @@ ExprDependence computeDependence(OMPArraySectionExpr *E);
 ExprDependence computeDependence(OMPArrayShapingExpr *E);
 ExprDependence computeDependence(OMPIteratorExpr *E);
 
-ExprDependence computeDependence(ObjCArrayLiteral *E);
-ExprDependence computeDependence(ObjCDictionaryLiteral *E);
-ExprDependence computeDependence(ObjCBoxedExpr *E);
-ExprDependence computeDependence(ObjCEncodeExpr *E);
-ExprDependence computeDependence(ObjCIvarRefExpr *E);
-ExprDependence computeDependence(ObjCPropertyRefExpr *E);
-ExprDependence computeDependence(ObjCSubscriptRefExpr *E);
-ExprDependence computeDependence(ObjCIsaExpr *E);
-ExprDependence computeDependence(ObjCIndirectCopyRestoreExpr *E);
-ExprDependence computeDependence(ObjCMessageExpr *E);
+// ExprDependence computeDependence(ObjCArrayLiteral *E);
+// ExprDependence computeDependence(ObjCDictionaryLiteral *E);
+// ExprDependence computeDependence(ObjCBoxedExpr *E);
+// ExprDependence computeDependence(ObjCEncodeExpr *E);
+// ExprDependence computeDependence(ObjCIvarRefExpr *E);
+// ExprDependence computeDependence(ObjCPropertyRefExpr *E);
+// ExprDependence computeDependence(ObjCSubscriptRefExpr *E);
+// ExprDependence computeDependence(ObjCIsaExpr *E);
+// ExprDependence computeDependence(ObjCIndirectCopyRestoreExpr *E);
+// ExprDependence computeDependence(ObjCMessageExpr *E);
 
 } // namespace latino
 #endif

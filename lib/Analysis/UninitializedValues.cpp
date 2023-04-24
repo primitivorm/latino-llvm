@@ -17,13 +17,13 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/Stmt.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/AST/Type.h"
 #include "latino/Analysis/Analyses/PostOrderCFGView.h"
 #include "latino/Analysis/AnalysisDeclContext.h"
 #include "latino/Analysis/CFG.h"
-#include "latino/Analysis/DomainSpecific/ObjCNoReturn.h"
+// #include "latino/Analysis/DomainSpecific/ObjCNoReturn.h"
 #include "latino/Analysis/FlowSensitive/DataflowWorklist.h"
 #include "latino/Basic/LLVM.h"
 #include "llvm/ADT/BitVector.h"
@@ -489,7 +489,7 @@ public:
   void VisitDeclRefExpr(DeclRefExpr *dr);
   void VisitDeclStmt(DeclStmt *ds);
   void VisitGCCAsmStmt(GCCAsmStmt *as);
-  void VisitObjCForCollectionStmt(ObjCForCollectionStmt *FS);
+  // void VisitObjCForCollectionStmt(ObjCForCollectionStmt *FS);
   // void VisitObjCMessageExpr(ObjCMessageExpr *ME);
   void VisitOMPExecutableDirective(OMPExecutableDirective *ED);
 
@@ -686,14 +686,14 @@ void TransferFunctions::reportConstRefUse(const Expr *ex, const VarDecl *vd) {
     handler.handleConstRefUseOfUninitVariable(vd, getUninitUse(ex, vd, v));
 }
 
-void TransferFunctions::VisitObjCForCollectionStmt(ObjCForCollectionStmt *FS) {
-  // This represents an initialization of the 'element' value.
-  if (const auto *DS = dyn_cast<DeclStmt>(FS->getElement())) {
-    const auto *VD = cast<VarDecl>(DS->getSingleDecl());
-    if (isTrackedVar(VD))
-      vals[VD] = Initialized;
-  }
-}
+// void TransferFunctions::VisitObjCForCollectionStmt(ObjCForCollectionStmt *FS) {
+//   // This represents an initialization of the 'element' value.
+//   if (const auto *DS = dyn_cast<DeclStmt>(FS->getElement())) {
+//     const auto *VD = cast<VarDecl>(DS->getSingleDecl());
+//     if (isTrackedVar(VD))
+//       vals[VD] = Initialized;
+//   }
+// }
 
 void TransferFunctions::VisitOMPExecutableDirective(
     OMPExecutableDirective *ED) {

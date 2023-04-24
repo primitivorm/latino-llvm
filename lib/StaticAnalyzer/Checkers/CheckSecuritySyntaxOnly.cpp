@@ -96,7 +96,7 @@ public:
   bool checkCall_strCommon(const CallExpr *CE, const FunctionDecl *FD);
 
   typedef void (WalkAST::*FnCheck)(const CallExpr *, const FunctionDecl *);
-  typedef void (WalkAST::*MsgCheck)(const ObjCMessageExpr *);
+  // typedef void (WalkAST::*MsgCheck)(const ObjCMessageExpr *);
 
   // Checker-specific methods.
   void checkLoopConditionForFloat(const ForStmt *FS);
@@ -114,7 +114,7 @@ public:
   void checkCall_rand(const CallExpr *CE, const FunctionDecl *FD);
   void checkCall_random(const CallExpr *CE, const FunctionDecl *FD);
   void checkCall_vfork(const CallExpr *CE, const FunctionDecl *FD);
-  void checkMsg_decodeValueOfObjCType(const ObjCMessageExpr *ME);
+  // void checkMsg_decodeValueOfObjCType(const ObjCMessageExpr *ME);
   void checkUncheckedReturnValue(CallExpr *CE);
 };
 } // end anonymous namespace
@@ -948,47 +948,47 @@ void WalkAST::checkCall_vfork(const CallExpr *CE, const FunctionDecl *FD) {
 // likelihood of buffer overflows.
 //===----------------------------------------------------------------------===//
 
-void WalkAST::checkMsg_decodeValueOfObjCType(const ObjCMessageExpr *ME) {
-  if (!filter.check_decodeValueOfObjCType)
-    return;
+// void WalkAST::checkMsg_decodeValueOfObjCType(const ObjCMessageExpr *ME) {
+//   if (!filter.check_decodeValueOfObjCType)
+//     return;
 
-  // Check availability of the secure alternative:
-  // iOS 11+, macOS 10.13+, tvOS 11+, and watchOS 4.0+
-  // FIXME: We probably shouldn't register the check if it's not available.
-  const TargetInfo &TI = AC->getASTContext().getTargetInfo();
-  const llvm::Triple &T = TI.getTriple();
-  const VersionTuple &VT = TI.getPlatformMinVersion();
-  switch (T.getOS()) {
-  case llvm::Triple::IOS:
-    if (VT < VersionTuple(11, 0))
-      return;
-    break;
-  case llvm::Triple::MacOSX:
-    if (VT < VersionTuple(10, 13))
-      return;
-    break;
-  case llvm::Triple::WatchOS:
-    if (VT < VersionTuple(4, 0))
-      return;
-    break;
-  case llvm::Triple::TvOS:
-    if (VT < VersionTuple(11, 0))
-      return;
-    break;
-  default:
-    return;
-  }
+//   // Check availability of the secure alternative:
+//   // iOS 11+, macOS 10.13+, tvOS 11+, and watchOS 4.0+
+//   // FIXME: We probably shouldn't register the check if it's not available.
+//   const TargetInfo &TI = AC->getASTContext().getTargetInfo();
+//   const llvm::Triple &T = TI.getTriple();
+//   const VersionTuple &VT = TI.getPlatformMinVersion();
+//   switch (T.getOS()) {
+//   case llvm::Triple::IOS:
+//     if (VT < VersionTuple(11, 0))
+//       return;
+//     break;
+//   case llvm::Triple::MacOSX:
+//     if (VT < VersionTuple(10, 13))
+//       return;
+//     break;
+//   case llvm::Triple::WatchOS:
+//     if (VT < VersionTuple(4, 0))
+//       return;
+//     break;
+//   case llvm::Triple::TvOS:
+//     if (VT < VersionTuple(11, 0))
+//       return;
+//     break;
+//   default:
+//     return;
+//   }
 
-  PathDiagnosticLocation MELoc =
-      PathDiagnosticLocation::createBegin(ME, BR.getSourceManager(), AC);
-  BR.EmitBasicReport(
-      AC->getDecl(), filter.checkName_decodeValueOfObjCType,
-      "Potential buffer overflow in '-decodeValueOfObjCType:at:'", "Security",
-      "Deprecated method '-decodeValueOfObjCType:at:' is insecure "
-      "as it can lead to potential buffer overflows. Use the safer "
-      "'-decodeValueOfObjCType:at:size:' method.",
-      MELoc, ME->getSourceRange());
-}
+//   PathDiagnosticLocation MELoc =
+//       PathDiagnosticLocation::createBegin(ME, BR.getSourceManager(), AC);
+//   BR.EmitBasicReport(
+//       AC->getDecl(), filter.checkName_decodeValueOfObjCType,
+//       "Potential buffer overflow in '-decodeValueOfObjCType:at:'", "Security",
+//       "Deprecated method '-decodeValueOfObjCType:at:' is insecure "
+//       "as it can lead to potential buffer overflows. Use the safer "
+//       "'-decodeValueOfObjCType:at:size:' method.",
+//       MELoc, ME->getSourceRange());
+// }
 
 //===----------------------------------------------------------------------===//
 // Check: Should check whether privileges are dropped successfully.

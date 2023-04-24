@@ -1822,12 +1822,12 @@ void Parser::SkipMalformedDecl() {
         return;
       break;
 
-    case tok::at:
-      // @end is very much like } in Objective-C contexts.
-      if (NextToken().isObjCAtKeyword(tok::objc_end) &&
-          ParsingInObjCContainer)
-        return;
-      break;
+    // case tok::at:
+    //   // @end is very much like } in Objective-C contexts.
+    //   if (NextToken().isObjCAtKeyword(tok::objc_end) &&
+    //       ParsingInObjCContainer)
+    //     return;
+    //   break;
 
     case tok::minus:
     case tok::plus:
@@ -4164,39 +4164,40 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
     //   continue;
     // }
 
-    if (!Tok.is(tok::at)) {
-      auto CFieldCallback = [&](ParsingFieldDeclarator &FD) {
-        // Install the declarator into the current TagDecl.
-        Decl *Field =
-            Actions.ActOnField(getCurScope(), TagDecl,
-                               FD.D.getDeclSpec().getSourceRange().getBegin(),
-                               FD.D, FD.BitfieldSize);
-        FD.complete(Field);
-      };
+    // if (!Tok.is(tok::at)) {
+    //   auto CFieldCallback = [&](ParsingFieldDeclarator &FD) {
+    //     // Install the declarator into the current TagDecl.
+    //     Decl *Field =
+    //         Actions.ActOnField(getCurScope(), TagDecl,
+    //                            FD.D.getDeclSpec().getSourceRange().getBegin(),
+    //                            FD.D, FD.BitfieldSize);
+    //     FD.complete(Field);
+    //   };
 
-      // Parse all the comma separated declarators.
-      ParsingDeclSpec DS(*this);
-      ParseStructDeclaration(DS, CFieldCallback);
-    } else { // Handle @defs
-      ConsumeToken();
-      if (!Tok.isObjCAtKeyword(tok::objc_defs)) {
-        Diag(Tok, diag::err_unexpected_at);
-        SkipUntil(tok::semi);
-        continue;
-      }
-      ConsumeToken();
-      ExpectAndConsume(tok::l_paren);
-      if (!Tok.is(tok::identifier)) {
-        Diag(Tok, diag::err_expected) << tok::identifier;
-        SkipUntil(tok::semi);
-        continue;
-      }
-      SmallVector<Decl *, 16> Fields;
-      Actions.ActOnDefs(getCurScope(), TagDecl, Tok.getLocation(),
-                        Tok.getIdentifierInfo(), Fields);
-      ConsumeToken();
-      ExpectAndConsume(tok::r_paren);
-    }
+    //   // Parse all the comma separated declarators.
+    //   ParsingDeclSpec DS(*this);
+    //   ParseStructDeclaration(DS, CFieldCallback);
+    // } 
+    // else { // Handle @defs
+    //   ConsumeToken();
+    //   if (!Tok.isObjCAtKeyword(tok::objc_defs)) {
+    //     Diag(Tok, diag::err_unexpected_at);
+    //     SkipUntil(tok::semi);
+    //     continue;
+    //   }
+    //   ConsumeToken();
+    //   ExpectAndConsume(tok::l_paren);
+    //   if (!Tok.is(tok::identifier)) {
+    //     Diag(Tok, diag::err_expected) << tok::identifier;
+    //     SkipUntil(tok::semi);
+    //     continue;
+    //   }
+    //   SmallVector<Decl *, 16> Fields;
+    //   Actions.ActOnDefs(getCurScope(), TagDecl, Tok.getLocation(),
+    //                     Tok.getIdentifierInfo(), Fields);
+    //   ConsumeToken();
+    //   ExpectAndConsume(tok::r_paren);
+    // }
 
     if (TryConsumeToken(tok::semi))
       continue;

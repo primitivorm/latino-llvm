@@ -295,10 +295,10 @@ Optional<SVal> SValBuilder::getConstantVal(const Expr *E) {
   case Stmt::ImplicitValueInitExprClass:
     return makeZeroVal(E->getType());
 
-  case Stmt::ObjCStringLiteralClass: {
-    const auto *SL = cast<ObjCStringLiteral>(E);
-    return makeLoc(getRegionManager().getObjCStringRegion(SL));
-  }
+  // case Stmt::ObjCStringLiteralClass: {
+  //   const auto *SL = cast<ObjCStringLiteral>(E);
+  //   return makeLoc(getRegionManager().getObjCStringRegion(SL));
+  // }
 
   case Stmt::StringLiteralClass: {
     const auto *SL = cast<StringLiteral>(E);
@@ -323,8 +323,8 @@ Optional<SVal> SValBuilder::getConstantVal(const Expr *E) {
   case Stmt::IntegerLiteralClass:
     return makeIntVal(cast<IntegerLiteral>(E));
 
-  case Stmt::ObjCBoolLiteralExprClass:
-    return makeBoolVal(cast<ObjCBoolLiteralExpr>(E));
+  // case Stmt::ObjCBoolLiteralExprClass:
+  //   return makeBoolVal(cast<ObjCBoolLiteralExpr>(E));
 
   case Stmt::CXXNullPtrLiteralExprClass:
     return makeNull();

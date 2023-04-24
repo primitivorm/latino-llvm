@@ -1210,57 +1210,57 @@ void UnwrappedLineParser::parseStructuralElement() {
         nextToken();
         break;
       }
-      switch (FormatTok->Tok.getObjCKeywordID()) {
-      case tok::objc_public:
-      case tok::objc_protected:
-      case tok::objc_package:
-      case tok::objc_private:
-        return parseAccessSpecifier();
-      // case tok::objc_interface:
-      case tok::objc_implementation:
-        return parseObjCInterfaceOrImplementation();
-      case tok::objc_protocol:
-        if (parseObjCProtocol())
-          return;
-        break;
-      case tok::objc_end:
-        return; // Handled by the caller.
-      case tok::objc_optional:
-      case tok::objc_required:
-        nextToken();
-        addUnwrappedLine();
-        return;
-      case tok::objc_autoreleasepool:
-        nextToken();
-        if (FormatTok->Tok.is(tok::l_brace)) {
-          if (Style.BraceWrapping.AfterControlStatement ==
-              FormatStyle::BWACS_Always)
-            addUnwrappedLine();
-          parseBlock(/*MustBeDeclaration=*/false);
-        }
-        addUnwrappedLine();
-        return;
-      case tok::objc_synchronized:
-        nextToken();
-        if (FormatTok->Tok.is(tok::l_paren))
-          // Skip synchronization object
-          parseParens();
-        if (FormatTok->Tok.is(tok::l_brace)) {
-          if (Style.BraceWrapping.AfterControlStatement ==
-              FormatStyle::BWACS_Always)
-            addUnwrappedLine();
-          parseBlock(/*MustBeDeclaration=*/false);
-        }
-        addUnwrappedLine();
-        return;
-      case tok::objc_try:
-        // This branch isn't strictly necessary (the kw_intentar case below would
-        // do this too after the tok::at is parsed above).  But be explicit.
-        parseTryCatch();
-        return;
-      default:
-        break;
-      }
+      // switch (FormatTok->Tok.getObjCKeywordID()) {
+      // case tok::objc_public:
+      // case tok::objc_protected:
+      // case tok::objc_package:
+      // case tok::objc_private:
+      //   return parseAccessSpecifier();
+      // // case tok::objc_interface:
+      // case tok::objc_implementation:
+      //   return parseObjCInterfaceOrImplementation();
+      // case tok::objc_protocol:
+      //   if (parseObjCProtocol())
+      //     return;
+      //   break;
+      // case tok::objc_end:
+      //   return; // Handled by the caller.
+      // case tok::objc_optional:
+      // case tok::objc_required:
+      //   nextToken();
+      //   addUnwrappedLine();
+      //   return;
+      // case tok::objc_autoreleasepool:
+      //   nextToken();
+      //   if (FormatTok->Tok.is(tok::l_brace)) {
+      //     if (Style.BraceWrapping.AfterControlStatement ==
+      //         FormatStyle::BWACS_Always)
+      //       addUnwrappedLine();
+      //     parseBlock(/*MustBeDeclaration=*/false);
+      //   }
+      //   addUnwrappedLine();
+      //   return;
+      // case tok::objc_synchronized:
+      //   nextToken();
+      //   if (FormatTok->Tok.is(tok::l_paren))
+      //     // Skip synchronization object
+      //     parseParens();
+      //   if (FormatTok->Tok.is(tok::l_brace)) {
+      //     if (Style.BraceWrapping.AfterControlStatement ==
+      //         FormatStyle::BWACS_Always)
+      //       addUnwrappedLine();
+      //     parseBlock(/*MustBeDeclaration=*/false);
+      //   }
+      //   addUnwrappedLine();
+      //   return;
+      // case tok::objc_try:
+      //   // This branch isn't strictly necessary (the kw_intentar case below would
+      //   // do this too after the tok::at is parsed above).  But be explicit.
+      //   parseTryCatch();
+      //   return;
+      // default:
+      //   break;
+      // }
       break;
     case tok::kw_enum:
       // Ignore if this is part of "template <enum ...".
@@ -2060,9 +2060,9 @@ void UnwrappedLineParser::parseTryCatch() {
                              tok::kw___finally*/) ||
           ((Style.Language == FormatStyle::LK_Java ||
             Style.Language == FormatStyle::LK_JavaScript) &&
-           FormatTok->is(Keywords.kw_finally)) ||
+           FormatTok->is(Keywords.kw_finally)) /*||
           (FormatTok->Tok.isObjCAtKeyword(tok::objc_catch) ||
-           FormatTok->Tok.isObjCAtKeyword(tok::objc_finally))))
+           FormatTok->Tok.isObjCAtKeyword(tok::objc_finally))*/))
       break;
     nextToken();
     while (FormatTok->isNot(tok::l_brace)) {
@@ -2572,8 +2572,8 @@ void UnwrappedLineParser::parseObjCProtocolList() {
   do {
     nextToken();
     // Early exit in case someone forgot a close angle.
-    if (FormatTok->isOneOf(tok::semi, tok::l_brace) ||
-        FormatTok->Tok.isObjCAtKeyword(tok::objc_end))
+    if (FormatTok->isOneOf(tok::semi, tok::l_brace) /*||
+        FormatTok->Tok.isObjCAtKeyword(tok::objc_end)*/)
       return;
   } while (!eof() && FormatTok->Tok.isNot(tok::greater));
   nextToken(); // Skip '>'.
@@ -2581,11 +2581,11 @@ void UnwrappedLineParser::parseObjCProtocolList() {
 
 void UnwrappedLineParser::parseObjCUntilAtEnd() {
   do {
-    if (FormatTok->Tok.isObjCAtKeyword(tok::objc_end)) {
-      nextToken();
-      addUnwrappedLine();
-      break;
-    }
+    // if (FormatTok->Tok.isObjCAtKeyword(tok::objc_end)) {
+    //   nextToken();
+    //   addUnwrappedLine();
+    //   break;
+    // }
     if (FormatTok->is(tok::l_brace)) {
       parseBlock(/*MustBeDeclaration=*/false);
       // In ObjC interfaces, nothing should be following the "}".
@@ -2603,92 +2603,92 @@ void UnwrappedLineParser::parseObjCUntilAtEnd() {
   } while (!eof());
 }
 
-void UnwrappedLineParser::parseObjCInterfaceOrImplementation() {
-  assert(FormatTok->Tok.getObjCKeywordID() == tok::objc_interface ||
-         FormatTok->Tok.getObjCKeywordID() == tok::objc_implementation);
-  nextToken();
-  nextToken(); // interface name
+// void UnwrappedLineParser::parseObjCInterfaceOrImplementation() {
+//   assert(FormatTok->Tok.getObjCKeywordID() == tok::objc_interface ||
+//          FormatTok->Tok.getObjCKeywordID() == tok::objc_implementation);
+//   nextToken();
+//   nextToken(); // interface name
 
-  // @interface can be followed by a lightweight generic
-  // specialization list, then either a base class or a category.
-  if (FormatTok->Tok.is(tok::less)) {
-    // Unlike protocol lists, generic parameterizations support
-    // nested angles:
-    //
-    // @interface Foo<ValueType : id <NSCopying, NSSecureCoding>> :
-    //     NSObject <NSCopying, NSSecureCoding>
-    //
-    // so we need to count how many open angles we have left.
-    unsigned NumOpenAngles = 1;
-    do {
-      nextToken();
-      // Early exit in case someone forgot a close angle.
-      if (FormatTok->isOneOf(tok::semi, tok::l_brace) ||
-          FormatTok->Tok.isObjCAtKeyword(tok::objc_end))
-        break;
-      if (FormatTok->Tok.is(tok::less))
-        ++NumOpenAngles;
-      else if (FormatTok->Tok.is(tok::greater)) {
-        assert(NumOpenAngles > 0 && "'>' makes NumOpenAngles negative");
-        --NumOpenAngles;
-      }
-    } while (!eof() && NumOpenAngles != 0);
-    nextToken(); // Skip '>'.
-  }
-  if (FormatTok->Tok.is(tok::colon)) {
-    nextToken();
-    nextToken(); // base class name
-  } else if (FormatTok->Tok.is(tok::l_paren))
-    // Skip category, if present.
-    parseParens();
+//   // @interface can be followed by a lightweight generic
+//   // specialization list, then either a base class or a category.
+//   if (FormatTok->Tok.is(tok::less)) {
+//     // Unlike protocol lists, generic parameterizations support
+//     // nested angles:
+//     //
+//     // @interface Foo<ValueType : id <NSCopying, NSSecureCoding>> :
+//     //     NSObject <NSCopying, NSSecureCoding>
+//     //
+//     // so we need to count how many open angles we have left.
+//     unsigned NumOpenAngles = 1;
+//     do {
+//       nextToken();
+//       // Early exit in case someone forgot a close angle.
+//       if (FormatTok->isOneOf(tok::semi, tok::l_brace) /*||
+//           FormatTok->Tok.isObjCAtKeyword(tok::objc_end)*/)
+//         break;
+//       if (FormatTok->Tok.is(tok::less))
+//         ++NumOpenAngles;
+//       else if (FormatTok->Tok.is(tok::greater)) {
+//         assert(NumOpenAngles > 0 && "'>' makes NumOpenAngles negative");
+//         --NumOpenAngles;
+//       }
+//     } while (!eof() && NumOpenAngles != 0);
+//     nextToken(); // Skip '>'.
+//   }
+//   if (FormatTok->Tok.is(tok::colon)) {
+//     nextToken();
+//     nextToken(); // base class name
+//   } else if (FormatTok->Tok.is(tok::l_paren))
+//     // Skip category, if present.
+//     parseParens();
 
-  if (FormatTok->Tok.is(tok::less))
-    parseObjCProtocolList();
+//   if (FormatTok->Tok.is(tok::less))
+//     parseObjCProtocolList();
 
-  if (FormatTok->Tok.is(tok::l_brace)) {
-    if (Style.BraceWrapping.AfterObjCDeclaration)
-      addUnwrappedLine();
-    parseBlock(/*MustBeDeclaration=*/true);
-  }
+//   if (FormatTok->Tok.is(tok::l_brace)) {
+//     if (Style.BraceWrapping.AfterObjCDeclaration)
+//       addUnwrappedLine();
+//     parseBlock(/*MustBeDeclaration=*/true);
+//   }
 
-  // With instance variables, this puts '}' on its own line.  Without instance
-  // variables, this ends the @interface line.
-  addUnwrappedLine();
+//   // With instance variables, this puts '}' on its own line.  Without instance
+//   // variables, this ends the @interface line.
+//   addUnwrappedLine();
 
-  parseObjCUntilAtEnd();
-}
+//   parseObjCUntilAtEnd();
+// }
 
 // Returns true for the declaration/definition form of @protocol,
 // false for the expression form.
-bool UnwrappedLineParser::parseObjCProtocol() {
-  assert(FormatTok->Tok.getObjCKeywordID() == tok::objc_protocol);
-  nextToken();
+// bool UnwrappedLineParser::parseObjCProtocol() {
+//   assert(FormatTok->Tok.getObjCKeywordID() == tok::objc_protocol);
+//   nextToken();
 
-  if (FormatTok->is(tok::l_paren))
-    // The expression form of @protocol, e.g. "Protocol* p = @protocol(foo);".
-    return false;
+//   if (FormatTok->is(tok::l_paren))
+//     // The expression form of @protocol, e.g. "Protocol* p = @protocol(foo);".
+//     return false;
 
-  // The definition/declaration form,
-  // @protocol Foo
-  // - (int)someMethod;
-  // @end
+//   // The definition/declaration form,
+//   // @protocol Foo
+//   // - (int)someMethod;
+//   // @end
 
-  nextToken(); // protocol name
+//   nextToken(); // protocol name
 
-  if (FormatTok->Tok.is(tok::less))
-    parseObjCProtocolList();
+//   if (FormatTok->Tok.is(tok::less))
+//     parseObjCProtocolList();
 
-  // Check for protocol declaration.
-  if (FormatTok->Tok.is(tok::semi)) {
-    nextToken();
-    addUnwrappedLine();
-    return true;
-  }
+//   // Check for protocol declaration.
+//   if (FormatTok->Tok.is(tok::semi)) {
+//     nextToken();
+//     addUnwrappedLine();
+//     return true;
+//   }
 
-  addUnwrappedLine();
-  parseObjCUntilAtEnd();
-  return true;
-}
+//   addUnwrappedLine();
+//   parseObjCUntilAtEnd();
+//   return true;
+// }
 
 void UnwrappedLineParser::parseJavaScriptEs6ImportExport() {
   bool IsImport = FormatTok->is(Keywords.kw_import);

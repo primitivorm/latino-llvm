@@ -3552,133 +3552,133 @@ static const Expr *maybeGetUnaryAddrOfOperand(const Expr *E) {
 /// we are passing the address of an __autoreleased temporary; it
 /// might be copy-initialized with the current value of the given
 /// address, but it will definitely be copied out of after the call.
-static void emitWritebackArg(CodeGenFunction &CGF, CallArgList &args,
-                             const ObjCIndirectCopyRestoreExpr *CRE) {
-  LValue srcLV;
+// static void emitWritebackArg(CodeGenFunction &CGF, CallArgList &args,
+//                              const ObjCIndirectCopyRestoreExpr *CRE) {
+//   LValue srcLV;
 
-  // Make an optimistic effort to emit the address as an l-value.
-  // This can fail if the argument expression is more complicated.
-  if (const Expr *lvExpr = maybeGetUnaryAddrOfOperand(CRE->getSubExpr())) {
-    srcLV = CGF.EmitLValue(lvExpr);
+//   // Make an optimistic effort to emit the address as an l-value.
+//   // This can fail if the argument expression is more complicated.
+//   if (const Expr *lvExpr = maybeGetUnaryAddrOfOperand(CRE->getSubExpr())) {
+//     srcLV = CGF.EmitLValue(lvExpr);
 
-  // Otherwise, just emit it as a scalar.
-  } else {
-    Address srcAddr = CGF.EmitPointerWithAlignment(CRE->getSubExpr());
+//   // Otherwise, just emit it as a scalar.
+//   } else {
+//     Address srcAddr = CGF.EmitPointerWithAlignment(CRE->getSubExpr());
 
-    QualType srcAddrType =
-      CRE->getSubExpr()->getType()->castAs<PointerType>()->getPointeeType();
-    srcLV = CGF.MakeAddrLValue(srcAddr, srcAddrType);
-  }
-  Address srcAddr = srcLV.getAddress(CGF);
+//     QualType srcAddrType =
+//       CRE->getSubExpr()->getType()->castAs<PointerType>()->getPointeeType();
+//     srcLV = CGF.MakeAddrLValue(srcAddr, srcAddrType);
+//   }
+//   Address srcAddr = srcLV.getAddress(CGF);
 
-  // The dest and src types don't necessarily match in LLVM terms
-  // because of the crazy ObjC compatibility rules.
+//   // The dest and src types don't necessarily match in LLVM terms
+//   // because of the crazy ObjC compatibility rules.
 
-  llvm::PointerType *destType =
-    cast<llvm::PointerType>(CGF.ConvertType(CRE->getType()));
+//   llvm::PointerType *destType =
+//     cast<llvm::PointerType>(CGF.ConvertType(CRE->getType()));
 
-  // If the address is a constant null, just pass the appropriate null.
-  if (isProvablyNull(srcAddr.getPointer())) {
-    args.add(RValue::get(llvm::ConstantPointerNull::get(destType)),
-             CRE->getType());
-    return;
-  }
+//   // If the address is a constant null, just pass the appropriate null.
+//   if (isProvablyNull(srcAddr.getPointer())) {
+//     args.add(RValue::get(llvm::ConstantPointerNull::get(destType)),
+//              CRE->getType());
+//     return;
+//   }
 
-  // Create the temporary.
-  Address temp = CGF.CreateTempAlloca(destType->getElementType(),
-                                      CGF.getPointerAlign(),
-                                      "icr.temp");
-  // Loading an l-value can introduce a cleanup if the l-value is __weak,
-  // and that cleanup will be conditional if we can't prove that the l-value
-  // isn't null, so we need to register a dominating point so that the cleanups
-  // system will make valid IR.
-  CodeGenFunction::ConditionalEvaluation condEval(CGF);
+//   // Create the temporary.
+//   Address temp = CGF.CreateTempAlloca(destType->getElementType(),
+//                                       CGF.getPointerAlign(),
+//                                       "icr.temp");
+//   // Loading an l-value can introduce a cleanup if the l-value is __weak,
+//   // and that cleanup will be conditional if we can't prove that the l-value
+//   // isn't null, so we need to register a dominating point so that the cleanups
+//   // system will make valid IR.
+//   CodeGenFunction::ConditionalEvaluation condEval(CGF);
 
-  // Zero-initialize it if we're not doing a copy-initialization.
-  bool shouldCopy = CRE->shouldCopy();
-  if (!shouldCopy) {
-    llvm::Value *null =
-      llvm::ConstantPointerNull::get(
-        cast<llvm::PointerType>(destType->getElementType()));
-    CGF.Builder.CreateStore(null, temp);
-  }
+//   // Zero-initialize it if we're not doing a copy-initialization.
+//   bool shouldCopy = CRE->shouldCopy();
+//   if (!shouldCopy) {
+//     llvm::Value *null =
+//       llvm::ConstantPointerNull::get(
+//         cast<llvm::PointerType>(destType->getElementType()));
+//     CGF.Builder.CreateStore(null, temp);
+//   }
 
-  llvm::BasicBlock *contBB = nullptr;
-  llvm::BasicBlock *originBB = nullptr;
+//   llvm::BasicBlock *contBB = nullptr;
+//   llvm::BasicBlock *originBB = nullptr;
 
-  // If the address is *not* known to be non-null, we need to switch.
-  llvm::Value *finalArgument;
+//   // If the address is *not* known to be non-null, we need to switch.
+//   llvm::Value *finalArgument;
 
-  bool provablyNonNull = llvm::isKnownNonZero(srcAddr.getPointer(),
-                                              CGF.CGM.getDataLayout());
-  if (provablyNonNull) {
-    finalArgument = temp.getPointer();
-  } else {
-    llvm::Value *isNull =
-      CGF.Builder.CreateIsNull(srcAddr.getPointer(), "icr.isnull");
+//   bool provablyNonNull = llvm::isKnownNonZero(srcAddr.getPointer(),
+//                                               CGF.CGM.getDataLayout());
+//   if (provablyNonNull) {
+//     finalArgument = temp.getPointer();
+//   } else {
+//     llvm::Value *isNull =
+//       CGF.Builder.CreateIsNull(srcAddr.getPointer(), "icr.isnull");
 
-    finalArgument = CGF.Builder.CreateSelect(isNull,
-                                   llvm::ConstantPointerNull::get(destType),
-                                             temp.getPointer(), "icr.argument");
+//     finalArgument = CGF.Builder.CreateSelect(isNull,
+//                                    llvm::ConstantPointerNull::get(destType),
+//                                              temp.getPointer(), "icr.argument");
 
-    // If we need to copy, then the load has to be conditional, which
-    // means we need control flow.
-    if (shouldCopy) {
-      originBB = CGF.Builder.GetInsertBlock();
-      contBB = CGF.createBasicBlock("icr.cont");
-      llvm::BasicBlock *copyBB = CGF.createBasicBlock("icr.copy");
-      CGF.Builder.CreateCondBr(isNull, contBB, copyBB);
-      CGF.EmitBlock(copyBB);
-      condEval.begin(CGF);
-    }
-  }
+//     // If we need to copy, then the load has to be conditional, which
+//     // means we need control flow.
+//     if (shouldCopy) {
+//       originBB = CGF.Builder.GetInsertBlock();
+//       contBB = CGF.createBasicBlock("icr.cont");
+//       llvm::BasicBlock *copyBB = CGF.createBasicBlock("icr.copy");
+//       CGF.Builder.CreateCondBr(isNull, contBB, copyBB);
+//       CGF.EmitBlock(copyBB);
+//       condEval.begin(CGF);
+//     }
+//   }
 
-  llvm::Value *valueToUse = nullptr;
+//   llvm::Value *valueToUse = nullptr;
 
-  // Perform a copy if necessary.
-  if (shouldCopy) {
-    RValue srcRV = CGF.EmitLoadOfLValue(srcLV, SourceLocation());
-    assert(srcRV.isScalar());
+//   // Perform a copy if necessary.
+//   if (shouldCopy) {
+//     RValue srcRV = CGF.EmitLoadOfLValue(srcLV, SourceLocation());
+//     assert(srcRV.isScalar());
 
-    llvm::Value *src = srcRV.getScalarVal();
-    src = CGF.Builder.CreateBitCast(src, destType->getElementType(),
-                                    "icr.cast");
+//     llvm::Value *src = srcRV.getScalarVal();
+//     src = CGF.Builder.CreateBitCast(src, destType->getElementType(),
+//                                     "icr.cast");
 
-    // Use an ordinary store, not a store-to-lvalue.
-    CGF.Builder.CreateStore(src, temp);
+//     // Use an ordinary store, not a store-to-lvalue.
+//     CGF.Builder.CreateStore(src, temp);
 
-    // If optimization is enabled, and the value was held in a
-    // __strong variable, we need to tell the optimizer that this
-    // value has to stay alive until we're doing the store back.
-    // This is because the temporary is effectively unretained,
-    // and so otherwise we can violate the high-level semantics.
-    if (CGF.CGM.getCodeGenOpts().OptimizationLevel != 0 &&
-        srcLV.getObjCLifetime() == Qualifiers::OCL_Strong) {
-      valueToUse = src;
-    }
-  }
+//     // If optimization is enabled, and the value was held in a
+//     // __strong variable, we need to tell the optimizer that this
+//     // value has to stay alive until we're doing the store back.
+//     // This is because the temporary is effectively unretained,
+//     // and so otherwise we can violate the high-level semantics.
+//     if (CGF.CGM.getCodeGenOpts().OptimizationLevel != 0 &&
+//         srcLV.getObjCLifetime() == Qualifiers::OCL_Strong) {
+//       valueToUse = src;
+//     }
+//   }
 
-  // Finish the control flow if we needed it.
-  if (shouldCopy && !provablyNonNull) {
-    llvm::BasicBlock *copyBB = CGF.Builder.GetInsertBlock();
-    CGF.EmitBlock(contBB);
+//   // Finish the control flow if we needed it.
+//   if (shouldCopy && !provablyNonNull) {
+//     llvm::BasicBlock *copyBB = CGF.Builder.GetInsertBlock();
+//     CGF.EmitBlock(contBB);
 
-    // Make a phi for the value to intrinsically use.
-    if (valueToUse) {
-      llvm::PHINode *phiToUse = CGF.Builder.CreatePHI(valueToUse->getType(), 2,
-                                                      "icr.to-use");
-      phiToUse->addIncoming(valueToUse, copyBB);
-      phiToUse->addIncoming(llvm::UndefValue::get(valueToUse->getType()),
-                            originBB);
-      valueToUse = phiToUse;
-    }
+//     // Make a phi for the value to intrinsically use.
+//     if (valueToUse) {
+//       llvm::PHINode *phiToUse = CGF.Builder.CreatePHI(valueToUse->getType(), 2,
+//                                                       "icr.to-use");
+//       phiToUse->addIncoming(valueToUse, copyBB);
+//       phiToUse->addIncoming(llvm::UndefValue::get(valueToUse->getType()),
+//                             originBB);
+//       valueToUse = phiToUse;
+//     }
 
-    condEval.end(CGF);
-  }
+//     condEval.end(CGF);
+//   }
 
-  args.addWriteback(srcLV, temp, valueToUse);
-  args.add(RValue::get(finalArgument), CRE->getType());
-}
+//   args.addWriteback(srcLV, temp, valueToUse);
+//   args.add(RValue::get(finalArgument), CRE->getType());
+// }
 
 void CallArgList::allocateArgumentMemory(CodeGenFunction &CGF) {
   assert(!StackBase);
@@ -3807,7 +3807,7 @@ void CodeGenFunction::EmitCallArgs(
     unsigned InitialArgSize = Args.size();
     // If *Arg is an ObjCIndirectCopyRestoreExpr, check that either the types of
     // the argument and parameter match or the objc method is parameterized.
-    assert((!isa<ObjCIndirectCopyRestoreExpr>(*Arg) ||
+    assert((/*!isa<ObjCIndirectCopyRestoreExpr>(*Arg) ||*/
             getContext().hasSameUnqualifiedType((*Arg)->getType(),
                                                 ArgTypes[Idx]) /*||
             (isa<ObjCMethodDecl>(AC.getDecl()) &&
@@ -3906,11 +3906,11 @@ void CallArg::copyInto(CodeGenFunction &CGF, Address Addr) const {
 void CodeGenFunction::EmitCallArg(CallArgList &args, const Expr *E,
                                   QualType type) {
   DisableDebugLocationUpdates Dis(*this, E);
-  if (const ObjCIndirectCopyRestoreExpr *CRE
-        = dyn_cast<ObjCIndirectCopyRestoreExpr>(E)) {
-    assert(getLangOpts().ObjCAutoRefCount);
-    return emitWritebackArg(*this, args, CRE);
-  }
+  // if (const ObjCIndirectCopyRestoreExpr *CRE
+  //       = dyn_cast<ObjCIndirectCopyRestoreExpr>(E)) {
+  //   assert(getLangOpts().ObjCAutoRefCount);
+  //   return emitWritebackArg(*this, args, CRE);
+  // }
 
   assert(type->isReferenceType() == E->isGLValue() &&
          "reference binding to unmaterialized r-value!");

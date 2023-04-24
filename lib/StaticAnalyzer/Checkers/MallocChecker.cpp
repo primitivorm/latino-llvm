@@ -1698,14 +1698,14 @@ static bool printMemFnName(raw_ostream &os, CheckerContext &C, const Expr *E) {
     return true;
   }
 
-  if (const ObjCMessageExpr *Msg = dyn_cast<ObjCMessageExpr>(E)) {
-    if (Msg->isInstanceMessage())
-      os << "-";
-    else
-      os << "+";
-    Msg->getSelector().print(os);
-    return true;
-  }
+  // if (const ObjCMessageExpr *Msg = dyn_cast<ObjCMessageExpr>(E)) {
+  //   if (Msg->isInstanceMessage())
+  //     os << "-";
+  //   else
+  //     os << "+";
+  //   Msg->getSelector().print(os);
+  //   return true;
+  // }
 
   if (const CXXNewExpr *NE = dyn_cast<CXXNewExpr>(E)) {
     os << "'"

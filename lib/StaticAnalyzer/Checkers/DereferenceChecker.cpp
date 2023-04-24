@@ -76,14 +76,14 @@ DereferenceChecker::AddDerefSource(raw_ostream &os,
       Ranges.push_back(SourceRange(L, L));
       break;
     }
-    case Stmt::ObjCIvarRefExprClass: {
-      const ObjCIvarRefExpr *IV = cast<ObjCIvarRefExpr>(Ex);
-      os << " (" << (loadedFrom ? "loaded from" : "via")
-         << " ivar '" << IV->getDecl()->getName() << "')";
-      SourceLocation L = IV->getLocation();
-      Ranges.push_back(SourceRange(L, L));
-      break;
-    }
+    // case Stmt::ObjCIvarRefExprClass: {
+    //   const ObjCIvarRefExpr *IV = cast<ObjCIvarRefExpr>(Ex);
+    //   os << " (" << (loadedFrom ? "loaded from" : "via")
+    //      << " ivar '" << IV->getDecl()->getName() << "')";
+    //   SourceLocation L = IV->getLocation();
+    //   Ranges.push_back(SourceRange(L, L));
+    //   break;
+    // }
   }
 }
 
@@ -167,14 +167,14 @@ void DereferenceChecker::reportBug(ProgramStateRef State, const Stmt *S,
     }
     break;
   }
-  case Stmt::ObjCIvarRefExprClass: {
-    const ObjCIvarRefExpr *IV = cast<ObjCIvarRefExpr>(S);
-    os << "Access to instance variable '" << *IV->getDecl()
-       << "' results in a dereference of a null pointer";
-    AddDerefSource(os, Ranges, IV->getBase()->IgnoreParenCasts(),
-                   State.get(), N->getLocationContext(), true);
-    break;
-  }
+  // case Stmt::ObjCIvarRefExprClass: {
+  //   const ObjCIvarRefExpr *IV = cast<ObjCIvarRefExpr>(S);
+  //   os << "Access to instance variable '" << *IV->getDecl()
+  //      << "' results in a dereference of a null pointer";
+  //   AddDerefSource(os, Ranges, IV->getBase()->IgnoreParenCasts(),
+  //                  State.get(), N->getLocationContext(), true);
+  //   break;
+  // }
   default:
     break;
   }

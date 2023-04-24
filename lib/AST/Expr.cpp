@@ -184,8 +184,8 @@ bool Expr::isKnownToHaveBooleanValue(bool Semantic) const {
     return CO->getTrueExpr()->isKnownToHaveBooleanValue(Semantic) &&
            CO->getFalseExpr()->isKnownToHaveBooleanValue(Semantic);
 
-  if (isa<ObjCBoolLiteralExpr>(E))
-    return true;
+  // if (isa<ObjCBoolLiteralExpr>(E))
+  //   return true;
 
   if (const auto *OVE = dyn_cast<OpaqueValueExpr>(E))
     return OVE->getSourceExpr()->isKnownToHaveBooleanValue(Semantic);
@@ -2176,7 +2176,7 @@ bool InitListExpr::isStringLiteralInit() const {
   if (!Init)
     return false;
   Init = Init->IgnoreParens();
-  return isa<StringLiteral>(Init) || isa<ObjCEncodeExpr>(Init);
+  return isa<StringLiteral>(Init) /*|| isa<ObjCEncodeExpr>(Init)*/;
 }
 
 bool InitListExpr::isTransparent() const {
@@ -2324,7 +2324,7 @@ bool Expr::isReadIfDiscardedInCPlusPlus11() const {
   }
 
   // Objective-C++ extensions to the rule.
-  if (isa<PseudoObjectExpr>(E) || isa<ObjCIvarRefExpr>(E))
+  if (isa<PseudoObjectExpr>(E) /*|| isa<ObjCIvarRefExpr>(E)*/)
     return true;
 
   return false;
@@ -2574,25 +2574,25 @@ bool Expr::isUnusedResultAWarning(const Expr *&WarnE, SourceLocation &Loc,
   //   return false;
   // }
 
-  case ObjCPropertyRefExprClass:
-    WarnE = this;
-    Loc = getExprLoc();
-    R1 = getSourceRange();
-    return true;
+  // case ObjCPropertyRefExprClass:
+  //   WarnE = this;
+  //   Loc = getExprLoc();
+  //   R1 = getSourceRange();
+  //   return true;
 
-  case PseudoObjectExprClass: {
-    const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
+  // case PseudoObjectExprClass: {
+  //   const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
 
-    // Only complain about things that have the form of a getter.
-    if (isa<UnaryOperator>(PO->getSyntacticForm()) ||
-        isa<BinaryOperator>(PO->getSyntacticForm()))
-      return false;
+  //   // Only complain about things that have the form of a getter.
+  //   if (isa<UnaryOperator>(PO->getSyntacticForm()) ||
+  //       isa<BinaryOperator>(PO->getSyntacticForm()))
+  //     return false;
 
-    WarnE = this;
-    Loc = getExprLoc();
-    R1 = getSourceRange();
-    return true;
-  }
+  //   WarnE = this;
+  //   Loc = getExprLoc();
+  //   R1 = getSourceRange();
+  //   return true;
+  // }
 
   case StmtExprClass: {
     // Statement exprs don't logically have side effects themselves, but are
@@ -2701,44 +2701,44 @@ bool Expr::isUnusedResultAWarning(const Expr *&WarnE, SourceLocation &Loc,
 
 /// isOBJCGCCandidate - Check if an expression is objc gc'able.
 /// returns true, if it is; false otherwise.
-bool Expr::isOBJCGCCandidate(ASTContext &Ctx) const {
-  const Expr *E = IgnoreParens();
-  switch (E->getStmtClass()) {
-  default:
-    return false;
-  case ObjCIvarRefExprClass:
-    return true;
-  case Expr::UnaryOperatorClass:
-    return cast<UnaryOperator>(E)->getSubExpr()->isOBJCGCCandidate(Ctx);
-  case ImplicitCastExprClass:
-    return cast<ImplicitCastExpr>(E)->getSubExpr()->isOBJCGCCandidate(Ctx);
-  case MaterializeTemporaryExprClass:
-    return cast<MaterializeTemporaryExpr>(E)->getSubExpr()->isOBJCGCCandidate(
-        Ctx);
-  case CStyleCastExprClass:
-    return cast<CStyleCastExpr>(E)->getSubExpr()->isOBJCGCCandidate(Ctx);
-  case DeclRefExprClass: {
-    const Decl *D = cast<DeclRefExpr>(E)->getDecl();
+// bool Expr::isOBJCGCCandidate(ASTContext &Ctx) const {
+//   const Expr *E = IgnoreParens();
+//   switch (E->getStmtClass()) {
+//   default:
+//     return false;
+//   // case ObjCIvarRefExprClass:
+//   //   return true;
+//   case Expr::UnaryOperatorClass:
+//     return cast<UnaryOperator>(E)->getSubExpr()->isOBJCGCCandidate(Ctx);
+//   case ImplicitCastExprClass:
+//     return cast<ImplicitCastExpr>(E)->getSubExpr()->isOBJCGCCandidate(Ctx);
+//   case MaterializeTemporaryExprClass:
+//     return cast<MaterializeTemporaryExpr>(E)->getSubExpr()->isOBJCGCCandidate(
+//         Ctx);
+//   case CStyleCastExprClass:
+//     return cast<CStyleCastExpr>(E)->getSubExpr()->isOBJCGCCandidate(Ctx);
+//   case DeclRefExprClass: {
+//     const Decl *D = cast<DeclRefExpr>(E)->getDecl();
 
-    if (const VarDecl *VD = dyn_cast<VarDecl>(D)) {
-      if (VD->hasGlobalStorage())
-        return true;
-      QualType T = VD->getType();
-      // dereferencing to a  pointer is always a gc'able candidate,
-      // unless it is __weak.
-      return T->isPointerType() &&
-             (Ctx.getObjCGCAttrKind(T) != Qualifiers::Weak);
-    }
-    return false;
-  }
-  case MemberExprClass: {
-    const MemberExpr *M = cast<MemberExpr>(E);
-    return M->getBase()->isOBJCGCCandidate(Ctx);
-  }
-  case ArraySubscriptExprClass:
-    return cast<ArraySubscriptExpr>(E)->getBase()->isOBJCGCCandidate(Ctx);
-  }
-}
+//     if (const VarDecl *VD = dyn_cast<VarDecl>(D)) {
+//       if (VD->hasGlobalStorage())
+//         return true;
+//       QualType T = VD->getType();
+//       // dereferencing to a  pointer is always a gc'able candidate,
+//       // unless it is __weak.
+//       return T->isPointerType() &&
+//              (Ctx.getObjCGCAttrKind(T) != Qualifiers::Weak);
+//     }
+//     return false;
+//   }
+//   case MemberExprClass: {
+//     const MemberExpr *M = cast<MemberExpr>(E);
+//     return M->getBase()->isOBJCGCCandidate(Ctx);
+//   }
+//   case ArraySubscriptExprClass:
+//     return cast<ArraySubscriptExpr>(E)->getBase()->isOBJCGCCandidate(Ctx);
+//   }
+// }
 
 bool Expr::isBoundMemberFunction(ASTContext &Ctx) const {
   if (isTypeDependent())
@@ -3182,7 +3182,7 @@ bool Expr::isConstantInitializer(ASTContext &Ctx, bool IsForRef,
     return cast<ExprWithCleanups>(this)->getSubExpr()->isConstantInitializer(
         Ctx, IsForRef, Culprit);
   case StringLiteralClass:
-  case ObjCEncodeExprClass:
+  // case ObjCEncodeExprClass:
     return true;
   case CXXTemporaryObjectExprClass:
   case CXXConstructExprClass: {
@@ -3291,7 +3291,7 @@ bool Expr::isConstantInitializer(ASTContext &Ctx, bool IsForRef,
   case CXXStaticCastExprClass:
   case ImplicitCastExprClass:
   case CStyleCastExprClass:
-  case ObjCBridgedCastExprClass:
+  // case ObjCBridgedCastExprClass:
   case CXXDynamicCastExprClass:
   case CXXReinterpretCastExprClass:
   // case CXXAddrspaceCastExprClass:
@@ -3422,7 +3422,7 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
     llvm_unreachable("shouldn't see dependent / unresolved nodes here");
 
   case DeclRefExprClass:
-  case ObjCIvarRefExprClass:
+  // case ObjCIvarRefExprClass:
   case PredefinedExprClass:
   case IntegerLiteralClass:
   case FixedPointLiteralClass:
@@ -3446,10 +3446,10 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
   case ExpressionTraitExprClass:
   case CXXNoexceptExprClass:
   case SizeOfPackExprClass:
-  case ObjCStringLiteralClass:
-  case ObjCEncodeExprClass:
-  case ObjCBoolLiteralExprClass:
-  case ObjCAvailabilityCheckExprClass:
+  // case ObjCStringLiteralClass:
+  // case ObjCEncodeExprClass:
+  // case ObjCBoolLiteralExprClass:
+  // case ObjCAvailabilityCheckExprClass:
   case CXXUuidofExprClass:
   case OpaqueValueExprClass:
   case SourceLocExprClass:
@@ -3634,37 +3634,37 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
     return false;
   }
 
-  case PseudoObjectExprClass: {
-    // Only look for side-effects in the semantic form, and look past
-    // OpaqueValueExpr bindings in that form.
-    const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
-    for (PseudoObjectExpr::const_semantics_iterator I = PO->semantics_begin(),
-                                                    E = PO->semantics_end();
-         I != E; ++I) {
-      const Expr *Subexpr = *I;
-      if (const OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Subexpr))
-        Subexpr = OVE->getSourceExpr();
-      if (Subexpr->HasSideEffects(Ctx, IncludePossibleEffects))
-        return true;
-    }
-    return false;
-  }
+  // case PseudoObjectExprClass: {
+  //   // Only look for side-effects in the semantic form, and look past
+  //   // OpaqueValueExpr bindings in that form.
+  //   const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
+  //   for (PseudoObjectExpr::const_semantics_iterator I = PO->semantics_begin(),
+  //                                                   E = PO->semantics_end();
+  //        I != E; ++I) {
+  //     const Expr *Subexpr = *I;
+  //     if (const OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Subexpr))
+  //       Subexpr = OVE->getSourceExpr();
+  //     if (Subexpr->HasSideEffects(Ctx, IncludePossibleEffects))
+  //       return true;
+  //   }
+  //   return false;
+  // }
 
-  case ObjCBoxedExprClass:
-  case ObjCArrayLiteralClass:
-  case ObjCDictionaryLiteralClass:
-  case ObjCSelectorExprClass:
-  case ObjCProtocolExprClass:
-  case ObjCIsaExprClass:
-  case ObjCIndirectCopyRestoreExprClass:
-  case ObjCSubscriptRefExprClass:
-  case ObjCBridgedCastExprClass:
-  // case ObjCMessageExprClass:
-  case ObjCPropertyRefExprClass:
-  // FIXME: Classify these cases better.
-    if (IncludePossibleEffects)
-      return true;
-    break;
+  // case ObjCBoxedExprClass:
+  // case ObjCArrayLiteralClass:
+  // case ObjCDictionaryLiteralClass:
+  // case ObjCSelectorExprClass:
+  // case ObjCProtocolExprClass:
+  // case ObjCIsaExprClass:
+  // case ObjCIndirectCopyRestoreExprClass:
+  // case ObjCSubscriptRefExprClass:
+  // case ObjCBridgedCastExprClass:
+  // // case ObjCMessageExprClass:
+  // case ObjCPropertyRefExprClass:
+  // // FIXME: Classify these cases better.
+  //   if (IncludePossibleEffects)
+  //     return true;
+  //   break;
   }
 
   // Recurse to children.
@@ -3914,11 +3914,11 @@ FieldDecl *Expr::getSourceBitField() {
       if (Field->isBitField())
         return Field;
 
-  if (ObjCIvarRefExpr *IvarRef = dyn_cast<ObjCIvarRefExpr>(E)) {
-    FieldDecl *Ivar = IvarRef->getDecl();
-    if (Ivar->isBitField())
-      return Ivar;
-  }
+  // if (ObjCIvarRefExpr *IvarRef = dyn_cast<ObjCIvarRefExpr>(E)) {
+  //   FieldDecl *Ivar = IvarRef->getDecl();
+  //   if (Ivar->isBitField())
+  //     return Ivar;
+  // }
 
   if (DeclRefExpr *DeclRef = dyn_cast<DeclRefExpr>(E)) {
     if (FieldDecl *Field = dyn_cast<FieldDecl>(DeclRef->getDecl()))
@@ -4027,12 +4027,12 @@ bool Expr::isSameComparisonOperand(const Expr* E1, const Expr* E2) {
       if (DRE1 && DRE2)
         return declaresSameEntity(DRE1->getDecl(), DRE2->getDecl());
 
-      const auto *Ivar1 = dyn_cast<ObjCIvarRefExpr>(E1);
-      const auto *Ivar2 = dyn_cast<ObjCIvarRefExpr>(E2);
-      if (Ivar1 && Ivar2) {
-        return Ivar1->isFreeIvar() && Ivar2->isFreeIvar() &&
-               declaresSameEntity(Ivar1->getDecl(), Ivar2->getDecl());
-      }
+      // const auto *Ivar1 = dyn_cast<ObjCIvarRefExpr>(E1);
+      // const auto *Ivar2 = dyn_cast<ObjCIvarRefExpr>(E2);
+      // if (Ivar1 && Ivar2) {
+      //   return Ivar1->isFreeIvar() && Ivar2->isFreeIvar() &&
+      //          declaresSameEntity(Ivar1->getDecl(), Ivar2->getDecl());
+      // }
 
       const auto *Array1 = dyn_cast<ArraySubscriptExpr>(E1);
       const auto *Array2 = dyn_cast<ArraySubscriptExpr>(E2);
@@ -4594,10 +4594,10 @@ PseudoObjectExpr *PseudoObjectExpr::Create(const ASTContext &Context,
   return new(buffer) PseudoObjectExpr(sh, numSemanticExprs);
 }
 
-PseudoObjectExpr::PseudoObjectExpr(EmptyShell shell, unsigned numSemanticExprs)
-  : Expr(PseudoObjectExprClass, shell) {
-  PseudoObjectExprBits.NumSubExprs = numSemanticExprs + 1;
-}
+// PseudoObjectExpr::PseudoObjectExpr(EmptyShell shell, unsigned numSemanticExprs)
+//   : Expr(PseudoObjectExprClass, shell) {
+//   PseudoObjectExprBits.NumSubExprs = numSemanticExprs + 1;
+// }
 
 PseudoObjectExpr *PseudoObjectExpr::Create(const ASTContext &C, Expr *syntax,
                                            ArrayRef<Expr*> semantics,
@@ -4623,25 +4623,25 @@ PseudoObjectExpr *PseudoObjectExpr::Create(const ASTContext &C, Expr *syntax,
                                       resultIndex);
 }
 
-PseudoObjectExpr::PseudoObjectExpr(QualType type, ExprValueKind VK,
-                                   Expr *syntax, ArrayRef<Expr *> semantics,
-                                   unsigned resultIndex)
-    : Expr(PseudoObjectExprClass, type, VK, OK_Ordinary) {
-  PseudoObjectExprBits.NumSubExprs = semantics.size() + 1;
-  PseudoObjectExprBits.ResultIndex = resultIndex + 1;
+// PseudoObjectExpr::PseudoObjectExpr(QualType type, ExprValueKind VK,
+//                                    Expr *syntax, ArrayRef<Expr *> semantics,
+//                                    unsigned resultIndex)
+//     : Expr(PseudoObjectExprClass, type, VK, OK_Ordinary) {
+//   PseudoObjectExprBits.NumSubExprs = semantics.size() + 1;
+//   PseudoObjectExprBits.ResultIndex = resultIndex + 1;
 
-  for (unsigned i = 0, e = semantics.size() + 1; i != e; ++i) {
-    Expr *E = (i == 0 ? syntax : semantics[i-1]);
-    getSubExprsBuffer()[i] = E;
+//   for (unsigned i = 0, e = semantics.size() + 1; i != e; ++i) {
+//     Expr *E = (i == 0 ? syntax : semantics[i-1]);
+//     getSubExprsBuffer()[i] = E;
 
-    if (isa<OpaqueValueExpr>(E))
-      assert(cast<OpaqueValueExpr>(E)->getSourceExpr() != nullptr &&
-             "opaque-value semantic expressions for pseudo-object "
-             "operations must have sources");
-  }
+//     if (isa<OpaqueValueExpr>(E))
+//       assert(cast<OpaqueValueExpr>(E)->getSourceExpr() != nullptr &&
+//              "opaque-value semantic expressions for pseudo-object "
+//              "operations must have sources");
+//   }
 
-  setDependence(computeDependence(this));
-}
+//   setDependence(computeDependence(this));
+// }
 
 //===----------------------------------------------------------------------===//
 //  Child Iterators for iterating over subexpressions/substatements

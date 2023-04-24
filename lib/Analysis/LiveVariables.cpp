@@ -166,7 +166,7 @@ public:
   void VisitBlockExpr(BlockExpr *BE);
   void VisitDeclRefExpr(DeclRefExpr *DR);
   void VisitDeclStmt(DeclStmt *DS);
-  void VisitObjCForCollectionStmt(ObjCForCollectionStmt *OS);
+  // void VisitObjCForCollectionStmt(ObjCForCollectionStmt *OS);
   void VisitUnaryExprOrTypeTraitExpr(UnaryExprOrTypeTraitExpr *UE);
   void VisitUnaryOperator(UnaryOperator *UO);
   void Visit(Stmt *S);
@@ -255,17 +255,17 @@ void TransferFunctions::Visit(Stmt *S) {
       }
       break;
     }
-    case Stmt::PseudoObjectExprClass: {
-      // A pseudo-object operation only directly consumes its result
-      // expression.
-      Expr *child = cast<PseudoObjectExpr>(S)->getResultExpr();
-      if (!child) return;
-      if (OpaqueValueExpr *OV = dyn_cast<OpaqueValueExpr>(child))
-        child = OV->getSourceExpr();
-      child = child->IgnoreParens();
-      val.liveStmts = LV.SSetFact.add(val.liveStmts, child);
-      return;
-    }
+    // case Stmt::PseudoObjectExprClass: {
+    //   // A pseudo-object operation only directly consumes its result
+    //   // expression.
+    //   Expr *child = cast<PseudoObjectExpr>(S)->getResultExpr();
+    //   if (!child) return;
+    //   if (OpaqueValueExpr *OV = dyn_cast<OpaqueValueExpr>(child))
+    //     child = OV->getSourceExpr();
+    //   child = child->IgnoreParens();
+    //   val.liveStmts = LV.SSetFact.add(val.liveStmts, child);
+    //   return;
+    // }
 
     // FIXME: These cases eventually shouldn't be needed.
     case Stmt::ExprWithCleanupsClass: {
@@ -384,25 +384,25 @@ void TransferFunctions::VisitDeclStmt(DeclStmt *DS) {
   }
 }
 
-void TransferFunctions::VisitObjCForCollectionStmt(ObjCForCollectionStmt *OS) {
-  // Kill the iteration variable.
-  DeclRefExpr *DR = nullptr;
-  const VarDecl *VD = nullptr;
+// void TransferFunctions::VisitObjCForCollectionStmt(ObjCForCollectionStmt *OS) {
+//   // Kill the iteration variable.
+//   DeclRefExpr *DR = nullptr;
+//   const VarDecl *VD = nullptr;
 
-  Stmt *element = OS->getElement();
-  if (DeclStmt *DS = dyn_cast<DeclStmt>(element)) {
-    VD = cast<VarDecl>(DS->getSingleDecl());
-  }
-  else if ((DR = dyn_cast<DeclRefExpr>(cast<Expr>(element)->IgnoreParens()))) {
-    VD = cast<VarDecl>(DR->getDecl());
-  }
+//   Stmt *element = OS->getElement();
+//   if (DeclStmt *DS = dyn_cast<DeclStmt>(element)) {
+//     VD = cast<VarDecl>(DS->getSingleDecl());
+//   }
+//   else if ((DR = dyn_cast<DeclRefExpr>(cast<Expr>(element)->IgnoreParens()))) {
+//     VD = cast<VarDecl>(DR->getDecl());
+//   }
 
-  if (VD) {
-    val.liveDecls = LV.DSetFact.remove(val.liveDecls, VD);
-    if (observer && DR)
-      observer->observerKill(DR);
-  }
-}
+//   if (VD) {
+//     val.liveDecls = LV.DSetFact.remove(val.liveDecls, VD);
+//     if (observer && DR)
+//       observer->observerKill(DR);
+//   }
+// }
 
 void TransferFunctions::
 VisitUnaryExprOrTypeTraitExpr(UnaryExprOrTypeTraitExpr *UE)

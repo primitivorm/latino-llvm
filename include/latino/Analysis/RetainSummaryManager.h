@@ -37,7 +37,7 @@ enum class ObjKind {
   CF,
 
   /// Indicates that the tracked object is an Objective-C object.
-  ObjC,
+  // ObjC,
 
   /// Indicates that the tracked object could be a CF or Objective-C object.
   AnyObj,
@@ -185,9 +185,9 @@ public:
     return K == Other.K && O == Other.O;
   }
 
-  static RetEffect MakeOwnedWhenTrackedReceiver() {
-    return RetEffect(OwnedWhenTrackedReceiver, ObjKind::ObjC);
-  }
+  // static RetEffect MakeOwnedWhenTrackedReceiver() {
+  //   return RetEffect(OwnedWhenTrackedReceiver, ObjKind::ObjC);
+  // }
 
   static RetEffect MakeOwned(ObjKind o) {
     return RetEffect(OwnedSymbol, o);
@@ -244,27 +244,27 @@ template <> struct FoldingSetTrait<RetEffect> {
 }
 };
 
-template <> struct DenseMapInfo<ObjCSummaryKey> {
-  static inline ObjCSummaryKey getEmptyKey() {
-    return ObjCSummaryKey(DenseMapInfo<IdentifierInfo*>::getEmptyKey(),
-                          DenseMapInfo<Selector>::getEmptyKey());
-  }
+// template <> struct DenseMapInfo<ObjCSummaryKey> {
+//   static inline ObjCSummaryKey getEmptyKey() {
+//     return ObjCSummaryKey(DenseMapInfo<IdentifierInfo*>::getEmptyKey(),
+//                           DenseMapInfo<Selector>::getEmptyKey());
+//   }
 
-  static inline ObjCSummaryKey getTombstoneKey() {
-    return ObjCSummaryKey(DenseMapInfo<IdentifierInfo*>::getTombstoneKey(),
-                          DenseMapInfo<Selector>::getTombstoneKey());
-  }
+//   static inline ObjCSummaryKey getTombstoneKey() {
+//     return ObjCSummaryKey(DenseMapInfo<IdentifierInfo*>::getTombstoneKey(),
+//                           DenseMapInfo<Selector>::getTombstoneKey());
+//   }
 
-  static unsigned getHashValue(const ObjCSummaryKey &V) {
-    typedef std::pair<IdentifierInfo*, Selector> PairTy;
-    return DenseMapInfo<PairTy>::getHashValue(PairTy(V.getIdentifier(),
-                                                     V.getSelector()));
-  }
+//   static unsigned getHashValue(const ObjCSummaryKey &V) {
+//     typedef std::pair<IdentifierInfo*, Selector> PairTy;
+//     return DenseMapInfo<PairTy>::getHashValue(PairTy(V.getIdentifier(),
+//                                                      V.getSelector()));
+//   }
 
-  static bool isEqual(const ObjCSummaryKey& LHS, const ObjCSummaryKey& RHS) {
-    return LHS.getIdentifier() == RHS.getIdentifier() &&
-           LHS.getSelector() == RHS.getSelector();
-  }
+//   static bool isEqual(const ObjCSummaryKey& LHS, const ObjCSummaryKey& RHS) {
+//     return LHS.getIdentifier() == RHS.getIdentifier() &&
+//            LHS.getSelector() == RHS.getSelector();
+//   }
 
 };
 

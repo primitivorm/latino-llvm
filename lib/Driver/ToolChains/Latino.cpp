@@ -380,22 +380,22 @@ static void getTargetFeatures(const Driver &D, const llvm::Triple &Triple,
   }
 }
 
-static bool
-shouldUseExceptionTablesForObjCExceptions(const ObjCRuntime &runtime,
-                                          const llvm::Triple &Triple) {
-  // We use the zero-cost exception tables for Objective-C if the non-fragile
-  // ABI is enabled or when compiling for x86_64 and ARM on Snow Leopard and
-  // later.
-  if (runtime.isNonFragile())
-    return true;
+// static bool
+// shouldUseExceptionTablesForObjCExceptions(const ObjCRuntime &runtime,
+//                                           const llvm::Triple &Triple) {
+//   // We use the zero-cost exception tables for Objective-C if the non-fragile
+//   // ABI is enabled or when compiling for x86_64 and ARM on Snow Leopard and
+//   // later.
+//   if (runtime.isNonFragile())
+//     return true;
 
-  if (!Triple.isMacOSX())
-    return false;
+//   if (!Triple.isMacOSX())
+//     return false;
 
-  return (!Triple.isMacOSXVersionLT(10, 5) &&
-          (Triple.getArch() == llvm::Triple::x86_64 ||
-           Triple.getArch() == llvm::Triple::arm));
-}
+//   return (!Triple.isMacOSXVersionLT(10, 5) &&
+//           (Triple.getArch() == llvm::Triple::x86_64 ||
+//            Triple.getArch() == llvm::Triple::arm));
+// }
 
 /// Adds exception related arguments to the driver command arguments. There's a
 /// master flag, -fexceptions and also language specific flags to enable/disable
@@ -412,8 +412,8 @@ static void addExceptionArgs(const ArgList &Args, types::ID InputType,
     // arguments now to avoid warnings about unused arguments.
     Args.ClaimAllArgs(options::OPT_fexceptions);
     Args.ClaimAllArgs(options::OPT_fno_exceptions);
-    Args.ClaimAllArgs(options::OPT_fobjc_exceptions);
-    Args.ClaimAllArgs(options::OPT_fno_objc_exceptions);
+    // Args.ClaimAllArgs(options::OPT_fobjc_exceptions);
+    // Args.ClaimAllArgs(options::OPT_fno_objc_exceptions);
     Args.ClaimAllArgs(options::OPT_fcxx_exceptions);
     Args.ClaimAllArgs(options::OPT_fno_cxx_exceptions);
     return;
@@ -425,13 +425,13 @@ static void addExceptionArgs(const ArgList &Args, types::ID InputType,
 
   // Obj-C exceptions are enabled by default, regardless of -fexceptions. This
   // is not necessarily sensible, but follows GCC.
-  if (types::isObjC(InputType) &&
-      Args.hasFlag(options::OPT_fobjc_exceptions,
-                   options::OPT_fno_objc_exceptions, true)) {
-    CmdArgs.push_back("-fobjc-exceptions");
+  // if (types::isObjC(InputType) &&
+  //     Args.hasFlag(options::OPT_fobjc_exceptions,
+  //                  options::OPT_fno_objc_exceptions, true)) {
+  //   CmdArgs.push_back("-fobjc-exceptions");
 
-    EH |= shouldUseExceptionTablesForObjCExceptions(objcRuntime, Triple);
-  }
+  //   EH |= shouldUseExceptionTablesForObjCExceptions(objcRuntime, Triple);
+  // }
 
   if (types::isCXX(InputType)) {
     // Disable C++ EH by default on XCore and PS4.
@@ -3425,12 +3425,12 @@ static void RenderObjCOptions(const ToolChain &TC, const Driver &D,
     // FIXME: It seems like this entire block, and several around it should be
     // wrapped in isObjC, but for now we just use it here as this is where it
     // was being used previously.
-    if (types::isCXX(Input.getType()) && types::isObjC(Input.getType())) {
-      if (TC.GetCXXStdlibType(Args) == ToolChain::CST_Libcxx)
-        CmdArgs.push_back("-fobjc-arc-cxxlib=libc++");
-      else
-        CmdArgs.push_back("-fobjc-arc-cxxlib=libstdc++");
-    }
+    // if (types::isCXX(Input.getType()) && types::isObjC(Input.getType())) {
+    //   if (TC.GetCXXStdlibType(Args) == ToolChain::CST_Libcxx)
+    //     CmdArgs.push_back("-fobjc-arc-cxxlib=libc++");
+    //   else
+    //     CmdArgs.push_back("-fobjc-arc-cxxlib=libstdc++");
+    // }
 
     // Allow the user to enable full exceptions code emission.
     // We default off for Objective-C, on for Objective-C++.
@@ -3449,15 +3449,15 @@ static void RenderObjCOptions(const ToolChain &TC, const Driver &D,
 
   // Allow the user to control whether messages can be converted to runtime
   // functions.
-  if (types::isObjC(Input.getType())) {
-    auto *Arg = Args.getLastArg(
-        options::OPT_fobjc_convert_messages_to_runtime_calls,
-        options::OPT_fno_objc_convert_messages_to_runtime_calls);
-    if (Arg &&
-        Arg->getOption().matches(
-            options::OPT_fno_objc_convert_messages_to_runtime_calls))
-      CmdArgs.push_back("-fno-objc-convert-messages-to-runtime-calls");
-  }
+  // if (types::isObjC(Input.getType())) {
+  //   auto *Arg = Args.getLastArg(
+  //       options::OPT_fobjc_convert_messages_to_runtime_calls,
+  //       options::OPT_fno_objc_convert_messages_to_runtime_calls);
+  //   if (Arg &&
+  //       Arg->getOption().matches(
+  //           options::OPT_fno_objc_convert_messages_to_runtime_calls))
+  //     CmdArgs.push_back("-fno-objc-convert-messages-to-runtime-calls");
+  // }
 
   // -fobjc-infer-related-result-type is the default, except in the Objective-C
   // rewriter.
@@ -3465,18 +3465,18 @@ static void RenderObjCOptions(const ToolChain &TC, const Driver &D,
     CmdArgs.push_back("-fno-objc-infer-related-result-type");
 
   // Pass down -fobjc-weak or -fno-objc-weak if present.
-  if (types::isObjC(Input.getType())) {
-    auto WeakArg =
-        Args.getLastArg(options::OPT_fobjc_weak, options::OPT_fno_objc_weak);
-    if (!WeakArg) {
-      // nothing to do
-    } else if (!Runtime.allowsWeak()) {
-      if (WeakArg->getOption().matches(options::OPT_fobjc_weak))
-        D.Diag(diag::err_objc_weak_unsupported);
-    } else {
-      WeakArg->render(Args, CmdArgs);
-    }
-  }
+  // if (types::isObjC(Input.getType())) {
+  //   auto WeakArg =
+  //       Args.getLastArg(options::OPT_fobjc_weak, options::OPT_fno_objc_weak);
+  //   if (!WeakArg) {
+  //     // nothing to do
+  //   } else if (!Runtime.allowsWeak()) {
+  //     if (WeakArg->getOption().matches(options::OPT_fobjc_weak))
+  //       D.Diag(diag::err_objc_weak_unsupported);
+  //   } else {
+  //     WeakArg->render(Args, CmdArgs);
+  //   }
+  // }
 }
 
 static void RenderDiagnosticsOptions(const Driver &D, const ArgList &Args,
@@ -6414,11 +6414,11 @@ ObjCRuntime Clang::AddObjCRuntimeArgs(const ArgList &args,
       runtime = ObjCRuntime(ObjCRuntime::GCC, VersionTuple());
   }
 
-  if (llvm::any_of(inputs, [](const InputInfo &input) {
-        return types::isObjC(input.getType());
-      }))
-    cmdArgs.push_back(
-        args.MakeArgString("-fobjc-runtime=" + runtime.getAsString()));
+  // if (llvm::any_of(inputs, [](const InputInfo &input) {
+  //       return types::isObjC(input.getType());
+  //     }))
+  //   cmdArgs.push_back(
+  //       args.MakeArgString("-fobjc-runtime=" + runtime.getAsString()));
   return runtime;
 }
 

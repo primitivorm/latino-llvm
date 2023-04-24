@@ -63,7 +63,7 @@ Cl Expr::ClassifyImpl(ASTContext &Ctx, SourceLocation *Loc) const {
   case Cl::CL_SubObjCPropertySetting:
   case Cl::CL_ClassTemporary:
   case Cl::CL_ArrayTemporary:
-  case Cl::CL_ObjCMessageRValue:
+  // case Cl::CL_ObjCMessageRValue:
   case Cl::CL_PRValue: assert(getValueKind() == VK_RValue); break;
   }
 
@@ -112,16 +112,16 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
     llvm_unreachable("cannot classify a statement");
 
     // First come the expressions that are always lvalues, unconditionally.
-  case Expr::ObjCIsaExprClass:
+  // case Expr::ObjCIsaExprClass:
     // C++ [expr.prim.general]p1: A string literal is an lvalue.
   case Expr::StringLiteralClass:
     // @encode is equivalent to its string
-  case Expr::ObjCEncodeExprClass:
+  // case Expr::ObjCEncodeExprClass:
     // __func__ and friends are too.
   case Expr::PredefinedExprClass:
     // Property references are lvalues
-  case Expr::ObjCSubscriptRefExprClass:
-  case Expr::ObjCPropertyRefExprClass:
+  // case Expr::ObjCSubscriptRefExprClass:
+  // case Expr::ObjCPropertyRefExprClass:
     // C++ [expr.typeid]p1: The result of a typeid expression is an lvalue of...
   case Expr::CXXTypeidExprClass:
   case Expr::CXXUuidofExprClass:
@@ -135,7 +135,7 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
   case Expr::DependentScopeDeclRefExprClass:
     // ObjC instance variables are lvalues
     // FIXME: ObjC++0x might have different rules
-  case Expr::ObjCIvarRefExprClass:
+  // case Expr::ObjCIvarRefExprClass:
   case Expr::FunctionParmPackExprClass:
   case Expr::MSPropertyRefExprClass:
   case Expr::MSPropertySubscriptExprClass:
@@ -175,19 +175,19 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
   case Expr::TypeTraitExprClass:
   case Expr::ArrayTypeTraitExprClass:
   case Expr::ExpressionTraitExprClass:
-  case Expr::ObjCSelectorExprClass:
-  case Expr::ObjCProtocolExprClass:
-  case Expr::ObjCStringLiteralClass:
-  case Expr::ObjCBoxedExprClass:
-  case Expr::ObjCArrayLiteralClass:
-  case Expr::ObjCDictionaryLiteralClass:
-  case Expr::ObjCBoolLiteralExprClass:
-  case Expr::ObjCAvailabilityCheckExprClass:
+  // case Expr::ObjCSelectorExprClass:
+  // case Expr::ObjCProtocolExprClass:
+  // case Expr::ObjCStringLiteralClass:
+  // case Expr::ObjCBoxedExprClass:
+  // case Expr::ObjCArrayLiteralClass:
+  // case Expr::ObjCDictionaryLiteralClass:
+  // case Expr::ObjCBoolLiteralExprClass:
+  // case Expr::ObjCAvailabilityCheckExprClass:
   case Expr::ParenListExprClass:
   case Expr::SizeOfPackExprClass:
   case Expr::SubstNonTypeTemplateParmPackExprClass:
   case Expr::AsTypeExprClass:
-  case Expr::ObjCIndirectCopyRestoreExprClass:
+  // case Expr::ObjCIndirectCopyRestoreExprClass:
   case Expr::AtomicExprClass:
   case Expr::CXXFoldExprClass:
   case Expr::ArrayInitLoopExprClass:
@@ -280,9 +280,9 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
     return ClassifyExprValueKind(Lang, E, E->getValueKind());
 
     // Pseudo-object expressions can produce l-values with reference magic.
-  case Expr::PseudoObjectExprClass:
-    return ClassifyExprValueKind(Lang, E,
-                                 cast<PseudoObjectExpr>(E)->getValueKind());
+  // case Expr::PseudoObjectExprClass:
+  //   return ClassifyExprValueKind(Lang, E,
+  //                                cast<PseudoObjectExpr>(E)->getValueKind());
 
     // Implicit casts are lvalues if they're lvalue casts. Other than that, we
     // only specifically record class temporaries.
@@ -676,7 +676,7 @@ Expr::LValueClassification Expr::ClassifyLValue(ASTContext &Ctx) const {
   case Cl::CL_SubObjCPropertySetting: return LV_SubObjCPropertySetting;
   case Cl::CL_ClassTemporary: return LV_ClassTemporary;
   case Cl::CL_ArrayTemporary: return LV_ArrayTemporary;
-  case Cl::CL_ObjCMessageRValue: return LV_InvalidMessageExpression;
+  // case Cl::CL_ObjCMessageRValue: return LV_InvalidMessageExpression;
   case Cl::CL_PRValue: return LV_InvalidExpression;
   }
   llvm_unreachable("Unhandled kind");
@@ -697,7 +697,7 @@ Expr::isModifiableLvalue(ASTContext &Ctx, SourceLocation *Loc) const {
   case Cl::CL_SubObjCPropertySetting: return MLV_SubObjCPropertySetting;
   case Cl::CL_ClassTemporary: return MLV_ClassTemporary;
   case Cl::CL_ArrayTemporary: return MLV_ArrayTemporary;
-  case Cl::CL_ObjCMessageRValue: return MLV_InvalidMessageExpression;
+  // case Cl::CL_ObjCMessageRValue: return MLV_InvalidMessageExpression;
   case Cl::CL_PRValue:
     return VC.getModifiable() == Cl::CM_LValueCast ?
       MLV_LValueCast : MLV_InvalidExpression;

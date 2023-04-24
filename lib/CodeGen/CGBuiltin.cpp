@@ -1359,7 +1359,7 @@ RValue CodeGenFunction::emitBuiltinOSLogFormat(const CallExpr &E) {
         // FIXME: We should do this in other cases in which temporaries are
         //        created including arguments of non-ARC types (e.g., C++
         //        temporaries).
-        if (isa<CallExpr>(E) || isa<ObjCMessageExpr>(E))
+        if (isa<CallExpr>(E) /*|| isa<ObjCMessageExpr>(E)*/)
           return true;
         return false;
       };

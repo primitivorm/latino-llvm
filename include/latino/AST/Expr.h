@@ -337,7 +337,7 @@ public:
       CL_SubObjCPropertySetting,
       CL_ClassTemporary, // A temporary of class type, or subobject thereof.
       CL_ArrayTemporary, // A temporary of array type.
-      CL_ObjCMessageRValue, // ObjC message is an rvalue
+      // CL_ObjCMessageRValue, // ObjC message is an rvalue
       CL_PRValue // A prvalue for any other reason, of any other type
     };
     /// The results of modification testing.
@@ -483,7 +483,7 @@ public:
   // const ObjCPropertyRefExpr *getObjCProperty() const;
 
   /// Check if this expression is the ObjC 'self' implicit parameter.
-  bool isObjCSelfExpr() const;
+  // bool isObjCSelfExpr() const;
 
   /// Returns whether this expression refers to a vector element.
   bool refersToVectorElement() const;
@@ -773,7 +773,7 @@ public:
 
   /// isOBJCGCCandidate - Return true if this expression may be used in a read/
   /// write barrier.
-  bool isOBJCGCCandidate(ASTContext &Ctx) const;
+  // bool isOBJCGCCandidate(ASTContext &Ctx) const;
 
   /// Returns true if this expression is a bound member function.
   bool isBoundMemberFunction(ASTContext &Ctx) const;
@@ -5923,132 +5923,132 @@ public:
 /// equivalent to a particular message send, and this is very much
 /// part of the user model.  The name of this class encourages this
 /// modelling design.
-class PseudoObjectExpr final
-    : public Expr,
-      private llvm::TrailingObjects<PseudoObjectExpr, Expr *> {
-  // PseudoObjectExprBits.NumSubExprs - The number of sub-expressions.
-  // Always at least two, because the first sub-expression is the
-  // syntactic form.
+// class PseudoObjectExpr final
+//     : public Expr,
+//       private llvm::TrailingObjects<PseudoObjectExpr, Expr *> {
+//   // PseudoObjectExprBits.NumSubExprs - The number of sub-expressions.
+//   // Always at least two, because the first sub-expression is the
+//   // syntactic form.
 
-  // PseudoObjectExprBits.ResultIndex - The index of the
-  // sub-expression holding the result.  0 means the result is void,
-  // which is unambiguous because it's the index of the syntactic
-  // form.  Note that this is therefore 1 higher than the value passed
-  // in to Create, which is an index within the semantic forms.
-  // Note also that ASTStmtWriter assumes this encoding.
+//   // PseudoObjectExprBits.ResultIndex - The index of the
+//   // sub-expression holding the result.  0 means the result is void,
+//   // which is unambiguous because it's the index of the syntactic
+//   // form.  Note that this is therefore 1 higher than the value passed
+//   // in to Create, which is an index within the semantic forms.
+//   // Note also that ASTStmtWriter assumes this encoding.
 
-  Expr **getSubExprsBuffer() { return getTrailingObjects<Expr *>(); }
-  const Expr * const *getSubExprsBuffer() const {
-    return getTrailingObjects<Expr *>();
-  }
+//   Expr **getSubExprsBuffer() { return getTrailingObjects<Expr *>(); }
+//   const Expr * const *getSubExprsBuffer() const {
+//     return getTrailingObjects<Expr *>();
+//   }
 
-  PseudoObjectExpr(QualType type, ExprValueKind VK,
-                   Expr *syntactic, ArrayRef<Expr*> semantic,
-                   unsigned resultIndex);
+//   PseudoObjectExpr(QualType type, ExprValueKind VK,
+//                    Expr *syntactic, ArrayRef<Expr*> semantic,
+//                    unsigned resultIndex);
 
-  PseudoObjectExpr(EmptyShell shell, unsigned numSemanticExprs);
+//   PseudoObjectExpr(EmptyShell shell, unsigned numSemanticExprs);
 
-  unsigned getNumSubExprs() const {
-    return PseudoObjectExprBits.NumSubExprs;
-  }
+//   unsigned getNumSubExprs() const {
+//     return PseudoObjectExprBits.NumSubExprs;
+//   }
 
-public:
-  /// NoResult - A value for the result index indicating that there is
-  /// no semantic result.
-  enum : unsigned { NoResult = ~0U };
+// public:
+//   /// NoResult - A value for the result index indicating that there is
+//   /// no semantic result.
+//   enum : unsigned { NoResult = ~0U };
 
-  static PseudoObjectExpr *Create(const ASTContext &Context, Expr *syntactic,
-                                  ArrayRef<Expr*> semantic,
-                                  unsigned resultIndex);
+//   static PseudoObjectExpr *Create(const ASTContext &Context, Expr *syntactic,
+//                                   ArrayRef<Expr*> semantic,
+//                                   unsigned resultIndex);
 
-  static PseudoObjectExpr *Create(const ASTContext &Context, EmptyShell shell,
-                                  unsigned numSemanticExprs);
+//   static PseudoObjectExpr *Create(const ASTContext &Context, EmptyShell shell,
+//                                   unsigned numSemanticExprs);
 
-  /// Return the syntactic form of this expression, i.e. the
-  /// expression it actually looks like.  Likely to be expressed in
-  /// terms of OpaqueValueExprs bound in the semantic form.
-  Expr *getSyntacticForm() { return getSubExprsBuffer()[0]; }
-  const Expr *getSyntacticForm() const { return getSubExprsBuffer()[0]; }
+//   /// Return the syntactic form of this expression, i.e. the
+//   /// expression it actually looks like.  Likely to be expressed in
+//   /// terms of OpaqueValueExprs bound in the semantic form.
+//   Expr *getSyntacticForm() { return getSubExprsBuffer()[0]; }
+//   const Expr *getSyntacticForm() const { return getSubExprsBuffer()[0]; }
 
-  /// Return the index of the result-bearing expression into the semantics
-  /// expressions, or PseudoObjectExpr::NoResult if there is none.
-  unsigned getResultExprIndex() const {
-    if (PseudoObjectExprBits.ResultIndex == 0) return NoResult;
-    return PseudoObjectExprBits.ResultIndex - 1;
-  }
+//   /// Return the index of the result-bearing expression into the semantics
+//   /// expressions, or PseudoObjectExpr::NoResult if there is none.
+//   unsigned getResultExprIndex() const {
+//     if (PseudoObjectExprBits.ResultIndex == 0) return NoResult;
+//     return PseudoObjectExprBits.ResultIndex - 1;
+//   }
 
-  /// Return the result-bearing expression, or null if there is none.
-  Expr *getResultExpr() {
-    if (PseudoObjectExprBits.ResultIndex == 0)
-      return nullptr;
-    return getSubExprsBuffer()[PseudoObjectExprBits.ResultIndex];
-  }
-  const Expr *getResultExpr() const {
-    return const_cast<PseudoObjectExpr*>(this)->getResultExpr();
-  }
+//   /// Return the result-bearing expression, or null if there is none.
+//   Expr *getResultExpr() {
+//     if (PseudoObjectExprBits.ResultIndex == 0)
+//       return nullptr;
+//     return getSubExprsBuffer()[PseudoObjectExprBits.ResultIndex];
+//   }
+//   const Expr *getResultExpr() const {
+//     return const_cast<PseudoObjectExpr*>(this)->getResultExpr();
+//   }
 
-  unsigned getNumSemanticExprs() const { return getNumSubExprs() - 1; }
+//   unsigned getNumSemanticExprs() const { return getNumSubExprs() - 1; }
 
-  typedef Expr * const *semantics_iterator;
-  typedef const Expr * const *const_semantics_iterator;
-  semantics_iterator semantics_begin() {
-    return getSubExprsBuffer() + 1;
-  }
-  const_semantics_iterator semantics_begin() const {
-    return getSubExprsBuffer() + 1;
-  }
-  semantics_iterator semantics_end() {
-    return getSubExprsBuffer() + getNumSubExprs();
-  }
-  const_semantics_iterator semantics_end() const {
-    return getSubExprsBuffer() + getNumSubExprs();
-  }
+//   typedef Expr * const *semantics_iterator;
+//   typedef const Expr * const *const_semantics_iterator;
+//   semantics_iterator semantics_begin() {
+//     return getSubExprsBuffer() + 1;
+//   }
+//   const_semantics_iterator semantics_begin() const {
+//     return getSubExprsBuffer() + 1;
+//   }
+//   semantics_iterator semantics_end() {
+//     return getSubExprsBuffer() + getNumSubExprs();
+//   }
+//   const_semantics_iterator semantics_end() const {
+//     return getSubExprsBuffer() + getNumSubExprs();
+//   }
 
-  llvm::iterator_range<semantics_iterator> semantics() {
-    return llvm::make_range(semantics_begin(), semantics_end());
-  }
-  llvm::iterator_range<const_semantics_iterator> semantics() const {
-    return llvm::make_range(semantics_begin(), semantics_end());
-  }
+//   llvm::iterator_range<semantics_iterator> semantics() {
+//     return llvm::make_range(semantics_begin(), semantics_end());
+//   }
+//   llvm::iterator_range<const_semantics_iterator> semantics() const {
+//     return llvm::make_range(semantics_begin(), semantics_end());
+//   }
 
-  Expr *getSemanticExpr(unsigned index) {
-    assert(index + 1 < getNumSubExprs());
-    return getSubExprsBuffer()[index + 1];
-  }
-  const Expr *getSemanticExpr(unsigned index) const {
-    return const_cast<PseudoObjectExpr*>(this)->getSemanticExpr(index);
-  }
+//   Expr *getSemanticExpr(unsigned index) {
+//     assert(index + 1 < getNumSubExprs());
+//     return getSubExprsBuffer()[index + 1];
+//   }
+//   const Expr *getSemanticExpr(unsigned index) const {
+//     return const_cast<PseudoObjectExpr*>(this)->getSemanticExpr(index);
+//   }
 
-  SourceLocation getExprLoc() const LLVM_READONLY {
-    return getSyntacticForm()->getExprLoc();
-  }
+//   SourceLocation getExprLoc() const LLVM_READONLY {
+//     return getSyntacticForm()->getExprLoc();
+//   }
 
-  SourceLocation getBeginLoc() const LLVM_READONLY {
-    return getSyntacticForm()->getBeginLoc();
-  }
-  SourceLocation getEndLoc() const LLVM_READONLY {
-    return getSyntacticForm()->getEndLoc();
-  }
+//   SourceLocation getBeginLoc() const LLVM_READONLY {
+//     return getSyntacticForm()->getBeginLoc();
+//   }
+//   SourceLocation getEndLoc() const LLVM_READONLY {
+//     return getSyntacticForm()->getEndLoc();
+//   }
 
-  child_range children() {
-    const_child_range CCR =
-        const_cast<const PseudoObjectExpr *>(this)->children();
-    return child_range(cast_away_const(CCR.begin()),
-                       cast_away_const(CCR.end()));
-  }
-  const_child_range children() const {
-    Stmt *const *cs = const_cast<Stmt *const *>(
-        reinterpret_cast<const Stmt *const *>(getSubExprsBuffer()));
-    return const_child_range(cs, cs + getNumSubExprs());
-  }
+//   child_range children() {
+//     const_child_range CCR =
+//         const_cast<const PseudoObjectExpr *>(this)->children();
+//     return child_range(cast_away_const(CCR.begin()),
+//                        cast_away_const(CCR.end()));
+//   }
+//   const_child_range children() const {
+//     Stmt *const *cs = const_cast<Stmt *const *>(
+//         reinterpret_cast<const Stmt *const *>(getSubExprsBuffer()));
+//     return const_child_range(cs, cs + getNumSubExprs());
+//   }
 
-  static bool classof(const Stmt *T) {
-    return T->getStmtClass() == PseudoObjectExprClass;
-  }
+//   static bool classof(const Stmt *T) {
+//     return T->getStmtClass() == PseudoObjectExprClass;
+//   }
 
-  friend TrailingObjects;
-  friend class ASTStmtReader;
-};
+//   friend TrailingObjects;
+//   friend class ASTStmtReader;
+// };
 
 /// AtomicExpr - Variadic atomic builtins: __atomic_exchange, __atomic_fetch_*,
 /// __atomic_load, __atomic_store, and __atomic_compare_exchange_*, for the

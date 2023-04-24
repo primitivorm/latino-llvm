@@ -77,10 +77,10 @@ bool trans::isPlusOne(const Expr *E) {
   if (const FullExpr *FE = dyn_cast<FullExpr>(E))
     E = FE->getSubExpr();
 
-  if (const ObjCMessageExpr *
-        ME = dyn_cast<ObjCMessageExpr>(E->IgnoreParenCasts()))
-    if (ME->getMethodFamily() == OMF_retain)
-      return true;
+  // if (const ObjCMessageExpr *
+  //       ME = dyn_cast<ObjCMessageExpr>(E->IgnoreParenCasts()))
+  //   if (ME->getMethodFamily() == OMF_retain)
+  //     return true;
 
   if (const CallExpr *
         callE = dyn_cast<CallExpr>(E->IgnoreParenCasts())) {
@@ -170,26 +170,26 @@ bool trans::hasSideEffects(Expr *E, ASTContext &Ctx) {
     return false;
 
   E = E->IgnoreParenCasts();
-  ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(E);
-  if (!ME)
-    return true;
-  switch (ME->getMethodFamily()) {
-  case OMF_autorelease:
-  case OMF_dealloc:
-  case OMF_release:
-  case OMF_retain:
-    switch (ME->getReceiverKind()) {
-    case ObjCMessageExpr::SuperInstance:
-      return false;
-    case ObjCMessageExpr::Instance:
-      return hasSideEffects(ME->getInstanceReceiver(), Ctx);
-    default:
-      break;
-    }
-    break;
-  default:
-    break;
-  }
+  // ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(E);
+  // if (!ME)
+  //   return true;
+  // switch (ME->getMethodFamily()) {
+  // case OMF_autorelease:
+  // case OMF_dealloc:
+  // case OMF_release:
+  // case OMF_retain:
+  //   switch (ME->getReceiverKind()) {
+  //   case ObjCMessageExpr::SuperInstance:
+  //     return false;
+  //   case ObjCMessageExpr::Instance:
+  //     return hasSideEffects(ME->getInstanceReceiver(), Ctx);
+  //   default:
+  //     break;
+  //   }
+  //   break;
+  // default:
+  //   break;
+  // }
 
   return true;
 }
@@ -357,25 +357,25 @@ MigrationContext::~MigrationContext() {
     delete *I;
 }
 
-bool MigrationContext::isGCOwnedNonObjC(QualType T) {
-  while (!T.isNull()) {
-    if (const AttributedType *AttrT = T->getAs<AttributedType>()) {
-      if (AttrT->getAttrKind() == attr::ObjCOwnership)
-        return !AttrT->getModifiedType()->isObjCRetainableType();
-    }
+// bool MigrationContext::isGCOwnedNonObjC(QualType T) {
+//   while (!T.isNull()) {
+//     if (const AttributedType *AttrT = T->getAs<AttributedType>()) {
+//       if (AttrT->getAttrKind() == attr::ObjCOwnership)
+//         return !AttrT->getModifiedType()->isObjCRetainableType();
+//     }
 
-    if (T->isArrayType())
-      T = Pass.Ctx.getBaseElementType(T);
-    else if (const PointerType *PT = T->getAs<PointerType>())
-      T = PT->getPointeeType();
-    else if (const ReferenceType *RT = T->getAs<ReferenceType>())
-      T = RT->getPointeeType();
-    else
-      break;
-  }
+//     if (T->isArrayType())
+//       T = Pass.Ctx.getBaseElementType(T);
+//     else if (const PointerType *PT = T->getAs<PointerType>())
+//       T = PT->getPointeeType();
+//     else if (const ReferenceType *RT = T->getAs<ReferenceType>())
+//       T = RT->getPointeeType();
+//     else
+//       break;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 bool MigrationContext::rewritePropertyAttribute(StringRef fromAttr,
                                                 StringRef toAttr,
@@ -515,41 +515,41 @@ void MigrationContext::traverse(TranslationUnitDecl *TU) {
   ASTTransform(*this).TraverseDecl(TU);
 }
 
-static void GCRewriteFinalize(MigrationPass &pass) {
-  ASTContext &Ctx = pass.Ctx;
-  TransformActions &TA = pass.TA;
-  DeclContext *DC = Ctx.getTranslationUnitDecl();
-  Selector FinalizeSel =
-   Ctx.Selectors.getNullarySelector(&pass.Ctx.Idents.get("finalize"));
+// static void GCRewriteFinalize(MigrationPass &pass) {
+//   ASTContext &Ctx = pass.Ctx;
+//   TransformActions &TA = pass.TA;
+//   DeclContext *DC = Ctx.getTranslationUnitDecl();
+//   Selector FinalizeSel =
+//    Ctx.Selectors.getNullarySelector(&pass.Ctx.Idents.get("finalize"));
 
-  typedef DeclContext::specific_decl_iterator<ObjCImplementationDecl>
-  impl_iterator;
-  for (impl_iterator I = impl_iterator(DC->decls_begin()),
-       E = impl_iterator(DC->decls_end()); I != E; ++I) {
-    for (const auto *MD : I->instance_methods()) {
-      if (!MD->hasBody())
-        continue;
+//   typedef DeclContext::specific_decl_iterator<ObjCImplementationDecl>
+//   impl_iterator;
+//   for (impl_iterator I = impl_iterator(DC->decls_begin()),
+//        E = impl_iterator(DC->decls_end()); I != E; ++I) {
+//     for (const auto *MD : I->instance_methods()) {
+//       if (!MD->hasBody())
+//         continue;
 
-      // if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
-      //   const ObjCMethodDecl *FinalizeM = MD;
-      //   Transaction Trans(TA);
-      //   TA.insert(FinalizeM->getSourceRange().getBegin(),
-      //             "#if !__has_feature(objc_arc)\n");
-      //   CharSourceRange::getTokenRange(FinalizeM->getSourceRange());
-      //   const SourceManager &SM = pass.Ctx.getSourceManager();
-      //   const LangOptions &LangOpts = pass.Ctx.getLangOpts();
-      //   bool Invalid;
-      //   std::string str = "\n#endif\n";
-      //   str += Lexer::getSourceText(
-      //             CharSourceRange::getTokenRange(FinalizeM->getSourceRange()),
-      //                               SM, LangOpts, &Invalid);
-      //   TA.insertAfterToken(FinalizeM->getSourceRange().getEnd(), str);
+//       // if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
+//       //   const ObjCMethodDecl *FinalizeM = MD;
+//       //   Transaction Trans(TA);
+//       //   TA.insert(FinalizeM->getSourceRange().getBegin(),
+//       //             "#if !__has_feature(objc_arc)\n");
+//       //   CharSourceRange::getTokenRange(FinalizeM->getSourceRange());
+//       //   const SourceManager &SM = pass.Ctx.getSourceManager();
+//       //   const LangOptions &LangOpts = pass.Ctx.getLangOpts();
+//       //   bool Invalid;
+//       //   std::string str = "\n#endif\n";
+//       //   str += Lexer::getSourceText(
+//       //             CharSourceRange::getTokenRange(FinalizeM->getSourceRange()),
+//       //                               SM, LangOpts, &Invalid);
+//       //   TA.insertAfterToken(FinalizeM->getSourceRange().getEnd(), str);
 
-      //   break;
-      // }
-    }
-  }
-}
+//       //   break;
+//       // }
+//     }
+//   }
+// }
 
 //===----------------------------------------------------------------------===//
 // getAllTransformations.
@@ -563,7 +563,7 @@ static void traverseAST(MigrationPass &pass) {
     MigrateCtx.addTraverser(new GCAttrsTraverser());
   }
   MigrateCtx.addTraverser(new PropertyRewriteTraverser());
-  MigrateCtx.addTraverser(new BlockObjCVariableTraverser());
+  // MigrateCtx.addTraverser(new BlockObjCVariableTraverser());
   MigrateCtx.addTraverser(new ProtectedScopeTraverser());
 
   MigrateCtx.traverse(pass.Ctx.getTranslationUnitDecl());

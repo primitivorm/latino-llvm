@@ -161,21 +161,21 @@ void CodeGenFunction::EmitStmt(const Stmt *S, ArrayRef<const Attr *> Attrs) {
     EmitCapturedStmt(*CS, CS->getCapturedRegionKind());
     }
     break;
-  case Stmt::ObjCAtTryStmtClass:
-    EmitObjCAtTryStmt(cast<ObjCAtTryStmt>(*S));
-    break;
-  case Stmt::ObjCAtCatchStmtClass:
-    llvm_unreachable(
-                    "@catch statements should be handled by EmitObjCAtTryStmt");
-  case Stmt::ObjCAtFinallyStmtClass:
-    llvm_unreachable(
-                  "@finally statements should be handled by EmitObjCAtTryStmt");
-  case Stmt::ObjCAtThrowStmtClass:
-    EmitObjCAtThrowStmt(cast<ObjCAtThrowStmt>(*S));
-    break;
-  case Stmt::ObjCAtSynchronizedStmtClass:
-    EmitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(*S));
-    break;
+  // case Stmt::ObjCAtTryStmtClass:
+  //   EmitObjCAtTryStmt(cast<ObjCAtTryStmt>(*S));
+  //   break;
+  // case Stmt::ObjCAtCatchStmtClass:
+  //   llvm_unreachable(
+  //                   "@catch statements should be handled by EmitObjCAtTryStmt");
+  // case Stmt::ObjCAtFinallyStmtClass:
+  //   llvm_unreachable(
+  //                 "@finally statements should be handled by EmitObjCAtTryStmt");
+  // case Stmt::ObjCAtThrowStmtClass:
+  //   EmitObjCAtThrowStmt(cast<ObjCAtThrowStmt>(*S));
+  //   break;
+  // case Stmt::ObjCAtSynchronizedStmtClass:
+  //   EmitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(*S));
+  //   break;
   // case Stmt::ObjCForCollectionStmtClass:
   //   EmitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(*S));
   //   break;

@@ -518,11 +518,11 @@ public:
   //   return CGF.EmitObjCMessageExpr(E).getScalarVal();
   // }
 
-  Value *VisitObjCIsaExpr(ObjCIsaExpr *E) {
-    LValue LV = CGF.EmitObjCIsaExpr(E);
-    Value *V = CGF.EmitLoadOfLValue(LV, E->getExprLoc()).getScalarVal();
-    return V;
-  }
+  // Value *VisitObjCIsaExpr(ObjCIsaExpr *E) {
+  //   LValue LV = CGF.EmitObjCIsaExpr(E);
+  //   Value *V = CGF.EmitLoadOfLValue(LV, E->getExprLoc()).getScalarVal();
+  //   return V;
+  // }
 
   Value *VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
     VersionTuple Version = E->getVersion();
@@ -4732,22 +4732,22 @@ EmitScalarPrePostIncDec(const UnaryOperator *E, LValue LV,
   return ScalarExprEmitter(*this).EmitScalarPrePostIncDec(E, LV, isInc, isPre);
 }
 
-LValue CodeGenFunction::EmitObjCIsaExpr(const ObjCIsaExpr *E) {
-  // object->isa or (*object).isa
-  // Generate code as for: *(Class*)object
+// LValue CodeGenFunction::EmitObjCIsaExpr(const ObjCIsaExpr *E) {
+//   // object->isa or (*object).isa
+//   // Generate code as for: *(Class*)object
 
-  Expr *BaseExpr = E->getBase();
-  Address Addr = Address::invalid();
-  if (BaseExpr->isRValue()) {
-    Addr = Address(EmitScalarExpr(BaseExpr), getPointerAlign());
-  } else {
-    Addr = EmitLValue(BaseExpr).getAddress(*this);
-  }
+//   Expr *BaseExpr = E->getBase();
+//   Address Addr = Address::invalid();
+//   if (BaseExpr->isRValue()) {
+//     Addr = Address(EmitScalarExpr(BaseExpr), getPointerAlign());
+//   } else {
+//     Addr = EmitLValue(BaseExpr).getAddress(*this);
+//   }
 
-  // Cast the address to Class*.
-  Addr = Builder.CreateElementBitCast(Addr, ConvertType(E->getType()));
-  return MakeAddrLValue(Addr, E->getType());
-}
+//   // Cast the address to Class*.
+//   Addr = Builder.CreateElementBitCast(Addr, ConvertType(E->getType()));
+//   return MakeAddrLValue(Addr, E->getType());
+// }
 
 
 LValue CodeGenFunction::EmitCompoundAssignmentLValue(

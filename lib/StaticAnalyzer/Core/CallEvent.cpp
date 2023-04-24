@@ -419,7 +419,7 @@ void CallEvent::dump(raw_ostream &Out) const {
 }
 
 bool CallEvent::isCallStmt(const Stmt *S) {
-  return isa<CallExpr>(S) || isa<ObjCMessageExpr>(S)
+  return isa<CallExpr>(S) /*|| isa<ObjCMessageExpr>(S)*/
                           || isa<CXXConstructExpr>(S)
                           || isa<CXXNewExpr>(S);
 }
@@ -1447,9 +1447,9 @@ CallEventRef<> CallEventManager::getCall(const Stmt *S, ProgramStateRef State,
     return getSimpleCall(CE, State, LC);
   } else if (const auto *NE = dyn_cast<CXXNewExpr>(S)) {
     return getCXXAllocatorCall(NE, State, LC);
-  } else if (const auto *ME = dyn_cast<ObjCMessageExpr>(S)) {
+  } /*else if (const auto *ME = dyn_cast<ObjCMessageExpr>(S)) {
     return getObjCMethodCall(ME, State, LC);
-  } else {
+  }*/ else {
     return nullptr;
   }
 }

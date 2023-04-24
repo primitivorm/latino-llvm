@@ -903,9 +903,10 @@ static bool isFlexibleArrayMemberExpr(const Expr *E) {
           DeclContext::decl_iterator(const_cast<FieldDecl *>(FD)));
       return ++FI == FD->getParent()->field_end();
     }
-  } else if (const auto *IRE = dyn_cast<ObjCIvarRefExpr>(E)) {
-    return IRE->getDecl()->getNextIvar() == nullptr;
-  }
+  } 
+  // else if (const auto *IRE = dyn_cast<ObjCIvarRefExpr>(E)) {
+  //   return IRE->getDecl()->getNextIvar() == nullptr;
+  // }
 
   return false;
 }
@@ -1279,8 +1280,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
 
   // case Expr::ObjCSelectorExprClass:
   //   return EmitObjCSelectorLValue(cast<ObjCSelectorExpr>(E));
-  case Expr::ObjCIsaExprClass:
-    return EmitObjCIsaExpr(cast<ObjCIsaExpr>(E));
+  // case Expr::ObjCIsaExprClass:
+  //   return EmitObjCIsaExpr(cast<ObjCIsaExpr>(E));
   case Expr::BinaryOperatorClass:
     return EmitBinaryOperatorLValue(cast<BinaryOperator>(E));
   case Expr::CompoundAssignOperatorClass: {
@@ -1321,8 +1322,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
     return EmitStringLiteralLValue(cast<StringLiteral>(E));
   // case Expr::ObjCEncodeExprClass:
   //   return EmitObjCEncodeExprLValue(cast<ObjCEncodeExpr>(E));
-  case Expr::PseudoObjectExprClass:
-    return EmitPseudoObjectLValue(cast<PseudoObjectExpr>(E));
+  // case Expr::PseudoObjectExprClass:
+  //   return EmitPseudoObjectLValue(cast<PseudoObjectExpr>(E));
   case Expr::InitListExprClass:
     return EmitInitListLValue(cast<InitListExpr>(E));
   case Expr::CXXTemporaryObjectExprClass:
@@ -2296,24 +2297,24 @@ static void setObjCGCLValueClass(const ASTContext &Ctx, const Expr *E,
   if (Ctx.getLangOpts().getGC() == LangOptions::NonGC)
     return;
 
-  if (isa<ObjCIvarRefExpr>(E)) {
-    QualType ExpTy = E->getType();
-    if (IsMemberAccess && ExpTy->isPointerType()) {
-      // If ivar is a structure pointer, assigning to field of
-      // this struct follows gcc's behavior and makes it a non-ivar
-      // writer-barrier conservatively.
-      ExpTy = ExpTy->castAs<PointerType>()->getPointeeType();
-      if (ExpTy->isRecordType()) {
-        LV.setObjCIvar(false);
-        return;
-      }
-    }
-    LV.setObjCIvar(true);
-    auto *Exp = cast<ObjCIvarRefExpr>(const_cast<Expr *>(E));
-    LV.setBaseIvarExp(Exp->getBase());
-    LV.setObjCArray(E->getType()->isArrayType());
-    return;
-  }
+  // if (isa<ObjCIvarRefExpr>(E)) {
+  //   QualType ExpTy = E->getType();
+  //   if (IsMemberAccess && ExpTy->isPointerType()) {
+  //     // If ivar is a structure pointer, assigning to field of
+  //     // this struct follows gcc's behavior and makes it a non-ivar
+  //     // writer-barrier conservatively.
+  //     ExpTy = ExpTy->castAs<PointerType>()->getPointeeType();
+  //     if (ExpTy->isRecordType()) {
+  //       LV.setObjCIvar(false);
+  //       return;
+  //     }
+  //   }
+  //   LV.setObjCIvar(true);
+  //   auto *Exp = cast<ObjCIvarRefExpr>(const_cast<Expr *>(E));
+  //   LV.setBaseIvarExp(Exp->getBase());
+  //   LV.setObjCArray(E->getType()->isArrayType());
+  //   return;
+  // }
 
   if (const auto *Exp = dyn_cast<DeclRefExpr>(E)) {
     if (const auto *VD = dyn_cast<VarDecl>(Exp->getDecl())) {

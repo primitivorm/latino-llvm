@@ -79,7 +79,7 @@ namespace types {
   bool isHIP(ID Id);
 
   /// isObjC - Is this an "ObjC" input (Obj-C and Obj-C++ sources and headers).
-  bool isObjC(ID Id);
+  // bool isObjC(ID Id);
 
   /// isFortran - Is this a Fortran input.
   bool isFortran(ID Id);

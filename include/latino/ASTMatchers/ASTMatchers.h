@@ -1172,8 +1172,8 @@ AST_MATCHER_P(TemplateArgument, equalsIntegralValue,
 /// \endcode
 /// autoreleasePoolStmt(stmt()) matches the declaration of "x"
 /// inside the autorelease pool.
-extern const internal::VariadicDynCastAllOfMatcher<Stmt,
-       ObjCAutoreleasePoolStmt> autoreleasePoolStmt;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt,
+//        ObjCAutoreleasePoolStmt> autoreleasePoolStmt;
 
 /// Matches any value declaration.
 ///
@@ -1454,8 +1454,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, CXXMemberCallExpr>
 /// \code
 ///   [[NSString alloc] initWithString:@"Hello"]
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCMessageExpr>
-    objcMessageExpr;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCMessageExpr>
+//     objcMessageExpr;
 
 /// Matches Objective-C interface declarations.
 ///
@@ -1474,8 +1474,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCMessageExpr>
 ///   @implementation Foo
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCImplementationDecl>
-    objcImplementationDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCImplementationDecl>
+//     objcImplementationDecl;
 
 /// Matches Objective-C protocol declarations.
 ///
@@ -1519,8 +1519,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, ObjCImplementationDecl>
 ///   - (void)method {}
 ///   @end
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Decl/*, ObjCMethodDecl*/>
-    objcMethodDecl;
+// extern const internal::VariadicDynCastAllOfMatcher<Decl/*, ObjCMethodDecl*/>
+//     objcMethodDecl;
 
 /// Matches block declarations.
 ///
@@ -1564,8 +1564,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Decl, BlockDecl>
 /// \code
 ///   @throw obj;
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtThrowStmt>
-    objcThrowStmt;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtThrowStmt>
+//     objcThrowStmt;
 
 /// Matches Objective-C @try statements.
 ///
@@ -1574,8 +1574,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtThrowStmt>
 ///   @try {}
 ///   @catch (...) {}
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtTryStmt>
-    objcTryStmt;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtTryStmt>
+//     objcTryStmt;
 
 /// Matches Objective-C @catch statements.
 ///
@@ -1584,8 +1584,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtTryStmt>
 ///   @try {}
 ///   @catch (...) {}
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtCatchStmt>
-    objcCatchStmt;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtCatchStmt>
+//     objcCatchStmt;
 
 /// Matches Objective-C @finally statements.
 ///
@@ -1594,8 +1594,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtCatchStmt>
 ///   @try {}
 ///   @finally {}
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtFinallyStmt>
-    objcFinallyStmt;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAtFinallyStmt>
+//     objcFinallyStmt;
 
 /// Matches expressions that introduce cleanups to be run at the end
 /// of the sub-expression's evaluation.
@@ -1959,8 +1959,8 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, DeclRefExpr>
 ///   a = @"hello";
 /// }
 /// \endcode
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCIvarRefExpr>
-    objcIvarRefExpr;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCIvarRefExpr>
+//     objcIvarRefExpr;
 
 /// Matches a reference to a block.
 ///
@@ -3265,11 +3265,11 @@ AST_MATCHER_P(CXXMemberCallExpr, on, internal::Matcher<Expr>,
 ///   UIWebView *webView = ...
 ///   [webView stringByEvaluatingJavaScriptFromString:webViewJavascript];
 /// \endcode
-AST_MATCHER_P(ObjCMessageExpr, hasReceiverType, internal::Matcher<QualType>,
-              InnerMatcher) {
-  const QualType TypeDecl = Node.getReceiverType();
-  return InnerMatcher.matches(TypeDecl, Finder, Builder);
-}
+// AST_MATCHER_P(ObjCMessageExpr, hasReceiverType, internal::Matcher<QualType>,
+//               InnerMatcher) {
+//   const QualType TypeDecl = Node.getReceiverType();
+//   return InnerMatcher.matches(TypeDecl, Finder, Builder);
+// }
 
 /// Returns true when the Objective-C method declaration is a class method.
 ///
@@ -3316,9 +3316,9 @@ AST_MATCHER_P(ObjCMessageExpr, hasReceiverType, internal::Matcher<QualType>,
 ///   NSString *x = @"hello";
 ///   [x containsString:@"h"];
 /// \endcode
-AST_MATCHER(ObjCMessageExpr, isClassMessage) {
-  return Node.isClassMessage();
-}
+// AST_MATCHER(ObjCMessageExpr, isClassMessage) {
+//   return Node.isClassMessage();
+// }
 
 /// Returns true when the Objective-C message is sent to an instance.
 ///
@@ -3333,9 +3333,9 @@ AST_MATCHER(ObjCMessageExpr, isClassMessage) {
 /// \code
 ///   [NSString stringWithFormat:@"format"];
 /// \endcode
-AST_MATCHER(ObjCMessageExpr, isInstanceMessage) {
-  return Node.isInstanceMessage();
-}
+// AST_MATCHER(ObjCMessageExpr, isInstanceMessage) {
+//   return Node.isInstanceMessage();
+// }
 
 /// Matches if the Objective-C message is sent to an instance,
 /// and the inner matcher matches on that instance.
@@ -3347,13 +3347,13 @@ AST_MATCHER(ObjCMessageExpr, isInstanceMessage) {
 /// \endcode
 /// is matched by
 /// objcMessageExpr(hasReceiver(declRefExpr(to(varDecl(hasName("x"))))))
-AST_MATCHER_P(ObjCMessageExpr, hasReceiver, internal::Matcher<Expr>,
-              InnerMatcher) {
-  const Expr *ReceiverNode = Node.getInstanceReceiver();
-  return (ReceiverNode != nullptr &&
-          InnerMatcher.matches(*ReceiverNode->IgnoreParenImpCasts(), Finder,
-                               Builder));
-}
+// AST_MATCHER_P(ObjCMessageExpr, hasReceiver, internal::Matcher<Expr>,
+//               InnerMatcher) {
+//   const Expr *ReceiverNode = Node.getInstanceReceiver();
+//   return (ReceiverNode != nullptr &&
+//           InnerMatcher.matches(*ReceiverNode->IgnoreParenImpCasts(), Finder,
+//                                Builder));
+// }
 
 /// Matches when BaseName == Selector.getAsString()
 ///
@@ -3363,10 +3363,10 @@ AST_MATCHER_P(ObjCMessageExpr, hasReceiver, internal::Matcher<Expr>,
 /// \code
 ///     [self.bodyView loadHTMLString:html baseURL:NULL];
 /// \endcode
-AST_MATCHER_P(ObjCMessageExpr, hasSelector, std::string, BaseName) {
-  Selector Sel = Node.getSelector();
-  return BaseName.compare(Sel.getAsString()) == 0;
-}
+// AST_MATCHER_P(ObjCMessageExpr, hasSelector, std::string, BaseName) {
+//   Selector Sel = Node.getSelector();
+//   return BaseName.compare(Sel.getAsString()) == 0;
+// }
 
 
 /// Matches when at least one of the supplied string equals to the
@@ -3378,10 +3378,10 @@ AST_MATCHER_P(ObjCMessageExpr, hasSelector, std::string, BaseName) {
 ///     [myObj methodA:argA];
 ///     [myObj methodB:argB];
 /// \endcode
-extern const internal::VariadicFunction<internal::Matcher<ObjCMessageExpr>,
-                                        StringRef,
-                                        internal::hasAnySelectorFunc>
-                                        hasAnySelector;
+// extern const internal::VariadicFunction<internal::Matcher<ObjCMessageExpr>,
+//                                         StringRef,
+//                                         internal::hasAnySelectorFunc>
+//                                         hasAnySelector;
 
 /// Matches ObjC selectors whose name contains
 /// a substring matched by the given RegExp.
@@ -3391,18 +3391,18 @@ extern const internal::VariadicFunction<internal::Matcher<ObjCMessageExpr>,
 /// \code
 ///     [self.bodyView loadHTMLString:html baseURL:NULL];
 /// \endcode
-AST_MATCHER_REGEX(ObjCMessageExpr, matchesSelector, RegExp) {
-  std::string SelectorString = Node.getSelector().getAsString();
-  return RegExp->match(SelectorString);
-}
+// AST_MATCHER_REGEX(ObjCMessageExpr, matchesSelector, RegExp) {
+//   std::string SelectorString = Node.getSelector().getAsString();
+//   return RegExp->match(SelectorString);
+// }
 
 /// Matches when the selector is the empty selector
 ///
 /// Matches only when the selector of the objCMessageExpr is NULL. This may
 /// represent an error condition in the tree!
-AST_MATCHER(ObjCMessageExpr, hasNullSelector) {
-  return Node.getSelector().isNull();
-}
+// AST_MATCHER(ObjCMessageExpr, hasNullSelector) {
+//   return Node.getSelector().isNull();
+// }
 
 /// Matches when the selector is a Unary Selector
 ///
@@ -3412,9 +3412,9 @@ AST_MATCHER(ObjCMessageExpr, hasNullSelector) {
 /// \code
 ///     [self.bodyView loadHTMLString:html baseURL:NULL];
 /// \endcode
-AST_MATCHER(ObjCMessageExpr, hasUnarySelector) {
-  return Node.getSelector().isUnarySelector();
-}
+// AST_MATCHER(ObjCMessageExpr, hasUnarySelector) {
+//   return Node.getSelector().isUnarySelector();
+// }
 
 /// Matches when the selector is a keyword selector
 ///
@@ -3428,9 +3428,9 @@ AST_MATCHER(ObjCMessageExpr, hasUnarySelector) {
 ///   webView.frame = bodyFrame;
 ///   //     ^---- matches here
 /// \endcode
-AST_MATCHER(ObjCMessageExpr, hasKeywordSelector) {
-  return Node.getSelector().isKeywordSelector();
-}
+// AST_MATCHER(ObjCMessageExpr, hasKeywordSelector) {
+//   return Node.getSelector().isKeywordSelector();
+// }
 
 /// Matches when the selector has the specified number of arguments
 ///
@@ -3443,9 +3443,9 @@ AST_MATCHER(ObjCMessageExpr, hasKeywordSelector) {
 /// \code
 ///     [self.bodyView loadHTMLString:html baseURL:NULL];
 /// \endcode
-AST_MATCHER_P(ObjCMessageExpr, numSelectorArgs, unsigned, N) {
-  return Node.getSelector().getNumArgs() == N;
-}
+// AST_MATCHER_P(ObjCMessageExpr, numSelectorArgs, unsigned, N) {
+//   return Node.getSelector().getNumArgs() == N;
+// }
 
 /// Matches if the call expression's callee expression matches.
 ///
@@ -3925,13 +3925,13 @@ AST_MATCHER(VarDecl, isExceptionVariable) {
 ///   void f(int x, int y);
 ///   f(0, 0);
 /// \endcode
-AST_POLYMORPHIC_MATCHER_P(argumentCountIs,
-                          AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
-                                                          CXXConstructExpr,
-                                                          ObjCMessageExpr),
-                          unsigned, N) {
-  return Node.getNumArgs() == N;
-}
+// AST_POLYMORPHIC_MATCHER_P(argumentCountIs,
+//                           AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
+//                                                           CXXConstructExpr,
+//                                                           ObjCMessageExpr),
+//                           unsigned, N) {
+//   return Node.getNumArgs() == N;
+// }
 
 /// Matches the n'th argument of a call expression or a constructor
 /// call expression.
@@ -3941,15 +3941,15 @@ AST_POLYMORPHIC_MATCHER_P(argumentCountIs,
 /// \code
 ///   void x(int) { int y; x(y); }
 /// \endcode
-AST_POLYMORPHIC_MATCHER_P2(hasArgument,
-                           AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
-                                                           CXXConstructExpr,
-                                                           ObjCMessageExpr),
-                           unsigned, N, internal::Matcher<Expr>, InnerMatcher) {
-  return (N < Node.getNumArgs() &&
-          InnerMatcher.matches(
-              *Node.getArg(N)->IgnoreParenImpCasts(), Finder, Builder));
-}
+// AST_POLYMORPHIC_MATCHER_P2(hasArgument,
+//                            AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
+//                                                            CXXConstructExpr,
+//                                                            ObjCMessageExpr),
+//                            unsigned, N, internal::Matcher<Expr>, InnerMatcher) {
+//   return (N < Node.getNumArgs() &&
+//           InnerMatcher.matches(
+//               *Node.getArg(N)->IgnoreParenImpCasts(), Finder, Builder));
+// }
 
 /// Matches the n'th item of an initializer list expression.
 ///
@@ -4160,20 +4160,20 @@ AST_MATCHER(CXXCtorInitializer, isMemberInitializer) {
 /// \endcode
 /// objcMessageExpr(hasAnyArgument(integerLiteral(equals(12))))
 ///   matches [i f:12]
-AST_POLYMORPHIC_MATCHER_P(hasAnyArgument,
-                          AST_POLYMORPHIC_SUPPORTED_TYPES(
-                              CallExpr, CXXConstructExpr,
-                              CXXUnresolvedConstructExpr, ObjCMessageExpr),
-                          internal::Matcher<Expr>, InnerMatcher) {
-  for (const Expr *Arg : Node.arguments()) {
-    BoundNodesTreeBuilder Result(*Builder);
-    if (InnerMatcher.matches(*Arg, Finder, &Result)) {
-      *Builder = std::move(Result);
-      return true;
-    }
-  }
-  return false;
-}
+// AST_POLYMORPHIC_MATCHER_P(hasAnyArgument,
+//                           AST_POLYMORPHIC_SUPPORTED_TYPES(
+//                               CallExpr, CXXConstructExpr,
+//                               CXXUnresolvedConstructExpr, ObjCMessageExpr),
+//                           internal::Matcher<Expr>, InnerMatcher) {
+//   for (const Expr *Arg : Node.arguments()) {
+//     BoundNodesTreeBuilder Result(*Builder);
+//     if (InnerMatcher.matches(*Arg, Finder, &Result)) {
+//       *Builder = std::move(Result);
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
 /// Matches any capture of a lambda expression.
 ///

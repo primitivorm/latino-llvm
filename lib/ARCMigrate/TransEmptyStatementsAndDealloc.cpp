@@ -126,21 +126,21 @@ public:
       return false;
     return Visit(S->getBody());
   }
-  bool VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
-    Expr *Exp = S->getCollection();
-    if (!Exp)
-      return false;
-    if (hasSideEffects(Exp, Ctx))
-      return false;
-    if (!S->getBody())
-      return false;
-    return Visit(S->getBody());
-  }
-  bool VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
-    if (!S->getSubStmt())
-      return false;
-    return Visit(S->getSubStmt());
-  }
+  // bool VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
+  //   Expr *Exp = S->getCollection();
+  //   if (!Exp)
+  //     return false;
+  //   if (hasSideEffects(Exp, Ctx))
+  //     return false;
+  //   if (!S->getBody())
+  //     return false;
+  //   return Visit(S->getBody());
+  // }
+  // bool VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
+  //   if (!S->getSubStmt())
+  //     return false;
+  //   return Visit(S->getSubStmt());
+  // }
 };
 
 class EmptyStatementsRemover :

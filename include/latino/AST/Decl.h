@@ -432,7 +432,7 @@ public:
     return const_cast<NamedDecl*>(this)->getMostRecentDecl();
   }
 
-  ObjCStringFormatFamily getObjCFStringFormattingFamily() const;
+  // ObjCStringFormatFamily getObjCFStringFormattingFamily() const;
 
   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
   static bool classofKind(Kind K) { return K >= firstNamed && K <= lastNamed; }
@@ -891,7 +891,7 @@ protected:
     DAK_Normal
   };
 
-  enum { NumScopeDepthOrObjCQualsBits = 7 };
+  // enum { NumScopeDepthOrObjCQualsBits = 7 };
 
   class ParmVarDeclBitfields {
     friend class ASTDeclReader;
@@ -913,13 +913,13 @@ protected:
     unsigned IsKNRPromoted : 1;
 
     /// Whether this parameter is an ObjC method parameter or not.
-    unsigned IsObjCMethodParam : 1;
+    // unsigned IsObjCMethodParam : 1;
 
     /// If IsObjCMethodParam, a Decl::ObjCDeclQualifier.
     /// Otherwise, the number of function parameter scopes enclosing
     /// the function parameter scope in which this parameter was
     /// declared.
-    unsigned ScopeDepthOrObjCQuals : NumScopeDepthOrObjCQualsBits;
+    // unsigned ScopeDepthOrObjCQuals : NumScopeDepthOrObjCQualsBits;
 
     /// The number of parameters preceding this parameter in the
     /// function parameter scope in which it was declared.
@@ -952,7 +952,7 @@ protected:
     unsigned CXXForRangeDecl : 1;
 
     /// Whether this variable is the for-in loop declaration in Objective-C.
-    unsigned ObjCForDecl : 1;
+    // unsigned ObjCForDecl : 1;
 
     /// Whether this variable is (C++1z) inline.
     unsigned IsInline : 1;
@@ -1372,13 +1372,13 @@ public:
 
   /// Determine whether this variable is a for-loop declaration for a
   /// for-in statement in Objective-C.
-  bool isObjCForDecl() const {
-    return NonParmVarDeclBits.ObjCForDecl;
-  }
+  // bool isObjCForDecl() const {
+  //   return NonParmVarDeclBits.ObjCForDecl;
+  // }
 
-  void setObjCForDecl(bool FRD) {
-    NonParmVarDeclBits.ObjCForDecl = FRD;
-  }
+  // void setObjCForDecl(bool FRD) {
+  //   NonParmVarDeclBits.ObjCForDecl = FRD;
+  // }
 
   /// Determine whether this variable is an ARC pseudo-__strong variable. A
   /// pseudo-__strong variable has a __strong-qualified type but does not
@@ -1537,10 +1537,10 @@ public:
   /// context or something else.
   enum ImplicitParamKind : unsigned {
     /// Parameter for Objective-C 'self' argument
-    ObjCSelf,
+    // ObjCSelf,
 
     /// Parameter for Objective-C '_cmd' argument
-    ObjCCmd,
+    // ObjCCmd,
 
     /// Parameter for C++ 'this' argument
     CXXThis,
@@ -1605,7 +1605,7 @@ protected:
     assert(ParmVarDeclBits.HasInheritedDefaultArg == false);
     assert(ParmVarDeclBits.DefaultArgKind == DAK_None);
     assert(ParmVarDeclBits.IsKNRPromoted == false);
-    assert(ParmVarDeclBits.IsObjCMethodParam == false);
+    // assert(ParmVarDeclBits.IsObjCMethodParam == false);
     setDefaultArg(DefArg);
   }
 
@@ -1620,47 +1620,47 @@ public:
 
   SourceRange getSourceRange() const override LLVM_READONLY;
 
-  void setObjCMethodScopeInfo(unsigned parameterIndex) {
-    ParmVarDeclBits.IsObjCMethodParam = true;
-    setParameterIndex(parameterIndex);
-  }
+  // void setObjCMethodScopeInfo(unsigned parameterIndex) {
+  //   ParmVarDeclBits.IsObjCMethodParam = true;
+  //   setParameterIndex(parameterIndex);
+  // }
 
-  void setScopeInfo(unsigned scopeDepth, unsigned parameterIndex) {
-    assert(!ParmVarDeclBits.IsObjCMethodParam);
+  // void setScopeInfo(unsigned scopeDepth, unsigned parameterIndex) {
+  //   assert(!ParmVarDeclBits.IsObjCMethodParam);
 
-    ParmVarDeclBits.ScopeDepthOrObjCQuals = scopeDepth;
-    assert(ParmVarDeclBits.ScopeDepthOrObjCQuals == scopeDepth
-           && "truncation!");
+  //   ParmVarDeclBits.ScopeDepthOrObjCQuals = scopeDepth;
+  //   assert(ParmVarDeclBits.ScopeDepthOrObjCQuals == scopeDepth
+  //          && "truncation!");
 
-    setParameterIndex(parameterIndex);
-  }
+  //   setParameterIndex(parameterIndex);
+  // }
 
-  bool isObjCMethodParameter() const {
-    return ParmVarDeclBits.IsObjCMethodParam;
-  }
+  // bool isObjCMethodParameter() const {
+  //   return ParmVarDeclBits.IsObjCMethodParam;
+  // }
 
-  unsigned getFunctionScopeDepth() const {
-    if (ParmVarDeclBits.IsObjCMethodParam) return 0;
-    return ParmVarDeclBits.ScopeDepthOrObjCQuals;
-  }
+  // unsigned getFunctionScopeDepth() const {
+  //   if (ParmVarDeclBits.IsObjCMethodParam) return 0;
+  //   return ParmVarDeclBits.ScopeDepthOrObjCQuals;
+  // }
 
-  static constexpr unsigned getMaxFunctionScopeDepth() {
-    return (1u << NumScopeDepthOrObjCQualsBits) - 1;
-  }
+  // static constexpr unsigned getMaxFunctionScopeDepth() {
+  //   return (1u << NumScopeDepthOrObjCQualsBits) - 1;
+  // }
 
   /// Returns the index of this parameter in its prototype or method scope.
   unsigned getFunctionScopeIndex() const {
     return getParameterIndex();
   }
 
-  ObjCDeclQualifier getObjCDeclQualifier() const {
-    if (!ParmVarDeclBits.IsObjCMethodParam) return OBJC_TQ_None;
-    return ObjCDeclQualifier(ParmVarDeclBits.ScopeDepthOrObjCQuals);
-  }
-  void setObjCDeclQualifier(ObjCDeclQualifier QTVal) {
-    assert(ParmVarDeclBits.IsObjCMethodParam);
-    ParmVarDeclBits.ScopeDepthOrObjCQuals = QTVal;
-  }
+  // ObjCDeclQualifier getObjCDeclQualifier() const {
+  //   if (!ParmVarDeclBits.IsObjCMethodParam) return OBJC_TQ_None;
+  //   return ObjCDeclQualifier(ParmVarDeclBits.ScopeDepthOrObjCQuals);
+  // }
+  // void setObjCDeclQualifier(ObjCDeclQualifier QTVal) {
+  //   assert(ParmVarDeclBits.IsObjCMethodParam);
+  //   ParmVarDeclBits.ScopeDepthOrObjCQuals = QTVal;
+  // }
 
   /// True if the value passed to this parameter must undergo
   /// K&R-style default argument promotion:

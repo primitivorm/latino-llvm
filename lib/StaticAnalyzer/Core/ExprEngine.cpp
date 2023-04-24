@@ -1328,9 +1328,9 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
       // analyzer can reconstruct these values from the AST.
       llvm_unreachable("Should be pruned from CFG");
 
-    case Stmt::ObjCSubscriptRefExprClass:
-    case Stmt::ObjCPropertyRefExprClass:
-      llvm_unreachable("These are handled by PseudoObjectExpr");
+    // case Stmt::ObjCSubscriptRefExprClass:
+    // case Stmt::ObjCPropertyRefExprClass:
+    //   llvm_unreachable("These are handled by PseudoObjectExpr");
 
     case Stmt::GNUNullExprClass: {
       // GNU __null is a pointer-width integer, not an actual pointer.
@@ -1341,11 +1341,11 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
       break;
     }
 
-    case Stmt::ObjCAtSynchronizedStmtClass:
-      Bldr.takeNodes(Pred);
-      VisitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(S), Pred, Dst);
-      Bldr.addNodes(Dst);
-      break;
+    // case Stmt::ObjCAtSynchronizedStmtClass:
+    //   Bldr.takeNodes(Pred);
+    //   VisitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(S), Pred, Dst);
+    //   Bldr.addNodes(Dst);
+    //   break;
 
     case Expr::ConstantExprClass:
     case Stmt::ExprWithCleanupsClass:
@@ -1370,14 +1370,14 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     case Stmt::ArrayInitIndexExprClass:
     case Stmt::ExtVectorElementExprClass:
     case Stmt::ImaginaryLiteralClass:
-    case Stmt::ObjCAtCatchStmtClass:
-    case Stmt::ObjCAtFinallyStmtClass:
-    case Stmt::ObjCAtTryStmtClass:
-    case Stmt::ObjCAutoreleasePoolStmtClass:
-    case Stmt::ObjCEncodeExprClass:
-    case Stmt::ObjCIsaExprClass:
-    case Stmt::ObjCProtocolExprClass:
-    case Stmt::ObjCSelectorExprClass:
+    // case Stmt::ObjCAtCatchStmtClass:
+    // case Stmt::ObjCAtFinallyStmtClass:
+    // case Stmt::ObjCAtTryStmtClass:
+    // case Stmt::ObjCAutoreleasePoolStmtClass:
+    // case Stmt::ObjCEncodeExprClass:
+    // case Stmt::ObjCIsaExprClass:
+    // case Stmt::ObjCProtocolExprClass:
+    // case Stmt::ObjCSelectorExprClass:
     case Stmt::ParenListExprClass:
     case Stmt::ShuffleVectorExprClass:
     case Stmt::ConvertVectorExprClass:
@@ -1400,14 +1400,14 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     case Stmt::CharacterLiteralClass:
     case Stmt::CXXScalarValueInitExprClass:
     case Stmt::CXXBoolLiteralExprClass:
-    case Stmt::ObjCBoolLiteralExprClass:
-    case Stmt::ObjCAvailabilityCheckExprClass:
+    // case Stmt::ObjCBoolLiteralExprClass:
+    // case Stmt::ObjCAvailabilityCheckExprClass:
     case Stmt::FloatingLiteralClass:
     case Stmt::NoInitExprClass:
     case Stmt::SizeOfPackExprClass:
     case Stmt::StringLiteralClass:
     case Stmt::SourceLocExprClass:
-    case Stmt::ObjCStringLiteralClass:
+    // case Stmt::ObjCStringLiteralClass:
     case Stmt::CXXPseudoDestructorExprClass:
     case Stmt::SubstNonTypeTemplateParmExprClass:
     case Stmt::CXXNullPtrLiteralExprClass:
@@ -1468,9 +1468,10 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
 
     // Cases we evaluate as opaque expressions, conjuring a symbol.
     case Stmt::CXXStdInitializerListExprClass:
-    case Expr::ObjCArrayLiteralClass:
-    case Expr::ObjCDictionaryLiteralClass:
-    case Expr::ObjCBoxedExprClass: {
+    // case Expr::ObjCArrayLiteralClass:
+    // case Expr::ObjCDictionaryLiteralClass:
+    // case Expr::ObjCBoxedExprClass: 
+    {
       Bldr.takeNodes(Pred);
 
       ExplodedNodeSet preVisit;
@@ -1491,14 +1492,14 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
 
         // Escape pointers passed into the list, unless it's an ObjC boxed
         // expression which is not a boxable C structure.
-        if (!(isa<ObjCBoxedExpr>(Ex) &&
-              !cast<ObjCBoxedExpr>(Ex)->getSubExpr()
-                                      ->getType()->isRecordType()))
-          for (auto Child : Ex->children()) {
-            assert(Child);
-            SVal Val = State->getSVal(Child, LCtx);
-            State = escapeValues(State, Val, PSK_EscapeOther);
-          }
+        // if (!(isa<ObjCBoxedExpr>(Ex) &&
+        //       !cast<ObjCBoxedExpr>(Ex)->getSubExpr()
+        //                               ->getType()->isRecordType()))
+        //   for (auto Child : Ex->children()) {
+        //     assert(Child);
+        //     SVal Val = State->getSVal(Child, LCtx);
+        //     State = escapeValues(State, Val, PSK_EscapeOther);
+        //   }
 
         Bldr2.generateNode(S, N, State);
       }
@@ -1766,17 +1767,17 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
       Bldr.addNodes(Dst);
       break;
 
-    case Stmt::ObjCIvarRefExprClass:
-      Bldr.takeNodes(Pred);
-      VisitLvalObjCIvarRefExpr(cast<ObjCIvarRefExpr>(S), Pred, Dst);
-      Bldr.addNodes(Dst);
-      break;
+    // case Stmt::ObjCIvarRefExprClass:
+    //   Bldr.takeNodes(Pred);
+    //   VisitLvalObjCIvarRefExpr(cast<ObjCIvarRefExpr>(S), Pred, Dst);
+    //   Bldr.addNodes(Dst);
+    //   break;
 
-    case Stmt::ObjCForCollectionStmtClass:
-      Bldr.takeNodes(Pred);
-      VisitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(S), Pred, Dst);
-      Bldr.addNodes(Dst);
-      break;
+    // case Stmt::ObjCForCollectionStmtClass:
+    //   Bldr.takeNodes(Pred);
+    //   VisitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(S), Pred, Dst);
+    //   Bldr.addNodes(Dst);
+    //   break;
 
     // case Stmt::ObjCMessageExprClass:
     //   Bldr.takeNodes(Pred);
@@ -1853,38 +1854,38 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
       break;
     }
 
-    case Stmt::PseudoObjectExprClass: {
-      Bldr.takeNodes(Pred);
-      ProgramStateRef state = Pred->getState();
-      const auto *PE = cast<PseudoObjectExpr>(S);
-      if (const Expr *Result = PE->getResultExpr()) {
-        SVal V = state->getSVal(Result, Pred->getLocationContext());
-        Bldr.generateNode(S, Pred,
-                          state->BindExpr(S, Pred->getLocationContext(), V));
-      }
-      else
-        Bldr.generateNode(S, Pred,
-                          state->BindExpr(S, Pred->getLocationContext(),
-                                                   UnknownVal()));
+    // case Stmt::PseudoObjectExprClass: {
+    //   Bldr.takeNodes(Pred);
+    //   ProgramStateRef state = Pred->getState();
+    //   const auto *PE = cast<PseudoObjectExpr>(S);
+    //   if (const Expr *Result = PE->getResultExpr()) {
+    //     SVal V = state->getSVal(Result, Pred->getLocationContext());
+    //     Bldr.generateNode(S, Pred,
+    //                       state->BindExpr(S, Pred->getLocationContext(), V));
+    //   }
+    //   else
+    //     Bldr.generateNode(S, Pred,
+    //                       state->BindExpr(S, Pred->getLocationContext(),
+    //                                                UnknownVal()));
 
-      Bldr.addNodes(Dst);
-      break;
-    }
+    //   Bldr.addNodes(Dst);
+    //   break;
+    // }
 
-    case Expr::ObjCIndirectCopyRestoreExprClass: {
-      // ObjCIndirectCopyRestoreExpr implies passing a temporary for
-      // correctness of lifetime management.  Due to limited analysis
-      // of ARC, this is implemented as direct arg passing.
-      Bldr.takeNodes(Pred);
-      ProgramStateRef state = Pred->getState();
-      const auto *OIE = cast<ObjCIndirectCopyRestoreExpr>(S);
-      const Expr *E = OIE->getSubExpr();
-      SVal V = state->getSVal(E, Pred->getLocationContext());
-      Bldr.generateNode(S, Pred,
-              state->BindExpr(S, Pred->getLocationContext(), V));
-      Bldr.addNodes(Dst);
-      break;
-    }
+    // case Expr::ObjCIndirectCopyRestoreExprClass: {
+    //   // ObjCIndirectCopyRestoreExpr implies passing a temporary for
+    //   // correctness of lifetime management.  Due to limited analysis
+    //   // of ARC, this is implemented as direct arg passing.
+    //   Bldr.takeNodes(Pred);
+    //   ProgramStateRef state = Pred->getState();
+    //   const auto *OIE = cast<ObjCIndirectCopyRestoreExpr>(S);
+    //   const Expr *E = OIE->getSubExpr();
+    //   SVal V = state->getSVal(E, Pred->getLocationContext());
+    //   Bldr.generateNode(S, Pred,
+    //           state->BindExpr(S, Pred->getLocationContext(), V));
+    //   Bldr.addNodes(Dst);
+    //   break;
+    // }
   }
 }
 

@@ -217,13 +217,13 @@ public:
   /// Return the Objective-C keyword ID for the this identifier.
   ///
   /// For example, 'class' will return tok::objc_class if ObjC is enabled.
-  tok::ObjCKeywordKind getObjCKeywordID() const {
-    if (ObjCOrBuiltinID < tok::NUM_OBJC_KEYWORDS)
-      return tok::ObjCKeywordKind(ObjCOrBuiltinID);
-    else
-      return tok::objc_not_keyword;
-  }
-  void setObjCKeywordID(tok::ObjCKeywordKind ID) { ObjCOrBuiltinID = ID; }
+  // tok::ObjCKeywordKind getObjCKeywordID() const {
+  //   if (ObjCOrBuiltinID < tok::NUM_OBJC_KEYWORDS)
+  //     return tok::ObjCKeywordKind(ObjCOrBuiltinID);
+  //   else
+  //     return tok::objc_not_keyword;
+  // }
+  // void setObjCKeywordID(tok::ObjCKeywordKind ID) { ObjCOrBuiltinID = ID; }
 
   /// Return a value indicating whether this is a builtin function.
   ///
@@ -619,60 +619,60 @@ public:
 /// (but would be if it returned 'id').  It is also possible to
 /// explicitly change or remove a method's family.  Therefore the
 /// method's family should be considered the single source of truth.
-enum ObjCMethodFamily {
-  /// No particular method family.
-  OMF_None,
+// enum ObjCMethodFamily {
+//   /// No particular method family.
+//   OMF_None,
 
-  // Selectors in these families may have arbitrary arity, may be
-  // written with arbitrary leading underscores, and may have
-  // additional CamelCase "words" in their first selector chunk
-  // following the family name.
-  OMF_alloc,
-  OMF_copy,
-  OMF_init,
-  OMF_mutableCopy,
-  OMF_new,
+//   // Selectors in these families may have arbitrary arity, may be
+//   // written with arbitrary leading underscores, and may have
+//   // additional CamelCase "words" in their first selector chunk
+//   // following the family name.
+//   OMF_alloc,
+//   OMF_copy,
+//   OMF_init,
+//   OMF_mutableCopy,
+//   OMF_new,
 
-  // These families are singletons consisting only of the nullary
-  // selector with the given name.
-  OMF_autorelease,
-  OMF_dealloc,
-  OMF_finalize,
-  OMF_release,
-  OMF_retain,
-  OMF_retainCount,
-  OMF_self,
-  OMF_initialize,
+//   // These families are singletons consisting only of the nullary
+//   // selector with the given name.
+//   OMF_autorelease,
+//   OMF_dealloc,
+//   OMF_finalize,
+//   OMF_release,
+//   OMF_retain,
+//   OMF_retainCount,
+//   OMF_self,
+//   OMF_initialize,
 
-  // performSelector families
-  OMF_performSelector
-};
+//   // performSelector families
+//   OMF_performSelector
+// };
 
 /// Enough bits to store any enumerator in ObjCMethodFamily or
 /// InvalidObjCMethodFamily.
-enum { ObjCMethodFamilyBitWidth = 4 };
+// enum { ObjCMethodFamilyBitWidth = 4 };
 
 /// An invalid value of ObjCMethodFamily.
-enum { InvalidObjCMethodFamily = (1 << ObjCMethodFamilyBitWidth) - 1 };
+// enum { InvalidObjCMethodFamily = (1 << ObjCMethodFamilyBitWidth) - 1 };
 
 /// A family of Objective-C methods.
 ///
 /// These are family of methods whose result type is initially 'id', but
 /// but are candidate for the result type to be changed to 'instancetype'.
-enum ObjCInstanceTypeFamily {
-  OIT_None,
-  OIT_Array,
-  OIT_Dictionary,
-  OIT_Singleton,
-  OIT_Init,
-  OIT_ReturnsSelf
-};
+// enum ObjCInstanceTypeFamily {
+//   OIT_None,
+//   OIT_Array,
+//   OIT_Dictionary,
+//   OIT_Singleton,
+//   OIT_Init,
+//   OIT_ReturnsSelf
+// };
 
-enum ObjCStringFormatFamily {
-  SFF_None,
-  SFF_NSString,
-  SFF_CFString
-};
+// enum ObjCStringFormatFamily {
+//   SFF_None,
+//   SFF_NSString,
+//   SFF_CFString
+// };
 
 /// Smart pointer class that efficiently represents Objective-C method
 /// names.
@@ -728,9 +728,9 @@ class Selector {
     return InfoPtr & ArgFlags;
   }
 
-  static ObjCMethodFamily getMethodFamilyImpl(Selector sel);
+  // static ObjCMethodFamily getMethodFamilyImpl(Selector sel);
 
-  static ObjCStringFormatFamily getStringFormatFamilyImpl(Selector sel);
+  // static ObjCStringFormatFamily getStringFormatFamilyImpl(Selector sel);
 
 public:
   /// The default ctor should only be used when creating data structures that
@@ -805,13 +805,13 @@ public:
   void dump() const;
 
   /// Derive the conventional family of this method.
-  ObjCMethodFamily getMethodFamily() const {
-    return getMethodFamilyImpl(*this);
-  }
+  // ObjCMethodFamily getMethodFamily() const {
+  //   return getMethodFamilyImpl(*this);
+  // }
 
-  ObjCStringFormatFamily getStringFormatFamily() const {
-    return getStringFormatFamilyImpl(*this);
-  }
+  // ObjCStringFormatFamily getStringFormatFamily() const {
+  //   return getStringFormatFamilyImpl(*this);
+  // }
 
   static Selector getEmptyMarker() {
     return Selector(uintptr_t(-1));
@@ -821,7 +821,7 @@ public:
     return Selector(uintptr_t(-2));
   }
 
-  static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
+  // static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
 };
 
 /// This table allows us to fully hide how we implement
@@ -894,8 +894,8 @@ protected:
   enum ExtraKind {
     CXXDeductionGuideName,
     CXXLiteralOperatorName,
-    CXXUsingDirective,
-    ObjCMultiArgSelector
+    CXXUsingDirective //,
+    // ObjCMultiArgSelector
   };
 
   /// ExtraKindOrNumArgs has one of the following meaning:
@@ -917,17 +917,17 @@ protected:
   /// Return the corresponding ExtraKind.
   ExtraKind getKind() const {
     return static_cast<ExtraKind>(ExtraKindOrNumArgs >
-                                          (unsigned)ObjCMultiArgSelector
+                                          /*(unsigned)ObjCMultiArgSelector
                                       ? (unsigned)ObjCMultiArgSelector
-                                      : ExtraKindOrNumArgs);
+                                      :*/ ExtraKindOrNumArgs);
   }
 
   /// Return the number of arguments in an ObjC selector. Only valid when this
   /// is indeed an ObjCMultiArgSelector.
   unsigned getNumArgs() const {
-    assert(ExtraKindOrNumArgs >= (unsigned)ObjCMultiArgSelector &&
-           "getNumArgs called but this is not an ObjC selector!");
-    return ExtraKindOrNumArgs - (unsigned)ObjCMultiArgSelector;
+    // assert(ExtraKindOrNumArgs >= (unsigned)ObjCMultiArgSelector &&
+    //        "getNumArgs called but this is not an ObjC selector!");
+    return ExtraKindOrNumArgs /*- (unsigned)ObjCMultiArgSelector*/;
   }
 };
 

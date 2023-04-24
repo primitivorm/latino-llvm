@@ -129,9 +129,9 @@ const Expr *bugreporter::getDerefExpr(const Stmt *S) {
     // Pattern match for a few useful cases: a[0], p->f, *p etc.
     else if (const auto *ME = dyn_cast<MemberExpr>(E)) {
       E = ME->getBase();
-    } else if (const auto *IvarRef = dyn_cast<ObjCIvarRefExpr>(E)) {
+    } /*else if (const auto *IvarRef = dyn_cast<ObjCIvarRefExpr>(E)) {
       E = IvarRef->getBase();
-    } else if (const auto *AE = dyn_cast<ArraySubscriptExpr>(E)) {
+    }*/ else if (const auto *AE = dyn_cast<ArraySubscriptExpr>(E)) {
       E = AE->getBase();
     } else if (const auto *PE = dyn_cast<ParenExpr>(E)) {
       E = PE->getSubExpr();
@@ -1424,12 +1424,13 @@ FindLastStoreBRVisitor::VisitNode(const ExplodedNode *Succ,
           CallEventRef<> Call = CallMgr.getCaller(CE->getCalleeContext(),
                                                   Succ->getState());
           InitE = Call->getArgExpr(Param->getFunctionScopeIndex());
-        } else {
-          // Handle Objective-C 'self'.
-          assert(isa<ImplicitParamDecl>(VR->getDecl()));
-          InitE = cast<ObjCMessageExpr>(CE->getCalleeContext()->getCallSite())
-                      ->getInstanceReceiver()->IgnoreParenCasts();
-        }
+        } 
+        // else {
+        //   // Handle Objective-C 'self'.
+        //   assert(isa<ImplicitParamDecl>(VR->getDecl()));
+        //   InitE = cast<ObjCMessageExpr>(CE->getCalleeContext()->getCallSite())
+        //               ->getInstanceReceiver()->IgnoreParenCasts();
+        // }
         IsParam = true;
       }
     }
@@ -2078,15 +2079,15 @@ bool bugreporter::trackExpressionValue(const ExplodedNode *InputNode,
 
 const Expr *NilReceiverBRVisitor::getNilReceiver(const Stmt *S,
                                                  const ExplodedNode *N) {
-  const auto *ME = dyn_cast<ObjCMessageExpr>(S);
-  if (!ME)
-    return nullptr;
-  if (const Expr *Receiver = ME->getInstanceReceiver()) {
-    ProgramStateRef state = N->getState();
-    SVal V = N->getSVal(Receiver);
-    if (state->isNull(V).isConstrainedTrue())
-      return Receiver;
-  }
+  // const auto *ME = dyn_cast<ObjCMessageExpr>(S);
+  // if (!ME)
+  //   return nullptr;
+  // if (const Expr *Receiver = ME->getInstanceReceiver()) {
+  //   ProgramStateRef state = N->getState();
+  //   SVal V = N->getSVal(Receiver);
+  //   if (state->isNull(V).isConstrainedTrue())
+  //     return Receiver;
+  // }
   return nullptr;
 }
 
@@ -2105,14 +2106,14 @@ NilReceiverBRVisitor::VisitNode(const ExplodedNode *N, BugReporterContext &BRC,
   llvm::SmallString<256> Buf;
   llvm::raw_svector_ostream OS(Buf);
 
-  if (const auto *ME = dyn_cast<ObjCMessageExpr>(S)) {
-    OS << "'";
-    ME->getSelector().print(OS);
-    OS << "' not called";
-  }
-  else {
+  // if (const auto *ME = dyn_cast<ObjCMessageExpr>(S)) {
+  //   OS << "'";
+  //   ME->getSelector().print(OS);
+  //   OS << "' not called";
+  // }
+  // else {
     OS << "No method is called";
-  }
+  // }
   OS << " because the receiver is nil";
 
   // The receiver was nil, and hence the method was skipped.

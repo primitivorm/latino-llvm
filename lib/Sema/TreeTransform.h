@@ -3308,19 +3308,19 @@ public:
   ///
   /// By default, performs semantic analysis to build the new expression.
   /// Subclasses may override this routine to provide different behavior.
-  ExprResult RebuildObjCBoxedExpr(SourceRange SR, Expr *ValueExpr) {
-    return getSema().BuildObjCBoxedExpr(SR, ValueExpr);
-  }
+  // ExprResult RebuildObjCBoxedExpr(SourceRange SR, Expr *ValueExpr) {
+  //   return getSema().BuildObjCBoxedExpr(SR, ValueExpr);
+  // }
 
   /// Build a new Objective-C array literal.
   ///
   /// By default, performs semantic analysis to build the new expression.
   /// Subclasses may override this routine to provide different behavior.
-  ExprResult RebuildObjCArrayLiteral(SourceRange Range,
-                                     Expr **Elements, unsigned NumElements) {
-    return getSema().BuildObjCArrayLiteral(Range,
-                                           MultiExprArg(Elements, NumElements));
-  }
+  // ExprResult RebuildObjCArrayLiteral(SourceRange Range,
+  //                                    Expr **Elements, unsigned NumElements) {
+  //   return getSema().BuildObjCArrayLiteral(Range,
+  //                                          MultiExprArg(Elements, NumElements));
+  // }
 
   // ExprResult RebuildObjCSubscriptRefExpr(SourceLocation RB,
   //                                        Expr *Base, Expr *Key,
@@ -3334,10 +3334,10 @@ public:
   ///
   /// By default, performs semantic analysis to build the new expression.
   /// Subclasses may override this routine to provide different behavior.
-  ExprResult RebuildObjCDictionaryLiteral(SourceRange Range,
-                              MutableArrayRef<ObjCDictionaryElement> Elements) {
-    return getSema().BuildObjCDictionaryLiteral(Range, Elements);
-  }
+  // ExprResult RebuildObjCDictionaryLiteral(SourceRange Range,
+  //                             MutableArrayRef<ObjCDictionaryElement> Elements) {
+  //   return getSema().BuildObjCDictionaryLiteral(Range, Elements);
+  // }
 
   /// Build a new Objective-C \@encode expression.
   ///
@@ -13235,11 +13235,11 @@ TreeTransform<Derived>::TransformCXXStdInitializerListExpr(
   return getDerived().TransformExpr(E->getSubExpr());
 }
 
-template<typename Derived>
-ExprResult
-TreeTransform<Derived>::TransformObjCStringLiteral(ObjCStringLiteral *E) {
-  return SemaRef.MaybeBindToTemporary(E);
-}
+// template<typename Derived>
+// ExprResult
+// TreeTransform<Derived>::TransformObjCStringLiteral(ObjCStringLiteral *E) {
+//   return SemaRef.MaybeBindToTemporary(E);
+// }
 
 template<typename Derived>
 ExprResult
@@ -13247,159 +13247,159 @@ TreeTransform<Derived>::TransformObjCBoolLiteralExpr(ObjCBoolLiteralExpr *E) {
   return E;
 }
 
-template<typename Derived>
-ExprResult
-TreeTransform<Derived>::TransformObjCBoxedExpr(ObjCBoxedExpr *E) {
-  ExprResult SubExpr = getDerived().TransformExpr(E->getSubExpr());
-  if (SubExpr.isInvalid())
-    return ExprError();
+// template<typename Derived>
+// ExprResult
+// TreeTransform<Derived>::TransformObjCBoxedExpr(ObjCBoxedExpr *E) {
+//   ExprResult SubExpr = getDerived().TransformExpr(E->getSubExpr());
+//   if (SubExpr.isInvalid())
+//     return ExprError();
 
-  if (!getDerived().AlwaysRebuild() &&
-      SubExpr.get() == E->getSubExpr())
-    return E;
+//   if (!getDerived().AlwaysRebuild() &&
+//       SubExpr.get() == E->getSubExpr())
+//     return E;
 
-  return getDerived().RebuildObjCBoxedExpr(E->getSourceRange(), SubExpr.get());
-}
+//   return getDerived().RebuildObjCBoxedExpr(E->getSourceRange(), SubExpr.get());
+// }
 
-template<typename Derived>
-ExprResult
-TreeTransform<Derived>::TransformObjCArrayLiteral(ObjCArrayLiteral *E) {
-  // Transform each of the elements.
-  SmallVector<Expr *, 8> Elements;
-  bool ArgChanged = false;
-  if (getDerived().TransformExprs(E->getElements(), E->getNumElements(),
-                                  /*IsCall=*/false, Elements, &ArgChanged))
-    return ExprError();
+// template<typename Derived>
+// ExprResult
+// TreeTransform<Derived>::TransformObjCArrayLiteral(ObjCArrayLiteral *E) {
+//   // Transform each of the elements.
+//   SmallVector<Expr *, 8> Elements;
+//   bool ArgChanged = false;
+//   if (getDerived().TransformExprs(E->getElements(), E->getNumElements(),
+//                                   /*IsCall=*/false, Elements, &ArgChanged))
+//     return ExprError();
 
-  if (!getDerived().AlwaysRebuild() && !ArgChanged)
-    return SemaRef.MaybeBindToTemporary(E);
+//   if (!getDerived().AlwaysRebuild() && !ArgChanged)
+//     return SemaRef.MaybeBindToTemporary(E);
 
-  return getDerived().RebuildObjCArrayLiteral(E->getSourceRange(),
-                                              Elements.data(),
-                                              Elements.size());
-}
+//   return getDerived().RebuildObjCArrayLiteral(E->getSourceRange(),
+//                                               Elements.data(),
+//                                               Elements.size());
+// }
 
-template<typename Derived>
-ExprResult
-TreeTransform<Derived>::TransformObjCDictionaryLiteral(
-                                                    ObjCDictionaryLiteral *E) {
-  // Transform each of the elements.
-  SmallVector<ObjCDictionaryElement, 8> Elements;
-  bool ArgChanged = false;
-  for (unsigned I = 0, N = E->getNumElements(); I != N; ++I) {
-    ObjCDictionaryElement OrigElement = E->getKeyValueElement(I);
+// template<typename Derived>
+// ExprResult
+// TreeTransform<Derived>::TransformObjCDictionaryLiteral(
+//                                                     ObjCDictionaryLiteral *E) {
+//   // Transform each of the elements.
+//   SmallVector<ObjCDictionaryElement, 8> Elements;
+//   bool ArgChanged = false;
+//   for (unsigned I = 0, N = E->getNumElements(); I != N; ++I) {
+//     ObjCDictionaryElement OrigElement = E->getKeyValueElement(I);
 
-    if (OrigElement.isPackExpansion()) {
-      // This key/value element is a pack expansion.
-      SmallVector<UnexpandedParameterPack, 2> Unexpanded;
-      getSema().collectUnexpandedParameterPacks(OrigElement.Key, Unexpanded);
-      getSema().collectUnexpandedParameterPacks(OrigElement.Value, Unexpanded);
-      assert(!Unexpanded.empty() && "Pack expansion without parameter packs?");
+//     if (OrigElement.isPackExpansion()) {
+//       // This key/value element is a pack expansion.
+//       SmallVector<UnexpandedParameterPack, 2> Unexpanded;
+//       getSema().collectUnexpandedParameterPacks(OrigElement.Key, Unexpanded);
+//       getSema().collectUnexpandedParameterPacks(OrigElement.Value, Unexpanded);
+//       assert(!Unexpanded.empty() && "Pack expansion without parameter packs?");
 
-      // Determine whether the set of unexpanded parameter packs can
-      // and should be expanded.
-      bool Expand = true;
-      bool RetainExpansion = false;
-      Optional<unsigned> OrigNumExpansions = OrigElement.NumExpansions;
-      Optional<unsigned> NumExpansions = OrigNumExpansions;
-      SourceRange PatternRange(OrigElement.Key->getBeginLoc(),
-                               OrigElement.Value->getEndLoc());
-      if (getDerived().TryExpandParameterPacks(OrigElement.EllipsisLoc,
-                                               PatternRange, Unexpanded, Expand,
-                                               RetainExpansion, NumExpansions))
-        return ExprError();
+//       // Determine whether the set of unexpanded parameter packs can
+//       // and should be expanded.
+//       bool Expand = true;
+//       bool RetainExpansion = false;
+//       Optional<unsigned> OrigNumExpansions = OrigElement.NumExpansions;
+//       Optional<unsigned> NumExpansions = OrigNumExpansions;
+//       SourceRange PatternRange(OrigElement.Key->getBeginLoc(),
+//                                OrigElement.Value->getEndLoc());
+//       if (getDerived().TryExpandParameterPacks(OrigElement.EllipsisLoc,
+//                                                PatternRange, Unexpanded, Expand,
+//                                                RetainExpansion, NumExpansions))
+//         return ExprError();
 
-      if (!Expand) {
-        // The transform has determined that we should perform a simple
-        // transformation on the pack expansion, producing another pack
-        // expansion.
-        Sema::ArgumentPackSubstitutionIndexRAII SubstIndex(getSema(), -1);
-        ExprResult Key = getDerived().TransformExpr(OrigElement.Key);
-        if (Key.isInvalid())
-          return ExprError();
+//       if (!Expand) {
+//         // The transform has determined that we should perform a simple
+//         // transformation on the pack expansion, producing another pack
+//         // expansion.
+//         Sema::ArgumentPackSubstitutionIndexRAII SubstIndex(getSema(), -1);
+//         ExprResult Key = getDerived().TransformExpr(OrigElement.Key);
+//         if (Key.isInvalid())
+//           return ExprError();
 
-        if (Key.get() != OrigElement.Key)
-          ArgChanged = true;
+//         if (Key.get() != OrigElement.Key)
+//           ArgChanged = true;
 
-        ExprResult Value = getDerived().TransformExpr(OrigElement.Value);
-        if (Value.isInvalid())
-          return ExprError();
+//         ExprResult Value = getDerived().TransformExpr(OrigElement.Value);
+//         if (Value.isInvalid())
+//           return ExprError();
 
-        if (Value.get() != OrigElement.Value)
-          ArgChanged = true;
+//         if (Value.get() != OrigElement.Value)
+//           ArgChanged = true;
 
-        ObjCDictionaryElement Expansion = {
-          Key.get(), Value.get(), OrigElement.EllipsisLoc, NumExpansions
-        };
-        Elements.push_back(Expansion);
-        continue;
-      }
+//         ObjCDictionaryElement Expansion = {
+//           Key.get(), Value.get(), OrigElement.EllipsisLoc, NumExpansions
+//         };
+//         Elements.push_back(Expansion);
+//         continue;
+//       }
 
-      // Record right away that the argument was changed.  This needs
-      // to happen even if the array expands to nothing.
-      ArgChanged = true;
+//       // Record right away that the argument was changed.  This needs
+//       // to happen even if the array expands to nothing.
+//       ArgChanged = true;
 
-      // The transform has determined that we should perform an elementwise
-      // expansion of the pattern. Do so.
-      for (unsigned I = 0; I != *NumExpansions; ++I) {
-        Sema::ArgumentPackSubstitutionIndexRAII SubstIndex(getSema(), I);
-        ExprResult Key = getDerived().TransformExpr(OrigElement.Key);
-        if (Key.isInvalid())
-          return ExprError();
+//       // The transform has determined that we should perform an elementwise
+//       // expansion of the pattern. Do so.
+//       for (unsigned I = 0; I != *NumExpansions; ++I) {
+//         Sema::ArgumentPackSubstitutionIndexRAII SubstIndex(getSema(), I);
+//         ExprResult Key = getDerived().TransformExpr(OrigElement.Key);
+//         if (Key.isInvalid())
+//           return ExprError();
 
-        ExprResult Value = getDerived().TransformExpr(OrigElement.Value);
-        if (Value.isInvalid())
-          return ExprError();
+//         ExprResult Value = getDerived().TransformExpr(OrigElement.Value);
+//         if (Value.isInvalid())
+//           return ExprError();
 
-        ObjCDictionaryElement Element = {
-          Key.get(), Value.get(), SourceLocation(), NumExpansions
-        };
+//         ObjCDictionaryElement Element = {
+//           Key.get(), Value.get(), SourceLocation(), NumExpansions
+//         };
 
-        // If any unexpanded parameter packs remain, we still have a
-        // pack expansion.
-        // FIXME: Can this really happen?
-        if (Key.get()->containsUnexpandedParameterPack() ||
-            Value.get()->containsUnexpandedParameterPack())
-          Element.EllipsisLoc = OrigElement.EllipsisLoc;
+//         // If any unexpanded parameter packs remain, we still have a
+//         // pack expansion.
+//         // FIXME: Can this really happen?
+//         if (Key.get()->containsUnexpandedParameterPack() ||
+//             Value.get()->containsUnexpandedParameterPack())
+//           Element.EllipsisLoc = OrigElement.EllipsisLoc;
 
-        Elements.push_back(Element);
-      }
+//         Elements.push_back(Element);
+//       }
 
-      // FIXME: Retain a pack expansion if RetainExpansion is true.
+//       // FIXME: Retain a pack expansion if RetainExpansion is true.
 
-      // We've finished with this pack expansion.
-      continue;
-    }
+//       // We've finished with this pack expansion.
+//       continue;
+//     }
 
-    // Transform and check key.
-    ExprResult Key = getDerived().TransformExpr(OrigElement.Key);
-    if (Key.isInvalid())
-      return ExprError();
+//     // Transform and check key.
+//     ExprResult Key = getDerived().TransformExpr(OrigElement.Key);
+//     if (Key.isInvalid())
+//       return ExprError();
 
-    if (Key.get() != OrigElement.Key)
-      ArgChanged = true;
+//     if (Key.get() != OrigElement.Key)
+//       ArgChanged = true;
 
-    // Transform and check value.
-    ExprResult Value
-      = getDerived().TransformExpr(OrigElement.Value);
-    if (Value.isInvalid())
-      return ExprError();
+//     // Transform and check value.
+//     ExprResult Value
+//       = getDerived().TransformExpr(OrigElement.Value);
+//     if (Value.isInvalid())
+//       return ExprError();
 
-    if (Value.get() != OrigElement.Value)
-      ArgChanged = true;
+//     if (Value.get() != OrigElement.Value)
+//       ArgChanged = true;
 
-    ObjCDictionaryElement Element = {
-      Key.get(), Value.get(), SourceLocation(), None
-    };
-    Elements.push_back(Element);
-  }
+//     ObjCDictionaryElement Element = {
+//       Key.get(), Value.get(), SourceLocation(), None
+//     };
+//     Elements.push_back(Element);
+//   }
 
-  if (!getDerived().AlwaysRebuild() && !ArgChanged)
-    return SemaRef.MaybeBindToTemporary(E);
+//   if (!getDerived().AlwaysRebuild() && !ArgChanged)
+//     return SemaRef.MaybeBindToTemporary(E);
 
-  return getDerived().RebuildObjCDictionaryLiteral(E->getSourceRange(),
-                                                   Elements);
-}
+//   return getDerived().RebuildObjCDictionaryLiteral(E->getSourceRange(),
+//                                                    Elements);
+// }
 
 // template<typename Derived>
 // ExprResult
@@ -13418,15 +13418,15 @@ TreeTransform<Derived>::TransformObjCDictionaryLiteral(
 //                                             E->getRParenLoc());
 // }
 
-template<typename Derived>
-ExprResult TreeTransform<Derived>::
-TransformObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
-  // This is a kind of implicit conversion, and it needs to get dropped
-  // and recomputed for the same general reasons that ImplicitCastExprs
-  // do, as well a more specific one: this expression is only valid when
-  // it appears *immediately* as an argument expression.
-  return getDerived().TransformExpr(E->getSubExpr());
-}
+// template<typename Derived>
+// ExprResult TreeTransform<Derived>::
+// TransformObjCIndirectCopyRestoreExpr(ObjCIndirectCopyRestoreExpr *E) {
+//   // This is a kind of implicit conversion, and it needs to get dropped
+//   // and recomputed for the same general reasons that ImplicitCastExprs
+//   // do, as well a more specific one: this expression is only valid when
+//   // it appears *immediately* as an argument expression.
+//   return getDerived().TransformExpr(E->getSubExpr());
+// }
 
 // template<typename Derived>
 // ExprResult TreeTransform<Derived>::

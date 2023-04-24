@@ -308,14 +308,14 @@ void JumpScopeChecker::BuildScopeInformation(Stmt *S,
     IndirectJumpTargets.push_back(cast<AddrLabelExpr>(S)->getLabel());
     break;
 
-  case Stmt::ObjCForCollectionStmtClass: {
-    auto *CS = cast<ObjCForCollectionStmt>(S);
-    unsigned Diag = diag::note_protected_by_objc_fast_enumeration;
-    unsigned NewParentScope = Scopes.size();
-    Scopes.push_back(GotoScope(ParentScope, Diag, 0, S->getBeginLoc()));
-    BuildScopeInformation(CS->getBody(), NewParentScope);
-    return;
-  }
+  // case Stmt::ObjCForCollectionStmtClass: {
+  //   auto *CS = cast<ObjCForCollectionStmt>(S);
+  //   unsigned Diag = diag::note_protected_by_objc_fast_enumeration;
+  //   unsigned NewParentScope = Scopes.size();
+  //   Scopes.push_back(GotoScope(ParentScope, Diag, 0, S->getBeginLoc()));
+  //   BuildScopeInformation(CS->getBody(), NewParentScope);
+  //   return;
+  // }
 
   case Stmt::IndirectGotoStmtClass:
     // "goto *&&lbl;" is a special case which we treat as equivalent
@@ -461,78 +461,78 @@ void JumpScopeChecker::BuildScopeInformation(Stmt *S,
     return;
   }
 
-  case Stmt::ObjCAtTryStmtClass: {
-    // Disallow jumps into any part of an @try statement by pushing a scope and
-    // walking all sub-stmts in that scope.
-    ObjCAtTryStmt *AT = cast<ObjCAtTryStmt>(S);
-    // Recursively walk the AST for the @try part.
-    {
-      unsigned NewParentScope = Scopes.size();
-      Scopes.push_back(GotoScope(ParentScope,
-                                 diag::note_protected_by_objc_try,
-                                 diag::note_exits_objc_try,
-                                 AT->getAtTryLoc()));
-      if (Stmt *TryPart = AT->getTryBody())
-        BuildScopeInformation(TryPart, NewParentScope);
-    }
+  // case Stmt::ObjCAtTryStmtClass: {
+  //   // Disallow jumps into any part of an @try statement by pushing a scope and
+  //   // walking all sub-stmts in that scope.
+  //   ObjCAtTryStmt *AT = cast<ObjCAtTryStmt>(S);
+  //   // Recursively walk the AST for the @try part.
+  //   {
+  //     unsigned NewParentScope = Scopes.size();
+  //     Scopes.push_back(GotoScope(ParentScope,
+  //                                diag::note_protected_by_objc_try,
+  //                                diag::note_exits_objc_try,
+  //                                AT->getAtTryLoc()));
+  //     if (Stmt *TryPart = AT->getTryBody())
+  //       BuildScopeInformation(TryPart, NewParentScope);
+  //   }
 
-    // Jump from the catch to the finally or try is not valid.
-    for (unsigned I = 0, N = AT->getNumCatchStmts(); I != N; ++I) {
-      ObjCAtCatchStmt *AC = AT->getCatchStmt(I);
-      unsigned NewParentScope = Scopes.size();
-      Scopes.push_back(GotoScope(ParentScope,
-                                 diag::note_protected_by_objc_catch,
-                                 diag::note_exits_objc_catch,
-                                 AC->getAtCatchLoc()));
-      // @catches are nested and it isn't
-      BuildScopeInformation(AC->getCatchBody(), NewParentScope);
-    }
+  //   // Jump from the catch to the finally or try is not valid.
+  //   for (unsigned I = 0, N = AT->getNumCatchStmts(); I != N; ++I) {
+  //     ObjCAtCatchStmt *AC = AT->getCatchStmt(I);
+  //     unsigned NewParentScope = Scopes.size();
+  //     Scopes.push_back(GotoScope(ParentScope,
+  //                                diag::note_protected_by_objc_catch,
+  //                                diag::note_exits_objc_catch,
+  //                                AC->getAtCatchLoc()));
+  //     // @catches are nested and it isn't
+  //     BuildScopeInformation(AC->getCatchBody(), NewParentScope);
+  //   }
 
-    // Jump from the finally to the try or catch is not valid.
-    if (ObjCAtFinallyStmt *AF = AT->getFinallyStmt()) {
-      unsigned NewParentScope = Scopes.size();
-      Scopes.push_back(GotoScope(ParentScope,
-                                 diag::note_protected_by_objc_finally,
-                                 diag::note_exits_objc_finally,
-                                 AF->getAtFinallyLoc()));
-      BuildScopeInformation(AF, NewParentScope);
-    }
+  //   // Jump from the finally to the try or catch is not valid.
+  //   if (ObjCAtFinallyStmt *AF = AT->getFinallyStmt()) {
+  //     unsigned NewParentScope = Scopes.size();
+  //     Scopes.push_back(GotoScope(ParentScope,
+  //                                diag::note_protected_by_objc_finally,
+  //                                diag::note_exits_objc_finally,
+  //                                AF->getAtFinallyLoc()));
+  //     BuildScopeInformation(AF, NewParentScope);
+  //   }
 
-    return;
-  }
+  //   return;
+  // }
 
-  case Stmt::ObjCAtSynchronizedStmtClass: {
-    // Disallow jumps into the protected statement of an @synchronized, but
-    // allow jumps into the object expression it protects.
-    ObjCAtSynchronizedStmt *AS = cast<ObjCAtSynchronizedStmt>(S);
-    // Recursively walk the AST for the @synchronized object expr, it is
-    // evaluated in the normal scope.
-    BuildScopeInformation(AS->getSynchExpr(), ParentScope);
+  // case Stmt::ObjCAtSynchronizedStmtClass: {
+  //   // Disallow jumps into the protected statement of an @synchronized, but
+  //   // allow jumps into the object expression it protects.
+  //   ObjCAtSynchronizedStmt *AS = cast<ObjCAtSynchronizedStmt>(S);
+  //   // Recursively walk the AST for the @synchronized object expr, it is
+  //   // evaluated in the normal scope.
+  //   BuildScopeInformation(AS->getSynchExpr(), ParentScope);
 
-    // Recursively walk the AST for the @synchronized part, protected by a new
-    // scope.
-    unsigned NewParentScope = Scopes.size();
-    Scopes.push_back(GotoScope(ParentScope,
-                               diag::note_protected_by_objc_synchronized,
-                               diag::note_exits_objc_synchronized,
-                               AS->getAtSynchronizedLoc()));
-    BuildScopeInformation(AS->getSynchBody(), NewParentScope);
-    return;
-  }
+  //   // Recursively walk the AST for the @synchronized part, protected by a new
+  //   // scope.
+  //   unsigned NewParentScope = Scopes.size();
+  //   Scopes.push_back(GotoScope(ParentScope,
+  //                              diag::note_protected_by_objc_synchronized,
+  //                              diag::note_exits_objc_synchronized,
+  //                              AS->getAtSynchronizedLoc()));
+  //   BuildScopeInformation(AS->getSynchBody(), NewParentScope);
+  //   return;
+  // }
 
-  case Stmt::ObjCAutoreleasePoolStmtClass: {
-    // Disallow jumps into the protected statement of an @autoreleasepool.
-    ObjCAutoreleasePoolStmt *AS = cast<ObjCAutoreleasePoolStmt>(S);
-    // Recursively walk the AST for the @autoreleasepool part, protected by a
-    // new scope.
-    unsigned NewParentScope = Scopes.size();
-    Scopes.push_back(GotoScope(ParentScope,
-                               diag::note_protected_by_objc_autoreleasepool,
-                               diag::note_exits_objc_autoreleasepool,
-                               AS->getAtLoc()));
-    BuildScopeInformation(AS->getSubStmt(), NewParentScope);
-    return;
-  }
+  // case Stmt::ObjCAutoreleasePoolStmtClass: {
+  //   // Disallow jumps into the protected statement of an @autoreleasepool.
+  //   ObjCAutoreleasePoolStmt *AS = cast<ObjCAutoreleasePoolStmt>(S);
+  //   // Recursively walk the AST for the @autoreleasepool part, protected by a
+  //   // new scope.
+  //   unsigned NewParentScope = Scopes.size();
+  //   Scopes.push_back(GotoScope(ParentScope,
+  //                              diag::note_protected_by_objc_autoreleasepool,
+  //                              diag::note_exits_objc_autoreleasepool,
+  //                              AS->getAtLoc()));
+  //   BuildScopeInformation(AS->getSubStmt(), NewParentScope);
+  //   return;
+  // }
 
   case Stmt::ExprWithCleanupsClass: {
     // Disallow jumps past full-expressions that use blocks with

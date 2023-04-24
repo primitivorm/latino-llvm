@@ -94,7 +94,7 @@ public:
     DoStmt,
     ForStmt,
     CXXForRangeStmt,
-    ObjCForCollectionStmt,
+    // ObjCForCollectionStmt,
     SwitchStmt,
     CaseStmt,
     DefaultStmt,
@@ -248,7 +248,7 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
   DEFINE_NESTABLE_TRAVERSAL(DoStmt)
   DEFINE_NESTABLE_TRAVERSAL(ForStmt)
   DEFINE_NESTABLE_TRAVERSAL(CXXForRangeStmt)
-  DEFINE_NESTABLE_TRAVERSAL(ObjCForCollectionStmt)
+  // DEFINE_NESTABLE_TRAVERSAL(ObjCForCollectionStmt)
   DEFINE_NESTABLE_TRAVERSAL(CXXTryStmt)
   DEFINE_NESTABLE_TRAVERSAL(CXXCatchStmt)
 
@@ -267,8 +267,8 @@ struct MapRegionCounters : public RecursiveASTVisitor<MapRegionCounters> {
       return PGOHash::ForStmt;
     case Stmt::CXXForRangeStmtClass:
       return PGOHash::CXXForRangeStmt;
-    case Stmt::ObjCForCollectionStmtClass:
-      return PGOHash::ObjCForCollectionStmt;
+    // case Stmt::ObjCForCollectionStmtClass:
+    //   return PGOHash::ObjCForCollectionStmt;
     case Stmt::SwitchStmtClass:
       return PGOHash::SwitchStmt;
     case Stmt::CaseStmtClass:
@@ -584,22 +584,22 @@ struct ComputeRegionCounts : public ConstStmtVisitor<ComputeRegionCounts> {
     RecordNextStmtCount = true;
   }
 
-  void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
-    RecordStmtCount(S);
-    Visit(S->getElement());
-    uint64_t ParentCount = CurrentCount;
-    BreakContinueStack.push_back(BreakContinue());
-    // Counter tracks the body of the loop.
-    uint64_t BodyCount = setCount(PGO.getRegionCount(S));
-    CountMap[S->getBody()] = BodyCount;
-    Visit(S->getBody());
-    uint64_t BackedgeCount = CurrentCount;
-    BreakContinue BC = BreakContinueStack.pop_back_val();
+  // void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S) {
+  //   RecordStmtCount(S);
+  //   Visit(S->getElement());
+  //   uint64_t ParentCount = CurrentCount;
+  //   BreakContinueStack.push_back(BreakContinue());
+  //   // Counter tracks the body of the loop.
+  //   uint64_t BodyCount = setCount(PGO.getRegionCount(S));
+  //   CountMap[S->getBody()] = BodyCount;
+  //   Visit(S->getBody());
+  //   uint64_t BackedgeCount = CurrentCount;
+  //   BreakContinue BC = BreakContinueStack.pop_back_val();
 
-    setCount(BC.BreakCount + ParentCount + BackedgeCount + BC.ContinueCount -
-             BodyCount);
-    RecordNextStmtCount = true;
-  }
+  //   setCount(BC.BreakCount + ParentCount + BackedgeCount + BC.ContinueCount -
+  //            BodyCount);
+  //   RecordNextStmtCount = true;
+  // }
 
   void VisitSwitchStmt(const SwitchStmt *S) {
     RecordStmtCount(S);

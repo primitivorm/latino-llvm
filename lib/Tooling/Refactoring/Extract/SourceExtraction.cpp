@@ -38,8 +38,8 @@ bool isSemicolonRequiredAfter(const Stmt *S) {
     return isSemicolonRequiredAfter(For->getBody());
   if (const auto *CXXFor = dyn_cast<CXXForRangeStmt>(S))
     return isSemicolonRequiredAfter(CXXFor->getBody());
-  if (const auto *ObjCFor = dyn_cast<ObjCForCollectionStmt>(S))
-    return isSemicolonRequiredAfter(ObjCFor->getBody());
+  // if (const auto *ObjCFor = dyn_cast<ObjCForCollectionStmt>(S))
+  //   return isSemicolonRequiredAfter(ObjCFor->getBody());
   if(const auto *Switch = dyn_cast<SwitchStmt>(S))
     return isSemicolonRequiredAfter(Switch->getBody());
   if(const auto *Case = dyn_cast<SwitchCase>(S))
@@ -47,9 +47,9 @@ bool isSemicolonRequiredAfter(const Stmt *S) {
   switch (S->getStmtClass()) {
   case Stmt::DeclStmtClass:
   case Stmt::CXXTryStmtClass:
-  case Stmt::ObjCAtSynchronizedStmtClass:
-  case Stmt::ObjCAutoreleasePoolStmtClass:
-  case Stmt::ObjCAtTryStmtClass:
+  // case Stmt::ObjCAtSynchronizedStmtClass:
+  // case Stmt::ObjCAutoreleasePoolStmtClass:
+  // case Stmt::ObjCAtTryStmtClass:
     return false;
   default:
     return true;

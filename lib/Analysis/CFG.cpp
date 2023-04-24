@@ -24,7 +24,7 @@
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/AST/Type.h"
 #include "latino/Analysis/ConstructionContext.h"
@@ -588,12 +588,12 @@ private:
   CFGBlock *VisitMaterializeTemporaryExpr(MaterializeTemporaryExpr *MTE,
                                           AddStmtChoice asc);
   CFGBlock *VisitMemberExpr(MemberExpr *M, AddStmtChoice asc);
-  CFGBlock *VisitObjCAtCatchStmt(ObjCAtCatchStmt *S);
-  CFGBlock *VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S);
-  CFGBlock *VisitObjCAtThrowStmt(ObjCAtThrowStmt *S);
-  CFGBlock *VisitObjCAtTryStmt(ObjCAtTryStmt *S);
-  CFGBlock *VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S);
-  CFGBlock *VisitObjCForCollectionStmt(ObjCForCollectionStmt *S);
+  // CFGBlock *VisitObjCAtCatchStmt(ObjCAtCatchStmt *S);
+  // CFGBlock *VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S);
+  // CFGBlock *VisitObjCAtThrowStmt(ObjCAtThrowStmt *S);
+  // CFGBlock *VisitObjCAtTryStmt(ObjCAtTryStmt *S);
+  // CFGBlock *VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S);
+  // CFGBlock *VisitObjCForCollectionStmt(ObjCForCollectionStmt *S);
   // CFGBlock *VisitObjCMessageExpr(ObjCMessageExpr *E, AddStmtChoice asc);
   CFGBlock *VisitPseudoObjectExpr(PseudoObjectExpr *E);
   CFGBlock *VisitReturnStmt(Stmt *S);
@@ -720,8 +720,8 @@ private:
   template <typename CallLikeExpr,
             typename = std::enable_if_t<
                 std::is_base_of<CallExpr, CallLikeExpr>::value ||
-                std::is_base_of<CXXConstructExpr, CallLikeExpr>::value ||
-                std::is_base_of<ObjCMessageExpr, CallLikeExpr>::value>>
+                std::is_base_of<CXXConstructExpr, CallLikeExpr>::value /*||
+                std::is_base_of<ObjCMessageExpr, CallLikeExpr>::value*/>>
   void findConstructionContextsForArguments(CallLikeExpr *E) {
     for (unsigned i = 0, e = E->getNumArgs(); i != e; ++i) {
       Expr *Arg = E->getArg(i);
@@ -836,19 +836,19 @@ private:
     B->appendMemberDtor(FD, cfg->getBumpVectorContext());
   }
 
-  void appendObjCMessage(CFGBlock *B, ObjCMessageExpr *ME) {
-    if (alwaysAdd(ME) && cachedEntry)
-      cachedEntry->second = B;
+  // void appendObjCMessage(CFGBlock *B, ObjCMessageExpr *ME) {
+  //   if (alwaysAdd(ME) && cachedEntry)
+  //     cachedEntry->second = B;
 
-    if (const ConstructionContext *CC =
-            retrieveAndCleanupConstructionContext(ME)) {
-      B->appendCXXRecordTypedCall(ME, CC, cfg->getBumpVectorContext());
-      return;
-    }
+  //   if (const ConstructionContext *CC =
+  //           retrieveAndCleanupConstructionContext(ME)) {
+  //     B->appendCXXRecordTypedCall(ME, CC, cfg->getBumpVectorContext());
+  //     return;
+  //   }
 
-    B->appendStmt(const_cast<ObjCMessageExpr *>(ME),
-                  cfg->getBumpVectorContext());
-  }
+  //   B->appendStmt(const_cast<ObjCMessageExpr *>(ME),
+  //                 cfg->getBumpVectorContext());
+  // }
 
   void appendTemporaryDtor(CFGBlock *B, CXXBindTemporaryExpr *E) {
     B->appendTemporaryDtor(E, cfg->getBumpVectorContext());
@@ -1339,8 +1339,8 @@ static const VariableArrayType *FindVA(const Type *t) {
 
 void CFGBuilder::consumeConstructionContext(
     const ConstructionContextLayer *Layer, Expr *E) {
-  assert((isa<CXXConstructExpr>(E) || isa<CallExpr>(E) ||
-          isa<ObjCMessageExpr>(E)) && "Expression cannot construct an object!");
+  assert((isa<CXXConstructExpr>(E) || isa<CallExpr>(E) /*||
+          isa<ObjCMessageExpr>(E)*/) && "Expression cannot construct an object!");
   if (const ConstructionContextLayer *PreviouslyStoredLayer =
           ConstructionContextMap.lookup(E)) {
     (void)PreviouslyStoredLayer;
@@ -2272,23 +2272,23 @@ CFGBlock *CFGBuilder::Visit(Stmt * S, AddStmtChoice asc,
     case Stmt::NullStmtClass:
       return Block;
 
-    case Stmt::ObjCAtCatchStmtClass:
-      return VisitObjCAtCatchStmt(cast<ObjCAtCatchStmt>(S));
+    // case Stmt::ObjCAtCatchStmtClass:
+    //   return VisitObjCAtCatchStmt(cast<ObjCAtCatchStmt>(S));
 
-    case Stmt::ObjCAutoreleasePoolStmtClass:
-    return VisitObjCAutoreleasePoolStmt(cast<ObjCAutoreleasePoolStmt>(S));
+    // case Stmt::ObjCAutoreleasePoolStmtClass:
+    // return VisitObjCAutoreleasePoolStmt(cast<ObjCAutoreleasePoolStmt>(S));
 
-    case Stmt::ObjCAtSynchronizedStmtClass:
-      return VisitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(S));
+    // case Stmt::ObjCAtSynchronizedStmtClass:
+    //   return VisitObjCAtSynchronizedStmt(cast<ObjCAtSynchronizedStmt>(S));
 
-    case Stmt::ObjCAtThrowStmtClass:
-      return VisitObjCAtThrowStmt(cast<ObjCAtThrowStmt>(S));
+    // case Stmt::ObjCAtThrowStmtClass:
+    //   return VisitObjCAtThrowStmt(cast<ObjCAtThrowStmt>(S));
 
-    case Stmt::ObjCAtTryStmtClass:
-      return VisitObjCAtTryStmt(cast<ObjCAtTryStmt>(S));
+    // case Stmt::ObjCAtTryStmtClass:
+    //   return VisitObjCAtTryStmt(cast<ObjCAtTryStmt>(S));
 
-    case Stmt::ObjCForCollectionStmtClass:
-      return VisitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(S));
+    // case Stmt::ObjCForCollectionStmtClass:
+    //   return VisitObjCForCollectionStmt(cast<ObjCForCollectionStmt>(S));
 
     // case Stmt::ObjCMessageExprClass:
     //   return VisitObjCMessageExpr(cast<ObjCMessageExpr>(S), asc);
@@ -2296,8 +2296,8 @@ CFGBlock *CFGBuilder::Visit(Stmt * S, AddStmtChoice asc,
     case Stmt::OpaqueValueExprClass:
       return Block;
 
-    case Stmt::PseudoObjectExprClass:
-      return VisitPseudoObjectExpr(cast<PseudoObjectExpr>(S));
+    // case Stmt::PseudoObjectExprClass:
+    //   return VisitPseudoObjectExpr(cast<PseudoObjectExpr>(S));
 
     case Stmt::ReturnStmtClass:
     case Stmt::CoreturnStmtClass:
@@ -3526,148 +3526,148 @@ CFGBlock *CFGBuilder::VisitMemberExpr(MemberExpr *M, AddStmtChoice asc) {
   return Visit(M->getBase());
 }
 
-CFGBlock *CFGBuilder::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
-  // Objective-C fast enumeration 'for' statements:
-  //  http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC
-  //
-  //  for ( Type newVariable in collection_expression ) { statements }
-  //
-  //  becomes:
-  //
-  //   prologue:
-  //     1. collection_expression
-  //     T. jump to loop_entry
-  //   loop_entry:
-  //     1. side-effects of element expression
-  //     1. ObjCForCollectionStmt [performs binding to newVariable]
-  //     T. ObjCForCollectionStmt  TB, FB  [jumps to TB if newVariable != nil]
-  //   TB:
-  //     statements
-  //     T. jump to loop_entry
-  //   FB:
-  //     what comes after
-  //
-  //  and
-  //
-  //  Type existingItem;
-  //  for ( existingItem in expression ) { statements }
-  //
-  //  becomes:
-  //
-  //   the same with newVariable replaced with existingItem; the binding works
-  //   the same except that for one ObjCForCollectionStmt::getElement() returns
-  //   a DeclStmt and the other returns a DeclRefExpr.
+// CFGBlock *CFGBuilder::VisitObjCForCollectionStmt(ObjCForCollectionStmt *S) {
+//   // Objective-C fast enumeration 'for' statements:
+//   //  http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC
+//   //
+//   //  for ( Type newVariable in collection_expression ) { statements }
+//   //
+//   //  becomes:
+//   //
+//   //   prologue:
+//   //     1. collection_expression
+//   //     T. jump to loop_entry
+//   //   loop_entry:
+//   //     1. side-effects of element expression
+//   //     1. ObjCForCollectionStmt [performs binding to newVariable]
+//   //     T. ObjCForCollectionStmt  TB, FB  [jumps to TB if newVariable != nil]
+//   //   TB:
+//   //     statements
+//   //     T. jump to loop_entry
+//   //   FB:
+//   //     what comes after
+//   //
+//   //  and
+//   //
+//   //  Type existingItem;
+//   //  for ( existingItem in expression ) { statements }
+//   //
+//   //  becomes:
+//   //
+//   //   the same with newVariable replaced with existingItem; the binding works
+//   //   the same except that for one ObjCForCollectionStmt::getElement() returns
+//   //   a DeclStmt and the other returns a DeclRefExpr.
 
-  CFGBlock *LoopSuccessor = nullptr;
+//   CFGBlock *LoopSuccessor = nullptr;
 
-  if (Block) {
-    if (badCFG)
-      return nullptr;
-    LoopSuccessor = Block;
-    Block = nullptr;
-  } else
-    LoopSuccessor = Succ;
+//   if (Block) {
+//     if (badCFG)
+//       return nullptr;
+//     LoopSuccessor = Block;
+//     Block = nullptr;
+//   } else
+//     LoopSuccessor = Succ;
 
-  // Build the condition blocks.
-  CFGBlock *ExitConditionBlock = createBlock(false);
+//   // Build the condition blocks.
+//   CFGBlock *ExitConditionBlock = createBlock(false);
 
-  // Set the terminator for the "exit" condition block.
-  ExitConditionBlock->setTerminator(S);
+//   // Set the terminator for the "exit" condition block.
+//   ExitConditionBlock->setTerminator(S);
 
-  // The last statement in the block should be the ObjCForCollectionStmt, which
-  // performs the actual binding to 'element' and determines if there are any
-  // more items in the collection.
-  appendStmt(ExitConditionBlock, S);
-  Block = ExitConditionBlock;
+//   // The last statement in the block should be the ObjCForCollectionStmt, which
+//   // performs the actual binding to 'element' and determines if there are any
+//   // more items in the collection.
+//   appendStmt(ExitConditionBlock, S);
+//   Block = ExitConditionBlock;
 
-  // Walk the 'element' expression to see if there are any side-effects.  We
-  // generate new blocks as necessary.  We DON'T add the statement by default to
-  // the CFG unless it contains control-flow.
-  CFGBlock *EntryConditionBlock = Visit(S->getElement(),
-                                        AddStmtChoice::NotAlwaysAdd);
-  if (Block) {
-    if (badCFG)
-      return nullptr;
-    Block = nullptr;
-  }
+//   // Walk the 'element' expression to see if there are any side-effects.  We
+//   // generate new blocks as necessary.  We DON'T add the statement by default to
+//   // the CFG unless it contains control-flow.
+//   CFGBlock *EntryConditionBlock = Visit(S->getElement(),
+//                                         AddStmtChoice::NotAlwaysAdd);
+//   if (Block) {
+//     if (badCFG)
+//       return nullptr;
+//     Block = nullptr;
+//   }
 
-  // The condition block is the implicit successor for the loop body as well as
-  // any code above the loop.
-  Succ = EntryConditionBlock;
+//   // The condition block is the implicit successor for the loop body as well as
+//   // any code above the loop.
+//   Succ = EntryConditionBlock;
 
-  // Now create the true branch.
-  {
-    // Save the current values for Succ, continue and break targets.
-    SaveAndRestore<CFGBlock*> save_Block(Block), save_Succ(Succ);
-    SaveAndRestore<JumpTarget> save_continue(ContinueJumpTarget),
-                               save_break(BreakJumpTarget);
+//   // Now create the true branch.
+//   {
+//     // Save the current values for Succ, continue and break targets.
+//     SaveAndRestore<CFGBlock*> save_Block(Block), save_Succ(Succ);
+//     SaveAndRestore<JumpTarget> save_continue(ContinueJumpTarget),
+//                                save_break(BreakJumpTarget);
 
-    // Add an intermediate block between the BodyBlock and the
-    // EntryConditionBlock to represent the "loop back" transition, for looping
-    // back to the head of the loop.
-    CFGBlock *LoopBackBlock = nullptr;
-    Succ = LoopBackBlock = createBlock();
-    LoopBackBlock->setLoopTarget(S);
+//     // Add an intermediate block between the BodyBlock and the
+//     // EntryConditionBlock to represent the "loop back" transition, for looping
+//     // back to the head of the loop.
+//     CFGBlock *LoopBackBlock = nullptr;
+//     Succ = LoopBackBlock = createBlock();
+//     LoopBackBlock->setLoopTarget(S);
 
-    BreakJumpTarget = JumpTarget(LoopSuccessor, ScopePos);
-    ContinueJumpTarget = JumpTarget(Succ, ScopePos);
+//     BreakJumpTarget = JumpTarget(LoopSuccessor, ScopePos);
+//     ContinueJumpTarget = JumpTarget(Succ, ScopePos);
 
-    CFGBlock *BodyBlock = addStmt(S->getBody());
+//     CFGBlock *BodyBlock = addStmt(S->getBody());
 
-    if (!BodyBlock)
-      BodyBlock = ContinueJumpTarget.block; // can happen for "for (X in Y) ;"
-    else if (Block) {
-      if (badCFG)
-        return nullptr;
-    }
+//     if (!BodyBlock)
+//       BodyBlock = ContinueJumpTarget.block; // can happen for "for (X in Y) ;"
+//     else if (Block) {
+//       if (badCFG)
+//         return nullptr;
+//     }
 
-    // This new body block is a successor to our "exit" condition block.
-    addSuccessor(ExitConditionBlock, BodyBlock);
-  }
+//     // This new body block is a successor to our "exit" condition block.
+//     addSuccessor(ExitConditionBlock, BodyBlock);
+//   }
 
-  // Link up the condition block with the code that follows the loop.
-  // (the false branch).
-  addSuccessor(ExitConditionBlock, LoopSuccessor);
+//   // Link up the condition block with the code that follows the loop.
+//   // (the false branch).
+//   addSuccessor(ExitConditionBlock, LoopSuccessor);
 
-  // Now create a prologue block to contain the collection expression.
-  Block = createBlock();
-  return addStmt(S->getCollection());
-}
+//   // Now create a prologue block to contain the collection expression.
+//   Block = createBlock();
+//   return addStmt(S->getCollection());
+// }
 
-CFGBlock *CFGBuilder::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
-  // Inline the body.
-  return addStmt(S->getSubStmt());
-  // TODO: consider adding cleanups for the end of @autoreleasepool scope.
-}
+// CFGBlock *CFGBuilder::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
+//   // Inline the body.
+//   return addStmt(S->getSubStmt());
+//   // TODO: consider adding cleanups for the end of @autoreleasepool scope.
+// }
 
-CFGBlock *CFGBuilder::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
-  // FIXME: Add locking 'primitives' to CFG for @synchronized.
+// CFGBlock *CFGBuilder::VisitObjCAtSynchronizedStmt(ObjCAtSynchronizedStmt *S) {
+//   // FIXME: Add locking 'primitives' to CFG for @synchronized.
 
-  // Inline the body.
-  CFGBlock *SyncBlock = addStmt(S->getSynchBody());
+//   // Inline the body.
+//   CFGBlock *SyncBlock = addStmt(S->getSynchBody());
 
-  // The sync body starts its own basic block.  This makes it a little easier
-  // for diagnostic clients.
-  if (SyncBlock) {
-    if (badCFG)
-      return nullptr;
+//   // The sync body starts its own basic block.  This makes it a little easier
+//   // for diagnostic clients.
+//   if (SyncBlock) {
+//     if (badCFG)
+//       return nullptr;
 
-    Block = nullptr;
-    Succ = SyncBlock;
-  }
+//     Block = nullptr;
+//     Succ = SyncBlock;
+//   }
 
-  // Add the @synchronized to the CFG.
-  autoCreateBlock();
-  appendStmt(Block, S);
+//   // Add the @synchronized to the CFG.
+//   autoCreateBlock();
+//   appendStmt(Block, S);
 
-  // Inline the sync expression.
-  return addStmt(S->getSynchExpr());
-}
+//   // Inline the sync expression.
+//   return addStmt(S->getSynchExpr());
+// }
 
-CFGBlock *CFGBuilder::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
-  // FIXME
-  return NYS();
-}
+// CFGBlock *CFGBuilder::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
+//   // FIXME
+//   return NYS();
+// }
 
 // CFGBlock *CFGBuilder::VisitPseudoObjectExpr(PseudoObjectExpr *E) {
 //   autoCreateBlock();
@@ -3829,40 +3829,40 @@ CFGBlock *CFGBuilder::VisitWhileStmt(WhileStmt *W) {
   return EntryConditionBlock;
 }
 
-CFGBlock *CFGBuilder::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
-  // FIXME: For now we pretend that @catch and the code it contains does not
-  //  exit.
-  return Block;
-}
+// CFGBlock *CFGBuilder::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
+//   // FIXME: For now we pretend that @catch and the code it contains does not
+//   //  exit.
+//   return Block;
+// }
 
-CFGBlock *CFGBuilder::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
-  // FIXME: This isn't complete.  We basically treat @throw like a return
-  //  statement.
+// CFGBlock *CFGBuilder::VisitObjCAtThrowStmt(ObjCAtThrowStmt *S) {
+//   // FIXME: This isn't complete.  We basically treat @throw like a return
+//   //  statement.
 
-  // If we were in the middle of a block we stop processing that block.
-  if (badCFG)
-    return nullptr;
+//   // If we were in the middle of a block we stop processing that block.
+//   if (badCFG)
+//     return nullptr;
 
-  // Create the new block.
-  Block = createBlock(false);
+//   // Create the new block.
+//   Block = createBlock(false);
 
-  // The Exit block is the only successor.
-  addSuccessor(Block, &cfg->getExit());
+//   // The Exit block is the only successor.
+//   addSuccessor(Block, &cfg->getExit());
 
-  // Add the statement to the block.  This may create new blocks if S contains
-  // control-flow (short-circuit operations).
-  return VisitStmt(S, AddStmtChoice::AlwaysAdd);
-}
+//   // Add the statement to the block.  This may create new blocks if S contains
+//   // control-flow (short-circuit operations).
+//   return VisitStmt(S, AddStmtChoice::AlwaysAdd);
+// }
 
-CFGBlock *CFGBuilder::VisitObjCMessageExpr(ObjCMessageExpr *ME,
-                                           AddStmtChoice asc) {
-  findConstructionContextsForArguments(ME);
+// CFGBlock *CFGBuilder::VisitObjCMessageExpr(ObjCMessageExpr *ME,
+//                                            AddStmtChoice asc) {
+//   findConstructionContextsForArguments(ME);
 
-  autoCreateBlock();
-  appendObjCMessage(Block, ME);
+//   autoCreateBlock();
+//   appendObjCMessage(Block, ME);
 
-  return VisitChildren(ME);
-}
+//   return VisitChildren(ME);
+// }
 
 CFGBlock *CFGBuilder::VisitCXXThrowExpr(CXXThrowExpr *T) {
   // If we were in the middle of a block we stop processing that block.
@@ -5943,9 +5943,9 @@ const Expr *CFGBlock::getLastCondition() const {
   if (!StmtElem)
     return nullptr;
 
-  const Stmt *Cond = StmtElem->getStmt();
-  if (isa<ObjCForCollectionStmt>(Cond) || isa<DeclStmt>(Cond))
-    return nullptr;
+  // const Stmt *Cond = StmtElem->getStmt();
+  // if (isa<ObjCForCollectionStmt>(Cond) || isa<DeclStmt>(Cond))
+  //   return nullptr;
 
   // Only ObjCForCollectionStmt is known not to be a non-Expr terminator, hence
   // the cast<>.
@@ -6007,8 +6007,8 @@ Stmt *CFGBlock::getTerminatorCondition(bool StripParens) {
       E = cast<BinaryOperator>(Terminator)->getLHS();
       break;
 
-    case Stmt::ObjCForCollectionStmtClass:
-      return Terminator;
+    // case Stmt::ObjCForCollectionStmtClass:
+    //   return Terminator;
   }
 
   if (!StripParens)

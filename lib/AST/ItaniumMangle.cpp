@@ -3812,20 +3812,20 @@ recurse:
   case Expr::CompoundLiteralExprClass:
   case Expr::ExtVectorElementExprClass:
   case Expr::GenericSelectionExprClass:
-  case Expr::ObjCEncodeExprClass:
-  case Expr::ObjCIsaExprClass:
-  case Expr::ObjCIvarRefExprClass:
+  // case Expr::ObjCEncodeExprClass:
+  // case Expr::ObjCIsaExprClass:
+  // case Expr::ObjCIvarRefExprClass:
   // case Expr::ObjCMessageExprClass:
-  case Expr::ObjCPropertyRefExprClass:
-  case Expr::ObjCProtocolExprClass:
-  case Expr::ObjCSelectorExprClass:
-  case Expr::ObjCStringLiteralClass:
-  case Expr::ObjCBoxedExprClass:
-  case Expr::ObjCArrayLiteralClass:
-  case Expr::ObjCDictionaryLiteralClass:
-  case Expr::ObjCSubscriptRefExprClass:
-  case Expr::ObjCIndirectCopyRestoreExprClass:
-  case Expr::ObjCAvailabilityCheckExprClass:
+  // case Expr::ObjCPropertyRefExprClass:
+  // case Expr::ObjCProtocolExprClass:
+  // case Expr::ObjCSelectorExprClass:
+  // case Expr::ObjCStringLiteralClass:
+  // case Expr::ObjCBoxedExprClass:
+  // case Expr::ObjCArrayLiteralClass:
+  // case Expr::ObjCDictionaryLiteralClass:
+  // case Expr::ObjCSubscriptRefExprClass:
+  // case Expr::ObjCIndirectCopyRestoreExprClass:
+  // case Expr::ObjCAvailabilityCheckExprClass:
   case Expr::OffsetOfExprClass:
   case Expr::PredefinedExprClass:
   case Expr::ShuffleVectorExprClass:
@@ -3838,7 +3838,7 @@ recurse:
   case Expr::VAArgExprClass:
   case Expr::CUDAKernelCallExprClass:
   case Expr::AsTypeExprClass:
-  case Expr::PseudoObjectExprClass:
+  // case Expr::PseudoObjectExprClass:
   case Expr::AtomicExprClass:
   case Expr::SourceLocExprClass:
   case Expr::FixedPointLiteralClass:
@@ -4430,11 +4430,11 @@ recurse:
     break;
 
   // FIXME. __objc_yes/__objc_no are mangled same as true/false
-  case Expr::ObjCBoolLiteralExprClass:
-    Out << "Lb";
-    Out << (cast<ObjCBoolLiteralExpr>(E)->getValue() ? '1' : '0');
-    Out << 'E';
-    break;
+  // case Expr::ObjCBoolLiteralExprClass:
+  //   Out << "Lb";
+  //   Out << (cast<ObjCBoolLiteralExpr>(E)->getValue() ? '1' : '0');
+  //   Out << 'E';
+  //   break;
 
   case Expr::CXXBoolLiteralExprClass:
     Out << "Lb";

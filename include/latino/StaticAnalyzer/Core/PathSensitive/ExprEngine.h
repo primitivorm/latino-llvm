@@ -18,7 +18,7 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/Type.h"
 #include "latino/Analysis/CFG.h"
-#include "latino/Analysis/DomainSpecific/ObjCNoReturn.h"
+// #include "latino/Analysis/DomainSpecific/ObjCNoReturn.h"
 #include "latino/Analysis/ProgramPoint.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"
@@ -60,10 +60,10 @@ class LocationContext;
 class MaterializeTemporaryExpr;
 class MSAsmStmt;
 class NamedDecl;
-class ObjCAtSynchronizedStmt;
-class ObjCForCollectionStmt;
-class ObjCIvarRefExpr;
-class ObjCMessageExpr;
+// class ObjCAtSynchronizedStmt;
+// class ObjCForCollectionStmt;
+// class ObjCIvarRefExpr;
+// class ObjCMessageExpr;
 class ReturnStmt;
 class Stmt;
 
@@ -166,7 +166,7 @@ private:
 
   /// Helper object to determine if an Objective-C message expression
   /// implicitly never returns.
-  ObjCNoReturn ObjCNoRet;
+  // ObjCNoReturn ObjCNoRet;
 
   /// The BugReporter associated with this engine.  It is important that
   /// this object be placed at the very end of member variables so that its
@@ -509,20 +509,20 @@ public:
                        ExplodedNodeSet &Dst);
 
   /// Transfer function logic for ObjCAtSynchronizedStmts.
-  void VisitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt *S,
-                                   ExplodedNode *Pred, ExplodedNodeSet &Dst);
+  // void VisitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt *S,
+  //                                  ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// Transfer function logic for computing the lvalue of an Objective-C ivar.
-  void VisitLvalObjCIvarRefExpr(const ObjCIvarRefExpr *DR, ExplodedNode *Pred,
-                                ExplodedNodeSet &Dst);
+  // void VisitLvalObjCIvarRefExpr(const ObjCIvarRefExpr *DR, ExplodedNode *Pred,
+  //                               ExplodedNodeSet &Dst);
 
   /// VisitObjCForCollectionStmt - Transfer function logic for
   ///  ObjCForCollectionStmt.
-  void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S,
-                                  ExplodedNode *Pred, ExplodedNodeSet &Dst);
+  // void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S,
+  //                                 ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
-  void VisitObjCMessage(const ObjCMessageExpr *ME, ExplodedNode *Pred,
-                        ExplodedNodeSet &Dst);
+  // void VisitObjCMessage(const ObjCMessageExpr *ME, ExplodedNode *Pred,
+  //                       ExplodedNodeSet &Dst);
 
   /// VisitReturnStmt - Transfer function logic for return statements.
   void VisitReturnStmt(const ReturnStmt *R, ExplodedNode *Pred,

@@ -57,8 +57,8 @@ public:
 
 class NonLocalizedStringChecker
     : public Checker<check::PreCall, check::PostCall, check::PreObjCMessage,
-                     check::PostObjCMessage,
-                     check::PostStmt<ObjCStringLiteral>> {
+                     check::PostObjCMessage/*,
+                     check::PostStmt<ObjCStringLiteral>*/> {
 
   mutable std::unique_ptr<BugType> BT;
 
@@ -991,45 +991,45 @@ void NonLocalizedStringChecker::checkPostCall(const CallEvent &Call,
 // }
 
 /// Marks all empty string literals as localized
-void NonLocalizedStringChecker::checkPostStmt(const ObjCStringLiteral *SL,
-                                              CheckerContext &C) const {
-  SVal sv = C.getSVal(SL);
-  setNonLocalizedState(sv, C);
-}
+// void NonLocalizedStringChecker::checkPostStmt(const ObjCStringLiteral *SL,
+//                                               CheckerContext &C) const {
+//   SVal sv = C.getSVal(SL);
+//   setNonLocalizedState(sv, C);
+// }
 
-PathDiagnosticPieceRef
-NonLocalizedStringBRVisitor::VisitNode(const ExplodedNode *Succ,
-                                       BugReporterContext &BRC,
-                                       PathSensitiveBugReport &BR) {
-  if (Satisfied)
-    return nullptr;
+// PathDiagnosticPieceRef
+// NonLocalizedStringBRVisitor::VisitNode(const ExplodedNode *Succ,
+//                                        BugReporterContext &BRC,
+//                                        PathSensitiveBugReport &BR) {
+//   if (Satisfied)
+//     return nullptr;
 
-  Optional<StmtPoint> Point = Succ->getLocation().getAs<StmtPoint>();
-  if (!Point.hasValue())
-    return nullptr;
+//   Optional<StmtPoint> Point = Succ->getLocation().getAs<StmtPoint>();
+//   if (!Point.hasValue())
+//     return nullptr;
 
-  auto *LiteralExpr = dyn_cast<ObjCStringLiteral>(Point->getStmt());
-  if (!LiteralExpr)
-    return nullptr;
+//   // auto *LiteralExpr = dyn_cast<ObjCStringLiteral>(Point->getStmt());
+//   // if (!LiteralExpr)
+//   //   return nullptr;
 
-  SVal LiteralSVal = Succ->getSVal(LiteralExpr);
-  if (LiteralSVal.getAsRegion() != NonLocalizedString)
-    return nullptr;
+//   SVal LiteralSVal = Succ->getSVal(LiteralExpr);
+//   if (LiteralSVal.getAsRegion() != NonLocalizedString)
+//     return nullptr;
 
-  Satisfied = true;
+//   Satisfied = true;
 
-  PathDiagnosticLocation L =
-      PathDiagnosticLocation::create(*Point, BRC.getSourceManager());
+//   PathDiagnosticLocation L =
+//       PathDiagnosticLocation::create(*Point, BRC.getSourceManager());
 
-  if (!L.isValid() || !L.asLocation().isValid())
-    return nullptr;
+//   if (!L.isValid() || !L.asLocation().isValid())
+//     return nullptr;
 
-  auto Piece = std::make_shared<PathDiagnosticEventPiece>(
-      L, "Non-localized string literal here");
-  Piece->addRange(LiteralExpr->getSourceRange());
+//   auto Piece = std::make_shared<PathDiagnosticEventPiece>(
+//       L, "Non-localized string literal here");
+//   Piece->addRange(LiteralExpr->getSourceRange());
 
-  return std::move(Piece);
-}
+//   return std::move(Piece);
+// }
 
 // namespace {
 // class EmptyLocalizationContextChecker
@@ -1285,12 +1285,12 @@ bool PluralMisuseChecker::MethodCrawler::VisitCallExpr(const CallExpr *CE) {
     if (const FunctionDecl *FD = CE->getDirectCallee()) {
       std::string NormalizedName =
           StringRef(FD->getNameInfo().getAsString()).lower();
-      if (NormalizedName.find("loc") != std::string::npos) {
-        for (const Expr *Arg : CE->arguments()) {
-          if (isa<ObjCStringLiteral>(Arg))
-            reportPluralMisuseError(CE);
-        }
-      }
+      // if (NormalizedName.find("loc") != std::string::npos) {
+      //   for (const Expr *Arg : CE->arguments()) {
+      //     if (isa<ObjCStringLiteral>(Arg))
+      //       reportPluralMisuseError(CE);
+      //   }
+      // }
     }
   }
   return true;

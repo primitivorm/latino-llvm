@@ -88,8 +88,8 @@ static void emitDiagnostics(BoundNodes &Match,
 
   AnalysisDeclContext *ADC = AM.getAnalysisDeclContext(D);
 
-  const auto *ME = Match.getNodeAs<ObjCMessageExpr>(OtherMsgBind);
-  assert(ME);
+  // const auto *ME = Match.getNodeAs<ObjCMessageExpr>(OtherMsgBind);
+  // assert(ME);
 
   const auto *AP =
       Match.getNodeAs<ObjCAutoreleasePoolStmt>(AutoreleasePoolBind);
@@ -97,21 +97,21 @@ static void emitDiagnostics(BoundNodes &Match,
       Match.getNodeAs<ObjCAutoreleasePoolStmt>(OtherStmtAutoreleasePoolBind);
   bool HasAutoreleasePool = (AP != nullptr);
 
-  const auto *RL = Match.getNodeAs<ObjCMessageExpr>(RunLoopBind);
+  // const auto *RL = Match.getNodeAs<ObjCMessageExpr>(RunLoopBind);
   const auto *RLR = Match.getNodeAs<Stmt>(RunLoopRunBind);
   assert(RLR && "Run loop launch not found");
-  assert(ME != RLR);
+  // assert(ME != RLR);
 
   // Launch of run loop occurs before the message-sent expression is seen.
-  if (seenBefore(DeclBody, RLR, ME))
-    return;
+  // if (seenBefore(DeclBody, RLR, ME))
+  //   return;
 
   if (HasAutoreleasePool && (OAP != AP))
     return;
 
-  PathDiagnosticLocation Location = PathDiagnosticLocation::createBegin(
-    ME, BR.getSourceManager(), ADC);
-  SourceRange Range = ME->getSourceRange();
+  // PathDiagnosticLocation Location = PathDiagnosticLocation::createBegin(
+  //   ME, BR.getSourceManager(), ADC);
+  // SourceRange Range = ME->getSourceRange();
 
   BR.EmitBasicReport(ADC->getDecl(), Checker,
                      /*Name=*/"Memory leak inside autorelease pool",

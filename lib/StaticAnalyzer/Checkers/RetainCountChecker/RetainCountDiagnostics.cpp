@@ -501,38 +501,38 @@ RefCountReportVisitor::VisitNode(const ExplodedNode *N, BugReporterContext &BRC,
   if (!PrevT) {
     const Stmt *S = N->getLocation().castAs<StmtPoint>().getStmt();
 
-    if (isa<ObjCIvarRefExpr>(S) &&
-        isSynthesizedAccessor(LCtx->getStackFrame())) {
-      S = LCtx->getStackFrame()->getCallSite();
-    }
+    // if (isa<ObjCIvarRefExpr>(S) &&
+    //     isSynthesizedAccessor(LCtx->getStackFrame())) {
+    //   S = LCtx->getStackFrame()->getCallSite();
+    // }
 
-    if (isa<ObjCArrayLiteral>(S)) {
-      os << "NSArray literal is an object with a +0 retain count";
-    } else if (isa<ObjCDictionaryLiteral>(S)) {
-      os << "NSDictionary literal is an object with a +0 retain count";
-    } else if (const ObjCBoxedExpr *BL = dyn_cast<ObjCBoxedExpr>(S)) {
-      if (isNumericLiteralExpression(BL->getSubExpr()))
-        os << "NSNumber literal is an object with a +0 retain count";
-      // else {
-      //   const ObjCInterfaceDecl *BoxClass = nullptr;
-      //   if (const ObjCMethodDecl *Method = BL->getBoxingMethod())
-      //     BoxClass = Method->getClassInterface();
+    // if (isa<ObjCArrayLiteral>(S)) {
+    //   os << "NSArray literal is an object with a +0 retain count";
+    // } else if (isa<ObjCDictionaryLiteral>(S)) {
+    //   os << "NSDictionary literal is an object with a +0 retain count";
+    // } else if (const ObjCBoxedExpr *BL = dyn_cast<ObjCBoxedExpr>(S)) {
+    //   if (isNumericLiteralExpression(BL->getSubExpr()))
+    //     os << "NSNumber literal is an object with a +0 retain count";
+    //   // else {
+    //   //   const ObjCInterfaceDecl *BoxClass = nullptr;
+    //   //   if (const ObjCMethodDecl *Method = BL->getBoxingMethod())
+    //   //     BoxClass = Method->getClassInterface();
 
-      //   // We should always be able to find the boxing class interface,
-      //   // but consider this future-proofing.
-      //   if (BoxClass) {
-      //     os << *BoxClass << " b";
-      //   } else {
-      //     os << "B";
-      //   }
+    //   //   // We should always be able to find the boxing class interface,
+    //   //   // but consider this future-proofing.
+    //   //   if (BoxClass) {
+    //   //     os << *BoxClass << " b";
+    //   //   } else {
+    //   //     os << "B";
+    //   //   }
 
-      //   os << "oxed expression produces an object with a +0 retain count";
-      // }
-    } else if (isa<ObjCIvarRefExpr>(S)) {
-      os << "Object loaded from instance variable";
-    } else {
+    //   //   os << "oxed expression produces an object with a +0 retain count";
+    //   // }
+    // } else if (isa<ObjCIvarRefExpr>(S)) {
+    //   os << "Object loaded from instance variable";
+    // } else {
       generateDiagnosticsForCallLike(CurrSt, LCtx, CurrV, Sym, S, os);
-    }
+    // }
 
     PathDiagnosticLocation Pos(S, SM, N->getLocationContext());
     return std::make_shared<PathDiagnosticEventPiece>(Pos, os.str());
@@ -568,15 +568,16 @@ RefCountReportVisitor::VisitNode(const ExplodedNode *N, BugReporterContext &BRC,
         // We have an argument.  Get the effect!
         DeallocSent = true;
       }
-    } else if (const ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(S)) {
-      if (const Expr *receiver = ME->getInstanceReceiver()) {
-        if (CurrSt->getSValAsScalarOrLoc(receiver, LCtx)
-              .getAsLocSymbol() == Sym) {
-          // The symbol we are tracking is the receiver.
-          DeallocSent = true;
-        }
-      }
-    }
+    } 
+    // else if (const ObjCMessageExpr *ME = dyn_cast<ObjCMessageExpr>(S)) {
+    //   if (const Expr *receiver = ME->getInstanceReceiver()) {
+    //     if (CurrSt->getSValAsScalarOrLoc(receiver, LCtx)
+    //           .getAsLocSymbol() == Sym) {
+    //       // The symbol we are tracking is the receiver.
+    //       DeallocSent = true;
+    //     }
+    //   }
+    // }
   }
 
   if (!shouldGenerateNote(os, PrevT, CurrV, DeallocSent))
@@ -675,14 +676,14 @@ static AllocationInfo GetAllocationSite(ProgramStateManager &StateMgr,
     if (!InitMethodContext)
       if (auto CEP = N->getLocation().getAs<CallEnter>()) {
         const Stmt *CE = CEP->getCallExpr();
-        if (const auto *ME = dyn_cast_or_null<ObjCMessageExpr>(CE)) {
-          const Stmt *RecExpr = ME->getInstanceReceiver();
-          if (RecExpr) {
-            SVal RecV = St->getSVal(RecExpr, NContext);
-            if (ME->getMethodFamily() == OMF_init && RecV.getAsSymbol() == Sym)
-              InitMethodContext = CEP->getCalleeContext();
-          }
-        }
+        // if (const auto *ME = dyn_cast_or_null<ObjCMessageExpr>(CE)) {
+        //   const Stmt *RecExpr = ME->getInstanceReceiver();
+        //   if (RecExpr) {
+        //     SVal RecV = St->getSVal(RecExpr, NContext);
+        //     if (ME->getMethodFamily() == OMF_init && RecV.getAsSymbol() == Sym)
+        //       InitMethodContext = CEP->getCalleeContext();
+        //   }
+        // }
       }
 
     N = N->getFirstPred();
@@ -691,13 +692,13 @@ static AllocationInfo GetAllocationSite(ProgramStateManager &StateMgr,
   // If we are reporting a leak of the object that was allocated with alloc,
   // mark its init method as interesting.
   const LocationContext *InterestingMethodContext = nullptr;
-  if (InitMethodContext) {
-    const ProgramPoint AllocPP = AllocationNode->getLocation();
-    if (Optional<StmtPoint> SP = AllocPP.getAs<StmtPoint>())
-      if (const ObjCMessageExpr *ME = SP->getStmtAs<ObjCMessageExpr>())
-        if (ME->getMethodFamily() == OMF_alloc)
-          InterestingMethodContext = InitMethodContext;
-  }
+  // if (InitMethodContext) {
+  //   const ProgramPoint AllocPP = AllocationNode->getLocation();
+  //   if (Optional<StmtPoint> SP = AllocPP.getAs<StmtPoint>())
+  //     if (const ObjCMessageExpr *ME = SP->getStmtAs<ObjCMessageExpr>())
+  //       if (ME->getMethodFamily() == OMF_alloc)
+  //         InterestingMethodContext = InitMethodContext;
+  // }
 
   // If allocation happened in a function different from the leak node context,
   // do not report the binding.

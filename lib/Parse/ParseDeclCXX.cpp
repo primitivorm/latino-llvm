@@ -2467,9 +2467,9 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
                                        const ParsedTemplateInfo &TemplateInfo,
                                        ParsingDeclRAIIObject *TemplateDiags) {
   if (Tok.is(tok::at)) {
-    if (getLangOpts().ObjC && NextToken().isObjCAtKeyword(tok::objc_defs))
-      Diag(Tok, diag::err_at_defs_cxx);
-    else
+    // if (getLangOpts().ObjC && NextToken().isObjCAtKeyword(tok::objc_defs))
+    //   Diag(Tok, diag::err_at_defs_cxx);
+    // else
       Diag(Tok, diag::err_at_in_class);
 
     ConsumeToken();

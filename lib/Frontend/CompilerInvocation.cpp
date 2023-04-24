@@ -1271,15 +1271,15 @@ static bool ParseCodeGenArgs(CodeGenOptions &Opts, ArgList &Args, InputKind IK,
     if (Method == ~0U) {
       Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) << Name;
       Success = false;
-    } else {
+    } /*else {
       Opts.setObjCDispatchMethod(
         static_cast<CodeGenOptions::ObjCDispatchMethodKind>(Method));
-    }
+    }*/
   }
 
 
-  if (Args.hasArg(OPT_fno_objc_convert_messages_to_runtime_calls))
-    Opts.ObjCConvertMessagesToRuntimeCalls = 0;
+  // if (Args.hasArg(OPT_fno_objc_convert_messages_to_runtime_calls))
+  //   Opts.ObjCConvertMessagesToRuntimeCalls = 0;
 
   if (Args.getLastArg(OPT_femulated_tls) ||
       Args.getLastArg(OPT_fno_emulated_tls)) {
@@ -2817,7 +2817,7 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
     Opts.ThreadsafeStatics = 0;
   Opts.Exceptions = Args.hasArg(OPT_fexceptions);
   Opts.IgnoreExceptions = Args.hasArg(OPT_fignore_exceptions);
-  Opts.ObjCExceptions = Args.hasArg(OPT_fobjc_exceptions);
+  // Opts.ObjCExceptions = Args.hasArg(OPT_fobjc_exceptions);
   Opts.CXXExceptions = Args.hasArg(OPT_fcxx_exceptions);
 
   // -ffixed-point

@@ -75,14 +75,14 @@ namespace format {
   TYPE(MacroBlockBegin)                                                        \
   TYPE(MacroBlockEnd)                                                          \
   TYPE(NamespaceMacro)                                                         \
-  TYPE(ObjCBlockLBrace)                                                        \
-  TYPE(ObjCBlockLParen)                                                        \
-  TYPE(ObjCDecl)                                                               \
-  TYPE(ObjCForIn)                                                              \
-  TYPE(ObjCMethodExpr)                                                         \
-  TYPE(ObjCMethodSpecifier)                                                    \
-  TYPE(ObjCProperty)                                                           \
-  TYPE(ObjCStringLiteral)                                                      \
+  // TYPE(ObjCBlockLBrace)                                                        \
+  // TYPE(ObjCBlockLParen)                                                        \
+  // TYPE(ObjCDecl)                                                               \
+  // TYPE(ObjCForIn)                                                              \
+  // TYPE(ObjCMethodExpr)                                                         \
+  // TYPE(ObjCMethodSpecifier)                                                    \
+  // TYPE(ObjCProperty)                                                           \
+  // TYPE(ObjCStringLiteral)                                                      \
   TYPE(OverloadedOperator)                                                     \
   TYPE(OverloadedOperatorLParen)                                               \
   TYPE(PointerOrReference)                                                     \
@@ -376,9 +376,9 @@ struct FormatToken {
 
   bool isStringLiteral() const { return tok::isStringLiteral(Tok.getKind()); }
 
-  bool isObjCAtKeyword(tok::ObjCKeywordKind Kind) const {
-    return Tok.isObjCAtKeyword(Kind);
-  }
+  // bool isObjCAtKeyword(tok::ObjCKeywordKind Kind) const {
+  //   return Tok.isObjCAtKeyword(Kind);
+  // }
 
   bool isAccessSpecifier(bool ColonRequired = true) const {
     return isOneOf(tok::kw_pub, tok::kw_pro, tok::kw_pri) &&
@@ -388,13 +388,13 @@ struct FormatToken {
   /// Determine whether the token is a simple-type-specifier.
   bool isSimpleTypeSpecifier() const;
 
-  bool isObjCAccessSpecifier() const {
-    return is(tok::at) && Next &&
-           (Next->isObjCAtKeyword(tok::objc_public) ||
-            Next->isObjCAtKeyword(tok::objc_protected) ||
-            Next->isObjCAtKeyword(tok::objc_package) ||
-            Next->isObjCAtKeyword(tok::objc_private));
-  }
+  // bool isObjCAccessSpecifier() const {
+  //   return is(tok::at) && Next &&
+  //          (Next->isObjCAtKeyword(tok::objc_public) ||
+  //           Next->isObjCAtKeyword(tok::objc_protected) ||
+  //           Next->isObjCAtKeyword(tok::objc_package) ||
+  //           Next->isObjCAtKeyword(tok::objc_private));
+  // }
 
   /// Returns whether \p Tok is ([{ or an opening < of a template or in
   /// protos.
