@@ -323,15 +323,15 @@ public:
     return true;
   }
 
-  bool VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-    if (D->getSynthesize()) {
-      // handled in VisitObjCPropertyImplDecl
-      return true;
-    }
-    TRY_DECL(D, IndexCtx.handleDecl(D));
-    handleDeclarator(D);
-    return true;
-  }
+  // bool VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+  //   if (D->getSynthesize()) {
+  //     // handled in VisitObjCPropertyImplDecl
+  //     return true;
+  //   }
+  //   TRY_DECL(D, IndexCtx.handleDecl(D));
+  //   handleDeclarator(D);
+  //   return true;
+  // }
 
   bool VisitMSPropertyDecl(const MSPropertyDecl *D) {
     TRY_DECL(D, IndexCtx.handleDecl(D));

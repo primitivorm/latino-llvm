@@ -907,18 +907,18 @@ void JSONNodeDumper::VisitFriendDecl(const FriendDecl *FD) {
     JOS.attribute("type", createQualType(T->getType()));
 }
 
-void JSONNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-  VisitNamedDecl(D);
-  JOS.attribute("type", createQualType(D->getType()));
-  attributeOnlyIfTrue("synthesized", D->getSynthesize());
-  switch (D->getAccessControl()) {
-  case ObjCIvarDecl::None: JOS.attribute("access", "none"); break;
-  case ObjCIvarDecl::Private: JOS.attribute("access", "private"); break;
-  case ObjCIvarDecl::Protected: JOS.attribute("access", "protected"); break;
-  case ObjCIvarDecl::Public: JOS.attribute("access", "public"); break;
-  case ObjCIvarDecl::Package: JOS.attribute("access", "package"); break;
-  }
-}
+// void JSONNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+//   VisitNamedDecl(D);
+//   JOS.attribute("type", createQualType(D->getType()));
+//   attributeOnlyIfTrue("synthesized", D->getSynthesize());
+//   switch (D->getAccessControl()) {
+//   case ObjCIvarDecl::None: JOS.attribute("access", "none"); break;
+//   case ObjCIvarDecl::Private: JOS.attribute("access", "private"); break;
+//   case ObjCIvarDecl::Protected: JOS.attribute("access", "protected"); break;
+//   case ObjCIvarDecl::Public: JOS.attribute("access", "public"); break;
+//   case ObjCIvarDecl::Package: JOS.attribute("access", "package"); break;
+//   }
+// }
 
 // void JSONNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
 //   VisitNamedDecl(D);

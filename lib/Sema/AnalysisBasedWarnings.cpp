@@ -14,7 +14,7 @@
 
 #include "latino/Sema/AnalysisBasedWarnings.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"

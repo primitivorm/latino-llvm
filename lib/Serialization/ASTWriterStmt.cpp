@@ -16,7 +16,7 @@
 #include "latino/Sema/DeclSpec.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Lex/Token.h"

@@ -14,7 +14,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/TemplateBase.h"

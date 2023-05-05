@@ -19,7 +19,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 // #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
@@ -1976,12 +1976,12 @@ DEF_TRAVERSE_DECL(FieldDecl, {
 //   // FIXME: implement the rest.
 // })
 
-DEF_TRAVERSE_DECL(ObjCIvarDecl, {
-  TRY_TO(TraverseDeclaratorHelper(D));
-  if (D->isBitField())
-    TRY_TO(TraverseStmt(D->getBitWidth()));
-  // FIXME: implement the rest.
-})
+// DEF_TRAVERSE_DECL(ObjCIvarDecl, {
+//   TRY_TO(TraverseDeclaratorHelper(D));
+//   if (D->isBitField())
+//     TRY_TO(TraverseStmt(D->getBitWidth()));
+//   // FIXME: implement the rest.
+// })
 
 template <typename Derived>
 bool RecursiveASTVisitor<Derived>::TraverseFunctionHelper(FunctionDecl *D) {

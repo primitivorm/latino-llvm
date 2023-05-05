@@ -1827,7 +1827,7 @@ private:
   unsigned Extension : 1;
 
   /// Indicates whether this is an Objective-C instance variable.
-  unsigned ObjCIvar : 1;
+  // unsigned ObjCIvar : 1;
 
   /// Indicates whether this is an Objective-C 'weak' property.
   // unsigned ObjCWeakProperty : 1;
@@ -1880,7 +1880,7 @@ public:
       : DS(ds), Range(ds.getSourceRange()), Context(C),
         InvalidType(DS.getTypeSpecType() == DeclSpec::TST_error),
         GroupingParens(false), FunctionDefinition(FDK_Declaration),
-        Redeclaration(false), Extension(false), ObjCIvar(false),
+        Redeclaration(false), Extension(false), /*ObjCIvar(false),*/
         /*ObjCWeakProperty(false),*/ InlineStorageUsed(false),
         Attrs(ds.getAttributePool().getFactory()), AsmLabel(nullptr),
         TrailingRequiresClause(nullptr),
@@ -1966,7 +1966,7 @@ public:
     Attrs.clear();
     AsmLabel = nullptr;
     InlineStorageUsed = false;
-    ObjCIvar = false;
+    // ObjCIvar = false;
     // ObjCWeakProperty = false;
     CommaLoc = SourceLocation();
     EllipsisLoc = SourceLocation();
@@ -2519,8 +2519,8 @@ public:
   void setExtension(bool Val = true) { Extension = Val; }
   bool getExtension() const { return Extension; }
 
-  void setObjCIvar(bool Val = true) { ObjCIvar = Val; }
-  bool isObjCIvar() const { return ObjCIvar; }
+  // void setObjCIvar(bool Val = true) { ObjCIvar = Val; }
+  // bool isObjCIvar() const { return ObjCIvar; }
 
   // void setObjCWeakProperty(bool Val = true) { ObjCWeakProperty = Val; }
   // bool isObjCWeakProperty() const { return ObjCWeakProperty; }

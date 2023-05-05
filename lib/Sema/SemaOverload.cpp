@@ -12,7 +12,7 @@
 
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CXXInheritance.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"

@@ -138,7 +138,7 @@ namespace latino {
     // void VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
     // void VisitObjCContainerDecl(ObjCContainerDecl *D);
     // void VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
-    void VisitObjCIvarDecl(ObjCIvarDecl *D);
+    // void VisitObjCIvarDecl(ObjCIvarDecl *D);
     // void VisitObjCProtocolDecl(ObjCProtocolDecl *D);
     // void VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D);
     // void VisitObjCCategoryDecl(ObjCCategoryDecl *D);
@@ -787,26 +787,26 @@ void ASTDeclWriter::VisitCXXDeductionGuideDecl(CXXDeductionGuideDecl *D) {
 //   Code = serialization::DECL_OBJC_INTERFACE;
 // }
 
-void ASTDeclWriter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
-  VisitFieldDecl(D);
-  // FIXME: stable encoding for @public/@private/@protected/@package
-  Record.push_back(D->getAccessControl());
-  Record.push_back(D->getSynthesize());
+// void ASTDeclWriter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
+//   VisitFieldDecl(D);
+//   // FIXME: stable encoding for @public/@private/@protected/@package
+//   Record.push_back(D->getAccessControl());
+//   Record.push_back(D->getSynthesize());
 
-  if (D->getDeclContext() == D->getLexicalDeclContext() &&
-      !D->hasAttrs() &&
-      !D->isImplicit() &&
-      !D->isUsed(false) &&
-      !D->isInvalidDecl() &&
-      !D->isReferenced() &&
-      !D->isModulePrivate() &&
-      !D->getBitWidth() &&
-      !D->hasExtInfo() &&
-      D->getDeclName())
-    AbbrevToUse = Writer.getDeclObjCIvarAbbrev();
+//   if (D->getDeclContext() == D->getLexicalDeclContext() &&
+//       !D->hasAttrs() &&
+//       !D->isImplicit() &&
+//       !D->isUsed(false) &&
+//       !D->isInvalidDecl() &&
+//       !D->isReferenced() &&
+//       !D->isModulePrivate() &&
+//       !D->getBitWidth() &&
+//       !D->hasExtInfo() &&
+//       D->getDeclName())
+//     AbbrevToUse = Writer.getDeclObjCIvarAbbrev();
 
-  Code = serialization::DECL_OBJC_IVAR;
-}
+//   Code = serialization::DECL_OBJC_IVAR;
+// }
 
 // void ASTDeclWriter::VisitObjCProtocolDecl(ObjCProtocolDecl *D) {
 //   VisitRedeclarable(D);

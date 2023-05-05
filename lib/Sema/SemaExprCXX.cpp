@@ -19,7 +19,7 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/CharUnits.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"

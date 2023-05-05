@@ -41,7 +41,7 @@ add_latino_library(latinoAST
   DeclCXX.cpp
   DeclFriend.cpp
   DeclGroup.cpp
-  DeclObjC.cpp
+  # DeclObjC.cpp
   # DeclOpenMP.cpp
   DeclPrinter.cpp
   DeclTemplate.cpp

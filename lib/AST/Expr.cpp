@@ -16,7 +16,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/ComputeDependence.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/EvaluatedExprVisitor.h"

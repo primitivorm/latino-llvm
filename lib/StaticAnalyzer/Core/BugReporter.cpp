@@ -14,7 +14,7 @@
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporter.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/ParentMap.h"

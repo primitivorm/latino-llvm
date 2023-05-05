@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "latino/AST/ASTContext.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
 // #include "latino/AST/ExprOpenMP.h"

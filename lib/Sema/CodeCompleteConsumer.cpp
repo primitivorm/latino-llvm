@@ -14,7 +14,7 @@
 #include "clang-c/Index.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Type.h"

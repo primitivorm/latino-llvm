@@ -17,7 +17,7 @@
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Lex/Lexer.h"

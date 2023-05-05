@@ -9,7 +9,7 @@
 #include "IndexingContext.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/SourceManager.h"

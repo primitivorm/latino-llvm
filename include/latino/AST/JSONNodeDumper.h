@@ -249,7 +249,7 @@ public:
   void VisitAccessSpecDecl(const AccessSpecDecl *ASD);
   void VisitFriendDecl(const FriendDecl *FD);
 
-  void VisitObjCIvarDecl(const ObjCIvarDecl *D);
+  // void VisitObjCIvarDecl(const ObjCIvarDecl *D);
   // void VisitObjCMethodDecl(const ObjCMethodDecl *D);
   // void VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D);
   // void VisitObjCCategoryDecl(const ObjCCategoryDecl *D);

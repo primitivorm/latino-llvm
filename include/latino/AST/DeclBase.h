@@ -60,7 +60,7 @@ class NamedDecl;
 // class ObjCInterfaceDecl;
 // class ObjCMethodDecl;
 // class ObjCProtocolDecl;
-class ObjCIvarDecl;
+// class ObjCIvarDecl;
 struct PrintingPolicy;
 class RecordDecl;
 class SourceManager;

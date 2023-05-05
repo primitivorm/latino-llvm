@@ -21,7 +21,7 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/AST/StmtVisitor.h"

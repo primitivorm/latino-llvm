@@ -14,7 +14,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
 #include "latino/AST/Expr.h"
@@ -377,8 +377,8 @@ void DeclPrinter::VisitDeclContext(DeclContext *DC, bool Indent) {
 
     // Don't print ObjCIvarDecls, as they are printed when visiting the
     // containing ObjCInterfaceDecl.
-    if (isa<ObjCIvarDecl>(*D))
-      continue;
+    // if (isa<ObjCIvarDecl>(*D))
+    //   continue;
 
     // Skip over implicit declarations in pretty-printing mode.
     if (D->isImplicit())

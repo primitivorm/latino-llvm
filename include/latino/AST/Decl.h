@@ -2951,7 +2951,7 @@ public:
 
   // Implement isa/cast/dyncast/etc.
   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
-  static bool classofKind(Kind K) { return K >= firstField && K <= lastField; }
+  static bool classofKind(Kind K) { /*return K >= firstField && K <= lastField;*/ return K == Field; }
 };
 
 /// An instance of this object exists for each enum constant

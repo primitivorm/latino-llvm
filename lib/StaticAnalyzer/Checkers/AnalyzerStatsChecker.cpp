@@ -8,7 +8,7 @@
 // This file reports various statistics about analyzer visitation.
 //===----------------------------------------------------------------------===//
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporter.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"

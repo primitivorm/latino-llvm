@@ -18,7 +18,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/CommentDiagnostic.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"

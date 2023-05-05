@@ -18,7 +18,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/RecordLayout.h"

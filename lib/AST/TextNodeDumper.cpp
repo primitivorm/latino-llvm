@@ -2084,30 +2084,30 @@ void TextNodeDumper::VisitFriendDecl(const FriendDecl *D) {
     dumpType(T->getType());
 }
 
-void TextNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-  dumpName(D);
-  dumpType(D->getType());
-  if (D->getSynthesize())
-    OS << " synthesize";
+// void TextNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+//   dumpName(D);
+//   dumpType(D->getType());
+//   if (D->getSynthesize())
+//     OS << " synthesize";
 
-  switch (D->getAccessControl()) {
-  case ObjCIvarDecl::None:
-    OS << " none";
-    break;
-  case ObjCIvarDecl::Private:
-    OS << " private";
-    break;
-  case ObjCIvarDecl::Protected:
-    OS << " protected";
-    break;
-  case ObjCIvarDecl::Public:
-    OS << " public";
-    break;
-  case ObjCIvarDecl::Package:
-    OS << " package";
-    break;
-  }
-}
+//   switch (D->getAccessControl()) {
+//   case ObjCIvarDecl::None:
+//     OS << " none";
+//     break;
+//   case ObjCIvarDecl::Private:
+//     OS << " private";
+//     break;
+//   case ObjCIvarDecl::Protected:
+//     OS << " protected";
+//     break;
+//   case ObjCIvarDecl::Public:
+//     OS << " public";
+//     break;
+//   case ObjCIvarDecl::Package:
+//     OS << " package";
+//     break;
+//   }
+// }
 
 // void TextNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
 //   if (D->isInstanceMethod())

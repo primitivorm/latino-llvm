@@ -16,7 +16,7 @@
 #include "CoroutineStmtBuilder.h"
 #include "TypeLocBuilder.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprConcepts.h"

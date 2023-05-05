@@ -17,7 +17,7 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/CXXInheritance.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"

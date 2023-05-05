@@ -65,7 +65,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/NestedNameSpecifier.h"

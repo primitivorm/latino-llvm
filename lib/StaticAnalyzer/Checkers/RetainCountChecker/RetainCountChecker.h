@@ -18,7 +18,7 @@
 #include "RetainCountDiagnostics.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ParentMap.h"
 // #include "latino/Analysis/DomainSpecific/CocoaConventions.h"
 #include "latino/Analysis/PathDiagnostic.h"

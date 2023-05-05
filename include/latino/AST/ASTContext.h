@@ -112,7 +112,7 @@ struct MSGuidDeclParts;
 // class ObjCImplDecl;
 // class ObjCImplementationDecl;
 // class ObjCInterfaceDecl;
-class ObjCIvarDecl;
+// class ObjCIvarDecl;
 // class ObjCMethodDecl;
 // class ObjCPropertyDecl;
 // class ObjCPropertyImplDecl;

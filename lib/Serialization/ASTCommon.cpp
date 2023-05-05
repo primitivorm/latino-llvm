@@ -12,7 +12,7 @@
 
 #include "ASTCommon.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Serialization/ASTDeserializationListener.h"
 #include "llvm/Support/DJB.h"

@@ -25,7 +25,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclContextInternals.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 // #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"

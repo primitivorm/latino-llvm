@@ -155,7 +155,7 @@ namespace latino {
   // class ObjCImplDecl;
   // class ObjCImplementationDecl;
   // class ObjCInterfaceDecl;
-  class ObjCIvarDecl;
+  // class ObjCIvarDecl;
   // template <class T> class ObjCList;
   // class ObjCMessageExpr;
   // class ObjCMethodDecl;

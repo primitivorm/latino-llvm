@@ -43,7 +43,7 @@ def Named : DeclNode<Decl, "named declarations", 1>;
     def MSGuid : DeclNode<Value>;
     def Declarator : DeclNode<Value, "declarators", 1>;
       def Field : DeclNode<Declarator, "non-static data members">;
-        def ObjCIvar : DeclNode<Field>;
+        // def ObjCIvar : DeclNode<Field>;
         // def ObjCAtDefsField : DeclNode<Field>;
       def MSProperty : DeclNode<Declarator>;
       def Function : DeclNode<Declarator, "functions">, DeclContext;

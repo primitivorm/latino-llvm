@@ -22,7 +22,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclContextInternals.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"

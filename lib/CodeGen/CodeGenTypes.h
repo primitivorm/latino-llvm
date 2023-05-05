@@ -38,7 +38,7 @@ class CodeGenOptions;
 class FieldDecl;
 class FunctionProtoType;
 // class ObjCInterfaceDecl;
-class ObjCIvarDecl;
+// class ObjCIvarDecl;
 class PointerType;
 class QualType;
 class RecordDecl;

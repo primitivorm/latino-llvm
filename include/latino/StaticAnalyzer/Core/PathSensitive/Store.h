@@ -38,7 +38,7 @@ class CXXBasePath;
 class Decl;
 class Expr;
 class LocationContext;
-class ObjCIvarDecl;
+// class ObjCIvarDecl;
 class StackFrameContext;
 
 namespace ento {

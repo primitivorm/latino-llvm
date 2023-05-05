@@ -9,7 +9,7 @@
 #include "latino/Index/IndexSymbol.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/Lex/MacroInfo.h"

@@ -23,7 +23,7 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 // #include "latino/AST/NSAPI.h"
 #include "latino/Basic/Builtins.h"
 #include "latino/Basic/CodeGenOptions.h"

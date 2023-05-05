@@ -16,7 +16,7 @@
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"

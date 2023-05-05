@@ -66,7 +66,7 @@ class FunctionProtoType;
 class LabelStmt;
 // class ObjCContainerDecl;
 // class ObjCInterfaceDecl;
-class ObjCIvarDecl;
+// class ObjCIvarDecl;
 // class ObjCMethodDecl;
 // class ObjCImplementationDecl;
 // class ObjCPropertyImplDecl;

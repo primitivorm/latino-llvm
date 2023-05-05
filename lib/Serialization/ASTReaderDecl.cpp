@@ -20,7 +20,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 // #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
@@ -431,7 +431,7 @@ namespace latino {
     // void VisitObjCTypeParamDecl(ObjCTypeParamDecl *D);
     // void VisitObjCContainerDecl(ObjCContainerDecl *D);
     // void VisitObjCInterfaceDecl(ObjCInterfaceDecl *D);
-    void VisitObjCIvarDecl(ObjCIvarDecl *D);
+    // void VisitObjCIvarDecl(ObjCIvarDecl *D);
     // void VisitObjCProtocolDecl(ObjCProtocolDecl *D);
     // void VisitObjCAtDefsFieldDecl(ObjCAtDefsFieldDecl *D);
     // void VisitObjCCategoryDecl(ObjCCategoryDecl *D);
@@ -1178,14 +1178,14 @@ void ASTDeclReader::VisitFunctionDecl(FunctionDecl *FD) {
 //   }
 // }
 
-void ASTDeclReader::VisitObjCIvarDecl(ObjCIvarDecl *IVD) {
-  VisitFieldDecl(IVD);
-  IVD->setAccessControl((ObjCIvarDecl::AccessControl)Record.readInt());
-  // This field will be built lazily.
-  IVD->setNextIvar(nullptr);
-  bool synth = Record.readInt();
-  IVD->setSynthesize(synth);
-}
+// void ASTDeclReader::VisitObjCIvarDecl(ObjCIvarDecl *IVD) {
+//   VisitFieldDecl(IVD);
+//   IVD->setAccessControl((ObjCIvarDecl::AccessControl)Record.readInt());
+//   // This field will be built lazily.
+//   IVD->setNextIvar(nullptr);
+//   bool synth = Record.readInt();
+//   IVD->setSynthesize(synth);
+// }
 
 // void ASTDeclReader::ReadObjCDefinitionData(
 //          struct ObjCProtocolDecl::DefinitionData &Data) {

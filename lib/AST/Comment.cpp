@@ -9,7 +9,7 @@
 #include "latino/AST/Comment.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Decl.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/Basic/CharInfo.h"
 #include "llvm/Support/ErrorHandling.h"

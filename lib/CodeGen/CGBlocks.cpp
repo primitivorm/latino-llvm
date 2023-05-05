@@ -20,7 +20,7 @@
 #include "ConstantEmitter.h"
 #include "TargetInfo.h"
 #include "latino/AST/Attr.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/CodeGen/ConstantInitBuilder.h"
 #include "llvm/ADT/SmallSet.h"
 #include "llvm/IR/DataLayout.h"

@@ -14,7 +14,7 @@
 #define LLVM_LATINO_AST_COMMENT_H
 
 #include "latino/AST/CommentCommandTraits.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/SourceLocation.h"
 #include "llvm/ADT/ArrayRef.h"

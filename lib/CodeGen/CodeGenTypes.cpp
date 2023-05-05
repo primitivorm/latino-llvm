@@ -18,7 +18,7 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/CodeGen/CGFunctionInfo.h"
