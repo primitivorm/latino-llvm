@@ -197,7 +197,7 @@ class DeclArgument<DeclNode kind, string name, bit opt = 0, bit fake = 0>
 //   OMPTraitSelector := {Kind, Expr, list<OMPTraitProperty>}
 //   OMPTraitProperty := {Kind}
 //
-class OMPTraitInfoArgument<string name> : Argument<name, 0>;
+// class OMPTraitInfoArgument<string name> : Argument<name, 0>;
 
 class TypeArgument<string name, bit opt = 0> : Argument<name, opt>;
 class UnsignedArgument<string name, bit opt = 0> : Argument<name, opt>;
@@ -873,7 +873,7 @@ def CarriesDependency : InheritableParamAttr {
 
 def CDecl : DeclOrTypeAttr {
   let Spellings = [GCC<"cdecl">, Keyword<"__cdecl">, Keyword<"_cdecl">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
@@ -1132,74 +1132,74 @@ def CXX11NoReturn : InheritableAttr {
 
 // Similar to CUDA, OpenCL attributes do not receive a [[]] spelling because
 // the specification does not expose them with one currently.
-def OpenCLKernel : InheritableAttr {
-  let Spellings = [Keyword<"__kernel">, Keyword<"kernel">];
-  let Subjects = SubjectList<[Function], ErrorDiag>;
-  let Documentation = [Undocumented];
-  let SimpleHandler = 1;
-}
+// def OpenCLKernel : InheritableAttr {
+//   let Spellings = [Keyword<"__kernel">, Keyword<"kernel">];
+//   let Subjects = SubjectList<[Function], ErrorDiag>;
+//   let Documentation = [Undocumented];
+//   let SimpleHandler = 1;
+// }
 
-def OpenCLUnrollHint : InheritableAttr {
-  let Spellings = [GNU<"opencl_unroll_hint">];
-  let Args = [UnsignedArgument<"UnrollHint">];
-  let Documentation = [OpenCLUnrollHintDocs];
-}
+// def OpenCLUnrollHint : InheritableAttr {
+//   let Spellings = [GNU<"opencl_unroll_hint">];
+//   let Args = [UnsignedArgument<"UnrollHint">];
+//   let Documentation = [OpenCLUnrollHintDocs];
+// }
 
-def OpenCLIntelReqdSubGroupSize: InheritableAttr {
-  let Spellings = [GNU<"intel_reqd_sub_group_size">];
-  let Args = [UnsignedArgument<"SubGroupSize">];
-  let Subjects = SubjectList<[Function], ErrorDiag>;
-  let Documentation = [OpenCLIntelReqdSubGroupSizeDocs];
-}
+// def OpenCLIntelReqdSubGroupSize: InheritableAttr {
+//   let Spellings = [GNU<"intel_reqd_sub_group_size">];
+//   let Args = [UnsignedArgument<"SubGroupSize">];
+//   let Subjects = SubjectList<[Function], ErrorDiag>;
+//   let Documentation = [OpenCLIntelReqdSubGroupSizeDocs];
+// }
 
 // This attribute is both a type attribute, and a declaration attribute (for
 // parameter variables).
-def OpenCLAccess : Attr {
-  let Spellings = [Keyword<"__read_only">, Keyword<"read_only">,
-                   Keyword<"__write_only">, Keyword<"write_only">,
-                   Keyword<"__read_write">, Keyword<"read_write">];
-  let Subjects = SubjectList<[ParmVar, TypedefName], ErrorDiag>;
-  let Accessors = [Accessor<"isReadOnly", [Keyword<"__read_only">,
-                                           Keyword<"read_only">]>,
-                   Accessor<"isReadWrite", [Keyword<"__read_write">,
-                                            Keyword<"read_write">]>,
-                   Accessor<"isWriteOnly", [Keyword<"__write_only">,
-                                            Keyword<"write_only">]>];
-  let Documentation = [OpenCLAccessDocs];
-}
+// def OpenCLAccess : Attr {
+//   let Spellings = [Keyword<"__read_only">, Keyword<"read_only">,
+//                    Keyword<"__write_only">, Keyword<"write_only">,
+//                    Keyword<"__read_write">, Keyword<"read_write">];
+//   let Subjects = SubjectList<[ParmVar, TypedefName], ErrorDiag>;
+//   let Accessors = [Accessor<"isReadOnly", [Keyword<"__read_only">,
+//                                            Keyword<"read_only">]>,
+//                    Accessor<"isReadWrite", [Keyword<"__read_write">,
+//                                             Keyword<"read_write">]>,
+//                    Accessor<"isWriteOnly", [Keyword<"__write_only">,
+//                                             Keyword<"write_only">]>];
+//   let Documentation = [OpenCLAccessDocs];
+// }
 
-def OpenCLPrivateAddressSpace : TypeAttr {
-  let Spellings = [Keyword<"__private">, Keyword<"private">, Clang<"opencl_private">];
-  let Documentation = [OpenCLAddressSpacePrivateDocs];
-}
+// def OpenCLPrivateAddressSpace : TypeAttr {
+//   let Spellings = [Keyword<"__private">, Keyword<"private">, Clang<"opencl_private">];
+//   let Documentation = [OpenCLAddressSpacePrivateDocs];
+// }
 
-def OpenCLGlobalAddressSpace : TypeAttr {
-  let Spellings = [Keyword<"__global">, Keyword<"global">, Clang<"opencl_global">];
-  let Documentation = [OpenCLAddressSpaceGlobalDocs];
-}
+// def OpenCLGlobalAddressSpace : TypeAttr {
+//   let Spellings = [Keyword<"__global">, Keyword<"global">, Clang<"opencl_global">];
+//   let Documentation = [OpenCLAddressSpaceGlobalDocs];
+// }
 
-def OpenCLLocalAddressSpace : TypeAttr {
-  let Spellings = [Keyword<"__local">, Keyword<"local">, Clang<"opencl_local">];
-  let Documentation = [OpenCLAddressSpaceLocalDocs];
-}
+// def OpenCLLocalAddressSpace : TypeAttr {
+//   let Spellings = [Keyword<"__local">, Keyword<"local">, Clang<"opencl_local">];
+//   let Documentation = [OpenCLAddressSpaceLocalDocs];
+// }
 
-def OpenCLConstantAddressSpace : TypeAttr {
-  let Spellings = [Keyword<"__constant">, Keyword<"constant">, Clang<"opencl_constant">];
-  let Documentation = [OpenCLAddressSpaceConstantDocs];
-}
+// def OpenCLConstantAddressSpace : TypeAttr {
+//   let Spellings = [Keyword<"__constant">, Keyword<"constant">, Clang<"opencl_constant">];
+//   let Documentation = [OpenCLAddressSpaceConstantDocs];
+// }
 
-def OpenCLGenericAddressSpace : TypeAttr {
-  let Spellings = [Keyword<"__generic">, Keyword<"generic">, Clang<"opencl_generic">];
-  let Documentation = [OpenCLAddressSpaceGenericDocs];
-}
+// def OpenCLGenericAddressSpace : TypeAttr {
+//   let Spellings = [Keyword<"__generic">, Keyword<"generic">, Clang<"opencl_generic">];
+//   let Documentation = [OpenCLAddressSpaceGenericDocs];
+// }
 
-def OpenCLNoSVM : Attr {
-  let Spellings = [GNU<"nosvm">];
-  let Subjects = SubjectList<[Var]>;
-  let Documentation = [OpenCLNoSVMDocs];
-  let LangOpts = [OpenCL];
-  let ASTNode = 0;
-}
+// def OpenCLNoSVM : Attr {
+//   let Spellings = [GNU<"nosvm">];
+//   let Subjects = SubjectList<[Var]>;
+//   let Documentation = [OpenCLNoSVMDocs];
+//   let LangOpts = [OpenCL];
+//   let ASTNode = 0;
+// }
 
 def RenderScriptKernel : Attr {
   let Spellings = [GNU<"kernel">];
@@ -1282,7 +1282,7 @@ def NoMerge : StmtAttr {
 def FastCall : DeclOrTypeAttr {
   let Spellings = [GCC<"fastcall">, Keyword<"__fastcall">,
                    Keyword<"_fastcall">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>;// [Function/*, ObjCMethod*/];
   let Documentation = [FastCallDocs];
 }
 
@@ -1446,7 +1446,7 @@ def MIGServerRoutine : InheritableAttr {
 
 def MSABI : DeclOrTypeAttr {
   let Spellings = [GCC<"ms_abi">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [MSABIDocs];
 }
 
@@ -2049,13 +2049,13 @@ def Ownership : InheritableAttr {
 
 def Packed : InheritableAttr {
   let Spellings = [GCC<"packed">];
-//  let Subjects = [Tag, Field];
+  let Subjects = SubjectList<[Tag, Field]>;
   let Documentation = [Undocumented];
 }
 
 def IntelOclBicc : DeclOrTypeAttr {
   let Spellings = [Clang<"intel_ocl_bicc", 0>];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
@@ -2064,7 +2064,7 @@ def Pcs : DeclOrTypeAttr {
   let Args = [EnumArgument<"PCS", "PCSType",
                            ["aapcs", "aapcs-vfp"],
                            ["AAPCS", "AAPCS_VFP"]>];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [PcsDocs];
 }
 
@@ -2185,7 +2185,7 @@ def Sentinel : InheritableAttr {
 
 def StdCall : DeclOrTypeAttr {
   let Spellings = [GCC<"stdcall">, Keyword<"__stdcall">, Keyword<"_stdcall">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [StdCallDocs];
 }
 
@@ -2218,27 +2218,27 @@ def Suppress : StmtAttr {
 
 def SysVABI : DeclOrTypeAttr {
   let Spellings = [GCC<"sysv_abi">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
 def ThisCall : DeclOrTypeAttr {
   let Spellings = [GCC<"thiscall">, Keyword<"__thiscall">,
                    Keyword<"_thiscall">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [ThisCallDocs];
 }
 
 def VectorCall : DeclOrTypeAttr {
   let Spellings = [Clang<"vectorcall">, Keyword<"__vectorcall">,
                    Keyword<"_vectorcall">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [VectorCallDocs];
 }
 
 def Pascal : DeclOrTypeAttr {
   let Spellings = [Clang<"pascal">, Keyword<"__pascal">, Keyword<"_pascal">];
-  let Subjects = [Function/*, ObjCMethod*/];
+  let Subjects = SubjectList<[Function]>; // [Function/*, ObjCMethod*/];
   let Documentation = [Undocumented];
 }
 
@@ -2354,7 +2354,7 @@ def MinVectorWidth : InheritableAttr {
 
 def TransparentUnion : InheritableAttr {
   let Spellings = [GCC<"transparent_union">];
-//  let Subjects = SubjectList<[Record, TypedefName]>;
+  let Subjects = SubjectList<[Record, TypedefName]>;
   let Documentation = [TransparentUnionDocs];
   let LangOpts = [COnly];
 }
@@ -2378,7 +2378,7 @@ def DiagnoseIf : InheritableAttr {
   // to parse function arguments but the attribute is not written in the type
   // position.
   let Spellings = [GNU<"diagnose_if">];
-  let Subjects = SubjectList<[Function, /*ObjCMethod, ObjCProperty*/]>;
+  let Subjects = SubjectList<[Function/*, ObjCMethod, ObjCProperty*/]>;
   let Args = [ExprArgument<"Cond">, StringArgument<"Message">,
               EnumArgument<"DiagnosticType",
                            "DiagnosticType",
@@ -2396,12 +2396,12 @@ def DiagnoseIf : InheritableAttr {
   let Documentation = [DiagnoseIfDocs];
 }
 
-def ArcWeakrefUnavailable : InheritableAttr {
-  let Spellings = [Clang<"objc_arc_weak_reference_unavailable">];
-  // let Subjects = SubjectList<[ObjCInterface], ErrorDiag>;
-  let Documentation = [Undocumented];
-  let SimpleHandler = 1;
-}
+// def ArcWeakrefUnavailable : InheritableAttr {
+//   let Spellings = [Clang<"objc_arc_weak_reference_unavailable">];
+//   let Subjects = SubjectList</*[ObjCInterface],*/ [ErrorDiag]>;
+//   let Documentation = [Undocumented];
+//   let SimpleHandler = 1;
+// }
 
 // def ObjCGC : TypeAttr {
 //   let Spellings = [Clang<"objc_gc">];
@@ -2489,7 +2489,7 @@ def TypeVisibility : InheritableAttr {
   let Args = [EnumArgument<"Visibility", "VisibilityType",
                            ["default", "hidden", "internal", "protected"],
                            ["Default", "Hidden", "Hidden", "Protected"]>];
-  let Subjects = [Tag, /*ObjCInterface,*/ Namespace];
+  let Subjects = SubjectList<[Tag, Namespace]>;//[Tag, /*ObjCInterface,*/ Namespace];
   let Documentation = [Undocumented];
 }
 
@@ -2977,7 +2977,7 @@ def TypeTagForDatatype : InheritableAttr {
               TypeArgument<"MatchingCType">,
               BoolArgument<"LayoutCompatible">,
               BoolArgument<"MustBeNull">];
-//  let Subjects = SubjectList<[Var], ErrorDiag>;
+  let Subjects = SubjectList<[Var], ErrorDiag>;
   let HasCustomParsing = 1;
   let Documentation = [TypeTagForDatatypeDocs];
 }
@@ -3229,125 +3229,125 @@ def CapturedRecord : InheritableAttr {
   let Documentation = [Undocumented];
 }
 
-def OMPThreadPrivateDecl : InheritableAttr {
-  // This attribute has no spellings as it is only ever created implicitly.
-  let Spellings = [];
-  let SemaHandler = 0;
-  let Documentation = [Undocumented];
-}
+// def OMPThreadPrivateDecl : InheritableAttr {
+//   // This attribute has no spellings as it is only ever created implicitly.
+//   let Spellings = [];
+//   let SemaHandler = 0;
+//   let Documentation = [Undocumented];
+// }
 
-def OMPCaptureNoInit : InheritableAttr {
-  // This attribute has no spellings as it is only ever created implicitly.
-  let Spellings = [];
-  let SemaHandler = 0;
-  let Documentation = [Undocumented];
-}
+// def OMPCaptureNoInit : InheritableAttr {
+//   // This attribute has no spellings as it is only ever created implicitly.
+//   let Spellings = [];
+//   let SemaHandler = 0;
+//   let Documentation = [Undocumented];
+// }
 
-def OMPCaptureKind : Attr {
-  // This attribute has no spellings as it is only ever created implicitly.
-  let Spellings = [];
-  let SemaHandler = 0;
-  let Args = [UnsignedArgument<"CaptureKindVal">];
-  let Documentation = [Undocumented];
-  let AdditionalMembers = [{
-    llvm::omp::Clause getCaptureKind() const {
-      return static_cast<llvm::omp::Clause>(getCaptureKindVal());
-    }
-  }];
-}
+// def OMPCaptureKind : Attr {
+//   // This attribute has no spellings as it is only ever created implicitly.
+//   let Spellings = [];
+//   let SemaHandler = 0;
+//   let Args = [UnsignedArgument<"CaptureKindVal">];
+//   let Documentation = [Undocumented];
+//   let AdditionalMembers = [{
+//     llvm::omp::Clause getCaptureKind() const {
+//       return static_cast<llvm::omp::Clause>(getCaptureKindVal());
+//     }
+//   }];
+// }
 
-def OMPReferencedVar : Attr {
-  // This attribute has no spellings as it is only ever created implicitly.
-  let Spellings = [];
-  let SemaHandler = 0;
-  let Args = [ExprArgument<"Ref">];
-  let Documentation = [Undocumented];
-}
+// def OMPReferencedVar : Attr {
+//   // This attribute has no spellings as it is only ever created implicitly.
+//   let Spellings = [];
+//   let SemaHandler = 0;
+//   let Args = [ExprArgument<"Ref">];
+//   let Documentation = [Undocumented];
+// }
 
-def OMPDeclareSimdDecl : Attr {
-  let Spellings = [Pragma<"omp", "declare simd">];
-  let Subjects = SubjectList<[Function]>;
-  let SemaHandler = 0;
-  let HasCustomParsing = 1;
-  let Documentation = [OMPDeclareSimdDocs];
-  let Args = [
-    EnumArgument<"BranchState", "BranchStateTy",
-                 [ "", "inbranch", "notinbranch" ],
-                 [ "BS_Undefined", "BS_Inbranch", "BS_Notinbranch" ]>,
-    ExprArgument<"Simdlen">, VariadicExprArgument<"Uniforms">,
-    VariadicExprArgument<"Aligneds">, VariadicExprArgument<"Alignments">,
-    VariadicExprArgument<"Linears">, VariadicUnsignedArgument<"Modifiers">,
-    VariadicExprArgument<"Steps">
-  ];
-  let AdditionalMembers = [{
-    void printPrettyPragma(raw_ostream & OS, const PrintingPolicy &Policy)
-        const;
-  }];
-}
+// def OMPDeclareSimdDecl : Attr {
+//   let Spellings = [Pragma<"omp", "declare simd">];
+//   let Subjects = SubjectList<[Function]>;
+//   let SemaHandler = 0;
+//   let HasCustomParsing = 1;
+//   let Documentation = [OMPDeclareSimdDocs];
+//   let Args = [
+//     EnumArgument<"BranchState", "BranchStateTy",
+//                  [ "", "inbranch", "notinbranch" ],
+//                  [ "BS_Undefined", "BS_Inbranch", "BS_Notinbranch" ]>,
+//     ExprArgument<"Simdlen">, VariadicExprArgument<"Uniforms">,
+//     VariadicExprArgument<"Aligneds">, VariadicExprArgument<"Alignments">,
+//     VariadicExprArgument<"Linears">, VariadicUnsignedArgument<"Modifiers">,
+//     VariadicExprArgument<"Steps">
+//   ];
+//   let AdditionalMembers = [{
+//     void printPrettyPragma(raw_ostream & OS, const PrintingPolicy &Policy)
+//         const;
+//   }];
+// }
 
-def OMPDeclareTargetDecl : InheritableAttr {
-  let Spellings = [Pragma<"omp", "declare target">];
-  let SemaHandler = 0;
-  let Subjects = SubjectList<[Function, SharedVar]>;
-  let Documentation = [OMPDeclareTargetDocs];
-  let Args = [
-    EnumArgument<"MapType", "MapTypeTy",
-                 [ "to", "link" ],
-                 [ "MT_To", "MT_Link" ]>,
-    EnumArgument<"DevType", "DevTypeTy",
-                 [ "host", "nohost", "any" ],
-                 [ "DT_Host", "DT_NoHost", "DT_Any" ]>
-  ];
-  let AdditionalMembers = [{
-    void printPrettyPragma(raw_ostream &OS, const PrintingPolicy &Policy) const;
-    static llvm::Optional<MapTypeTy>
-    isDeclareTargetDeclaration(const ValueDecl *VD);
-    static llvm::Optional<DevTypeTy> getDeviceType(const ValueDecl *VD);
-  }];
-}
+// def OMPDeclareTargetDecl : InheritableAttr {
+//   let Spellings = [Pragma<"omp", "declare target">];
+//   let SemaHandler = 0;
+//   let Subjects = SubjectList<[Function, SharedVar]>;
+//   let Documentation = [OMPDeclareTargetDocs];
+//   let Args = [
+//     EnumArgument<"MapType", "MapTypeTy",
+//                  [ "to", "link" ],
+//                  [ "MT_To", "MT_Link" ]>,
+//     EnumArgument<"DevType", "DevTypeTy",
+//                  [ "host", "nohost", "any" ],
+//                  [ "DT_Host", "DT_NoHost", "DT_Any" ]>
+//   ];
+//   let AdditionalMembers = [{
+//     void printPrettyPragma(raw_ostream &OS, const PrintingPolicy &Policy) const;
+//     static llvm::Optional<MapTypeTy>
+//     isDeclareTargetDeclaration(const ValueDecl *VD);
+//     static llvm::Optional<DevTypeTy> getDeviceType(const ValueDecl *VD);
+//   }];
+// }
 
-def OMPAllocateDecl : InheritableAttr {
-  // This attribute has no spellings as it is only ever created implicitly.
-  let Spellings = [];
-  let SemaHandler = 0;
-  let Args = [
-    EnumArgument<"AllocatorType", "AllocatorTypeTy",
-                 [
-                   "omp_null_allocator", "omp_default_mem_alloc",
-                   "omp_large_cap_mem_alloc", "omp_const_mem_alloc",
-                   "omp_high_bw_mem_alloc", "omp_low_lat_mem_alloc",
-                   "omp_cgroup_mem_alloc", "omp_pteam_mem_alloc",
-                   "omp_thread_mem_alloc", ""
-                 ],
-                 [
-                   "OMPNullMemAlloc", "OMPDefaultMemAlloc",
-                   "OMPLargeCapMemAlloc", "OMPConstMemAlloc",
-                   "OMPHighBWMemAlloc", "OMPLowLatMemAlloc",
-                   "OMPCGroupMemAlloc", "OMPPTeamMemAlloc", "OMPThreadMemAlloc",
-                   "OMPUserDefinedMemAlloc"
-                 ]>,
-    ExprArgument<"Allocator">
-  ];
-  let Documentation = [Undocumented];
-}
+// def OMPAllocateDecl : InheritableAttr {
+//   // This attribute has no spellings as it is only ever created implicitly.
+//   let Spellings = [];
+//   let SemaHandler = 0;
+//   let Args = [
+//     EnumArgument<"AllocatorType", "AllocatorTypeTy",
+//                  [
+//                    "omp_null_allocator", "omp_default_mem_alloc",
+//                    "omp_large_cap_mem_alloc", "omp_const_mem_alloc",
+//                    "omp_high_bw_mem_alloc", "omp_low_lat_mem_alloc",
+//                    "omp_cgroup_mem_alloc", "omp_pteam_mem_alloc",
+//                    "omp_thread_mem_alloc", ""
+//                  ],
+//                  [
+//                    "OMPNullMemAlloc", "OMPDefaultMemAlloc",
+//                    "OMPLargeCapMemAlloc", "OMPConstMemAlloc",
+//                    "OMPHighBWMemAlloc", "OMPLowLatMemAlloc",
+//                    "OMPCGroupMemAlloc", "OMPPTeamMemAlloc", "OMPThreadMemAlloc",
+//                    "OMPUserDefinedMemAlloc"
+//                  ]>,
+//     ExprArgument<"Allocator">
+//   ];
+//   let Documentation = [Undocumented];
+// }
 
-def OMPDeclareVariant : InheritableAttr {
-  let Spellings = [Pragma<"omp", "declare variant">];
-  let Subjects = SubjectList<[Function]>;
-  let SemaHandler = 0;
-  let HasCustomParsing = 1;
-  let InheritEvenIfAlreadyPresent = 1;
-  let Documentation = [OMPDeclareVariantDocs];
-  let Args = [
-    ExprArgument<"VariantFuncRef">,
-    OMPTraitInfoArgument<"TraitInfos">,
-  ];
-  let AdditionalMembers = [{
-    OMPTraitInfo &getTraitInfo() { return *traitInfos; }
-    void printPrettyPragma(raw_ostream & OS, const PrintingPolicy &Policy)
-        const;
-  }];
-}
+// def OMPDeclareVariant : InheritableAttr {
+//   let Spellings = [Pragma<"omp", "declare variant">];
+//   let Subjects = SubjectList<[Function]>;
+//   let SemaHandler = 0;
+//   let HasCustomParsing = 1;
+//   let InheritEvenIfAlreadyPresent = 1;
+//   let Documentation = [OMPDeclareVariantDocs];
+//   let Args = [
+//     ExprArgument<"VariantFuncRef">,
+//     OMPTraitInfoArgument<"TraitInfos">,
+//   ];
+//   let AdditionalMembers = [{
+//     OMPTraitInfo &getTraitInfo() { return *traitInfos; }
+//     void printPrettyPragma(raw_ostream & OS, const PrintingPolicy &Policy)
+//         const;
+//   }];
+// }
 
 def InternalLinkage : InheritableAttr {
   let Spellings = [Clang<"internal_linkage">];

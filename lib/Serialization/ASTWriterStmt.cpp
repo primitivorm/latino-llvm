@@ -11,12 +11,12 @@
 ///
 //===----------------------------------------------------------------------===//
 
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/Serialization/ASTRecordWriter.h"
 #include "latino/Sema/DeclSpec.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/Lex/Token.h"
@@ -794,56 +794,56 @@ void ASTStmtWriter::VisitMatrixSubscriptExpr(MatrixSubscriptExpr *E) {
   Code = serialization::EXPR_ARRAY_SUBSCRIPT;
 }
 
-void ASTStmtWriter::VisitOMPArraySectionExpr(OMPArraySectionExpr *E) {
-  VisitExpr(E);
-  Record.AddStmt(E->getBase());
-  Record.AddStmt(E->getLowerBound());
-  Record.AddStmt(E->getLength());
-  Record.AddStmt(E->getStride());
-  Record.AddSourceLocation(E->getColonLocFirst());
-  Record.AddSourceLocation(E->getColonLocSecond());
-  Record.AddSourceLocation(E->getRBracketLoc());
-  Code = serialization::EXPR_OMP_ARRAY_SECTION;
-}
+// void ASTStmtWriter::VisitOMPArraySectionExpr(OMPArraySectionExpr *E) {
+//   VisitExpr(E);
+//   Record.AddStmt(E->getBase());
+//   Record.AddStmt(E->getLowerBound());
+//   Record.AddStmt(E->getLength());
+//   Record.AddStmt(E->getStride());
+//   Record.AddSourceLocation(E->getColonLocFirst());
+//   Record.AddSourceLocation(E->getColonLocSecond());
+//   Record.AddSourceLocation(E->getRBracketLoc());
+//   Code = serialization::EXPR_OMP_ARRAY_SECTION;
+// }
 
-void ASTStmtWriter::VisitOMPArrayShapingExpr(OMPArrayShapingExpr *E) {
-  VisitExpr(E);
-  Record.push_back(E->getDimensions().size());
-  Record.AddStmt(E->getBase());
-  for (Expr *Dim : E->getDimensions())
-    Record.AddStmt(Dim);
-  for (SourceRange SR : E->getBracketsRanges())
-    Record.AddSourceRange(SR);
-  Record.AddSourceLocation(E->getLParenLoc());
-  Record.AddSourceLocation(E->getRParenLoc());
-  Code = serialization::EXPR_OMP_ARRAY_SHAPING;
-}
+// void ASTStmtWriter::VisitOMPArrayShapingExpr(OMPArrayShapingExpr *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->getDimensions().size());
+//   Record.AddStmt(E->getBase());
+//   for (Expr *Dim : E->getDimensions())
+//     Record.AddStmt(Dim);
+//   for (SourceRange SR : E->getBracketsRanges())
+//     Record.AddSourceRange(SR);
+//   Record.AddSourceLocation(E->getLParenLoc());
+//   Record.AddSourceLocation(E->getRParenLoc());
+//   Code = serialization::EXPR_OMP_ARRAY_SHAPING;
+// }
 
-void ASTStmtWriter::VisitOMPIteratorExpr(OMPIteratorExpr *E) {
-  VisitExpr(E);
-  Record.push_back(E->numOfIterators());
-  Record.AddSourceLocation(E->getIteratorKwLoc());
-  Record.AddSourceLocation(E->getLParenLoc());
-  Record.AddSourceLocation(E->getRParenLoc());
-  for (unsigned I = 0, End = E->numOfIterators(); I < End; ++I) {
-    Record.AddDeclRef(E->getIteratorDecl(I));
-    Record.AddSourceLocation(E->getAssignLoc(I));
-    OMPIteratorExpr::IteratorRange Range = E->getIteratorRange(I);
-    Record.AddStmt(Range.Begin);
-    Record.AddStmt(Range.End);
-    Record.AddStmt(Range.Step);
-    Record.AddSourceLocation(E->getColonLoc(I));
-    if (Range.Step)
-      Record.AddSourceLocation(E->getSecondColonLoc(I));
-    // Serialize helpers
-    OMPIteratorHelperData &HD = E->getHelper(I);
-    Record.AddDeclRef(HD.CounterVD);
-    Record.AddStmt(HD.Upper);
-    Record.AddStmt(HD.Update);
-    Record.AddStmt(HD.CounterUpdate);
-  }
-  Code = serialization::EXPR_OMP_ITERATOR;
-}
+// void ASTStmtWriter::VisitOMPIteratorExpr(OMPIteratorExpr *E) {
+//   VisitExpr(E);
+//   Record.push_back(E->numOfIterators());
+//   Record.AddSourceLocation(E->getIteratorKwLoc());
+//   Record.AddSourceLocation(E->getLParenLoc());
+//   Record.AddSourceLocation(E->getRParenLoc());
+//   for (unsigned I = 0, End = E->numOfIterators(); I < End; ++I) {
+//     Record.AddDeclRef(E->getIteratorDecl(I));
+//     Record.AddSourceLocation(E->getAssignLoc(I));
+//     OMPIteratorExpr::IteratorRange Range = E->getIteratorRange(I);
+//     Record.AddStmt(Range.Begin);
+//     Record.AddStmt(Range.End);
+//     Record.AddStmt(Range.Step);
+//     Record.AddSourceLocation(E->getColonLoc(I));
+//     if (Range.Step)
+//       Record.AddSourceLocation(E->getSecondColonLoc(I));
+//     // Serialize helpers
+//     OMPIteratorHelperData &HD = E->getHelper(I);
+//     Record.AddDeclRef(HD.CounterVD);
+//     Record.AddStmt(HD.Upper);
+//     Record.AddStmt(HD.Update);
+//     Record.AddStmt(HD.CounterUpdate);
+//   }
+//   Code = serialization::EXPR_OMP_ITERATOR;
+// }
 
 void ASTStmtWriter::VisitCallExpr(CallExpr *E) {
   VisitExpr(E);
@@ -1432,28 +1432,28 @@ void ASTStmtWriter::VisitAtomicExpr(AtomicExpr *E) {
 //   Code = serialization::STMT_OBJC_FOR_COLLECTION;
 // }
 
-void ASTStmtWriter::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
-  VisitStmt(S);
-  Record.AddStmt(S->getCatchBody());
-  Record.AddDeclRef(S->getCatchParamDecl());
-  Record.AddSourceLocation(S->getAtCatchLoc());
-  Record.AddSourceLocation(S->getRParenLoc());
-  Code = serialization::STMT_OBJC_CATCH;
-}
+// void ASTStmtWriter::VisitObjCAtCatchStmt(ObjCAtCatchStmt *S) {
+//   VisitStmt(S);
+//   Record.AddStmt(S->getCatchBody());
+//   Record.AddDeclRef(S->getCatchParamDecl());
+//   Record.AddSourceLocation(S->getAtCatchLoc());
+//   Record.AddSourceLocation(S->getRParenLoc());
+//   Code = serialization::STMT_OBJC_CATCH;
+// }
 
-void ASTStmtWriter::VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *S) {
-  VisitStmt(S);
-  Record.AddStmt(S->getFinallyBody());
-  Record.AddSourceLocation(S->getAtFinallyLoc());
-  Code = serialization::STMT_OBJC_FINALLY;
-}
+// void ASTStmtWriter::VisitObjCAtFinallyStmt(ObjCAtFinallyStmt *S) {
+//   VisitStmt(S);
+//   Record.AddStmt(S->getFinallyBody());
+//   Record.AddSourceLocation(S->getAtFinallyLoc());
+//   Code = serialization::STMT_OBJC_FINALLY;
+// }
 
-void ASTStmtWriter::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
-  VisitStmt(S); // FIXME: no test coverage.
-  Record.AddStmt(S->getSubStmt());
-  Record.AddSourceLocation(S->getAtLoc());
-  Code = serialization::STMT_OBJC_AUTORELEASE_POOL;
-}
+// void ASTStmtWriter::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
+//   VisitStmt(S); // FIXME: no test coverage.
+//   Record.AddStmt(S->getSubStmt());
+//   Record.AddSourceLocation(S->getAtLoc());
+//   Code = serialization::STMT_OBJC_AUTORELEASE_POOL;
+// }
 
 // void ASTStmtWriter::VisitObjCAtTryStmt(ObjCAtTryStmt *S) {
 //   VisitStmt(S);
@@ -1490,12 +1490,12 @@ void ASTStmtWriter::VisitObjCAutoreleasePoolStmt(ObjCAutoreleasePoolStmt *S) {
 //   Code = serialization::EXPR_OBJC_BOOL_LITERAL;
 // }
 
-void ASTStmtWriter::VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
-  VisitExpr(E);
-  Record.AddSourceRange(E->getSourceRange());
-  Record.AddVersionTuple(E->getVersion());
-  Code = serialization::EXPR_OBJC_AVAILABILITY_CHECK;
-}
+// void ASTStmtWriter::VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
+//   VisitExpr(E);
+//   Record.AddSourceRange(E->getSourceRange());
+//   Record.AddVersionTuple(E->getVersion());
+//   Code = serialization::EXPR_OBJC_AVAILABILITY_CHECK;
+// }
 
 //===----------------------------------------------------------------------===//
 // C++ Expressions and Statements.
@@ -2157,459 +2157,459 @@ void ASTStmtWriter::VisitSEHLeaveStmt(SEHLeaveStmt *S) {
 //===----------------------------------------------------------------------===//
 // OpenMP Directives.
 //===----------------------------------------------------------------------===//
-void ASTStmtWriter::VisitOMPExecutableDirective(OMPExecutableDirective *E) {
-  Record.AddSourceLocation(E->getBeginLoc());
-  Record.AddSourceLocation(E->getEndLoc());
-  for (unsigned i = 0; i < E->getNumClauses(); ++i) {
-    Record.writeOMPClause(E->getClause(i));
-  }
-  if (E->hasAssociatedStmt())
-    Record.AddStmt(E->getAssociatedStmt());
-}
+// void ASTStmtWriter::VisitOMPExecutableDirective(OMPExecutableDirective *E) {
+//   Record.AddSourceLocation(E->getBeginLoc());
+//   Record.AddSourceLocation(E->getEndLoc());
+//   for (unsigned i = 0; i < E->getNumClauses(); ++i) {
+//     Record.writeOMPClause(E->getClause(i));
+//   }
+//   if (E->hasAssociatedStmt())
+//     Record.AddStmt(E->getAssociatedStmt());
+// }
 
-void ASTStmtWriter::VisitOMPLoopDirective(OMPLoopDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  Record.push_back(D->getCollapsedNumber());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getIterationVariable());
-  Record.AddStmt(D->getLastIteration());
-  Record.AddStmt(D->getCalcLastIteration());
-  Record.AddStmt(D->getPreCond());
-  Record.AddStmt(D->getCond());
-  Record.AddStmt(D->getInit());
-  Record.AddStmt(D->getInc());
-  Record.AddStmt(D->getPreInits());
-  if (isOpenMPWorksharingDirective(D->getDirectiveKind()) ||
-      isOpenMPTaskLoopDirective(D->getDirectiveKind()) ||
-      isOpenMPDistributeDirective(D->getDirectiveKind())) {
-    Record.AddStmt(D->getIsLastIterVariable());
-    Record.AddStmt(D->getLowerBoundVariable());
-    Record.AddStmt(D->getUpperBoundVariable());
-    Record.AddStmt(D->getStrideVariable());
-    Record.AddStmt(D->getEnsureUpperBound());
-    Record.AddStmt(D->getNextLowerBound());
-    Record.AddStmt(D->getNextUpperBound());
-    Record.AddStmt(D->getNumIterations());
-  }
-  if (isOpenMPLoopBoundSharingDirective(D->getDirectiveKind())) {
-    Record.AddStmt(D->getPrevLowerBoundVariable());
-    Record.AddStmt(D->getPrevUpperBoundVariable());
-    Record.AddStmt(D->getDistInc());
-    Record.AddStmt(D->getPrevEnsureUpperBound());
-    Record.AddStmt(D->getCombinedLowerBoundVariable());
-    Record.AddStmt(D->getCombinedUpperBoundVariable());
-    Record.AddStmt(D->getCombinedEnsureUpperBound());
-    Record.AddStmt(D->getCombinedInit());
-    Record.AddStmt(D->getCombinedCond());
-    Record.AddStmt(D->getCombinedNextLowerBound());
-    Record.AddStmt(D->getCombinedNextUpperBound());
-    Record.AddStmt(D->getCombinedDistCond());
-    Record.AddStmt(D->getCombinedParForInDistCond());
-  }
-  for (auto I : D->counters()) {
-    Record.AddStmt(I);
-  }
-  for (auto I : D->private_counters()) {
-    Record.AddStmt(I);
-  }
-  for (auto I : D->inits()) {
-    Record.AddStmt(I);
-  }
-  for (auto I : D->updates()) {
-    Record.AddStmt(I);
-  }
-  for (auto I : D->finals()) {
-    Record.AddStmt(I);
-  }
-  for (Stmt *S : D->dependent_counters())
-    Record.AddStmt(S);
-  for (Stmt *S : D->dependent_inits())
-    Record.AddStmt(S);
-  for (Stmt *S : D->finals_conditions())
-    Record.AddStmt(S);
-}
+// void ASTStmtWriter::VisitOMPLoopDirective(OMPLoopDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   Record.push_back(D->getCollapsedNumber());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getIterationVariable());
+//   Record.AddStmt(D->getLastIteration());
+//   Record.AddStmt(D->getCalcLastIteration());
+//   Record.AddStmt(D->getPreCond());
+//   Record.AddStmt(D->getCond());
+//   Record.AddStmt(D->getInit());
+//   Record.AddStmt(D->getInc());
+//   Record.AddStmt(D->getPreInits());
+//   if (isOpenMPWorksharingDirective(D->getDirectiveKind()) ||
+//       isOpenMPTaskLoopDirective(D->getDirectiveKind()) ||
+//       isOpenMPDistributeDirective(D->getDirectiveKind())) {
+//     Record.AddStmt(D->getIsLastIterVariable());
+//     Record.AddStmt(D->getLowerBoundVariable());
+//     Record.AddStmt(D->getUpperBoundVariable());
+//     Record.AddStmt(D->getStrideVariable());
+//     Record.AddStmt(D->getEnsureUpperBound());
+//     Record.AddStmt(D->getNextLowerBound());
+//     Record.AddStmt(D->getNextUpperBound());
+//     Record.AddStmt(D->getNumIterations());
+//   }
+//   if (isOpenMPLoopBoundSharingDirective(D->getDirectiveKind())) {
+//     Record.AddStmt(D->getPrevLowerBoundVariable());
+//     Record.AddStmt(D->getPrevUpperBoundVariable());
+//     Record.AddStmt(D->getDistInc());
+//     Record.AddStmt(D->getPrevEnsureUpperBound());
+//     Record.AddStmt(D->getCombinedLowerBoundVariable());
+//     Record.AddStmt(D->getCombinedUpperBoundVariable());
+//     Record.AddStmt(D->getCombinedEnsureUpperBound());
+//     Record.AddStmt(D->getCombinedInit());
+//     Record.AddStmt(D->getCombinedCond());
+//     Record.AddStmt(D->getCombinedNextLowerBound());
+//     Record.AddStmt(D->getCombinedNextUpperBound());
+//     Record.AddStmt(D->getCombinedDistCond());
+//     Record.AddStmt(D->getCombinedParForInDistCond());
+//   }
+//   for (auto I : D->counters()) {
+//     Record.AddStmt(I);
+//   }
+//   for (auto I : D->private_counters()) {
+//     Record.AddStmt(I);
+//   }
+//   for (auto I : D->inits()) {
+//     Record.AddStmt(I);
+//   }
+//   for (auto I : D->updates()) {
+//     Record.AddStmt(I);
+//   }
+//   for (auto I : D->finals()) {
+//     Record.AddStmt(I);
+//   }
+//   for (Stmt *S : D->dependent_counters())
+//     Record.AddStmt(S);
+//   for (Stmt *S : D->dependent_inits())
+//     Record.AddStmt(S);
+//   for (Stmt *S : D->finals_conditions())
+//     Record.AddStmt(S);
+// }
 
-void ASTStmtWriter::VisitOMPParallelDirective(OMPParallelDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_PARALLEL_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelDirective(OMPParallelDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_PARALLEL_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPSimdDirective(OMPSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPSimdDirective(OMPSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPForDirective(OMPForDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_FOR_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPForDirective(OMPForDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_FOR_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPForSimdDirective(OMPForSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_FOR_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPForSimdDirective(OMPForSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_FOR_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPSectionsDirective(OMPSectionsDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_SECTIONS_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPSectionsDirective(OMPSectionsDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_SECTIONS_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPSectionDirective(OMPSectionDirective *D) {
-  VisitStmt(D);
-  VisitOMPExecutableDirective(D);
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_SECTION_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPSectionDirective(OMPSectionDirective *D) {
+//   VisitStmt(D);
+//   VisitOMPExecutableDirective(D);
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_SECTION_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPSingleDirective(OMPSingleDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_SINGLE_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPSingleDirective(OMPSingleDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_SINGLE_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPMasterDirective(OMPMasterDirective *D) {
-  VisitStmt(D);
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_MASTER_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPMasterDirective(OMPMasterDirective *D) {
+//   VisitStmt(D);
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_MASTER_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPCriticalDirective(OMPCriticalDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddDeclarationNameInfo(D->getDirectiveName());
-  Code = serialization::STMT_OMP_CRITICAL_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPCriticalDirective(OMPCriticalDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddDeclarationNameInfo(D->getDirectiveName());
+//   Code = serialization::STMT_OMP_CRITICAL_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPParallelForDirective(OMPParallelForDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_PARALLEL_FOR_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelForDirective(OMPParallelForDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_PARALLEL_FOR_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPParallelForSimdDirective(
-    OMPParallelForSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_PARALLEL_FOR_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelForSimdDirective(
+//     OMPParallelForSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_PARALLEL_FOR_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPParallelMasterDirective(
-    OMPParallelMasterDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Code = serialization::STMT_OMP_PARALLEL_MASTER_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelMasterDirective(
+//     OMPParallelMasterDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Code = serialization::STMT_OMP_PARALLEL_MASTER_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPParallelSectionsDirective(
-    OMPParallelSectionsDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_PARALLEL_SECTIONS_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelSectionsDirective(
+//     OMPParallelSectionsDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_PARALLEL_SECTIONS_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTaskDirective(OMPTaskDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_TASK_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTaskDirective(OMPTaskDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_TASK_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPAtomicDirective(OMPAtomicDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getX());
-  Record.AddStmt(D->getV());
-  Record.AddStmt(D->getExpr());
-  Record.AddStmt(D->getUpdateExpr());
-  Record.push_back(D->isXLHSInRHSPart() ? 1 : 0);
-  Record.push_back(D->isPostfixUpdate() ? 1 : 0);
-  Code = serialization::STMT_OMP_ATOMIC_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPAtomicDirective(OMPAtomicDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getX());
+//   Record.AddStmt(D->getV());
+//   Record.AddStmt(D->getExpr());
+//   Record.AddStmt(D->getUpdateExpr());
+//   Record.push_back(D->isXLHSInRHSPart() ? 1 : 0);
+//   Record.push_back(D->isPostfixUpdate() ? 1 : 0);
+//   Code = serialization::STMT_OMP_ATOMIC_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetDirective(OMPTargetDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TARGET_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetDirective(OMPTargetDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetDataDirective(OMPTargetDataDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TARGET_DATA_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetDataDirective(OMPTargetDataDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_DATA_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetEnterDataDirective(
-    OMPTargetEnterDataDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TARGET_ENTER_DATA_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetEnterDataDirective(
+//     OMPTargetEnterDataDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_ENTER_DATA_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetExitDataDirective(
-    OMPTargetExitDataDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TARGET_EXIT_DATA_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetExitDataDirective(
+//     OMPTargetExitDataDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_EXIT_DATA_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetParallelDirective(
-    OMPTargetParallelDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.writeBool(D->hasCancel());
-  Code = serialization::STMT_OMP_TARGET_PARALLEL_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetParallelDirective(
+//     OMPTargetParallelDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.writeBool(D->hasCancel());
+//   Code = serialization::STMT_OMP_TARGET_PARALLEL_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetParallelForDirective(
-    OMPTargetParallelForDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_TARGET_PARALLEL_FOR_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetParallelForDirective(
+//     OMPTargetParallelForDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_TARGET_PARALLEL_FOR_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTaskyieldDirective(OMPTaskyieldDirective *D) {
-  VisitStmt(D);
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TASKYIELD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTaskyieldDirective(OMPTaskyieldDirective *D) {
+//   VisitStmt(D);
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TASKYIELD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPBarrierDirective(OMPBarrierDirective *D) {
-  VisitStmt(D);
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_BARRIER_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPBarrierDirective(OMPBarrierDirective *D) {
+//   VisitStmt(D);
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_BARRIER_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTaskwaitDirective(OMPTaskwaitDirective *D) {
-  VisitStmt(D);
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TASKWAIT_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTaskwaitDirective(OMPTaskwaitDirective *D) {
+//   VisitStmt(D);
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TASKWAIT_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTaskgroupDirective(OMPTaskgroupDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.AddStmt(D->getReductionRef());
-  Code = serialization::STMT_OMP_TASKGROUP_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTaskgroupDirective(OMPTaskgroupDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.AddStmt(D->getReductionRef());
+//   Code = serialization::STMT_OMP_TASKGROUP_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPFlushDirective(OMPFlushDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_FLUSH_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPFlushDirective(OMPFlushDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_FLUSH_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPDepobjDirective(OMPDepobjDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_DEPOBJ_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPDepobjDirective(OMPDepobjDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_DEPOBJ_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPScanDirective(OMPScanDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_SCAN_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPScanDirective(OMPScanDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_SCAN_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPOrderedDirective(OMPOrderedDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_ORDERED_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPOrderedDirective(OMPOrderedDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_ORDERED_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTeamsDirective(OMPTeamsDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TEAMS_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTeamsDirective(OMPTeamsDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TEAMS_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPCancellationPointDirective(
-    OMPCancellationPointDirective *D) {
-  VisitStmt(D);
-  VisitOMPExecutableDirective(D);
-  Record.push_back(uint64_t(D->getCancelRegion()));
-  Code = serialization::STMT_OMP_CANCELLATION_POINT_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPCancellationPointDirective(
+//     OMPCancellationPointDirective *D) {
+//   VisitStmt(D);
+//   VisitOMPExecutableDirective(D);
+//   Record.push_back(uint64_t(D->getCancelRegion()));
+//   Code = serialization::STMT_OMP_CANCELLATION_POINT_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPCancelDirective(OMPCancelDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Record.push_back(uint64_t(D->getCancelRegion()));
-  Code = serialization::STMT_OMP_CANCEL_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPCancelDirective(OMPCancelDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Record.push_back(uint64_t(D->getCancelRegion()));
+//   Code = serialization::STMT_OMP_CANCEL_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTaskLoopDirective(OMPTaskLoopDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_TASKLOOP_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTaskLoopDirective(OMPTaskLoopDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_TASKLOOP_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTaskLoopSimdDirective(OMPTaskLoopSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TASKLOOP_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTaskLoopSimdDirective(OMPTaskLoopSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TASKLOOP_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPMasterTaskLoopDirective(
-    OMPMasterTaskLoopDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_MASTER_TASKLOOP_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPMasterTaskLoopDirective(
+//     OMPMasterTaskLoopDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_MASTER_TASKLOOP_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPMasterTaskLoopSimdDirective(
-    OMPMasterTaskLoopSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_MASTER_TASKLOOP_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPMasterTaskLoopSimdDirective(
+//     OMPMasterTaskLoopSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_MASTER_TASKLOOP_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPParallelMasterTaskLoopDirective(
-    OMPParallelMasterTaskLoopDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_PARALLEL_MASTER_TASKLOOP_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelMasterTaskLoopDirective(
+//     OMPParallelMasterTaskLoopDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_PARALLEL_MASTER_TASKLOOP_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPParallelMasterTaskLoopSimdDirective(
-    OMPParallelMasterTaskLoopSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_PARALLEL_MASTER_TASKLOOP_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPParallelMasterTaskLoopSimdDirective(
+//     OMPParallelMasterTaskLoopSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_PARALLEL_MASTER_TASKLOOP_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPDistributeDirective(OMPDistributeDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_DISTRIBUTE_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPDistributeDirective(OMPDistributeDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_DISTRIBUTE_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetUpdateDirective(OMPTargetUpdateDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TARGET_UPDATE_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetUpdateDirective(OMPTargetUpdateDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_UPDATE_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPDistributeParallelForDirective(
-    OMPDistributeParallelForDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_DISTRIBUTE_PARALLEL_FOR_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPDistributeParallelForDirective(
+//     OMPDistributeParallelForDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_DISTRIBUTE_PARALLEL_FOR_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPDistributeParallelForSimdDirective(
-    OMPDistributeParallelForSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_DISTRIBUTE_PARALLEL_FOR_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPDistributeParallelForSimdDirective(
+//     OMPDistributeParallelForSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_DISTRIBUTE_PARALLEL_FOR_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPDistributeSimdDirective(
-    OMPDistributeSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_DISTRIBUTE_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPDistributeSimdDirective(
+//     OMPDistributeSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_DISTRIBUTE_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetParallelForSimdDirective(
-    OMPTargetParallelForSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TARGET_PARALLEL_FOR_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetParallelForSimdDirective(
+//     OMPTargetParallelForSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_PARALLEL_FOR_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetSimdDirective(OMPTargetSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TARGET_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetSimdDirective(OMPTargetSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTeamsDistributeDirective(
-    OMPTeamsDistributeDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTeamsDistributeDirective(
+//     OMPTeamsDistributeDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTeamsDistributeSimdDirective(
-    OMPTeamsDistributeSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTeamsDistributeSimdDirective(
+//     OMPTeamsDistributeSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTeamsDistributeParallelForSimdDirective(
-    OMPTeamsDistributeParallelForSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_PARALLEL_FOR_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTeamsDistributeParallelForSimdDirective(
+//     OMPTeamsDistributeParallelForSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_PARALLEL_FOR_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTeamsDistributeParallelForDirective(
-    OMPTeamsDistributeParallelForDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_PARALLEL_FOR_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTeamsDistributeParallelForDirective(
+//     OMPTeamsDistributeParallelForDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_TEAMS_DISTRIBUTE_PARALLEL_FOR_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetTeamsDirective(OMPTargetTeamsDirective *D) {
-  VisitStmt(D);
-  Record.push_back(D->getNumClauses());
-  VisitOMPExecutableDirective(D);
-  Code = serialization::STMT_OMP_TARGET_TEAMS_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetTeamsDirective(OMPTargetTeamsDirective *D) {
+//   VisitStmt(D);
+//   Record.push_back(D->getNumClauses());
+//   VisitOMPExecutableDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_TEAMS_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetTeamsDistributeDirective(
-    OMPTargetTeamsDistributeDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TARGET_TEAMS_DISTRIBUTE_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetTeamsDistributeDirective(
+//     OMPTargetTeamsDistributeDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_TEAMS_DISTRIBUTE_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetTeamsDistributeParallelForDirective(
-    OMPTargetTeamsDistributeParallelForDirective *D) {
-  VisitOMPLoopDirective(D);
-  Record.AddStmt(D->getTaskReductionRefExpr());
-  Record.push_back(D->hasCancel() ? 1 : 0);
-  Code = serialization::STMT_OMP_TARGET_TEAMS_DISTRIBUTE_PARALLEL_FOR_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetTeamsDistributeParallelForDirective(
+//     OMPTargetTeamsDistributeParallelForDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Record.AddStmt(D->getTaskReductionRefExpr());
+//   Record.push_back(D->hasCancel() ? 1 : 0);
+//   Code = serialization::STMT_OMP_TARGET_TEAMS_DISTRIBUTE_PARALLEL_FOR_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetTeamsDistributeParallelForSimdDirective(
-    OMPTargetTeamsDistributeParallelForSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::
-      STMT_OMP_TARGET_TEAMS_DISTRIBUTE_PARALLEL_FOR_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetTeamsDistributeParallelForSimdDirective(
+//     OMPTargetTeamsDistributeParallelForSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::
+//       STMT_OMP_TARGET_TEAMS_DISTRIBUTE_PARALLEL_FOR_SIMD_DIRECTIVE;
+// }
 
-void ASTStmtWriter::VisitOMPTargetTeamsDistributeSimdDirective(
-    OMPTargetTeamsDistributeSimdDirective *D) {
-  VisitOMPLoopDirective(D);
-  Code = serialization::STMT_OMP_TARGET_TEAMS_DISTRIBUTE_SIMD_DIRECTIVE;
-}
+// void ASTStmtWriter::VisitOMPTargetTeamsDistributeSimdDirective(
+//     OMPTargetTeamsDistributeSimdDirective *D) {
+//   VisitOMPLoopDirective(D);
+//   Code = serialization::STMT_OMP_TARGET_TEAMS_DISTRIBUTE_SIMD_DIRECTIVE;
+// }
 
 //===----------------------------------------------------------------------===//
 // ASTWriter Implementation

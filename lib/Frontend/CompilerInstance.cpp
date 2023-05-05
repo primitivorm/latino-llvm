@@ -486,7 +486,7 @@ std::string CompilerInstance::getSpecificModuleCachePath() {
 void CompilerInstance::createASTContext() {
   Preprocessor &PP = getPreprocessor();
   auto *Context = new ASTContext(getLangOpts(), PP.getSourceManager(),
-                                 PP.getIdentifierTable(), PP.getSelectorTable(),
+                                 PP.getIdentifierTable(), /*PP.getSelectorTable(),*/
                                  PP.getBuiltinInfo());
   Context->InitBuiltinTypes(getTarget(), getAuxTarget());
   setASTContext(Context);
@@ -920,18 +920,18 @@ bool CompilerInstance::ExecuteAction(FrontendAction &Act) {
     return false;
 
   // Create TargetInfo for the other side of CUDA/OpenMP/SYCL compilation.
-  if ((getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
-       getLangOpts().SYCLIsDevice) &&
-      !getFrontendOpts().AuxTriple.empty()) {
-    auto TO = std::make_shared<TargetOptions>();
-    TO->Triple = llvm::Triple::normalize(getFrontendOpts().AuxTriple);
-    if (getFrontendOpts().AuxTargetCPU)
-      TO->CPU = getFrontendOpts().AuxTargetCPU.getValue();
-    if (getFrontendOpts().AuxTargetFeatures)
-      TO->FeaturesAsWritten = getFrontendOpts().AuxTargetFeatures.getValue();
-    TO->HostTriple = getTarget().getTriple().str();
-    setAuxTarget(TargetInfo::CreateTargetInfo(getDiagnostics(), TO));
-  }
+  // if ((getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
+  //      getLangOpts().SYCLIsDevice) &&
+  //     !getFrontendOpts().AuxTriple.empty()) {
+  //   auto TO = std::make_shared<TargetOptions>();
+  //   TO->Triple = llvm::Triple::normalize(getFrontendOpts().AuxTriple);
+  //   if (getFrontendOpts().AuxTargetCPU)
+  //     TO->CPU = getFrontendOpts().AuxTargetCPU.getValue();
+  //   if (getFrontendOpts().AuxTargetFeatures)
+  //     TO->FeaturesAsWritten = getFrontendOpts().AuxTargetFeatures.getValue();
+  //   TO->HostTriple = getTarget().getTriple().str();
+  //   setAuxTarget(TargetInfo::CreateTargetInfo(getDiagnostics(), TO));
+  // }
 
   if (!getTarget().hasStrictFP() && !getLangOpts().ExpStrictFP) {
     if (getLangOpts().getFPRoundingMode() !=
@@ -1042,8 +1042,8 @@ bool CompilerInstance::ExecuteAction(FrontendAction &Act) {
 /// Determine the appropriate source input kind based on language
 /// options.
 static Language getLanguageFromOptions(const LangOptions &LangOpts) {
-  if (LangOpts.OpenCL)
-    return Language::OpenCL;
+  // if (LangOpts.OpenCL)
+  //   return Language::OpenCL;
   if (LangOpts.CUDA)
     return Language::CUDA;
   // if (LangOpts.ObjC)

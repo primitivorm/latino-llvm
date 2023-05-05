@@ -606,30 +606,30 @@ void Driver::setLTOMode(const llvm::opt::ArgList &Args) {
 }
 
 /// Compute the desired OpenMP runtime from the flags provided.
-Driver::OpenMPRuntimeKind Driver::getOpenMPRuntime(const ArgList &Args) const {
-  StringRef RuntimeName(LATINO_DEFAULT_OPENMP_RUNTIME);
+// Driver::OpenMPRuntimeKind Driver::getOpenMPRuntime(const ArgList &Args) const {
+//   StringRef RuntimeName(LATINO_DEFAULT_OPENMP_RUNTIME);
 
-  const Arg *A = Args.getLastArg(options::OPT_fopenmp_EQ);
-  if (A)
-    RuntimeName = A->getValue();
+//   const Arg *A = Args.getLastArg(options::OPT_fopenmp_EQ);
+//   if (A)
+//     RuntimeName = A->getValue();
 
-  auto RT = llvm::StringSwitch<OpenMPRuntimeKind>(RuntimeName)
-                .Case("libomp", OMPRT_OMP)
-                .Case("libgomp", OMPRT_GOMP)
-                .Case("libiomp5", OMPRT_IOMP5)
-                .Default(OMPRT_Unknown);
+//   auto RT = llvm::StringSwitch<OpenMPRuntimeKind>(RuntimeName)
+//                 .Case("libomp", OMPRT_OMP)
+//                 .Case("libgomp", OMPRT_GOMP)
+//                 .Case("libiomp5", OMPRT_IOMP5)
+//                 .Default(OMPRT_Unknown);
 
-  if (RT == OMPRT_Unknown) {
-    if (A)
-      Diag(diag::err_drv_unsupported_option_argument)
-          << A->getOption().getName() << A->getValue();
-    else
-      // FIXME: We could use a nicer diagnostic here.
-      Diag(diag::err_drv_unsupported_opt) << "-fopenmp";
-  }
+//   if (RT == OMPRT_Unknown) {
+//     if (A)
+//       Diag(diag::err_drv_unsupported_option_argument)
+//           << A->getOption().getName() << A->getValue();
+//     else
+//       // FIXME: We could use a nicer diagnostic here.
+//       Diag(diag::err_drv_unsupported_opt) << "-fopenmp";
+//   }
 
-  return RT;
-}
+//   return RT;
+// }
 
 void Driver::CreateOffloadingDeviceToolChains(Compilation &C,
                                               InputList &Inputs) {
@@ -691,67 +691,67 @@ void Driver::CreateOffloadingDeviceToolChains(Compilation &C,
   //
   // We need to generate an OpenMP toolchain if the user specified targets with
   // the -fopenmp-targets option.
-  if (Arg *OpenMPTargets =
-          C.getInputArgs().getLastArg(options::OPT_fopenmp_targets_EQ)) {
-    if (OpenMPTargets->getNumValues()) {
-      // We expect that -fopenmp-targets is always used in conjunction with the
-      // option -fopenmp specifying a valid runtime with offloading support,
-      // i.e. libomp or libiomp.
-      bool HasValidOpenMPRuntime = C.getInputArgs().hasFlag(
-          options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-          options::OPT_fno_openmp, false);
-      if (HasValidOpenMPRuntime) {
-        OpenMPRuntimeKind OpenMPKind = getOpenMPRuntime(C.getInputArgs());
-        HasValidOpenMPRuntime =
-            OpenMPKind == OMPRT_OMP || OpenMPKind == OMPRT_IOMP5;
-      }
+  // if (Arg *OpenMPTargets =
+  //         C.getInputArgs().getLastArg(options::OPT_fopenmp_targets_EQ)) {
+  //   if (OpenMPTargets->getNumValues()) {
+  //     // We expect that -fopenmp-targets is always used in conjunction with the
+  //     // option -fopenmp specifying a valid runtime with offloading support,
+  //     // i.e. libomp or libiomp.
+  //     bool HasValidOpenMPRuntime = C.getInputArgs().hasFlag(
+  //         options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+  //         options::OPT_fno_openmp, false);
+  //     if (HasValidOpenMPRuntime) {
+  //       OpenMPRuntimeKind OpenMPKind = getOpenMPRuntime(C.getInputArgs());
+  //       HasValidOpenMPRuntime =
+  //           OpenMPKind == OMPRT_OMP || OpenMPKind == OMPRT_IOMP5;
+  //     }
 
-      if (HasValidOpenMPRuntime) {
-        llvm::StringMap<const char *> FoundNormalizedTriples;
-        for (const char *Val : OpenMPTargets->getValues()) {
-          llvm::Triple TT(Val);
-          std::string NormalizedName = TT.normalize();
+  //     if (HasValidOpenMPRuntime) {
+  //       llvm::StringMap<const char *> FoundNormalizedTriples;
+  //       for (const char *Val : OpenMPTargets->getValues()) {
+  //         llvm::Triple TT(Val);
+  //         std::string NormalizedName = TT.normalize();
 
-          // Make sure we don't have a duplicate triple.
-          auto Duplicate = FoundNormalizedTriples.find(NormalizedName);
-          if (Duplicate != FoundNormalizedTriples.end()) {
-            Diag(latino::diag::warn_drv_omp_offload_target_duplicate)
-                << Val << Duplicate->second;
-            continue;
-          }
+  //         // Make sure we don't have a duplicate triple.
+  //         auto Duplicate = FoundNormalizedTriples.find(NormalizedName);
+  //         if (Duplicate != FoundNormalizedTriples.end()) {
+  //           Diag(latino::diag::warn_drv_omp_offload_target_duplicate)
+  //               << Val << Duplicate->second;
+  //           continue;
+  //         }
 
-          // Store the current triple so that we can check for duplicates in the
-          // following iterations.
-          FoundNormalizedTriples[NormalizedName] = Val;
+  //         // Store the current triple so that we can check for duplicates in the
+  //         // following iterations.
+  //         FoundNormalizedTriples[NormalizedName] = Val;
 
-          // If the specified target is invalid, emit a diagnostic.
-          if (TT.getArch() == llvm::Triple::UnknownArch)
-            Diag(latino::diag::err_drv_invalid_omp_target) << Val;
-          else {
-            const ToolChain *TC;
-            // CUDA toolchains have to be selected differently. They pair host
-            // and device in their implementation.
-            if (TT.isNVPTX()) {
-              const ToolChain *HostTC =
-                  C.getSingleOffloadToolChain<Action::OFK_Host>();
-              assert(HostTC && "Host toolchain should be always defined.");
-              auto &CudaTC =
-                  ToolChains[TT.str() + "/" + HostTC->getTriple().normalize()];
-              if (!CudaTC)
-                CudaTC = std::make_unique<toolchains::CudaToolChain>(
-                    *this, TT, *HostTC, C.getInputArgs(), Action::OFK_OpenMP);
-              TC = CudaTC.get();
-            } else
-              TC = &getToolChain(C.getInputArgs(), TT);
-            C.addOffloadDeviceToolChain(TC, Action::OFK_OpenMP);
-          }
-        }
-      } else
-        Diag(latino::diag::err_drv_expecting_fopenmp_with_fopenmp_targets);
-    } else
-      Diag(latino::diag::warn_drv_empty_joined_argument)
-          << OpenMPTargets->getAsString(C.getInputArgs());
-  }
+  //         // If the specified target is invalid, emit a diagnostic.
+  //         if (TT.getArch() == llvm::Triple::UnknownArch)
+  //           Diag(latino::diag::err_drv_invalid_omp_target) << Val;
+  //         else {
+  //           const ToolChain *TC;
+  //           // CUDA toolchains have to be selected differently. They pair host
+  //           // and device in their implementation.
+  //           if (TT.isNVPTX()) {
+  //             const ToolChain *HostTC =
+  //                 C.getSingleOffloadToolChain<Action::OFK_Host>();
+  //             assert(HostTC && "Host toolchain should be always defined.");
+  //             auto &CudaTC =
+  //                 ToolChains[TT.str() + "/" + HostTC->getTriple().normalize()];
+  //             if (!CudaTC)
+  //               CudaTC = std::make_unique<toolchains::CudaToolChain>(
+  //                   *this, TT, *HostTC, C.getInputArgs(), Action::OFK_OpenMP);
+  //             TC = CudaTC.get();
+  //           } else
+  //             TC = &getToolChain(C.getInputArgs(), TT);
+  //           C.addOffloadDeviceToolChain(TC, Action::OFK_OpenMP);
+  //         }
+  //       }
+  //     } else
+  //       Diag(latino::diag::err_drv_expecting_fopenmp_with_fopenmp_targets);
+  //   } else
+  //     Diag(latino::diag::warn_drv_empty_joined_argument)
+  //         << OpenMPTargets->getAsString(C.getInputArgs());
+  // }
 
   //
   // TODO: Add support for other offloading programming models here.
@@ -3883,299 +3883,299 @@ void Driver::BuildJobs(Compilation &C) const {
   }
 }
 
-namespace {
-/// Utility class to control the collapse of dependent actions and select the
-/// tools accordingly.
-class ToolSelector final {
-  /// The tool chain this selector refers to.
-  const ToolChain &TC;
+// namespace {
+// /// Utility class to control the collapse of dependent actions and select the
+// /// tools accordingly.
+// class ToolSelector final {
+//   /// The tool chain this selector refers to.
+//   const ToolChain &TC;
 
-  /// The compilation this selector refers to.
-  const Compilation &C;
+//   /// The compilation this selector refers to.
+//   const Compilation &C;
 
-  /// The base action this selector refers to.
-  const JobAction *BaseAction;
+//   /// The base action this selector refers to.
+//   const JobAction *BaseAction;
 
-  /// Set to true if the current toolchain refers to host actions.
-  bool IsHostSelector;
+//   /// Set to true if the current toolchain refers to host actions.
+//   bool IsHostSelector;
 
-  /// Set to true if save-temps and embed-bitcode functionalities are active.
-  bool SaveTemps;
-  bool EmbedBitcode;
+//   /// Set to true if save-temps and embed-bitcode functionalities are active.
+//   bool SaveTemps;
+//   bool EmbedBitcode;
 
-  /// Get previous dependent action or null if that does not exist. If
-  /// \a CanBeCollapsed is false, that action must be legal to collapse or
-  /// null will be returned.
-  const JobAction *getPrevDependentAction(const ActionList &Inputs,
-                                          ActionList &SavedOffloadAction,
-                                          bool CanBeCollapsed = true) {
-    // An option can be collapsed only if it has a single input.
-    if (Inputs.size() != 1)
-      return nullptr;
+//   /// Get previous dependent action or null if that does not exist. If
+//   /// \a CanBeCollapsed is false, that action must be legal to collapse or
+//   /// null will be returned.
+//   const JobAction *getPrevDependentAction(const ActionList &Inputs,
+//                                           ActionList &SavedOffloadAction,
+//                                           bool CanBeCollapsed = true) {
+//     // An option can be collapsed only if it has a single input.
+//     if (Inputs.size() != 1)
+//       return nullptr;
 
-    Action *CurAction = *Inputs.begin();
-    if (CanBeCollapsed &&
-        !CurAction->isCollapsingWithNextDependentActionLegal())
-      return nullptr;
+//     Action *CurAction = *Inputs.begin();
+//     if (CanBeCollapsed &&
+//         !CurAction->isCollapsingWithNextDependentActionLegal())
+//       return nullptr;
 
-    // If the input action is an offload action. Look through it and save any
-    // offload action that can be dropped in the event of a collapse.
-    if (auto *OA = dyn_cast<OffloadAction>(CurAction)) {
-      // If the dependent action is a device action, we will attempt to collapse
-      // only with other device actions. Otherwise, we would do the same but
-      // with host actions only.
-      if (!IsHostSelector) {
-        if (OA->hasSingleDeviceDependence(/*DoNotConsiderHostActions=*/true)) {
-          CurAction =
-              OA->getSingleDeviceDependence(/*DoNotConsiderHostActions=*/true);
-          if (CanBeCollapsed &&
-              !CurAction->isCollapsingWithNextDependentActionLegal())
-            return nullptr;
-          SavedOffloadAction.push_back(OA);
-          return dyn_cast<JobAction>(CurAction);
-        }
-      } else if (OA->hasHostDependence()) {
-        CurAction = OA->getHostDependence();
-        if (CanBeCollapsed &&
-            !CurAction->isCollapsingWithNextDependentActionLegal())
-          return nullptr;
-        SavedOffloadAction.push_back(OA);
-        return dyn_cast<JobAction>(CurAction);
-      }
-      return nullptr;
-    }
+//     // If the input action is an offload action. Look through it and save any
+//     // offload action that can be dropped in the event of a collapse.
+//     if (auto *OA = dyn_cast<OffloadAction>(CurAction)) {
+//       // If the dependent action is a device action, we will attempt to collapse
+//       // only with other device actions. Otherwise, we would do the same but
+//       // with host actions only.
+//       if (!IsHostSelector) {
+//         if (OA->hasSingleDeviceDependence(/*DoNotConsiderHostActions=*/true)) {
+//           CurAction =
+//               OA->getSingleDeviceDependence(/*DoNotConsiderHostActions=*/true);
+//           if (CanBeCollapsed &&
+//               !CurAction->isCollapsingWithNextDependentActionLegal())
+//             return nullptr;
+//           SavedOffloadAction.push_back(OA);
+//           return dyn_cast<JobAction>(CurAction);
+//         }
+//       } else if (OA->hasHostDependence()) {
+//         CurAction = OA->getHostDependence();
+//         if (CanBeCollapsed &&
+//             !CurAction->isCollapsingWithNextDependentActionLegal())
+//           return nullptr;
+//         SavedOffloadAction.push_back(OA);
+//         return dyn_cast<JobAction>(CurAction);
+//       }
+//       return nullptr;
+//     }
 
-    return dyn_cast<JobAction>(CurAction);
-  }
+//     return dyn_cast<JobAction>(CurAction);
+//   }
 
-  /// Return true if an assemble action can be collapsed.
-  bool canCollapseAssembleAction() const {
-    return TC.useIntegratedAs() && !SaveTemps &&
-           !C.getArgs().hasArg(options::OPT_via_file_asm) &&
-           !C.getArgs().hasArg(options::OPT__SLASH_FA) &&
-           !C.getArgs().hasArg(options::OPT__SLASH_Fa);
-  }
+//   /// Return true if an assemble action can be collapsed.
+//   bool canCollapseAssembleAction() const {
+//     return TC.useIntegratedAs() && !SaveTemps &&
+//            !C.getArgs().hasArg(options::OPT_via_file_asm) &&
+//            !C.getArgs().hasArg(options::OPT__SLASH_FA) &&
+//            !C.getArgs().hasArg(options::OPT__SLASH_Fa);
+//   }
 
-  /// Return true if a preprocessor action can be collapsed.
-  bool canCollapsePreprocessorAction() const {
-    return !C.getArgs().hasArg(options::OPT_no_integrated_cpp) &&
-           !C.getArgs().hasArg(options::OPT_traditional_cpp) && !SaveTemps &&
-           !C.getArgs().hasArg(options::OPT_rewrite_objc);
-  }
+//   /// Return true if a preprocessor action can be collapsed.
+//   bool canCollapsePreprocessorAction() const {
+//     return !C.getArgs().hasArg(options::OPT_no_integrated_cpp) &&
+//            !C.getArgs().hasArg(options::OPT_traditional_cpp) && !SaveTemps &&
+//            !C.getArgs().hasArg(options::OPT_rewrite_objc);
+//   }
 
-  /// Struct that relates an action with the offload actions that would be
-  /// collapsed with it.
-  struct JobActionInfo final {
-    /// The action this info refers to.
-    const JobAction *JA = nullptr;
-    /// The offload actions we need to take care off if this action is
-    /// collapsed.
-    ActionList SavedOffloadAction;
-  };
+//   /// Struct that relates an action with the offload actions that would be
+//   /// collapsed with it.
+//   struct JobActionInfo final {
+//     /// The action this info refers to.
+//     const JobAction *JA = nullptr;
+//     /// The offload actions we need to take care off if this action is
+//     /// collapsed.
+//     ActionList SavedOffloadAction;
+//   };
 
-  /// Append collapsed offload actions from the give nnumber of elements in the
-  /// action info array.
-  static void AppendCollapsedOffloadAction(ActionList &CollapsedOffloadAction,
-                                           ArrayRef<JobActionInfo> &ActionInfo,
-                                           unsigned ElementNum) {
-    assert(ElementNum <= ActionInfo.size() && "Invalid number of elements.");
-    for (unsigned I = 0; I < ElementNum; ++I)
-      CollapsedOffloadAction.append(ActionInfo[I].SavedOffloadAction.begin(),
-                                    ActionInfo[I].SavedOffloadAction.end());
-  }
+//   /// Append collapsed offload actions from the give nnumber of elements in the
+//   /// action info array.
+//   static void AppendCollapsedOffloadAction(ActionList &CollapsedOffloadAction,
+//                                            ArrayRef<JobActionInfo> &ActionInfo,
+//                                            unsigned ElementNum) {
+//     assert(ElementNum <= ActionInfo.size() && "Invalid number of elements.");
+//     for (unsigned I = 0; I < ElementNum; ++I)
+//       CollapsedOffloadAction.append(ActionInfo[I].SavedOffloadAction.begin(),
+//                                     ActionInfo[I].SavedOffloadAction.end());
+//   }
 
-  /// Functions that attempt to perform the combining. They detect if that is
-  /// legal, and if so they update the inputs \a Inputs and the offload action
-  /// that were collapsed in \a CollapsedOffloadAction. A tool that deals with
-  /// the combined action is returned. If the combining is not legal or if the
-  /// tool does not exist, null is returned.
-  /// Currently three kinds of collapsing are supported:
-  ///  - Assemble + Backend + Compile;
-  ///  - Assemble + Backend ;
-  ///  - Backend + Compile.
-  const Tool *
-  combineAssembleBackendCompile(ArrayRef<JobActionInfo> ActionInfo,
-                                ActionList &Inputs,
-                                ActionList &CollapsedOffloadAction) {
-    if (ActionInfo.size() < 3 || !canCollapseAssembleAction())
-      return nullptr;
-    auto *AJ = dyn_cast<AssembleJobAction>(ActionInfo[0].JA);
-    auto *BJ = dyn_cast<BackendJobAction>(ActionInfo[1].JA);
-    auto *CJ = dyn_cast<CompileJobAction>(ActionInfo[2].JA);
-    if (!AJ || !BJ || !CJ)
-      return nullptr;
+//   /// Functions that attempt to perform the combining. They detect if that is
+//   /// legal, and if so they update the inputs \a Inputs and the offload action
+//   /// that were collapsed in \a CollapsedOffloadAction. A tool that deals with
+//   /// the combined action is returned. If the combining is not legal or if the
+//   /// tool does not exist, null is returned.
+//   /// Currently three kinds of collapsing are supported:
+//   ///  - Assemble + Backend + Compile;
+//   ///  - Assemble + Backend ;
+//   ///  - Backend + Compile.
+//   const Tool *
+//   combineAssembleBackendCompile(ArrayRef<JobActionInfo> ActionInfo,
+//                                 ActionList &Inputs,
+//                                 ActionList &CollapsedOffloadAction) {
+//     if (ActionInfo.size() < 3 || !canCollapseAssembleAction())
+//       return nullptr;
+//     auto *AJ = dyn_cast<AssembleJobAction>(ActionInfo[0].JA);
+//     auto *BJ = dyn_cast<BackendJobAction>(ActionInfo[1].JA);
+//     auto *CJ = dyn_cast<CompileJobAction>(ActionInfo[2].JA);
+//     if (!AJ || !BJ || !CJ)
+//       return nullptr;
 
-    // Get compiler tool.
-    const Tool *T = TC.SelectTool(*CJ);
-    if (!T)
-      return nullptr;
+//     // Get compiler tool.
+//     const Tool *T = TC.SelectTool(*CJ);
+//     if (!T)
+//       return nullptr;
 
-    // When using -fembed-bitcode, it is required to have the same tool (clang)
-    // for both CompilerJA and BackendJA. Otherwise, combine two stages.
-    if (EmbedBitcode) {
-      const Tool *BT = TC.SelectTool(*BJ);
-      if (BT == T)
-        return nullptr;
-    }
+//     // When using -fembed-bitcode, it is required to have the same tool (clang)
+//     // for both CompilerJA and BackendJA. Otherwise, combine two stages.
+//     if (EmbedBitcode) {
+//       const Tool *BT = TC.SelectTool(*BJ);
+//       if (BT == T)
+//         return nullptr;
+//     }
 
-    if (!T->hasIntegratedAssembler())
-      return nullptr;
+//     if (!T->hasIntegratedAssembler())
+//       return nullptr;
 
-    Inputs = CJ->getInputs();
-    AppendCollapsedOffloadAction(CollapsedOffloadAction, ActionInfo,
-                                 /*NumElements=*/3);
-    return T;
-  }
-  const Tool *combineAssembleBackend(ArrayRef<JobActionInfo> ActionInfo,
-                                     ActionList &Inputs,
-                                     ActionList &CollapsedOffloadAction) {
-    if (ActionInfo.size() < 2 || !canCollapseAssembleAction())
-      return nullptr;
-    auto *AJ = dyn_cast<AssembleJobAction>(ActionInfo[0].JA);
-    auto *BJ = dyn_cast<BackendJobAction>(ActionInfo[1].JA);
-    if (!AJ || !BJ)
-      return nullptr;
+//     Inputs = CJ->getInputs();
+//     AppendCollapsedOffloadAction(CollapsedOffloadAction, ActionInfo,
+//                                  /*NumElements=*/3);
+//     return T;
+//   }
+//   const Tool *combineAssembleBackend(ArrayRef<JobActionInfo> ActionInfo,
+//                                      ActionList &Inputs,
+//                                      ActionList &CollapsedOffloadAction) {
+//     if (ActionInfo.size() < 2 || !canCollapseAssembleAction())
+//       return nullptr;
+//     auto *AJ = dyn_cast<AssembleJobAction>(ActionInfo[0].JA);
+//     auto *BJ = dyn_cast<BackendJobAction>(ActionInfo[1].JA);
+//     if (!AJ || !BJ)
+//       return nullptr;
 
-    // Get backend tool.
-    const Tool *T = TC.SelectTool(*BJ);
-    if (!T)
-      return nullptr;
+//     // Get backend tool.
+//     const Tool *T = TC.SelectTool(*BJ);
+//     if (!T)
+//       return nullptr;
 
-    if (!T->hasIntegratedAssembler())
-      return nullptr;
+//     if (!T->hasIntegratedAssembler())
+//       return nullptr;
 
-    Inputs = BJ->getInputs();
-    AppendCollapsedOffloadAction(CollapsedOffloadAction, ActionInfo,
-                                 /*NumElements=*/2);
-    return T;
-  }
-  const Tool *combineBackendCompile(ArrayRef<JobActionInfo> ActionInfo,
-                                    ActionList &Inputs,
-                                    ActionList &CollapsedOffloadAction) {
-    if (ActionInfo.size() < 2)
-      return nullptr;
-    auto *BJ = dyn_cast<BackendJobAction>(ActionInfo[0].JA);
-    auto *CJ = dyn_cast<CompileJobAction>(ActionInfo[1].JA);
-    if (!BJ || !CJ)
-      return nullptr;
+//     Inputs = BJ->getInputs();
+//     AppendCollapsedOffloadAction(CollapsedOffloadAction, ActionInfo,
+//                                  /*NumElements=*/2);
+//     return T;
+//   }
+//   const Tool *combineBackendCompile(ArrayRef<JobActionInfo> ActionInfo,
+//                                     ActionList &Inputs,
+//                                     ActionList &CollapsedOffloadAction) {
+//     if (ActionInfo.size() < 2)
+//       return nullptr;
+//     auto *BJ = dyn_cast<BackendJobAction>(ActionInfo[0].JA);
+//     auto *CJ = dyn_cast<CompileJobAction>(ActionInfo[1].JA);
+//     if (!BJ || !CJ)
+//       return nullptr;
 
-    // Check if the initial input (to the compile job or its predessor if one
-    // exists) is LLVM bitcode. In that case, no preprocessor step is required
-    // and we can still collapse the compile and backend jobs when we have
-    // -save-temps. I.e. there is no need for a separate compile job just to
-    // emit unoptimized bitcode.
-    bool InputIsBitcode = true;
-    for (size_t i = 1; i < ActionInfo.size(); i++)
-      if (ActionInfo[i].JA->getType() != types::TY_LLVM_BC &&
-          ActionInfo[i].JA->getType() != types::TY_LTO_BC) {
-        InputIsBitcode = false;
-        break;
-      }
-    if (!InputIsBitcode && !canCollapsePreprocessorAction())
-      return nullptr;
+//     // Check if the initial input (to the compile job or its predessor if one
+//     // exists) is LLVM bitcode. In that case, no preprocessor step is required
+//     // and we can still collapse the compile and backend jobs when we have
+//     // -save-temps. I.e. there is no need for a separate compile job just to
+//     // emit unoptimized bitcode.
+//     bool InputIsBitcode = true;
+//     for (size_t i = 1; i < ActionInfo.size(); i++)
+//       if (ActionInfo[i].JA->getType() != types::TY_LLVM_BC &&
+//           ActionInfo[i].JA->getType() != types::TY_LTO_BC) {
+//         InputIsBitcode = false;
+//         break;
+//       }
+//     if (!InputIsBitcode && !canCollapsePreprocessorAction())
+//       return nullptr;
 
-    // Get compiler tool.
-    const Tool *T = TC.SelectTool(*CJ);
-    if (!T)
-      return nullptr;
+//     // Get compiler tool.
+//     const Tool *T = TC.SelectTool(*CJ);
+//     if (!T)
+//       return nullptr;
 
-    if (T->canEmitIR() && ((SaveTemps && !InputIsBitcode) || EmbedBitcode))
-      return nullptr;
+//     if (T->canEmitIR() && ((SaveTemps && !InputIsBitcode) || EmbedBitcode))
+//       return nullptr;
 
-    Inputs = CJ->getInputs();
-    AppendCollapsedOffloadAction(CollapsedOffloadAction, ActionInfo,
-                                 /*NumElements=*/2);
-    return T;
-  }
+//     Inputs = CJ->getInputs();
+//     AppendCollapsedOffloadAction(CollapsedOffloadAction, ActionInfo,
+//                                  /*NumElements=*/2);
+//     return T;
+//   }
 
-  /// Updates the inputs if the obtained tool supports combining with
-  /// preprocessor action, and the current input is indeed a preprocessor
-  /// action. If combining results in the collapse of offloading actions, those
-  /// are appended to \a CollapsedOffloadAction.
-  void combineWithPreprocessor(const Tool *T, ActionList &Inputs,
-                               ActionList &CollapsedOffloadAction) {
-    if (!T || !canCollapsePreprocessorAction() || !T->hasIntegratedCPP())
-      return;
+//   /// Updates the inputs if the obtained tool supports combining with
+//   /// preprocessor action, and the current input is indeed a preprocessor
+//   /// action. If combining results in the collapse of offloading actions, those
+//   /// are appended to \a CollapsedOffloadAction.
+//   void combineWithPreprocessor(const Tool *T, ActionList &Inputs,
+//                                ActionList &CollapsedOffloadAction) {
+//     if (!T || !canCollapsePreprocessorAction() || !T->hasIntegratedCPP())
+//       return;
 
-    // Attempt to get a preprocessor action dependence.
-    ActionList PreprocessJobOffloadActions;
-    ActionList NewInputs;
-    for (Action *A : Inputs) {
-      auto *PJ = getPrevDependentAction({A}, PreprocessJobOffloadActions);
-      if (!PJ || !isa<PreprocessJobAction>(PJ)) {
-        NewInputs.push_back(A);
-        continue;
-      }
+//     // Attempt to get a preprocessor action dependence.
+//     ActionList PreprocessJobOffloadActions;
+//     ActionList NewInputs;
+//     for (Action *A : Inputs) {
+//       auto *PJ = getPrevDependentAction({A}, PreprocessJobOffloadActions);
+//       if (!PJ || !isa<PreprocessJobAction>(PJ)) {
+//         NewInputs.push_back(A);
+//         continue;
+//       }
 
-      // This is legal to combine. Append any offload action we found and add the
-      // current input to preprocessor inputs.
-      CollapsedOffloadAction.append(PreprocessJobOffloadActions.begin(),
-                                    PreprocessJobOffloadActions.end());
-      NewInputs.append(PJ->input_begin(), PJ->input_end());
-    }
-    Inputs = NewInputs;
-  }
+//       // This is legal to combine. Append any offload action we found and add the
+//       // current input to preprocessor inputs.
+//       CollapsedOffloadAction.append(PreprocessJobOffloadActions.begin(),
+//                                     PreprocessJobOffloadActions.end());
+//       NewInputs.append(PJ->input_begin(), PJ->input_end());
+//     }
+//     Inputs = NewInputs;
+//   }
 
-public:
-  ToolSelector(const JobAction *BaseAction, const ToolChain &TC,
-               const Compilation &C, bool SaveTemps, bool EmbedBitcode)
-      : TC(TC), C(C), BaseAction(BaseAction), SaveTemps(SaveTemps),
-        EmbedBitcode(EmbedBitcode) {
-    assert(BaseAction && "Invalid base action.");
-    IsHostSelector = BaseAction->getOffloadingDeviceKind() == Action::OFK_None;
-  }
+// public:
+//   ToolSelector(const JobAction *BaseAction, const ToolChain &TC,
+//                const Compilation &C, bool SaveTemps, bool EmbedBitcode)
+//       : TC(TC), C(C), BaseAction(BaseAction), SaveTemps(SaveTemps),
+//         EmbedBitcode(EmbedBitcode) {
+//     assert(BaseAction && "Invalid base action.");
+//     IsHostSelector = BaseAction->getOffloadingDeviceKind() == Action::OFK_None;
+//   }
 
-  /// Check if a chain of actions can be combined and return the tool that can
-  /// handle the combination of actions. The pointer to the current inputs \a
-  /// Inputs and the list of offload actions \a CollapsedOffloadActions
-  /// connected to collapsed actions are updated accordingly. The latter enables
-  /// the caller of the selector to process them afterwards instead of just
-  /// dropping them. If no suitable tool is found, null will be returned.
-  const Tool *getTool(ActionList &Inputs,
-                      ActionList &CollapsedOffloadAction) {
-    //
-    // Get the largest chain of actions that we could combine.
-    //
+//   /// Check if a chain of actions can be combined and return the tool that can
+//   /// handle the combination of actions. The pointer to the current inputs \a
+//   /// Inputs and the list of offload actions \a CollapsedOffloadActions
+//   /// connected to collapsed actions are updated accordingly. The latter enables
+//   /// the caller of the selector to process them afterwards instead of just
+//   /// dropping them. If no suitable tool is found, null will be returned.
+//   const Tool *getTool(ActionList &Inputs,
+//                       ActionList &CollapsedOffloadAction) {
+//     //
+//     // Get the largest chain of actions that we could combine.
+//     //
 
-    SmallVector<JobActionInfo, 5> ActionChain(1);
-    ActionChain.back().JA = BaseAction;
-    while (ActionChain.back().JA) {
-      const Action *CurAction = ActionChain.back().JA;
+//     SmallVector<JobActionInfo, 5> ActionChain(1);
+//     ActionChain.back().JA = BaseAction;
+//     while (ActionChain.back().JA) {
+//       const Action *CurAction = ActionChain.back().JA;
 
-      // Grow the chain by one element.
-      ActionChain.resize(ActionChain.size() + 1);
-      JobActionInfo &AI = ActionChain.back();
+//       // Grow the chain by one element.
+//       ActionChain.resize(ActionChain.size() + 1);
+//       JobActionInfo &AI = ActionChain.back();
 
-      // Attempt to fill it with the
-      AI.JA =
-          getPrevDependentAction(CurAction->getInputs(), AI.SavedOffloadAction);
-    }
+//       // Attempt to fill it with the
+//       AI.JA =
+//           getPrevDependentAction(CurAction->getInputs(), AI.SavedOffloadAction);
+//     }
 
-    // Pop the last action info as it could not be filled.
-    ActionChain.pop_back();
+//     // Pop the last action info as it could not be filled.
+//     ActionChain.pop_back();
 
-    //
-    // Attempt to combine actions. If all combining attempts failed, just return
-    // the tool of the provided action. At the end we attempt to combine the
-    // action with any preprocessor action it may depend on.
-    //
+//     //
+//     // Attempt to combine actions. If all combining attempts failed, just return
+//     // the tool of the provided action. At the end we attempt to combine the
+//     // action with any preprocessor action it may depend on.
+//     //
 
-    const Tool *T = combineAssembleBackendCompile(ActionChain, Inputs,
-                                                  CollapsedOffloadAction);
-    if (!T)
-      T = combineAssembleBackend(ActionChain, Inputs, CollapsedOffloadAction);
-    if (!T)
-      T = combineBackendCompile(ActionChain, Inputs, CollapsedOffloadAction);
-    if (!T) {
-      Inputs = BaseAction->getInputs();
-      T = TC.SelectTool(*BaseAction);
-    }
+//     const Tool *T = combineAssembleBackendCompile(ActionChain, Inputs,
+//                                                   CollapsedOffloadAction);
+//     if (!T)
+//       T = combineAssembleBackend(ActionChain, Inputs, CollapsedOffloadAction);
+//     if (!T)
+//       T = combineBackendCompile(ActionChain, Inputs, CollapsedOffloadAction);
+//     if (!T) {
+//       Inputs = BaseAction->getInputs();
+//       T = TC.SelectTool(*BaseAction);
+//     }
 
-    combineWithPreprocessor(T, Inputs, CollapsedOffloadAction);
-    return T;
-  }
-};
-}
+//     combineWithPreprocessor(T, Inputs, CollapsedOffloadAction);
+//     return T;
+//   }
+// };
+// }
 
 /// Return a string that uniquely identifies the result of a job. The bound arch
 /// is not necessarily represented in the toolchain's triple -- for example,
@@ -4317,12 +4317,12 @@ InputInfo Driver::BuildJobsForActionNoCache(
   const JobAction *JA = cast<JobAction>(A);
   ActionList CollapsedOffloadActions;
 
-  ToolSelector TS(JA, *TC, C, isSaveTempsEnabled(),
-                  embedBitcodeInObject() && !isUsingLTO());
-  const Tool *T = TS.getTool(Inputs, CollapsedOffloadActions);
+  // ToolSelector TS(JA, *TC, C, isSaveTempsEnabled(),
+  //                 embedBitcodeInObject() && !isUsingLTO());
+  // const Tool *T = TS.getTool(Inputs, CollapsedOffloadActions);
 
-  if (!T)
-    return InputInfo();
+  // if (!T)
+  //   return InputInfo();
 
   // If we've collapsed action list that contained OffloadAction we
   // need to build jobs for host/device-side inputs it may have held.
@@ -4368,17 +4368,17 @@ InputInfo Driver::BuildJobsForActionNoCache(
 
   // Set the effective triple of the toolchain for the duration of this job.
   llvm::Triple EffectiveTriple;
-  const ToolChain &ToolTC = T->getToolChain();
-  const ArgList &Args =
-      C.getArgsForToolChain(TC, BoundArch, A->getOffloadingDeviceKind());
-  if (InputInfos.size() != 1) {
-    EffectiveTriple = llvm::Triple(ToolTC.ComputeEffectiveClangTriple(Args));
-  } else {
-    // Pass along the input type if it can be unambiguously determined.
-    EffectiveTriple = llvm::Triple(
-        ToolTC.ComputeEffectiveClangTriple(Args, InputInfos[0].getType()));
-  }
-  RegisterEffectiveTriple TripleRAII(ToolTC, EffectiveTriple);
+  // const ToolChain &ToolTC = T->getToolChain();
+  // const ArgList &Args =
+  //     C.getArgsForToolChain(TC, BoundArch, A->getOffloadingDeviceKind());
+  // if (InputInfos.size() != 1) {
+  //   EffectiveTriple = llvm::Triple(ToolTC.ComputeEffectiveClangTriple(Args));
+  // } else {
+  //   // Pass along the input type if it can be unambiguously determined.
+  //   EffectiveTriple = llvm::Triple(
+  //       ToolTC.ComputeEffectiveClangTriple(Args, InputInfos[0].getType()));
+  // }
+  // RegisterEffectiveTriple TripleRAII(ToolTC, EffectiveTriple);
 
   // Determine the place to write output to, if any.
   InputInfo Result;
@@ -4455,37 +4455,37 @@ InputInfo Driver::BuildJobsForActionNoCache(
                        BaseInput);
   }
 
-  if (CCCPrintBindings && !CCGenDiagnostics) {
-    llvm::errs() << "# \"" << T->getToolChain().getTripleString() << '"'
-                 << " - \"" << T->getName() << "\", inputs: [";
-    for (unsigned i = 0, e = InputInfos.size(); i != e; ++i) {
-      llvm::errs() << InputInfos[i].getAsString();
-      if (i + 1 != e)
-        llvm::errs() << ", ";
-    }
-    if (UnbundlingResults.empty())
-      llvm::errs() << "], output: " << Result.getAsString() << "\n";
-    else {
-      llvm::errs() << "], outputs: [";
-      for (unsigned i = 0, e = UnbundlingResults.size(); i != e; ++i) {
-        llvm::errs() << UnbundlingResults[i].getAsString();
-        if (i + 1 != e)
-          llvm::errs() << ", ";
-      }
-      llvm::errs() << "] \n";
-    }
-  } else {
-    if (UnbundlingResults.empty())
-      T->ConstructJob(
-          C, *JA, Result, InputInfos,
-          C.getArgsForToolChain(TC, BoundArch, JA->getOffloadingDeviceKind()),
-          LinkingOutput);
-    else
-      T->ConstructJobMultipleOutputs(
-          C, *JA, UnbundlingResults, InputInfos,
-          C.getArgsForToolChain(TC, BoundArch, JA->getOffloadingDeviceKind()),
-          LinkingOutput);
-  }
+  // if (CCCPrintBindings && !CCGenDiagnostics) {
+  //   llvm::errs() << "# \"" << T->getToolChain().getTripleString() << '"'
+  //                << " - \"" << T->getName() << "\", inputs: [";
+  //   for (unsigned i = 0, e = InputInfos.size(); i != e; ++i) {
+  //     llvm::errs() << InputInfos[i].getAsString();
+  //     if (i + 1 != e)
+  //       llvm::errs() << ", ";
+  //   }
+  //   if (UnbundlingResults.empty())
+  //     llvm::errs() << "], output: " << Result.getAsString() << "\n";
+  //   else {
+  //     llvm::errs() << "], outputs: [";
+  //     for (unsigned i = 0, e = UnbundlingResults.size(); i != e; ++i) {
+  //       llvm::errs() << UnbundlingResults[i].getAsString();
+  //       if (i + 1 != e)
+  //         llvm::errs() << ", ";
+  //     }
+  //     llvm::errs() << "] \n";
+  //   }
+  // } else {
+    // if (UnbundlingResults.empty())
+    //   T->ConstructJob(
+    //       C, *JA, Result, InputInfos,
+    //       C.getArgsForToolChain(TC, BoundArch, JA->getOffloadingDeviceKind()),
+    //       LinkingOutput);
+    // else
+    //   T->ConstructJobMultipleOutputs(
+    //       C, *JA, UnbundlingResults, InputInfos,
+    //       C.getArgsForToolChain(TC, BoundArch, JA->getOffloadingDeviceKind()),
+    //       LinkingOutput);
+  // }
   return Result;
 }
 

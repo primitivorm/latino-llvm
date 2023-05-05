@@ -30,25 +30,25 @@ namespace {
 class APIChecker : public RecursiveASTVisitor<APIChecker> {
   MigrationPass &Pass;
 
-  Selector getReturnValueSel, setReturnValueSel;
-  Selector getArgumentSel, setArgumentSel;
+  // Selector getReturnValueSel, setReturnValueSel;
+  // Selector getArgumentSel, setArgumentSel;
 
-  Selector zoneSel;
+  // Selector zoneSel;
 public:
   APIChecker(MigrationPass &pass) : Pass(pass) {
-    SelectorTable &sels = Pass.Ctx.Selectors;
+    // SelectorTable &sels = Pass.Ctx.Selectors;
     IdentifierTable &ids = Pass.Ctx.Idents;
-    getReturnValueSel = sels.getUnarySelector(&ids.get("getReturnValue"));
-    setReturnValueSel = sels.getUnarySelector(&ids.get("setReturnValue"));
+    // getReturnValueSel = sels.getUnarySelector(&ids.get("getReturnValue"));
+    // setReturnValueSel = sels.getUnarySelector(&ids.get("setReturnValue"));
 
     IdentifierInfo *selIds[2];
     selIds[0] = &ids.get("getArgument");
     selIds[1] = &ids.get("atIndex");
-    getArgumentSel = sels.getSelector(2, selIds);
+    // getArgumentSel = sels.getSelector(2, selIds);
     selIds[0] = &ids.get("setArgument");
-    setArgumentSel = sels.getSelector(2, selIds);
+    // setArgumentSel = sels.getSelector(2, selIds);
 
-    zoneSel = sels.getNullarySelector(&ids.get("zone"));
+    // zoneSel = sels.getNullarySelector(&ids.get("zone"));
   }
 
   // bool VisitObjCMessageExpr(ObjCMessageExpr *E) {

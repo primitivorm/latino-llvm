@@ -448,11 +448,11 @@ void Parser::ParseGNUAttributeArgs(IdentifierInfo *AttrName,
     ParseExternalSourceSymbolAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc,
                                        ScopeName, ScopeLoc, Syntax);
     return;
-  } else if (AttrKind == ParsedAttr::AT_ObjCBridgeRelated) {
+  } /*else if (AttrKind == ParsedAttr::AT_ObjCBridgeRelated) {
     ParseObjCBridgeRelatedAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc,
                                     ScopeName, ScopeLoc, Syntax);
     return;
-  } else if (AttrKind == ParsedAttr::AT_TypeTagForDatatype) {
+  }*/ else if (AttrKind == ParsedAttr::AT_TypeTagForDatatype) {
     ParseTypeTagForDatatypeAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc,
                                      ScopeName, ScopeLoc, Syntax);
     return;
@@ -502,10 +502,10 @@ unsigned Parser::ParseClangAttributeArgs(
     ParseAvailabilityAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc, ScopeName,
                                ScopeLoc, Syntax);
     break;
-  case ParsedAttr::AT_ObjCBridgeRelated:
-    ParseObjCBridgeRelatedAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc,
-                                    ScopeName, ScopeLoc, Syntax);
-    break;
+  // case ParsedAttr::AT_ObjCBridgeRelated:
+  //   ParseObjCBridgeRelatedAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc,
+  //                                   ScopeName, ScopeLoc, Syntax);
+  //   break;
   case ParsedAttr::AT_TypeTagForDatatype:
     ParseTypeTagForDatatypeAttribute(*AttrName, AttrNameLoc, Attrs, EndLoc,
                                      ScopeName, ScopeLoc, Syntax);
@@ -1601,7 +1601,7 @@ Parser::ParseDeclaration(DeclaratorContext Context, SourceLocation &DeclEnd,
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
   // Must temporarily exit the objective-c container scope for
   // parsing c none objective-c decls.
-  ObjCDeclContextSwitch ObjCDC(*this);
+  // ObjCDeclContextSwitch ObjCDC(*this);
 
   Decl *SingleDecl = nullptr;
   switch (Tok.getKind()) {
@@ -1804,23 +1804,23 @@ void Parser::SkipMalformedDecl() {
       ConsumeToken();
       return;
 
-    case tok::kw_en_linea:
-      // 'inline namespace' at the start of a line is almost certainly
-      // a good place to pick back up parsing, except in an Objective-C
-      // @interface context.
-      if (Tok.isAtStartOfLine() && NextToken().is(tok::kw_contexto) &&
-          (!ParsingInObjCContainer || CurParsedObjCImpl))
-        return;
-      break;
+    // case tok::kw_en_linea:
+    //   // 'inline namespace' at the start of a line is almost certainly
+    //   // a good place to pick back up parsing, except in an Objective-C
+    //   // @interface context.
+    //   if (Tok.isAtStartOfLine() && NextToken().is(tok::kw_contexto) &&
+    //       (!ParsingInObjCContainer || CurParsedObjCImpl))
+    //     return;
+    //   break;
 
-    case tok::kw_contexto:
-      // 'namespace' at the start of a line is almost certainly a good
-      // place to pick back up parsing, except in an Objective-C
-      // @interface context.
-      if (Tok.isAtStartOfLine() &&
-          (!ParsingInObjCContainer || CurParsedObjCImpl))
-        return;
-      break;
+    // case tok::kw_contexto:
+    //   // 'namespace' at the start of a line is almost certainly a good
+    //   // place to pick back up parsing, except in an Objective-C
+    //   // @interface context.
+    //   if (Tok.isAtStartOfLine() &&
+    //       (!ParsingInObjCContainer || CurParsedObjCImpl))
+    //     return;
+    //   break;
 
     // case tok::at:
     //   // @end is very much like } in Objective-C contexts.
@@ -1829,12 +1829,12 @@ void Parser::SkipMalformedDecl() {
     //     return;
     //   break;
 
-    case tok::minus:
-    case tok::plus:
-      // - and + probably start new method declarations in Objective-C contexts.
-      if (Tok.isAtStartOfLine() && ParsingInObjCContainer)
-        return;
-      break;
+    // case tok::minus:
+    // case tok::plus:
+    //   // - and + probably start new method declarations in Objective-C contexts.
+    //   if (Tok.isAtStartOfLine() && ParsingInObjCContainer)
+    //     return;
+    //   break;
 
     case tok::eof:
     case tok::annot_module_begin:
@@ -1958,12 +1958,12 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
   //
   // Handle the Objective-C for-in loop variable similarly, although we
   // don't need to parse the container in advance.
-  if (FRI && (Tok.is(tok::colon) || isTokIdentifier_in())) {
+  if (FRI && (Tok.is(tok::colon) /*|| isTokIdentifier_in()*/)) {
     bool IsForRangeLoop = false;
     if (TryConsumeToken(tok::colon, FRI->ColonLoc)) {
       IsForRangeLoop = true;
-      if (getLangOpts().OpenMP)
-        Actions.startOpenMPCXXRangeFor();
+      // if (getLangOpts().OpenMP)
+      //   Actions.startOpenMPCXXRangeFor();
       if (Tok.is(tok::l_brace))
         FRI->RangeExpr = ParseBraceInitializer();
       else
@@ -1973,11 +1973,12 @@ Parser::DeclGroupPtrTy Parser::ParseDeclGroup(ParsingDeclSpec &DS,
     Decl *ThisDecl = Actions.ActOnDeclarator(getCurScope(), D);
     if (IsForRangeLoop) {
       Actions.ActOnCXXForRangeDecl(ThisDecl);
-    } else {
-      // Obj-C for loop
-      if (auto *VD = dyn_cast_or_null<VarDecl>(ThisDecl))
-        VD->setObjCForDecl(true);
-    }
+    } 
+    // else {
+    //   // Obj-C for loop
+    //   if (auto *VD = dyn_cast_or_null<VarDecl>(ThisDecl))
+    //     VD->setObjCForDecl(true);
+    // }
     Actions.FinalizeDeclaration(ThisDecl);
     D.complete(ThisDecl);
     return Actions.FinalizeDeclaratorGroup(getCurScope(), DS, ThisDecl);
@@ -3251,19 +3252,19 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       if (DS.isTypeAltiVecVector())
         goto DoneWithDeclSpec;
 
-      if (DSContext == DeclSpecContext::DSC_objc_method_result &&
-          isObjCInstancetype()) {
-        ParsedType TypeRep = Actions.ActOnObjCInstanceType(Loc);
-        assert(TypeRep);
-        isInvalid = DS.SetTypeSpecType(DeclSpec::TST_typename, Loc, PrevSpec,
-                                       DiagID, TypeRep, Policy);
-        if (isInvalid)
-          break;
+      // if (DSContext == DeclSpecContext::DSC_objc_method_result &&
+      //     isObjCInstancetype()) {
+      //   ParsedType TypeRep = Actions.ActOnObjCInstanceType(Loc);
+      //   assert(TypeRep);
+      //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_typename, Loc, PrevSpec,
+      //                                  DiagID, TypeRep, Policy);
+      //   if (isInvalid)
+      //     break;
 
-        DS.SetRangeEnd(Loc);
-        ConsumeToken();
-        continue;
-      }
+      //   DS.SetRangeEnd(Loc);
+      //   ConsumeToken();
+      //   continue;
+      // }
 
       // If we're in a context where the identifier could be a class name,
       // check whether this is a constructor declaration.
@@ -3713,10 +3714,10 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       isInvalid = DS.SetTypeSpecType(DeclSpec::TST_double, Loc, PrevSpec,
                                      DiagID, Policy);
       break;
-    case tok::kw__Float16:
-      isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float16, Loc, PrevSpec,
-                                     DiagID, Policy);
-      break;
+    // case tok::kw__Float16:
+    //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_float16, Loc, PrevSpec,
+    //                                  DiagID, Policy);
+    //   break;
     // case tok::kw__Accum:
     //   if (!getLangOpts().FixedPoint) {
     //     SetupFixedPointError(getLangOpts(), PrevSpec, DiagID, isInvalid);
@@ -5001,9 +5002,9 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
     // expression is permitted, then this is probably a class message send
     // missing the initial '['. In this case, we won't consider this to be
     // the start of a declaration.
-    if (DisambiguatingWithExpression &&
-        isStartOfObjCClassMessageMissingOpenBracket())
-      return false;
+    // if (DisambiguatingWithExpression &&
+    //     isStartOfObjCClassMessageMissingOpenBracket())
+    //   return false;
 
     return isDeclarationSpecifier();
 
@@ -5122,8 +5123,8 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
 
     // typedef-name
   case tok::annot_typename:
-    return !DisambiguatingWithExpression ||
-           !isStartOfObjCClassMessageMissingOpenBracket();
+    return !DisambiguatingWithExpression /*||
+           !isStartOfObjCClassMessageMissingOpenBracket()*/;
 
     // placeholder-type-specifier
   case tok::annot_template_id: {
@@ -5812,14 +5813,14 @@ void Parser::ParseDirectDeclarator(Declarator &D) {
         // Change the declaration context for name lookup, until this function
         // is exited (and the declarator has been parsed).
         DeclScopeObj.EnterDeclaratorScope();
-      else if (getObjCDeclContext()) {
-        // Ensure that we don't interpret the next token as an identifier when
-        // dealing with declarations in an Objective-C container.
-        D.SetIdentifier(nullptr, Tok.getLocation());
-        D.setInvalidType(true);
-        ConsumeToken();
-        goto PastIdentifier;
-      }
+      // else if (getObjCDeclContext()) {
+      //   // Ensure that we don't interpret the next token as an identifier when
+      //   // dealing with declarations in an Objective-C container.
+      //   D.SetIdentifier(nullptr, Tok.getLocation());
+      //   D.setInvalidType(true);
+      //   ConsumeToken();
+      //   goto PastIdentifier;
+      // }
     }
 
     // C++0x [dcl.fct]p14:
@@ -6305,15 +6306,15 @@ void Parser::InitCXXThisScopeForDeclaratorIfRelevant(
   // Carry on using the first addr space for the qualifiers of 'this'.
   // The diagnostic will be given later while creating the function
   // prototype for the method.
-  if (getLangOpts().OpenCLCPlusPlus) {
-    for (ParsedAttr &attr : DS.getAttributes()) {
-      LangAS ASIdx = attr.asOpenCLLangAS();
-      if (ASIdx != LangAS::Default) {
-        Q.addAddressSpace(ASIdx);
-        break;
-      }
-    }
-  }
+  // if (getLangOpts().OpenCLCPlusPlus) {
+  //   for (ParsedAttr &attr : DS.getAttributes()) {
+  //     LangAS ASIdx = attr.asOpenCLLangAS();
+  //     if (ASIdx != LangAS::Default) {
+  //       Q.addAddressSpace(ASIdx);
+  //       break;
+  //     }
+  //   }
+  // }
   ThisScope.emplace(Actions, dyn_cast<CXXRecordDecl>(Actions.CurContext), Q,
                     IsCXX11MemberFunction);
 }
@@ -6399,7 +6400,7 @@ void Parser::ParseFunctionDeclarator(Declarator &D,
       Diag(Tok, diag::err_argument_required_after_attribute);
 
     HasProto = ParamInfo.size() || getLangOpts().CPlusPlus
-                                || getLangOpts().OpenCL;
+                                /*|| getLangOpts().OpenCL*/;
 
     // If we have the closing ')', eat it.
     Tracker.consumeClose();

@@ -17,7 +17,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/ExprObjC.h"
+// #include "latino/AST/ExprObjC.h"
 #include "latino/AST/NestedNameSpecifier.h"
 #include "latino/Analysis/CodeInjector.h"
 #include "latino/Basic/OperatorKinds.h"
@@ -185,10 +185,10 @@ ImplicitCastExpr *ASTMaker::makeIntegralCastToBoolean(const Expr *Arg) {
                                   const_cast<Expr*>(Arg), nullptr, VK_RValue);
 }
 
-ObjCBoolLiteralExpr *ASTMaker::makeObjCBool(bool Val) {
-  QualType Ty = C.getBOOLDecl() ? C.getBOOLType() : C.ObjCBuiltinBoolTy;
-  return new (C) ObjCBoolLiteralExpr(Val, Ty, SourceLocation());
-}
+// ObjCBoolLiteralExpr *ASTMaker::makeObjCBool(bool Val) {
+//   QualType Ty = C.getBOOLDecl() ? C.getBOOLType() : C.ObjCBuiltinBoolTy;
+//   return new (C) ObjCBoolLiteralExpr(Val, Ty, SourceLocation());
+// }
 
 // ObjCIvarRefExpr *ASTMaker::makeObjCIvarRef(const Expr *Base,
 //                                            const ObjCIvarDecl *IVar) {
@@ -583,86 +583,86 @@ static Stmt *create_dispatch_sync(ASTContext &C, const FunctionDecl *D) {
   return CE;
 }
 
-static Stmt *create_OSAtomicCompareAndSwap(ASTContext &C, const FunctionDecl *D)
-{
-  // There are exactly 3 arguments.
-  if (D->param_size() != 3)
-    return nullptr;
+// static Stmt *create_OSAtomicCompareAndSwap(ASTContext &C, const FunctionDecl *D)
+// {
+//   // There are exactly 3 arguments.
+//   if (D->param_size() != 3)
+//     return nullptr;
 
-  // Signature:
-  // _Bool OSAtomicCompareAndSwapPtr(void *__oldValue,
-  //                                 void *__newValue,
-  //                                 void * volatile *__theValue)
-  // Generate body:
-  //   if (oldValue == *theValue) {
-  //    *theValue = newValue;
-  //    return YES;
-  //   }
-  //   else return NO;
+//   // Signature:
+//   // _Bool OSAtomicCompareAndSwapPtr(void *__oldValue,
+//   //                                 void *__newValue,
+//   //                                 void * volatile *__theValue)
+//   // Generate body:
+//   //   if (oldValue == *theValue) {
+//   //    *theValue = newValue;
+//   //    return YES;
+//   //   }
+//   //   else return NO;
 
-  QualType ResultTy = D->getReturnType();
-  bool isBoolean = ResultTy->isBooleanType();
-  if (!isBoolean && !ResultTy->isIntegralType(C))
-    return nullptr;
+//   QualType ResultTy = D->getReturnType();
+//   bool isBoolean = ResultTy->isBooleanType();
+//   if (!isBoolean && !ResultTy->isIntegralType(C))
+//     return nullptr;
 
-  const ParmVarDecl *OldValue = D->getParamDecl(0);
-  QualType OldValueTy = OldValue->getType();
+//   const ParmVarDecl *OldValue = D->getParamDecl(0);
+//   QualType OldValueTy = OldValue->getType();
 
-  const ParmVarDecl *NewValue = D->getParamDecl(1);
-  QualType NewValueTy = NewValue->getType();
+//   const ParmVarDecl *NewValue = D->getParamDecl(1);
+//   QualType NewValueTy = NewValue->getType();
 
-  assert(OldValueTy == NewValueTy);
+//   assert(OldValueTy == NewValueTy);
 
-  const ParmVarDecl *TheValue = D->getParamDecl(2);
-  QualType TheValueTy = TheValue->getType();
-  const PointerType *PT = TheValueTy->getAs<PointerType>();
-  if (!PT)
-    return nullptr;
-  QualType PointeeTy = PT->getPointeeType();
+//   const ParmVarDecl *TheValue = D->getParamDecl(2);
+//   QualType TheValueTy = TheValue->getType();
+//   const PointerType *PT = TheValueTy->getAs<PointerType>();
+//   if (!PT)
+//     return nullptr;
+//   QualType PointeeTy = PT->getPointeeType();
 
-  ASTMaker M(C);
-  // Construct the comparison.
-  Expr *Comparison =
-    M.makeComparison(
-      M.makeLvalueToRvalue(M.makeDeclRefExpr(OldValue), OldValueTy),
-      M.makeLvalueToRvalue(
-        M.makeDereference(
-          M.makeLvalueToRvalue(M.makeDeclRefExpr(TheValue), TheValueTy),
-          PointeeTy),
-        PointeeTy),
-      BO_EQ);
+//   ASTMaker M(C);
+//   // Construct the comparison.
+//   Expr *Comparison =
+//     M.makeComparison(
+//       M.makeLvalueToRvalue(M.makeDeclRefExpr(OldValue), OldValueTy),
+//       M.makeLvalueToRvalue(
+//         M.makeDereference(
+//           M.makeLvalueToRvalue(M.makeDeclRefExpr(TheValue), TheValueTy),
+//           PointeeTy),
+//         PointeeTy),
+//       BO_EQ);
 
-  // Construct the body of the IfStmt.
-  Stmt *Stmts[2];
-  Stmts[0] =
-    M.makeAssignment(
-      M.makeDereference(
-        M.makeLvalueToRvalue(M.makeDeclRefExpr(TheValue), TheValueTy),
-        PointeeTy),
-      M.makeLvalueToRvalue(M.makeDeclRefExpr(NewValue), NewValueTy),
-      NewValueTy);
+//   // Construct the body of the IfStmt.
+//   Stmt *Stmts[2];
+//   Stmts[0] =
+//     M.makeAssignment(
+//       M.makeDereference(
+//         M.makeLvalueToRvalue(M.makeDeclRefExpr(TheValue), TheValueTy),
+//         PointeeTy),
+//       M.makeLvalueToRvalue(M.makeDeclRefExpr(NewValue), NewValueTy),
+//       NewValueTy);
 
-  Expr *BoolVal = M.makeObjCBool(true);
-  Expr *RetVal = isBoolean ? M.makeIntegralCastToBoolean(BoolVal)
-                           : M.makeIntegralCast(BoolVal, ResultTy);
-  Stmts[1] = M.makeReturn(RetVal);
-  CompoundStmt *Body = M.makeCompound(Stmts);
+//   Expr *BoolVal = M.makeObjCBool(true);
+//   Expr *RetVal = isBoolean ? M.makeIntegralCastToBoolean(BoolVal)
+//                            : M.makeIntegralCast(BoolVal, ResultTy);
+//   Stmts[1] = M.makeReturn(RetVal);
+//   CompoundStmt *Body = M.makeCompound(Stmts);
 
-  // Construct the else clause.
-  BoolVal = M.makeObjCBool(false);
-  RetVal = isBoolean ? M.makeIntegralCastToBoolean(BoolVal)
-                     : M.makeIntegralCast(BoolVal, ResultTy);
-  Stmt *Else = M.makeReturn(RetVal);
+//   // Construct the else clause.
+//   BoolVal = M.makeObjCBool(false);
+//   RetVal = isBoolean ? M.makeIntegralCastToBoolean(BoolVal)
+//                      : M.makeIntegralCast(BoolVal, ResultTy);
+//   Stmt *Else = M.makeReturn(RetVal);
 
-  /// Construct the If.
-  auto *If = IfStmt::Create(C, SourceLocation(),
-                            /* IsConstexpr=*/false,
-                            /* Init=*/nullptr,
-                            /* Var=*/nullptr, Comparison, Body,
-                            SourceLocation(), Else);
+//   /// Construct the If.
+//   auto *If = IfStmt::Create(C, SourceLocation(),
+//                             /* IsConstexpr=*/false,
+//                             /* Init=*/nullptr,
+//                             /* Var=*/nullptr, Comparison, Body,
+//                             SourceLocation(), Else);
 
-  return If;
-}
+//   return If;
+// }
 
 Stmt *BodyFarm::getBody(const FunctionDecl *D) {
   Optional<Stmt *> &Val = Bodies[D];
@@ -680,10 +680,10 @@ Stmt *BodyFarm::getBody(const FunctionDecl *D) {
 
   FunctionFarmer FF;
 
-  if (Name.startswith("OSAtomicCompareAndSwap") ||
+  /*if (Name.startswith("OSAtomicCompareAndSwap") ||
       Name.startswith("objc_atomicCompareAndSwap")) {
     FF = create_OSAtomicCompareAndSwap;
-  } else if (Name == "call_once" && D->getDeclContext()->isStdNamespace()) {
+  } else*/ if (Name == "call_once" && D->getDeclContext()->isStdNamespace()) {
     FF = create_call_once;
   } else {
     FF = llvm::StringSwitch<FunctionFarmer>(Name)

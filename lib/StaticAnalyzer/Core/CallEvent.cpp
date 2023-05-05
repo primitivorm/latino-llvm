@@ -18,7 +18,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -97,8 +97,8 @@ QualType CallEvent::getResultType() const {
 static bool isCallback(QualType T) {
   // If a parameter is a block or a callback, assume it can modify pointer.
   if (T->isBlockPointerType() ||
-      T->isFunctionPointerType() ||
-      T->isObjCSelType())
+      T->isFunctionPointerType() /*||
+      T->isObjCSelType()*/)
     return true;
 
   // Check if a callback is passed inside a struct (for both, struct passed by

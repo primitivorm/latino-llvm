@@ -19,15 +19,15 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/FormatString.h"
-#include "latino/AST/NSAPI.h"
+// #include "latino/AST/NSAPI.h"
 #include "latino/AST/NonTrivialTypeVisitor.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/RecordLayout.h"
@@ -42,7 +42,7 @@
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"
-#include "latino/Basic/OpenCLOptions.h"
+// #include "latino/Basic/OpenCLOptions.h"
 #include "latino/Basic/OperatorKinds.h"
 #include "latino/Basic/PartialDiagnostic.h"
 #include "latino/Basic/SourceLocation.h"
@@ -1257,11 +1257,11 @@ static bool SemaBuiltinPipePackets(Sema &S, CallExpr *Call) {
   if (checkArgCount(S, Call, 1))
     return true;
 
-  if (!Call->getArg(0)->getType()->isPipeType()) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
-        << Call->getDirectCallee() << Call->getArg(0)->getSourceRange();
-    return true;
-  }
+  // if (!Call->getArg(0)->getType()->isPipeType()) {
+  //   S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
+  //       << Call->getDirectCallee() << Call->getArg(0)->getSourceRange();
+  //   return true;
+  // }
 
   return false;
 }
@@ -1272,49 +1272,49 @@ static bool SemaBuiltinPipePackets(Sema &S, CallExpr *Call) {
 // \param BuiltinID ID of the builtin function.
 // \param Call A pointer to the builtin call.
 // \return True if a semantic error has been found, false otherwise.
-static bool SemaOpenCLBuiltinToAddr(Sema &S, unsigned BuiltinID,
-                                    CallExpr *Call) {
-  if (Call->getNumArgs() != 1) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_arg_num)
-        << Call->getDirectCallee() << Call->getSourceRange();
-    return true;
-  }
+// static bool SemaOpenCLBuiltinToAddr(Sema &S, unsigned BuiltinID,
+//                                     CallExpr *Call) {
+//   if (Call->getNumArgs() != 1) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_arg_num)
+//         << Call->getDirectCallee() << Call->getSourceRange();
+//     return true;
+//   }
 
-  auto RT = Call->getArg(0)->getType();
-  if (!RT->isPointerType() || RT->getPointeeType()
-      .getAddressSpace() == LangAS::opencl_constant) {
-    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_invalid_arg)
-        << Call->getArg(0) << Call->getDirectCallee() << Call->getSourceRange();
-    return true;
-  }
+//   auto RT = Call->getArg(0)->getType();
+//   if (!RT->isPointerType() || RT->getPointeeType()
+//       .getAddressSpace() == LangAS::opencl_constant) {
+//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_invalid_arg)
+//         << Call->getArg(0) << Call->getDirectCallee() << Call->getSourceRange();
+//     return true;
+//   }
 
-  if (RT->getPointeeType().getAddressSpace() != LangAS::opencl_generic) {
-    S.Diag(Call->getArg(0)->getBeginLoc(),
-           diag::warn_opencl_generic_address_space_arg)
-        << Call->getDirectCallee()->getNameInfo().getAsString()
-        << Call->getArg(0)->getSourceRange();
-  }
+//   if (RT->getPointeeType().getAddressSpace() != LangAS::opencl_generic) {
+//     S.Diag(Call->getArg(0)->getBeginLoc(),
+//            diag::warn_opencl_generic_address_space_arg)
+//         << Call->getDirectCallee()->getNameInfo().getAsString()
+//         << Call->getArg(0)->getSourceRange();
+//   }
 
-  RT = RT->getPointeeType();
-  auto Qual = RT.getQualifiers();
-  switch (BuiltinID) {
-  case Builtin::BIto_global:
-    Qual.setAddressSpace(LangAS::opencl_global);
-    break;
-  case Builtin::BIto_local:
-    Qual.setAddressSpace(LangAS::opencl_local);
-    break;
-  case Builtin::BIto_private:
-    Qual.setAddressSpace(LangAS::opencl_private);
-    break;
-  default:
-    llvm_unreachable("Invalid builtin function");
-  }
-  Call->setType(S.Context.getPointerType(S.Context.getQualifiedType(
-      RT.getUnqualifiedType(), Qual)));
+//   RT = RT->getPointeeType();
+//   auto Qual = RT.getQualifiers();
+//   switch (BuiltinID) {
+//   case Builtin::BIto_global:
+//     Qual.setAddressSpace(LangAS::opencl_global);
+//     break;
+//   case Builtin::BIto_local:
+//     Qual.setAddressSpace(LangAS::opencl_local);
+//     break;
+//   case Builtin::BIto_private:
+//     Qual.setAddressSpace(LangAS::opencl_private);
+//     break;
+//   default:
+//     llvm_unreachable("Invalid builtin function");
+//   }
+//   Call->setType(S.Context.getPointerType(S.Context.getQualifiedType(
+//       RT.getUnqualifiedType(), Qual)));
 
-  return false;
-}
+//   return false;
+// }
 
 static ExprResult SemaBuiltinLaunder(Sema &S, CallExpr *TheCall) {
   if (checkArgCount(S, TheCall, 1))
@@ -1460,8 +1460,8 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
   case Builtin::BI__builtin___CFStringMakeConstantString:
     assert(TheCall->getNumArgs() == 1 &&
            "Wrong # arguments to builtin CFStringMakeConstantString");
-    if (CheckObjCString(TheCall->getArg(0)))
-      return ExprError();
+    // if (CheckObjCString(TheCall->getArg(0)))
+    //   return ExprError();
     break;
   case Builtin::BI__builtin_ms_va_start:
   case Builtin::BI__builtin_stdarg_start:
@@ -1900,17 +1900,17 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
   //       SemaBuiltinCommitRWPipe(*this, TheCall))
   //     return ExprError();
   //   break;
-  case Builtin::BIget_pipe_num_packets:
-  case Builtin::BIget_pipe_max_packets:
-    if (SemaBuiltinPipePackets(*this, TheCall))
-      return ExprError();
-    break;
-  case Builtin::BIto_global:
-  case Builtin::BIto_local:
-  case Builtin::BIto_private:
-    if (SemaOpenCLBuiltinToAddr(*this, BuiltinID, TheCall))
-      return ExprError();
-    break;
+  // case Builtin::BIget_pipe_num_packets:
+  // case Builtin::BIget_pipe_max_packets:
+  //   if (SemaBuiltinPipePackets(*this, TheCall))
+  //     return ExprError();
+  //   break;
+  // case Builtin::BIto_global:
+  // case Builtin::BIto_local:
+  // case Builtin::BIto_private:
+  //   if (SemaOpenCLBuiltinToAddr(*this, BuiltinID, TheCall))
+  //     return ExprError();
+  //   break;
   // OpenCL v2.0, s6.13.17 - Enqueue kernel functions.
   // case Builtin::BIenqueue_kernel:
   //   if (SemaOpenCLBuiltinEnqueueKernel(*this, TheCall))
@@ -1921,11 +1921,11 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
   //   if (SemaOpenCLBuiltinKernelWorkGroupSize(*this, TheCall))
   //     return ExprError();
   //   break;
-  case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
-  case Builtin::BIget_kernel_sub_group_count_for_ndrange:
-    if (SemaOpenCLBuiltinNDRangeAndBlock(*this, TheCall))
-      return ExprError();
-    break;
+  // case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
+  // case Builtin::BIget_kernel_sub_group_count_for_ndrange:
+  //   if (SemaOpenCLBuiltinNDRangeAndBlock(*this, TheCall))
+  //     return ExprError();
+  //   break;
   case Builtin::BI__builtin_os_log_format:
     Cleanup.setExprNeedsCleanups(true);
     LLVM_FALLTHROUGH;
@@ -2377,19 +2377,19 @@ bool Sema::CheckARMBuiltinExclusiveCall(unsigned BuiltinID, CallExpr *TheCall,
     return true;
   }
 
-  switch (ValType.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-  case Qualifiers::OCL_ExplicitNone:
-    // okay
-    break;
+  // switch (ValType.getObjCLifetime()) {
+  // case Qualifiers::OCL_None:
+  // case Qualifiers::OCL_ExplicitNone:
+  //   // okay
+  //   break;
 
-  case Qualifiers::OCL_Weak:
-  case Qualifiers::OCL_Strong:
-  case Qualifiers::OCL_Autoreleasing:
-    Diag(DRE->getBeginLoc(), diag::err_arc_atomic_ownership)
-        << ValType << PointerArg->getSourceRange();
-    return true;
-  }
+  // case Qualifiers::OCL_Weak:
+  // case Qualifiers::OCL_Strong:
+  // case Qualifiers::OCL_Autoreleasing:
+  //   Diag(DRE->getBeginLoc(), diag::err_arc_atomic_ownership)
+  //       << ValType << PointerArg->getSourceRange();
+  //   return true;
+  // }
 
   if (IsLdrex) {
     TheCall->setType(ValType);
@@ -4116,12 +4116,12 @@ DiagnoseCStringFormatDirectiveInCFAPI(Sema &S,
                                         unsigned NumArgs) {
   unsigned Idx = 0;
   bool Format = false;
-  ObjCStringFormatFamily SFFamily = FDecl->getObjCFStringFormattingFamily();
-  if (SFFamily == ObjCStringFormatFamily::SFF_CFString) {
-    Idx = 2;
-    Format = true;
-  }
-  else
+  // ObjCStringFormatFamily SFFamily = FDecl->getObjCFStringFormattingFamily();
+  // if (SFFamily == ObjCStringFormatFamily::SFF_CFString) {
+  //   Idx = 2;
+  //   Format = true;
+  // }
+  // else
     for (const auto *I : FDecl->specific_attrs<FormatAttr>()) {
       if (S.GetFormatNSStringIdx(I, Idx)) {
         Format = true;
@@ -4142,8 +4142,8 @@ DiagnoseCStringFormatDirectiveInCFAPI(Sema &S,
   if (!FormatString)
     return;
   if (S.FormatStringHasSArg(FormatString)) {
-    S.Diag(FormatExpr->getExprLoc(), diag::warn_objc_cdirective_format_string)
-      << "%s" << 1 << 1;
+    // S.Diag(FormatExpr->getExprLoc(), diag::warn_objc_cdirective_format_string)
+    //   << "%s" << 1 << 1;
     S.Diag(FDecl->getLocation(), diag::note_entity_declared_at)
       << FDecl->getDeclName();
   }
@@ -4191,7 +4191,7 @@ static void CheckNonNullArguments(Sema &S,
     }
   }
 
-  if (FDecl && (isa<FunctionDecl>(FDecl) /*|| isa<ObjCMethodDecl>(FDecl))*/) {
+  if (FDecl && (isa<FunctionDecl>(FDecl) /*|| isa<ObjCMethodDecl>(FDecl)*/)) {
     // Handle the nonnull attribute on the parameters of the
     // function/method.
     ArrayRef<ParmVarDecl*> parms;
@@ -4731,21 +4731,21 @@ ExprResult Sema::BuildAtomicExpr(SourceRange CallRange, SourceRange ExprRange,
     return ExprError();
   }
 
-  switch (ValType.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-  case Qualifiers::OCL_ExplicitNone:
-    // okay
-    break;
+  // switch (ValType.getObjCLifetime()) {
+  // case Qualifiers::OCL_None:
+  // case Qualifiers::OCL_ExplicitNone:
+  //   // okay
+  //   break;
 
-  case Qualifiers::OCL_Weak:
-  case Qualifiers::OCL_Strong:
-  case Qualifiers::OCL_Autoreleasing:
-    // FIXME: Can this happen? By this point, ValType should be known
-    // to be trivially copyable.
-    Diag(ExprRange.getBegin(), diag::err_arc_atomic_ownership)
-        << ValType << Ptr->getSourceRange();
-    return ExprError();
-  }
+  // case Qualifiers::OCL_Weak:
+  // case Qualifiers::OCL_Strong:
+  // case Qualifiers::OCL_Autoreleasing:
+  //   // FIXME: Can this happen? By this point, ValType should be known
+  //   // to be trivially copyable.
+  //   Diag(ExprRange.getBegin(), diag::err_arc_atomic_ownership)
+  //       << ValType << Ptr->getSourceRange();
+  //   return ExprError();
+  // }
 
   // All atomic operations have an overload which takes a pointer to a volatile
   // 'A'.  We shouldn't let the volatile-ness of the pointee-type inject itself
@@ -5037,19 +5037,19 @@ Sema::SemaBuiltinAtomicOverloaded(ExprResult TheCallResult) {
     return ExprError();
   }
 
-  switch (ValType.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-  case Qualifiers::OCL_ExplicitNone:
-    // okay
-    break;
+  // switch (ValType.getObjCLifetime()) {
+  // case Qualifiers::OCL_None:
+  // case Qualifiers::OCL_ExplicitNone:
+  //   // okay
+  //   break;
 
-  case Qualifiers::OCL_Weak:
-  case Qualifiers::OCL_Strong:
-  case Qualifiers::OCL_Autoreleasing:
-    Diag(DRE->getBeginLoc(), diag::err_arc_atomic_ownership)
-        << ValType << FirstArg->getSourceRange();
-    return ExprError();
-  }
+  // case Qualifiers::OCL_Weak:
+  // case Qualifiers::OCL_Strong:
+  // case Qualifiers::OCL_Autoreleasing:
+  //   Diag(DRE->getBeginLoc(), diag::err_arc_atomic_ownership)
+  //       << ValType << FirstArg->getSourceRange();
+  //   return ExprError();
+  // }
 
   // Strip any qualifiers off ValType.
   ValType = ValType.getUnqualifiedType();
@@ -5437,33 +5437,33 @@ ExprResult Sema::SemaBuiltinNontemporalOverloaded(ExprResult TheCallResult) {
 /// CFString constructor is correct
 /// Note: It might also make sense to do the UTF-16 conversion here (would
 /// simplify the backend).
-bool Sema::CheckObjCString(Expr *Arg) {
-  Arg = Arg->IgnoreParenCasts();
-  StringLiteral *Literal = dyn_cast<StringLiteral>(Arg);
+// bool Sema::CheckObjCString(Expr *Arg) {
+//   Arg = Arg->IgnoreParenCasts();
+//   StringLiteral *Literal = dyn_cast<StringLiteral>(Arg);
 
-  if (!Literal || !Literal->isAscii()) {
-    Diag(Arg->getBeginLoc(), diag::err_cfstring_literal_not_string_constant)
-        << Arg->getSourceRange();
-    return true;
-  }
+//   if (!Literal || !Literal->isAscii()) {
+//     Diag(Arg->getBeginLoc(), diag::err_cfstring_literal_not_string_constant)
+//         << Arg->getSourceRange();
+//     return true;
+//   }
 
-  if (Literal->containsNonAsciiOrNull()) {
-    StringRef String = Literal->getString();
-    unsigned NumBytes = String.size();
-    SmallVector<llvm::UTF16, 128> ToBuf(NumBytes);
-    const llvm::UTF8 *FromPtr = (const llvm::UTF8 *)String.data();
-    llvm::UTF16 *ToPtr = &ToBuf[0];
+//   if (Literal->containsNonAsciiOrNull()) {
+//     StringRef String = Literal->getString();
+//     unsigned NumBytes = String.size();
+//     SmallVector<llvm::UTF16, 128> ToBuf(NumBytes);
+//     const llvm::UTF8 *FromPtr = (const llvm::UTF8 *)String.data();
+//     llvm::UTF16 *ToPtr = &ToBuf[0];
 
-    llvm::ConversionResult Result =
-        llvm::ConvertUTF8toUTF16(&FromPtr, FromPtr + NumBytes, &ToPtr,
-                                 ToPtr + NumBytes, llvm::strictConversion);
-    // Check for conversion failure.
-    if (Result != llvm::conversionOK)
-      Diag(Arg->getBeginLoc(), diag::warn_cfstring_truncated)
-          << Arg->getSourceRange();
-  }
-  return false;
-}
+//     llvm::ConversionResult Result =
+//         llvm::ConvertUTF8toUTF16(&FromPtr, FromPtr + NumBytes, &ToPtr,
+//                                  ToPtr + NumBytes, llvm::strictConversion);
+//     // Check for conversion failure.
+//     if (Result != llvm::conversionOK)
+//       Diag(Arg->getBeginLoc(), diag::warn_cfstring_truncated)
+//           << Arg->getSourceRange();
+//   }
+//   return false;
+// }
 
 /// CheckObjCString - Checks that the format string argument to the os_log()
 /// and os_trace() functions is correct, and converts it to const char *.
@@ -7721,16 +7721,16 @@ public:
   bool checkForCStrMembers(const analyze_printf::ArgType &AT,
                            const Expr *E);
 
-  void HandleEmptyObjCModifierFlag(const char *startFlag,
-                                   unsigned flagLen) override;
+  // void HandleEmptyObjCModifierFlag(const char *startFlag,
+  //                                  unsigned flagLen) override;
 
-  void HandleInvalidObjCModifierFlag(const char *startFlag,
-                                            unsigned flagLen) override;
+  // void HandleInvalidObjCModifierFlag(const char *startFlag,
+  //                                           unsigned flagLen) override;
 
-  void HandleObjCFlagsWithNonObjCConversion(const char *flagsStart,
-                                           const char *flagsEnd,
-                                           const char *conversionPosition)
-                                             override;
+  // void HandleObjCFlagsWithNonObjCConversion(const char *flagsStart,
+  //                                          const char *flagsEnd,
+  //                                          const char *conversionPosition)
+  //                                            override;
 };
 
 } // namespace
@@ -7855,36 +7855,36 @@ void CheckPrintfHandler::HandleIgnoredFlag(
                          getSpecifierRange(ignoredFlag.getPosition(), 1)));
 }
 
-void CheckPrintfHandler::HandleEmptyObjCModifierFlag(const char *startFlag,
-                                                     unsigned flagLen) {
-  // Warn about an empty flag.
-  EmitFormatDiagnostic(S.PDiag(diag::warn_printf_empty_objc_flag),
-                       getLocationOfByte(startFlag),
-                       /*IsStringLocation*/true,
-                       getSpecifierRange(startFlag, flagLen));
-}
+// void CheckPrintfHandler::HandleEmptyObjCModifierFlag(const char *startFlag,
+//                                                      unsigned flagLen) {
+//   // Warn about an empty flag.
+//   EmitFormatDiagnostic(S.PDiag(diag::warn_printf_empty_objc_flag),
+//                        getLocationOfByte(startFlag),
+//                        /*IsStringLocation*/true,
+//                        getSpecifierRange(startFlag, flagLen));
+// }
 
-void CheckPrintfHandler::HandleInvalidObjCModifierFlag(const char *startFlag,
-                                                       unsigned flagLen) {
-  // Warn about an invalid flag.
-  auto Range = getSpecifierRange(startFlag, flagLen);
-  StringRef flag(startFlag, flagLen);
-  EmitFormatDiagnostic(S.PDiag(diag::warn_printf_invalid_objc_flag) << flag,
-                      getLocationOfByte(startFlag),
-                      /*IsStringLocation*/true,
-                      Range, FixItHint::CreateRemoval(Range));
-}
+// void CheckPrintfHandler::HandleInvalidObjCModifierFlag(const char *startFlag,
+//                                                        unsigned flagLen) {
+//   // Warn about an invalid flag.
+//   auto Range = getSpecifierRange(startFlag, flagLen);
+//   StringRef flag(startFlag, flagLen);
+//   EmitFormatDiagnostic(S.PDiag(diag::warn_printf_invalid_objc_flag) << flag,
+//                       getLocationOfByte(startFlag),
+//                       /*IsStringLocation*/true,
+//                       Range, FixItHint::CreateRemoval(Range));
+// }
 
-void CheckPrintfHandler::HandleObjCFlagsWithNonObjCConversion(
-    const char *flagsStart, const char *flagsEnd, const char *conversionPosition) {
-    // Warn about using '[...]' without a '@' conversion.
-    auto Range = getSpecifierRange(flagsStart, flagsEnd - flagsStart + 1);
-    auto diag = diag::warn_printf_ObjCflags_without_ObjCConversion;
-    EmitFormatDiagnostic(S.PDiag(diag) << StringRef(conversionPosition, 1),
-                         getLocationOfByte(conversionPosition),
-                         /*IsStringLocation*/true,
-                         Range, FixItHint::CreateRemoval(Range));
-}
+// void CheckPrintfHandler::HandleObjCFlagsWithNonObjCConversion(
+//     const char *flagsStart, const char *flagsEnd, const char *conversionPosition) {
+//     // Warn about using '[...]' without a '@' conversion.
+//     auto Range = getSpecifierRange(flagsStart, flagsEnd - flagsStart + 1);
+//     auto diag = diag::warn_printf_ObjCflags_without_ObjCConversion;
+//     EmitFormatDiagnostic(S.PDiag(diag) << StringRef(conversionPosition, 1),
+//                          getLocationOfByte(conversionPosition),
+//                          /*IsStringLocation*/true,
+//                          Range, FixItHint::CreateRemoval(Range));
+// }
 
 // Determines if the specified is a C++ class or struct containing
 // a member with the specified name and kind (e.g. a CXXMethodDecl named
@@ -9405,12 +9405,12 @@ struct SearchNonTrivialToInitializeField
     Super::visitWithKind(PDIK, FT, SL);
   }
 
-  void visitARCStrong(QualType FT, SourceLocation SL) {
-    S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 1);
-  }
-  void visitARCWeak(QualType FT, SourceLocation SL) {
-    S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 1);
-  }
+  // void visitARCStrong(QualType FT, SourceLocation SL) {
+  //   S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 1);
+  // }
+  // void visitARCWeak(QualType FT, SourceLocation SL) {
+  //   S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 1);
+  // }
   void visitStruct(QualType FT, SourceLocation SL) {
     for (const FieldDecl *FD : FT->castAs<RecordType>()->getDecl()->fields())
       visit(FD->getType(), FD->getLocation());
@@ -9447,12 +9447,12 @@ struct SearchNonTrivialToCopyField
     Super::visitWithKind(PCK, FT, SL);
   }
 
-  void visitARCStrong(QualType FT, SourceLocation SL) {
-    S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 0);
-  }
-  void visitARCWeak(QualType FT, SourceLocation SL) {
-    S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 0);
-  }
+  // void visitARCStrong(QualType FT, SourceLocation SL) {
+  //   S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 0);
+  // }
+  // void visitARCWeak(QualType FT, SourceLocation SL) {
+  //   S.DiagRuntimeBehavior(SL, E, S.PDiag(diag::note_nontrivial_field) << 0);
+  // }
   void visitStruct(QualType FT, SourceLocation SL) {
     for (const FieldDecl *FD : FT->castAs<RecordType>()->getDecl()->fields())
       visit(FD->getType(), FD->getLocation());
@@ -9722,14 +9722,14 @@ void Sema::CheckMemaccessArguments(const CallExpr *Call,
                               << (IsCmp ? ArgIdx + 2 : ArgIdx) << FnName
                               << IsContained << ContainedRD << OperationType
                               << Call->getCallee()->getSourceRange());
-    } else if (PointeeTy.hasNonTrivialObjCLifetime() &&
+    } /*else if (PointeeTy.hasNonTrivialObjCLifetime() &&
              BId != Builtin::BImemset)
       DiagRuntimeBehavior(
         Dest->getExprLoc(), Dest,
         PDiag(diag::warn_arc_object_memaccess)
           << ArgIdx << FnName << PointeeTy
           << Call->getCallee()->getSourceRange());
-    else if (const auto *RT = PointeeTy->getAs<RecordType>()) {
+    else*/ if (const auto *RT = PointeeTy->getAs<RecordType>()) {
       if ((BId == Builtin::BImemset || BId == Builtin::BIbzero) &&
           RT->getDecl()->isNonTrivialToPrimitiveDefaultInitialize()) {
         DiagRuntimeBehavior(Dest->getExprLoc(), Dest,
@@ -10727,19 +10727,19 @@ static bool CheckTautologicalComparison(Sema &S, BinaryOperator *E,
   llvm::raw_svector_ostream OS(PrettySourceValue);
   if (ED) {
     OS << '\'' << *ED << "' (" << Value << ")";
-  } else if (auto *BL = dyn_cast<ObjCBoolLiteralExpr>(
+  } /*else if (auto *BL = dyn_cast<ObjCBoolLiteralExpr>(
                Constant->IgnoreParenImpCasts())) {
     OS << (BL->getValue() ? "YES" : "NO");
-  } else {
+  }*/ else {
     OS << Value;
   }
 
-  if (IsObjCSignedCharBool) {
-    S.DiagRuntimeBehavior(E->getOperatorLoc(), E,
-                          S.PDiag(diag::warn_tautological_compare_objc_bool)
-                              << OS.str() << *Result);
-    return true;
-  }
+  // if (IsObjCSignedCharBool) {
+  //   S.DiagRuntimeBehavior(E->getOperatorLoc(), E,
+  //                         S.PDiag(diag::warn_tautological_compare_objc_bool)
+  //                             << OS.str() << *Result);
+  //   return true;
+  // }
 
   // FIXME: We use a somewhat different formatting for the in-range cases and
   // cases involving boolean values for historical reasons. We should pick a
@@ -11856,16 +11856,17 @@ static void CheckImplicitConversion(Sema &S, Expr *E, QualType T,
     if (TargetRange.Width == 32 && S.Context.getIntWidth(E->getType()) == 64)
       return DiagnoseImpCast(S, E, T, CC, diag::warn_impcast_integer_64_32,
                              /* pruneControlFlow */ true);
-    return DiagnoseImpCast(S, E, T, CC, diag::warn_impcast_integer_precision);
+    // return DiagnoseImpCast(S, E, T, CC, diag::warn_impcast_integer_precision);
+    return;
   }
 
   if (TargetRange.Width > SourceRange.Width) {
     if (auto *UO = dyn_cast<UnaryOperator>(E))
       if (UO->getOpcode() == UO_Minus)
         if (Source->isUnsignedIntegerType()) {
-          if (Target->isUnsignedIntegerType())
-            return DiagnoseImpCast(S, E, T, CC,
-                                   diag::warn_impcast_high_order_zero_bits);
+          // if (Target->isUnsignedIntegerType())
+          //   return DiagnoseImpCast(S, E, T, CC,
+          //                          diag::warn_impcast_high_order_zero_bits);
           if (Target->isSignedIntegerType())
             return DiagnoseImpCast(S, E, T, CC,
                                    diag::warn_impcast_nonnegative_result);
@@ -13931,13 +13932,13 @@ void Sema::CheckArrayAccess(const Expr *expr) {
         expr = cast<MemberExpr>(expr)->getBase();
         break;
       }
-      case Stmt::OMPArraySectionExprClass: {
-        const OMPArraySectionExpr *ASE = cast<OMPArraySectionExpr>(expr);
-        if (ASE->getLowerBound())
-          CheckArrayAccess(ASE->getBase(), ASE->getLowerBound(),
-                           /*ASE=*/nullptr, AllowOnePastEnd > 0);
-        return;
-      }
+      // case Stmt::OMPArraySectionExprClass: {
+      //   const OMPArraySectionExpr *ASE = cast<OMPArraySectionExpr>(expr);
+      //   if (ASE->getLowerBound())
+      //     CheckArrayAccess(ASE->getBase(), ASE->getLowerBound(),
+      //                      /*ASE=*/nullptr, AllowOnePastEnd > 0);
+      //   return;
+      // }
       case Stmt::UnaryOperatorClass: {
         // Only unwrap the * and & unary operators
         const UnaryOperator *UO = cast<UnaryOperator>(expr);
@@ -14000,8 +14001,8 @@ static bool considerVariable(VarDecl *var, Expr *ref, RetainCycleOwner &owner) {
   // In ARC, it's captured strongly iff the variable has __strong
   // lifetime.  In MRR, it's captured strongly if the variable is
   // __block and has an appropriate type.
-  if (var->getType().getObjCLifetime() != Qualifiers::OCL_Strong)
-    return false;
+  // if (var->getType().getObjCLifetime() != Qualifiers::OCL_Strong)
+  //   return false;
 
   owner.Variable = var;
   if (ref)
@@ -14054,33 +14055,33 @@ static bool findRetainCycleOwner(Sema &S, Expr *e, RetainCycleOwner &owner) {
       continue;
     }
 
-    // if (PseudoObjectExpr *pseudo = dyn_cast<PseudoObjectExpr>(e)) {
-    //   // Only pay attention to pseudo-objects on property references.
-    //   ObjCPropertyRefExpr *pre
-    //     = dyn_cast<ObjCPropertyRefExpr>(pseudo->getSyntacticForm()
-    //                                           ->IgnoreParens());
-    //   if (!pre) return false;
-    //   if (pre->isImplicitProperty()) return false;
-    //   ObjCPropertyDecl *property = pre->getExplicitProperty();
-    //   if (!property->isRetaining() &&
-    //       !(property->getPropertyIvarDecl() &&
-    //         property->getPropertyIvarDecl()->getType()
-    //           .getObjCLifetime() == Qualifiers::OCL_Strong))
-    //       return false;
+    if (PseudoObjectExpr *pseudo = dyn_cast<PseudoObjectExpr>(e)) {
+      // Only pay attention to pseudo-objects on property references.
+      // ObjCPropertyRefExpr *pre
+      //   = dyn_cast<ObjCPropertyRefExpr>(pseudo->getSyntacticForm()
+      //                                         ->IgnoreParens());
+      // if (!pre) return false;
+      // if (pre->isImplicitProperty()) return false;
+      // ObjCPropertyDecl *property = pre->getExplicitProperty();
+      // if (!property->isRetaining() &&
+      //     !(property->getPropertyIvarDecl() &&
+      //       property->getPropertyIvarDecl()->getType()
+      //         .getObjCLifetime() == Qualifiers::OCL_Strong))
+      //     return false;
 
-    //   owner.Indirect = true;
-    //   if (pre->isSuperReceiver()) {
-    //     owner.Variable = S.getCurMethodDecl()->getSelfDecl();
-    //     if (!owner.Variable)
-    //       return false;
-    //     owner.Loc = pre->getLocation();
-    //     owner.Range = pre->getSourceRange();
-    //     return true;
-    //   }
-    //   e = const_cast<Expr*>(cast<OpaqueValueExpr>(pre->getBase())
-    //                           ->getSourceExpr());
-    //   continue;
-    // }
+      owner.Indirect = true;
+      // if (pre->isSuperReceiver()) {
+      //   owner.Variable = S.getCurMethodDecl()->getSelfDecl();
+      //   if (!owner.Variable)
+      //     return false;
+      //   owner.Loc = pre->getLocation();
+      //   owner.Range = pre->getSourceRange();
+      //   return true;
+      // }
+      // e = const_cast<Expr*>(cast<OpaqueValueExpr>(pre->getBase())
+      //                         ->getSourceExpr());
+      continue;
+    }
 
     // Array ivars?
 
@@ -14194,25 +14195,25 @@ static void diagnoseRetainCycle(Sema &S, Expr *capturer,
 
 /// Check for a keyword selector that starts with the word 'add' or
 /// 'set'.
-static bool isSetterLikeSelector(Selector sel) {
-  if (sel.isUnarySelector()) return false;
+// static bool isSetterLikeSelector(Selector sel) {
+//   if (sel.isUnarySelector()) return false;
 
-  StringRef str = sel.getNameForSlot(0);
-  while (!str.empty() && str.front() == '_') str = str.substr(1);
-  if (str.startswith("set"))
-    str = str.substr(3);
-  else if (str.startswith("add")) {
-    // Specially allow 'addOperationWithBlock:'.
-    if (sel.getNumArgs() == 1 && str.startswith("addOperationWithBlock"))
-      return false;
-    str = str.substr(3);
-  }
-  else
-    return false;
+//   StringRef str = sel.getNameForSlot(0);
+//   while (!str.empty() && str.front() == '_') str = str.substr(1);
+//   if (str.startswith("set"))
+//     str = str.substr(3);
+//   else if (str.startswith("add")) {
+//     // Specially allow 'addOperationWithBlock:'.
+//     if (sel.getNumArgs() == 1 && str.startswith("addOperationWithBlock"))
+//       return false;
+//     str = str.substr(3);
+//   }
+//   else
+//     return false;
 
-  if (str.empty()) return true;
-  return !isLowercase(str.front());
-}
+//   if (str.empty()) return true;
+//   return !isLowercase(str.front());
+// }
 
 // static Optional<int> GetNSMutableArrayArgumentIndex(Sema &S,
 //                                                     ObjCMessageExpr *Message) {
@@ -14455,37 +14456,37 @@ static bool checkUnsafeAssignLiteral(Sema &S, SourceLocation Loc,
   return true;
 }
 
-static bool checkUnsafeAssignObject(Sema &S, SourceLocation Loc,
-                                    Qualifiers::ObjCLifetime LT,
-                                    Expr *RHS, bool isProperty) {
-  // Strip off any implicit cast added to get to the one ARC-specific.
-  while (ImplicitCastExpr *cast = dyn_cast<ImplicitCastExpr>(RHS)) {
-    if (cast->getCastKind() == CK_ARCConsumeObject) {
-      S.Diag(Loc, diag::warn_arc_retained_assign)
-        << (LT == Qualifiers::OCL_ExplicitNone)
-        << (isProperty ? 0 : 1)
-        << RHS->getSourceRange();
-      return true;
-    }
-    RHS = cast->getSubExpr();
-  }
+// static bool checkUnsafeAssignObject(Sema &S, SourceLocation Loc,
+//                                     Qualifiers::ObjCLifetime LT,
+//                                     Expr *RHS, bool isProperty) {
+//   // Strip off any implicit cast added to get to the one ARC-specific.
+//   while (ImplicitCastExpr *cast = dyn_cast<ImplicitCastExpr>(RHS)) {
+//     if (cast->getCastKind() == CK_ARCConsumeObject) {
+//       S.Diag(Loc, diag::warn_arc_retained_assign)
+//         << (LT == Qualifiers::OCL_ExplicitNone)
+//         << (isProperty ? 0 : 1)
+//         << RHS->getSourceRange();
+//       return true;
+//     }
+//     RHS = cast->getSubExpr();
+//   }
 
-  if (LT == Qualifiers::OCL_Weak &&
-      checkUnsafeAssignLiteral(S, Loc, RHS, isProperty))
-    return true;
+//   if (LT == Qualifiers::OCL_Weak &&
+//       checkUnsafeAssignLiteral(S, Loc, RHS, isProperty))
+//     return true;
 
-  return false;
-}
+//   return false;
+// }
 
 bool Sema::checkUnsafeAssigns(SourceLocation Loc,
                               QualType LHS, Expr *RHS) {
-  Qualifiers::ObjCLifetime LT = LHS.getObjCLifetime();
+  // Qualifiers::ObjCLifetime LT = LHS.getObjCLifetime();
 
-  if (LT != Qualifiers::OCL_Weak && LT != Qualifiers::OCL_ExplicitNone)
-    return false;
+  // if (LT != Qualifiers::OCL_Weak && LT != Qualifiers::OCL_ExplicitNone)
+  //   return false;
 
-  if (checkUnsafeAssignObject(*this, Loc, LT, RHS, false))
-    return true;
+  // if (checkUnsafeAssignObject(*this, Loc, LT, RHS, false))
+  //   return true;
 
   return false;
 }

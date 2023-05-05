@@ -608,12 +608,12 @@ void tools::gnutools::Linker::ConstructJob(Compilation &C, const JobAction &JA,
 
       // FIXME: Only pass GompNeedsRT = true for platforms with libgomp that
       // require librt. Most modern Linux platforms do, but some may not.
-      if (addOpenMPRuntime(CmdArgs, ToolChain, Args, StaticOpenMP,
-                           JA.isHostOffloading(Action::OFK_OpenMP),
-                           /* GompNeedsRT= */ true))
+      // if (addOpenMPRuntime(CmdArgs, ToolChain, Args, StaticOpenMP,
+      //                      JA.isHostOffloading(Action::OFK_OpenMP),
+      //                      /* GompNeedsRT= */ true))
         // OpenMP runtimes implies pthreads when using the GNU toolchain.
         // FIXME: Does this really make sense for all GNU toolchains?
-        WantPthread = true;
+        // WantPthread = true;
 
       AddRunTimeLibs(ToolChain, D, CmdArgs, Args);
 

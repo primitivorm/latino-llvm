@@ -64,7 +64,7 @@ void DelayedDiagnostic::Destroy() {
 
   case Availability:
     delete[] AvailabilityData.Message;
-    delete[] AvailabilityData.SelectorLocs;
+    // delete[] AvailabilityData.SelectorLocs;
     break;
 
   case ForbiddenType:

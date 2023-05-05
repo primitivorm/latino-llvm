@@ -60,7 +60,7 @@ Parser::DeclGroupPtrTy Parser::ParseNamespace(DeclaratorContext Context,
                                               SourceLocation InlineLoc) {
   assert(Tok.is(tok::kw_contexto) && "Not a namespace!");
   SourceLocation NamespaceLoc = ConsumeToken();  // eat the 'namespace'.
-  ObjCDeclContextSwitch ObjCDC(*this);
+  // ObjCDeclContextSwitch ObjCDC(*this);
 
   if (Tok.is(tok::code_completion)) {
     Actions.CodeCompleteNamespaceDecl(getCurScope());
@@ -465,7 +465,7 @@ Parser::ParseUsingDirectiveOrDeclaration(DeclaratorContext Context,
                                          SourceLocation &DeclEnd,
                                          ParsedAttributesWithRange &attrs) {
   assert(Tok.is(tok::kw_usar) && "Not using token");
-  ObjCDeclContextSwitch ObjCDC(*this);
+  // ObjCDeclContextSwitch ObjCDC(*this);
 
   // Eat 'using'.
   SourceLocation UsingLoc = ConsumeToken();
@@ -1681,8 +1681,8 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
 
   const PrintingPolicy &Policy = Actions.getASTContext().getPrintingPolicy();
   Sema::TagUseKind TUK;
-  if (isDefiningTypeSpecifierContext(DSC) == AllowDefiningTypeSpec::No ||
-      (getLangOpts().OpenMP && OpenMPDirectiveParsing))
+  if (isDefiningTypeSpecifierContext(DSC) == AllowDefiningTypeSpec::No /*||
+      (getLangOpts().OpenMP && OpenMPDirectiveParsing)*/)
     TUK = Sema::TUK_Reference;
   else if (Tok.is(tok::l_brace) ||
            (getLangOpts().CPlusPlus && Tok.is(tok::colon)) ||
@@ -2550,7 +2550,7 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
   if (Tok.is(tok::kw_plantilla)) {
     assert(!TemplateInfo.TemplateParams &&
            "Nested template improperly parsed?");
-    ObjCDeclContextSwitch ObjCDC(*this);
+    // ObjCDeclContextSwitch ObjCDC(*this);
     SourceLocation DeclEnd;
     return DeclGroupPtrTy::make(
         DeclGroupRef(ParseTemplateDeclarationOrSpecialization(

@@ -183,7 +183,7 @@ public:
 
   void Visit(const CXXCtorInitializer *Init);
 
-  void Visit(const OMPClause *C);
+  // void Visit(const OMPClause *C);
 
   void Visit(const BlockDecl::Capture &C);
 
@@ -283,7 +283,7 @@ public:
   void VisitSizeOfPackExpr(const SizeOfPackExpr *Node);
   void
   VisitCXXDependentScopeMemberExpr(const CXXDependentScopeMemberExpr *Node);
-  void VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node);
+  // void VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node);
   // void VisitObjCEncodeExpr(const ObjCEncodeExpr *Node);
   // void VisitObjCMessageExpr(const ObjCMessageExpr *Node);
   // void VisitObjCBoxedExpr(const ObjCBoxedExpr *Node);
@@ -293,7 +293,7 @@ public:
   // void VisitObjCSubscriptRefExpr(const ObjCSubscriptRefExpr *Node);
   // void VisitObjCIvarRefExpr(const ObjCIvarRefExpr *Node);
   // void VisitObjCBoolLiteralExpr(const ObjCBoolLiteralExpr *Node);
-  void VisitOMPIteratorExpr(const OMPIteratorExpr *Node);
+  // void VisitOMPIteratorExpr(const OMPIteratorExpr *Node);
 
   void VisitRValueReferenceType(const ReferenceType *T);
   void VisitArrayType(const ArrayType *T);
@@ -329,10 +329,10 @@ public:
   void VisitImportDecl(const ImportDecl *D);
   void VisitPragmaCommentDecl(const PragmaCommentDecl *D);
   void VisitPragmaDetectMismatchDecl(const PragmaDetectMismatchDecl *D);
-  void VisitOMPExecutableDirective(const OMPExecutableDirective *D);
-  void VisitOMPDeclareReductionDecl(const OMPDeclareReductionDecl *D);
-  void VisitOMPRequiresDecl(const OMPRequiresDecl *D);
-  void VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D);
+  // void VisitOMPExecutableDirective(const OMPExecutableDirective *D);
+  // void VisitOMPDeclareReductionDecl(const OMPDeclareReductionDecl *D);
+  // void VisitOMPRequiresDecl(const OMPRequiresDecl *D);
+  // void VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D);
   void VisitNamespaceDecl(const NamespaceDecl *D);
   void VisitUsingDirectiveDecl(const UsingDirectiveDecl *D);
   void VisitNamespaceAliasDecl(const NamespaceAliasDecl *D);
@@ -354,7 +354,7 @@ public:
   void VisitLinkageSpecDecl(const LinkageSpecDecl *D);
   void VisitAccessSpecDecl(const AccessSpecDecl *D);
   void VisitFriendDecl(const FriendDecl *D);
-  // void VisitObjCIvarDecl(const ObjCIvarDecl *D);
+  void VisitObjCIvarDecl(const ObjCIvarDecl *D);
   // void VisitObjCMethodDecl(const ObjCMethodDecl *D);
   // void VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D);
   // void VisitObjCCategoryDecl(const ObjCCategoryDecl *D);

@@ -117,7 +117,7 @@ def OverloadedOperatorKind : EnumPropertyType;
 def Qualifiers : PropertyType;
 def QualType : DefaultValuePropertyType;
 def RefQualifierKind : EnumPropertyType;
-def Selector : PropertyType;
+// def Selector : PropertyType;
 def SourceLocation : PropertyType;
 def StmtRef : RefPropertyType<"Stmt"> { let ConstWhenWriting = 1; }
   def ExprRef : SubclassPropertyType<"Expr", StmtRef>;

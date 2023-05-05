@@ -12,7 +12,7 @@
 
 #include "CGCXXABI.h"
 // #include "CGObjCRuntime.h"
-#include "CGOpenMPRuntime.h"
+// #include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "TargetInfo.h"
 #include "latino/AST/Attr.h"
@@ -42,13 +42,13 @@ static void EmitDeclInit(CodeGenFunction &CGF, const VarDecl &D,
   switch (CGF.getEvaluationKind(type)) {
   case TEK_Scalar: {
     CodeGenModule &CGM = CGF.CGM;
-    if (lv.isObjCStrong())
-      CGM.getObjCRuntime().EmitObjCGlobalAssign(CGF, CGF.EmitScalarExpr(Init),
-                                                DeclPtr, D.getTLSKind());
-    else if (lv.isObjCWeak())
-      CGM.getObjCRuntime().EmitObjCWeakAssign(CGF, CGF.EmitScalarExpr(Init),
-                                              DeclPtr);
-    else
+    // if (lv.isObjCStrong())
+    //   CGM.getObjCRuntime().EmitObjCGlobalAssign(CGF, CGF.EmitScalarExpr(Init),
+    //                                             DeclPtr, D.getTLSKind());
+    // else if (lv.isObjCWeak())
+    //   CGM.getObjCRuntime().EmitObjCWeakAssign(CGF, CGF.EmitScalarExpr(Init),
+    //                                           DeclPtr);
+    // else
       CGF.EmitScalarInit(Init, &D, lv, false);
     return;
   }
@@ -87,8 +87,8 @@ static void EmitDeclDestroy(CodeGenFunction &CGF, const VarDecl &D,
   case QualType::DK_cxx_destructor:
     break;
 
-  case QualType::DK_objc_strong_lifetime:
-  case QualType::DK_objc_weak_lifetime:
+  // case QualType::DK_objc_strong_lifetime:
+  // case QualType::DK_objc_weak_lifetime:
   case QualType::DK_nontrivial_c_struct:
     // We don't care about releasing objects during process teardown.
     assert(!D.getTLSKind() && "should have rejected this");
@@ -119,22 +119,22 @@ static void EmitDeclDestroy(CodeGenFunction &CGF, const VarDecl &D,
     CXXDestructorDecl *Dtor = Record->getDestructor();
 
     Func = CGM.getAddrAndTypeOfCXXStructor(GlobalDecl(Dtor, Dtor_Complete));
-    if (CGF.getContext().getLangOpts().OpenCL) {
-      auto DestAS =
-          CGM.getTargetCodeGenInfo().getAddrSpaceOfCxaAtexitPtrParam();
-      auto DestTy = CGF.getTypes().ConvertType(Type)->getPointerTo(
-          CGM.getContext().getTargetAddressSpace(DestAS));
-      auto SrcAS = D.getType().getQualifiers().getAddressSpace();
-      if (DestAS == SrcAS)
-        Argument = llvm::ConstantExpr::getBitCast(Addr.getPointer(), DestTy);
-      else
-        // FIXME: On addr space mismatch we are passing NULL. The generation
-        // of the global destructor function should be adjusted accordingly.
-        Argument = llvm::ConstantPointerNull::get(DestTy);
-    } else {
+    // if (CGF.getContext().getLangOpts().OpenCL) {
+    //   auto DestAS =
+    //       CGM.getTargetCodeGenInfo().getAddrSpaceOfCxaAtexitPtrParam();
+    //   auto DestTy = CGF.getTypes().ConvertType(Type)->getPointerTo(
+    //       CGM.getContext().getTargetAddressSpace(DestAS));
+    //   auto SrcAS = D.getType().getQualifiers().getAddressSpace();
+    //   if (DestAS == SrcAS)
+    //     Argument = llvm::ConstantExpr::getBitCast(Addr.getPointer(), DestTy);
+    //   else
+    //     // FIXME: On addr space mismatch we are passing NULL. The generation
+    //     // of the global destructor function should be adjusted accordingly.
+    //     Argument = llvm::ConstantPointerNull::get(DestTy);
+    // } else {
       Argument = llvm::ConstantExpr::getBitCast(
           Addr.getPointer(), CGF.getTypes().ConvertType(Type)->getPointerTo());
-    }
+    // }
   // Otherwise, the standard logic requires a helper function.
   } else {
     Func = CodeGenFunction(CGM)
@@ -205,12 +205,12 @@ void CodeGenFunction::EmitCXXGlobalVarDeclInit(const VarDecl &D,
   ConstantAddress DeclAddr(DeclPtr, getContext().getDeclAlign(&D));
 
   if (!T->isReferenceType()) {
-    if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd &&
-        D.hasAttr<OMPThreadPrivateDeclAttr>()) {
-      (void)CGM.getOpenMPRuntime().emitThreadPrivateVarDefinition(
-          &D, DeclAddr, D.getAttr<OMPThreadPrivateDeclAttr>()->getLocation(),
-          PerformInit, this);
-    }
+    // if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd &&
+    //     D.hasAttr<OMPThreadPrivateDeclAttr>()) {
+    //   (void)CGM.getOpenMPRuntime().emitThreadPrivateVarDefinition(
+    //       &D, DeclAddr, D.getAttr<OMPThreadPrivateDeclAttr>()->getLocation(),
+    //       PerformInit, this);
+    // }
     if (PerformInit)
       EmitDeclInit(*this, D, DeclAddr);
     if (CGM.isTypeConstant(D.getType(), true))
@@ -477,9 +477,9 @@ CodeGenModule::EmitCXXGlobalVarDeclInitFunc(const VarDecl *D,
        D->hasAttr<CUDASharedAttr>()))
     return;
 
-  if (getLangOpts().OpenMP &&
-      getOpenMPRuntime().emitDeclareTargetVarDefinition(D, Addr, PerformInit))
-    return;
+  // if (getLangOpts().OpenMP &&
+  //     getOpenMPRuntime().emitDeclareTargetVarDefinition(D, Addr, PerformInit))
+  //   return;
 
   // Check if we've already initialized this decl.
   auto I = DelayedCXXInitPosition.find(D);
@@ -673,10 +673,10 @@ CodeGenModule::EmitCXXGlobalInitFunc() {
   // However it seems global destruction has little meaning without any
   // dynamic resource allocation on the device and program scope variables are
   // destroyed by the runtime when program is released.
-  if (getLangOpts().OpenCL) {
-    GenOpenCLArgMetadata(Fn);
-    Fn->setCallingConv(llvm::CallingConv::SPIR_KERNEL);
-  }
+  // if (getLangOpts().OpenCL) {
+  //   GenOpenCLArgMetadata(Fn);
+  //   Fn->setCallingConv(llvm::CallingConv::SPIR_KERNEL);
+  // }
 
   if (getLangOpts().HIP) {
     Fn->setCallingConv(llvm::CallingConv::AMDGPU_KERNEL);
@@ -793,10 +793,10 @@ CodeGenFunction::GenerateCXXGlobalInitFunc(llvm::Function *Fn,
 
     // When building in Objective-C++ ARC mode, create an autorelease pool
     // around the global initializers.
-    if (getLangOpts().ObjCAutoRefCount && getLangOpts().CPlusPlus) {
-      llvm::Value *token = EmitObjCAutoreleasePoolPush();
-      EmitObjCAutoreleasePoolCleanup(token);
-    }
+    // if (getLangOpts().ObjCAutoRefCount && getLangOpts().CPlusPlus) {
+    //   llvm::Value *token = EmitObjCAutoreleasePoolPush();
+    //   EmitObjCAutoreleasePoolCleanup(token);
+    // }
 
     for (unsigned i = 0, e = Decls.size(); i != e; ++i)
       if (Decls[i])

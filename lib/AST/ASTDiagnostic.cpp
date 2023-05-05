@@ -14,7 +14,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/Attr.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/TemplateBase.h"
@@ -129,11 +129,11 @@ static QualType Desugar(ASTContext &Context, QualType QT, bool &ShouldAKA) {
     }
 
     // Don't desugar magic Objective-C types.
-    if (QualType(Ty,0) == Context.getObjCIdType() ||
-        QualType(Ty,0) == Context.getObjCClassType() ||
-        QualType(Ty,0) == Context.getObjCSelType() ||
-        QualType(Ty,0) == Context.getObjCProtoType())
-      break;
+    // if (QualType(Ty,0) == Context.getObjCIdType() ||
+    //     QualType(Ty,0) == Context.getObjCClassType() ||
+    //     QualType(Ty,0) == Context.getObjCSelType() ||
+    //     QualType(Ty,0) == Context.getObjCProtoType())
+    //   break;
 
     // Don't desugar va_list.
     if (QualType(Ty, 0) == Context.getBuiltinVaListType() ||
@@ -343,7 +343,7 @@ void latino::FormatASTNodeDiagnosticArgument(
 
       auto S = Qualifiers::getAddrSpaceAsString(static_cast<LangAS>(Val));
       if (S.empty()) {
-        OS << (Context.getLangOpts().OpenCL ? "default" : "generic");
+        OS << (/*Context.getLangOpts().OpenCL ? "default" :*/ "generic");
         OS << " address space";
       } else {
         OS << "address space";

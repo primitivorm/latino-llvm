@@ -23,7 +23,7 @@
 #include "llvm/ADT/APSInt.h"
 
 namespace latino {
-class OMPTraitInfo;
+// class OMPTraitInfo;
 
 /// An object for streaming information from a record.
 class ASTRecordReader
@@ -210,9 +210,9 @@ public:
   }
 
   /// Read a selector from the Record, advancing Idx.
-  Selector readSelector() {
-    return Reader->ReadSelector(*F, Record, Idx);
-  }
+  // Selector readSelector() {
+  //   return Reader->ReadSelector(*F, Record, Idx);
+  // }
 
   /// Read a declaration name, advancing Idx.
   // DeclarationName readDeclarationName(); (inherited)
@@ -261,10 +261,10 @@ public:
   }
 
   /// Read an OMPTraitInfo object, advancing Idx.
-  OMPTraitInfo *readOMPTraitInfo();
+  // OMPTraitInfo *readOMPTraitInfo();
 
   /// Read an OpenMP clause, advancing Idx.
-  OMPClause *readOMPClause();
+  // OMPClause *readOMPClause();
 
   /// Read a source location, advancing Idx.
   SourceLocation readSourceLocation() {

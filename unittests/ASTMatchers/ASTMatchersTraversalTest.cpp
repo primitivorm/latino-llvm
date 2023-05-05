@@ -171,12 +171,12 @@ TEST(TypeMatcher, MatchesDeclTypes) {
   EXPECT_TRUE(matches("typedef int I; void f(I i);",
                       parmVarDecl(hasType(namedDecl(hasName("I"))))));
   // ObjCObjectPointerType
-  EXPECT_TRUE(matchesObjC("@interface Foo @end void f(Foo *f);",
-                          parmVarDecl(hasType(objcObjectPointerType()))));
+  // EXPECT_TRUE(matchesObjC("@interface Foo @end void f(Foo *f);",
+  //                         parmVarDecl(hasType(objcObjectPointerType()))));
   // ObjCObjectPointerType -> ObjCInterfaceType -> ObjCInterfaceDecl
-  EXPECT_TRUE(matchesObjC(
-    "@interface Foo @end void f(Foo *f);",
-    parmVarDecl(hasType(pointsTo(objcInterfaceDecl(hasName("Foo")))))));
+  // EXPECT_TRUE(matchesObjC(
+  //   "@interface Foo @end void f(Foo *f);",
+  //   parmVarDecl(hasType(pointsTo(objcInterfaceDecl(hasName("Foo")))))));
   // TemplateTypeParmType
   EXPECT_TRUE(matches("template <typename T> void f(T t);",
                       parmVarDecl(hasType(templateTypeParmType()))));
@@ -409,7 +409,7 @@ TEST(Matcher, AnyArgument) {
   StatementMatcher CtorArgumentY = cxxConstructExpr(HasArgumentY);
   StatementMatcher UnresolvedCtorArgumentY =
       cxxUnresolvedConstructExpr(HasArgumentY);
-  StatementMatcher ObjCCallArgumentY = objcMessageExpr(HasArgumentY);
+  // StatementMatcher ObjCCallArgumentY = objcMessageExpr(HasArgumentY);
   EXPECT_TRUE(matches("void x(int, int) { int y; x(1, y); }", CallArgumentY));
   EXPECT_TRUE(matches("void x(int, int) { int y; x(y, 42); }", CallArgumentY));
   EXPECT_TRUE(matches("struct Y { Y(int, int); };"
@@ -422,12 +422,12 @@ TEST(Matcher, AnyArgument) {
                       UnresolvedCtorArgumentY));
   EXPECT_TRUE(matches("template <class Y> void x() { int y; (void)Y(y, 42); }",
                       UnresolvedCtorArgumentY));
-  EXPECT_TRUE(matchesObjC("@interface I -(void)f:(int) y; @end "
-                          "void x(I* i) { int y; [i f:y]; }",
-                          ObjCCallArgumentY));
-  EXPECT_FALSE(matchesObjC("@interface I -(void)f:(int) z; @end "
-                           "void x(I* i) { int z; [i f:z]; }",
-                           ObjCCallArgumentY));
+  // EXPECT_TRUE(matchesObjC("@interface I -(void)f:(int) y; @end "
+  //                         "void x(I* i) { int y; [i f:y]; }",
+  //                         ObjCCallArgumentY));
+  // EXPECT_FALSE(matchesObjC("@interface I -(void)f:(int) z; @end "
+  //                          "void x(I* i) { int z; [i f:z]; }",
+  //                          ObjCCallArgumentY));
   EXPECT_TRUE(notMatches("void x(int, int) { x(1, 2); }", CallArgumentY));
   EXPECT_TRUE(notMatches("struct Y { Y(int, int); };"
                          "void x() { int y; (void)Y(1, 2); }",
@@ -441,19 +441,19 @@ TEST(Matcher, AnyArgument) {
   EXPECT_TRUE(matches("void x(long) { int y; x(y); }", ImplicitCastedArgument));
 }
 
-TEST(Matcher, HasReceiver) {
-  EXPECT_TRUE(matchesObjC(
-      "@interface NSString @end "
-      "void f(NSString *x) {"
-      "[x containsString];"
-      "}",
-      objcMessageExpr(hasReceiver(declRefExpr(to(varDecl(hasName("x"))))))));
+// TEST(Matcher, HasReceiver) {
+//   EXPECT_TRUE(matchesObjC(
+//       "@interface NSString @end "
+//       "void f(NSString *x) {"
+//       "[x containsString];"
+//       "}",
+//       objcMessageExpr(hasReceiver(declRefExpr(to(varDecl(hasName("x"))))))));
 
-  EXPECT_FALSE(matchesObjC(
-      "@interface NSString +(NSString *) stringWithFormat; @end "
-      "void f() { [NSString stringWithFormat]; }",
-      objcMessageExpr(hasReceiver(declRefExpr(to(varDecl(hasName("x"))))))));
-}
+//   EXPECT_FALSE(matchesObjC(
+//       "@interface NSString +(NSString *) stringWithFormat; @end "
+//       "void f() { [NSString stringWithFormat]; }",
+//       objcMessageExpr(hasReceiver(declRefExpr(to(varDecl(hasName("x"))))))));
+// }
 
 TEST(Matcher, HasAnyCapture) {
   auto HasCaptureX = lambdaExpr(hasAnyCapture(varDecl(hasName("x"))));
@@ -475,74 +475,74 @@ TEST(Matcher, CapturesThis) {
   EXPECT_TRUE(notMatches("void f() { int z = 3; [&z](){}; }", HasCaptureThis));
 }
 
-TEST(Matcher, isClassMessage) {
-  EXPECT_TRUE(matchesObjC(
-      "@interface NSString +(NSString *) stringWithFormat; @end "
-      "void f() { [NSString stringWithFormat]; }",
-      objcMessageExpr(isClassMessage())));
+// TEST(Matcher, isClassMessage) {
+//   EXPECT_TRUE(matchesObjC(
+//       "@interface NSString +(NSString *) stringWithFormat; @end "
+//       "void f() { [NSString stringWithFormat]; }",
+//       objcMessageExpr(isClassMessage())));
 
-  EXPECT_FALSE(matchesObjC(
-      "@interface NSString @end "
-      "void f(NSString *x) {"
-      "[x containsString];"
-      "}",
-      objcMessageExpr(isClassMessage())));
-}
+//   EXPECT_FALSE(matchesObjC(
+//       "@interface NSString @end "
+//       "void f(NSString *x) {"
+//       "[x containsString];"
+//       "}",
+//       objcMessageExpr(isClassMessage())));
+// }
 
-TEST(Matcher, isInstanceMessage) {
-  EXPECT_TRUE(matchesObjC(
-      "@interface NSString @end "
-      "void f(NSString *x) {"
-      "[x containsString];"
-      "}",
-      objcMessageExpr(isInstanceMessage())));
+// TEST(Matcher, isInstanceMessage) {
+//   EXPECT_TRUE(matchesObjC(
+//       "@interface NSString @end "
+//       "void f(NSString *x) {"
+//       "[x containsString];"
+//       "}",
+//       objcMessageExpr(isInstanceMessage())));
 
-  EXPECT_FALSE(matchesObjC(
-      "@interface NSString +(NSString *) stringWithFormat; @end "
-      "void f() { [NSString stringWithFormat]; }",
-      objcMessageExpr(isInstanceMessage())));
+//   EXPECT_FALSE(matchesObjC(
+//       "@interface NSString +(NSString *) stringWithFormat; @end "
+//       "void f() { [NSString stringWithFormat]; }",
+//       objcMessageExpr(isInstanceMessage())));
 
-}
+// }
 
-TEST(Matcher, isClassMethod) {
-  EXPECT_TRUE(matchesObjC(
-    "@interface Bar + (void)bar; @end",
-    objcMethodDecl(isClassMethod())));
+// TEST(Matcher, isClassMethod) {
+//   EXPECT_TRUE(matchesObjC(
+//     "@interface Bar + (void)bar; @end",
+//     objcMethodDecl(isClassMethod())));
 
-  EXPECT_TRUE(matchesObjC(
-    "@interface Bar @end"
-    "@implementation Bar + (void)bar {} @end",
-    objcMethodDecl(isClassMethod())));
+//   EXPECT_TRUE(matchesObjC(
+//     "@interface Bar @end"
+//     "@implementation Bar + (void)bar {} @end",
+//     objcMethodDecl(isClassMethod())));
 
-  EXPECT_FALSE(matchesObjC(
-    "@interface Foo - (void)foo; @end",
-    objcMethodDecl(isClassMethod())));
+//   EXPECT_FALSE(matchesObjC(
+//     "@interface Foo - (void)foo; @end",
+//     objcMethodDecl(isClassMethod())));
 
-  EXPECT_FALSE(matchesObjC(
-    "@interface Foo @end "
-    "@implementation Foo - (void)foo {} @end",
-    objcMethodDecl(isClassMethod())));
-}
+//   EXPECT_FALSE(matchesObjC(
+//     "@interface Foo @end "
+//     "@implementation Foo - (void)foo {} @end",
+//     objcMethodDecl(isClassMethod())));
+// }
 
-TEST(Matcher, isInstanceMethod) {
-  EXPECT_TRUE(matchesObjC(
-    "@interface Foo - (void)foo; @end",
-    objcMethodDecl(isInstanceMethod())));
+// TEST(Matcher, isInstanceMethod) {
+//   EXPECT_TRUE(matchesObjC(
+//     "@interface Foo - (void)foo; @end",
+//     objcMethodDecl(isInstanceMethod())));
 
-  EXPECT_TRUE(matchesObjC(
-    "@interface Foo @end "
-    "@implementation Foo - (void)foo {} @end",
-    objcMethodDecl(isInstanceMethod())));
+//   EXPECT_TRUE(matchesObjC(
+//     "@interface Foo @end "
+//     "@implementation Foo - (void)foo {} @end",
+//     objcMethodDecl(isInstanceMethod())));
 
-  EXPECT_FALSE(matchesObjC(
-    "@interface Bar + (void)bar; @end",
-    objcMethodDecl(isInstanceMethod())));
+//   EXPECT_FALSE(matchesObjC(
+//     "@interface Bar + (void)bar; @end",
+//     objcMethodDecl(isInstanceMethod())));
 
-  EXPECT_FALSE(matchesObjC(
-    "@interface Bar @end"
-    "@implementation Bar + (void)bar {} @end",
-    objcMethodDecl(isInstanceMethod())));
-}
+//   EXPECT_FALSE(matchesObjC(
+//     "@interface Bar @end"
+//     "@implementation Bar + (void)bar {} @end",
+//     objcMethodDecl(isInstanceMethod())));
+// }
 
 TEST(MatcherCXXMemberCallExpr, On) {
   StringRef Snippet1 = R"cc(
@@ -758,10 +758,10 @@ TEST(HasParameter, CallsInnerMatcher) {
                       cxxMethodDecl(hasParameter(0, varDecl()))));
   EXPECT_TRUE(notMatches("class X { void x(int) {} };",
                          cxxMethodDecl(hasParameter(0, hasName("x")))));
-  EXPECT_TRUE(matchesObjC("@interface I -(void)f:(int) x; @end",
-                          objcMethodDecl(hasParameter(0, hasName("x")))));
-  EXPECT_TRUE(matchesObjC("int main() { void (^b)(int) = ^(int p) {}; }",
-                          blockDecl(hasParameter(0, hasName("p")))));
+  // EXPECT_TRUE(matchesObjC("@interface I -(void)f:(int) x; @end",
+  //                         objcMethodDecl(hasParameter(0, hasName("x")))));
+  // EXPECT_TRUE(matchesObjC("int main() { void (^b)(int) = ^(int p) {}; }",
+  //                         blockDecl(hasParameter(0, hasName("p")))));
 }
 
 TEST(HasParameter, DoesNotMatchIfIndexOutOfBounds) {

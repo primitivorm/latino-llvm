@@ -212,8 +212,8 @@ public:
   /// pointer.
   bool isFunctionOrBlockPointerVarLikeDecl();
   bool isFunctionOrMethodVariadic();
-  bool isObjCMethodDecl();
-  bool isObjCPropertyDecl();
+  // bool isObjCMethodDecl();
+  // bool isObjCPropertyDecl();
   bool isTemplateOrSpecialization();
   bool isRecordLikeDecl();
   bool isClassOrStructDecl();
@@ -222,7 +222,7 @@ public:
   bool isClassOrStructOrTagTypedefDecl();
   bool isUnionDecl();
   // bool isObjCInterfaceDecl();
-  bool isObjCProtocolDecl();
+  // bool isObjCProtocolDecl();
   bool isClassTemplateDecl();
   bool isFunctionTemplateDecl();
 

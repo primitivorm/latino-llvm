@@ -451,7 +451,7 @@ llvm::Constant *TargetCodeGenInfo::getNullPointer(const CodeGen::CodeGenModule &
 
 LangAS TargetCodeGenInfo::getGlobalVarAddressSpace(CodeGenModule &CGM,
                                                    const VarDecl *D) const {
-  assert(!CGM.getLangOpts().OpenCL &&
+  assert(/*!CGM.getLangOpts().OpenCL &&*/
          !(CGM.getLangOpts().CUDA && CGM.getLangOpts().CUDAIsDevice) &&
          "Address space agnostic languages only");
   return D ? D->getType().getAddressSpace() : LangAS::Default;
@@ -1037,7 +1037,7 @@ static llvm::Type* X86AdjustInlineAsmType(CodeGen::CodeGenFunction &CGF,
 /// X86_VectorCall calling convention. Shared between x86_32 and x86_64.
 static bool isX86VectorTypeForVectorCall(ASTContext &Context, QualType Ty) {
   if (const BuiltinType *BT = Ty->getAs<BuiltinType>()) {
-    if (BT->isFloatingPoint() && BT->getKind() != BuiltinType::Half) {
+    if (BT->isFloatingPoint() /*&& BT->getKind() != BuiltinType::Half*/) {
       if (BT->getKind() == BuiltinType::LongDouble) {
         if (&Context.getTargetInfo().getLongDoubleFormat() ==
             &llvm::APFloat::x87DoubleExtended())
@@ -5193,9 +5193,9 @@ bool PPC64_SVR4_ABIInfo::isHomogeneousAggregateBaseType(QualType Ty) const {
   if (const BuiltinType *BT = Ty->getAs<BuiltinType>()) {
     if (BT->getKind() == BuiltinType::Float ||
         BT->getKind() == BuiltinType::Double ||
-        BT->getKind() == BuiltinType::LongDouble ||
+        BT->getKind() == BuiltinType::LongDouble /*||
         (getContext().getTargetInfo().hasFloat128Type() &&
-          (BT->getKind() == BuiltinType::Float128))) {
+          (BT->getKind() == BuiltinType::Float128))*/) {
       if (IsSoftFloatABI)
         return false;
       return true;
@@ -6970,9 +6970,9 @@ ABIArgInfo NVPTXABIInfo::classifyReturnType(QualType RetTy) const {
   if (RetTy->isVoidType())
     return ABIArgInfo::getIgnore();
 
-  if (getContext().getLangOpts().OpenMP &&
-      getContext().getLangOpts().OpenMPIsDevice && isUnsupportedType(RetTy))
-    return coerceToIntArrayWithLimit(RetTy, 64);
+  // if (getContext().getLangOpts().OpenMP &&
+  //     getContext().getLangOpts().OpenMPIsDevice && isUnsupportedType(RetTy))
+  //   return coerceToIntArrayWithLimit(RetTy, 64);
 
   // note: this is different from default ABI
   if (!RetTy->isScalarType())
@@ -7056,17 +7056,17 @@ void NVPTXTargetCodeGenInfo::setTargetAttributes(
   llvm::Function *F = cast<llvm::Function>(GV);
 
   // Perform special handling in OpenCL mode
-  if (M.getLangOpts().OpenCL) {
-    // Use OpenCL function attributes to check for kernel functions
-    // By default, all functions are device functions
-    if (FD->hasAttr<OpenCLKernelAttr>()) {
-      // OpenCL __kernel functions get kernel metadata
-      // Create !{<func-ref>, metadata !"kernel", i32 1} node
-      addNVVMMetadata(F, "kernel", 1);
-      // And kernel functions are not subject to inlining
-      F->addFnAttr(llvm::Attribute::NoInline);
-    }
-  }
+  // if (M.getLangOpts().OpenCL) {
+  //   // Use OpenCL function attributes to check for kernel functions
+  //   // By default, all functions are device functions
+  //   if (FD->hasAttr<OpenCLKernelAttr>()) {
+  //     // OpenCL __kernel functions get kernel metadata
+  //     // Create !{<func-ref>, metadata !"kernel", i32 1} node
+  //     addNVVMMetadata(F, "kernel", 1);
+  //     // And kernel functions are not subject to inlining
+  //     F->addFnAttr(llvm::Attribute::NoInline);
+  //   }
+  // }
 
   // Perform special handling in CUDA mode.
   if (M.getLangOpts().CUDA) {
@@ -8041,40 +8041,40 @@ void TCETargetCodeGenInfo::setTargetAttributes(
 
   llvm::Function *F = cast<llvm::Function>(GV);
 
-  if (M.getLangOpts().OpenCL) {
-    if (FD->hasAttr<OpenCLKernelAttr>()) {
-      // OpenCL C Kernel functions are not subject to inlining
-      F->addFnAttr(llvm::Attribute::NoInline);
-      const ReqdWorkGroupSizeAttr *Attr = FD->getAttr<ReqdWorkGroupSizeAttr>();
-      if (Attr) {
-        // Convert the reqd_work_group_size() attributes to metadata.
-        llvm::LLVMContext &Context = F->getContext();
-        llvm::NamedMDNode *OpenCLMetadata =
-            M.getModule().getOrInsertNamedMetadata(
-                "opencl.kernel_wg_size_info");
+  // if (M.getLangOpts().OpenCL) {
+  //   if (FD->hasAttr<OpenCLKernelAttr>()) {
+  //     // OpenCL C Kernel functions are not subject to inlining
+  //     F->addFnAttr(llvm::Attribute::NoInline);
+  //     const ReqdWorkGroupSizeAttr *Attr = FD->getAttr<ReqdWorkGroupSizeAttr>();
+  //     if (Attr) {
+  //       // Convert the reqd_work_group_size() attributes to metadata.
+  //       llvm::LLVMContext &Context = F->getContext();
+  //       llvm::NamedMDNode *OpenCLMetadata =
+  //           M.getModule().getOrInsertNamedMetadata(
+  //               "opencl.kernel_wg_size_info");
 
-        SmallVector<llvm::Metadata *, 5> Operands;
-        Operands.push_back(llvm::ConstantAsMetadata::get(F));
+  //       SmallVector<llvm::Metadata *, 5> Operands;
+  //       Operands.push_back(llvm::ConstantAsMetadata::get(F));
 
-        Operands.push_back(
-            llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
-                M.Int32Ty, llvm::APInt(32, Attr->getXDim()))));
-        Operands.push_back(
-            llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
-                M.Int32Ty, llvm::APInt(32, Attr->getYDim()))));
-        Operands.push_back(
-            llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
-                M.Int32Ty, llvm::APInt(32, Attr->getZDim()))));
+  //       Operands.push_back(
+  //           llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
+  //               M.Int32Ty, llvm::APInt(32, Attr->getXDim()))));
+  //       Operands.push_back(
+  //           llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
+  //               M.Int32Ty, llvm::APInt(32, Attr->getYDim()))));
+  //       Operands.push_back(
+  //           llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
+  //               M.Int32Ty, llvm::APInt(32, Attr->getZDim()))));
 
-        // Add a boolean constant operand for "required" (true) or "hint"
-        // (false) for implementing the work_group_size_hint attr later.
-        // Currently always true as the hint is not yet implemented.
-        Operands.push_back(
-            llvm::ConstantAsMetadata::get(llvm::ConstantInt::getTrue(Context)));
-        OpenCLMetadata->addOperand(llvm::MDNode::get(Context, Operands));
-      }
-    }
-  }
+  //       // Add a boolean constant operand for "required" (true) or "hint"
+  //       // (false) for implementing the work_group_size_hint attr later.
+  //       // Currently always true as the hint is not yet implemented.
+  //       Operands.push_back(
+  //           llvm::ConstantAsMetadata::get(llvm::ConstantInt::getTrue(Context)));
+  //       OpenCLMetadata->addOperand(llvm::MDNode::get(Context, Operands));
+  //     }
+  //   }
+  // }
 }
 
 }
@@ -8914,7 +8914,7 @@ static bool requiresAMDGPUProtectedVisibility(const Decl *D,
   if (GV->getVisibility() != llvm::GlobalValue::HiddenVisibility)
     return false;
 
-  return D->hasAttr<OpenCLKernelAttr>() ||
+  return /*D->hasAttr<OpenCLKernelAttr>() ||*/
          (isa<FunctionDecl>(D) && D->hasAttr<CUDAGlobalAttr>()) ||
          (isa<VarDecl>(D) &&
           (D->hasAttr<CUDADeviceAttr>() || D->hasAttr<CUDAConstantAttr>() ||
@@ -8937,15 +8937,15 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
 
   llvm::Function *F = cast<llvm::Function>(GV);
 
-  const auto *ReqdWGS = M.getLangOpts().OpenCL ?
-    FD->getAttr<ReqdWorkGroupSizeAttr>() : nullptr;
+  // const auto *ReqdWGS = M.getLangOpts().OpenCL ?
+  //   FD->getAttr<ReqdWorkGroupSizeAttr>() : nullptr;
 
 
-  const bool IsOpenCLKernel = M.getLangOpts().OpenCL &&
-                              FD->hasAttr<OpenCLKernelAttr>();
+  // const bool IsOpenCLKernel = M.getLangOpts().OpenCL &&
+  //                             FD->hasAttr<OpenCLKernelAttr>();
   const bool IsHIPKernel = M.getLangOpts().HIP &&
                            FD->hasAttr<CUDAGlobalAttr>();
-  if ((IsOpenCLKernel || IsHIPKernel) &&
+  if ((/*IsOpenCLKernel ||*/ IsHIPKernel) &&
       (M.getTriple().getOS() == llvm::Triple::AMDHSA))
     F->addFnAttr("amdgpu-implicitarg-num-bytes", "56");
 
@@ -8954,7 +8954,7 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
 
 
   const auto *FlatWGS = FD->getAttr<AMDGPUFlatWorkGroupSizeAttr>();
-  if (ReqdWGS || FlatWGS) {
+  if (/*ReqdWGS ||*/ FlatWGS) {
     unsigned Min = 0;
     unsigned Max = 0;
     if (FlatWGS) {
@@ -8965,8 +8965,8 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
                 ->EvaluateKnownConstInt(M.getContext())
                 .getExtValue();
     }
-    if (ReqdWGS && Min == 0 && Max == 0)
-      Min = Max = ReqdWGS->getXDim() * ReqdWGS->getYDim() * ReqdWGS->getZDim();
+    // if (ReqdWGS && Min == 0 && Max == 0)
+    //   Min = Max = ReqdWGS->getXDim() * ReqdWGS->getYDim() * ReqdWGS->getZDim();
 
     if (Min != 0) {
       assert(Min <= Max && "Min must be less than or equal Max");
@@ -8975,17 +8975,18 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
       F->addFnAttr("amdgpu-flat-work-group-size", AttrVal);
     } else
       assert(Max == 0 && "Max must be zero");
-  } else if (IsOpenCLKernel || IsHIPKernel) {
-    // By default, restrict the maximum size to a value specified by
-    // --gpu-max-threads-per-block=n or its default value for HIP.
-    const unsigned OpenCLDefaultMaxWorkGroupSize = 256;
-    const unsigned DefaultMaxWorkGroupSize =
-        IsOpenCLKernel ? OpenCLDefaultMaxWorkGroupSize
-                       : M.getLangOpts().GPUMaxThreadsPerBlock;
-    std::string AttrVal =
-        std::string("1,") + llvm::utostr(DefaultMaxWorkGroupSize);
-    F->addFnAttr("amdgpu-flat-work-group-size", AttrVal);
-  }
+  } 
+  // else if (IsOpenCLKernel || IsHIPKernel) {
+  //   // By default, restrict the maximum size to a value specified by
+  //   // --gpu-max-threads-per-block=n or its default value for HIP.
+  //   const unsigned OpenCLDefaultMaxWorkGroupSize = 256;
+  //   const unsigned DefaultMaxWorkGroupSize =
+  //       IsOpenCLKernel ? OpenCLDefaultMaxWorkGroupSize
+  //                      : M.getLangOpts().GPUMaxThreadsPerBlock;
+  //   std::string AttrVal =
+  //       std::string("1,") + llvm::utostr(DefaultMaxWorkGroupSize);
+  //   F->addFnAttr("amdgpu-flat-work-group-size", AttrVal);
+  // }
 
   if (const auto *Attr = FD->getAttr<AMDGPUWavesPerEUAttr>()) {
     unsigned Min =
@@ -9046,7 +9047,7 @@ llvm::Constant *AMDGPUTargetCodeGenInfo::getNullPointer(
 LangAS
 AMDGPUTargetCodeGenInfo::getGlobalVarAddressSpace(CodeGenModule &CGM,
                                                   const VarDecl *D) const {
-  assert(!CGM.getLangOpts().OpenCL &&
+  assert(/*!CGM.getLangOpts().OpenCL &&*/
          !(CGM.getLangOpts().CUDA && CGM.getLangOpts().CUDAIsDevice) &&
          "Address space agnostic languages only");
   LangAS DefaultGlobalAS = getLangASFromTargetAS(

@@ -706,15 +706,15 @@ public:
   virtual void HandleIncompleteSpecifier(const char *startSpecifier,
                                          unsigned specifierLen) {}
 
-  virtual void HandleEmptyObjCModifierFlag(const char *startFlags,
-                                           unsigned flagsLen) {}
+  // virtual void HandleEmptyObjCModifierFlag(const char *startFlags,
+  //                                          unsigned flagsLen) {}
 
-  virtual void HandleInvalidObjCModifierFlag(const char *startFlag,
-                                             unsigned flagLen) {}
+  // virtual void HandleInvalidObjCModifierFlag(const char *startFlag,
+  //                                            unsigned flagLen) {}
 
-  virtual void HandleObjCFlagsWithNonObjCConversion(const char *flagsStart,
-                                            const char *flagsEnd,
-                                            const char *conversionPosition) {}
+  // virtual void HandleObjCFlagsWithNonObjCConversion(const char *flagsStart,
+  //                                           const char *flagsEnd,
+  //                                           const char *conversionPosition) {}
   // Printf-specific handlers.
 
   virtual bool HandleInvalidPrintfConversionSpecifier(
@@ -769,5 +769,5 @@ bool parseFormatStringHasFormattingSpecifiers(const char *Begin,
                                               const TargetInfo &Target);
 
 } // end analyze_format_string namespace
-} // end clang namespace
+} // end latino namespace
 #endif

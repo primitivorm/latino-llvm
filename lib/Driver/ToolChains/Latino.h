@@ -19,7 +19,7 @@
 #include "llvm/Support/raw_ostream.h"
 
 namespace latino {
-class ObjCRuntime;
+// class ObjCRuntime;
 namespace driver {
 
 namespace tools {
@@ -78,10 +78,10 @@ private:
 
   enum RewriteKind { RK_None, RK_Fragile, RK_NonFragile };
 
-  ObjCRuntime AddObjCRuntimeArgs(const llvm::opt::ArgList &args,
-                                 const InputInfoList &inputs,
-                                 llvm::opt::ArgStringList &cmdArgs,
-                                 RewriteKind rewrite) const;
+  // ObjCRuntime AddObjCRuntimeArgs(const llvm::opt::ArgList &args,
+  //                                const InputInfoList &inputs,
+  //                                llvm::opt::ArgStringList &cmdArgs,
+  //                                RewriteKind rewrite) const;
 
   void AddClangCLArgs(const llvm::opt::ArgList &Args, types::ID InputType,
                       llvm::opt::ArgStringList &CmdArgs,

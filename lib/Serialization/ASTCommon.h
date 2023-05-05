@@ -70,7 +70,7 @@ TypeID MakeTypeID(ASTContext &Context, QualType T, IdxForTypeTy IdxForType) {
   return IdxForType(T).asTypeID(FastQuals);
 }
 
-unsigned ComputeHash(Selector Sel);
+// unsigned ComputeHash(Selector Sel);
 
 /// Retrieve the "definitive" declaration that provides all of the
 /// visible entries for the given declaration context, if there is one.

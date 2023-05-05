@@ -894,7 +894,7 @@ static bool ParseCodeGenArgs(CodeGenOptions &Opts, ArgList &Args, InputKind IK,
   Opts.AsmVerbose = !Args.hasArg(OPT_fno_verbose_asm);
   Opts.PreserveAsmComments = !Args.hasArg(OPT_fno_preserve_as_comments);
   Opts.AssumeSaneOperatorNew = !Args.hasArg(OPT_fno_assume_sane_operator_new);
-  Opts.ObjCAutoRefCountExceptions = Args.hasArg(OPT_fobjc_arc_exceptions);
+  // Opts.ObjCAutoRefCountExceptions = Args.hasArg(OPT_fobjc_arc_exceptions);
   Opts.CXAAtExit = !Args.hasArg(OPT_fno_use_cxa_atexit);
   Opts.RegisterGlobalDtorsWithAtExit =
       Args.hasArg(OPT_fregister_global_dtors_with_atexit);
@@ -1264,9 +1264,9 @@ static bool ParseCodeGenArgs(CodeGenOptions &Opts, ArgList &Args, InputKind IK,
   if (Arg *A = Args.getLastArg(OPT_fobjc_dispatch_method_EQ)) {
     StringRef Name = A->getValue();
     unsigned Method = llvm::StringSwitch<unsigned>(Name)
-      .Case("legacy", CodeGenOptions::Legacy)
-      .Case("non-legacy", CodeGenOptions::NonLegacy)
-      .Case("mixed", CodeGenOptions::Mixed)
+      // .Case("legacy", CodeGenOptions::Legacy)
+      // .Case("non-legacy", CodeGenOptions::NonLegacy)
+      // .Case("mixed", CodeGenOptions::Mixed)
       .Default(~0U);
     if (Method == ~0U) {
       Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) << Name;
@@ -2335,38 +2335,38 @@ void CompilerInvocation::setLangDefaults(LangOptions &Opts, InputKind IK,
   Opts.ImplicitInt = Std.hasImplicitInt();
 
   // Set OpenCL Version.
-  Opts.OpenCL = Std.isOpenCL();
-  if (LangStd == LangStandard::lang_opencl10)
-    Opts.OpenCLVersion = 100;
-  else if (LangStd == LangStandard::lang_opencl11)
-    Opts.OpenCLVersion = 110;
-  else if (LangStd == LangStandard::lang_opencl12)
-    Opts.OpenCLVersion = 120;
-  else if (LangStd == LangStandard::lang_opencl20)
-    Opts.OpenCLVersion = 200;
-  else if (LangStd == LangStandard::lang_openclcpp)
-    Opts.OpenCLCPlusPlusVersion = 100;
+  // Opts.OpenCL = Std.isOpenCL();
+  // if (LangStd == LangStandard::lang_opencl10)
+  //   Opts.OpenCLVersion = 100;
+  // else if (LangStd == LangStandard::lang_opencl11)
+  //   Opts.OpenCLVersion = 110;
+  // else if (LangStd == LangStandard::lang_opencl12)
+  //   Opts.OpenCLVersion = 120;
+  // else if (LangStd == LangStandard::lang_opencl20)
+  //   Opts.OpenCLVersion = 200;
+  // else if (LangStd == LangStandard::lang_openclcpp)
+  //   Opts.OpenCLCPlusPlusVersion = 100;
 
   // OpenCL has some additional defaults.
-  if (Opts.OpenCL) {
-    Opts.AltiVec = 0;
-    Opts.ZVector = 0;
-    Opts.setLaxVectorConversions(LangOptions::LaxVectorConversionKind::None);
-    Opts.setDefaultFPContractMode(LangOptions::FPM_On);
-    Opts.NativeHalfType = 1;
-    Opts.NativeHalfArgsAndReturns = 1;
-    Opts.OpenCLCPlusPlus = Opts.CPlusPlus;
+  // if (Opts.OpenCL) {
+  //   Opts.AltiVec = 0;
+  //   Opts.ZVector = 0;
+  //   Opts.setLaxVectorConversions(LangOptions::LaxVectorConversionKind::None);
+  //   Opts.setDefaultFPContractMode(LangOptions::FPM_On);
+  //   Opts.NativeHalfType = 1;
+  //   Opts.NativeHalfArgsAndReturns = 1;
+  //   Opts.OpenCLCPlusPlus = Opts.CPlusPlus;
 
-    // Include default header file for OpenCL.
-    if (Opts.IncludeDefaultHeader) {
-      if (Opts.DeclareOpenCLBuiltins) {
-        // Only include base header file for builtin types and constants.
-        PPOpts.Includes.push_back("opencl-c-base.h");
-      } else {
-        PPOpts.Includes.push_back("opencl-c.h");
-      }
-    }
-  }
+  //   // Include default header file for OpenCL.
+  //   if (Opts.IncludeDefaultHeader) {
+  //     if (Opts.DeclareOpenCLBuiltins) {
+  //       // Only include base header file for builtin types and constants.
+  //       PPOpts.Includes.push_back("opencl-c-base.h");
+  //     } else {
+  //       PPOpts.Includes.push_back("opencl-c.h");
+  //     }
+  //   }
+  // }
 
   Opts.HIP = IK.getLanguage() == Language::HIP;
   Opts.CUDA = IK.getLanguage() == Language::CUDA || Opts.HIP;
@@ -2381,10 +2381,10 @@ void CompilerInvocation::setLangDefaults(LangOptions &Opts, InputKind IK,
   }
 
   // OpenCL and C++ both have bool, true, false keywords.
-  Opts.Bool = Opts.OpenCL || Opts.CPlusPlus;
+  Opts.Bool = /*Opts.OpenCL ||*/ Opts.CPlusPlus;
 
   // OpenCL has half keyword
-  Opts.Half = Opts.OpenCL;
+  // Opts.Half = Opts.OpenCL;
 
   // C++ has wchar_t keyword.
   Opts.WChar = Opts.CPlusPlus;
@@ -2580,7 +2580,7 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
   }
 
   Opts.IncludeDefaultHeader = Args.hasArg(OPT_finclude_default_header);
-  Opts.DeclareOpenCLBuiltins = Args.hasArg(OPT_fdeclare_opencl_builtins);
+  // Opts.DeclareOpenCLBuiltins = Args.hasArg(OPT_fdeclare_opencl_builtins);
 
   llvm::Triple T(TargetOpts.Triple);
   CompilerInvocation::setLangDefaults(Opts, IK, T, PPOpts, LangStd);
@@ -2636,55 +2636,55 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
     Diags.Report(diag::warn_ignored_hip_only_option)
         << Args.getLastArg(OPT_gpu_max_threads_per_block_EQ)->getAsString(Args);
 
-  if (Opts.ObjC) {
-    if (Arg *arg = Args.getLastArg(OPT_fobjc_runtime_EQ)) {
-      StringRef value = arg->getValue();
-      if (Opts.ObjCRuntime.tryParse(value))
-        Diags.Report(diag::err_drv_unknown_objc_runtime) << value;
-    }
+  // if (Opts.ObjC) {
+  //   if (Arg *arg = Args.getLastArg(OPT_fobjc_runtime_EQ)) {
+  //     StringRef value = arg->getValue();
+  //     if (Opts.ObjCRuntime.tryParse(value))
+  //       Diags.Report(diag::err_drv_unknown_objc_runtime) << value;
+  //   }
 
-    if (Args.hasArg(OPT_fobjc_gc_only))
-      Opts.setGC(LangOptions::GCOnly);
-    else if (Args.hasArg(OPT_fobjc_gc))
-      Opts.setGC(LangOptions::HybridGC);
-    else if (Args.hasArg(OPT_fobjc_arc)) {
-      Opts.ObjCAutoRefCount = 1;
-      if (!Opts.ObjCRuntime.allowsARC())
-        Diags.Report(diag::err_arc_unsupported_on_runtime);
-    }
+  //   if (Args.hasArg(OPT_fobjc_gc_only))
+  //     Opts.setGC(LangOptions::GCOnly);
+  //   else if (Args.hasArg(OPT_fobjc_gc))
+  //     Opts.setGC(LangOptions::HybridGC);
+  //   else if (Args.hasArg(OPT_fobjc_arc)) {
+  //     Opts.ObjCAutoRefCount = 1;
+  //     if (!Opts.ObjCRuntime.allowsARC())
+  //       Diags.Report(diag::err_arc_unsupported_on_runtime);
+  //   }
 
-    // ObjCWeakRuntime tracks whether the runtime supports __weak, not
-    // whether the feature is actually enabled.  This is predominantly
-    // determined by -fobjc-runtime, but we allow it to be overridden
-    // from the command line for testing purposes.
-    if (Args.hasArg(OPT_fobjc_runtime_has_weak))
-      Opts.ObjCWeakRuntime = 1;
-    else
-      Opts.ObjCWeakRuntime = Opts.ObjCRuntime.allowsWeak();
+  //   // ObjCWeakRuntime tracks whether the runtime supports __weak, not
+  //   // whether the feature is actually enabled.  This is predominantly
+  //   // determined by -fobjc-runtime, but we allow it to be overridden
+  //   // from the command line for testing purposes.
+  //   if (Args.hasArg(OPT_fobjc_runtime_has_weak))
+  //     Opts.ObjCWeakRuntime = 1;
+  //   else
+  //     Opts.ObjCWeakRuntime = Opts.ObjCRuntime.allowsWeak();
 
-    // ObjCWeak determines whether __weak is actually enabled.
-    // Note that we allow -fno-objc-weak to disable this even in ARC mode.
-    if (auto weakArg = Args.getLastArg(OPT_fobjc_weak, OPT_fno_objc_weak)) {
-      if (!weakArg->getOption().matches(OPT_fobjc_weak)) {
-        assert(!Opts.ObjCWeak);
-      } else if (Opts.getGC() != LangOptions::NonGC) {
-        Diags.Report(diag::err_objc_weak_with_gc);
-      } else if (!Opts.ObjCWeakRuntime) {
-        Diags.Report(diag::err_objc_weak_unsupported);
-      } else {
-        Opts.ObjCWeak = 1;
-      }
-    } else if (Opts.ObjCAutoRefCount) {
-      Opts.ObjCWeak = Opts.ObjCWeakRuntime;
-    }
+  //   // ObjCWeak determines whether __weak is actually enabled.
+  //   // Note that we allow -fno-objc-weak to disable this even in ARC mode.
+  //   if (auto weakArg = Args.getLastArg(OPT_fobjc_weak, OPT_fno_objc_weak)) {
+  //     if (!weakArg->getOption().matches(OPT_fobjc_weak)) {
+  //       assert(!Opts.ObjCWeak);
+  //     } else if (Opts.getGC() != LangOptions::NonGC) {
+  //       Diags.Report(diag::err_objc_weak_with_gc);
+  //     } else if (!Opts.ObjCWeakRuntime) {
+  //       Diags.Report(diag::err_objc_weak_unsupported);
+  //     } else {
+  //       Opts.ObjCWeak = 1;
+  //     }
+  //   } else if (Opts.ObjCAutoRefCount) {
+  //     Opts.ObjCWeak = Opts.ObjCWeakRuntime;
+  //   }
 
-    if (Args.hasArg(OPT_fno_objc_infer_related_result_type))
-      Opts.ObjCInferRelatedResultType = 0;
+  //   if (Args.hasArg(OPT_fno_objc_infer_related_result_type))
+  //     Opts.ObjCInferRelatedResultType = 0;
 
-    if (Args.hasArg(OPT_fobjc_subscripting_legacy_runtime))
-      Opts.ObjCSubscriptingLegacyRuntime =
-        (Opts.ObjCRuntime.getKind() == ObjCRuntime::FragileMacOSX);
-  }
+  //   if (Args.hasArg(OPT_fobjc_subscripting_legacy_runtime))
+  //     Opts.ObjCSubscriptingLegacyRuntime =
+  //       (Opts.ObjCRuntime.getKind() == ObjCRuntime::FragileMacOSX);
+  // }
 
   if (Arg *A = Args.getLastArg(options::OPT_fgnuc_version_EQ)) {
     // Check that the version has 1 to 3 components and the minor and patch
@@ -2852,12 +2852,12 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
 
   Opts.RTTI = Opts.CPlusPlus && !Args.hasArg(OPT_fno_rtti);
   Opts.RTTIData = Opts.RTTI && !Args.hasArg(OPT_fno_rtti_data);
-  Opts.Blocks = Args.hasArg(OPT_fblocks) || (Opts.OpenCL
-    && Opts.OpenCLVersion == 200);
+  Opts.Blocks = Args.hasArg(OPT_fblocks) /*|| (Opts.OpenCL
+    && Opts.OpenCLVersion == 200)*/;
   Opts.BlocksRuntimeOptional = Args.hasArg(OPT_fblocks_runtime_optional);
   Opts.Coroutines = Opts.CPlusPlus20 || Args.hasArg(OPT_fcoroutines_ts);
 
-  Opts.ConvergentFunctions = Opts.OpenCL || (Opts.CUDA && Opts.CUDAIsDevice) ||
+  Opts.ConvergentFunctions = /*Opts.OpenCL ||*/ (Opts.CUDA && Opts.CUDAIsDevice) ||
     Args.hasArg(OPT_fconvergent_functions);
 
   Opts.DoubleSquareBracketAttributes =
@@ -2884,7 +2884,7 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
     Args.hasArg(OPT_fmodules_search_all);
   Opts.ModulesErrorRecovery = !Args.hasArg(OPT_fno_modules_error_recovery);
   Opts.ImplicitModules = !Args.hasArg(OPT_fno_implicit_modules);
-  Opts.CharIsSigned = Opts.OpenCL || !Args.hasArg(OPT_fno_signed_char);
+  Opts.CharIsSigned = /*Opts.OpenCL ||*/ !Args.hasArg(OPT_fno_signed_char);
   Opts.WChar = Opts.CPlusPlus && !Args.hasArg(OPT_fno_wchar);
   Opts.Char8 = Args.hasFlag(OPT_fchar8__t, OPT_fno_char8__t, Opts.CPlusPlus20);
   if (const Arg *A = Args.getLastArg(OPT_fwchar_type_EQ)) {
@@ -3099,112 +3099,112 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
     }
   }
 
-  // Check if -fopenmp is specified and set default version to 5.0.
-  Opts.OpenMP = Args.hasArg(options::OPT_fopenmp) ? 50 : 0;
-  // Check if -fopenmp-simd is specified.
-  bool IsSimdSpecified =
-      Args.hasFlag(options::OPT_fopenmp_simd, options::OPT_fno_openmp_simd,
-                   /*Default=*/false);
-  Opts.OpenMPSimd = !Opts.OpenMP && IsSimdSpecified;
-  Opts.OpenMPUseTLS =
-      Opts.OpenMP && !Args.hasArg(options::OPT_fnoopenmp_use_tls);
-  Opts.OpenMPIsDevice =
-      Opts.OpenMP && Args.hasArg(options::OPT_fopenmp_is_device);
-  Opts.OpenMPIRBuilder =
-      Opts.OpenMP && Args.hasArg(options::OPT_fopenmp_enable_irbuilder);
-  bool IsTargetSpecified =
-      Opts.OpenMPIsDevice || Args.hasArg(options::OPT_fopenmp_targets_EQ);
+  // // Check if -fopenmp is specified and set default version to 5.0.
+  // Opts.OpenMP = Args.hasArg(options::OPT_fopenmp) ? 50 : 0;
+  // // Check if -fopenmp-simd is specified.
+  // bool IsSimdSpecified =
+  //     Args.hasFlag(options::OPT_fopenmp_simd, options::OPT_fno_openmp_simd,
+  //                  /*Default=*/false);
+  // Opts.OpenMPSimd = !Opts.OpenMP && IsSimdSpecified;
+  // Opts.OpenMPUseTLS =
+  //     Opts.OpenMP && !Args.hasArg(options::OPT_fnoopenmp_use_tls);
+  // Opts.OpenMPIsDevice =
+  //     Opts.OpenMP && Args.hasArg(options::OPT_fopenmp_is_device);
+  // Opts.OpenMPIRBuilder =
+  //     Opts.OpenMP && Args.hasArg(options::OPT_fopenmp_enable_irbuilder);
+  // bool IsTargetSpecified =
+  //     Opts.OpenMPIsDevice || Args.hasArg(options::OPT_fopenmp_targets_EQ);
 
-  if (Opts.OpenMP || Opts.OpenMPSimd) {
-    if (int Version = getLastArgIntValue(
-            Args, OPT_fopenmp_version_EQ,
-            (IsSimdSpecified || IsTargetSpecified) ? 50 : Opts.OpenMP, Diags))
-      Opts.OpenMP = Version;
-    // Provide diagnostic when a given target is not expected to be an OpenMP
-    // device or host.
-    if (!Opts.OpenMPIsDevice) {
-      switch (T.getArch()) {
-      default:
-        break;
-      // Add unsupported host targets here:
-      case llvm::Triple::nvptx:
-      case llvm::Triple::nvptx64:
-        Diags.Report(diag::err_drv_omp_host_target_not_supported)
-            << TargetOpts.Triple;
-        break;
-      }
-    }
-  }
+  // if (Opts.OpenMP || Opts.OpenMPSimd) {
+  //   if (int Version = getLastArgIntValue(
+  //           Args, OPT_fopenmp_version_EQ,
+  //           (IsSimdSpecified || IsTargetSpecified) ? 50 : Opts.OpenMP, Diags))
+  //     Opts.OpenMP = Version;
+  //   // Provide diagnostic when a given target is not expected to be an OpenMP
+  //   // device or host.
+  //   if (!Opts.OpenMPIsDevice) {
+  //     switch (T.getArch()) {
+  //     default:
+  //       break;
+  //     // Add unsupported host targets here:
+  //     case llvm::Triple::nvptx:
+  //     case llvm::Triple::nvptx64:
+  //       Diags.Report(diag::err_drv_omp_host_target_not_supported)
+  //           << TargetOpts.Triple;
+  //       break;
+  //     }
+  //   }
+  // }
 
   // Set the flag to prevent the implementation from emitting device exception
   // handling code for those requiring so.
-  if ((Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN())) ||
-      Opts.OpenCLCPlusPlus) {
-    Opts.Exceptions = 0;
-    Opts.CXXExceptions = 0;
-  }
-  if (Opts.OpenMPIsDevice && T.isNVPTX()) {
-    Opts.OpenMPCUDANumSMs =
-        getLastArgIntValue(Args, options::OPT_fopenmp_cuda_number_of_sm_EQ,
-                           Opts.OpenMPCUDANumSMs, Diags);
-    Opts.OpenMPCUDABlocksPerSM =
-        getLastArgIntValue(Args, options::OPT_fopenmp_cuda_blocks_per_sm_EQ,
-                           Opts.OpenMPCUDABlocksPerSM, Diags);
-    Opts.OpenMPCUDAReductionBufNum = getLastArgIntValue(
-        Args, options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ,
-        Opts.OpenMPCUDAReductionBufNum, Diags);
-  }
+  // if ((Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN())) ||
+  //     Opts.OpenCLCPlusPlus) {
+  //   Opts.Exceptions = 0;
+  //   Opts.CXXExceptions = 0;
+  // }
+  // if (Opts.OpenMPIsDevice && T.isNVPTX()) {
+  //   Opts.OpenMPCUDANumSMs =
+  //       getLastArgIntValue(Args, options::OPT_fopenmp_cuda_number_of_sm_EQ,
+  //                          Opts.OpenMPCUDANumSMs, Diags);
+  //   Opts.OpenMPCUDABlocksPerSM =
+  //       getLastArgIntValue(Args, options::OPT_fopenmp_cuda_blocks_per_sm_EQ,
+  //                          Opts.OpenMPCUDABlocksPerSM, Diags);
+  //   Opts.OpenMPCUDAReductionBufNum = getLastArgIntValue(
+  //       Args, options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ,
+  //       Opts.OpenMPCUDAReductionBufNum, Diags);
+  // }
 
   // Prevent auto-widening the representation of loop counters during an
   // OpenMP collapse clause.
-  Opts.OpenMPOptimisticCollapse =
-      Args.hasArg(options::OPT_fopenmp_optimistic_collapse) ? 1 : 0;
+  // Opts.OpenMPOptimisticCollapse =
+  //     Args.hasArg(options::OPT_fopenmp_optimistic_collapse) ? 1 : 0;
 
   // Get the OpenMP target triples if any.
-  if (Arg *A = Args.getLastArg(options::OPT_fopenmp_targets_EQ)) {
+  // if (Arg *A = Args.getLastArg(options::OPT_fopenmp_targets_EQ)) {
 
-    for (unsigned i = 0; i < A->getNumValues(); ++i) {
-      llvm::Triple TT(A->getValue(i));
+  //   for (unsigned i = 0; i < A->getNumValues(); ++i) {
+  //     llvm::Triple TT(A->getValue(i));
 
-      if (TT.getArch() == llvm::Triple::UnknownArch ||
-          !(TT.getArch() == llvm::Triple::aarch64 ||
-            TT.getArch() == llvm::Triple::ppc ||
-            TT.getArch() == llvm::Triple::ppc64 ||
-            TT.getArch() == llvm::Triple::ppc64le ||
-            TT.getArch() == llvm::Triple::nvptx ||
-            TT.getArch() == llvm::Triple::nvptx64 ||
-            TT.getArch() == llvm::Triple::amdgcn ||
-            TT.getArch() == llvm::Triple::x86 ||
-            TT.getArch() == llvm::Triple::x86_64))
-        Diags.Report(diag::err_drv_invalid_omp_target) << A->getValue(i);
-      else
-        Opts.OMPTargetTriples.push_back(TT);
-    }
-  }
+  //     if (TT.getArch() == llvm::Triple::UnknownArch ||
+  //         !(TT.getArch() == llvm::Triple::aarch64 ||
+  //           TT.getArch() == llvm::Triple::ppc ||
+  //           TT.getArch() == llvm::Triple::ppc64 ||
+  //           TT.getArch() == llvm::Triple::ppc64le ||
+  //           TT.getArch() == llvm::Triple::nvptx ||
+  //           TT.getArch() == llvm::Triple::nvptx64 ||
+  //           TT.getArch() == llvm::Triple::amdgcn ||
+  //           TT.getArch() == llvm::Triple::x86 ||
+  //           TT.getArch() == llvm::Triple::x86_64))
+  //       Diags.Report(diag::err_drv_invalid_omp_target) << A->getValue(i);
+  //     else
+  //       Opts.OMPTargetTriples.push_back(TT);
+  //   }
+  // }
 
   // Get OpenMP host file path if any and report if a non existent file is
   // found
-  if (Arg *A = Args.getLastArg(options::OPT_fopenmp_host_ir_file_path)) {
-    Opts.OMPHostIRFile = A->getValue();
-    if (!llvm::sys::fs::exists(Opts.OMPHostIRFile))
-      Diags.Report(diag::err_drv_omp_host_ir_file_not_found)
-          << Opts.OMPHostIRFile;
-  }
+  // if (Arg *A = Args.getLastArg(options::OPT_fopenmp_host_ir_file_path)) {
+  //   Opts.OMPHostIRFile = A->getValue();
+  //   if (!llvm::sys::fs::exists(Opts.OMPHostIRFile))
+  //     Diags.Report(diag::err_drv_omp_host_ir_file_not_found)
+  //         << Opts.OMPHostIRFile;
+  // }
 
   // Set CUDA mode for OpenMP target NVPTX/AMDGCN if specified in options
-  Opts.OpenMPCUDAMode = Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
-                        Args.hasArg(options::OPT_fopenmp_cuda_mode);
+  // Opts.OpenMPCUDAMode = Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
+  //                       Args.hasArg(options::OPT_fopenmp_cuda_mode);
 
   // Set CUDA support for parallel execution of target regions for OpenMP target
   // NVPTX/AMDGCN if specified in options.
-  Opts.OpenMPCUDATargetParallel =
-      Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
-      Args.hasArg(options::OPT_fopenmp_cuda_parallel_target_regions);
+  // Opts.OpenMPCUDATargetParallel =
+  //     Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
+  //     Args.hasArg(options::OPT_fopenmp_cuda_parallel_target_regions);
 
   // Set CUDA mode for OpenMP target NVPTX/AMDGCN if specified in options
-  Opts.OpenMPCUDAForceFullRuntime =
-      Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
-      Args.hasArg(options::OPT_fopenmp_cuda_force_full_runtime);
+  // Opts.OpenMPCUDAForceFullRuntime =
+  //     Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
+  //     Args.hasArg(options::OPT_fopenmp_cuda_force_full_runtime);
 
   // Record whether the __DEPRECATED define was requested.
   Opts.Deprecated = Args.hasFlag(OPT_fdeprecated_macro,
@@ -3754,8 +3754,8 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
     // ObjCAAutoRefCount and Sanitize LangOpts are used to setup the
     // PassManager in BackendUtil.cpp. They need to be initializd no matter
     // what the input type is.
-    if (Args.hasArg(OPT_fobjc_arc))
-      LangOpts.ObjCAutoRefCount = 1;
+    // if (Args.hasArg(OPT_fobjc_arc))
+    //   LangOpts.ObjCAutoRefCount = 1;
     // PIClevel and PIELevel are needed during code generation and this should be
     // set regardless of the input type.
     LangOpts.PICLevel = getLastArgIntValue(Args, OPT_pic_level, 0, Diags);
@@ -3791,8 +3791,8 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
   }
 
   // Set the triple of the host for OpenMP device compile.
-  if (LangOpts.OpenMPIsDevice)
-    Res.getTargetOpts().HostTriple = Res.getFrontendOpts().AuxTriple;
+  // if (LangOpts.OpenMPIsDevice)
+  //   Res.getTargetOpts().HostTriple = Res.getFrontendOpts().AuxTriple;
 
   // FIXME: Override value name discarding when asan or msan is used because the
   // backend passes depend on the name of the alloca in order to print out
@@ -3856,7 +3856,7 @@ std::string CompilerInvocation::getModuleHash() const {
   for (StringRef Feature : LangOpts->ModuleFeatures)
     code = hash_combine(code, Feature);
 
-  code = hash_combine(code, LangOpts->ObjCRuntime);
+  // code = hash_combine(code, LangOpts->ObjCRuntime);
   const auto &BCN = LangOpts->CommentOpts.BlockCommandNames;
   code = hash_combine(code, hash_combine_range(BCN.begin(), BCN.end()));
 

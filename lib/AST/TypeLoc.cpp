@@ -345,12 +345,12 @@ TypeSpecifierType BuiltinTypeLoc::getWrittenTypeSpec() const {
   case BuiltinType::Long:
   case BuiltinType::LongLong:
   case BuiltinType::Int128:
-  case BuiltinType::Half:
+  // case BuiltinType::Half:
   case BuiltinType::Float:
   case BuiltinType::Double:
   case BuiltinType::LongDouble:
-  case BuiltinType::Float16:
-  case BuiltinType::Float128:
+  // case BuiltinType::Float16:
+  // case BuiltinType::Float128:
   case BuiltinType::ShortAccum:
   case BuiltinType::Accum:
   case BuiltinType::LongAccum:
@@ -385,7 +385,7 @@ TypeSpecifierType BuiltinTypeLoc::getWrittenTypeSpec() const {
   case BuiltinType::BoundMember:
   case BuiltinType::UnknownAny:
   case BuiltinType::ARCUnbridgedCast:
-  // case BuiltinType::PseudoObject:
+  case BuiltinType::PseudoObject:
   // case BuiltinType::ObjCId:
   // case BuiltinType::ObjCClass:
   // case BuiltinType::ObjCSel:
@@ -452,16 +452,16 @@ TypeLoc TypeLoc::findExplicitQualifierLoc() const {
   return {};
 }
 
-void ObjCTypeParamTypeLoc::initializeLocal(ASTContext &Context,
-                                           SourceLocation Loc) {
-  setNameLoc(Loc);
-  if (!getNumProtocols()) return;
+// void ObjCTypeParamTypeLoc::initializeLocal(ASTContext &Context,
+//                                            SourceLocation Loc) {
+//   setNameLoc(Loc);
+//   if (!getNumProtocols()) return;
 
-  setProtocolLAngleLoc(Loc);
-  setProtocolRAngleLoc(Loc);
-  for (unsigned i = 0, e = getNumProtocols(); i != e; ++i)
-    setProtocolLoc(i, Loc);
-}
+//   setProtocolLAngleLoc(Loc);
+//   setProtocolRAngleLoc(Loc);
+//   for (unsigned i = 0, e = getNumProtocols(); i != e; ++i)
+//     setProtocolLoc(i, Loc);
+// }
 
 // void ObjCObjectTypeLoc::initializeLocal(ASTContext &Context,
 //                                         SourceLocation Loc) {

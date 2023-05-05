@@ -245,23 +245,23 @@ void tools::MinGW::Linker::ConstructJob(Compilation &C, const JobAction &JA,
         CmdArgs.push_back("-lssp");
       }
 
-      if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-                       options::OPT_fno_openmp, false)) {
-        switch (TC.getDriver().getOpenMPRuntime(Args)) {
-        case Driver::OMPRT_OMP:
-          CmdArgs.push_back("-lomp");
-          break;
-        case Driver::OMPRT_IOMP5:
-          CmdArgs.push_back("-liomp5md");
-          break;
-        case Driver::OMPRT_GOMP:
-          CmdArgs.push_back("-lgomp");
-          break;
-        case Driver::OMPRT_Unknown:
-          // Already diagnosed.
-          break;
-        }
-      }
+      // if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+      //                  options::OPT_fno_openmp, false)) {
+      //   switch (TC.getDriver().getOpenMPRuntime(Args)) {
+      //   case Driver::OMPRT_OMP:
+      //     CmdArgs.push_back("-lomp");
+      //     break;
+      //   case Driver::OMPRT_IOMP5:
+      //     CmdArgs.push_back("-liomp5md");
+      //     break;
+      //   case Driver::OMPRT_GOMP:
+      //     CmdArgs.push_back("-lgomp");
+      //     break;
+      //   case Driver::OMPRT_Unknown:
+      //     // Already diagnosed.
+      //     break;
+      //   }
+      // }
 
       AddLibGCC(Args, CmdArgs);
 

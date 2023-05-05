@@ -285,60 +285,60 @@ static const char *getLockFreeValue(unsigned TypeWidth, unsigned TypeAlign,
 
 /// Add definitions required for a smooth interaction between
 /// Objective-C++ automated reference counting and libstdc++ (4.2).
-static void AddObjCXXARCLibstdcxxDefines(const LangOptions &LangOpts,
-                                         MacroBuilder &Builder) {
-  Builder.defineMacro("_GLIBCXX_PREDEFINED_OBJC_ARC_IS_SCALAR");
+// static void AddObjCXXARCLibstdcxxDefines(const LangOptions &LangOpts,
+//                                          MacroBuilder &Builder) {
+//   Builder.defineMacro("_GLIBCXX_PREDEFINED_OBJC_ARC_IS_SCALAR");
 
-  std::string Result;
-  {
-    // Provide specializations for the __is_scalar type trait so that
-    // lifetime-qualified objects are not considered "scalar" types, which
-    // libstdc++ uses as an indicator of the presence of trivial copy, assign,
-    // default-construct, and destruct semantics (none of which hold for
-    // lifetime-qualified objects in ARC).
-    llvm::raw_string_ostream Out(Result);
+//   std::string Result;
+//   {
+//     // Provide specializations for the __is_scalar type trait so that
+//     // lifetime-qualified objects are not considered "scalar" types, which
+//     // libstdc++ uses as an indicator of the presence of trivial copy, assign,
+//     // default-construct, and destruct semantics (none of which hold for
+//     // lifetime-qualified objects in ARC).
+//     llvm::raw_string_ostream Out(Result);
 
-    Out << "namespace std {\n"
-        << "\n"
-        << "struct __true_type;\n"
-        << "struct __false_type;\n"
-        << "\n";
+//     Out << "namespace std {\n"
+//         << "\n"
+//         << "struct __true_type;\n"
+//         << "struct __false_type;\n"
+//         << "\n";
 
-    Out << "template<typename _Tp> struct __is_scalar;\n"
-        << "\n";
+//     Out << "template<typename _Tp> struct __is_scalar;\n"
+//         << "\n";
 
-    if (LangOpts.ObjCAutoRefCount) {
-      Out << "template<typename _Tp>\n"
-          << "struct __is_scalar<__attribute__((objc_ownership(strong))) _Tp> {\n"
-          << "  enum { __value = 0 };\n"
-          << "  typedef __false_type __type;\n"
-          << "};\n"
-          << "\n";
-    }
+//     // if (LangOpts.ObjCAutoRefCount) {
+//     //   Out << "template<typename _Tp>\n"
+//     //       << "struct __is_scalar<__attribute__((objc_ownership(strong))) _Tp> {\n"
+//     //       << "  enum { __value = 0 };\n"
+//     //       << "  typedef __false_type __type;\n"
+//     //       << "};\n"
+//     //       << "\n";
+//     // }
 
-    if (LangOpts.ObjCWeak) {
-      Out << "template<typename _Tp>\n"
-          << "struct __is_scalar<__attribute__((objc_ownership(weak))) _Tp> {\n"
-          << "  enum { __value = 0 };\n"
-          << "  typedef __false_type __type;\n"
-          << "};\n"
-          << "\n";
-    }
+//     // if (LangOpts.ObjCWeak) {
+//     //   Out << "template<typename _Tp>\n"
+//     //       << "struct __is_scalar<__attribute__((objc_ownership(weak))) _Tp> {\n"
+//     //       << "  enum { __value = 0 };\n"
+//     //       << "  typedef __false_type __type;\n"
+//     //       << "};\n"
+//     //       << "\n";
+//     // }
 
-    if (LangOpts.ObjCAutoRefCount) {
-      Out << "template<typename _Tp>\n"
-          << "struct __is_scalar<__attribute__((objc_ownership(autoreleasing)))"
-          << " _Tp> {\n"
-          << "  enum { __value = 0 };\n"
-          << "  typedef __false_type __type;\n"
-          << "};\n"
-          << "\n";
-    }
+//     // if (LangOpts.ObjCAutoRefCount) {
+//     //   Out << "template<typename _Tp>\n"
+//     //       << "struct __is_scalar<__attribute__((objc_ownership(autoreleasing)))"
+//     //       << " _Tp> {\n"
+//     //       << "  enum { __value = 0 };\n"
+//     //       << "  typedef __false_type __type;\n"
+//     //       << "};\n"
+//     //       << "\n";
+//     // }
 
-    Out << "}\n";
-  }
-  Builder.append(Result);
-}
+//     Out << "}\n";
+//   }
+//   Builder.append(Result);
+// }
 
 static void InitializeStandardPredefinedMacros(const TargetInfo &TI,
                                                const LangOptions &LangOpts,
@@ -417,49 +417,49 @@ static void InitializeStandardPredefinedMacros(const TargetInfo &TI,
   //   Builder.defineMacro("__OBJC__");
 
   // OpenCL v1.0/1.1 s6.9, v1.2/2.0 s6.10: Preprocessor Directives and Macros.
-  if (LangOpts.OpenCL) {
-    if (LangOpts.CPlusPlus) {
-      if (LangOpts.OpenCLCPlusPlusVersion == 100)
-        Builder.defineMacro("__OPENCL_CPP_VERSION__", "100");
-      else
-        llvm_unreachable("Unsupported C++ version for OpenCL");
-      Builder.defineMacro("__CL_CPP_VERSION_1_0__", "100");
-    } else {
-      // OpenCL v1.0 and v1.1 do not have a predefined macro to indicate the
-      // language standard with which the program is compiled. __OPENCL_VERSION__
-      // is for the OpenCL version supported by the OpenCL device, which is not
-      // necessarily the language standard with which the program is compiled.
-      // A shared OpenCL header file requires a macro to indicate the language
-      // standard. As a workaround, __OPENCL_C_VERSION__ is defined for
-      // OpenCL v1.0 and v1.1.
-      switch (LangOpts.OpenCLVersion) {
-      case 100:
-        Builder.defineMacro("__OPENCL_C_VERSION__", "100");
-        break;
-      case 110:
-        Builder.defineMacro("__OPENCL_C_VERSION__", "110");
-        break;
-      case 120:
-        Builder.defineMacro("__OPENCL_C_VERSION__", "120");
-        break;
-      case 200:
-        Builder.defineMacro("__OPENCL_C_VERSION__", "200");
-        break;
-      default:
-        llvm_unreachable("Unsupported OpenCL version");
-      }
-    }
-    Builder.defineMacro("CL_VERSION_1_0", "100");
-    Builder.defineMacro("CL_VERSION_1_1", "110");
-    Builder.defineMacro("CL_VERSION_1_2", "120");
-    Builder.defineMacro("CL_VERSION_2_0", "200");
+  // if (LangOpts.OpenCL) {
+  //   if (LangOpts.CPlusPlus) {
+  //     if (LangOpts.OpenCLCPlusPlusVersion == 100)
+  //       Builder.defineMacro("__OPENCL_CPP_VERSION__", "100");
+  //     else
+  //       llvm_unreachable("Unsupported C++ version for OpenCL");
+  //     Builder.defineMacro("__CL_CPP_VERSION_1_0__", "100");
+  //   } else {
+  //     // OpenCL v1.0 and v1.1 do not have a predefined macro to indicate the
+  //     // language standard with which the program is compiled. __OPENCL_VERSION__
+  //     // is for the OpenCL version supported by the OpenCL device, which is not
+  //     // necessarily the language standard with which the program is compiled.
+  //     // A shared OpenCL header file requires a macro to indicate the language
+  //     // standard. As a workaround, __OPENCL_C_VERSION__ is defined for
+  //     // OpenCL v1.0 and v1.1.
+  //     switch (LangOpts.OpenCLVersion) {
+  //     case 100:
+  //       Builder.defineMacro("__OPENCL_C_VERSION__", "100");
+  //       break;
+  //     case 110:
+  //       Builder.defineMacro("__OPENCL_C_VERSION__", "110");
+  //       break;
+  //     case 120:
+  //       Builder.defineMacro("__OPENCL_C_VERSION__", "120");
+  //       break;
+  //     case 200:
+  //       Builder.defineMacro("__OPENCL_C_VERSION__", "200");
+  //       break;
+  //     default:
+  //       llvm_unreachable("Unsupported OpenCL version");
+  //     }
+  //   }
+  //   Builder.defineMacro("CL_VERSION_1_0", "100");
+  //   Builder.defineMacro("CL_VERSION_1_1", "110");
+  //   Builder.defineMacro("CL_VERSION_1_2", "120");
+  //   Builder.defineMacro("CL_VERSION_2_0", "200");
 
-    if (TI.isLittleEndian())
-      Builder.defineMacro("__ENDIAN_LITTLE__");
+  //   if (TI.isLittleEndian())
+  //     Builder.defineMacro("__ENDIAN_LITTLE__");
 
-    if (LangOpts.FastRelaxedMath)
-      Builder.defineMacro("__FAST_RELAXED_MATH__");
-  }
+  //   if (LangOpts.FastRelaxedMath)
+  //     Builder.defineMacro("__FAST_RELAXED_MATH__");
+  // }
 
   if (LangOpts.SYCL) {
     // SYCL Version is set to a value when building SYCL applications
@@ -1066,55 +1066,55 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   //   macro name is defined to have the decimal value yyyymm where
   //   yyyy and mm are the year and the month designations of the
   //   version of the OpenMP API that the implementation support.
-  if (!LangOpts.OpenMPSimd) {
-    switch (LangOpts.OpenMP) {
-    case 0:
-      break;
-    case 31:
-      Builder.defineMacro("_OPENMP", "201107");
-      break;
-    case 40:
-      Builder.defineMacro("_OPENMP", "201307");
-      break;
-    case 45:
-      Builder.defineMacro("_OPENMP", "201511");
-      break;
-    default:
-      // Default version is OpenMP 5.0
-      Builder.defineMacro("_OPENMP", "201811");
-      break;
-    }
-  }
+  // if (!LangOpts.OpenMPSimd) {
+  //   switch (LangOpts.OpenMP) {
+  //   case 0:
+  //     break;
+  //   case 31:
+  //     Builder.defineMacro("_OPENMP", "201107");
+  //     break;
+  //   case 40:
+  //     Builder.defineMacro("_OPENMP", "201307");
+  //     break;
+  //   case 45:
+  //     Builder.defineMacro("_OPENMP", "201511");
+  //     break;
+  //   default:
+  //     // Default version is OpenMP 5.0
+  //     Builder.defineMacro("_OPENMP", "201811");
+  //     break;
+  //   }
+  // }
 
   // CUDA device path compilaton
-  if (LangOpts.CUDAIsDevice && !LangOpts.HIP) {
-    // The CUDA_ARCH value is set for the GPU target specified in the NVPTX
-    // backend's target defines.
-    Builder.defineMacro("__CUDA_ARCH__");
-  }
+  // if (LangOpts.CUDAIsDevice && !LangOpts.HIP) {
+  //   // The CUDA_ARCH value is set for the GPU target specified in the NVPTX
+  //   // backend's target defines.
+  //   Builder.defineMacro("__CUDA_ARCH__");
+  // }
 
   // We need to communicate this to our CUDA header wrapper, which in turn
   // informs the proper CUDA headers of this choice.
-  if (LangOpts.CUDADeviceApproxTranscendentals || LangOpts.FastMath) {
-    Builder.defineMacro("__CLANG_CUDA_APPROX_TRANSCENDENTALS__");
-  }
+  // if (LangOpts.CUDADeviceApproxTranscendentals || LangOpts.FastMath) {
+  //   Builder.defineMacro("__CLANG_CUDA_APPROX_TRANSCENDENTALS__");
+  // }
 
   // Define a macro indicating that the source file is being compiled with a
   // SYCL device compiler which doesn't produce host binary.
-  if (LangOpts.SYCLIsDevice) {
-    Builder.defineMacro("__SYCL_DEVICE_ONLY__", "1");
-  }
+  // if (LangOpts.SYCLIsDevice) {
+  //   Builder.defineMacro("__SYCL_DEVICE_ONLY__", "1");
+  // }
 
   // OpenCL definitions.
-  if (LangOpts.OpenCL) {
-#define OPENCLEXT(Ext)                                                         \
-  if (TI.getSupportedOpenCLOpts().isSupported(#Ext, LangOpts))                 \
-    Builder.defineMacro(#Ext);
-#include "latino/Basic/OpenCLExtensions.def"
+//   if (LangOpts.OpenCL) {
+// #define OPENCLEXT(Ext)                                                         \
+//   if (TI.getSupportedOpenCLOpts().isSupported(#Ext, LangOpts))                 \
+//     Builder.defineMacro(#Ext);
+// #include "latino/Basic/OpenCLExtensions.def"
 
-    if (TI.getTriple().isSPIR())
-      Builder.defineMacro("__IMAGE_SUPPORT__");
-  }
+//     if (TI.getTriple().isSPIR())
+//       Builder.defineMacro("__IMAGE_SUPPORT__");
+//   }
 
   if (TI.hasInt128Type() && LangOpts.CPlusPlus && LangOpts.GNUMode) {
     // For each extended integer type, g++ defines a macro mapping the
@@ -1151,10 +1151,10 @@ void latino::InitializePreprocessor(
   if (InitOpts.UsePredefines) {
     // FIXME: This will create multiple definitions for most of the predefined
     // macros. This is not the right way to handle this.
-    if ((LangOpts.CUDA || LangOpts.OpenMPIsDevice || LangOpts.SYCLIsDevice) &&
-        PP.getAuxTargetInfo())
-      InitializePredefinedMacros(*PP.getAuxTargetInfo(), LangOpts, FEOpts,
-                                 PP.getPreprocessorOpts(), Builder);
+    // if ((LangOpts.CUDA || LangOpts.OpenMPIsDevice || LangOpts.SYCLIsDevice) &&
+    //     PP.getAuxTargetInfo())
+    //   InitializePredefinedMacros(*PP.getAuxTargetInfo(), LangOpts, FEOpts,
+    //                              PP.getPreprocessorOpts(), Builder);
 
     InitializePredefinedMacros(PP.getTargetInfo(), LangOpts, FEOpts,
                                PP.getPreprocessorOpts(), Builder);

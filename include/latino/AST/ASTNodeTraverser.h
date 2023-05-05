@@ -198,13 +198,13 @@ public:
     });
   }
 
-  void Visit(const OMPClause *C) {
-    getNodeDelegate().AddChild([=] {
-      getNodeDelegate().Visit(C);
-      for (const auto *S : C->children())
-        Visit(S);
-    });
-  }
+  // void Visit(const OMPClause *C) {
+  //   getNodeDelegate().AddChild([=] {
+  //     getNodeDelegate().Visit(C);
+  //     for (const auto *S : C->children())
+  //       Visit(S);
+  //   });
+  // }
 
   void Visit(const GenericSelectionExpr::ConstAssociation &A) {
     getNodeDelegate().AddChild([=] {
@@ -247,8 +247,8 @@ public:
       Visit(T);
     else if (const auto *C = N.get<CXXCtorInitializer>())
       Visit(C);
-    else if (const auto *C = N.get<OMPClause>())
-      Visit(C);
+    // else if (const auto *C = N.get<OMPClause>())
+    //   Visit(C);
     else if (const auto *T = N.get<TemplateArgument>())
       Visit(*T);
   }
@@ -292,14 +292,14 @@ public:
       Visit(TAL[i]);
   }
 
-  void dumpObjCTypeParamList(const ObjCTypeParamList *typeParams) {
-    if (!typeParams)
-      return;
+  // void dumpObjCTypeParamList(const ObjCTypeParamList *typeParams) {
+  //   if (!typeParams)
+  //     return;
 
-    for (const auto &typeParam : *typeParams) {
-      Visit(typeParam);
-    }
-  }
+  //   for (const auto &typeParam : *typeParams) {
+  //     Visit(typeParam);
+  //   }
+  // }
 
   void VisitComplexType(const ComplexType *T) { Visit(T->getElementType()); }
   void VisitLocInfoType(const LocInfoType *T) {
@@ -429,32 +429,32 @@ public:
 
   void VisitCapturedDecl(const CapturedDecl *D) { Visit(D->getBody()); }
 
-  void VisitOMPThreadPrivateDecl(const OMPThreadPrivateDecl *D) {
-    for (const auto *E : D->varlists())
-      Visit(E);
-  }
+  // void VisitOMPThreadPrivateDecl(const OMPThreadPrivateDecl *D) {
+  //   for (const auto *E : D->varlists())
+  //     Visit(E);
+  // }
 
-  void VisitOMPDeclareReductionDecl(const OMPDeclareReductionDecl *D) {
-    Visit(D->getCombiner());
-    if (const auto *Initializer = D->getInitializer())
-      Visit(Initializer);
-  }
+  // void VisitOMPDeclareReductionDecl(const OMPDeclareReductionDecl *D) {
+  //   Visit(D->getCombiner());
+  //   if (const auto *Initializer = D->getInitializer())
+  //     Visit(Initializer);
+  // }
 
-  void VisitOMPDeclareMapperDecl(const OMPDeclareMapperDecl *D) {
-    for (const auto *C : D->clauselists())
-      Visit(C);
-  }
+  // void VisitOMPDeclareMapperDecl(const OMPDeclareMapperDecl *D) {
+  //   for (const auto *C : D->clauselists())
+  //     Visit(C);
+  // }
 
-  void VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D) {
-    Visit(D->getInit());
-  }
+  // void VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D) {
+  //   Visit(D->getInit());
+  // }
 
-  void VisitOMPAllocateDecl(const OMPAllocateDecl *D) {
-    for (const auto *E : D->varlists())
-      Visit(E);
-    for (const auto *C : D->clauselists())
-      Visit(C);
-  }
+  // void VisitOMPAllocateDecl(const OMPAllocateDecl *D) {
+  //   for (const auto *E : D->varlists())
+  //     Visit(E);
+  //   for (const auto *C : D->clauselists())
+  //     Visit(C);
+  // }
 
   template <typename SpecializationDecl>
   void dumpTemplateDeclSpecialization(const SpecializationDecl *D) {
@@ -635,10 +635,10 @@ public:
     Visit(Node->getCapturedDecl());
   }
 
-  void VisitOMPExecutableDirective(const OMPExecutableDirective *Node) {
-    for (const auto *C : Node->clauses())
-      Visit(C);
-  }
+  // void VisitOMPExecutableDirective(const OMPExecutableDirective *Node) {
+  //   for (const auto *C : Node->clauses())
+  //     Visit(C);
+  // }
 
   void VisitInitListExpr(const InitListExpr *ILE) {
     if (auto *Filler = ILE->getArrayFiller()) {
@@ -697,10 +697,10 @@ public:
     Visit(E->getArgumentPack());
   }
 
-  void VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node) {
-    if (const VarDecl *CatchParam = Node->getCatchParamDecl())
-      Visit(CatchParam);
-  }
+  // void VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node) {
+  //   if (const VarDecl *CatchParam = Node->getCatchParamDecl())
+  //     Visit(CatchParam);
+  // }
 
   void VisitExpressionTemplateArgument(const TemplateArgument &TA) {
     Visit(TA.getAsExpr());

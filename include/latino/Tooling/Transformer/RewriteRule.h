@@ -316,10 +316,10 @@ TextGenerator text(std::string M);
 using transformer::addInclude;
 using transformer::applyFirst;
 using transformer::change;
-using transformer::insertAfter;
-using transformer::insertBefore;
+// using transformer::insertAfter;
+// using transformer::insertBefore;
 using transformer::makeRule;
-using transformer::remove;
+// using transformer::remove;
 using transformer::RewriteRule;
 using transformer::IncludeFormat;
 namespace detail {

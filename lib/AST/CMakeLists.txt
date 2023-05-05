@@ -41,8 +41,8 @@ add_latino_library(latinoAST
   DeclCXX.cpp
   DeclFriend.cpp
   DeclGroup.cpp
-  # DeclObjC.cpp
-  DeclOpenMP.cpp
+  DeclObjC.cpp
+  # DeclOpenMP.cpp
   DeclPrinter.cpp
   DeclTemplate.cpp
   ParentMapContext.cpp
@@ -84,9 +84,9 @@ add_latino_library(latinoAST
   MicrosoftCXXABI.cpp
   MicrosoftMangle.cpp
   NestedNameSpecifier.cpp
-  NSAPI.cpp
+  # NSAPI.cpp
   ODRHash.cpp
-  OpenMPClause.cpp
+  # OpenMPClause.cpp
   OSLog.cpp
   ParentMap.cpp
   PrintfFormatString.cpp
@@ -95,12 +95,12 @@ add_latino_library(latinoAST
   RecordLayout.cpp
   RecordLayoutBuilder.cpp
   ScanfFormatString.cpp
-  SelectorLocationsKind.cpp
+  # SelectorLocationsKind.cpp
   Stmt.cpp
   StmtCXX.cpp
   StmtIterator.cpp
   # StmtObjC.cpp
-  StmtOpenMP.cpp
+  # StmtOpenMP.cpp
   StmtPrinter.cpp
   StmtProfile.cpp
   StmtViz.cpp

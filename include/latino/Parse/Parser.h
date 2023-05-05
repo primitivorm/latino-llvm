@@ -15,7 +15,7 @@
 
 #include "latino/AST/Availability.h"
 #include "latino/Basic/BitmaskEnum.h"
-#include "latino/Basic/OpenMPKinds.h"
+// #include "latino/Basic/OpenMPKinds.h"
 #include "latino/Basic/OperatorPrecedence.h"
 #include "latino/Basic/Specifiers.h"
 #include "latino/Lex/CodeCompletionHandler.h"
@@ -23,7 +23,7 @@
 #include "latino/Sema/DeclSpec.h"
 #include "latino/Sema/Sema.h"
 #include "llvm/ADT/SmallVector.h"
-#include "llvm/Frontend/OpenMP/OMPContext.h"
+// #include "llvm/Frontend/OpenMP/OMPContext.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/PrettyStackTrace.h"
 #include "llvm/Support/SaveAndRestore.h"
@@ -46,13 +46,13 @@ namespace latino {
   class ColonProtectionRAIIObject;
   class InMessageExpressionRAIIObject;
   class PoisonSEHIdentifiersRAIIObject;
-  class OMPClause;
-  class ObjCTypeParamList;
-  class ObjCTypeParameter;
-  struct OMPTraitProperty;
-  struct OMPTraitSelector;
-  struct OMPTraitSet;
-  class OMPTraitInfo;
+  // class OMPClause;
+  // class ObjCTypeParamList;
+  // class ObjCTypeParameter;
+  // struct OMPTraitProperty;
+  // struct OMPTraitSelector;
+  // struct OMPTraitSet;
+  // class OMPTraitInfo;
 
 /// Parser - This implements a parser for the C family of languages.  After
 /// parsing units of the grammar, productions are invoked to handle whatever has
@@ -60,10 +60,10 @@ namespace latino {
 ///
 class Parser : public CodeCompletionHandler {
   friend class ColonProtectionRAIIObject;
-  friend class ParsingOpenMPDirectiveRAII;
+  // friend class ParsingOpenMPDirectiveRAII;
   friend class InMessageExpressionRAIIObject;
   friend class PoisonSEHIdentifiersRAIIObject;
-  friend class ObjCDeclContextSwitch;
+  // friend class ObjCDeclContextSwitch;
   friend class ParenBraceBracketBalancer;
   friend class BalancedDelimiterTracker;
 
@@ -242,7 +242,7 @@ class Parser : public CodeCompletionHandler {
   unsigned TemplateParameterDepth;
 
   /// Current kind of OpenMP clause
-  OpenMPClauseKind OMPClauseKind = llvm::omp::OMPC_unknown;
+  // OpenMPClauseKind OMPClauseKind = llvm::omp::OMPC_unknown;
 
   /// RAII class that manages the template parameter depth.
   class TemplateParameterDepthRAII {
@@ -390,7 +390,7 @@ class Parser : public CodeCompletionHandler {
   /// This is necessary because Sema thinks we have left the container
   /// to parse the C-like decls, meaning Actions.getObjCDeclContext() will
   /// be NULL.
-  bool ParsingInObjCContainer;
+  // bool ParsingInObjCContainer;
 
   /// Whether to skip parsing of function bodies.
   ///
@@ -442,7 +442,7 @@ public:
     return Actions.incrementMSManglingNumber();
   }
 
-  Decl  *getObjCDeclContext() const { return Actions.getObjCDeclContext(); }
+  // Decl  *getObjCDeclContext() const { return Actions.getObjCDeclContext(); }
 
   // Type forwarding.  All of these are statically 'void*', but they may all be
   // different actual classes based on the actions in place.
@@ -990,22 +990,22 @@ private:
   /// ObjCDeclContextSwitch - An object used to switch context from
   /// an objective-c decl context to its enclosing decl context and
   /// back.
-  class ObjCDeclContextSwitch {
-    Parser &P;
-    Decl *DC;
-    SaveAndRestore<bool> WithinObjCContainer;
-  public:
-    explicit ObjCDeclContextSwitch(Parser &p)
-      : P(p), DC(p.getObjCDeclContext()),
-        WithinObjCContainer(P.ParsingInObjCContainer, DC != nullptr) {
-      if (DC)
-        P.Actions.ActOnObjCTemporaryExitContainerContext(cast<DeclContext>(DC));
-    }
-    ~ObjCDeclContextSwitch() {
-      if (DC)
-        P.Actions.ActOnObjCReenterContainerContext(cast<DeclContext>(DC));
-    }
-  };
+  // class ObjCDeclContextSwitch {
+  //   Parser &P;
+  //   Decl *DC;
+  //   SaveAndRestore<bool> WithinObjCContainer;
+  // public:
+  //   explicit ObjCDeclContextSwitch(Parser &p)
+  //     : P(p), DC(p.getObjCDeclContext()),
+  //       WithinObjCContainer(P.ParsingInObjCContainer, DC != nullptr) {
+  //     if (DC)
+  //       P.Actions.ActOnObjCTemporaryExitContainerContext(cast<DeclContext>(DC));
+  //   }
+  //   ~ObjCDeclContextSwitch() {
+  //     if (DC)
+  //       P.Actions.ActOnObjCReenterContainerContext(cast<DeclContext>(DC));
+  //   }
+  // };
 
   /// ExpectAndConsume - The parser expects that 'ExpectedTok' is next in the
   /// input.  If so, it is consumed and false is returned.
@@ -1601,7 +1601,7 @@ private:
   // DeclGroupPtrTy ParseObjCAtClassDeclaration(SourceLocation atLoc);
   // Decl *ParseObjCAtInterfaceDeclaration(SourceLocation AtLoc,
   //                                       ParsedAttributes &prefixAttrs);
-  class ObjCTypeParamListScope;
+  // class ObjCTypeParamListScope;
   // ObjCTypeParamList *parseObjCTypeParamList();
   // ObjCTypeParamList *parseObjCTypeParamListOrProtocolRefs(
   //     ObjCTypeParamListScope &Scope, SourceLocation &lAngleLoc,
@@ -1688,7 +1688,7 @@ private:
     bool Finished;
   };
   ObjCImplParsingDataRAII *CurParsedObjCImpl;
-  void StashAwayMethodOrFunctionBodyTokens(Decl *MDecl);
+  // void StashAwayMethodOrFunctionBodyTokens(Decl *MDecl);
 
   // DeclGroupPtrTy ParseObjCAtImplementationDeclaration(SourceLocation AtLoc,
   //                                                     ParsedAttributes &Attrs);
@@ -1697,20 +1697,20 @@ private:
   // Decl *ParseObjCPropertySynthesize(SourceLocation atLoc);
   // Decl *ParseObjCPropertyDynamic(SourceLocation atLoc);
 
-  IdentifierInfo *ParseObjCSelectorPiece(SourceLocation &MethodLocation);
+  // IdentifierInfo *ParseObjCSelectorPiece(SourceLocation &MethodLocation);
   // Definitions for Objective-c context sensitive keywords recognition.
-  enum ObjCTypeQual {
-    objc_in=0, objc_out, objc_inout, objc_oneway, objc_bycopy, objc_byref,
-    objc_nonnull, objc_nullable, objc_null_unspecified,
-    objc_NumQuals
-  };
-  IdentifierInfo *ObjCTypeQuals[objc_NumQuals];
+  // enum ObjCTypeQual {
+  //   objc_in=0, objc_out, objc_inout, objc_oneway, objc_bycopy, objc_byref,
+  //   objc_nonnull, objc_nullable, objc_null_unspecified,
+  //   objc_NumQuals
+  // };
+  // IdentifierInfo *ObjCTypeQuals[objc_NumQuals];
 
-  bool isTokIdentifier_in() const;
+  // bool isTokIdentifier_in() const;
 
   // ParsedType ParseObjCTypeName(ObjCDeclSpec &DS, DeclaratorContext Ctx,
   //                              ParsedAttributes *ParamAttrs);
-  void ParseObjCMethodRequirement();
+  // void ParseObjCMethodRequirement();
   // Decl *ParseObjCMethodPrototype(
   //           tok::ObjCKeywordKind MethodImplKind = tok::objc_not_keyword,
   //           bool MethodDefinition = true);
@@ -2389,8 +2389,8 @@ private:
   // 'for-init-statement' part of a 'for' statement.
   /// Returns true for declaration, false for expression.
   bool isForInitDeclaration() {
-    if (getLangOpts().OpenMP)
-      Actions.startOpenMPLoop();
+    // if (getLangOpts().OpenMP)
+    //   Actions.startOpenMPLoop();
     if (getLangOpts().CPlusPlus)
       return isCXXSimpleDeclaration(/*AllowForRangeDecl=*/true);
     return isDeclarationSpecifier(true);
@@ -2401,7 +2401,7 @@ private:
 
   /// Determine whether we are currently at the start of an Objective-C
   /// class message that appears to be missing the open bracket '['.
-  bool isStartOfObjCClassMessageMissingOpenBracket();
+  // bool isStartOfObjCClassMessageMissingOpenBracket();
 
   /// Starting with a scope specifier, identifier, or
   /// template-id that refers to the current class, determine whether
@@ -3041,47 +3041,47 @@ private:
 
   /// Parse a property kind into \p TIProperty for the selector set \p Set and
   /// selector \p Selector.
-  void parseOMPTraitPropertyKind(OMPTraitProperty &TIProperty,
-                                 llvm::omp::TraitSet Set,
-                                 llvm::omp::TraitSelector Selector,
-                                 llvm::StringMap<SourceLocation> &Seen);
+  // void parseOMPTraitPropertyKind(OMPTraitProperty &TIProperty,
+  //                                llvm::omp::TraitSet Set,
+  //                                llvm::omp::TraitSelector Selector,
+  //                                llvm::StringMap<SourceLocation> &Seen);
 
   /// Parse a selector kind into \p TISelector for the selector set \p Set.
-  void parseOMPTraitSelectorKind(OMPTraitSelector &TISelector,
-                                 llvm::omp::TraitSet Set,
-                                 llvm::StringMap<SourceLocation> &Seen);
+  // void parseOMPTraitSelectorKind(OMPTraitSelector &TISelector,
+  //                                llvm::omp::TraitSet Set,
+  //                                llvm::StringMap<SourceLocation> &Seen);
 
   /// Parse a selector set kind into \p TISet.
-  void parseOMPTraitSetKind(OMPTraitSet &TISet,
-                            llvm::StringMap<SourceLocation> &Seen);
+  // void parseOMPTraitSetKind(OMPTraitSet &TISet,
+  //                           llvm::StringMap<SourceLocation> &Seen);
 
   /// Parses an OpenMP context property.
-  void parseOMPContextProperty(OMPTraitSelector &TISelector,
-                               llvm::omp::TraitSet Set,
-                               llvm::StringMap<SourceLocation> &Seen);
+  // void parseOMPContextProperty(OMPTraitSelector &TISelector,
+  //                              llvm::omp::TraitSet Set,
+  //                              llvm::StringMap<SourceLocation> &Seen);
 
   /// Parses an OpenMP context selector.
-  void parseOMPContextSelector(OMPTraitSelector &TISelector,
-                               llvm::omp::TraitSet Set,
-                               llvm::StringMap<SourceLocation> &SeenSelectors);
+  // void parseOMPContextSelector(OMPTraitSelector &TISelector,
+  //                              llvm::omp::TraitSet Set,
+  //                              llvm::StringMap<SourceLocation> &SeenSelectors);
 
   /// Parses an OpenMP context selector set.
-  void parseOMPContextSelectorSet(OMPTraitSet &TISet,
-                                  llvm::StringMap<SourceLocation> &SeenSets);
+  // void parseOMPContextSelectorSet(OMPTraitSet &TISet,
+  //                                 llvm::StringMap<SourceLocation> &SeenSets);
 
   /// Parses OpenMP context selectors.
-  bool parseOMPContextSelectors(SourceLocation Loc, OMPTraitInfo &TI);
+  // bool parseOMPContextSelectors(SourceLocation Loc, OMPTraitInfo &TI);
 
   /// Parse a `match` clause for an '#pragma omp declare variant'. Return true
   /// if there was an error.
-  bool parseOMPDeclareVariantMatchClause(SourceLocation Loc, OMPTraitInfo &TI);
+  // bool parseOMPDeclareVariantMatchClause(SourceLocation Loc, OMPTraitInfo &TI);
 
   /// Parse clauses for '#pragma omp declare variant'.
-  void ParseOMPDeclareVariantClauses(DeclGroupPtrTy Ptr, CachedTokens &Toks,
-                                     SourceLocation Loc);
+  // void ParseOMPDeclareVariantClauses(DeclGroupPtrTy Ptr, CachedTokens &Toks,
+  //                                    SourceLocation Loc);
 
   /// Parse clauses for '#pragma omp declare target'.
-  DeclGroupPtrTy ParseOMPDeclareTargetClauses();
+  // DeclGroupPtrTy ParseOMPDeclareTargetClauses();
   /// Parse '#pragma omp end declare target'.
   // void ParseOMPEndDeclareTargetDirective(OpenMPDirectiveKind DKind,
   //                                        SourceLocation Loc);
@@ -3110,14 +3110,14 @@ private:
   // DeclGroupPtrTy ParseOpenMPDeclareReductionDirective(AccessSpecifier AS);
   /// Parses initializer for provided omp_priv declaration inside the reduction
   /// initializer.
-  void ParseOpenMPReductionInitializerForDecl(VarDecl *OmpPrivParm);
+  // void ParseOpenMPReductionInitializerForDecl(VarDecl *OmpPrivParm);
 
   /// Parses 'omp declare mapper' directive.
-  DeclGroupPtrTy ParseOpenMPDeclareMapperDirective(AccessSpecifier AS);
+  // DeclGroupPtrTy ParseOpenMPDeclareMapperDirective(AccessSpecifier AS);
   /// Parses variable declaration in 'omp declare mapper' directive.
-  TypeResult parseOpenMPDeclareMapperVarDecl(SourceRange &Range,
-                                             DeclarationName &Name,
-                                             AccessSpecifier AS = AS_none);
+  // TypeResult parseOpenMPDeclareMapperVarDecl(SourceRange &Range,
+  //                                            DeclarationName &Name,
+  //                                            AccessSpecifier AS = AS_none);
 
   /// Tries to parse cast part of OpenMP array shaping operation:
   /// '[' expression ']' { '[' expression ']' } ')'.
@@ -3130,11 +3130,11 @@ private:
   /// \param AllowScopeSpecifier true, if the variables can have fully
   /// qualified names.
   ///
-  bool ParseOpenMPSimpleVarList(
-      OpenMPDirectiveKind Kind,
-      const llvm::function_ref<void(CXXScopeSpec &, DeclarationNameInfo)> &
-          Callback,
-      bool AllowScopeSpecifier);
+  // bool ParseOpenMPSimpleVarList(
+  //     OpenMPDirectiveKind Kind,
+  //     const llvm::function_ref<void(CXXScopeSpec &, DeclarationNameInfo)> &
+  //         Callback,
+  //     bool AllowScopeSpecifier);
   /// Parses declarative or executable directive.
   ///
   /// \param StmtCtx The context in which we're parsing the directive.
@@ -3147,23 +3147,23 @@ private:
   /// \param FirstClause true, if this is the first clause of a kind \a CKind
   /// in current directive.
   ///
-  OMPClause *ParseOpenMPClause(OpenMPDirectiveKind DKind,
-                               OpenMPClauseKind CKind, bool FirstClause);
+  // OMPClause *ParseOpenMPClause(OpenMPDirectiveKind DKind,
+  //                              OpenMPClauseKind CKind, bool FirstClause);
   /// Parses clause with a single expression of a kind \a Kind.
   ///
   /// \param Kind Kind of current clause.
   /// \param ParseOnly true to skip the clause's semantic actions and return
   /// nullptr.
   ///
-  OMPClause *ParseOpenMPSingleExprClause(OpenMPClauseKind Kind,
-                                         bool ParseOnly);
+  // OMPClause *ParseOpenMPSingleExprClause(OpenMPClauseKind Kind,
+  //                                        bool ParseOnly);
   /// Parses simple clause of a kind \a Kind.
   ///
   /// \param Kind Kind of current clause.
   /// \param ParseOnly true to skip the clause's semantic actions and return
   /// nullptr.
   ///
-  OMPClause *ParseOpenMPSimpleClause(OpenMPClauseKind Kind, bool ParseOnly);
+  // OMPClause *ParseOpenMPSimpleClause(OpenMPClauseKind Kind, bool ParseOnly);
   /// Parses clause with a single expression and an additional argument
   /// of a kind \a Kind.
   ///
@@ -3172,63 +3172,63 @@ private:
   /// \param ParseOnly true to skip the clause's semantic actions and return
   /// nullptr.
   ///
-  OMPClause *ParseOpenMPSingleExprWithArgClause(OpenMPDirectiveKind DKind,
-                                                OpenMPClauseKind Kind,
-                                                bool ParseOnly);
+  // OMPClause *ParseOpenMPSingleExprWithArgClause(OpenMPDirectiveKind DKind,
+  //                                               OpenMPClauseKind Kind,
+  //                                               bool ParseOnly);
   /// Parses clause without any additional arguments.
   ///
   /// \param Kind Kind of current clause.
   /// \param ParseOnly true to skip the clause's semantic actions and return
   /// nullptr.
   ///
-  OMPClause *ParseOpenMPClause(OpenMPClauseKind Kind, bool ParseOnly = false);
+  // OMPClause *ParseOpenMPClause(OpenMPClauseKind Kind, bool ParseOnly = false);
   /// Parses clause with the list of variables of a kind \a Kind.
   ///
   /// \param Kind Kind of current clause.
   /// \param ParseOnly true to skip the clause's semantic actions and return
   /// nullptr.
   ///
-  OMPClause *ParseOpenMPVarListClause(OpenMPDirectiveKind DKind,
-                                      OpenMPClauseKind Kind, bool ParseOnly);
+  // OMPClause *ParseOpenMPVarListClause(OpenMPDirectiveKind DKind,
+  //                                     OpenMPClauseKind Kind, bool ParseOnly);
 
   /// Parses and creates OpenMP 5.0 iterators expression:
   /// <iterators> = 'iterator' '(' { [ <iterator-type> ] identifier =
   /// <range-specification> }+ ')'
-  ExprResult ParseOpenMPIteratorsExpr();
+  // ExprResult ParseOpenMPIteratorsExpr();
 
   /// Parses allocators and traits in the context of the uses_allocator clause.
   /// Expected format:
   /// '(' { <allocator> [ '(' <allocator_traits> ')' ] }+ ')'
-  OMPClause *ParseOpenMPUsesAllocatorClause(OpenMPDirectiveKind DKind);
+  // OMPClause *ParseOpenMPUsesAllocatorClause(OpenMPDirectiveKind DKind);
 
 public:
   /// Parses simple expression in parens for single-expression clauses of OpenMP
   /// constructs.
   /// \param RLoc Returned location of right paren.
-  ExprResult ParseOpenMPParensExpr(StringRef ClauseName, SourceLocation &RLoc,
-                                   bool IsAddressOfOperand = false);
+  // ExprResult ParseOpenMPParensExpr(StringRef ClauseName, SourceLocation &RLoc,
+  //                                  bool IsAddressOfOperand = false);
 
   /// Data used for parsing list of variables in OpenMP clauses.
-  struct OpenMPVarListDataTy {
-    Expr *DepModOrTailExpr = nullptr;
-    SourceLocation ColonLoc;
-    SourceLocation RLoc;
-    CXXScopeSpec ReductionOrMapperIdScopeSpec;
-    DeclarationNameInfo ReductionOrMapperId;
-    int ExtraModifier = -1; ///< Additional modifier for linear, map, depend or
-                            ///< lastprivate clause.
-    SmallVector<OpenMPMapModifierKind, NumberOfOMPMapClauseModifiers>
-    MapTypeModifiers;
-    SmallVector<SourceLocation, NumberOfOMPMapClauseModifiers>
-    MapTypeModifiersLoc;
-    bool IsMapTypeImplicit = false;
-    SourceLocation ExtraModifierLoc;
-  };
+  // struct OpenMPVarListDataTy {
+  //   Expr *DepModOrTailExpr = nullptr;
+  //   SourceLocation ColonLoc;
+  //   SourceLocation RLoc;
+  //   CXXScopeSpec ReductionOrMapperIdScopeSpec;
+  //   DeclarationNameInfo ReductionOrMapperId;
+  //   int ExtraModifier = -1; ///< Additional modifier for linear, map, depend or
+  //                           ///< lastprivate clause.
+  //   SmallVector<OpenMPMapModifierKind, NumberOfOMPMapClauseModifiers>
+  //   MapTypeModifiers;
+  //   SmallVector<SourceLocation, NumberOfOMPMapClauseModifiers>
+  //   MapTypeModifiersLoc;
+  //   bool IsMapTypeImplicit = false;
+  //   SourceLocation ExtraModifierLoc;
+  // };
 
   /// Parses clauses with list.
-  bool ParseOpenMPVarList(OpenMPDirectiveKind DKind, OpenMPClauseKind Kind,
-                          SmallVectorImpl<Expr *> &Vars,
-                          OpenMPVarListDataTy &Data);
+  // bool ParseOpenMPVarList(OpenMPDirectiveKind DKind, OpenMPClauseKind Kind,
+  //                         SmallVectorImpl<Expr *> &Vars,
+  //                         OpenMPVarListDataTy &Data);
   bool ParseUnqualifiedId(CXXScopeSpec &SS, ParsedType ObjectType,
                           bool ObjectHadErrors, bool EnteringContext,
                           bool AllowDestructorName, bool AllowConstructorName,
@@ -3236,11 +3236,11 @@ public:
                           SourceLocation *TemplateKWLoc, UnqualifiedId &Result);
 
   /// Parses the mapper modifier in map, to, and from clauses.
-  bool parseMapperModifier(OpenMPVarListDataTy &Data);
+  // bool parseMapperModifier(OpenMPVarListDataTy &Data);
   /// Parses map-type-modifiers in map clause.
   /// map([ [map-type-modifier[,] [map-type-modifier[,] ...] map-type : ] list)
   /// where, map-type-modifier ::= always | close | mapper(mapper-identifier)
-  bool parseMapTypeModifiers(OpenMPVarListDataTy &Data);
+  // bool parseMapTypeModifiers(OpenMPVarListDataTy &Data);
 
 private:
   //===--------------------------------------------------------------------===//

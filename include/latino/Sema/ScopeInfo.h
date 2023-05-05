@@ -134,24 +134,24 @@ public:
   /// A flag that is set when parsing a method that must call super's
   /// implementation, such as \c -dealloc, \c -finalize, or any method marked
   /// with \c __attribute__((objc_requires_super)).
-  bool ObjCShouldCallSuper : 1;
+  // bool ObjCShouldCallSuper : 1;
 
   /// True when this is a method marked as a designated initializer.
-  bool ObjCIsDesignatedInit : 1;
+  // bool ObjCIsDesignatedInit : 1;
 
   /// This starts true for a method marked as designated initializer and will
   /// be set to false if there is an invocation to a designated initializer of
   /// the super class.
-  bool ObjCWarnForNoDesignatedInitChain : 1;
+  // bool ObjCWarnForNoDesignatedInitChain : 1;
 
   /// True when this is an initializer method not marked as a designated
   /// initializer within a class that has at least one initializer marked as a
   /// designated initializer.
-  bool ObjCIsSecondaryInit : 1;
+  // bool ObjCIsSecondaryInit : 1;
 
   /// This starts true for a secondary initializer method and will be set to
   /// false if there is an invocation of an initializer on 'self'.
-  bool ObjCWarnForNoInitDelegation : 1;
+  // bool ObjCWarnForNoInitDelegation : 1;
 
   /// True only when this function has not already built, or attempted
   /// to build, the initial and final coroutine suspend points
@@ -359,7 +359,7 @@ private:
   /// Used to collect all uses of weak objects in this function body.
   ///
   /// Part of the implementation of -Wrepeated-use-of-weak.
-  WeakObjectUseMap WeakObjectUses;
+  // WeakObjectUseMap WeakObjectUses;
 
 protected:
   FunctionScopeInfo(const FunctionScopeInfo&) = default;
@@ -370,9 +370,9 @@ public:
         HasBranchIntoScope(false), HasIndirectGoto(false),
         HasDroppedStmt(false), HasOMPDeclareReductionCombiner(false),
         HasFallthroughStmt(false), HasPotentialAvailabilityViolations(false),
-        ObjCShouldCallSuper(false), ObjCIsDesignatedInit(false),
+        /*ObjCShouldCallSuper(false), ObjCIsDesignatedInit(false),
         ObjCWarnForNoDesignatedInitChain(false), ObjCIsSecondaryInit(false),
-        ObjCWarnForNoInitDelegation(false), NeedsCoroutineSuspends(true),
+        ObjCWarnForNoInitDelegation(false),*/ NeedsCoroutineSuspends(true),
         ErrorTrap(Diag) {}
 
   virtual ~FunctionScopeInfo();

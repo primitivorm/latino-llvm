@@ -30,7 +30,7 @@ class CXXDeleteExpr;
 class CXXRecordDecl;
 class DeclaratorDecl;
 class LookupResult;
-struct ObjCMethodList;
+// struct ObjCMethodList;
 class Scope;
 class Sema;
 class TypedefNameDecl;
@@ -68,11 +68,11 @@ public:
 
   /// Load the contents of the global method pool for a given
   /// selector.
-  virtual void ReadMethodPool(Selector Sel);
+  // virtual void ReadMethodPool(Selector Sel);
 
   /// Load the contents of the global method pool for a given
   /// selector if necessary.
-  virtual void updateOutOfDateSelector(Selector Sel);
+  // virtual void updateOutOfDateSelector(Selector Sel);
 
   /// Load the set of namespaces that are known to the external source,
   /// which will be used during typo correction.
@@ -152,8 +152,8 @@ public:
   /// given vector of selectors. Note that this routine
   /// may be invoked multiple times; the external source should take care not
   /// to introduce the same selectors repeatedly.
-  virtual void ReadReferencedSelectors(
-                 SmallVectorImpl<std::pair<Selector, SourceLocation> > &Sels) {}
+  // virtual void ReadReferencedSelectors(
+  //                SmallVectorImpl<std::pair<Selector, SourceLocation> > &Sels) {}
 
   /// Read the set of weak, undeclared identifiers known to the
   /// external Sema source.
@@ -213,8 +213,8 @@ public:
                                      int LookupKind, Scope *S, CXXScopeSpec *SS,
                                      CorrectionCandidateCallback &CCC,
                                      DeclContext *MemberContext,
-                                     bool EnteringContext,
-                                     const ObjCObjectPointerType *OPT) {
+                                     bool EnteringContext/*,
+                                     const ObjCObjectPointerType *OPT*/) {
     return TypoCorrection();
   }
 

@@ -11,7 +11,7 @@
 
 #include "latino/AST/Type.h"
 #include "latino/AST/AbstractBasicWriter.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 
 namespace latino {
 namespace serialization {

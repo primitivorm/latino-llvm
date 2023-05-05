@@ -128,15 +128,15 @@ PrintedWrittenNamedDeclCXX11Matches(StringRef Code, StringRef DeclName,
                                  ExpectedPrinted, "input.cc");
 }
 
-::testing::AssertionResult
-PrintedWrittenPropertyDeclObjCMatches(StringRef Code, StringRef DeclName,
-                                   StringRef ExpectedPrinted) {
-  std::vector<std::string> Args{"-std=c++11", "-xobjective-c++"};
-  return PrintedNamedDeclMatches(Code, Args,
-                                 /*SuppressUnwrittenScope*/ true,
-                                 objcPropertyDecl(hasName(DeclName)).bind("id"),
-                                 ExpectedPrinted, "input.m");
-}
+// ::testing::AssertionResult
+// PrintedWrittenPropertyDeclObjCMatches(StringRef Code, StringRef DeclName,
+//                                    StringRef ExpectedPrinted) {
+//   std::vector<std::string> Args{"-std=c++11", "-xobjective-c++"};
+//   return PrintedNamedDeclMatches(Code, Args,
+//                                  /*SuppressUnwrittenScope*/ true,
+//                                  objcPropertyDecl(hasName(DeclName)).bind("id"),
+//                                  ExpectedPrinted, "input.m");
+// }
 
 ::testing::AssertionResult
 PrintedNestedNameSpecifierMatches(StringRef Code, StringRef DeclName,

@@ -2081,130 +2081,130 @@ TEST_P(ASTMatchersTest, TypeAliasTemplateDecl) {
 //                                                argumentCountIs(0))));
 // }
 
-TEST(ASTMatchersTestObjC, ObjCDecls) {
-  StringRef ObjCString = "@protocol Proto "
-                         "- (void)protoDidThing; "
-                         "@end "
-                         "@interface Thing "
-                         "@property int enabled; "
-                         "@end "
-                         "@interface Thing (ABC) "
-                         "- (void)abc_doThing; "
-                         "@end "
-                         "@implementation Thing "
-                         "{ id _ivar; } "
-                         "- (void)anything {} "
-                         "@end "
-                         "@implementation Thing (ABC) "
-                         "- (void)abc_doThing {} "
-                         "@end ";
+// TEST(ASTMatchersTestObjC, ObjCDecls) {
+//   StringRef ObjCString = "@protocol Proto "
+//                          "- (void)protoDidThing; "
+//                          "@end "
+//                          "@interface Thing "
+//                          "@property int enabled; "
+//                          "@end "
+//                          "@interface Thing (ABC) "
+//                          "- (void)abc_doThing; "
+//                          "@end "
+//                          "@implementation Thing "
+//                          "{ id _ivar; } "
+//                          "- (void)anything {} "
+//                          "@end "
+//                          "@implementation Thing (ABC) "
+//                          "- (void)abc_doThing {} "
+//                          "@end ";
 
-  EXPECT_TRUE(matchesObjC(ObjCString, objcProtocolDecl(hasName("Proto"))));
-  EXPECT_TRUE(
-      matchesObjC(ObjCString, objcImplementationDecl(hasName("Thing"))));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcCategoryDecl(hasName("ABC"))));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcCategoryImplDecl(hasName("ABC"))));
-  EXPECT_TRUE(
-      matchesObjC(ObjCString, objcMethodDecl(hasName("protoDidThing"))));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcMethodDecl(hasName("abc_doThing"))));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcMethodDecl(hasName("anything"))));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcIvarDecl(hasName("_ivar"))));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcPropertyDecl(hasName("enabled"))));
-}
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcProtocolDecl(hasName("Proto"))));
+//   EXPECT_TRUE(
+//       matchesObjC(ObjCString, objcImplementationDecl(hasName("Thing"))));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcCategoryDecl(hasName("ABC"))));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcCategoryImplDecl(hasName("ABC"))));
+//   EXPECT_TRUE(
+//       matchesObjC(ObjCString, objcMethodDecl(hasName("protoDidThing"))));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcMethodDecl(hasName("abc_doThing"))));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcMethodDecl(hasName("anything"))));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcIvarDecl(hasName("_ivar"))));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcPropertyDecl(hasName("enabled"))));
+// }
 
-TEST(ASTMatchersTestObjC, ObjCExceptionStmts) {
-  StringRef ObjCString = "void f(id obj) {"
-                         "  @try {"
-                         "    @throw obj;"
-                         "  } @catch (...) {"
-                         "  } @finally {}"
-                         "}";
+// TEST(ASTMatchersTestObjC, ObjCExceptionStmts) {
+//   StringRef ObjCString = "void f(id obj) {"
+//                          "  @try {"
+//                          "    @throw obj;"
+//                          "  } @catch (...) {"
+//                          "  } @finally {}"
+//                          "}";
 
-  EXPECT_TRUE(matchesObjC(ObjCString, objcTryStmt()));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcThrowStmt()));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcCatchStmt()));
-  EXPECT_TRUE(matchesObjC(ObjCString, objcFinallyStmt()));
-}
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcTryStmt()));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcThrowStmt()));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcCatchStmt()));
+//   EXPECT_TRUE(matchesObjC(ObjCString, objcFinallyStmt()));
+// }
 
-TEST(ASTMatchersTestObjC, ObjCAutoreleasePoolStmt) {
-  StringRef ObjCString = "void f() {"
-                         "@autoreleasepool {"
-                         "  int x = 1;"
-                         "}"
-                         "}";
-  EXPECT_TRUE(matchesObjC(ObjCString, autoreleasePoolStmt()));
-  StringRef ObjCStringNoPool = "void f() { int x = 1; }";
-  EXPECT_FALSE(matchesObjC(ObjCStringNoPool, autoreleasePoolStmt()));
-}
+// TEST(ASTMatchersTestObjC, ObjCAutoreleasePoolStmt) {
+//   StringRef ObjCString = "void f() {"
+//                          "@autoreleasepool {"
+//                          "  int x = 1;"
+//                          "}"
+//                          "}";
+//   EXPECT_TRUE(matchesObjC(ObjCString, autoreleasePoolStmt()));
+//   StringRef ObjCStringNoPool = "void f() { int x = 1; }";
+//   EXPECT_FALSE(matchesObjC(ObjCStringNoPool, autoreleasePoolStmt()));
+// }
 
-TEST(ASTMatchersTestOpenMP, OMPExecutableDirective) {
-  auto Matcher = stmt(ompExecutableDirective());
+// TEST(ASTMatchersTestOpenMP, OMPExecutableDirective) {
+//   auto Matcher = stmt(ompExecutableDirective());
 
-  StringRef Source0 = R"(
-void x() {
-#pragma omp parallel
-;
-})";
-  EXPECT_TRUE(matchesWithOpenMP(Source0, Matcher));
+//   StringRef Source0 = R"(
+// void x() {
+// #pragma omp parallel
+// ;
+// })";
+//   EXPECT_TRUE(matchesWithOpenMP(Source0, Matcher));
 
-  StringRef Source1 = R"(
-void x() {
-#pragma omp taskyield
-;
-})";
-  EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
+//   StringRef Source1 = R"(
+// void x() {
+// #pragma omp taskyield
+// ;
+// })";
+//   EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
 
-  StringRef Source2 = R"(
-void x() {
-;
-})";
-  EXPECT_TRUE(notMatchesWithOpenMP(Source2, Matcher));
-}
+//   StringRef Source2 = R"(
+// void x() {
+// ;
+// })";
+//   EXPECT_TRUE(notMatchesWithOpenMP(Source2, Matcher));
+// }
 
-TEST(ASTMatchersTestOpenMP, OMPDefaultClause) {
-  auto Matcher = ompExecutableDirective(hasAnyClause(ompDefaultClause()));
+// TEST(ASTMatchersTestOpenMP, OMPDefaultClause) {
+//   auto Matcher = ompExecutableDirective(hasAnyClause(ompDefaultClause()));
 
-  StringRef Source0 = R"(
-void x() {
-;
-})";
-  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+//   StringRef Source0 = R"(
+// void x() {
+// ;
+// })";
+//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-  StringRef Source1 = R"(
-void x() {
-#pragma omp parallel
-;
-})";
-  EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
+//   StringRef Source1 = R"(
+// void x() {
+// #pragma omp parallel
+// ;
+// })";
+//   EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
 
-  StringRef Source2 = R"(
-void x() {
-#pragma omp parallel default(none)
-;
-})";
-  EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
+//   StringRef Source2 = R"(
+// void x() {
+// #pragma omp parallel default(none)
+// ;
+// })";
+//   EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
 
-  StringRef Source3 = R"(
-void x() {
-#pragma omp parallel default(shared)
-;
-})";
-  EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
+//   StringRef Source3 = R"(
+// void x() {
+// #pragma omp parallel default(shared)
+// ;
+// })";
+//   EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
 
-  StringRef Source4 = R"(
-void x() {
-#pragma omp parallel default(firstprivate)
-;
-})";
-  EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
+//   StringRef Source4 = R"(
+// void x() {
+// #pragma omp parallel default(firstprivate)
+// ;
+// })";
+//   EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
 
-  StringRef Source5 = R"(
-void x(int x) {
-#pragma omp parallel num_threads(x)
-;
-})";
-  EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
-}
+//   StringRef Source5 = R"(
+// void x(int x) {
+// #pragma omp parallel num_threads(x)
+// ;
+// })";
+//   EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
+// }
 
 TEST(ASTMatchersTest, Finder_DynamicOnlyAcceptsSomeMatchers) {
   MatchFinder Finder;

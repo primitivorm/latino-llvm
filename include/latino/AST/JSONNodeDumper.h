@@ -201,7 +201,7 @@ public:
   void Visit(const TemplateArgument &TA, SourceRange R = {},
              const Decl *From = nullptr, StringRef Label = {});
   void Visit(const CXXCtorInitializer *Init);
-  void Visit(const OMPClause *C);
+  // void Visit(const OMPClause *C);
   void Visit(const BlockDecl::Capture &C);
   void Visit(const GenericSelectionExpr::ConstAssociation &A);
   void Visit(const APValue &Value, QualType Ty);
@@ -249,7 +249,7 @@ public:
   void VisitAccessSpecDecl(const AccessSpecDecl *ASD);
   void VisitFriendDecl(const FriendDecl *FD);
 
-  // void VisitObjCIvarDecl(const ObjCIvarDecl *D);
+  void VisitObjCIvarDecl(const ObjCIvarDecl *D);
   // void VisitObjCMethodDecl(const ObjCMethodDecl *D);
   // void VisitObjCTypeParamDecl(const ObjCTypeParamDecl *D);
   // void VisitObjCCategoryDecl(const ObjCCategoryDecl *D);
@@ -312,7 +312,7 @@ public:
   void VisitLabelStmt(const LabelStmt *LS);
   void VisitGotoStmt(const GotoStmt *GS);
   void VisitWhileStmt(const WhileStmt *WS);
-  void VisitObjCAtCatchStmt(const ObjCAtCatchStmt *OACS);
+  // void VisitObjCAtCatchStmt(const ObjCAtCatchStmt *OACS);
 
   void VisitNullTemplateArgument(const TemplateArgument &TA);
   void VisitTypeTemplateArgument(const TemplateArgument &TA);

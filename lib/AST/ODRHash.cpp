@@ -63,24 +63,24 @@ void ODRHash::AddDeclarationNameImpl(DeclarationName Name) {
   case DeclarationName::Identifier:
     AddIdentifierInfo(Name.getAsIdentifierInfo());
     break;
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector: {
-    Selector S = Name.getObjCSelector();
-    AddBoolean(S.isNull());
-    AddBoolean(S.isKeywordSelector());
-    AddBoolean(S.isUnarySelector());
-    unsigned NumArgs = S.getNumArgs();
-    ID.AddInteger(NumArgs);
-    for (unsigned i = 0; i < NumArgs; ++i) {
-      const IdentifierInfo *II = S.getIdentifierInfoForSlot(i);
-      AddBoolean(II);
-      if (II) {
-        AddIdentifierInfo(II);
-      }
-    }
-    break;
-  }
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector: {
+  //   Selector S = Name.getObjCSelector();
+  //   AddBoolean(S.isNull());
+  //   AddBoolean(S.isKeywordSelector());
+  //   AddBoolean(S.isUnarySelector());
+  //   unsigned NumArgs = S.getNumArgs();
+  //   ID.AddInteger(NumArgs);
+  //   for (unsigned i = 0; i < NumArgs; ++i) {
+  //     const IdentifierInfo *II = S.getIdentifierInfoForSlot(i);
+  //     AddBoolean(II);
+  //     if (II) {
+  //       AddIdentifierInfo(II);
+  //     }
+  //   }
+  //   break;
+  // }
   case DeclarationName::CXXConstructorName:
   case DeclarationName::CXXDestructorName:
     AddQualType(Name.getCXXNameType());

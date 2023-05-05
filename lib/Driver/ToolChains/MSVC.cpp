@@ -444,26 +444,26 @@ void visualstudio::Linker::ConstructJob(Compilation &C, const JobAction &JA,
     }
   }
 
-  if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-                   options::OPT_fno_openmp, false)) {
-    CmdArgs.push_back("-nodefaultlib:vcomp.lib");
-    CmdArgs.push_back("-nodefaultlib:vcompd.lib");
-    CmdArgs.push_back(Args.MakeArgString(std::string("-libpath:") +
-                                         TC.getDriver().Dir + "/../lib"));
-    switch (TC.getDriver().getOpenMPRuntime(Args)) {
-    case Driver::OMPRT_OMP:
-      CmdArgs.push_back("-defaultlib:libomp.lib");
-      break;
-    case Driver::OMPRT_IOMP5:
-      CmdArgs.push_back("-defaultlib:libiomp5md.lib");
-      break;
-    case Driver::OMPRT_GOMP:
-      break;
-    case Driver::OMPRT_Unknown:
-      // Already diagnosed.
-      break;
-    }
-  }
+  // if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+  //                  options::OPT_fno_openmp, false)) {
+  //   CmdArgs.push_back("-nodefaultlib:vcomp.lib");
+  //   CmdArgs.push_back("-nodefaultlib:vcompd.lib");
+  //   CmdArgs.push_back(Args.MakeArgString(std::string("-libpath:") +
+  //                                        TC.getDriver().Dir + "/../lib"));
+  //   switch (TC.getDriver().getOpenMPRuntime(Args)) {
+  //   case Driver::OMPRT_OMP:
+  //     CmdArgs.push_back("-defaultlib:libomp.lib");
+  //     break;
+  //   case Driver::OMPRT_IOMP5:
+  //     CmdArgs.push_back("-defaultlib:libiomp5md.lib");
+  //     break;
+  //   case Driver::OMPRT_GOMP:
+  //     break;
+  //   case Driver::OMPRT_Unknown:
+  //     // Already diagnosed.
+  //     break;
+  //   }
+  // }
 
   // Add compiler-rt lib in case if it was explicitly
   // specified as an argument for --rtlib option.

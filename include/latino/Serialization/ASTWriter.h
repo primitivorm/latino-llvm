@@ -317,18 +317,18 @@ private:
   serialization::SubmoduleID NextSubmoduleID = FirstSubmoduleID;
 
   /// The first ID number we can use for our own selectors.
-  serialization::SelectorID FirstSelectorID =
-      serialization::NUM_PREDEF_SELECTOR_IDS;
+  // serialization::SelectorID FirstSelectorID =
+  //     serialization::NUM_PREDEF_SELECTOR_IDS;
 
   /// The selector ID that will be assigned to the next new selector.
-  serialization::SelectorID NextSelectorID = FirstSelectorID;
+  // serialization::SelectorID NextSelectorID = FirstSelectorID;
 
   /// Map that provides the ID numbers of each Selector.
-  llvm::MapVector<Selector, serialization::SelectorID> SelectorIDs;
+  // llvm::MapVector<Selector, serialization::SelectorID> SelectorIDs;
 
   /// Offset of each selector within the method pool/selector
   /// table, indexed by the Selector ID (-1).
-  std::vector<uint32_t> SelectorOffsets;
+  // std::vector<uint32_t> SelectorOffsets;
 
   /// Mapping from macro definitions (as they occur in the preprocessing
   /// record) to the macro IDs.
@@ -501,17 +501,17 @@ private:
   void WriteTypeDeclOffsets();
   void WriteFileDeclIDsMap();
   void WriteComments();
-  void WriteSelectors(Sema &SemaRef);
-  void WriteReferencedSelectorsPool(Sema &SemaRef);
+  // void WriteSelectors(Sema &SemaRef);
+  // void WriteReferencedSelectorsPool(Sema &SemaRef);
   void WriteIdentifierTable(Preprocessor &PP, IdentifierResolver &IdResolver,
                             bool IsModule);
   void WriteDeclUpdatesBlocks(RecordDataImpl &OffsetsRecord);
   void WriteDeclContextVisibleUpdate(const DeclContext *DC);
   void WriteFPPragmaOptions(const FPOptionsOverride &Opts);
-  void WriteOpenCLExtensions(Sema &SemaRef);
-  void WriteOpenCLExtensionTypes(Sema &SemaRef);
-  void WriteOpenCLExtensionDecls(Sema &SemaRef);
-  void WriteCUDAPragmas(Sema &SemaRef);
+  // void WriteOpenCLExtensions(Sema &SemaRef);
+  // void WriteOpenCLExtensionTypes(Sema &SemaRef);
+  // void WriteOpenCLExtensionDecls(Sema &SemaRef);
+  // void WriteCUDAPragmas(Sema &SemaRef);
   // void WriteObjCCategories();
   void WriteLateParsedTemplates(Sema &SemaRef);
   void WriteOptimizePragmaOptions(Sema &SemaRef);
@@ -594,7 +594,7 @@ public:
   void AddIdentifierRef(const IdentifierInfo *II, RecordDataImpl &Record);
 
   /// Get the unique number used to refer to the given selector.
-  serialization::SelectorID getSelectorRef(Selector Sel);
+  // serialization::SelectorID getSelectorRef(Selector Sel);
 
   /// Get the unique number used to refer to the given identifier.
   serialization::IdentID getIdentifierRef(const IdentifierInfo *II);
@@ -671,7 +671,7 @@ public:
 
   /// Note that the selector Sel occurs at the given offset
   /// within the method pool/selector table.
-  void SetSelectorOffset(Selector Sel, uint32_t Offset);
+  // void SetSelectorOffset(Selector Sel, uint32_t Offset);
 
   /// Record an ID for the given switch-case statement.
   unsigned RecordSwitchCaseID(SwitchCase *S);
@@ -712,7 +712,7 @@ private:
   void IdentifierRead(serialization::IdentID ID, IdentifierInfo *II) override;
   void MacroRead(serialization::MacroID ID, MacroInfo *MI) override;
   void TypeRead(serialization::TypeIdx Idx, QualType T) override;
-  void SelectorRead(serialization::SelectorID ID, Selector Sel) override;
+  // void SelectorRead(serialization::SelectorID ID, Selector Sel) override;
   void MacroDefinitionRead(serialization::PreprocessedEntityID ID,
                            MacroDefinitionRecord *MD) override;
   void ModuleRead(serialization::SubmoduleID ID, Module *Mod) override;
@@ -743,10 +743,10 @@ private:
   // void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
   //                                   const ObjCInterfaceDecl *IFD) override;
   void DeclarationMarkedUsed(const Decl *D) override;
-  void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
-  void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
-                                            const Attr *Attr) override;
-  void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
+  // void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
+  // void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
+  //                                           const Attr *Attr) override;
+  // void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
   void RedefinedHiddenDefinition(const NamedDecl *D, Module *M) override;
   void AddedAttributeToRecord(const Attr *Attr,
                               const RecordDecl *Record) override;

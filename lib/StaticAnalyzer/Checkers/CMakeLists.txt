@@ -56,7 +56,7 @@ add_latino_library(latinoStaticAnalyzerCheckers
   LLVMConventionsChecker.cpp
   LocalizationChecker.cpp
   MacOSKeychainAPIChecker.cpp
-  MacOSXAPIChecker.cpp
+  # MacOSXAPIChecker.cpp
   MallocChecker.cpp
   MallocOverflowSecurityChecker.cpp
   MallocSizeofChecker.cpp

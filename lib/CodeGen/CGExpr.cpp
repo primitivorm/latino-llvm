@@ -15,7 +15,7 @@
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
 // #include "CGObjCRuntime.h"
-#include "CGOpenMPRuntime.h"
+// #include "CGOpenMPRuntime.h"
 #include "CGRecordLayout.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
@@ -23,8 +23,8 @@
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-// #include "latino/AST/DeclObjC.h"
-#include "latino/AST/NSAPI.h"
+#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/NSAPI.h"
 #include "latino/Basic/Builtins.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/SourceManager.h"
@@ -270,62 +270,62 @@ pushTemporaryCleanup(CodeGenFunction &CGF, const MaterializeTemporaryExpr *M,
   //   need to perform retain/release operations on the temporary.
   //
   // FIXME: This should be looking at E, not M.
-  if (auto Lifetime = M->getType().getObjCLifetime()) {
-    switch (Lifetime) {
-    case Qualifiers::OCL_None:
-    case Qualifiers::OCL_ExplicitNone:
-      // Carry on to normal cleanup handling.
-      break;
+  // if (auto Lifetime = M->getType().getObjCLifetime()) {
+  //   switch (Lifetime) {
+  //   case Qualifiers::OCL_None:
+  //   case Qualifiers::OCL_ExplicitNone:
+  //     // Carry on to normal cleanup handling.
+  //     break;
 
-    case Qualifiers::OCL_Autoreleasing:
-      // Nothing to do; cleaned up by an autorelease pool.
-      return;
+  //   case Qualifiers::OCL_Autoreleasing:
+  //     // Nothing to do; cleaned up by an autorelease pool.
+  //     return;
 
-    case Qualifiers::OCL_Strong:
-    case Qualifiers::OCL_Weak:
-      switch (StorageDuration Duration = M->getStorageDuration()) {
-      case SD_Static:
-        // Note: we intentionally do not register a cleanup to release
-        // the object on program termination.
-        return;
+  //   case Qualifiers::OCL_Strong:
+  //   case Qualifiers::OCL_Weak:
+  //     switch (StorageDuration Duration = M->getStorageDuration()) {
+  //     case SD_Static:
+  //       // Note: we intentionally do not register a cleanup to release
+  //       // the object on program termination.
+  //       return;
 
-      case SD_Thread:
-        // FIXME: We should probably register a cleanup in this case.
-        return;
+  //     case SD_Thread:
+  //       // FIXME: We should probably register a cleanup in this case.
+  //       return;
 
-      case SD_Automatic:
-      case SD_FullExpression:
-        CodeGenFunction::Destroyer *Destroy;
-        CleanupKind CleanupKind;
-        if (Lifetime == Qualifiers::OCL_Strong) {
-          const ValueDecl *VD = M->getExtendingDecl();
-          bool Precise =
-              VD && isa<VarDecl>(VD) && VD->hasAttr<ObjCPreciseLifetimeAttr>();
-          CleanupKind = CGF.getARCCleanupKind();
-          Destroy = Precise ? &CodeGenFunction::destroyARCStrongPrecise
-                            : &CodeGenFunction::destroyARCStrongImprecise;
-        } else {
-          // __weak objects always get EH cleanups; otherwise, exceptions
-          // could cause really nasty crashes instead of mere leaks.
-          CleanupKind = NormalAndEHCleanup;
-          Destroy = &CodeGenFunction::destroyARCWeak;
-        }
-        if (Duration == SD_FullExpression)
-          CGF.pushDestroy(CleanupKind, ReferenceTemporary,
-                          M->getType(), *Destroy,
-                          CleanupKind & EHCleanup);
-        else
-          CGF.pushLifetimeExtendedDestroy(CleanupKind, ReferenceTemporary,
-                                          M->getType(),
-                                          *Destroy, CleanupKind & EHCleanup);
-        return;
+  //     case SD_Automatic:
+  //     case SD_FullExpression:
+  //       CodeGenFunction::Destroyer *Destroy;
+  //       CleanupKind CleanupKind;
+  //       if (Lifetime == Qualifiers::OCL_Strong) {
+  //         const ValueDecl *VD = M->getExtendingDecl();
+  //         bool Precise =
+  //             VD && isa<VarDecl>(VD) && VD->hasAttr<ObjCPreciseLifetimeAttr>();
+  //         CleanupKind = CGF.getARCCleanupKind();
+  //         Destroy = Precise ? &CodeGenFunction::destroyARCStrongPrecise
+  //                           : &CodeGenFunction::destroyARCStrongImprecise;
+  //       } else {
+  //         // __weak objects always get EH cleanups; otherwise, exceptions
+  //         // could cause really nasty crashes instead of mere leaks.
+  //         CleanupKind = NormalAndEHCleanup;
+  //         Destroy = &CodeGenFunction::destroyARCWeak;
+  //       }
+  //       if (Duration == SD_FullExpression)
+  //         CGF.pushDestroy(CleanupKind, ReferenceTemporary,
+  //                         M->getType(), *Destroy,
+  //                         CleanupKind & EHCleanup);
+  //       else
+  //         CGF.pushLifetimeExtendedDestroy(CleanupKind, ReferenceTemporary,
+  //                                         M->getType(),
+  //                                         *Destroy, CleanupKind & EHCleanup);
+  //       return;
 
-      case SD_Dynamic:
-        llvm_unreachable("temporary cannot have dynamic storage duration");
-      }
-      llvm_unreachable("unknown storage duration");
-    }
-  }
+  //     case SD_Dynamic:
+  //       llvm_unreachable("temporary cannot have dynamic storage duration");
+  //     }
+  //     llvm_unreachable("unknown storage duration");
+  //   }
+  // }
 
   CXXDestructorDecl *ReferenceTemporaryDtor = nullptr;
   if (const RecordType *RT =
@@ -442,49 +442,49 @@ EmitMaterializeTemporaryExpr(const MaterializeTemporaryExpr *M) {
 
   // FIXME: ideally this would use EmitAnyExprToMem, however, we cannot do so
   // as that will cause the lifetime adjustment to be lost for ARC
-  auto ownership = M->getType().getObjCLifetime();
-  if (ownership != Qualifiers::OCL_None &&
-      ownership != Qualifiers::OCL_ExplicitNone) {
-    Address Object = createReferenceTemporary(*this, M, E);
-    if (auto *Var = dyn_cast<llvm::GlobalVariable>(Object.getPointer())) {
-      Object = Address(llvm::ConstantExpr::getBitCast(Var,
-                           ConvertTypeForMem(E->getType())
-                             ->getPointerTo(Object.getAddressSpace())),
-                       Object.getAlignment());
+  // auto ownership = M->getType().getObjCLifetime();
+  // if (ownership != Qualifiers::OCL_None &&
+  //     ownership != Qualifiers::OCL_ExplicitNone) {
+  //   Address Object = createReferenceTemporary(*this, M, E);
+  //   if (auto *Var = dyn_cast<llvm::GlobalVariable>(Object.getPointer())) {
+  //     Object = Address(llvm::ConstantExpr::getBitCast(Var,
+  //                          ConvertTypeForMem(E->getType())
+  //                            ->getPointerTo(Object.getAddressSpace())),
+  //                      Object.getAlignment());
 
-      // createReferenceTemporary will promote the temporary to a global with a
-      // constant initializer if it can.  It can only do this to a value of
-      // ARC-manageable type if the value is global and therefore "immune" to
-      // ref-counting operations.  Therefore we have no need to emit either a
-      // dynamic initialization or a cleanup and we can just return the address
-      // of the temporary.
-      if (Var->hasInitializer())
-        return MakeAddrLValue(Object, M->getType(), AlignmentSource::Decl);
+  //     // createReferenceTemporary will promote the temporary to a global with a
+  //     // constant initializer if it can.  It can only do this to a value of
+  //     // ARC-manageable type if the value is global and therefore "immune" to
+  //     // ref-counting operations.  Therefore we have no need to emit either a
+  //     // dynamic initialization or a cleanup and we can just return the address
+  //     // of the temporary.
+  //     if (Var->hasInitializer())
+  //       return MakeAddrLValue(Object, M->getType(), AlignmentSource::Decl);
 
-      Var->setInitializer(CGM.EmitNullConstant(E->getType()));
-    }
-    LValue RefTempDst = MakeAddrLValue(Object, M->getType(),
-                                       AlignmentSource::Decl);
+  //     Var->setInitializer(CGM.EmitNullConstant(E->getType()));
+  //   }
+  //   LValue RefTempDst = MakeAddrLValue(Object, M->getType(),
+  //                                      AlignmentSource::Decl);
 
-    switch (getEvaluationKind(E->getType())) {
-    default: llvm_unreachable("expected scalar or aggregate expression");
-    case TEK_Scalar:
-      EmitScalarInit(E, M->getExtendingDecl(), RefTempDst, false);
-      break;
-    case TEK_Aggregate: {
-      EmitAggExpr(E, AggValueSlot::forAddr(Object,
-                                           E->getType().getQualifiers(),
-                                           AggValueSlot::IsDestructed,
-                                           AggValueSlot::DoesNotNeedGCBarriers,
-                                           AggValueSlot::IsNotAliased,
-                                           AggValueSlot::DoesNotOverlap));
-      break;
-    }
-    }
+  //   switch (getEvaluationKind(E->getType())) {
+  //   default: llvm_unreachable("expected scalar or aggregate expression");
+  //   case TEK_Scalar:
+  //     EmitScalarInit(E, M->getExtendingDecl(), RefTempDst, false);
+  //     break;
+  //   case TEK_Aggregate: {
+  //     EmitAggExpr(E, AggValueSlot::forAddr(Object,
+  //                                          E->getType().getQualifiers(),
+  //                                          AggValueSlot::IsDestructed,
+  //                                          AggValueSlot::DoesNotNeedGCBarriers,
+  //                                          AggValueSlot::IsNotAliased,
+  //                                          AggValueSlot::DoesNotOverlap));
+  //     break;
+  //   }
+  //   }
 
-    pushTemporaryCleanup(*this, M, E, Object);
-    return RefTempDst;
-  }
+  //   pushTemporaryCleanup(*this, M, E, Object);
+  //   return RefTempDst;
+  // }
 
   SmallVector<const Expr *, 2> CommaLHSs;
   SmallVector<SubobjectAdjustment, 2> Adjustments;
@@ -1039,9 +1039,9 @@ EmitComplexPrePostIncDec(const UnaryOperator *E, LValue LV,
 
   // Store the updated result through the lvalue.
   EmitStoreOfComplex(IncVal, LV, /*init*/ false);
-  if (getLangOpts().OpenMP)
-    CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(*this,
-                                                              E->getSubExpr());
+  // if (getLangOpts().OpenMP)
+  //   CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(*this,
+  //                                                             E->getSubExpr());
 
   // If this is a postinc, return the value read from memory, otherwise use the
   // updated value.
@@ -1275,8 +1275,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
   switch (E->getStmtClass()) {
   default: return EmitUnsupportedLValue(E, "l-value expression");
 
-  case Expr::ObjCPropertyRefExprClass:
-    llvm_unreachable("cannot emit a property reference directly");
+  // case Expr::ObjCPropertyRefExprClass:
+  //   llvm_unreachable("cannot emit a property reference directly");
 
   // case Expr::ObjCSelectorExprClass:
   //   return EmitObjCSelectorLValue(cast<ObjCSelectorExpr>(E));
@@ -1322,8 +1322,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
     return EmitStringLiteralLValue(cast<StringLiteral>(E));
   // case Expr::ObjCEncodeExprClass:
   //   return EmitObjCEncodeExprLValue(cast<ObjCEncodeExpr>(E));
-  // case Expr::PseudoObjectExprClass:
-  //   return EmitPseudoObjectLValue(cast<PseudoObjectExpr>(E));
+  case Expr::PseudoObjectExprClass:
+    return EmitPseudoObjectLValue(cast<PseudoObjectExpr>(E));
   case Expr::InitListExprClass:
     return EmitInitListLValue(cast<InitListExpr>(E));
   case Expr::CXXTemporaryObjectExprClass:
@@ -1378,8 +1378,8 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
     return EmitArraySubscriptExpr(cast<ArraySubscriptExpr>(E));
   case Expr::MatrixSubscriptExprClass:
     return EmitMatrixSubscriptExpr(cast<MatrixSubscriptExpr>(E));
-  case Expr::OMPArraySectionExprClass:
-    return EmitOMPArraySectionExpr(cast<OMPArraySectionExpr>(E));
+  // case Expr::OMPArraySectionExprClass:
+  //   return EmitOMPArraySectionExpr(cast<OMPArraySectionExpr>(E));
   case Expr::ExtVectorElementExprClass:
     return EmitExtVectorElementExpr(cast<ExtVectorElementExpr>(E));
   case Expr::MemberExprClass:
@@ -1404,7 +1404,7 @@ LValue CodeGenFunction::EmitLValue(const Expr *E) {
   case Expr::CXXReinterpretCastExprClass:
   case Expr::CXXConstCastExprClass:
   // case Expr::CXXAddrspaceCastExprClass:
-  case Expr::ObjCBridgedCastExprClass:
+  // case Expr::ObjCBridgedCastExprClass:
     return EmitCastLValue(cast<CastExpr>(E));
 
   case Expr::MaterializeTemporaryExprClass:
@@ -1858,23 +1858,23 @@ static RValue EmitLoadOfMatrixLValue(LValue LV, SourceLocation Loc,
 /// method emits the address of the lvalue, then loads the result as an rvalue,
 /// returning the rvalue.
 RValue CodeGenFunction::EmitLoadOfLValue(LValue LV, SourceLocation Loc) {
-  if (LV.isObjCWeak()) {
-    // load of a __weak object.
-    Address AddrWeakObj = LV.getAddress(*this);
-    return RValue::get(CGM.getObjCRuntime().EmitObjCWeakRead(*this,
-                                                             AddrWeakObj));
-  }
-  if (LV.getQuals().getObjCLifetime() == Qualifiers::OCL_Weak) {
-    // In MRC mode, we do a load+autorelease.
-    if (!getLangOpts().ObjCAutoRefCount) {
-      return RValue::get(EmitARCLoadWeak(LV.getAddress(*this)));
-    }
+  // if (LV.isObjCWeak()) {
+  //   // load of a __weak object.
+  //   Address AddrWeakObj = LV.getAddress(*this);
+  //   return RValue::get(CGM.getObjCRuntime().EmitObjCWeakRead(*this,
+  //                                                            AddrWeakObj));
+  // }
+  // if (LV.getQuals().getObjCLifetime() == Qualifiers::OCL_Weak) {
+  //   // In MRC mode, we do a load+autorelease.
+  //   if (!getLangOpts().ObjCAutoRefCount) {
+  //     return RValue::get(EmitARCLoadWeak(LV.getAddress(*this)));
+  //   }
 
-    // In ARC mode, we load retained and then consume the value.
-    llvm::Value *Object = EmitARCLoadWeakRetained(LV.getAddress(*this));
-    Object = EmitObjCConsumeObject(LV.getType(), Object);
-    return RValue::get(Object);
-  }
+  //   // In ARC mode, we load retained and then consume the value.
+  //   llvm::Value *Object = EmitARCLoadWeakRetained(LV.getAddress(*this));
+  //   Object = EmitObjCConsumeObject(LV.getType(), Object);
+  //   return RValue::get(Object);
+  // }
 
   if (LV.isSimple()) {
     assert(!LV.getType()->isFunctionType());
@@ -2054,72 +2054,72 @@ void CodeGenFunction::EmitStoreThroughLValue(RValue Src, LValue Dst,
   }
 
   // There's special magic for assigning into an ARC-qualified l-value.
-  if (Qualifiers::ObjCLifetime Lifetime = Dst.getQuals().getObjCLifetime()) {
-    switch (Lifetime) {
-    case Qualifiers::OCL_None:
-      llvm_unreachable("present but none");
+  // if (Qualifiers::ObjCLifetime Lifetime = Dst.getQuals().getObjCLifetime()) {
+  //   switch (Lifetime) {
+  //   case Qualifiers::OCL_None:
+  //     llvm_unreachable("present but none");
 
-    case Qualifiers::OCL_ExplicitNone:
-      // nothing special
-      break;
+  //   case Qualifiers::OCL_ExplicitNone:
+  //     // nothing special
+  //     break;
 
-    case Qualifiers::OCL_Strong:
-      if (isInit) {
-        Src = RValue::get(EmitARCRetain(Dst.getType(), Src.getScalarVal()));
-        break;
-      }
-      EmitARCStoreStrong(Dst, Src.getScalarVal(), /*ignore*/ true);
-      return;
+  //   case Qualifiers::OCL_Strong:
+  //     if (isInit) {
+  //       Src = RValue::get(EmitARCRetain(Dst.getType(), Src.getScalarVal()));
+  //       break;
+  //     }
+  //     EmitARCStoreStrong(Dst, Src.getScalarVal(), /*ignore*/ true);
+  //     return;
 
-    case Qualifiers::OCL_Weak:
-      if (isInit)
-        // Initialize and then skip the primitive store.
-        EmitARCInitWeak(Dst.getAddress(*this), Src.getScalarVal());
-      else
-        EmitARCStoreWeak(Dst.getAddress(*this), Src.getScalarVal(),
-                         /*ignore*/ true);
-      return;
+  //   case Qualifiers::OCL_Weak:
+  //     if (isInit)
+  //       // Initialize and then skip the primitive store.
+  //       EmitARCInitWeak(Dst.getAddress(*this), Src.getScalarVal());
+  //     else
+  //       EmitARCStoreWeak(Dst.getAddress(*this), Src.getScalarVal(),
+  //                        /*ignore*/ true);
+  //     return;
 
-    case Qualifiers::OCL_Autoreleasing:
-      Src = RValue::get(EmitObjCExtendObjectLifetime(Dst.getType(),
-                                                     Src.getScalarVal()));
-      // fall into the normal path
-      break;
-    }
-  }
+  //   case Qualifiers::OCL_Autoreleasing:
+  //     Src = RValue::get(EmitObjCExtendObjectLifetime(Dst.getType(),
+  //                                                    Src.getScalarVal()));
+  //     // fall into the normal path
+  //     break;
+  //   }
+  // }
 
-  if (Dst.isObjCWeak() && !Dst.isNonGC()) {
-    // load of a __weak object.
-    Address LvalueDst = Dst.getAddress(*this);
-    llvm::Value *src = Src.getScalarVal();
-     CGM.getObjCRuntime().EmitObjCWeakAssign(*this, src, LvalueDst);
-    return;
-  }
+  // if (Dst.isObjCWeak() && !Dst.isNonGC()) {
+  //   // load of a __weak object.
+  //   Address LvalueDst = Dst.getAddress(*this);
+  //   llvm::Value *src = Src.getScalarVal();
+  //    CGM.getObjCRuntime().EmitObjCWeakAssign(*this, src, LvalueDst);
+  //   return;
+  // }
 
-  if (Dst.isObjCStrong() && !Dst.isNonGC()) {
-    // load of a __strong object.
-    Address LvalueDst = Dst.getAddress(*this);
-    llvm::Value *src = Src.getScalarVal();
-    if (Dst.isObjCIvar()) {
-      assert(Dst.getBaseIvarExp() && "BaseIvarExp is NULL");
-      llvm::Type *ResultType = IntPtrTy;
-      Address dst = EmitPointerWithAlignment(Dst.getBaseIvarExp());
-      llvm::Value *RHS = dst.getPointer();
-      RHS = Builder.CreatePtrToInt(RHS, ResultType, "sub.ptr.rhs.cast");
-      llvm::Value *LHS =
-        Builder.CreatePtrToInt(LvalueDst.getPointer(), ResultType,
-                               "sub.ptr.lhs.cast");
-      llvm::Value *BytesBetween = Builder.CreateSub(LHS, RHS, "ivar.offset");
-      CGM.getObjCRuntime().EmitObjCIvarAssign(*this, src, dst,
-                                              BytesBetween);
-    } else if (Dst.isGlobalObjCRef()) {
-      CGM.getObjCRuntime().EmitObjCGlobalAssign(*this, src, LvalueDst,
-                                                Dst.isThreadLocalRef());
-    }
-    else
-      CGM.getObjCRuntime().EmitObjCStrongCastAssign(*this, src, LvalueDst);
-    return;
-  }
+  // if (Dst.isObjCStrong() && !Dst.isNonGC()) {
+  //   // load of a __strong object.
+  //   Address LvalueDst = Dst.getAddress(*this);
+  //   llvm::Value *src = Src.getScalarVal();
+  //   if (Dst.isObjCIvar()) {
+  //     assert(Dst.getBaseIvarExp() && "BaseIvarExp is NULL");
+  //     llvm::Type *ResultType = IntPtrTy;
+  //     Address dst = EmitPointerWithAlignment(Dst.getBaseIvarExp());
+  //     llvm::Value *RHS = dst.getPointer();
+  //     RHS = Builder.CreatePtrToInt(RHS, ResultType, "sub.ptr.rhs.cast");
+  //     llvm::Value *LHS =
+  //       Builder.CreatePtrToInt(LvalueDst.getPointer(), ResultType,
+  //                              "sub.ptr.lhs.cast");
+  //     llvm::Value *BytesBetween = Builder.CreateSub(LHS, RHS, "ivar.offset");
+  //     CGM.getObjCRuntime().EmitObjCIvarAssign(*this, src, dst,
+  //                                             BytesBetween);
+  //   } else if (Dst.isGlobalObjCRef()) {
+  //     CGM.getObjCRuntime().EmitObjCGlobalAssign(*this, src, LvalueDst,
+  //                                               Dst.isThreadLocalRef());
+  //   }
+  //   else
+  //     CGM.getObjCRuntime().EmitObjCStrongCastAssign(*this, src, LvalueDst);
+  //   return;
+  // }
 
   assert(Src.isScalar() && "Can't emit an agg store with this method");
   EmitStoreOfScalar(Src.getScalarVal(), Dst, isInit);
@@ -2291,102 +2291,102 @@ void CodeGenFunction::EmitStoreThroughGlobalRegLValue(RValue Src, LValue Dst) {
 // setObjCGCLValueClass - sets class of the lvalue for the purpose of
 // generating write-barries API. It is currently a global, ivar,
 // or neither.
-static void setObjCGCLValueClass(const ASTContext &Ctx, const Expr *E,
-                                 LValue &LV,
-                                 bool IsMemberAccess=false) {
-  if (Ctx.getLangOpts().getGC() == LangOptions::NonGC)
-    return;
+// static void setObjCGCLValueClass(const ASTContext &Ctx, const Expr *E,
+//                                  LValue &LV,
+//                                  bool IsMemberAccess=false) {
+//   if (Ctx.getLangOpts().getGC() == LangOptions::NonGC)
+//     return;
 
-  // if (isa<ObjCIvarRefExpr>(E)) {
-  //   QualType ExpTy = E->getType();
-  //   if (IsMemberAccess && ExpTy->isPointerType()) {
-  //     // If ivar is a structure pointer, assigning to field of
-  //     // this struct follows gcc's behavior and makes it a non-ivar
-  //     // writer-barrier conservatively.
-  //     ExpTy = ExpTy->castAs<PointerType>()->getPointeeType();
-  //     if (ExpTy->isRecordType()) {
-  //       LV.setObjCIvar(false);
-  //       return;
-  //     }
-  //   }
-  //   LV.setObjCIvar(true);
-  //   auto *Exp = cast<ObjCIvarRefExpr>(const_cast<Expr *>(E));
-  //   LV.setBaseIvarExp(Exp->getBase());
-  //   LV.setObjCArray(E->getType()->isArrayType());
-  //   return;
-  // }
+//   // if (isa<ObjCIvarRefExpr>(E)) {
+//   //   QualType ExpTy = E->getType();
+//   //   if (IsMemberAccess && ExpTy->isPointerType()) {
+//   //     // If ivar is a structure pointer, assigning to field of
+//   //     // this struct follows gcc's behavior and makes it a non-ivar
+//   //     // writer-barrier conservatively.
+//   //     ExpTy = ExpTy->castAs<PointerType>()->getPointeeType();
+//   //     if (ExpTy->isRecordType()) {
+//   //       LV.setObjCIvar(false);
+//   //       return;
+//   //     }
+//   //   }
+//   //   LV.setObjCIvar(true);
+//   //   auto *Exp = cast<ObjCIvarRefExpr>(const_cast<Expr *>(E));
+//   //   LV.setBaseIvarExp(Exp->getBase());
+//   //   LV.setObjCArray(E->getType()->isArrayType());
+//   //   return;
+//   // }
 
-  if (const auto *Exp = dyn_cast<DeclRefExpr>(E)) {
-    if (const auto *VD = dyn_cast<VarDecl>(Exp->getDecl())) {
-      if (VD->hasGlobalStorage()) {
-        LV.setGlobalObjCRef(true);
-        LV.setThreadLocalRef(VD->getTLSKind() != VarDecl::TLS_None);
-      }
-    }
-    LV.setObjCArray(E->getType()->isArrayType());
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<DeclRefExpr>(E)) {
+//     if (const auto *VD = dyn_cast<VarDecl>(Exp->getDecl())) {
+//       if (VD->hasGlobalStorage()) {
+//         LV.setGlobalObjCRef(true);
+//         LV.setThreadLocalRef(VD->getTLSKind() != VarDecl::TLS_None);
+//       }
+//     }
+//     LV.setObjCArray(E->getType()->isArrayType());
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<UnaryOperator>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<UnaryOperator>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<ParenExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
-    if (LV.isObjCIvar()) {
-      // If cast is to a structure pointer, follow gcc's behavior and make it
-      // a non-ivar write-barrier.
-      QualType ExpTy = E->getType();
-      if (ExpTy->isPointerType())
-        ExpTy = ExpTy->castAs<PointerType>()->getPointeeType();
-      if (ExpTy->isRecordType())
-        LV.setObjCIvar(false);
-    }
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<ParenExpr>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
+//     if (LV.isObjCIvar()) {
+//       // If cast is to a structure pointer, follow gcc's behavior and make it
+//       // a non-ivar write-barrier.
+//       QualType ExpTy = E->getType();
+//       if (ExpTy->isPointerType())
+//         ExpTy = ExpTy->castAs<PointerType>()->getPointeeType();
+//       if (ExpTy->isRecordType())
+//         LV.setObjCIvar(false);
+//     }
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<GenericSelectionExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getResultExpr(), LV);
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<GenericSelectionExpr>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getResultExpr(), LV);
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<ImplicitCastExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<ImplicitCastExpr>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<CStyleCastExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<CStyleCastExpr>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<ObjCBridgedCastExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
-    return;
-  }
+//   // if (const auto *Exp = dyn_cast<ObjCBridgedCastExpr>(E)) {
+//   //   setObjCGCLValueClass(Ctx, Exp->getSubExpr(), LV, IsMemberAccess);
+//   //   return;
+//   // }
 
-  if (const auto *Exp = dyn_cast<ArraySubscriptExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getBase(), LV);
-    if (LV.isObjCIvar() && !LV.isObjCArray())
-      // Using array syntax to assigning to what an ivar points to is not
-      // same as assigning to the ivar itself. {id *Names;} Names[i] = 0;
-      LV.setObjCIvar(false);
-    else if (LV.isGlobalObjCRef() && !LV.isObjCArray())
-      // Using array syntax to assigning to what global points to is not
-      // same as assigning to the global itself. {id *G;} G[i] = 0;
-      LV.setGlobalObjCRef(false);
-    return;
-  }
+//   if (const auto *Exp = dyn_cast<ArraySubscriptExpr>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getBase(), LV);
+//     if (LV.isObjCIvar() && !LV.isObjCArray())
+//       // Using array syntax to assigning to what an ivar points to is not
+//       // same as assigning to the ivar itself. {id *Names;} Names[i] = 0;
+//       LV.setObjCIvar(false);
+//     else if (LV.isGlobalObjCRef() && !LV.isObjCArray())
+//       // Using array syntax to assigning to what global points to is not
+//       // same as assigning to the global itself. {id *G;} G[i] = 0;
+//       LV.setGlobalObjCRef(false);
+//     return;
+//   }
 
-  if (const auto *Exp = dyn_cast<MemberExpr>(E)) {
-    setObjCGCLValueClass(Ctx, Exp->getBase(), LV, true);
-    // We don't know if member is an 'ivar', but this flag is looked at
-    // only in the context of LV.isObjCIvar().
-    LV.setObjCArray(E->getType()->isArrayType());
-    return;
-  }
-}
+//   if (const auto *Exp = dyn_cast<MemberExpr>(E)) {
+//     setObjCGCLValueClass(Ctx, Exp->getBase(), LV, true);
+//     // We don't know if member is an 'ivar', but this flag is looked at
+//     // only in the context of LV.isObjCIvar().
+//     LV.setObjCArray(E->getType()->isArrayType());
+//     return;
+//   }
+// }
 
 static llvm::Value *
 EmitBitCastOfLValueToProperType(CodeGenFunction &CGF,
@@ -2399,35 +2399,35 @@ EmitBitCastOfLValueToProperType(CodeGenFunction &CGF,
 static LValue EmitThreadPrivateVarDeclLValue(
     CodeGenFunction &CGF, const VarDecl *VD, QualType T, Address Addr,
     llvm::Type *RealVarTy, SourceLocation Loc) {
-  if (CGF.CGM.getLangOpts().OpenMPIRBuilder)
-    Addr = CodeGenFunction::OMPBuilderCBHelpers::getAddrOfThreadPrivate(
-        CGF, VD, Addr, Loc);
-  else
-    Addr =
-        CGF.CGM.getOpenMPRuntime().getAddrOfThreadPrivate(CGF, VD, Addr, Loc);
+  // if (CGF.CGM.getLangOpts().OpenMPIRBuilder)
+  //   Addr = CodeGenFunction::OMPBuilderCBHelpers::getAddrOfThreadPrivate(
+  //       CGF, VD, Addr, Loc);
+  // else
+  //   Addr =
+  //       CGF.CGM.getOpenMPRuntime().getAddrOfThreadPrivate(CGF, VD, Addr, Loc);
 
   Addr = CGF.Builder.CreateElementBitCast(Addr, RealVarTy);
   return CGF.MakeAddrLValue(Addr, T, AlignmentSource::Decl);
 }
 
-static Address emitDeclTargetVarDeclLValue(CodeGenFunction &CGF,
-                                           const VarDecl *VD, QualType T) {
-  llvm::Optional<OMPDeclareTargetDeclAttr::MapTypeTy> Res =
-      OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(VD);
-  // Return an invalid address if variable is MT_To and unified
-  // memory is not enabled. For all other cases: MT_Link and
-  // MT_To with unified memory, return a valid address.
-  if (!Res || (*Res == OMPDeclareTargetDeclAttr::MT_To &&
-               !CGF.CGM.getOpenMPRuntime().hasRequiresUnifiedSharedMemory()))
-    return Address::invalid();
-  assert(((*Res == OMPDeclareTargetDeclAttr::MT_Link) ||
-          (*Res == OMPDeclareTargetDeclAttr::MT_To &&
-           CGF.CGM.getOpenMPRuntime().hasRequiresUnifiedSharedMemory())) &&
-         "Expected link clause OR to clause with unified memory enabled.");
-  QualType PtrTy = CGF.getContext().getPointerType(VD->getType());
-  Address Addr = CGF.CGM.getOpenMPRuntime().getAddrOfDeclareTargetVar(VD);
-  return CGF.EmitLoadOfPointer(Addr, PtrTy->castAs<PointerType>());
-}
+// static Address emitDeclTargetVarDeclLValue(CodeGenFunction &CGF,
+//                                            const VarDecl *VD, QualType T) {
+//   llvm::Optional<OMPDeclareTargetDeclAttr::MapTypeTy> Res =
+//       OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(VD);
+//   // Return an invalid address if variable is MT_To and unified
+//   // memory is not enabled. For all other cases: MT_Link and
+//   // MT_To with unified memory, return a valid address.
+//   if (!Res || (*Res == OMPDeclareTargetDeclAttr::MT_To &&
+//                !CGF.CGM.getOpenMPRuntime().hasRequiresUnifiedSharedMemory()))
+//     return Address::invalid();
+//   assert(((*Res == OMPDeclareTargetDeclAttr::MT_Link) ||
+//           (*Res == OMPDeclareTargetDeclAttr::MT_To &&
+//            CGF.CGM.getOpenMPRuntime().hasRequiresUnifiedSharedMemory())) &&
+//          "Expected link clause OR to clause with unified memory enabled.");
+//   QualType PtrTy = CGF.getContext().getPointerType(VD->getType());
+//   Address Addr = CGF.CGM.getOpenMPRuntime().getAddrOfDeclareTargetVar(VD);
+//   return CGF.EmitLoadOfPointer(Addr, PtrTy->castAs<PointerType>());
+// }
 
 Address
 CodeGenFunction::EmitLoadOfReference(LValue RefLVal,
@@ -2480,11 +2480,11 @@ static LValue EmitGlobalVarDeclLValue(CodeGenFunction &CGF,
     return CGF.CGM.getCXXABI().EmitThreadLocalVarDeclLValue(CGF, VD, T);
   // Check if the variable is marked as declare target with link clause in
   // device codegen.
-  if (CGF.getLangOpts().OpenMPIsDevice) {
-    Address Addr = emitDeclTargetVarDeclLValue(CGF, VD, T);
-    if (Addr.isValid())
-      return CGF.MakeAddrLValue(Addr, T, AlignmentSource::Decl);
-  }
+  // if (CGF.getLangOpts().OpenMPIsDevice) {
+  //   Address Addr = emitDeclTargetVarDeclLValue(CGF, VD, T);
+  //   if (Addr.isValid())
+  //     return CGF.MakeAddrLValue(Addr, T, AlignmentSource::Decl);
+  // }
 
   llvm::Value *V = CGF.CGM.GetAddrOfGlobalVar(VD);
   llvm::Type *RealVarTy = CGF.getTypes().ConvertTypeForMem(VD->getType());
@@ -2493,16 +2493,16 @@ static LValue EmitGlobalVarDeclLValue(CodeGenFunction &CGF,
   Address Addr(V, Alignment);
   // Emit reference to the private copy of the variable if it is an OpenMP
   // threadprivate variable.
-  if (CGF.getLangOpts().OpenMP && !CGF.getLangOpts().OpenMPSimd &&
-      VD->hasAttr<OMPThreadPrivateDeclAttr>()) {
-    return EmitThreadPrivateVarDeclLValue(CGF, VD, T, Addr, RealVarTy,
-                                          E->getExprLoc());
-  }
+  // if (CGF.getLangOpts().OpenMP && !CGF.getLangOpts().OpenMPSimd &&
+  //     VD->hasAttr<OMPThreadPrivateDeclAttr>()) {
+  //   return EmitThreadPrivateVarDeclLValue(CGF, VD, T, Addr, RealVarTy,
+  //                                         E->getExprLoc());
+  // }
   LValue LV = VD->getType()->isReferenceType() ?
       CGF.EmitLoadOfReferenceLValue(Addr, VD->getType(),
                                     AlignmentSource::Decl) :
       CGF.MakeAddrLValue(Addr, T, AlignmentSource::Decl);
-  setObjCGCLValueClass(CGF.getContext(), E, LV);
+  // setObjCGCLValueClass(CGF.getContext(), E, LV);
   return LV;
 }
 
@@ -2606,10 +2606,10 @@ static bool canEmitSpuriousReferenceToVariable(CodeGenFunction &CGF,
   // exists on a different device / target.
   // FIXME: This is unnecessarily broad. Check whether this would actually be a
   // cross-target reference.
-  if (CGF.getLangOpts().OpenMP || CGF.getLangOpts().CUDA ||
-      CGF.getLangOpts().OpenCL) {
-    return false;
-  }
+  // if (CGF.getLangOpts().OpenMP || CGF.getLangOpts().CUDA /*||
+  //     CGF.getLangOpts().OpenCL*/) {
+  //   return false;
+  // }
 
   // We can emit a spurious reference only if the linkage implies that we'll
   // be emitting a non-interposable symbol that will be retained until link
@@ -2687,13 +2687,13 @@ LValue CodeGenFunction::EmitDeclRefLValue(const DeclRefExpr *E) {
           if (VD->getType()->isReferenceType())
             CapLVal = EmitLoadOfReferenceLValue(I->second, VD->getType(),
                                                 AlignmentSource::Decl);
-          else
-            CapLVal = MakeAddrLValue(I->second, T);
-          // Mark lvalue as nontemporal if the variable is marked as nontemporal
-          // in simd context.
-          if (getLangOpts().OpenMP &&
-              CGM.getOpenMPRuntime().isNontemporalDecl(VD))
-            CapLVal.setNontemporal(/*Value=*/true);
+          // else
+          //   CapLVal = MakeAddrLValue(I->second, T);
+          // // Mark lvalue as nontemporal if the variable is marked as nontemporal
+          // // in simd context.
+          // if (getLangOpts().OpenMP &&
+          //     CGM.getOpenMPRuntime().isNontemporalDecl(VD))
+          //   CapLVal.setNontemporal(/*Value=*/true);
           return CapLVal;
         }
         LValue CapLVal =
@@ -2705,9 +2705,9 @@ LValue CodeGenFunction::EmitDeclRefLValue(const DeclRefExpr *E) {
             CapLVal.getTBAAInfo());
         // Mark lvalue as nontemporal if the variable is marked as nontemporal
         // in simd context.
-        if (getLangOpts().OpenMP &&
-            CGM.getOpenMPRuntime().isNontemporalDecl(VD))
-          CapLVal.setNontemporal(/*Value=*/true);
+        // if (getLangOpts().OpenMP &&
+        //     CGM.getOpenMPRuntime().isNontemporalDecl(VD))
+        //   CapLVal.setNontemporal(/*Value=*/true);
         return CapLVal;
       }
 
@@ -2756,12 +2756,12 @@ LValue CodeGenFunction::EmitDeclRefLValue(const DeclRefExpr *E) {
 
 
     // Check for OpenMP threadprivate variables.
-    if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd &&
-        VD->hasAttr<OMPThreadPrivateDeclAttr>()) {
-      return EmitThreadPrivateVarDeclLValue(
-          *this, VD, T, addr, getTypes().ConvertTypeForMem(VD->getType()),
-          E->getExprLoc());
-    }
+    // if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd &&
+    //     VD->hasAttr<OMPThreadPrivateDeclAttr>()) {
+    //   return EmitThreadPrivateVarDeclLValue(
+    //       *this, VD, T, addr, getTypes().ConvertTypeForMem(VD->getType()),
+    //       E->getExprLoc());
+    // }
 
     // Drill into block byref variables.
     bool isBlockByref = VD->isEscapingByref();
@@ -2780,15 +2780,15 @@ LValue CodeGenFunction::EmitDeclRefLValue(const DeclRefExpr *E) {
                      !VD->getType()->isReferenceType() &&
                      !isBlockByref;
     if (NonGCable) {
-      LV.getQuals().removeObjCGCAttr();
+      // LV.getQuals().removeObjCGCAttr();
       LV.setNonGC(true);
     }
 
-    bool isImpreciseLifetime =
-      (isLocalStorage && !VD->hasAttr<ObjCPreciseLifetimeAttr>());
-    if (isImpreciseLifetime)
-      LV.setARCPreciseLifetime(ARCImpreciseLifetime);
-    setObjCGCLValueClass(getContext(), E, LV);
+    // bool isImpreciseLifetime =
+    //   (isLocalStorage && !VD->hasAttr<ObjCPreciseLifetimeAttr>());
+    // if (isImpreciseLifetime)
+    //   LV.setARCPreciseLifetime(ARCImpreciseLifetime);
+    // setObjCGCLValueClass(getContext(), E, LV);
     return LV;
   }
 
@@ -2833,10 +2833,10 @@ LValue CodeGenFunction::EmitUnaryOpLValue(const UnaryOperator *E) {
     // of a pointer to object; as in void foo (__weak id *param); *param = 0;
     // But, we continue to generate __strong write barrier on indirect write
     // into a pointer to object.
-    if (getLangOpts().ObjC &&
-        getLangOpts().getGC() != LangOptions::NonGC &&
-        LV.isObjCWeak())
-      LV.setNonGC(!E->isOBJCGCCandidate(getContext()));
+    // if (getLangOpts().ObjC &&
+    //     getLangOpts().getGC() != LangOptions::NonGC &&
+    //     LV.isObjCWeak())
+    //   LV.setNonGC(!E->isOBJCGCCandidate(getContext()));
     return LV;
   }
   case UO_Real:
@@ -3779,11 +3779,11 @@ LValue CodeGenFunction::EmitArraySubscriptExpr(const ArraySubscriptExpr *E,
 
   LValue LV = MakeAddrLValue(Addr, E->getType(), EltBaseInfo, EltTBAAInfo);
 
-  if (getLangOpts().ObjC &&
-      getLangOpts().getGC() != LangOptions::NonGC) {
-    LV.setNonGC(!E->isOBJCGCCandidate(getContext()));
-    setObjCGCLValueClass(getContext(), E, LV);
-  }
+  // if (getLangOpts().ObjC &&
+  //     getLangOpts().getGC() != LangOptions::NonGC) {
+  //   LV.setNonGC(!E->isOBJCGCCandidate(getContext()));
+  //   setObjCGCLValueClass(getContext(), E, LV);
+  // }
   return LV;
 }
 
@@ -3804,197 +3804,197 @@ LValue CodeGenFunction::EmitMatrixSubscriptExpr(const MatrixSubscriptExpr *E) {
       E->getBase()->getType(), Base.getBaseInfo(), TBAAAccessInfo());
 }
 
-static Address emitOMPArraySectionBase(CodeGenFunction &CGF, const Expr *Base,
-                                       LValueBaseInfo &BaseInfo,
-                                       TBAAAccessInfo &TBAAInfo,
-                                       QualType BaseTy, QualType ElTy,
-                                       bool IsLowerBound) {
-  LValue BaseLVal;
-  if (auto *ASE = dyn_cast<OMPArraySectionExpr>(Base->IgnoreParenImpCasts())) {
-    BaseLVal = CGF.EmitOMPArraySectionExpr(ASE, IsLowerBound);
-    if (BaseTy->isArrayType()) {
-      Address Addr = BaseLVal.getAddress(CGF);
-      BaseInfo = BaseLVal.getBaseInfo();
+// static Address emitOMPArraySectionBase(CodeGenFunction &CGF, const Expr *Base,
+//                                        LValueBaseInfo &BaseInfo,
+//                                        TBAAAccessInfo &TBAAInfo,
+//                                        QualType BaseTy, QualType ElTy,
+//                                        bool IsLowerBound) {
+//   LValue BaseLVal;
+//   if (auto *ASE = dyn_cast<OMPArraySectionExpr>(Base->IgnoreParenImpCasts())) {
+//     BaseLVal = CGF.EmitOMPArraySectionExpr(ASE, IsLowerBound);
+//     if (BaseTy->isArrayType()) {
+//       Address Addr = BaseLVal.getAddress(CGF);
+//       BaseInfo = BaseLVal.getBaseInfo();
 
-      // If the array type was an incomplete type, we need to make sure
-      // the decay ends up being the right type.
-      llvm::Type *NewTy = CGF.ConvertType(BaseTy);
-      Addr = CGF.Builder.CreateElementBitCast(Addr, NewTy);
+//       // If the array type was an incomplete type, we need to make sure
+//       // the decay ends up being the right type.
+//       llvm::Type *NewTy = CGF.ConvertType(BaseTy);
+//       Addr = CGF.Builder.CreateElementBitCast(Addr, NewTy);
 
-      // Note that VLA pointers are always decayed, so we don't need to do
-      // anything here.
-      if (!BaseTy->isVariableArrayType()) {
-        assert(isa<llvm::ArrayType>(Addr.getElementType()) &&
-               "Expected pointer to array");
-        Addr = CGF.Builder.CreateConstArrayGEP(Addr, 0, "arraydecay");
-      }
+//       // Note that VLA pointers are always decayed, so we don't need to do
+//       // anything here.
+//       if (!BaseTy->isVariableArrayType()) {
+//         assert(isa<llvm::ArrayType>(Addr.getElementType()) &&
+//                "Expected pointer to array");
+//         Addr = CGF.Builder.CreateConstArrayGEP(Addr, 0, "arraydecay");
+//       }
 
-      return CGF.Builder.CreateElementBitCast(Addr,
-                                              CGF.ConvertTypeForMem(ElTy));
-    }
-    LValueBaseInfo TypeBaseInfo;
-    TBAAAccessInfo TypeTBAAInfo;
-    CharUnits Align =
-        CGF.CGM.getNaturalTypeAlignment(ElTy, &TypeBaseInfo, &TypeTBAAInfo);
-    BaseInfo.mergeForCast(TypeBaseInfo);
-    TBAAInfo = CGF.CGM.mergeTBAAInfoForCast(TBAAInfo, TypeTBAAInfo);
-    return Address(CGF.Builder.CreateLoad(BaseLVal.getAddress(CGF)), Align);
-  }
-  return CGF.EmitPointerWithAlignment(Base, &BaseInfo, &TBAAInfo);
-}
+//       return CGF.Builder.CreateElementBitCast(Addr,
+//                                               CGF.ConvertTypeForMem(ElTy));
+//     }
+//     LValueBaseInfo TypeBaseInfo;
+//     TBAAAccessInfo TypeTBAAInfo;
+//     CharUnits Align =
+//         CGF.CGM.getNaturalTypeAlignment(ElTy, &TypeBaseInfo, &TypeTBAAInfo);
+//     BaseInfo.mergeForCast(TypeBaseInfo);
+//     TBAAInfo = CGF.CGM.mergeTBAAInfoForCast(TBAAInfo, TypeTBAAInfo);
+//     return Address(CGF.Builder.CreateLoad(BaseLVal.getAddress(CGF)), Align);
+//   }
+//   return CGF.EmitPointerWithAlignment(Base, &BaseInfo, &TBAAInfo);
+// }
 
-LValue CodeGenFunction::EmitOMPArraySectionExpr(const OMPArraySectionExpr *E,
-                                                bool IsLowerBound) {
-  QualType BaseTy = OMPArraySectionExpr::getBaseOriginalType(E->getBase());
-  QualType ResultExprTy;
-  if (auto *AT = getContext().getAsArrayType(BaseTy))
-    ResultExprTy = AT->getElementType();
-  else
-    ResultExprTy = BaseTy->getPointeeType();
-  llvm::Value *Idx = nullptr;
-  if (IsLowerBound || E->getColonLocFirst().isInvalid()) {
-    // Requesting lower bound or upper bound, but without provided length and
-    // without ':' symbol for the default length -> length = 1.
-    // Idx = LowerBound ?: 0;
-    if (auto *LowerBound = E->getLowerBound()) {
-      Idx = Builder.CreateIntCast(
-          EmitScalarExpr(LowerBound), IntPtrTy,
-          LowerBound->getType()->hasSignedIntegerRepresentation());
-    } else
-      Idx = llvm::ConstantInt::getNullValue(IntPtrTy);
-  } else {
-    // Try to emit length or lower bound as constant. If this is possible, 1
-    // is subtracted from constant length or lower bound. Otherwise, emit LLVM
-    // IR (LB + Len) - 1.
-    auto &C = CGM.getContext();
-    auto *Length = E->getLength();
-    llvm::APSInt ConstLength;
-    if (Length) {
-      // Idx = LowerBound + Length - 1;
-      if (Length->isIntegerConstantExpr(ConstLength, C)) {
-        ConstLength = ConstLength.zextOrTrunc(PointerWidthInBits);
-        Length = nullptr;
-      }
-      auto *LowerBound = E->getLowerBound();
-      llvm::APSInt ConstLowerBound(PointerWidthInBits, /*isUnsigned=*/false);
-      if (LowerBound && LowerBound->isIntegerConstantExpr(ConstLowerBound, C)) {
-        ConstLowerBound = ConstLowerBound.zextOrTrunc(PointerWidthInBits);
-        LowerBound = nullptr;
-      }
-      if (!Length)
-        --ConstLength;
-      else if (!LowerBound)
-        --ConstLowerBound;
+// LValue CodeGenFunction::EmitOMPArraySectionExpr(const OMPArraySectionExpr *E,
+//                                                 bool IsLowerBound) {
+//   QualType BaseTy = OMPArraySectionExpr::getBaseOriginalType(E->getBase());
+//   QualType ResultExprTy;
+//   if (auto *AT = getContext().getAsArrayType(BaseTy))
+//     ResultExprTy = AT->getElementType();
+//   else
+//     ResultExprTy = BaseTy->getPointeeType();
+//   llvm::Value *Idx = nullptr;
+//   if (IsLowerBound || E->getColonLocFirst().isInvalid()) {
+//     // Requesting lower bound or upper bound, but without provided length and
+//     // without ':' symbol for the default length -> length = 1.
+//     // Idx = LowerBound ?: 0;
+//     if (auto *LowerBound = E->getLowerBound()) {
+//       Idx = Builder.CreateIntCast(
+//           EmitScalarExpr(LowerBound), IntPtrTy,
+//           LowerBound->getType()->hasSignedIntegerRepresentation());
+//     } else
+//       Idx = llvm::ConstantInt::getNullValue(IntPtrTy);
+//   } else {
+//     // Try to emit length or lower bound as constant. If this is possible, 1
+//     // is subtracted from constant length or lower bound. Otherwise, emit LLVM
+//     // IR (LB + Len) - 1.
+//     auto &C = CGM.getContext();
+//     auto *Length = E->getLength();
+//     llvm::APSInt ConstLength;
+//     if (Length) {
+//       // Idx = LowerBound + Length - 1;
+//       if (Length->isIntegerConstantExpr(ConstLength, C)) {
+//         ConstLength = ConstLength.zextOrTrunc(PointerWidthInBits);
+//         Length = nullptr;
+//       }
+//       auto *LowerBound = E->getLowerBound();
+//       llvm::APSInt ConstLowerBound(PointerWidthInBits, /*isUnsigned=*/false);
+//       if (LowerBound && LowerBound->isIntegerConstantExpr(ConstLowerBound, C)) {
+//         ConstLowerBound = ConstLowerBound.zextOrTrunc(PointerWidthInBits);
+//         LowerBound = nullptr;
+//       }
+//       if (!Length)
+//         --ConstLength;
+//       else if (!LowerBound)
+//         --ConstLowerBound;
 
-      if (Length || LowerBound) {
-        auto *LowerBoundVal =
-            LowerBound
-                ? Builder.CreateIntCast(
-                      EmitScalarExpr(LowerBound), IntPtrTy,
-                      LowerBound->getType()->hasSignedIntegerRepresentation())
-                : llvm::ConstantInt::get(IntPtrTy, ConstLowerBound);
-        auto *LengthVal =
-            Length
-                ? Builder.CreateIntCast(
-                      EmitScalarExpr(Length), IntPtrTy,
-                      Length->getType()->hasSignedIntegerRepresentation())
-                : llvm::ConstantInt::get(IntPtrTy, ConstLength);
-        Idx = Builder.CreateAdd(LowerBoundVal, LengthVal, "lb_add_len",
-                                /*HasNUW=*/false,
-                                !getLangOpts().isSignedOverflowDefined());
-        if (Length && LowerBound) {
-          Idx = Builder.CreateSub(
-              Idx, llvm::ConstantInt::get(IntPtrTy, /*V=*/1), "idx_sub_1",
-              /*HasNUW=*/false, !getLangOpts().isSignedOverflowDefined());
-        }
-      } else
-        Idx = llvm::ConstantInt::get(IntPtrTy, ConstLength + ConstLowerBound);
-    } else {
-      // Idx = ArraySize - 1;
-      QualType ArrayTy = BaseTy->isPointerType()
-                             ? E->getBase()->IgnoreParenImpCasts()->getType()
-                             : BaseTy;
-      if (auto *VAT = C.getAsVariableArrayType(ArrayTy)) {
-        Length = VAT->getSizeExpr();
-        if (Length->isIntegerConstantExpr(ConstLength, C))
-          Length = nullptr;
-      } else {
-        auto *CAT = C.getAsConstantArrayType(ArrayTy);
-        ConstLength = CAT->getSize();
-      }
-      if (Length) {
-        auto *LengthVal = Builder.CreateIntCast(
-            EmitScalarExpr(Length), IntPtrTy,
-            Length->getType()->hasSignedIntegerRepresentation());
-        Idx = Builder.CreateSub(
-            LengthVal, llvm::ConstantInt::get(IntPtrTy, /*V=*/1), "len_sub_1",
-            /*HasNUW=*/false, !getLangOpts().isSignedOverflowDefined());
-      } else {
-        ConstLength = ConstLength.zextOrTrunc(PointerWidthInBits);
-        --ConstLength;
-        Idx = llvm::ConstantInt::get(IntPtrTy, ConstLength);
-      }
-    }
-  }
-  assert(Idx);
+//       if (Length || LowerBound) {
+//         auto *LowerBoundVal =
+//             LowerBound
+//                 ? Builder.CreateIntCast(
+//                       EmitScalarExpr(LowerBound), IntPtrTy,
+//                       LowerBound->getType()->hasSignedIntegerRepresentation())
+//                 : llvm::ConstantInt::get(IntPtrTy, ConstLowerBound);
+//         auto *LengthVal =
+//             Length
+//                 ? Builder.CreateIntCast(
+//                       EmitScalarExpr(Length), IntPtrTy,
+//                       Length->getType()->hasSignedIntegerRepresentation())
+//                 : llvm::ConstantInt::get(IntPtrTy, ConstLength);
+//         Idx = Builder.CreateAdd(LowerBoundVal, LengthVal, "lb_add_len",
+//                                 /*HasNUW=*/false,
+//                                 !getLangOpts().isSignedOverflowDefined());
+//         if (Length && LowerBound) {
+//           Idx = Builder.CreateSub(
+//               Idx, llvm::ConstantInt::get(IntPtrTy, /*V=*/1), "idx_sub_1",
+//               /*HasNUW=*/false, !getLangOpts().isSignedOverflowDefined());
+//         }
+//       } else
+//         Idx = llvm::ConstantInt::get(IntPtrTy, ConstLength + ConstLowerBound);
+//     } else {
+//       // Idx = ArraySize - 1;
+//       QualType ArrayTy = BaseTy->isPointerType()
+//                              ? E->getBase()->IgnoreParenImpCasts()->getType()
+//                              : BaseTy;
+//       if (auto *VAT = C.getAsVariableArrayType(ArrayTy)) {
+//         Length = VAT->getSizeExpr();
+//         if (Length->isIntegerConstantExpr(ConstLength, C))
+//           Length = nullptr;
+//       } else {
+//         auto *CAT = C.getAsConstantArrayType(ArrayTy);
+//         ConstLength = CAT->getSize();
+//       }
+//       if (Length) {
+//         auto *LengthVal = Builder.CreateIntCast(
+//             EmitScalarExpr(Length), IntPtrTy,
+//             Length->getType()->hasSignedIntegerRepresentation());
+//         Idx = Builder.CreateSub(
+//             LengthVal, llvm::ConstantInt::get(IntPtrTy, /*V=*/1), "len_sub_1",
+//             /*HasNUW=*/false, !getLangOpts().isSignedOverflowDefined());
+//       } else {
+//         ConstLength = ConstLength.zextOrTrunc(PointerWidthInBits);
+//         --ConstLength;
+//         Idx = llvm::ConstantInt::get(IntPtrTy, ConstLength);
+//       }
+//     }
+//   }
+//   assert(Idx);
 
-  Address EltPtr = Address::invalid();
-  LValueBaseInfo BaseInfo;
-  TBAAAccessInfo TBAAInfo;
-  if (auto *VLA = getContext().getAsVariableArrayType(ResultExprTy)) {
-    // The base must be a pointer, which is not an aggregate.  Emit
-    // it.  It needs to be emitted first in case it's what captures
-    // the VLA bounds.
-    Address Base =
-        emitOMPArraySectionBase(*this, E->getBase(), BaseInfo, TBAAInfo,
-                                BaseTy, VLA->getElementType(), IsLowerBound);
-    // The element count here is the total number of non-VLA elements.
-    llvm::Value *NumElements = getVLASize(VLA).NumElts;
+//   Address EltPtr = Address::invalid();
+//   LValueBaseInfo BaseInfo;
+//   TBAAAccessInfo TBAAInfo;
+//   if (auto *VLA = getContext().getAsVariableArrayType(ResultExprTy)) {
+//     // The base must be a pointer, which is not an aggregate.  Emit
+//     // it.  It needs to be emitted first in case it's what captures
+//     // the VLA bounds.
+//     Address Base =
+//         emitOMPArraySectionBase(*this, E->getBase(), BaseInfo, TBAAInfo,
+//                                 BaseTy, VLA->getElementType(), IsLowerBound);
+//     // The element count here is the total number of non-VLA elements.
+//     llvm::Value *NumElements = getVLASize(VLA).NumElts;
 
-    // Effectively, the multiply by the VLA size is part of the GEP.
-    // GEP indexes are signed, and scaling an index isn't permitted to
-    // signed-overflow, so we use the same semantics for our explicit
-    // multiply.  We suppress this if overflow is not undefined behavior.
-    if (getLangOpts().isSignedOverflowDefined())
-      Idx = Builder.CreateMul(Idx, NumElements);
-    else
-      Idx = Builder.CreateNSWMul(Idx, NumElements);
-    EltPtr = emitArraySubscriptGEP(*this, Base, Idx, VLA->getElementType(),
-                                   !getLangOpts().isSignedOverflowDefined(),
-                                   /*signedIndices=*/false, E->getExprLoc());
-  } else if (const Expr *Array = isSimpleArrayDecayOperand(E->getBase())) {
-    // If this is A[i] where A is an array, the frontend will have decayed the
-    // base to be a ArrayToPointerDecay implicit cast.  While correct, it is
-    // inefficient at -O0 to emit a "gep A, 0, 0" when codegen'ing it, then a
-    // "gep x, i" here.  Emit one "gep A, 0, i".
-    assert(Array->getType()->isArrayType() &&
-           "Array to pointer decay must have array source type!");
-    LValue ArrayLV;
-    // For simple multidimensional array indexing, set the 'accessed' flag for
-    // better bounds-checking of the base expression.
-    if (const auto *ASE = dyn_cast<ArraySubscriptExpr>(Array))
-      ArrayLV = EmitArraySubscriptExpr(ASE, /*Accessed*/ true);
-    else
-      ArrayLV = EmitLValue(Array);
+//     // Effectively, the multiply by the VLA size is part of the GEP.
+//     // GEP indexes are signed, and scaling an index isn't permitted to
+//     // signed-overflow, so we use the same semantics for our explicit
+//     // multiply.  We suppress this if overflow is not undefined behavior.
+//     if (getLangOpts().isSignedOverflowDefined())
+//       Idx = Builder.CreateMul(Idx, NumElements);
+//     else
+//       Idx = Builder.CreateNSWMul(Idx, NumElements);
+//     EltPtr = emitArraySubscriptGEP(*this, Base, Idx, VLA->getElementType(),
+//                                    !getLangOpts().isSignedOverflowDefined(),
+//                                    /*signedIndices=*/false, E->getExprLoc());
+//   } else if (const Expr *Array = isSimpleArrayDecayOperand(E->getBase())) {
+//     // If this is A[i] where A is an array, the frontend will have decayed the
+//     // base to be a ArrayToPointerDecay implicit cast.  While correct, it is
+//     // inefficient at -O0 to emit a "gep A, 0, 0" when codegen'ing it, then a
+//     // "gep x, i" here.  Emit one "gep A, 0, i".
+//     assert(Array->getType()->isArrayType() &&
+//            "Array to pointer decay must have array source type!");
+//     LValue ArrayLV;
+//     // For simple multidimensional array indexing, set the 'accessed' flag for
+//     // better bounds-checking of the base expression.
+//     if (const auto *ASE = dyn_cast<ArraySubscriptExpr>(Array))
+//       ArrayLV = EmitArraySubscriptExpr(ASE, /*Accessed*/ true);
+//     else
+//       ArrayLV = EmitLValue(Array);
 
-    // Propagate the alignment from the array itself to the result.
-    EltPtr = emitArraySubscriptGEP(
-        *this, ArrayLV.getAddress(*this), {CGM.getSize(CharUnits::Zero()), Idx},
-        ResultExprTy, !getLangOpts().isSignedOverflowDefined(),
-        /*signedIndices=*/false, E->getExprLoc());
-    BaseInfo = ArrayLV.getBaseInfo();
-    TBAAInfo = CGM.getTBAAInfoForSubobject(ArrayLV, ResultExprTy);
-  } else {
-    Address Base = emitOMPArraySectionBase(*this, E->getBase(), BaseInfo,
-                                           TBAAInfo, BaseTy, ResultExprTy,
-                                           IsLowerBound);
-    EltPtr = emitArraySubscriptGEP(*this, Base, Idx, ResultExprTy,
-                                   !getLangOpts().isSignedOverflowDefined(),
-                                   /*signedIndices=*/false, E->getExprLoc());
-  }
+//     // Propagate the alignment from the array itself to the result.
+//     EltPtr = emitArraySubscriptGEP(
+//         *this, ArrayLV.getAddress(*this), {CGM.getSize(CharUnits::Zero()), Idx},
+//         ResultExprTy, !getLangOpts().isSignedOverflowDefined(),
+//         /*signedIndices=*/false, E->getExprLoc());
+//     BaseInfo = ArrayLV.getBaseInfo();
+//     TBAAInfo = CGM.getTBAAInfoForSubobject(ArrayLV, ResultExprTy);
+//   } else {
+//     Address Base = emitOMPArraySectionBase(*this, E->getBase(), BaseInfo,
+//                                            TBAAInfo, BaseTy, ResultExprTy,
+//                                            IsLowerBound);
+//     EltPtr = emitArraySubscriptGEP(*this, Base, Idx, ResultExprTy,
+//                                    !getLangOpts().isSignedOverflowDefined(),
+//                                    /*signedIndices=*/false, E->getExprLoc());
+//   }
 
-  return MakeAddrLValue(EltPtr, ResultExprTy, BaseInfo, TBAAInfo);
-}
+//   return MakeAddrLValue(EltPtr, ResultExprTy, BaseInfo, TBAAInfo);
+// }
 
 LValue CodeGenFunction::
 EmitExtVectorElementExpr(const ExtVectorElementExpr *E) {
@@ -4010,7 +4010,7 @@ EmitExtVectorElementExpr(const ExtVectorElementExpr *E) {
     Address Ptr = EmitPointerWithAlignment(E->getBase(), &BaseInfo, &TBAAInfo);
     const auto *PT = E->getBase()->getType()->castAs<PointerType>();
     Base = MakeAddrLValue(Ptr, PT->getPointeeType(), BaseInfo, TBAAInfo);
-    Base.getQuals().removeObjCGCAttr();
+    // Base.getQuals().removeObjCGCAttr();
   } else if (E->getBase()->isGLValue()) {
     // Otherwise, if the base is an lvalue ( as in the case of foo.x.x),
     // emit the base as an lvalue.
@@ -4083,16 +4083,16 @@ LValue CodeGenFunction::EmitMemberExpr(const MemberExpr *E) {
   NamedDecl *ND = E->getMemberDecl();
   if (auto *Field = dyn_cast<FieldDecl>(ND)) {
     LValue LV = EmitLValueForField(BaseLV, Field);
-    setObjCGCLValueClass(getContext(), E, LV);
-    if (getLangOpts().OpenMP) {
-      // If the member was explicitly marked as nontemporal, mark it as
-      // nontemporal. If the base lvalue is marked as nontemporal, mark access
-      // to children as nontemporal too.
-      if ((IsWrappedCXXThis(BaseExpr) &&
-           CGM.getOpenMPRuntime().isNontemporalDecl(Field)) ||
-          BaseLV.isNontemporal())
-        LV.setNontemporal(/*Value=*/true);
-    }
+    // setObjCGCLValueClass(getContext(), E, LV);
+    // if (getLangOpts().OpenMP) {
+    //   // If the member was explicitly marked as nontemporal, mark it as
+    //   // nontemporal. If the base lvalue is marked as nontemporal, mark access
+    //   // to children as nontemporal too.
+    //   if ((IsWrappedCXXThis(BaseExpr) &&
+    //        CGM.getOpenMPRuntime().isNontemporalDecl(Field)) ||
+    //       BaseLV.isNontemporal())
+    //     LV.setNontemporal(/*Value=*/true);
+    // }
     return LV;
   }
 
@@ -4341,8 +4341,8 @@ LValue CodeGenFunction::EmitLValueForField(LValue base,
   LV.getQuals().addCVRQualifiers(RecordCVR);
 
   // __weak attribute on a field is ignored.
-  if (LV.getQuals().getObjCGCAttr() == Qualifiers::Weak)
-    LV.getQuals().removeObjCGCAttr();
+  // if (LV.getQuals().getObjCGCAttr() == Qualifiers::Weak)
+  //   LV.getQuals().removeObjCGCAttr();
 
   return LV;
 }
@@ -4865,28 +4865,28 @@ LValue CodeGenFunction::EmitBinaryOperatorLValue(const BinaryOperator *E) {
 
   switch (getEvaluationKind(E->getType())) {
   case TEK_Scalar: {
-    switch (E->getLHS()->getType().getObjCLifetime()) {
-    case Qualifiers::OCL_Strong:
-      return EmitARCStoreStrong(E, /*ignored*/ false).first;
+    // switch (E->getLHS()->getType().getObjCLifetime()) {
+    // case Qualifiers::OCL_Strong:
+    //   return EmitARCStoreStrong(E, /*ignored*/ false).first;
 
-    case Qualifiers::OCL_Autoreleasing:
-      return EmitARCStoreAutoreleasing(E).first;
+    // case Qualifiers::OCL_Autoreleasing:
+    //   return EmitARCStoreAutoreleasing(E).first;
 
-    // No reason to do any of these differently.
-    case Qualifiers::OCL_None:
-    case Qualifiers::OCL_ExplicitNone:
-    case Qualifiers::OCL_Weak:
-      break;
-    }
+    // // No reason to do any of these differently.
+    // case Qualifiers::OCL_None:
+    // case Qualifiers::OCL_ExplicitNone:
+    // case Qualifiers::OCL_Weak:
+    //   break;
+    // }
 
     RValue RV = EmitAnyExpr(E->getRHS());
     LValue LV = EmitCheckedLValue(E->getLHS(), TCK_Store);
     if (RV.isScalar())
       EmitNullabilityCheck(LV, RV.getScalarVal(), E->getExprLoc());
     EmitStoreThroughLValue(RV, LV);
-    if (getLangOpts().OpenMP)
-      CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(*this,
-                                                                E->getLHS());
+    // if (getLangOpts().OpenMP)
+    //   CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(*this,
+    //                                                             E->getLHS());
     return LV;
   }
 

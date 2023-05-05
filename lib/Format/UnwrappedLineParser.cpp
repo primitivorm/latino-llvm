@@ -2547,61 +2547,61 @@ void UnwrappedLineParser::parseRecord(bool ParseAsExpr) {
   // "} n, m;" will end up in one unwrapped line.
 }
 
-void UnwrappedLineParser::parseObjCMethod() {
-  assert(FormatTok->Tok.isOneOf(tok::l_paren, tok::identifier) &&
-         "'(' or identifier expected.");
-  do {
-    if (FormatTok->Tok.is(tok::semi)) {
-      nextToken();
-      addUnwrappedLine();
-      return;
-    } else if (FormatTok->Tok.is(tok::l_brace)) {
-      if (Style.BraceWrapping.AfterFunction)
-        addUnwrappedLine();
-      parseBlock(/*MustBeDeclaration=*/false);
-      addUnwrappedLine();
-      return;
-    } else {
-      nextToken();
-    }
-  } while (!eof());
-}
+// void UnwrappedLineParser::parseObjCMethod() {
+//   assert(FormatTok->Tok.isOneOf(tok::l_paren, tok::identifier) &&
+//          "'(' or identifier expected.");
+//   do {
+//     if (FormatTok->Tok.is(tok::semi)) {
+//       nextToken();
+//       addUnwrappedLine();
+//       return;
+//     } else if (FormatTok->Tok.is(tok::l_brace)) {
+//       if (Style.BraceWrapping.AfterFunction)
+//         addUnwrappedLine();
+//       parseBlock(/*MustBeDeclaration=*/false);
+//       addUnwrappedLine();
+//       return;
+//     } else {
+//       nextToken();
+//     }
+//   } while (!eof());
+// }
 
-void UnwrappedLineParser::parseObjCProtocolList() {
-  assert(FormatTok->Tok.is(tok::less) && "'<' expected.");
-  do {
-    nextToken();
-    // Early exit in case someone forgot a close angle.
-    if (FormatTok->isOneOf(tok::semi, tok::l_brace) /*||
-        FormatTok->Tok.isObjCAtKeyword(tok::objc_end)*/)
-      return;
-  } while (!eof() && FormatTok->Tok.isNot(tok::greater));
-  nextToken(); // Skip '>'.
-}
+// void UnwrappedLineParser::parseObjCProtocolList() {
+//   assert(FormatTok->Tok.is(tok::less) && "'<' expected.");
+//   do {
+//     nextToken();
+//     // Early exit in case someone forgot a close angle.
+//     if (FormatTok->isOneOf(tok::semi, tok::l_brace) /*||
+//         FormatTok->Tok.isObjCAtKeyword(tok::objc_end)*/)
+//       return;
+//   } while (!eof() && FormatTok->Tok.isNot(tok::greater));
+//   nextToken(); // Skip '>'.
+// }
 
-void UnwrappedLineParser::parseObjCUntilAtEnd() {
-  do {
-    // if (FormatTok->Tok.isObjCAtKeyword(tok::objc_end)) {
-    //   nextToken();
-    //   addUnwrappedLine();
-    //   break;
-    // }
-    if (FormatTok->is(tok::l_brace)) {
-      parseBlock(/*MustBeDeclaration=*/false);
-      // In ObjC interfaces, nothing should be following the "}".
-      addUnwrappedLine();
-    } else if (FormatTok->is(tok::r_brace)) {
-      // Ignore stray "}". parseStructuralElement doesn't consume them.
-      nextToken();
-      addUnwrappedLine();
-    } else if (FormatTok->isOneOf(tok::minus, tok::plus)) {
-      nextToken();
-      parseObjCMethod();
-    } else {
-      parseStructuralElement();
-    }
-  } while (!eof());
-}
+// void UnwrappedLineParser::parseObjCUntilAtEnd() {
+//   do {
+//     // if (FormatTok->Tok.isObjCAtKeyword(tok::objc_end)) {
+//     //   nextToken();
+//     //   addUnwrappedLine();
+//     //   break;
+//     // }
+//     if (FormatTok->is(tok::l_brace)) {
+//       parseBlock(/*MustBeDeclaration=*/false);
+//       // In ObjC interfaces, nothing should be following the "}".
+//       addUnwrappedLine();
+//     } else if (FormatTok->is(tok::r_brace)) {
+//       // Ignore stray "}". parseStructuralElement doesn't consume them.
+//       nextToken();
+//       addUnwrappedLine();
+//     } else if (FormatTok->isOneOf(tok::minus, tok::plus)) {
+//       nextToken();
+//       parseObjCMethod();
+//     } else {
+//       parseStructuralElement();
+//     }
+//   } while (!eof());
+// }
 
 // void UnwrappedLineParser::parseObjCInterfaceOrImplementation() {
 //   assert(FormatTok->Tok.getObjCKeywordID() == tok::objc_interface ||

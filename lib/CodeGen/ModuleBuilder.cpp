@@ -14,7 +14,7 @@
 #include "CGDebugInfo.h"
 #include "CodeGenModule.h"
 #include "latino/AST/ASTContext.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/Diagnostic.h"
@@ -235,17 +235,17 @@ namespace {
         }
       }
       // For OpenMP emit declare reduction functions, if required.
-      if (Ctx->getLangOpts().OpenMP) {
-        for (Decl *Member : D->decls()) {
-          if (auto *DRD = dyn_cast<OMPDeclareReductionDecl>(Member)) {
-            if (Ctx->DeclMustBeEmitted(DRD))
-              Builder->EmitGlobal(DRD);
-          } else if (auto *DMD = dyn_cast<OMPDeclareMapperDecl>(Member)) {
-            if (Ctx->DeclMustBeEmitted(DMD))
-              Builder->EmitGlobal(DMD);
-          }
-        }
-      }
+      // if (Ctx->getLangOpts().OpenMP) {
+      //   for (Decl *Member : D->decls()) {
+      //     if (auto *DRD = dyn_cast<OMPDeclareReductionDecl>(Member)) {
+      //       if (Ctx->DeclMustBeEmitted(DRD))
+      //         Builder->EmitGlobal(DRD);
+      //     } else if (auto *DMD = dyn_cast<OMPDeclareMapperDecl>(Member)) {
+      //       if (Ctx->DeclMustBeEmitted(DMD))
+      //         Builder->EmitGlobal(DMD);
+      //     }
+      //   }
+      // }
     }
 
     void HandleTagDeclRequiredDefinition(const TagDecl *D) override {

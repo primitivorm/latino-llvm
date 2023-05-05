@@ -845,9 +845,9 @@ void CommentASTToXMLConverter::visitFullComment(const FullComment *C) {
       }
       if (DI->IsInstanceMethod)
         Result << " isInstanceMethod=\"1\"";
-      if (DI->IsClassMethod)
-        Result << " isClassMethod=\"1\"";
-      break;
+      // if (DI->IsClassMethod)
+      //   Result << " isClassMethod=\"1\"";
+      // break;
     case DeclInfo::ClassKind:
       RootEndTag = "</Class>";
       Result << "<Class";

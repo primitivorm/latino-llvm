@@ -13,7 +13,7 @@
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Attr.h"
-#include "latino/Analysis/SelectorExtras.h"
+// #include "latino/Analysis/SelectorExtras.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"
 #include "latino/StaticAnalyzer/Core/PathSensitive/CallEvent.h"

@@ -480,7 +480,7 @@ class TypeSourceInfo;
     ///
     /// \returns The equivalent selector in the "to" context, or the import
     /// error.
-    llvm::Expected<Selector> Import(Selector FromSel);
+    // llvm::Expected<Selector> Import(Selector FromSel);
 
     /// Import the given file ID from the "from" context into the
     /// "to" context.

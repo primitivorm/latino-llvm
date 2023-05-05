@@ -51,8 +51,8 @@ IdentifierInfo *Parser::getSEHExceptKeyword() {
 Parser::Parser(Preprocessor &pp, Sema &actions, bool skipFunctionBodies)
   : PP(pp), Actions(actions), Diags(PP.getDiagnostics()),
     GreaterThanIsOperator(true), ColonIsSacred(false),
-    InMessageExpression(false), TemplateParameterDepth(0),
-    ParsingInObjCContainer(false) {
+    InMessageExpression(false), TemplateParameterDepth(0)/*,
+    ParsingInObjCContainer(false)*/ {
   SkipFunctionBodies = pp.isCodeCompletionEnabled() || skipFunctionBodies;
   Tok.startToken();
   Tok.setKind(tok::eof);
@@ -834,12 +834,12 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   //   SingleDecl = ParseObjCMethodDefinition();
   //   break;
   case tok::code_completion:
-    if (CurParsedObjCImpl) {
-      // Code-complete Objective-C methods even without leading '-'/'+' prefix.
-      Actions.CodeCompleteObjCMethodDecl(getCurScope(),
-                                         /*IsInstanceMethod=*/None,
-                                         /*ReturnType=*/nullptr);
-    }
+    // if (CurParsedObjCImpl) {
+    //   // Code-complete Objective-C methods even without leading '-'/'+' prefix.
+    //   Actions.CodeCompleteObjCMethodDecl(getCurScope(),
+    //                                      /*IsInstanceMethod=*/None,
+    //                                      /*ReturnType=*/nullptr);
+    // }
     Actions.CodeCompleteOrdinaryName(
         getCurScope(),
         /*CurParsedObjCImpl ? Sema::PCC_ObjCImplementation :*/ Sema::PCC_Namespace);
@@ -1044,8 +1044,8 @@ Parser::ParseDeclOrFunctionDefInternal(ParsedAttributesWithRange &attrs,
     Decl *TheDecl = Actions.ParsedFreeStandingDeclSpec(getCurScope(), AS_none,
                                                        DS, AnonRecord);
     DS.complete(TheDecl);
-    if (getLangOpts().OpenCL)
-      Actions.setCurrentOpenCLExtensionForDecl(TheDecl);
+    // if (getLangOpts().OpenCL)
+    //   Actions.setCurrentOpenCLExtensionForDecl(TheDecl);
     if (AnonRecord) {
       Decl* decls[] = {AnonRecord, TheDecl};
       return Actions.BuildDeclaratorGroup(decls);
@@ -1110,7 +1110,7 @@ Parser::ParseDeclarationOrFunctionDefinition(ParsedAttributesWithRange &attrs,
     // Must temporarily exit the objective-c container scope for
     // parsing c constructs and re-enter objc container scope
     // afterwards.
-    ObjCDeclContextSwitch ObjCDC(*this);
+    // ObjCDeclContextSwitch ObjCDC(*this);
 
     return ParseDeclOrFunctionDefInternal(attrs, PDS, AS);
   }
@@ -1215,28 +1215,28 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
     }
     return DP;
   }
-  else if (CurParsedObjCImpl &&
-           !TemplateInfo.TemplateParams &&
-           (Tok.is(tok::l_brace) || Tok.is(tok::kw_intentar) ||
-            Tok.is(tok::colon)) &&
-      Actions.CurContext->isTranslationUnit()) {
-    ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
-                                   Scope::CompoundStmtScope);
-    Scope *ParentScope = getCurScope()->getParent();
+  // else if (CurParsedObjCImpl &&
+  //          !TemplateInfo.TemplateParams &&
+  //          (Tok.is(tok::l_brace) || Tok.is(tok::kw_intentar) ||
+  //           Tok.is(tok::colon)) &&
+  //     Actions.CurContext->isTranslationUnit()) {
+  //   ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
+  //                                  Scope::CompoundStmtScope);
+  //   Scope *ParentScope = getCurScope()->getParent();
 
-    D.setFunctionDefinitionKind(FDK_Definition);
-    Decl *FuncDecl = Actions.HandleDeclarator(ParentScope, D,
-                                              MultiTemplateParamsArg());
-    D.complete(FuncDecl);
-    D.getMutableDeclSpec().abort();
-    if (FuncDecl) {
-      // Consume the tokens and store them for later parsing.
-      StashAwayMethodOrFunctionBodyTokens(FuncDecl);
-      CurParsedObjCImpl->HasCFunction = true;
-      return FuncDecl;
-    }
-    // FIXME: Should we really fall through here?
-  }
+  //   D.setFunctionDefinitionKind(FDK_Definition);
+  //   Decl *FuncDecl = Actions.HandleDeclarator(ParentScope, D,
+  //                                             MultiTemplateParamsArg());
+  //   D.complete(FuncDecl);
+  //   D.getMutableDeclSpec().abort();
+  //   if (FuncDecl) {
+  //     // Consume the tokens and store them for later parsing.
+  //     StashAwayMethodOrFunctionBodyTokens(FuncDecl);
+  //     CurParsedObjCImpl->HasCFunction = true;
+  //     return FuncDecl;
+  //   }
+  //   // FIXME: Should we really fall through here?
+  // }
 
   // Enter a scope for the function body.
   ParseScope BodyScope(this, Scope::FnScope | Scope::DeclScope |
@@ -2392,13 +2392,13 @@ Decl *Parser::ParseModuleImport(SourceLocation AtLoc) {
 
   // Using '@import' in framework headers requires modules to be enabled so that
   // the header is parseable. Emit a warning to make the user aware.
-  if (IsObjCAtImport && AtLoc.isValid()) {
-    auto &SrcMgr = PP.getSourceManager();
-    auto *FE = SrcMgr.getFileEntryForID(SrcMgr.getFileID(AtLoc));
-    if (FE && llvm::sys::path::parent_path(FE->getDir()->getName())
-                  .endswith(".framework"))
-      Diags.Report(AtLoc, diag::warn_atimport_in_framework_header);
-  }
+  // if (IsObjCAtImport && AtLoc.isValid()) {
+  //   auto &SrcMgr = PP.getSourceManager();
+  //   auto *FE = SrcMgr.getFileEntryForID(SrcMgr.getFileID(AtLoc));
+  //   if (FE && llvm::sys::path::parent_path(FE->getDir()->getName())
+  //                 .endswith(".framework"))
+  //     Diags.Report(AtLoc, diag::warn_atimport_in_framework_header);
+  // }
 
   return Import.get();
 }

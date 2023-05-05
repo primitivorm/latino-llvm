@@ -16,7 +16,7 @@
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/ASTStructuralEquivalence.h"
 #include "latino/AST/CXXInheritance.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/TypeLoc.h"
@@ -40,11 +40,11 @@
 
 using namespace latino;
 
-enum TypeDiagSelector {
-  TDS_Function,
-  TDS_Pointer,
-  TDS_ObjCObjOrBlock
-};
+// enum TypeDiagSelector {
+//   TDS_Function,
+//   TDS_Pointer //,
+//   // TDS_ObjCObjOrBlock
+// };
 
 /// isOmittedBlockReturnType - Return true if this declarator is missing a
 /// return type because this is a omitted return type on a block literal.
@@ -65,47 +65,47 @@ static bool isOmittedBlockReturnType(const Declarator &D) {
 
 /// diagnoseBadTypeAttribute - Diagnoses a type attribute which
 /// doesn't apply to the given type.
-static void diagnoseBadTypeAttribute(Sema &S, const ParsedAttr &attr,
-                                     QualType type) {
-  TypeDiagSelector WhichType;
-  bool useExpansionLoc = true;
-  switch (attr.getKind()) {
-  case ParsedAttr::AT_ObjCGC:
-    WhichType = TDS_Pointer;
-    break;
-  case ParsedAttr::AT_ObjCOwnership:
-    WhichType = TDS_ObjCObjOrBlock;
-    break;
-  default:
-    // Assume everything else was a function attribute.
-    WhichType = TDS_Function;
-    useExpansionLoc = false;
-    break;
-  }
+// static void diagnoseBadTypeAttribute(Sema &S, const ParsedAttr &attr,
+//                                      QualType type) {
+//   TypeDiagSelector WhichType;
+//   bool useExpansionLoc = true;
+//   switch (attr.getKind()) {
+//   // case ParsedAttr::AT_ObjCGC:
+//   //   WhichType = TDS_Pointer;
+//   //   break;
+//   // case ParsedAttr::AT_ObjCOwnership:
+//   //   WhichType = TDS_ObjCObjOrBlock;
+//   //   break;
+//   default:
+//     // Assume everything else was a function attribute.
+//     WhichType = TDS_Function;
+//     useExpansionLoc = false;
+//     break;
+//   }
 
-  SourceLocation loc = attr.getLoc();
-  StringRef name = attr.getAttrName()->getName();
+//   SourceLocation loc = attr.getLoc();
+//   StringRef name = attr.getAttrName()->getName();
 
-  // The GC attributes are usually written with macros;  special-case them.
-  IdentifierInfo *II = attr.isArgIdent(0) ? attr.getArgAsIdent(0)->Ident
-                                          : nullptr;
-  if (useExpansionLoc && loc.isMacroID() && II) {
-    if (II->isStr("strong")) {
-      if (S.findMacroSpelling(loc, "__strong")) name = "__strong";
-    } else if (II->isStr("weak")) {
-      if (S.findMacroSpelling(loc, "__weak")) name = "__weak";
-    }
-  }
+//   // The GC attributes are usually written with macros;  special-case them.
+//   IdentifierInfo *II = attr.isArgIdent(0) ? attr.getArgAsIdent(0)->Ident
+//                                           : nullptr;
+//   if (useExpansionLoc && loc.isMacroID() && II) {
+//     if (II->isStr("strong")) {
+//       if (S.findMacroSpelling(loc, "__strong")) name = "__strong";
+//     } else if (II->isStr("weak")) {
+//       if (S.findMacroSpelling(loc, "__weak")) name = "__weak";
+//     }
+//   }
 
-  S.Diag(loc, diag::warn_type_attribute_wrong_type) << name << WhichType
-    << type;
-}
+//   S.Diag(loc, diag::warn_type_attribute_wrong_type) << name << WhichType
+//     << type;
+// }
 
 // objc_gc applies to Objective-C pointers or, otherwise, to the
 // smallest available pointer type (i.e. 'void*' in 'void**').
-#define OBJC_POINTER_TYPE_ATTRS_CASELIST                                       \
-  case ParsedAttr::AT_ObjCGC:                                                  \
-  case ParsedAttr::AT_ObjCOwnership
+// #define OBJC_POINTER_TYPE_ATTRS_CASELIST                                       \
+//   case ParsedAttr::AT_ObjCGC:                                                  \
+//   case ParsedAttr::AT_ObjCOwnership
 
 // Calling convention attributes.
 #define CALLING_CONV_ATTRS_CASELIST                                            \
@@ -246,10 +246,10 @@ namespace {
 
     /// Diagnose all the ignored type attributes, given that the
     /// declarator worked out to the given type.
-    void diagnoseIgnoredTypeAttrs(QualType type) const {
-      for (auto *Attr : ignoredTypeAttrs)
-        diagnoseBadTypeAttribute(getSema(), *Attr, type);
-    }
+    // void diagnoseIgnoredTypeAttrs(QualType type) const {
+    //   for (auto *Attr : ignoredTypeAttrs)
+    //     diagnoseBadTypeAttribute(getSema(), *Attr, type);
+    // }
 
     /// Get an attributed type for the given attribute, and remember the Attr
     /// object so that we can attach it to the AttributedTypeLoc.
@@ -366,19 +366,19 @@ static bool handleFunctionTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
 static bool handleMSPointerTypeQualifierAttr(TypeProcessingState &state,
                                              ParsedAttr &attr, QualType &type);
 
-static bool handleObjCGCTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
-                                 QualType &type);
+// static bool handleObjCGCTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
+//                                  QualType &type);
 
-static bool handleObjCOwnershipTypeAttr(TypeProcessingState &state,
-                                        ParsedAttr &attr, QualType &type);
+// static bool handleObjCOwnershipTypeAttr(TypeProcessingState &state,
+//                                         ParsedAttr &attr, QualType &type);
 
-static bool handleObjCPointerTypeAttr(TypeProcessingState &state,
-                                      ParsedAttr &attr, QualType &type) {
-  if (attr.getKind() == ParsedAttr::AT_ObjCGC)
-    return handleObjCGCTypeAttr(state, attr, type);
-  assert(attr.getKind() == ParsedAttr::AT_ObjCOwnership);
-  return handleObjCOwnershipTypeAttr(state, attr, type);
-}
+// static bool handleObjCPointerTypeAttr(TypeProcessingState &state,
+//                                       ParsedAttr &attr, QualType &type) {
+//   if (attr.getKind() == ParsedAttr::AT_ObjCGC)
+//     return handleObjCGCTypeAttr(state, attr, type);
+//   assert(attr.getKind() == ParsedAttr::AT_ObjCOwnership);
+//   return handleObjCOwnershipTypeAttr(state, attr, type);
+// }
 
 /// Given the index of a declarator chunk, check whether that chunk
 /// directly specifies the return type of a function and, if so, find
@@ -457,118 +457,118 @@ static DeclaratorChunk *maybeMovePastReturnType(Declarator &declarator,
 /// distributeObjCPointerTypeAttrFromDeclarator), and given that it
 /// didn't apply in whatever position it was written in, try to move
 /// it to a more appropriate position.
-static void distributeObjCPointerTypeAttr(TypeProcessingState &state,
-                                          ParsedAttr &attr, QualType type) {
-  Declarator &declarator = state.getDeclarator();
+// static void distributeObjCPointerTypeAttr(TypeProcessingState &state,
+//                                           ParsedAttr &attr, QualType type) {
+//   Declarator &declarator = state.getDeclarator();
 
-  // Move it to the outermost normal or block pointer declarator.
-  for (unsigned i = state.getCurrentChunkIndex(); i != 0; --i) {
-    DeclaratorChunk &chunk = declarator.getTypeObject(i-1);
-    switch (chunk.Kind) {
-    case DeclaratorChunk::Pointer:
-    case DeclaratorChunk::BlockPointer: {
-      // But don't move an ARC ownership attribute to the return type
-      // of a block.
-      DeclaratorChunk *destChunk = nullptr;
-      if (state.isProcessingDeclSpec() &&
-          attr.getKind() == ParsedAttr::AT_ObjCOwnership)
-        destChunk = maybeMovePastReturnType(declarator, i - 1,
-                                            /*onlyBlockPointers=*/true);
-      if (!destChunk) destChunk = &chunk;
+//   // Move it to the outermost normal or block pointer declarator.
+//   for (unsigned i = state.getCurrentChunkIndex(); i != 0; --i) {
+//     DeclaratorChunk &chunk = declarator.getTypeObject(i-1);
+//     switch (chunk.Kind) {
+//     case DeclaratorChunk::Pointer:
+//     case DeclaratorChunk::BlockPointer: {
+//       // But don't move an ARC ownership attribute to the return type
+//       // of a block.
+//       DeclaratorChunk *destChunk = nullptr;
+//       if (state.isProcessingDeclSpec() /*&&
+//           attr.getKind() == ParsedAttr::AT_ObjCOwnership*/)
+//         destChunk = maybeMovePastReturnType(declarator, i - 1,
+//                                             /*onlyBlockPointers=*/true);
+//       if (!destChunk) destChunk = &chunk;
 
-      moveAttrFromListToList(attr, state.getCurrentAttributes(),
-                             destChunk->getAttrs());
-      return;
-    }
+//       moveAttrFromListToList(attr, state.getCurrentAttributes(),
+//                              destChunk->getAttrs());
+//       return;
+//     }
 
-    case DeclaratorChunk::Paren:
-    case DeclaratorChunk::Array:
-      continue;
+//     case DeclaratorChunk::Paren:
+//     case DeclaratorChunk::Array:
+//       continue;
 
-    // We may be starting at the return type of a block.
-    case DeclaratorChunk::Function:
-      if (state.isProcessingDeclSpec() &&
-          attr.getKind() == ParsedAttr::AT_ObjCOwnership) {
-        if (DeclaratorChunk *dest = maybeMovePastReturnType(
-                                      declarator, i,
-                                      /*onlyBlockPointers=*/true)) {
-          moveAttrFromListToList(attr, state.getCurrentAttributes(),
-                                 dest->getAttrs());
-          return;
-        }
-      }
-      goto error;
+//     // We may be starting at the return type of a block.
+//     case DeclaratorChunk::Function:
+//       if (state.isProcessingDeclSpec() /*&&
+//           attr.getKind() == ParsedAttr::AT_ObjCOwnership*/) {
+//         if (DeclaratorChunk *dest = maybeMovePastReturnType(
+//                                       declarator, i,
+//                                       /*onlyBlockPointers=*/true)) {
+//           moveAttrFromListToList(attr, state.getCurrentAttributes(),
+//                                  dest->getAttrs());
+//           return;
+//         }
+//       }
+//       goto error;
 
-    // Don't walk through these.
-    case DeclaratorChunk::Reference:
-    case DeclaratorChunk::MemberPointer:
-    case DeclaratorChunk::Pipe:
-      goto error;
-    }
-  }
- error:
+//     // Don't walk through these.
+//     case DeclaratorChunk::Reference:
+//     case DeclaratorChunk::MemberPointer:
+//     case DeclaratorChunk::Pipe:
+//       goto error;
+//     }
+//   }
+//  error:
 
-  diagnoseBadTypeAttribute(state.getSema(), attr, type);
-}
+//   diagnoseBadTypeAttribute(state.getSema(), attr, type);
+// }
 
 /// Distribute an objc_gc type attribute that was written on the
 /// declarator.
-static void distributeObjCPointerTypeAttrFromDeclarator(
-    TypeProcessingState &state, ParsedAttr &attr, QualType &declSpecType) {
-  Declarator &declarator = state.getDeclarator();
+// static void distributeObjCPointerTypeAttrFromDeclarator(
+//     TypeProcessingState &state, ParsedAttr &attr, QualType &declSpecType) {
+//   Declarator &declarator = state.getDeclarator();
 
-  // objc_gc goes on the innermost pointer to something that's not a
-  // pointer.
-  unsigned innermost = -1U;
-  bool considerDeclSpec = true;
-  for (unsigned i = 0, e = declarator.getNumTypeObjects(); i != e; ++i) {
-    DeclaratorChunk &chunk = declarator.getTypeObject(i);
-    switch (chunk.Kind) {
-    case DeclaratorChunk::Pointer:
-    case DeclaratorChunk::BlockPointer:
-      innermost = i;
-      continue;
+//   // objc_gc goes on the innermost pointer to something that's not a
+//   // pointer.
+//   unsigned innermost = -1U;
+//   bool considerDeclSpec = true;
+//   for (unsigned i = 0, e = declarator.getNumTypeObjects(); i != e; ++i) {
+//     DeclaratorChunk &chunk = declarator.getTypeObject(i);
+//     switch (chunk.Kind) {
+//     case DeclaratorChunk::Pointer:
+//     case DeclaratorChunk::BlockPointer:
+//       innermost = i;
+//       continue;
 
-    case DeclaratorChunk::Reference:
-    case DeclaratorChunk::MemberPointer:
-    case DeclaratorChunk::Paren:
-    case DeclaratorChunk::Array:
-    case DeclaratorChunk::Pipe:
-      continue;
+//     case DeclaratorChunk::Reference:
+//     case DeclaratorChunk::MemberPointer:
+//     case DeclaratorChunk::Paren:
+//     case DeclaratorChunk::Array:
+//     case DeclaratorChunk::Pipe:
+//       continue;
 
-    case DeclaratorChunk::Function:
-      considerDeclSpec = false;
-      goto done;
-    }
-  }
- done:
+//     case DeclaratorChunk::Function:
+//       considerDeclSpec = false;
+//       goto done;
+//     }
+//   }
+//  done:
 
-  // That might actually be the decl spec if we weren't blocked by
-  // anything in the declarator.
-  if (considerDeclSpec) {
-    if (handleObjCPointerTypeAttr(state, attr, declSpecType)) {
-      // Splice the attribute into the decl spec.  Prevents the
-      // attribute from being applied multiple times and gives
-      // the source-location-filler something to work with.
-      state.saveDeclSpecAttrs();
-      declarator.getMutableDeclSpec().getAttributes().takeOneFrom(
-          declarator.getAttributes(), &attr);
-      return;
-    }
-  }
+//   // That might actually be the decl spec if we weren't blocked by
+//   // anything in the declarator.
+//   // if (considerDeclSpec) {
+//   //   if (handleObjCPointerTypeAttr(state, attr, declSpecType)) {
+//   //     // Splice the attribute into the decl spec.  Prevents the
+//   //     // attribute from being applied multiple times and gives
+//   //     // the source-location-filler something to work with.
+//   //     state.saveDeclSpecAttrs();
+//   //     declarator.getMutableDeclSpec().getAttributes().takeOneFrom(
+//   //         declarator.getAttributes(), &attr);
+//   //     return;
+//   //   }
+//   // }
 
-  // Otherwise, if we found an appropriate chunk, splice the attribute
-  // into it.
-  if (innermost != -1U) {
-    moveAttrFromListToList(attr, declarator.getAttributes(),
-                           declarator.getTypeObject(innermost).getAttrs());
-    return;
-  }
+//   // Otherwise, if we found an appropriate chunk, splice the attribute
+//   // into it.
+//   if (innermost != -1U) {
+//     moveAttrFromListToList(attr, declarator.getAttributes(),
+//                            declarator.getTypeObject(innermost).getAttrs());
+//     return;
+//   }
 
-  // Otherwise, diagnose when we're done building the type.
-  declarator.getAttributes().remove(&attr);
-  state.addIgnoredTypeAttr(attr);
-}
+//   // Otherwise, diagnose when we're done building the type.
+//   declarator.getAttributes().remove(&attr);
+//   state.addIgnoredTypeAttr(attr);
+// }
 
 /// A function type attribute was written somewhere in a declaration
 /// *other* than on the declarator itself or in the decl spec.  Given
@@ -599,7 +599,7 @@ static void distributeFunctionTypeAttr(TypeProcessingState &state,
     }
   }
 
-  diagnoseBadTypeAttribute(state.getSema(), attr, type);
+  // diagnoseBadTypeAttribute(state.getSema(), attr, type);
 }
 
 /// Try to distribute a function type attribute to the innermost
@@ -691,9 +691,9 @@ static void distributeTypeAttrsFromDeclarator(TypeProcessingState &state,
       continue;
 
     switch (attr.getKind()) {
-    OBJC_POINTER_TYPE_ATTRS_CASELIST:
-      distributeObjCPointerTypeAttrFromDeclarator(state, attr, declSpecType);
-      break;
+    // OBJC_POINTER_TYPE_ATTRS_CASELIST:
+    //   distributeObjCPointerTypeAttrFromDeclarator(state, attr, declSpecType);
+    //   break;
 
     FUNCTION_TYPE_ATTRS_CASELIST:
       distributeFunctionTypeAttrFromDeclarator(state, attr, declSpecType);
@@ -1246,13 +1246,13 @@ static bool checkOmittedBlockReturnType(Sema &S, Declarator &declarator,
 //   return CreateParsedType(Result, ResultTInfo);
 // }
 
-static OpenCLAccessAttr::Spelling
-getImageAccess(const ParsedAttributesView &Attrs) {
-  for (const ParsedAttr &AL : Attrs)
-    if (AL.getKind() == ParsedAttr::AT_OpenCLAccess)
-      return static_cast<OpenCLAccessAttr::Spelling>(AL.getSemanticSpelling());
-  return OpenCLAccessAttr::Keyword_read_only;
-}
+// static OpenCLAccessAttr::Spelling
+// getImageAccess(const ParsedAttributesView &Attrs) {
+//   for (const ParsedAttr &AL : Attrs)
+//     if (AL.getKind() == ParsedAttr::AT_OpenCLAccess)
+//       return static_cast<OpenCLAccessAttr::Spelling>(AL.getSemanticSpelling());
+//   return OpenCLAccessAttr::Keyword_read_only;
+// }
 
 static QualType ConvertConstrainedAutoDeclSpecToType(Sema &S, DeclSpec &DS,
                                                      AutoTypeKeyword AutoKW) {
@@ -1500,26 +1500,26 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
 
     break;
   }
-  case DeclSpec::TST_int128:
-    if (!S.Context.getTargetInfo().hasInt128Type() &&
-        !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
-      S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
-        << "__int128";
-    if (DS.getTypeSpecSign() == DeclSpec::TSS_unsigned)
-      Result = Context.UnsignedInt128Ty;
-    else
-      Result = Context.Int128Ty;
-    break;
-  case DeclSpec::TST_float16:
-    // CUDA host and device may have different _Float16 support, therefore
-    // do not diagnose _Float16 usage to avoid false alarm.
-    // ToDo: more precise diagnostics for CUDA.
-    if (!S.Context.getTargetInfo().hasFloat16Type() && !S.getLangOpts().CUDA &&
-        !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
-      S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
-        << "_Float16";
-    Result = Context.Float16Ty;
-    break;
+  // case DeclSpec::TST_int128:
+  //   if (!S.Context.getTargetInfo().hasInt128Type() &&
+  //       !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
+  //     S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
+  //       << "__int128";
+  //   if (DS.getTypeSpecSign() == DeclSpec::TSS_unsigned)
+  //     Result = Context.UnsignedInt128Ty;
+  //   else
+  //     Result = Context.Int128Ty;
+  //   break;
+  // case DeclSpec::TST_float16:
+  //   // CUDA host and device may have different _Float16 support, therefore
+  //   // do not diagnose _Float16 usage to avoid false alarm.
+  //   // ToDo: more precise diagnostics for CUDA.
+  //   if (!S.Context.getTargetInfo().hasFloat16Type() && !S.getLangOpts().CUDA &&
+  //       !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
+  //     S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
+  //       << "_Float16";
+  //   Result = Context.Float16Ty;
+  //   break;
   // case DeclSpec::TST_half:    Result = Context.HalfTy; break;
   case DeclSpec::TST_BFloat16:
     if (!S.Context.getTargetInfo().hasBFloat16Type())
@@ -1534,14 +1534,14 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
     else
       Result = Context.DoubleTy;
     break;
-  case DeclSpec::TST_float128:
-    if (!S.Context.getTargetInfo().hasFloat128Type() &&
-        !S.getLangOpts().SYCLIsDevice &&
-        !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
-      S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
-        << "__float128";
-    Result = Context.Float128Ty;
-    break;
+  // case DeclSpec::TST_float128:
+  //   if (!S.Context.getTargetInfo().hasFloat128Type() &&
+  //       !S.getLangOpts().SYCLIsDevice &&
+  //       !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
+  //     S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
+  //       << "__float128";
+  //   Result = Context.Float128Ty;
+  //   break;
   case DeclSpec::TST_bool: Result = Context.BoolTy; break; // _Bool or bool
     break;
   case DeclSpec::TST_decimal32:    // _Decimal32
@@ -1704,9 +1704,9 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
   if (Result->containsErrors())
     declarator.setInvalidType();
 
-  if (S.getLangOpts().OpenCL &&
-      S.checkOpenCLDisabledTypeDeclSpec(DS, Result))
-    declarator.setInvalidType(true);
+  // if (S.getLangOpts().OpenCL &&
+  //     S.checkOpenCLDisabledTypeDeclSpec(DS, Result))
+  //   declarator.setInvalidType(true);
 
   bool IsFixedPointType = DS.getTypeSpecType() == DeclSpec::TST_accum ||
                           DS.getTypeSpecType() == DeclSpec::TST_fract;
@@ -1920,56 +1920,56 @@ QualType Sema::BuildParenType(QualType T) {
 }
 
 /// Given that we're building a pointer or reference to the given
-static QualType inferARCLifetimeForPointee(Sema &S, QualType type,
-                                           SourceLocation loc,
-                                           bool isReference) {
-  // Bail out if retention is unrequired or already specified.
-  if (!type->isObjCLifetimeType() ||
-      type.getObjCLifetime() != Qualifiers::OCL_None)
-    return type;
+// static QualType inferARCLifetimeForPointee(Sema &S, QualType type,
+//                                            SourceLocation loc,
+//                                            bool isReference) {
+//   // Bail out if retention is unrequired or already specified.
+//   // if (!type->isObjCLifetimeType() ||
+//   //     type.getObjCLifetime() != Qualifiers::OCL_None)
+//   //   return type;
 
-  Qualifiers::ObjCLifetime implicitLifetime = Qualifiers::OCL_None;
+//   // Qualifiers::ObjCLifetime implicitLifetime = Qualifiers::OCL_None;
 
-  // If the object type is const-qualified, we can safely use
-  // __unsafe_unretained.  This is safe (because there are no read
-  // barriers), and it'll be safe to coerce anything but __weak* to
-  // the resulting type.
-  if (type.isConstQualified()) {
-    implicitLifetime = Qualifiers::OCL_ExplicitNone;
+//   // If the object type is const-qualified, we can safely use
+//   // __unsafe_unretained.  This is safe (because there are no read
+//   // barriers), and it'll be safe to coerce anything but __weak* to
+//   // the resulting type.
+//   if (type.isConstQualified()) {
+//     implicitLifetime = Qualifiers::OCL_ExplicitNone;
 
-  // Otherwise, check whether the static type does not require
-  // retaining.  This currently only triggers for Class (possibly
-  // protocol-qualifed, and arrays thereof).
-  } else if (type->isObjCARCImplicitlyUnretainedType()) {
-    implicitLifetime = Qualifiers::OCL_ExplicitNone;
+//   // Otherwise, check whether the static type does not require
+//   // retaining.  This currently only triggers for Class (possibly
+//   // protocol-qualifed, and arrays thereof).
+//   } else if (type->isObjCARCImplicitlyUnretainedType()) {
+//     implicitLifetime = Qualifiers::OCL_ExplicitNone;
 
-  // If we are in an unevaluated context, like sizeof, skip adding a
-  // qualification.
-  } else if (S.isUnevaluatedContext()) {
-    return type;
+//   // If we are in an unevaluated context, like sizeof, skip adding a
+//   // qualification.
+//   } else if (S.isUnevaluatedContext()) {
+//     return type;
 
-  // If that failed, give an error and recover using __strong.  __strong
-  // is the option most likely to prevent spurious second-order diagnostics,
-  // like when binding a reference to a field.
-  } else {
-    // These types can show up in private ivars in system headers, so
-    // we need this to not be an error in those cases.  Instead we
-    // want to delay.
-    if (S.DelayedDiagnostics.shouldDelayDiagnostics()) {
-      S.DelayedDiagnostics.add(
-          sema::DelayedDiagnostic::makeForbiddenType(loc,
-              diag::err_arc_indirect_no_ownership, type, isReference));
-    } else {
-      S.Diag(loc, diag::err_arc_indirect_no_ownership) << type << isReference;
-    }
-    implicitLifetime = Qualifiers::OCL_Strong;
-  }
-  assert(implicitLifetime && "didn't infer any lifetime!");
+//   // If that failed, give an error and recover using __strong.  __strong
+//   // is the option most likely to prevent spurious second-order diagnostics,
+//   // like when binding a reference to a field.
+//   } else {
+//     // These types can show up in private ivars in system headers, so
+//     // we need this to not be an error in those cases.  Instead we
+//     // want to delay.
+//     if (S.DelayedDiagnostics.shouldDelayDiagnostics()) {
+//       S.DelayedDiagnostics.add(
+//           sema::DelayedDiagnostic::makeForbiddenType(loc,
+//               diag::err_arc_indirect_no_ownership, type, isReference));
+//     } else {
+//       S.Diag(loc, diag::err_arc_indirect_no_ownership) << type << isReference;
+//     }
+//     implicitLifetime = Qualifiers::OCL_Strong;
+//   }
+//   assert(implicitLifetime && "didn't infer any lifetime!");
 
-  Qualifiers qs;
-  qs.addObjCLifetime(implicitLifetime);
-  return S.Context.getQualifiedType(type, qs);
-}
+//   Qualifiers qs;
+//   qs.addObjCLifetime(implicitLifetime);
+//   return S.Context.getQualifiedType(type, qs);
+// }
 
 static std::string getFunctionQualifiersAsString(const FunctionProtoType *FnTy){
   std::string Quals = FnTy->getMethodQuals().getAsString();
@@ -2038,7 +2038,7 @@ bool Sema::CheckQualifiedFunctionForTypeId(QualType T, SourceLocation Loc) {
 // Helper to deduce addr space of a pointee type in OpenCL mode.
 static QualType deduceOpenCLPointeeAddrSpace(Sema &S, QualType PointeeType) {
   if (!PointeeType->isUndeducedAutoType() && !PointeeType->isDependentType() &&
-      !PointeeType->isSamplerT() &&
+      // !PointeeType->isSamplerT() &&
       !PointeeType.hasAddressSpace())
     PointeeType = S.getASTContext().getAddrSpaceQualType(
         PointeeType,
@@ -2144,11 +2144,11 @@ QualType Sema::BuildReferenceType(QualType T, bool SpelledAsLValue,
     return QualType();
 
   // In ARC, it is forbidden to build references to unqualified pointers.
-  if (getLangOpts().ObjCAutoRefCount)
-    T = inferARCLifetimeForPointee(*this, T, Loc, /*reference*/ true);
+  // if (getLangOpts().ObjCAutoRefCount)
+  //   T = inferARCLifetimeForPointee(*this, T, Loc, /*reference*/ true);
 
-  if (getLangOpts().OpenCL)
-    T = deduceOpenCLPointeeAddrSpace(*this, T);
+  // if (getLangOpts().OpenCL)
+  //   T = deduceOpenCLPointeeAddrSpace(*this, T);
 
   // Handle restrict on references.
   if (LValueRef)
@@ -2449,14 +2449,14 @@ QualType Sema::BuildArrayType(QualType T, ArrayType::ArraySizeModifier ASM,
   // OpenCL v2.0 s6.12.5 - Arrays of blocks are not supported.
   // OpenCL v2.0 s6.16.13.1 - Arrays of pipe type are not supported.
   // OpenCL v2.0 s6.9.b - Arrays of image/sampler type are not supported.
-  if (getLangOpts().OpenCL) {
-    const QualType ArrType = Context.getBaseElementType(T);
-    if (ArrType->isBlockPointerType() || ArrType->isPipeType() ||
-        ArrType->isSamplerT() || ArrType->isImageType()) {
-      Diag(Loc, diag::err_opencl_invalid_type_array) << ArrType;
-      return QualType();
-    }
-  }
+  // if (getLangOpts().OpenCL) {
+  //   const QualType ArrType = Context.getBaseElementType(T);
+  //   if (ArrType->isBlockPointerType() || ArrType->isPipeType() ||
+  //       ArrType->isSamplerT() || ArrType->isImageType()) {
+  //     Diag(Loc, diag::err_opencl_invalid_type_array) << ArrType;
+  //     return QualType();
+  //   }
+  // }
 
   return T;
 }
@@ -2854,8 +2854,8 @@ QualType Sema::BuildBlockPointerType(QualType T,
   if (checkQualifiedFunction(*this, T, Loc, QFK_BlockPointer))
     return QualType();
 
-  if (getLangOpts().OpenCL)
-    T = deduceOpenCLPointeeAddrSpace(*this, T);
+  // if (getLangOpts().OpenCL)
+  //   T = deduceOpenCLPointeeAddrSpace(*this, T);
 
   return Context.getBlockPointerType(T);
 }
@@ -2877,9 +2877,9 @@ QualType Sema::GetTypeFromParser(ParsedType Ty, TypeSourceInfo **TInfo) {
   return QT;
 }
 
-static void transferARCOwnershipToDeclaratorChunk(TypeProcessingState &state,
-                                            Qualifiers::ObjCLifetime ownership,
-                                            unsigned chunkIndex);
+// static void transferARCOwnershipToDeclaratorChunk(TypeProcessingState &state,
+//                                             Qualifiers::ObjCLifetime ownership,
+//                                             unsigned chunkIndex);
 
 /// Given that this is the declaration of a parameter under ARC,
 /// attempt to infer attributes and such for pointer-to-whatever
@@ -2939,18 +2939,18 @@ static void inferARCWriteback(TypeProcessingState &state,
   // retainable object type.
   if (numPointers == 1) {
     // If it's not a retainable object type, the rule doesn't apply.
-    if (!declSpecType->isObjCRetainableType()) return;
+    // if (!declSpecType->isObjCRetainableType()) return;
 
     // If it already has lifetime, don't do anything.
-    if (declSpecType.getObjCLifetime()) return;
+    // if (declSpecType.getObjCLifetime()) return;
 
     // Otherwise, modify the type in-place.
     Qualifiers qs;
 
-    if (declSpecType->isObjCARCImplicitlyUnretainedType())
-      qs.addObjCLifetime(Qualifiers::OCL_ExplicitNone);
-    else
-      qs.addObjCLifetime(Qualifiers::OCL_Autoreleasing);
+    // if (declSpecType->isObjCARCImplicitlyUnretainedType())
+    //   qs.addObjCLifetime(Qualifiers::OCL_ExplicitNone);
+    // else
+      // qs.addObjCLifetime(Qualifiers::OCL_Autoreleasing);
     declSpecType = S.Context.getQualifiedType(declSpecType, qs);
 
   // If we have *two* pointers, then we want to throw the qualifier on
@@ -2967,12 +2967,12 @@ static void inferARCWriteback(TypeProcessingState &state,
     if (chunk.Kind != DeclaratorChunk::Pointer &&
         chunk.Kind != DeclaratorChunk::BlockPointer)
       return;
-    for (const ParsedAttr &AL : chunk.getAttrs())
-      if (AL.getKind() == ParsedAttr::AT_ObjCOwnership)
-        return;
+    // for (const ParsedAttr &AL : chunk.getAttrs())
+    //   if (AL.getKind() == ParsedAttr::AT_ObjCOwnership)
+    //     return;
 
-    transferARCOwnershipToDeclaratorChunk(state, Qualifiers::OCL_Autoreleasing,
-                                          outermostPointerIndex);
+    // transferARCOwnershipToDeclaratorChunk(state, Qualifiers::OCL_Autoreleasing,
+    //                                       outermostPointerIndex);
 
   // Any other number of pointers/references does not trigger the rule.
   } else return;
@@ -3294,9 +3294,9 @@ static QualType GetDeclSpecTypeForDeclarator(TypeProcessingState &state,
           D.isFunctionDeclarator())
         break;
       bool Cxx = SemaRef.getLangOpts().CPlusPlus;
-      if (isa<ObjCContainerDecl>(SemaRef.CurContext)) {
-        Error = 6; // Interface member.
-      } else {
+      // if (isa<ObjCContainerDecl>(SemaRef.CurContext)) {
+      //   Error = 6; // Interface member.
+      // } else {
         switch (cast<TagDecl>(SemaRef.CurContext)->getTagKind()) {
         case TTK_Enum: llvm_unreachable("unhandled tag kind");
         case TTK_Struct: Error = Cxx ? 1 : 2; /* Struct member */ break;
@@ -3304,7 +3304,7 @@ static QualType GetDeclSpecTypeForDeclarator(TypeProcessingState &state,
         case TTK_Class:  Error = 5; /* Class member */ break;
         case TTK_Interface: Error = 6; /* Interface member */ break;
         }
-      }
+      // }
       if (D.getDeclSpec().isFriendSpecified())
         Error = 20; // Friend type
       break;
@@ -3797,14 +3797,14 @@ static CallingConv getCCForDeclaratorChunk(
   // and AMDGPU targets, hence it cannot be treated as a calling
   // convention attribute. This is the simplest place to infer
   // calling convention for OpenCL kernels.
-  if (S.getLangOpts().OpenCL) {
-    for (const ParsedAttr &AL : D.getDeclSpec().getAttributes()) {
-      if (AL.getKind() == ParsedAttr::AT_OpenCLKernel) {
-        CC = CC_OpenCLKernel;
-        break;
-      }
-    }
-  }
+  // if (S.getLangOpts().OpenCL) {
+  //   for (const ParsedAttr &AL : D.getDeclSpec().getAttributes()) {
+  //     if (AL.getKind() == ParsedAttr::AT_OpenCLKernel) {
+  //       CC = CC_OpenCLKernel;
+  //       break;
+  //     }
+  //   }
+  // }
 
   return CC;
 }
@@ -3982,14 +3982,14 @@ classifyPointerDeclarator(Sema &S, QualType type, Declarator &declarator,
     // }
 
     // Look at Objective-C class types.
-    if (auto objcClass = type->getAs<ObjCInterfaceType>()) {
-      if (objcClass->getInterface()->getIdentifier() == S.getNSErrorIdent()) {
-        if (numNormalPointers == 2 && numTypeSpecifierPointers < 2)
-          return PointerDeclaratorKind::NSErrorPointerPointer;
-      }
+    // if (auto objcClass = type->getAs<ObjCInterfaceType>()) {
+    //   if (objcClass->getInterface()->getIdentifier() == S.getNSErrorIdent()) {
+    //     if (numNormalPointers == 2 && numTypeSpecifierPointers < 2)
+    //       return PointerDeclaratorKind::NSErrorPointerPointer;
+    //   }
 
-      break;
-    }
+    //   break;
+    // }
 
     // If at this point we haven't seen a pointer, we won't see one.
     if (numNormalPointers == 0)
@@ -4009,11 +4009,11 @@ classifyPointerDeclarator(Sema &S, QualType type, Declarator &declarator,
         // the two attributes.
         if (recordDecl->getTagKind() == TTK_Struct && numNormalPointers > 0) {
           IdentifierInfo *bridgedType = nullptr;
-          if (auto bridgeAttr = recordDecl->getAttr<ObjCBridgeAttr>())
-            bridgedType = bridgeAttr->getBridgedType();
-          else if (auto bridgeAttr =
-                       recordDecl->getAttr<ObjCBridgeMutableAttr>())
-            bridgedType = bridgeAttr->getBridgedType();
+          // if (auto bridgeAttr = recordDecl->getAttr<ObjCBridgeAttr>())
+          //   bridgedType = bridgeAttr->getBridgedType();
+          // else if (auto bridgeAttr =
+          //              recordDecl->getAttr<ObjCBridgeMutableAttr>())
+          //   bridgedType = bridgeAttr->getBridgedType();
 
           if (bridgedType == S.getNSErrorIdent()) {
             S.CFError = recordDecl;
@@ -4452,16 +4452,16 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
       LLVM_FALLTHROUGH;
 
     case DeclaratorContext::MemberContext:
-      if (state.getDeclarator().isObjCIvar() && !isFunctionOrMethod) {
+      if (/*state.getDeclarator().isObjCIvar() &&*/ !isFunctionOrMethod) {
         complainAboutMissingNullability = CAMN_No;
         break;
       }
 
       // Weak properties are inferred to be nullable.
-      if (state.getDeclarator().isObjCWeakProperty() && inAssumeNonNullRegion) {
-        inferNullability = NullabilityKind::Nullable;
-        break;
-      }
+      // if (state.getDeclarator().isObjCWeakProperty() && inAssumeNonNullRegion) {
+      //   inferNullability = NullabilityKind::Nullable;
+      //   break;
+      // }
 
       LLVM_FALLTHROUGH;
 
@@ -4589,10 +4589,10 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
 
       attrs.addAtEnd(nullabilityAttr);
 
-      if (inferNullabilityCS) {
-        state.getDeclarator().getMutableDeclSpec().getObjCQualifiers()
-          ->setObjCDeclQualifier(ObjCDeclSpec::DQ_CSNullability);
-      }
+      // if (inferNullabilityCS) {
+      //   state.getDeclarator().getMutableDeclSpec().getObjCQualifiers()
+      //     ->setObjCDeclQualifier(ObjCDeclSpec::DQ_CSNullability);
+      // }
 
       if (pointerLoc.isValid() &&
           complainAboutInferringWithinChunk !=
@@ -4689,11 +4689,11 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
                               state.getDeclarator().getAttributePool());
 
       T = S.BuildBlockPointerType(T, D.getIdentifierLoc(), Name);
-      if (DeclType.Cls.TypeQuals || LangOpts.OpenCL) {
+      if (DeclType.Cls.TypeQuals /*|| LangOpts.OpenCL*/) {
         // OpenCL v2.0, s6.12.5 - Block variable declarations are implicitly
         // qualified with const.
-        if (LangOpts.OpenCL)
-          DeclType.Cls.TypeQuals |= DeclSpec::TQ_const;
+        // if (LangOpts.OpenCL)
+        //   DeclType.Cls.TypeQuals |= DeclSpec::TQ_const;
         T = S.BuildQualifiedType(T, DeclType.Loc, DeclType.Cls.TypeQuals);
       }
       break;
@@ -4721,13 +4721,13 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
       // OpenCL v2.0 s6.9b - Pointer to image/sampler cannot be used.
       // OpenCL v2.0 s6.13.16.1 - Pointer to pipe cannot be used.
       // OpenCL v2.0 s6.12.5 - Pointers to Blocks are not allowed.
-      if (LangOpts.OpenCL) {
-        if (T->isImageType() || T->isSamplerT() || T->isPipeType() ||
-            T->isBlockPointerType()) {
-          S.Diag(D.getIdentifierLoc(), diag::err_opencl_pointer_to_type) << T;
-          D.setInvalidType(true);
-        }
-      }
+      // if (LangOpts.OpenCL) {
+      //   if (T->isImageType() || T->isSamplerT() || T->isPipeType() ||
+      //       T->isBlockPointerType()) {
+      //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_pointer_to_type) << T;
+      //     D.setInvalidType(true);
+      //   }
+      // }
 
       T = S.BuildPointerType(T, DeclType.Loc, Name);
       if (DeclType.Ptr.TypeQuals)
@@ -4912,40 +4912,41 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
       // Do not allow returning half FP value.
       // FIXME: This really should be in BuildFunctionType.
       if (T->isHalfType()) {
-        if (S.getLangOpts().OpenCL) {
-          if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
-            S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
-                << T << 0 /*pointer hint*/;
-            D.setInvalidType(true);
-          }
-        } else if (!S.getLangOpts().HalfArgsAndReturns) {
+        // if (S.getLangOpts().OpenCL) {
+        //   if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
+        //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
+        //         << T << 0 /*pointer hint*/;
+        //     D.setInvalidType(true);
+        //   }
+        // } else 
+        if (!S.getLangOpts().HalfArgsAndReturns) {
           S.Diag(D.getIdentifierLoc(),
             diag::err_parameters_retval_cannot_have_fp16_type) << 1;
           D.setInvalidType(true);
         }
       }
 
-      if (LangOpts.OpenCL) {
-        // OpenCL v2.0 s6.12.5 - A block cannot be the return value of a
-        // function.
-        if (T->isBlockPointerType() || T->isImageType() || T->isSamplerT() ||
-            T->isPipeType()) {
-          S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
-              << T << 1 /*hint off*/;
-          D.setInvalidType(true);
-        }
-        // OpenCL doesn't support variadic functions and blocks
-        // (s6.9.e and s6.12.5 OpenCL v2.0) except for printf.
-        // We also allow here any toolchain reserved identifiers.
-        if (FTI.isVariadic &&
-            !(D.getIdentifier() &&
-              ((D.getIdentifier()->getName() == "printf" &&
-                (LangOpts.OpenCLCPlusPlus || LangOpts.OpenCLVersion >= 120)) ||
-               D.getIdentifier()->getName().startswith("__")))) {
-          S.Diag(D.getIdentifierLoc(), diag::err_opencl_variadic_function);
-          D.setInvalidType(true);
-        }
-      }
+      // if (LangOpts.OpenCL) {
+      //   // OpenCL v2.0 s6.12.5 - A block cannot be the return value of a
+      //   // function.
+      //   if (T->isBlockPointerType() || T->isImageType() || T->isSamplerT() ||
+      //       T->isPipeType()) {
+      //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
+      //         << T << 1 /*hint off*/;
+      //     D.setInvalidType(true);
+      //   }
+      //   // OpenCL doesn't support variadic functions and blocks
+      //   // (s6.9.e and s6.12.5 OpenCL v2.0) except for printf.
+      //   // We also allow here any toolchain reserved identifiers.
+      //   if (FTI.isVariadic &&
+      //       !(D.getIdentifier() &&
+      //         ((D.getIdentifier()->getName() == "printf" &&
+      //           (LangOpts.OpenCLCPlusPlus || LangOpts.OpenCLVersion >= 120)) ||
+      //          D.getIdentifier()->getName().startswith("__")))) {
+      //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_variadic_function);
+      //     D.setInvalidType(true);
+      //   }
+      // }
 
       // Methods cannot return interface types. All ObjC objects are
       // passed by reference.
@@ -4997,38 +4998,38 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
       // Objective-C ARC ownership qualifiers are ignored on the function
       // return type (by type canonicalization). Complain if this attribute
       // was written here.
-      if (T.getQualifiers().hasObjCLifetime()) {
-        SourceLocation AttrLoc;
-        if (chunkIndex + 1 < D.getNumTypeObjects()) {
-          DeclaratorChunk ReturnTypeChunk = D.getTypeObject(chunkIndex + 1);
-          for (const ParsedAttr &AL : ReturnTypeChunk.getAttrs()) {
-            if (AL.getKind() == ParsedAttr::AT_ObjCOwnership) {
-              AttrLoc = AL.getLoc();
-              break;
-            }
-          }
-        }
-        if (AttrLoc.isInvalid()) {
-          for (const ParsedAttr &AL : D.getDeclSpec().getAttributes()) {
-            if (AL.getKind() == ParsedAttr::AT_ObjCOwnership) {
-              AttrLoc = AL.getLoc();
-              break;
-            }
-          }
-        }
+      // if (T.getQualifiers().hasObjCLifetime()) {
+      //   SourceLocation AttrLoc;
+      //   if (chunkIndex + 1 < D.getNumTypeObjects()) {
+      //     DeclaratorChunk ReturnTypeChunk = D.getTypeObject(chunkIndex + 1);
+      //     for (const ParsedAttr &AL : ReturnTypeChunk.getAttrs()) {
+      //       if (AL.getKind() == ParsedAttr::AT_ObjCOwnership) {
+      //         AttrLoc = AL.getLoc();
+      //         break;
+      //       }
+      //     }
+      //   }
+      //   if (AttrLoc.isInvalid()) {
+      //     for (const ParsedAttr &AL : D.getDeclSpec().getAttributes()) {
+      //       if (AL.getKind() == ParsedAttr::AT_ObjCOwnership) {
+      //         AttrLoc = AL.getLoc();
+      //         break;
+      //       }
+      //     }
+      //   }
 
-        if (AttrLoc.isValid()) {
-          // The ownership attributes are almost always written via
-          // the predefined
-          // __strong/__weak/__autoreleasing/__unsafe_unretained.
-          if (AttrLoc.isMacroID())
-            AttrLoc =
-                S.SourceMgr.getImmediateExpansionRange(AttrLoc).getBegin();
+      //   if (AttrLoc.isValid()) {
+      //     // The ownership attributes are almost always written via
+      //     // the predefined
+      //     // __strong/__weak/__autoreleasing/__unsafe_unretained.
+      //     if (AttrLoc.isMacroID())
+      //       AttrLoc =
+      //           S.SourceMgr.getImmediateExpansionRange(AttrLoc).getBegin();
 
-          S.Diag(AttrLoc, diag::warn_arc_lifetime_result_type)
-            << T.getQualifiers().getObjCLifetime();
-        }
-      }
+      //     S.Diag(AttrLoc, diag::warn_arc_lifetime_result_type)
+      //       << T.getQualifiers().getObjCLifetime();
+      //   }
+      // }
 
       if (LangOpts.CPlusPlus && D.getDeclSpec().hasTagDefinition()) {
         // C++ [dcl.fct]p6:
@@ -5130,14 +5131,15 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
           } else if (ParamTy->isHalfType()) {
             // Disallow half FP parameters.
             // FIXME: This really should be in BuildFunctionType.
-            if (S.getLangOpts().OpenCL) {
-              if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
-                S.Diag(Param->getLocation(), diag::err_opencl_invalid_param)
-                    << ParamTy << 0;
-                D.setInvalidType();
-                Param->setInvalidDecl();
-              }
-            } else if (!S.getLangOpts().HalfArgsAndReturns) {
+            // if (S.getLangOpts().OpenCL) {
+            //   if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
+            //     S.Diag(Param->getLocation(), diag::err_opencl_invalid_param)
+            //         << ParamTy << 0;
+            //     D.setInvalidType();
+            //     Param->setInvalidDecl();
+            //   }
+            // } else 
+            if (!S.getLangOpts().HalfArgsAndReturns) {
               S.Diag(Param->getLocation(),
                 diag::err_parameters_retval_cannot_have_fp16_type) << 0;
               D.setInvalidType();
@@ -5159,10 +5161,10 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
             D.setInvalidType();
           }
 
-          if (LangOpts.ObjCAutoRefCount && Param->hasAttr<NSConsumedAttr>()) {
-            ExtParameterInfos[i] = ExtParameterInfos[i].withIsConsumed(true);
-            HasAnyInterestingExtParameterInfos = true;
-          }
+          // if (LangOpts.ObjCAutoRefCount && Param->hasAttr<NSConsumedAttr>()) {
+          //   ExtParameterInfos[i] = ExtParameterInfos[i].withIsConsumed(true);
+          //   HasAnyInterestingExtParameterInfos = true;
+          // }
 
           if (auto attr = Param->getAttr<ParameterABIAttr>()) {
             ExtParameterInfos[i] =
@@ -5234,15 +5236,15 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
           LangAS ASIdx = LangAS::Default;
           // Take address space attr if any and mark as invalid to avoid adding
           // them later while creating QualType.
-          if (FTI.MethodQualifiers)
-            for (ParsedAttr &attr : FTI.MethodQualifiers->getAttributes()) {
-              LangAS ASIdxNew = attr.asOpenCLLangAS();
-              if (DiagnoseMultipleAddrSpaceAttributes(S, ASIdx, ASIdxNew,
-                                                      attr.getLoc()))
-                D.setInvalidType(true);
-              else
-                ASIdx = ASIdxNew;
-            }
+          // if (FTI.MethodQualifiers)
+          //   for (ParsedAttr &attr : FTI.MethodQualifiers->getAttributes()) {
+          //     LangAS ASIdxNew = attr.asOpenCLLangAS();
+          //     if (DiagnoseMultipleAddrSpaceAttributes(S, ASIdx, ASIdxNew,
+          //                                             attr.getLoc()))
+          //       D.setInvalidType(true);
+          //     else
+          //       ASIdx = ASIdxNew;
+          //   }
           // If a class member function's address space is not set, set it to
           // __generic.
           LangAS AS =
@@ -5475,7 +5477,7 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
   processTypeAttrs(state, T, TAL_DeclName, D.getAttributes());
 
   // Diagnose any ignored type attributes.
-  state.diagnoseIgnoredTypeAttrs(T);
+  // state.diagnoseIgnoredTypeAttrs(T);
 
   // C++0x [dcl.constexpr]p9:
   //  A constexpr specifier used in an object declaration declares the object
@@ -5593,110 +5595,110 @@ TypeSourceInfo *Sema::GetTypeForDeclarator(Declarator &D, Scope *S) {
 
   TypeSourceInfo *ReturnTypeInfo = nullptr;
   QualType T = GetDeclSpecTypeForDeclarator(state, ReturnTypeInfo);
-  if (D.isPrototypeContext() && getLangOpts().ObjCAutoRefCount)
-    inferARCWriteback(state, T);
+  // if (D.isPrototypeContext() && getLangOpts().ObjCAutoRefCount)
+  //   inferARCWriteback(state, T);
 
   return GetFullTypeForDeclarator(state, T, ReturnTypeInfo);
 }
 
-static void transferARCOwnershipToDeclSpec(Sema &S,
-                                           QualType &declSpecTy,
-                                           Qualifiers::ObjCLifetime ownership) {
-  if (declSpecTy->isObjCRetainableType() &&
-      declSpecTy.getObjCLifetime() == Qualifiers::OCL_None) {
-    Qualifiers qs;
-    qs.addObjCLifetime(ownership);
-    declSpecTy = S.Context.getQualifiedType(declSpecTy, qs);
-  }
-}
+// static void transferARCOwnershipToDeclSpec(Sema &S,
+//                                            QualType &declSpecTy,
+//                                            Qualifiers::ObjCLifetime ownership) {
+//   if (declSpecTy->isObjCRetainableType() &&
+//       declSpecTy.getObjCLifetime() == Qualifiers::OCL_None) {
+//     Qualifiers qs;
+//     qs.addObjCLifetime(ownership);
+//     declSpecTy = S.Context.getQualifiedType(declSpecTy, qs);
+//   }
+// }
 
-static void transferARCOwnershipToDeclaratorChunk(TypeProcessingState &state,
-                                            Qualifiers::ObjCLifetime ownership,
-                                            unsigned chunkIndex) {
-  Sema &S = state.getSema();
-  Declarator &D = state.getDeclarator();
+// static void transferARCOwnershipToDeclaratorChunk(TypeProcessingState &state,
+//                                             Qualifiers::ObjCLifetime ownership,
+//                                             unsigned chunkIndex) {
+//   Sema &S = state.getSema();
+//   Declarator &D = state.getDeclarator();
 
-  // Look for an explicit lifetime attribute.
-  DeclaratorChunk &chunk = D.getTypeObject(chunkIndex);
-  if (chunk.getAttrs().hasAttribute(ParsedAttr::AT_ObjCOwnership))
-    return;
+//   // Look for an explicit lifetime attribute.
+//   DeclaratorChunk &chunk = D.getTypeObject(chunkIndex);
+//   if (chunk.getAttrs().hasAttribute(ParsedAttr::AT_ObjCOwnership))
+//     return;
 
-  const char *attrStr = nullptr;
-  switch (ownership) {
-  case Qualifiers::OCL_None: llvm_unreachable("no ownership!");
-  case Qualifiers::OCL_ExplicitNone: attrStr = "none"; break;
-  case Qualifiers::OCL_Strong: attrStr = "strong"; break;
-  case Qualifiers::OCL_Weak: attrStr = "weak"; break;
-  case Qualifiers::OCL_Autoreleasing: attrStr = "autoreleasing"; break;
-  }
+//   const char *attrStr = nullptr;
+//   switch (ownership) {
+//   case Qualifiers::OCL_None: llvm_unreachable("no ownership!");
+//   case Qualifiers::OCL_ExplicitNone: attrStr = "none"; break;
+//   case Qualifiers::OCL_Strong: attrStr = "strong"; break;
+//   case Qualifiers::OCL_Weak: attrStr = "weak"; break;
+//   case Qualifiers::OCL_Autoreleasing: attrStr = "autoreleasing"; break;
+//   }
 
-  IdentifierLoc *Arg = new (S.Context) IdentifierLoc;
-  Arg->Ident = &S.Context.Idents.get(attrStr);
-  Arg->Loc = SourceLocation();
+//   IdentifierLoc *Arg = new (S.Context) IdentifierLoc;
+//   Arg->Ident = &S.Context.Idents.get(attrStr);
+//   Arg->Loc = SourceLocation();
 
-  ArgsUnion Args(Arg);
+//   ArgsUnion Args(Arg);
 
-  // If there wasn't one, add one (with an invalid source location
-  // so that we don't make an AttributedType for it).
-  ParsedAttr *attr = D.getAttributePool().create(
-      &S.Context.Idents.get("objc_ownership"), SourceLocation(),
-      /*scope*/ nullptr, SourceLocation(),
-      /*args*/ &Args, 1, ParsedAttr::AS_GNU);
-  chunk.getAttrs().addAtEnd(attr);
-  // TODO: mark whether we did this inference?
-}
+//   // If there wasn't one, add one (with an invalid source location
+//   // so that we don't make an AttributedType for it).
+//   ParsedAttr *attr = D.getAttributePool().create(
+//       &S.Context.Idents.get("objc_ownership"), SourceLocation(),
+//       /*scope*/ nullptr, SourceLocation(),
+//       /*args*/ &Args, 1, ParsedAttr::AS_GNU);
+//   chunk.getAttrs().addAtEnd(attr);
+//   // TODO: mark whether we did this inference?
+// }
 
 /// Used for transferring ownership in casts resulting in l-values.
-static void transferARCOwnership(TypeProcessingState &state,
-                                 QualType &declSpecTy,
-                                 Qualifiers::ObjCLifetime ownership) {
-  Sema &S = state.getSema();
-  Declarator &D = state.getDeclarator();
+// static void transferARCOwnership(TypeProcessingState &state,
+//                                  QualType &declSpecTy,
+//                                  Qualifiers::ObjCLifetime ownership) {
+//   Sema &S = state.getSema();
+//   Declarator &D = state.getDeclarator();
 
-  int inner = -1;
-  bool hasIndirection = false;
-  for (unsigned i = 0, e = D.getNumTypeObjects(); i != e; ++i) {
-    DeclaratorChunk &chunk = D.getTypeObject(i);
-    switch (chunk.Kind) {
-    case DeclaratorChunk::Paren:
-      // Ignore parens.
-      break;
+//   int inner = -1;
+//   bool hasIndirection = false;
+//   for (unsigned i = 0, e = D.getNumTypeObjects(); i != e; ++i) {
+//     DeclaratorChunk &chunk = D.getTypeObject(i);
+//     switch (chunk.Kind) {
+//     case DeclaratorChunk::Paren:
+//       // Ignore parens.
+//       break;
 
-    case DeclaratorChunk::Array:
-    case DeclaratorChunk::Reference:
-    case DeclaratorChunk::Pointer:
-      if (inner != -1)
-        hasIndirection = true;
-      inner = i;
-      break;
+//     case DeclaratorChunk::Array:
+//     case DeclaratorChunk::Reference:
+//     case DeclaratorChunk::Pointer:
+//       if (inner != -1)
+//         hasIndirection = true;
+//       inner = i;
+//       break;
 
-    case DeclaratorChunk::BlockPointer:
-      if (inner != -1)
-        transferARCOwnershipToDeclaratorChunk(state, ownership, i);
-      return;
+//     case DeclaratorChunk::BlockPointer:
+//       if (inner != -1)
+//         transferARCOwnershipToDeclaratorChunk(state, ownership, i);
+//       return;
 
-    case DeclaratorChunk::Function:
-    case DeclaratorChunk::MemberPointer:
-    case DeclaratorChunk::Pipe:
-      return;
-    }
-  }
+//     case DeclaratorChunk::Function:
+//     case DeclaratorChunk::MemberPointer:
+//     case DeclaratorChunk::Pipe:
+//       return;
+//     }
+//   }
 
-  if (inner == -1)
-    return;
+//   if (inner == -1)
+//     return;
 
-  DeclaratorChunk &chunk = D.getTypeObject(inner);
-  // if (chunk.Kind == DeclaratorChunk::Pointer) {
-  //   if (declSpecTy->isObjCRetainableType())
-  //     return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
-  //   if (declSpecTy->isObjCObjectType() && hasIndirection)
-  //     return transferARCOwnershipToDeclaratorChunk(state, ownership, inner);
-  // } else {
-    assert(chunk.Kind == DeclaratorChunk::Array ||
-           chunk.Kind == DeclaratorChunk::Reference);
-    return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
-  // }
-}
+//   DeclaratorChunk &chunk = D.getTypeObject(inner);
+//   // if (chunk.Kind == DeclaratorChunk::Pointer) {
+//   //   if (declSpecTy->isObjCRetainableType())
+//   //     return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
+//   //   if (declSpecTy->isObjCObjectType() && hasIndirection)
+//   //     return transferARCOwnershipToDeclaratorChunk(state, ownership, inner);
+//   // } else {
+//     assert(chunk.Kind == DeclaratorChunk::Array ||
+//            chunk.Kind == DeclaratorChunk::Reference);
+//     return transferARCOwnershipToDeclSpec(S, declSpecTy, ownership);
+//   // }
+// }
 
 TypeSourceInfo *Sema::GetTypeForDeclaratorCast(Declarator &D, QualType FromTy) {
   TypeProcessingState state(*this, D);
@@ -5704,11 +5706,11 @@ TypeSourceInfo *Sema::GetTypeForDeclaratorCast(Declarator &D, QualType FromTy) {
   TypeSourceInfo *ReturnTypeInfo = nullptr;
   QualType declSpecTy = GetDeclSpecTypeForDeclarator(state, ReturnTypeInfo);
 
-  if (getLangOpts().ObjC) {
-    Qualifiers::ObjCLifetime ownership = Context.getInnerObjCOwnership(FromTy);
-    if (ownership != Qualifiers::OCL_None)
-      transferARCOwnership(state, declSpecTy, ownership);
-  }
+  // if (getLangOpts().ObjC) {
+  //   Qualifiers::ObjCLifetime ownership = Context.getInnerObjCOwnership(FromTy);
+  //   if (ownership != Qualifiers::OCL_None)
+  //     transferARCOwnership(state, declSpecTy, ownership);
+  // }
 
   return GetFullTypeForDeclarator(state, declSpecTy, ReturnTypeInfo);
 }
@@ -6237,11 +6239,11 @@ TypeResult Sema::ActOnTypeName(Scope *S, Declarator &D) {
   return CreateParsedType(T, TInfo);
 }
 
-ParsedType Sema::ActOnObjCInstanceType(SourceLocation Loc) {
-  QualType T = Context.getObjCInstanceType();
-  TypeSourceInfo *TInfo = Context.getTrivialTypeSourceInfo(T, Loc);
-  return CreateParsedType(T, TInfo);
-}
+// ParsedType Sema::ActOnObjCInstanceType(SourceLocation Loc) {
+//   QualType T = Context.getObjCInstanceType();
+//   TypeSourceInfo *TInfo = Context.getTrivialTypeSourceInfo(T, Loc);
+//   return CreateParsedType(T, TInfo);
+// }
 
 //===----------------------------------------------------------------------===//
 // Type Attribute Processing
@@ -6408,9 +6410,9 @@ static void HandleAddressSpaceTypeAttribute(QualType &Type,
       Attr.setInvalid();
   } else {
     // The keyword-based type attributes imply which address space to use.
-    ASIdx = Attr.asOpenCLLangAS();
-    if (ASIdx == LangAS::Default)
-      llvm_unreachable("Invalid address space");
+    // ASIdx = Attr.asOpenCLLangAS();
+    // if (ASIdx == LangAS::Default)
+    //   llvm_unreachable("Invalid address space");
 
     if (DiagnoseMultipleAddrSpaceAttributes(S, Type.getAddressSpace(), ASIdx,
                                             Attr.getLoc())) {
@@ -6426,246 +6428,246 @@ static void HandleAddressSpaceTypeAttribute(QualType &Type,
 /// attribute on the specified type.
 ///
 /// Returns 'true' if the attribute was handled.
-static bool handleObjCOwnershipTypeAttr(TypeProcessingState &state,
-                                        ParsedAttr &attr, QualType &type) {
-  bool NonObjCPointer = false;
+// static bool handleObjCOwnershipTypeAttr(TypeProcessingState &state,
+//                                         ParsedAttr &attr, QualType &type) {
+//   bool NonObjCPointer = false;
 
-  if (!type->isDependentType() && !type->isUndeducedType()) {
-    if (const PointerType *ptr = type->getAs<PointerType>()) {
-      QualType pointee = ptr->getPointeeType();
-      if (pointee->isObjCRetainableType() || pointee->isPointerType())
-        return false;
-      // It is important not to lose the source info that there was an attribute
-      // applied to non-objc pointer. We will create an attributed type but
-      // its type will be the same as the original type.
-      NonObjCPointer = true;
-    } else if (!type->isObjCRetainableType()) {
-      return false;
-    }
+//   if (!type->isDependentType() && !type->isUndeducedType()) {
+//     if (const PointerType *ptr = type->getAs<PointerType>()) {
+//       QualType pointee = ptr->getPointeeType();
+//       if (pointee->isObjCRetainableType() || pointee->isPointerType())
+//         return false;
+//       // It is important not to lose the source info that there was an attribute
+//       // applied to non-objc pointer. We will create an attributed type but
+//       // its type will be the same as the original type.
+//       NonObjCPointer = true;
+//     } else if (!type->isObjCRetainableType()) {
+//       return false;
+//     }
 
-    // Don't accept an ownership attribute in the declspec if it would
-    // just be the return type of a block pointer.
-    if (state.isProcessingDeclSpec()) {
-      Declarator &D = state.getDeclarator();
-      if (maybeMovePastReturnType(D, D.getNumTypeObjects(),
-                                  /*onlyBlockPointers=*/true))
-        return false;
-    }
-  }
+//     // Don't accept an ownership attribute in the declspec if it would
+//     // just be the return type of a block pointer.
+//     if (state.isProcessingDeclSpec()) {
+//       Declarator &D = state.getDeclarator();
+//       if (maybeMovePastReturnType(D, D.getNumTypeObjects(),
+//                                   /*onlyBlockPointers=*/true))
+//         return false;
+//     }
+//   }
 
-  Sema &S = state.getSema();
-  SourceLocation AttrLoc = attr.getLoc();
-  if (AttrLoc.isMacroID())
-    AttrLoc =
-        S.getSourceManager().getImmediateExpansionRange(AttrLoc).getBegin();
+//   Sema &S = state.getSema();
+//   SourceLocation AttrLoc = attr.getLoc();
+//   if (AttrLoc.isMacroID())
+//     AttrLoc =
+//         S.getSourceManager().getImmediateExpansionRange(AttrLoc).getBegin();
 
-  if (!attr.isArgIdent(0)) {
-    S.Diag(AttrLoc, diag::err_attribute_argument_type) << attr
-                                                       << AANT_ArgumentString;
-    attr.setInvalid();
-    return true;
-  }
+//   if (!attr.isArgIdent(0)) {
+//     S.Diag(AttrLoc, diag::err_attribute_argument_type) << attr
+//                                                        << AANT_ArgumentString;
+//     attr.setInvalid();
+//     return true;
+//   }
 
-  IdentifierInfo *II = attr.getArgAsIdent(0)->Ident;
-  Qualifiers::ObjCLifetime lifetime;
-  if (II->isStr("none"))
-    lifetime = Qualifiers::OCL_ExplicitNone;
-  else if (II->isStr("strong"))
-    lifetime = Qualifiers::OCL_Strong;
-  else if (II->isStr("weak"))
-    lifetime = Qualifiers::OCL_Weak;
-  else if (II->isStr("autoreleasing"))
-    lifetime = Qualifiers::OCL_Autoreleasing;
-  else {
-    S.Diag(AttrLoc, diag::warn_attribute_type_not_supported) << attr << II;
-    attr.setInvalid();
-    return true;
-  }
+//   IdentifierInfo *II = attr.getArgAsIdent(0)->Ident;
+//   Qualifiers::ObjCLifetime lifetime;
+//   if (II->isStr("none"))
+//     lifetime = Qualifiers::OCL_ExplicitNone;
+//   else if (II->isStr("strong"))
+//     lifetime = Qualifiers::OCL_Strong;
+//   else if (II->isStr("weak"))
+//     lifetime = Qualifiers::OCL_Weak;
+//   else if (II->isStr("autoreleasing"))
+//     lifetime = Qualifiers::OCL_Autoreleasing;
+//   else {
+//     S.Diag(AttrLoc, diag::warn_attribute_type_not_supported) << attr << II;
+//     attr.setInvalid();
+//     return true;
+//   }
 
-  // Just ignore lifetime attributes other than __weak and __unsafe_unretained
-  // outside of ARC mode.
-  if (!S.getLangOpts().ObjCAutoRefCount &&
-      lifetime != Qualifiers::OCL_Weak &&
-      lifetime != Qualifiers::OCL_ExplicitNone) {
-    return true;
-  }
+//   // Just ignore lifetime attributes other than __weak and __unsafe_unretained
+//   // outside of ARC mode.
+//   if (!S.getLangOpts().ObjCAutoRefCount &&
+//       lifetime != Qualifiers::OCL_Weak &&
+//       lifetime != Qualifiers::OCL_ExplicitNone) {
+//     return true;
+//   }
 
-  SplitQualType underlyingType = type.split();
+//   SplitQualType underlyingType = type.split();
 
-  // Check for redundant/conflicting ownership qualifiers.
-  if (Qualifiers::ObjCLifetime previousLifetime
-        = type.getQualifiers().getObjCLifetime()) {
-    // If it's written directly, that's an error.
-    if (S.Context.hasDirectOwnershipQualifier(type)) {
-      S.Diag(AttrLoc, diag::err_attr_objc_ownership_redundant)
-        << type;
-      return true;
-    }
+//   // Check for redundant/conflicting ownership qualifiers.
+//   if (Qualifiers::ObjCLifetime previousLifetime
+//         = type.getQualifiers().getObjCLifetime()) {
+//     // If it's written directly, that's an error.
+//     if (S.Context.hasDirectOwnershipQualifier(type)) {
+//       S.Diag(AttrLoc, diag::err_attr_objc_ownership_redundant)
+//         << type;
+//       return true;
+//     }
 
-    // Otherwise, if the qualifiers actually conflict, pull sugar off
-    // and remove the ObjCLifetime qualifiers.
-    if (previousLifetime != lifetime) {
-      // It's possible to have multiple local ObjCLifetime qualifiers. We
-      // can't stop after we reach a type that is directly qualified.
-      const Type *prevTy = nullptr;
-      while (!prevTy || prevTy != underlyingType.Ty) {
-        prevTy = underlyingType.Ty;
-        underlyingType = underlyingType.getSingleStepDesugaredType();
-      }
-      underlyingType.Quals.removeObjCLifetime();
-    }
-  }
+//     // Otherwise, if the qualifiers actually conflict, pull sugar off
+//     // and remove the ObjCLifetime qualifiers.
+//     if (previousLifetime != lifetime) {
+//       // It's possible to have multiple local ObjCLifetime qualifiers. We
+//       // can't stop after we reach a type that is directly qualified.
+//       const Type *prevTy = nullptr;
+//       while (!prevTy || prevTy != underlyingType.Ty) {
+//         prevTy = underlyingType.Ty;
+//         underlyingType = underlyingType.getSingleStepDesugaredType();
+//       }
+//       underlyingType.Quals.removeObjCLifetime();
+//     }
+//   }
 
-  underlyingType.Quals.addObjCLifetime(lifetime);
+//   underlyingType.Quals.addObjCLifetime(lifetime);
 
-  if (NonObjCPointer) {
-    StringRef name = attr.getAttrName()->getName();
-    switch (lifetime) {
-    case Qualifiers::OCL_None:
-    case Qualifiers::OCL_ExplicitNone:
-      break;
-    case Qualifiers::OCL_Strong: name = "__strong"; break;
-    case Qualifiers::OCL_Weak: name = "__weak"; break;
-    case Qualifiers::OCL_Autoreleasing: name = "__autoreleasing"; break;
-    }
-    S.Diag(AttrLoc, diag::warn_type_attribute_wrong_type) << name
-      << TDS_ObjCObjOrBlock << type;
-  }
+//   if (NonObjCPointer) {
+//     StringRef name = attr.getAttrName()->getName();
+//     switch (lifetime) {
+//     case Qualifiers::OCL_None:
+//     case Qualifiers::OCL_ExplicitNone:
+//       break;
+//     case Qualifiers::OCL_Strong: name = "__strong"; break;
+//     case Qualifiers::OCL_Weak: name = "__weak"; break;
+//     case Qualifiers::OCL_Autoreleasing: name = "__autoreleasing"; break;
+//     }
+//     S.Diag(AttrLoc, diag::warn_type_attribute_wrong_type) << name
+//       << TDS_ObjCObjOrBlock << type;
+//   }
 
-  // Don't actually add the __unsafe_unretained qualifier in non-ARC files,
-  // because having both 'T' and '__unsafe_unretained T' exist in the type
-  // system causes unfortunate widespread consistency problems.  (For example,
-  // they're not considered compatible types, and we mangle them identicially
-  // as template arguments.)  These problems are all individually fixable,
-  // but it's easier to just not add the qualifier and instead sniff it out
-  // in specific places using isObjCInertUnsafeUnretainedType().
-  //
-  // Doing this does means we miss some trivial consistency checks that
-  // would've triggered in ARC, but that's better than trying to solve all
-  // the coexistence problems with __unsafe_unretained.
-  if (!S.getLangOpts().ObjCAutoRefCount &&
-      lifetime == Qualifiers::OCL_ExplicitNone) {
-    type = state.getAttributedType(
-        createSimpleAttr<ObjCInertUnsafeUnretainedAttr>(S.Context, attr),
-        type, type);
-    return true;
-  }
+//   // Don't actually add the __unsafe_unretained qualifier in non-ARC files,
+//   // because having both 'T' and '__unsafe_unretained T' exist in the type
+//   // system causes unfortunate widespread consistency problems.  (For example,
+//   // they're not considered compatible types, and we mangle them identicially
+//   // as template arguments.)  These problems are all individually fixable,
+//   // but it's easier to just not add the qualifier and instead sniff it out
+//   // in specific places using isObjCInertUnsafeUnretainedType().
+//   //
+//   // Doing this does means we miss some trivial consistency checks that
+//   // would've triggered in ARC, but that's better than trying to solve all
+//   // the coexistence problems with __unsafe_unretained.
+//   if (!S.getLangOpts().ObjCAutoRefCount &&
+//       lifetime == Qualifiers::OCL_ExplicitNone) {
+//     type = state.getAttributedType(
+//         createSimpleAttr<ObjCInertUnsafeUnretainedAttr>(S.Context, attr),
+//         type, type);
+//     return true;
+//   }
 
-  QualType origType = type;
-  if (!NonObjCPointer)
-    type = S.Context.getQualifiedType(underlyingType);
+//   QualType origType = type;
+//   if (!NonObjCPointer)
+//     type = S.Context.getQualifiedType(underlyingType);
 
-  // If we have a valid source location for the attribute, use an
-  // AttributedType instead.
-  if (AttrLoc.isValid()) {
-    type = state.getAttributedType(::new (S.Context)
-                                       ObjCOwnershipAttr(S.Context, attr, II),
-                                   origType, type);
-  }
+//   // If we have a valid source location for the attribute, use an
+//   // AttributedType instead.
+//   if (AttrLoc.isValid()) {
+//     type = state.getAttributedType(::new (S.Context)
+//                                        ObjCOwnershipAttr(S.Context, attr, II),
+//                                    origType, type);
+//   }
 
-  auto diagnoseOrDelay = [](Sema &S, SourceLocation loc,
-                            unsigned diagnostic, QualType type) {
-    if (S.DelayedDiagnostics.shouldDelayDiagnostics()) {
-      S.DelayedDiagnostics.add(
-          sema::DelayedDiagnostic::makeForbiddenType(
-              S.getSourceManager().getExpansionLoc(loc),
-              diagnostic, type, /*ignored*/ 0));
-    } else {
-      S.Diag(loc, diagnostic);
-    }
-  };
+//   auto diagnoseOrDelay = [](Sema &S, SourceLocation loc,
+//                             unsigned diagnostic, QualType type) {
+//     if (S.DelayedDiagnostics.shouldDelayDiagnostics()) {
+//       S.DelayedDiagnostics.add(
+//           sema::DelayedDiagnostic::makeForbiddenType(
+//               S.getSourceManager().getExpansionLoc(loc),
+//               diagnostic, type, /*ignored*/ 0));
+//     } else {
+//       S.Diag(loc, diagnostic);
+//     }
+//   };
 
-  // Sometimes, __weak isn't allowed.
-  if (lifetime == Qualifiers::OCL_Weak &&
-      !S.getLangOpts().ObjCWeak && !NonObjCPointer) {
+//   // Sometimes, __weak isn't allowed.
+//   if (lifetime == Qualifiers::OCL_Weak &&
+//       !S.getLangOpts().ObjCWeak && !NonObjCPointer) {
 
-    // Use a specialized diagnostic if the runtime just doesn't support them.
-    unsigned diagnostic =
-      (S.getLangOpts().ObjCWeakRuntime ? diag::err_arc_weak_disabled
-                                       : diag::err_arc_weak_no_runtime);
+//     // Use a specialized diagnostic if the runtime just doesn't support them.
+//     unsigned diagnostic =
+//       (S.getLangOpts().ObjCWeakRuntime ? diag::err_arc_weak_disabled
+//                                        : diag::err_arc_weak_no_runtime);
 
-    // In any case, delay the diagnostic until we know what we're parsing.
-    diagnoseOrDelay(S, AttrLoc, diagnostic, type);
+//     // In any case, delay the diagnostic until we know what we're parsing.
+//     diagnoseOrDelay(S, AttrLoc, diagnostic, type);
 
-    attr.setInvalid();
-    return true;
-  }
+//     attr.setInvalid();
+//     return true;
+//   }
 
-  // Forbid __weak for class objects marked as
-  // objc_arc_weak_reference_unavailable
-  // if (lifetime == Qualifiers::OCL_Weak) {
-  //   if (const ObjCObjectPointerType *ObjT =
-  //         type->getAs<ObjCObjectPointerType>()) {
-  //     if (ObjCInterfaceDecl *Class = ObjT->getInterfaceDecl()) {
-  //       if (Class->isArcWeakrefUnavailable()) {
-  //         S.Diag(AttrLoc, diag::err_arc_unsupported_weak_class);
-  //         S.Diag(ObjT->getInterfaceDecl()->getLocation(),
-  //                diag::note_class_declared);
-  //       }
-  //     }
-  //   }
-  // }
+//   // Forbid __weak for class objects marked as
+//   // objc_arc_weak_reference_unavailable
+//   // if (lifetime == Qualifiers::OCL_Weak) {
+//   //   if (const ObjCObjectPointerType *ObjT =
+//   //         type->getAs<ObjCObjectPointerType>()) {
+//   //     if (ObjCInterfaceDecl *Class = ObjT->getInterfaceDecl()) {
+//   //       if (Class->isArcWeakrefUnavailable()) {
+//   //         S.Diag(AttrLoc, diag::err_arc_unsupported_weak_class);
+//   //         S.Diag(ObjT->getInterfaceDecl()->getLocation(),
+//   //                diag::note_class_declared);
+//   //       }
+//   //     }
+//   //   }
+//   // }
 
-  return true;
-}
+//   return true;
+// }
 
 /// handleObjCGCTypeAttr - Process the __attribute__((objc_gc)) type
 /// attribute on the specified type.  Returns true to indicate that
 /// the attribute was handled, false to indicate that the type does
 /// not permit the attribute.
-static bool handleObjCGCTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
-                                 QualType &type) {
-  Sema &S = state.getSema();
+// static bool handleObjCGCTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
+//                                  QualType &type) {
+//   Sema &S = state.getSema();
 
-  // Delay if this isn't some kind of pointer.
-  if (!type->isPointerType() &&
-      // !type->isObjCObjectPointerType() &&
-      !type->isBlockPointerType())
-    return false;
+//   // Delay if this isn't some kind of pointer.
+//   if (!type->isPointerType() &&
+//       // !type->isObjCObjectPointerType() &&
+//       !type->isBlockPointerType())
+//     return false;
 
-  if (type.getObjCGCAttr() != Qualifiers::GCNone) {
-    S.Diag(attr.getLoc(), diag::err_attribute_multiple_objc_gc);
-    attr.setInvalid();
-    return true;
-  }
+//   if (type.getObjCGCAttr() != Qualifiers::GCNone) {
+//     S.Diag(attr.getLoc(), diag::err_attribute_multiple_objc_gc);
+//     attr.setInvalid();
+//     return true;
+//   }
 
-  // Check the attribute arguments.
-  if (!attr.isArgIdent(0)) {
-    S.Diag(attr.getLoc(), diag::err_attribute_argument_type)
-        << attr << AANT_ArgumentString;
-    attr.setInvalid();
-    return true;
-  }
-  Qualifiers::GC GCAttr;
-  if (attr.getNumArgs() > 1) {
-    S.Diag(attr.getLoc(), diag::err_attribute_wrong_number_arguments) << attr
-                                                                      << 1;
-    attr.setInvalid();
-    return true;
-  }
+//   // Check the attribute arguments.
+//   if (!attr.isArgIdent(0)) {
+//     S.Diag(attr.getLoc(), diag::err_attribute_argument_type)
+//         << attr << AANT_ArgumentString;
+//     attr.setInvalid();
+//     return true;
+//   }
+//   Qualifiers::GC GCAttr;
+//   if (attr.getNumArgs() > 1) {
+//     S.Diag(attr.getLoc(), diag::err_attribute_wrong_number_arguments) << attr
+//                                                                       << 1;
+//     attr.setInvalid();
+//     return true;
+//   }
 
-  IdentifierInfo *II = attr.getArgAsIdent(0)->Ident;
-  if (II->isStr("weak"))
-    GCAttr = Qualifiers::Weak;
-  else if (II->isStr("strong"))
-    GCAttr = Qualifiers::Strong;
-  else {
-    S.Diag(attr.getLoc(), diag::warn_attribute_type_not_supported)
-        << attr << II;
-    attr.setInvalid();
-    return true;
-  }
+//   IdentifierInfo *II = attr.getArgAsIdent(0)->Ident;
+//   if (II->isStr("weak"))
+//     GCAttr = Qualifiers::Weak;
+//   else if (II->isStr("strong"))
+//     GCAttr = Qualifiers::Strong;
+//   else {
+//     S.Diag(attr.getLoc(), diag::warn_attribute_type_not_supported)
+//         << attr << II;
+//     attr.setInvalid();
+//     return true;
+//   }
 
-  QualType origType = type;
-  type = S.Context.getObjCGCQualType(origType, GCAttr);
+//   QualType origType = type;
+//   type = S.Context.getObjCGCQualType(origType, GCAttr);
 
-  // Make an attributed type to preserve the source information.
-  if (attr.getLoc().isValid())
-    type = state.getAttributedType(
-        ::new (S.Context) ObjCGCAttr(S.Context, attr, II), origType, type);
+//   // Make an attributed type to preserve the source information.
+//   if (attr.getLoc().isValid())
+//     type = state.getAttributedType(
+//         ::new (S.Context) ObjCGCAttr(S.Context, attr, II), origType, type);
 
-  return true;
-}
+//   return true;
+// }
 
 namespace {
   /// A helper class to unwrap a type down to a function for the
@@ -7309,11 +7311,11 @@ static bool handleFunctionTypeAttr(TypeProcessingState &state, ParsedAttr &attr,
 
     // Only actually change the underlying type in ARC builds.
     QualType origType = type;
-    if (state.getSema().getLangOpts().ObjCAutoRefCount) {
-      FunctionType::ExtInfo EI
-        = unwrapped.get()->getExtInfo().withProducesResult(true);
-      type = unwrapped.wrap(S, S.Context.adjustFunctionType(unwrapped.get(), EI));
-    }
+    // if (state.getSema().getLangOpts().ObjCAutoRefCount) {
+    //   FunctionType::ExtInfo EI
+    //     = unwrapped.get()->getExtInfo().withProducesResult(true);
+    //   type = unwrapped.wrap(S, S.Context.adjustFunctionType(unwrapped.get(), EI));
+    // }
     type = state.getAttributedType(
         createSimpleAttr<NSReturnsRetainedAttr>(S.Context, attr),
         origType, type);
@@ -7682,7 +7684,7 @@ static bool isPermittedNeonBaseType(QualType &Ty,
          BTy->getKind() == BuiltinType::LongLong ||
          BTy->getKind() == BuiltinType::ULongLong ||
          BTy->getKind() == BuiltinType::Float ||
-         BTy->getKind() == BuiltinType::Half ||
+        //  BTy->getKind() == BuiltinType::Half ||
          BTy->getKind() == BuiltinType::BFloat16;
 }
 
@@ -7759,60 +7761,60 @@ static void HandleArmMveStrictPolymorphismAttr(TypeProcessingState &State,
 }
 
 /// Handle OpenCL Access Qualifier Attribute.
-static void HandleOpenCLAccessAttr(QualType &CurType, const ParsedAttr &Attr,
-                                   Sema &S) {
-  // OpenCL v2.0 s6.6 - Access qualifier can be used only for image and pipe type.
-  if (!(CurType->isImageType() || CurType->isPipeType())) {
-    S.Diag(Attr.getLoc(), diag::err_opencl_invalid_access_qualifier);
-    Attr.setInvalid();
-    return;
-  }
+// static void HandleOpenCLAccessAttr(QualType &CurType, const ParsedAttr &Attr,
+//                                    Sema &S) {
+//   // OpenCL v2.0 s6.6 - Access qualifier can be used only for image and pipe type.
+//   if (!(CurType->isImageType() || CurType->isPipeType())) {
+//     S.Diag(Attr.getLoc(), diag::err_opencl_invalid_access_qualifier);
+//     Attr.setInvalid();
+//     return;
+//   }
 
-  if (const TypedefType* TypedefTy = CurType->getAs<TypedefType>()) {
-    QualType BaseTy = TypedefTy->desugar();
+//   if (const TypedefType* TypedefTy = CurType->getAs<TypedefType>()) {
+//     QualType BaseTy = TypedefTy->desugar();
 
-    std::string PrevAccessQual;
-    if (BaseTy->isPipeType()) {
-      if (TypedefTy->getDecl()->hasAttr<OpenCLAccessAttr>()) {
-        OpenCLAccessAttr *Attr =
-            TypedefTy->getDecl()->getAttr<OpenCLAccessAttr>();
-        PrevAccessQual = Attr->getSpelling();
-      } else {
-        PrevAccessQual = "read_only";
-      }
-    } /*else if (const BuiltinType* ImgType = BaseTy->getAs<BuiltinType>()) {
+//     std::string PrevAccessQual;
+//     if (BaseTy->isPipeType()) {
+//       if (TypedefTy->getDecl()->hasAttr<OpenCLAccessAttr>()) {
+//         OpenCLAccessAttr *Attr =
+//             TypedefTy->getDecl()->getAttr<OpenCLAccessAttr>();
+//         PrevAccessQual = Attr->getSpelling();
+//       } else {
+//         PrevAccessQual = "read_only";
+//       }
+//     } /*else if (const BuiltinType* ImgType = BaseTy->getAs<BuiltinType>()) {
 
-      switch (ImgType->getKind()) {
-        #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-      case BuiltinType::Id:                                          \
-        PrevAccessQual = #Access;                                    \
-        break;
-        #include "latino/Basic/OpenCLImageTypes.def"
-      default:
-        llvm_unreachable("Unable to find corresponding image type.");
-      }
-    }*/ else {
-      llvm_unreachable("unexpected type");
-    }
-    StringRef AttrName = Attr.getAttrName()->getName();
-    if (PrevAccessQual == AttrName.ltrim("_")) {
-      // Duplicated qualifiers
-      S.Diag(Attr.getLoc(), diag::warn_duplicate_declspec)
-         << AttrName << Attr.getRange();
-    } else {
-      // Contradicting qualifiers
-      S.Diag(Attr.getLoc(), diag::err_opencl_multiple_access_qualifiers);
-    }
+//       switch (ImgType->getKind()) {
+//         #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+//       case BuiltinType::Id:                                          \
+//         PrevAccessQual = #Access;                                    \
+//         break;
+//         #include "latino/Basic/OpenCLImageTypes.def"
+//       default:
+//         llvm_unreachable("Unable to find corresponding image type.");
+//       }
+//     }*/ else {
+//       llvm_unreachable("unexpected type");
+//     }
+//     StringRef AttrName = Attr.getAttrName()->getName();
+//     if (PrevAccessQual == AttrName.ltrim("_")) {
+//       // Duplicated qualifiers
+//       S.Diag(Attr.getLoc(), diag::warn_duplicate_declspec)
+//          << AttrName << Attr.getRange();
+//     } else {
+//       // Contradicting qualifiers
+//       S.Diag(Attr.getLoc(), diag::err_opencl_multiple_access_qualifiers);
+//     }
 
-    S.Diag(TypedefTy->getDecl()->getBeginLoc(),
-           diag::note_opencl_typedef_access_qualifier) << PrevAccessQual;
-  } else if (CurType->isPipeType()) {
-    if (Attr.getSemanticSpelling() == OpenCLAccessAttr::Keyword_write_only) {
-      QualType ElemType = CurType->getAs<PipeType>()->getElementType();
-      CurType = S.Context.getWritePipeType(ElemType);
-    }
-  }
-}
+//     S.Diag(TypedefTy->getDecl()->getBeginLoc(),
+//            diag::note_opencl_typedef_access_qualifier) << PrevAccessQual;
+//   } else if (CurType->isPipeType()) {
+//     if (Attr.getSemanticSpelling() == OpenCLAccessAttr::Keyword_write_only) {
+//       QualType ElemType = CurType->getAs<PipeType>()->getElementType();
+//       CurType = S.Context.getWritePipeType(ElemType);
+//     }
+//   }
+// }
 
 /// HandleMatrixTypeAttr - "matrix_type" attribute, like ext_vector_type
 static void HandleMatrixTypeAttr(QualType &CurType, const ParsedAttr &Attr,
@@ -7891,12 +7893,12 @@ static void HandleLifetimeBoundAttr(TypeProcessingState &State,
 static bool isAddressSpaceKind(const ParsedAttr &attr) {
   auto attrKind = attr.getKind();
 
-  return attrKind == ParsedAttr::AT_AddressSpace ||
+  return attrKind == ParsedAttr::AT_AddressSpace /*||
          attrKind == ParsedAttr::AT_OpenCLPrivateAddressSpace ||
          attrKind == ParsedAttr::AT_OpenCLGlobalAddressSpace ||
          attrKind == ParsedAttr::AT_OpenCLLocalAddressSpace ||
          attrKind == ParsedAttr::AT_OpenCLConstantAddressSpace ||
-         attrKind == ParsedAttr::AT_OpenCLGenericAddressSpace;
+         attrKind == ParsedAttr::AT_OpenCLGenericAddressSpace*/;
 }
 
 static void processTypeAttrs(TypeProcessingState &state, QualType &type,
@@ -7972,20 +7974,20 @@ static void processTypeAttrs(TypeProcessingState &state, QualType &type,
       // it it breaks large amounts of Linux software.
       attr.setUsedAsTypeAttr();
       break;
-    case ParsedAttr::AT_OpenCLPrivateAddressSpace:
-    case ParsedAttr::AT_OpenCLGlobalAddressSpace:
-    case ParsedAttr::AT_OpenCLLocalAddressSpace:
-    case ParsedAttr::AT_OpenCLConstantAddressSpace:
-    case ParsedAttr::AT_OpenCLGenericAddressSpace:
+    // case ParsedAttr::AT_OpenCLPrivateAddressSpace:
+    // case ParsedAttr::AT_OpenCLGlobalAddressSpace:
+    // case ParsedAttr::AT_OpenCLLocalAddressSpace:
+    // case ParsedAttr::AT_OpenCLConstantAddressSpace:
+    // case ParsedAttr::AT_OpenCLGenericAddressSpace:
     case ParsedAttr::AT_AddressSpace:
       HandleAddressSpaceTypeAttribute(type, attr, state);
       attr.setUsedAsTypeAttr();
       break;
-    OBJC_POINTER_TYPE_ATTRS_CASELIST:
-      if (!handleObjCPointerTypeAttr(state, attr, type))
-        distributeObjCPointerTypeAttr(state, attr, type);
-      attr.setUsedAsTypeAttr();
-      break;
+    // OBJC_POINTER_TYPE_ATTRS_CASELIST:
+    //   if (!handleObjCPointerTypeAttr(state, attr, type))
+    //     distributeObjCPointerTypeAttr(state, attr, type);
+    //   attr.setUsedAsTypeAttr();
+    //   break;
     case ParsedAttr::AT_VectorSize:
       HandleVectorSizeAttr(type, attr, state.getSema());
       attr.setUsedAsTypeAttr();
@@ -8009,10 +8011,10 @@ static void processTypeAttrs(TypeProcessingState &state, QualType &type,
       attr.setUsedAsTypeAttr();
       break;
     }
-    case ParsedAttr::AT_OpenCLAccess:
-      HandleOpenCLAccessAttr(type, attr, state.getSema());
-      attr.setUsedAsTypeAttr();
-      break;
+    // case ParsedAttr::AT_OpenCLAccess:
+    //   HandleOpenCLAccessAttr(type, attr, state.getSema());
+    //   attr.setUsedAsTypeAttr();
+    //   break;
     case ParsedAttr::AT_LifetimeBound:
       if (TAL == TAL_DeclChunk)
         HandleLifetimeBoundAttr(state, type, attr);
@@ -8130,17 +8132,17 @@ static void processTypeAttrs(TypeProcessingState &state, QualType &type,
 
     // Handle attributes that are defined in a macro. We do not want this to be
     // applied to ObjC builtin attributes.
-    if (isa<AttributedType>(type) && attr.hasMacroIdentifier() &&
-        !type.getQualifiers().hasObjCLifetime() &&
-        !type.getQualifiers().hasObjCGCAttr() &&
-        attr.getKind() != ParsedAttr::AT_ObjCGC &&
-        attr.getKind() != ParsedAttr::AT_ObjCOwnership) {
-      const IdentifierInfo *MacroII = attr.getMacroIdentifier();
-      type = state.getSema().Context.getMacroQualifiedType(type, MacroII);
-      state.setExpansionLocForMacroQualifiedType(
-          cast<MacroQualifiedType>(type.getTypePtr()),
-          attr.getMacroExpansionLoc());
-    }
+    // if (isa<AttributedType>(type) && attr.hasMacroIdentifier() &&
+    //     !type.getQualifiers().hasObjCLifetime() &&
+    //     !type.getQualifiers().hasObjCGCAttr() &&
+    //     attr.getKind() != ParsedAttr::AT_ObjCGC &&
+    //     attr.getKind() != ParsedAttr::AT_ObjCOwnership) {
+    //   const IdentifierInfo *MacroII = attr.getMacroIdentifier();
+    //   type = state.getSema().Context.getMacroQualifiedType(type, MacroII);
+    //   state.setExpansionLocForMacroQualifiedType(
+    //       cast<MacroQualifiedType>(type.getTypePtr()),
+    //       attr.getMacroExpansionLoc());
+    // }
   }
 
   if (!state.getSema().getLangOpts().OpenCL ||
@@ -8561,8 +8563,8 @@ bool Sema::RequireCompleteTypeImpl(SourceLocation Loc, QualType T,
       << Context.getTagDeclType(Tag);
 
   // If the Objective-C class was a forward declaration, produce a note.
-  if (IFace && !IFace->isInvalidDecl() && !IFace->getLocation().isInvalid())
-    Diag(IFace->getLocation(), diag::note_forward_class);
+  // if (IFace && !IFace->isInvalidDecl() && !IFace->getLocation().isInvalid())
+  //   Diag(IFace->getLocation(), diag::note_forward_class);
 
   // If we have external information that we can use to suggest a fix,
   // produce a note.

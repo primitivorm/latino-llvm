@@ -878,8 +878,8 @@ Sema::ActOnDecompositionDeclarator(Scope *S, Declarator &D,
     CurContext->addHiddenDecl(New);
   }
 
-  if (isInOpenMPDeclareTargetContext())
-    checkDeclIsAllowedInOpenMPTarget(nullptr, New);
+  // if (isInOpenMPDeclareTargetContext())
+  //   checkDeclIsAllowedInOpenMPTarget(nullptr, New);
 
   return New;
 }
@@ -4777,16 +4777,16 @@ BuildImplicitMemberInitializer(Sema &SemaRef, CXXConstructorDecl *Constructor,
     }
   }
 
-  if (FieldBaseElementType.hasNonTrivialObjCLifetime()) {
-    // ARC and Weak:
-    //   Default-initialize Objective-C pointers to NULL.
-    CXXMemberInit
-      = new (SemaRef.Context) CXXCtorInitializer(SemaRef.Context, Field,
-                                                 Loc, Loc,
-                 new (SemaRef.Context) ImplicitValueInitExpr(Field->getType()),
-                                                 Loc);
-    return false;
-  }
+  // if (FieldBaseElementType.hasNonTrivialObjCLifetime()) {
+  //   // ARC and Weak:
+  //   //   Default-initialize Objective-C pointers to NULL.
+  //   CXXMemberInit
+  //     = new (SemaRef.Context) CXXCtorInitializer(SemaRef.Context, Field,
+  //                                                Loc, Loc,
+  //                new (SemaRef.Context) ImplicitValueInitExpr(Field->getType()),
+  //                                                Loc);
+  //   return false;
+  // }
 
   // Nothing to initialize.
   CXXMemberInit = nullptr;
@@ -8831,8 +8831,8 @@ bool SpecialMemberDeletionInfo::shouldDeleteForVariantObjCPtrMember(
   // The defaulted special functions are defined as deleted if this is a variant
   // member with a non-trivial ownership type, e.g., ObjC __strong or __weak
   // type under ARC.
-  if (!FieldType.hasNonTrivialObjCLifetime())
-    return false;
+  // if (!FieldType.hasNonTrivialObjCLifetime())
+  //   return false;
 
   // Don't make the defaulted default constructor defined as deleted if the
   // member has an in-class initializer.
@@ -9407,12 +9407,12 @@ static bool checkTrivialClassMembers(Sema &S, CXXRecordDecl *RD,
     //   [...] nontrivally ownership-qualified types are [...] not trivially
     //   default constructible, copy constructible, move constructible, copy
     //   assignable, move assignable, or destructible [...]
-    if (FieldType.hasNonTrivialObjCLifetime()) {
-      if (Diagnose)
-        S.Diag(FI->getLocation(), diag::note_nontrivial_objc_ownership)
-          << RD << FieldType.getObjCLifetime();
-      return false;
-    }
+    // if (FieldType.hasNonTrivialObjCLifetime()) {
+    //   if (Diagnose)
+    //     S.Diag(FI->getLocation(), diag::note_nontrivial_objc_ownership)
+    //       << RD << FieldType.getObjCLifetime();
+    //   return false;
+    // }
 
     bool ConstRHS = ConstArg && !FI->isMutable();
     if (!checkTrivialSubobjectCall(S, FI->getLocation(), FieldType, ConstRHS,
@@ -9772,10 +9772,10 @@ void Sema::checkIllFormedTrivialABIStruct(CXXRecordDecl &RD) {
     // Ill-formed if the field is an ObjectiveC pointer or of a type that is
     // non-trivial for the purpose of calls.
     QualType FT = FD->getType();
-    if (FT.getObjCLifetime() == Qualifiers::OCL_Weak) {
-      PrintDiagAndRemoveAttr(4);
-      return;
-    }
+    // if (FT.getObjCLifetime() == Qualifiers::OCL_Weak) {
+    //   PrintDiagAndRemoveAttr(4);
+    //   return;
+    // }
 
     if (const auto *RT = FT->getBaseElementTypeUnsafe()->getAs<RecordType>())
       if (!RT->isDependentType() &&
@@ -14865,7 +14865,7 @@ void Sema::DefineImplicitLambdaToBlockPointerConversion(
   // behavior.  Note that only the general conversion function does this
   // (since it's unusable otherwise); in the case where we inline the
   // block literal, it has block literal lifetime semantics.
-  if (!BuildBlock.isInvalid() && !getLangOpts().ObjCAutoRefCount)
+  if (!BuildBlock.isInvalid() /*&& !getLangOpts().ObjCAutoRefCount*/)
     BuildBlock = ImplicitCastExpr::Create(Context, BuildBlock.get()->getType(),
                                           CK_CopyAndAutoreleaseBlockObject,
                                           BuildBlock.get(), nullptr, VK_RValue);
@@ -17105,13 +17105,13 @@ void Sema::MarkVTableUsed(SourceLocation Loc, CXXRecordDecl *Class,
     return;
   // Do not mark as used if compiling for the device outside of the target
   // region.
-  if (TUKind != TU_Prefix && LangOpts.OpenMP && LangOpts.OpenMPIsDevice &&
-      !isInOpenMPDeclareTargetContext() &&
-      !isInOpenMPTargetExecutionDirective()) {
-    if (!DefinitionRequired)
-      MarkVirtualMembersReferenced(Loc, Class);
-    return;
-  }
+  // if (TUKind != TU_Prefix && LangOpts.OpenMP && LangOpts.OpenMPIsDevice &&
+  //     !isInOpenMPDeclareTargetContext() &&
+  //     !isInOpenMPTargetExecutionDirective()) {
+  //   if (!DefinitionRequired)
+  //     MarkVirtualMembersReferenced(Loc, Class);
+  //   return;
+  // }
 
   // Try to insert this class into the map.
   LoadExternalVTableUses();

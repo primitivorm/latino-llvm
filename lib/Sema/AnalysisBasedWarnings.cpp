@@ -14,7 +14,7 @@
 
 #include "latino/Sema/AnalysisBasedWarnings.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -477,10 +477,10 @@ static ControlFlowKind CheckFallThrough(AnalysisDeclContext &AC) {
       HasLiveReturn = true;
       continue;
     }
-    if (isa<ObjCAtThrowStmt>(S)) {
-      HasFakeEdge = true;
-      continue;
-    }
+    // if (isa<ObjCAtThrowStmt>(S)) {
+    //   HasFakeEdge = true;
+    //   continue;
+    // }
     if (isa<CXXThrowExpr>(S)) {
       HasFakeEdge = true;
       continue;
@@ -1022,7 +1022,8 @@ static bool DiagnoseUninitializedUse(Sema &S, const VarDecl *VD,
       S.Diag(BE->getBeginLoc(),
              diag::warn_uninit_byref_blockvar_captured_by_block)
           << VD->getDeclName()
-          << VD->getType().getQualifiers().hasObjCLifetime();
+          // << VD->getType().getQualifiers().hasObjCLifetime()
+          ;
     else
       DiagUninitUse(S, VD, Use, true);
   }
@@ -1348,161 +1349,161 @@ static bool isInLoop(const ASTContext &Ctx, const ParentMap &PM,
   return false;
 }
 
-static void diagnoseRepeatedUseOfWeak(Sema &S,
-                                      const sema::FunctionScopeInfo *CurFn,
-                                      const Decl *D,
-                                      const ParentMap &PM) {
-  // typedef sema::FunctionScopeInfo::WeakObjectProfileTy WeakObjectProfileTy;
-  typedef sema::FunctionScopeInfo::WeakObjectUseMap WeakObjectUseMap;
-  typedef sema::FunctionScopeInfo::WeakUseVector WeakUseVector;
-  typedef std::pair<const Stmt *, WeakObjectUseMap::const_iterator>
-  StmtUsesPair;
+// static void diagnoseRepeatedUseOfWeak(Sema &S,
+//                                       const sema::FunctionScopeInfo *CurFn,
+//                                       const Decl *D,
+//                                       const ParentMap &PM) {
+//   // typedef sema::FunctionScopeInfo::WeakObjectProfileTy WeakObjectProfileTy;
+//   typedef sema::FunctionScopeInfo::WeakObjectUseMap WeakObjectUseMap;
+//   typedef sema::FunctionScopeInfo::WeakUseVector WeakUseVector;
+//   typedef std::pair<const Stmt *, WeakObjectUseMap::const_iterator>
+//   StmtUsesPair;
 
-  ASTContext &Ctx = S.getASTContext();
+//   ASTContext &Ctx = S.getASTContext();
 
-  const WeakObjectUseMap &WeakMap = CurFn->getWeakObjectUses();
+//   const WeakObjectUseMap &WeakMap = CurFn->getWeakObjectUses();
 
-  // Extract all weak objects that are referenced more than once.
-  SmallVector<StmtUsesPair, 8> UsesByStmt;
-  for (WeakObjectUseMap::const_iterator I = WeakMap.begin(), E = WeakMap.end();
-       I != E; ++I) {
-    const WeakUseVector &Uses = I->second;
+//   // Extract all weak objects that are referenced more than once.
+//   SmallVector<StmtUsesPair, 8> UsesByStmt;
+//   for (WeakObjectUseMap::const_iterator I = WeakMap.begin(), E = WeakMap.end();
+//        I != E; ++I) {
+//     const WeakUseVector &Uses = I->second;
 
-    // Find the first read of the weak object.
-    WeakUseVector::const_iterator UI = Uses.begin(), UE = Uses.end();
-    for ( ; UI != UE; ++UI) {
-      if (UI->isUnsafe())
-        break;
-    }
+//     // Find the first read of the weak object.
+//     WeakUseVector::const_iterator UI = Uses.begin(), UE = Uses.end();
+//     for ( ; UI != UE; ++UI) {
+//       if (UI->isUnsafe())
+//         break;
+//     }
 
-    // If there were only writes to this object, don't warn.
-    if (UI == UE)
-      continue;
+//     // If there were only writes to this object, don't warn.
+//     if (UI == UE)
+//       continue;
 
-    // If there was only one read, followed by any number of writes, and the
-    // read is not within a loop, don't warn. Additionally, don't warn in a
-    // loop if the base object is a local variable -- local variables are often
-    // changed in loops.
-    if (UI == Uses.begin()) {
-      WeakUseVector::const_iterator UI2 = UI;
-      for (++UI2; UI2 != UE; ++UI2)
-        if (UI2->isUnsafe())
-          break;
+//     // If there was only one read, followed by any number of writes, and the
+//     // read is not within a loop, don't warn. Additionally, don't warn in a
+//     // loop if the base object is a local variable -- local variables are often
+//     // changed in loops.
+//     if (UI == Uses.begin()) {
+//       WeakUseVector::const_iterator UI2 = UI;
+//       for (++UI2; UI2 != UE; ++UI2)
+//         if (UI2->isUnsafe())
+//           break;
 
-      if (UI2 == UE) {
-        if (!isInLoop(Ctx, PM, UI->getUseExpr()))
-          continue;
+//       if (UI2 == UE) {
+//         if (!isInLoop(Ctx, PM, UI->getUseExpr()))
+//           continue;
 
-        // const WeakObjectProfileTy &Profile = I->first;
-        // if (!Profile.isExactProfile())
-        //   continue;
+//         // const WeakObjectProfileTy &Profile = I->first;
+//         // if (!Profile.isExactProfile())
+//         //   continue;
 
-        const NamedDecl *Base = Profile.getBase();
-        if (!Base)
-          Base = Profile.getProperty();
-        assert(Base && "A profile always has a base or property.");
+//         const NamedDecl *Base = Profile.getBase();
+//         if (!Base)
+//           Base = Profile.getProperty();
+//         assert(Base && "A profile always has a base or property.");
 
-        if (const VarDecl *BaseVar = dyn_cast<VarDecl>(Base))
-          if (BaseVar->hasLocalStorage() && !isa<ParmVarDecl>(Base))
-            continue;
-      }
-    }
+//         if (const VarDecl *BaseVar = dyn_cast<VarDecl>(Base))
+//           if (BaseVar->hasLocalStorage() && !isa<ParmVarDecl>(Base))
+//             continue;
+//       }
+//     }
 
-    UsesByStmt.push_back(StmtUsesPair(UI->getUseExpr(), I));
-  }
+//     UsesByStmt.push_back(StmtUsesPair(UI->getUseExpr(), I));
+//   }
 
-  if (UsesByStmt.empty())
-    return;
+//   if (UsesByStmt.empty())
+//     return;
 
-  // Sort by first use so that we emit the warnings in a deterministic order.
-  SourceManager &SM = S.getSourceManager();
-  llvm::sort(UsesByStmt,
-             [&SM](const StmtUsesPair &LHS, const StmtUsesPair &RHS) {
-               return SM.isBeforeInTranslationUnit(LHS.first->getBeginLoc(),
-                                                   RHS.first->getBeginLoc());
-             });
+//   // Sort by first use so that we emit the warnings in a deterministic order.
+//   SourceManager &SM = S.getSourceManager();
+//   llvm::sort(UsesByStmt,
+//              [&SM](const StmtUsesPair &LHS, const StmtUsesPair &RHS) {
+//                return SM.isBeforeInTranslationUnit(LHS.first->getBeginLoc(),
+//                                                    RHS.first->getBeginLoc());
+//              });
 
-  // Classify the current code body for better warning text.
-  // This enum should stay in sync with the cases in
-  // warn_arc_repeated_use_of_weak and warn_arc_possible_repeated_use_of_weak.
-  // FIXME: Should we use a common classification enum and the same set of
-  // possibilities all throughout Sema?
-  enum {
-    Function,
-    Method,
-    Block,
-    Lambda
-  } FunctionKind;
+//   // Classify the current code body for better warning text.
+//   // This enum should stay in sync with the cases in
+//   // warn_arc_repeated_use_of_weak and warn_arc_possible_repeated_use_of_weak.
+//   // FIXME: Should we use a common classification enum and the same set of
+//   // possibilities all throughout Sema?
+//   enum {
+//     Function,
+//     Method,
+//     Block,
+//     Lambda
+//   } FunctionKind;
 
-  if (isa<sema::BlockScopeInfo>(CurFn))
-    FunctionKind = Block;
-  else if (isa<sema::LambdaScopeInfo>(CurFn))
-    FunctionKind = Lambda;
-  // else if (isa<ObjCMethodDecl>(D))
-  //   FunctionKind = Method;
-  else
-    FunctionKind = Function;
+//   if (isa<sema::BlockScopeInfo>(CurFn))
+//     FunctionKind = Block;
+//   else if (isa<sema::LambdaScopeInfo>(CurFn))
+//     FunctionKind = Lambda;
+//   // else if (isa<ObjCMethodDecl>(D))
+//   //   FunctionKind = Method;
+//   else
+//     FunctionKind = Function;
 
-  // Iterate through the sorted problems and emit warnings for each.
-  for (const auto &P : UsesByStmt) {
-    const Stmt *FirstRead = P.first;
-    // const WeakObjectProfileTy &Key = P.second->first;
-    const WeakUseVector &Uses = P.second->second;
+//   // Iterate through the sorted problems and emit warnings for each.
+//   for (const auto &P : UsesByStmt) {
+//     const Stmt *FirstRead = P.first;
+//     // const WeakObjectProfileTy &Key = P.second->first;
+//     const WeakUseVector &Uses = P.second->second;
 
-    // For complicated expressions like 'a.b.c' and 'x.b.c', WeakObjectProfileTy
-    // may not contain enough information to determine that these are different
-    // properties. We can only be 100% sure of a repeated use in certain cases,
-    // and we adjust the diagnostic kind accordingly so that the less certain
-    // case can be turned off if it is too noisy.
-    unsigned DiagKind;
-    // if (Key.isExactProfile())
-    //   DiagKind = diag::warn_arc_repeated_use_of_weak;
-    // else
-      DiagKind = diag::warn_arc_possible_repeated_use_of_weak;
+//     // For complicated expressions like 'a.b.c' and 'x.b.c', WeakObjectProfileTy
+//     // may not contain enough information to determine that these are different
+//     // properties. We can only be 100% sure of a repeated use in certain cases,
+//     // and we adjust the diagnostic kind accordingly so that the less certain
+//     // case can be turned off if it is too noisy.
+//     unsigned DiagKind;
+//     // if (Key.isExactProfile())
+//     //   DiagKind = diag::warn_arc_repeated_use_of_weak;
+//     // else
+//       DiagKind = diag::warn_arc_possible_repeated_use_of_weak;
 
-    // Classify the weak object being accessed for better warning text.
-    // This enum should stay in sync with the cases in
-    // warn_arc_repeated_use_of_weak and warn_arc_possible_repeated_use_of_weak.
-    enum {
-      Variable,
-      Property,
-      ImplicitProperty,
-      Ivar
-    } ObjectKind;
+//     // Classify the weak object being accessed for better warning text.
+//     // This enum should stay in sync with the cases in
+//     // warn_arc_repeated_use_of_weak and warn_arc_possible_repeated_use_of_weak.
+//     enum {
+//       Variable,
+//       Property,
+//       ImplicitProperty,
+//       Ivar
+//     } ObjectKind;
 
-    const NamedDecl *KeyProp = Key.getProperty();
-    if (isa<VarDecl>(KeyProp))
-      ObjectKind = Variable;
-    // else if (isa<ObjCPropertyDecl>(KeyProp))
-    //   ObjectKind = Property;
-    // else if (isa<ObjCMethodDecl>(KeyProp))
-    //   ObjectKind = ImplicitProperty;
-    // else if (isa<ObjCIvarDecl>(KeyProp))
-    //   ObjectKind = Ivar;
-    else
-      llvm_unreachable("Unexpected weak object kind!");
+//     const NamedDecl *KeyProp = Key.getProperty();
+//     if (isa<VarDecl>(KeyProp))
+//       ObjectKind = Variable;
+//     // else if (isa<ObjCPropertyDecl>(KeyProp))
+//     //   ObjectKind = Property;
+//     // else if (isa<ObjCMethodDecl>(KeyProp))
+//     //   ObjectKind = ImplicitProperty;
+//     // else if (isa<ObjCIvarDecl>(KeyProp))
+//     //   ObjectKind = Ivar;
+//     else
+//       llvm_unreachable("Unexpected weak object kind!");
 
-    // Do not warn about IBOutlet weak property receivers being set to null
-    // since they are typically only used from the main thread.
-    // if (const ObjCPropertyDecl *Prop = dyn_cast<ObjCPropertyDecl>(KeyProp))
-    //   if (Prop->hasAttr<IBOutletAttr>())
-    //     continue;
+//     // Do not warn about IBOutlet weak property receivers being set to null
+//     // since they are typically only used from the main thread.
+//     // if (const ObjCPropertyDecl *Prop = dyn_cast<ObjCPropertyDecl>(KeyProp))
+//     //   if (Prop->hasAttr<IBOutletAttr>())
+//     //     continue;
 
-    // Show the first time the object was read.
-    S.Diag(FirstRead->getBeginLoc(), DiagKind)
-        << int(ObjectKind) << KeyProp << int(FunctionKind)
-        << FirstRead->getSourceRange();
+//     // Show the first time the object was read.
+//     S.Diag(FirstRead->getBeginLoc(), DiagKind)
+//         << int(ObjectKind) << KeyProp << int(FunctionKind)
+//         << FirstRead->getSourceRange();
 
-    // Print all the other accesses as notes.
-    for (const auto &Use : Uses) {
-      if (Use.getUseExpr() == FirstRead)
-        continue;
-      S.Diag(Use.getUseExpr()->getBeginLoc(),
-             diag::note_arc_weak_also_accessed_here)
-          << Use.getUseExpr()->getSourceRange();
-    }
-  }
-}
+//     // Print all the other accesses as notes.
+//     for (const auto &Use : Uses) {
+//       if (Use.getUseExpr() == FirstRead)
+//         continue;
+//       S.Diag(Use.getUseExpr()->getBeginLoc(),
+//              diag::note_arc_weak_also_accessed_here)
+//           << Use.getUseExpr()->getSourceRange();
+//     }
+//   }
+// }
 
 namespace {
 class UninitValsDiagReporter : public UninitVariablesHandler {
@@ -2266,9 +2267,9 @@ AnalysisBasedWarnings::IssueWarnings(sema::AnalysisBasedWarnings::Policy P,
     DiagnoseSwitchLabelsFallthrough(S, AC, !FallThroughDiagFull);
   }
 
-  if (S.getLangOpts().ObjCWeak &&
-      !Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, D->getBeginLoc()))
-    diagnoseRepeatedUseOfWeak(S, fscope, D, AC.getParentMap());
+  // if (S.getLangOpts().ObjCWeak &&
+  //     !Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, D->getBeginLoc()))
+  //   diagnoseRepeatedUseOfWeak(S, fscope, D, AC.getParentMap());
 
 
   // Check for infinite self-recursion in functions

@@ -14,9 +14,10 @@
 #ifndef LLVM_LATINO_BASIC_TARGETOPTIONS_H
 #define LLVM_LATINO_BASIC_TARGETOPTIONS_H
 
-#include "latino/Basic/OpenCLOptions.h"
+// #include "latino/Basic/OpenCLOptions.h"
 #include "llvm/Support/VersionTuple.h"
 #include "llvm/Target/TargetOptions.h"
+#include "llvm/ADT/StringMap.h"
 #include <string>
 #include <vector>
 
@@ -59,7 +60,7 @@ public:
   llvm::StringMap<bool> FeatureMap;
 
   /// Supported OpenCL extensions and optional core features.
-  OpenCLOptions SupportedOpenCLOptions;
+  // OpenCLOptions SupportedOpenCLOptions;
 
   /// The list of OpenCL extensions to enable or disable, as written on
   /// the command line.

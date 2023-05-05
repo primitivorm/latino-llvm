@@ -37,7 +37,7 @@ unsigned Parser::ReenterTemplateScopes(MultiParseScope &S, Decl *D) {
 Decl *Parser::ParseDeclarationStartingWithTemplate(
     DeclaratorContext Context, SourceLocation &DeclEnd,
     ParsedAttributes &AccessAttrs, AccessSpecifier AS) {
-  ObjCDeclContextSwitch ObjCDC(*this);
+  // ObjCDeclContextSwitch ObjCDC(*this);
 
   if (Tok.is(tok::kw_plantilla) && NextToken().isNot(tok::less)) {
     return ParseExplicitInstantiation(Context, SourceLocation(), ConsumeToken(),

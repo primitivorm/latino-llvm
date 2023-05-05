@@ -17,13 +17,13 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/CXXInheritance.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/AST/TypeLoc.h"
 #include "latino/Basic/Builtins.h"
@@ -85,19 +85,19 @@ bool Sema::CanUseDecl(NamedDecl *D, bool TreatUnavailableAsInvalid) {
   return true;
 }
 
-static void DiagnoseUnusedOfDecl(Sema &S, NamedDecl *D, SourceLocation Loc) {
-  // Warn if this is used but marked unused.
-  if (const auto *A = D->getAttr<UnusedAttr>()) {
-    // [[maybe_unused]] should not diagnose uses, but __attribute__((unused))
-    // should diagnose them.
-    if (A->getSemanticSpelling() != UnusedAttr::CXX11_maybe_unused &&
-        A->getSemanticSpelling() != UnusedAttr::C2x_maybe_unused) {
-      const Decl *DC = cast_or_null<Decl>(S.getCurObjCLexicalContext());
-      if (DC && !DC->hasAttr<UnusedAttr>())
-        S.Diag(Loc, diag::warn_used_but_marked_unused) << D->getDeclName();
-    }
-  }
-}
+// static void DiagnoseUnusedOfDecl(Sema &S, NamedDecl *D, SourceLocation Loc) {
+//   // Warn if this is used but marked unused.
+//   if (const auto *A = D->getAttr<UnusedAttr>()) {
+//     // [[maybe_unused]] should not diagnose uses, but __attribute__((unused))
+//     // should diagnose them.
+//     if (A->getSemanticSpelling() != UnusedAttr::CXX11_maybe_unused &&
+//         A->getSemanticSpelling() != UnusedAttr::C2x_maybe_unused) {
+//       const Decl *DC = cast_or_null<Decl>(S.getCurObjCLexicalContext());
+//       if (DC && !DC->hasAttr<UnusedAttr>())
+//         S.Diag(Loc, diag::warn_used_but_marked_unused) << D->getDeclName();
+//     }
+//   }
+// }
 
 /// Emit a note explaining that this function is deleted.
 void Sema::NoteDeletedFunction(FunctionDecl *Decl) {
@@ -208,10 +208,10 @@ void Sema::MaybeSuggestAddingStaticToDecl(const FunctionDecl *Cur) {
 /// referenced), false otherwise.
 ///
 bool Sema::DiagnoseUseOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
-                             const ObjCInterfaceDecl *UnknownObjCClass,
+                            //  const ObjCInterfaceDecl *UnknownObjCClass,
                              bool ObjCPropertyAccess,
-                             bool AvoidPartialAvailabilityChecks,
-                             ObjCInterfaceDecl *ClassReceiver) {
+                             bool AvoidPartialAvailabilityChecks/*,
+                             ObjCInterfaceDecl *ClassReceiver*/) {
   SourceLocation Loc = Locs.front();
   if (getLangOpts().CPlusPlus && isa<FunctionDecl>(D)) {
     // If there were any diagnostics suppressed by template argument deduction,
@@ -326,44 +326,44 @@ bool Sema::DiagnoseUseOfDecl(NamedDecl *D, ArrayRef<SourceLocation> Locs,
   // Only the variables omp_in and omp_out are allowed in the combiner.
   // Only the variables omp_priv and omp_orig are allowed in the
   // initializer-clause.
-  auto *DRD = dyn_cast<OMPDeclareReductionDecl>(CurContext);
-  if (LangOpts.OpenMP && DRD && !CurContext->containsDecl(D) &&
-      isa<VarDecl>(D)) {
-    Diag(Loc, diag::err_omp_wrong_var_in_declare_reduction)
-        << getCurFunction()->HasOMPDeclareReductionCombiner;
-    Diag(D->getLocation(), diag::note_entity_declared_at) << D;
-    return true;
-  }
+  // auto *DRD = dyn_cast<OMPDeclareReductionDecl>(CurContext);
+  // if (LangOpts.OpenMP && DRD && !CurContext->containsDecl(D) &&
+  //     isa<VarDecl>(D)) {
+  //   Diag(Loc, diag::err_omp_wrong_var_in_declare_reduction)
+  //       << getCurFunction()->HasOMPDeclareReductionCombiner;
+  //   Diag(D->getLocation(), diag::note_entity_declared_at) << D;
+  //   return true;
+  // }
 
   // [OpenMP 5.0], 2.19.7.3. declare mapper Directive, Restrictions
   //  List-items in map clauses on this construct may only refer to the declared
   //  variable var and entities that could be referenced by a procedure defined
   //  at the same location
-  auto *DMD = dyn_cast<OMPDeclareMapperDecl>(CurContext);
-  if (LangOpts.OpenMP && DMD && !CurContext->containsDecl(D) &&
-      isa<VarDecl>(D)) {
-    Diag(Loc, diag::err_omp_declare_mapper_wrong_var)
-        << DMD->getVarName().getAsString();
-    Diag(D->getLocation(), diag::note_entity_declared_at) << D;
-    return true;
-  }
+  // auto *DMD = dyn_cast<OMPDeclareMapperDecl>(CurContext);
+  // if (LangOpts.OpenMP && DMD && !CurContext->containsDecl(D) &&
+  //     isa<VarDecl>(D)) {
+  //   Diag(Loc, diag::err_omp_declare_mapper_wrong_var)
+  //       << DMD->getVarName().getAsString();
+  //   Diag(D->getLocation(), diag::note_entity_declared_at) << D;
+  //   return true;
+  // }
 
   // DiagnoseAvailabilityOfDecl(D, Locs, UnknownObjCClass, ObjCPropertyAccess,
   //                            AvoidPartialAvailabilityChecks, ClassReceiver);
 
-  DiagnoseUnusedOfDecl(*this, D, Loc);
+  // DiagnoseUnusedOfDecl(*this, D, Loc);
 
   diagnoseUseOfInternalDeclInInlineFunction(*this, D, Loc);
 
-  if (LangOpts.SYCLIsDevice || (LangOpts.OpenMP && LangOpts.OpenMPIsDevice)) {
-    if (const auto *VD = dyn_cast<ValueDecl>(D))
-      checkDeviceDecl(VD, Loc);
+  // if (LangOpts.SYCLIsDevice || (LangOpts.OpenMP && LangOpts.OpenMPIsDevice)) {
+  //   if (const auto *VD = dyn_cast<ValueDecl>(D))
+  //     checkDeviceDecl(VD, Loc);
 
-    if (!Context.getTargetInfo().isTLSSupported())
-      if (const auto *VD = dyn_cast<VarDecl>(D))
-        if (VD->getTLSKind() != VarDecl::TLS_None)
-          targetDiag(*Locs.begin(), diag::err_thread_unsupported);
-  }
+  //   if (!Context.getTargetInfo().isTLSSupported())
+  //     if (const auto *VD = dyn_cast<VarDecl>(D))
+  //       if (VD->getTLSKind() != VarDecl::TLS_None)
+  //         targetDiag(*Locs.begin(), diag::err_thread_unsupported);
+  // }
 
   if (isa<ParmVarDecl>(D) && isa<RequiresExprBodyDecl>(D->getDeclContext()) &&
       !isUnevaluatedContext()) {
@@ -640,12 +640,12 @@ ExprResult Sema::DefaultLvalueConversion(Expr *E) {
     return E;
 
   // OpenCL usually rejects direct accesses to values of 'half' type.
-  if (getLangOpts().OpenCL && !getOpenCLOptions().isEnabled("cl_khr_fp16") &&
-      T->isHalfType()) {
-    Diag(E->getExprLoc(), diag::err_opencl_half_load_store)
-      << 0 << T;
-    return ExprError();
-  }
+  // if (getLangOpts().OpenCL && !getOpenCLOptions().isEnabled("cl_khr_fp16") &&
+  //     T->isHalfType()) {
+  //   Diag(E->getExprLoc(), diag::err_opencl_half_load_store)
+  //     << 0 << T;
+  //   return ExprError();
+  // }
 
   CheckForNullPointerDereference(*this, E);
   // if (const ObjCIsaExpr *OISA = dyn_cast<ObjCIsaExpr>(E->IgnoreParenCasts())) {
@@ -688,8 +688,8 @@ ExprResult Sema::DefaultLvalueConversion(Expr *E) {
 
   // Loading a __weak object implicitly retains the value, so we need a cleanup to
   // balance that.
-  if (E->getType().getObjCLifetime() == Qualifiers::OCL_Weak)
-    Cleanup.setExprNeedsCleanups(true);
+  // if (E->getType().getObjCLifetime() == Qualifiers::OCL_Weak)
+  //   Cleanup.setExprNeedsCleanups(true);
 
   if (E->getType().isDestructedType() == QualType::DK_nontrivial_c_struct)
     Cleanup.setExprNeedsCleanups(true);
@@ -808,16 +808,16 @@ ExprResult Sema::DefaultArgumentPromotion(Expr *E) {
   // Note that default argument promotion applies only to float (and
   // half/fp16); it does not apply to _Float16.
   const BuiltinType *BTy = Ty->getAs<BuiltinType>();
-  if (BTy && (BTy->getKind() == BuiltinType::Half ||
+  if (BTy && (/*BTy->getKind() == BuiltinType::Half ||*/
               BTy->getKind() == BuiltinType::Float)) {
-    if (getLangOpts().OpenCL &&
-        !getOpenCLOptions().isEnabled("cl_khr_fp64")) {
-        if (BTy->getKind() == BuiltinType::Half) {
-            E = ImpCastExprToType(E, Context.FloatTy, CK_FloatingCast).get();
-        }
-    } else {
+    // if (getLangOpts().OpenCL &&
+    //     !getOpenCLOptions().isEnabled("cl_khr_fp64")) {
+    //     if (BTy->getKind() == BuiltinType::Half) {
+    //         E = ImpCastExprToType(E, Context.FloatTy, CK_FloatingCast).get();
+    //     }
+    // } else {
       E = ImpCastExprToType(E, Context.DoubleTy, CK_FloatingCast).get();
-    }
+    // }
   }
 
   // C++ performs lvalue-to-rvalue conversion as a default argument
@@ -882,8 +882,8 @@ Sema::VarArgKind Sema::isValidVarArgType(const QualType &Ty) {
           !Record->hasNonTrivialDestructor())
         return VAK_ValidInCXX11;
 
-  if (getLangOpts().ObjCAutoRefCount && Ty->isObjCLifetimeType())
-    return VAK_Valid;
+  // if (getLangOpts().ObjCAutoRefCount && Ty->isObjCLifetimeType())
+  //   return VAK_Valid;
 
   // if (Ty->isObjCObjectType())
   //   return VAK_Invalid;
@@ -947,18 +947,18 @@ ExprResult Sema::DefaultVariadicArgumentPromotion(Expr *E, VariadicCallType CT,
                                                   FunctionDecl *FDecl) {
   if (const BuiltinType *PlaceholderTy = E->getType()->getAsPlaceholderType()) {
     // Strip the unbridged-cast placeholder expression off, if applicable.
-    if (PlaceholderTy->getKind() == BuiltinType::ARCUnbridgedCast &&
-        (CT == VariadicMethod ||
-         (FDecl && FDecl->hasAttr<CFAuditedTransferAttr>()))) {
-      E = stripARCUnbridgedCast(E);
+    // if (PlaceholderTy->getKind() == BuiltinType::ARCUnbridgedCast &&
+    //     (CT == VariadicMethod ||
+    //      (FDecl && FDecl->hasAttr<CFAuditedTransferAttr>()))) {
+    //   E = stripARCUnbridgedCast(E);
 
-    // Otherwise, do normal placeholder checking.
-    } else {
+    // // Otherwise, do normal placeholder checking.
+    // } else {
       ExprResult ExprRes = CheckPlaceholderExpr(E);
       if (ExprRes.isInvalid())
         return ExprError();
       E = ExprRes.get();
-    }
+    // }
   }
 
   ExprResult ExprRes = DefaultArgumentPromotion(E);
@@ -1924,12 +1924,12 @@ NonOdrUseReason Sema::getNonOdrUseReasonInCurrentContext(ValueDecl *D) {
   //   A variable x whose name appears as a potentially-evaluated expression e
   //   is odr-used by e unless [...] x is a reference that is usable in
   //   constant expressions.
-  if (VarDecl *VD = dyn_cast<VarDecl>(D)) {
-    if (VD->getType()->isReferenceType() &&
-        !(getLangOpts().OpenMP && isOpenMPCapturedDecl(D)) &&
-        VD->isUsableInConstantExpressions(Context))
-      return NOUR_Constant;
-  }
+  // if (VarDecl *VD = dyn_cast<VarDecl>(D)) {
+  //   if (VD->getType()->isReferenceType() &&
+  //       !(getLangOpts().OpenMP && isOpenMPCapturedDecl(D)) &&
+  //       VD->isUsableInConstantExpressions(Context))
+  //     return NOUR_Constant;
+  // }
 
   // All remaining non-variable cases constitute an odr-use. For variables, we
   // need to wait and see how the expression is used.
@@ -1972,10 +1972,10 @@ Sema::BuildDeclRefExpr(ValueDecl *D, QualType Ty, ExprValueKind VK,
     }
   }
 
-  if (getLangOpts().ObjCWeak && isa<VarDecl>(D) &&
-      Ty.getObjCLifetime() == Qualifiers::OCL_Weak && !isUnevaluatedContext() &&
-      !Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, E->getBeginLoc()))
-    getCurFunction()->recordUseOfWeak(E);
+  // if (getLangOpts().ObjCWeak && isa<VarDecl>(D) &&
+  //     Ty.getObjCLifetime() == Qualifiers::OCL_Weak && !isUnevaluatedContext() &&
+  //     !Diags.isIgnored(diag::warn_arc_repeated_use_of_weak, E->getBeginLoc()))
+  //   getCurFunction()->recordUseOfWeak(E);
 
   FieldDecl *FD = dyn_cast<FieldDecl>(D);
   if (IndirectFieldDecl *IFD = dyn_cast<IndirectFieldDecl>(D))
@@ -2215,8 +2215,8 @@ bool Sema::DiagnoseEmptyLookup(Scope *S, CXXScopeSpec &SS, LookupResult &R,
       // correction, but don't make it a fix-it since we're not going
       // to recover well anyway.
       AcceptableWithoutRecovery = isa<TypeDecl>(UnderlyingND) ||
-                                  getAsTypeTemplateDecl(UnderlyingND) ||
-                                  /*isa<ObjCInterfaceDecl>(UnderlyingND)*/;
+                                  getAsTypeTemplateDecl(UnderlyingND) /*||
+                                  isa<ObjCInterfaceDecl>(UnderlyingND)*/;
     } else {
       // FIXME: We found a keyword. Suggest it, but don't provide a fix-it
       // because we aren't able to recover.
@@ -2361,9 +2361,9 @@ Sema::ActOnIdExpression(Scope *S, CXXScopeSpec &SS,
 
   // Perform the required lookup.
   LookupResult R(*this, NameInfo,
-                 (Id.getKind() == UnqualifiedIdKind::IK_ImplicitSelfParam)
+                 /*(Id.getKind() == UnqualifiedIdKind::IK_ImplicitSelfParam)
                      ? LookupObjCImplicitSelfParam
-                     : LookupOrdinaryName);
+                     :*/ LookupOrdinaryName);
   if (TemplateKWLoc.isValid() || TemplateArgs) {
     // Lookup the template name again to correctly establish the context in
     // which it was found. This is really unfortunate as we already did the
@@ -2393,14 +2393,14 @@ Sema::ActOnIdExpression(Scope *S, CXXScopeSpec &SS,
 
     // If this reference is in an Objective-C method, then we need to do
     // some special Objective-C lookup, too.
-    if (IvarLookupFollowUp) {
-      // ExprResult E(LookupInObjCMethod(R, S, II, true));
-      // if (E.isInvalid())
-      //   return ExprError();
+    // if (IvarLookupFollowUp) {
+    //   ExprResult E(LookupInObjCMethod(R, S, II, true));
+    //   if (E.isInvalid())
+    //     return ExprError();
 
-      if (Expr *Ex = E.getAs<Expr>())
-        return Ex;
-    }
+    //   if (Expr *Ex = E.getAs<Expr>())
+    //     return Ex;
+    // }
   }
 
   if (R.isAmbiguous())
@@ -3178,8 +3178,8 @@ ExprResult Sema::BuildDeclarationNameExpr(
     // Unresolved using declarations are dependent.
     case Decl::EnumConstant:
     case Decl::UnresolvedUsingValue:
-    case Decl::OMPDeclareReduction:
-    case Decl::OMPDeclareMapper:
+    // case Decl::OMPDeclareReduction:
+    // case Decl::OMPDeclareMapper:
       valueKind = VK_RValue;
       break;
 
@@ -3219,7 +3219,7 @@ ExprResult Sema::BuildDeclarationNameExpr(
     case Decl::VarTemplateSpecialization:
     case Decl::VarTemplatePartialSpecialization:
     case Decl::Decomposition:
-    case Decl::OMPCapturedExpr:
+    // case Decl::OMPCapturedExpr:
       // In C, "extern void blah;" is valid and is an r-value.
       if (!getLangOpts().CPlusPlus &&
           !type.hasQualifiers() &&
@@ -3478,14 +3478,14 @@ ExprResult Sema::ActOnUniqueStableNameExpr(SourceLocation OpLoc,
 
 //   switch (Kind) {
 //   default: llvm_unreachable("Unknown simple primary expr!");
-  // case tok::kw___func__: IK = PredefinedExpr::Func; break; // [C99 6.4.2.2]
-  // case tok::kw___FUNCTION__: IK = PredefinedExpr::Function; break;
-  // case tok::kw___FUNCDNAME__: IK = PredefinedExpr::FuncDName; break; // [MS]
-  // case tok::kw___FUNCSIG__: IK = PredefinedExpr::FuncSig; break; // [MS]
-  // case tok::kw_L__FUNCTION__: IK = PredefinedExpr::LFunction; break; // [MS]
-  // case tok::kw_L__FUNCSIG__: IK = PredefinedExpr::LFuncSig; break; // [MS]
-  // case tok::kw___PRETTY_FUNCTION__: IK = PredefinedExpr::PrettyFunction; break;
-  // }
+//   case tok::kw___func__: IK = PredefinedExpr::Func; break; // [C99 6.4.2.2]
+//   case tok::kw___FUNCTION__: IK = PredefinedExpr::Function; break;
+//   case tok::kw___FUNCDNAME__: IK = PredefinedExpr::FuncDName; break; // [MS]
+//   case tok::kw___FUNCSIG__: IK = PredefinedExpr::FuncSig; break; // [MS]
+//   case tok::kw_L__FUNCTION__: IK = PredefinedExpr::LFunction; break; // [MS]
+//   case tok::kw_L__FUNCSIG__: IK = PredefinedExpr::LFuncSig; break; // [MS]
+//   case tok::kw___PRETTY_FUNCTION__: IK = PredefinedExpr::PrettyFunction; break;
+//   }
 
 //   return BuildPredefinedExpr(Loc, IK);
 // }
@@ -3783,12 +3783,12 @@ ExprResult Sema::ActOnNumericConstant(const Token &Tok, Scope *UDLScope) {
   } else if (Literal.isFloatingLiteral()) {
     QualType Ty;
     if (Literal.isHalf){
-      if (getOpenCLOptions().isEnabled("cl_khr_fp16"))
-        Ty = Context.HalfTy;
-      else {
+      // if (getOpenCLOptions().isEnabled("cl_khr_fp16"))
+      //   Ty = Context.HalfTy;
+      // else {
         Diag(Tok.getLocation(), diag::err_half_const_requires_fp16);
         return ExprError();
-      }
+      // }
     } else if (Literal.isFloat)
       Ty = Context.FloatTy;
     else if (Literal.isLong)
@@ -3808,12 +3808,12 @@ ExprResult Sema::ActOnNumericConstant(const Token &Tok, Scope *UDLScope) {
         if (BTy->getKind() != BuiltinType::Float) {
           Res = ImpCastExprToType(Res, Context.FloatTy, CK_FloatingCast).get();
         }
-      } else if (getLangOpts().OpenCL &&
+      } /*else if (getLangOpts().OpenCL &&
                  !getOpenCLOptions().isEnabled("cl_khr_fp64")) {
         // Impose single-precision float type when cl_khr_fp64 is not enabled.
         Diag(Tok.getLocation(), diag::warn_double_const_requires_fp64);
         Res = ImpCastExprToType(Res, Context.FloatTy, CK_FloatingCast).get();
-      }
+      }*/
     }
   } else if (!Literal.isIntegerLiteral()) {
     return ExprError();
@@ -3996,8 +3996,8 @@ static bool CheckExtensionTraitOperandType(Sema &S, QualType T,
   // Allow sizeof(void)/alignof(void) as an extension, unless in OpenCL where
   // this is an error (OpenCL v1.1 s6.3.k)
   if (T->isVoidType()) {
-    unsigned DiagID = S.LangOpts.OpenCL ? diag::err_opencl_sizeof_alignof_type
-                                        : diag::ext_sizeof_alignof_void_type;
+    unsigned DiagID = /*S.LangOpts.OpenCL ? diag::err_opencl_sizeof_alignof_type
+                                        :*/ diag::ext_sizeof_alignof_void_type;
     S.Diag(Loc, DiagID) << getTraitSpelling(TraitKind) << ArgRange;
     return false;
   }
@@ -4103,9 +4103,9 @@ bool Sema::CheckUnaryExprOrTypeTraitOperand(Expr *E,
       E->HasSideEffects(Context, false))
     Diag(E->getExprLoc(), diag::warn_side_effects_unevaluated_context);
 
-  if (CheckObjCTraitOperandConstraints(*this, ExprTy, E->getExprLoc(),
-                                       E->getSourceRange(), ExprKind))
-    return true;
+  // if (CheckObjCTraitOperandConstraints(*this, ExprTy, E->getExprLoc(),
+  //                                      E->getSourceRange(), ExprKind))
+  //   return true;
 
   if (ExprKind == UETT_SizeOf) {
     if (DeclRefExpr *DeclRef = dyn_cast<DeclRefExpr>(E->IgnoreParens())) {
@@ -4168,8 +4168,8 @@ bool Sema::CheckUnaryExprOrTypeTraitOperand(QualType ExprType,
   // C11 6.5.3.4/3, C++11 [expr.alignof]p3:
   //   When alignof or _Alignof is applied to an array type, the result
   //   is the alignment of the element type.
-  if (ExprKind == UETT_AlignOf || ExprKind == UETT_PreferredAlignOf ||
-      ExprKind == UETT_OpenMPRequiredSimdAlign)
+  if (ExprKind == UETT_AlignOf || ExprKind == UETT_PreferredAlignOf /*||
+      ExprKind == UETT_OpenMPRequiredSimdAlign*/)
     ExprType = Context.getBaseElementType(ExprType);
 
   // if (ExprKind == UETT_VecStep)
@@ -4191,9 +4191,9 @@ bool Sema::CheckUnaryExprOrTypeTraitOperand(QualType ExprType,
     return true;
   }
 
-  if (CheckObjCTraitOperandConstraints(*this, ExprType, OpLoc, ExprRange,
-                                       ExprKind))
-    return true;
+  // if (CheckObjCTraitOperandConstraints(*this, ExprType, OpLoc, ExprRange,
+  //                                      ExprKind))
+  //   return true;
 
   return false;
 }
@@ -4433,10 +4433,10 @@ Sema::CreateUnaryExprOrTypeTraitExpr(Expr *E, SourceLocation OpLoc,
     isInvalid = CheckAlignOfExpr(*this, E, ExprKind);
   // } else if (ExprKind == UETT_VecStep) {
   //   isInvalid = CheckVecStepExpr(E);
-  } else if (ExprKind == UETT_OpenMPRequiredSimdAlign) {
+  }/* else if (ExprKind == UETT_OpenMPRequiredSimdAlign) {
       Diag(E->getExprLoc(), diag::err_openmp_default_simd_align_expr);
       isInvalid = true;
-  } else if (E->refersToBitField()) {  // C99 6.5.3.4p1.
+  }*/ else if (E->refersToBitField()) {  // C99 6.5.3.4p1.
     Diag(E->getExprLoc(), diag::err_sizeof_alignof_typeof_bitfield) << 0;
     isInvalid = true;
   } else {
@@ -4559,11 +4559,11 @@ static bool isMSPropertySubscriptExpr(Sema &S, Expr *Base) {
 ExprResult
 Sema::ActOnArraySubscriptExpr(Scope *S, Expr *base, SourceLocation lbLoc,
                               Expr *idx, SourceLocation rbLoc) {
-  if (base && !base->getType().isNull() &&
-      base->getType()->isSpecificPlaceholderType(BuiltinType::OMPArraySection))
-    return ActOnOMPArraySectionExpr(base, lbLoc, idx, SourceLocation(),
-                                    SourceLocation(), /*Length*/ nullptr,
-                                    /*Stride=*/nullptr, rbLoc);
+  // if (base && !base->getType().isNull() &&
+  //     base->getType()->isSpecificPlaceholderType(BuiltinType::OMPArraySection))
+  //   return ActOnOMPArraySectionExpr(base, lbLoc, idx, SourceLocation(),
+  //                                   SourceLocation(), /*Length*/ nullptr,
+  //                                   /*Stride=*/nullptr, rbLoc);
 
   // Since this might be a postfix expression, get rid of ParenListExprs.
   if (isa<ParenListExpr>(base)) {
@@ -4811,555 +4811,555 @@ void Sema::CheckSubscriptAccessOfNoDeref(const ArraySubscriptExpr *E) {
   }
 }
 
-ExprResult Sema::ActOnOMPArraySectionExpr(Expr *Base, SourceLocation LBLoc,
-                                          Expr *LowerBound,
-                                          SourceLocation ColonLocFirst,
-                                          SourceLocation ColonLocSecond,
-                                          Expr *Length, Expr *Stride,
-                                          SourceLocation RBLoc) {
-  if (Base->getType()->isPlaceholderType() &&
-      !Base->getType()->isSpecificPlaceholderType(
-          BuiltinType::OMPArraySection)) {
-    ExprResult Result = CheckPlaceholderExpr(Base);
-    if (Result.isInvalid())
-      return ExprError();
-    Base = Result.get();
-  }
-  if (LowerBound && LowerBound->getType()->isNonOverloadPlaceholderType()) {
-    ExprResult Result = CheckPlaceholderExpr(LowerBound);
-    if (Result.isInvalid())
-      return ExprError();
-    Result = DefaultLvalueConversion(Result.get());
-    if (Result.isInvalid())
-      return ExprError();
-    LowerBound = Result.get();
-  }
-  if (Length && Length->getType()->isNonOverloadPlaceholderType()) {
-    ExprResult Result = CheckPlaceholderExpr(Length);
-    if (Result.isInvalid())
-      return ExprError();
-    Result = DefaultLvalueConversion(Result.get());
-    if (Result.isInvalid())
-      return ExprError();
-    Length = Result.get();
-  }
-  if (Stride && Stride->getType()->isNonOverloadPlaceholderType()) {
-    ExprResult Result = CheckPlaceholderExpr(Stride);
-    if (Result.isInvalid())
-      return ExprError();
-    Result = DefaultLvalueConversion(Result.get());
-    if (Result.isInvalid())
-      return ExprError();
-    Stride = Result.get();
-  }
+// ExprResult Sema::ActOnOMPArraySectionExpr(Expr *Base, SourceLocation LBLoc,
+//                                           Expr *LowerBound,
+//                                           SourceLocation ColonLocFirst,
+//                                           SourceLocation ColonLocSecond,
+//                                           Expr *Length, Expr *Stride,
+//                                           SourceLocation RBLoc) {
+//   if (Base->getType()->isPlaceholderType() &&
+//       !Base->getType()->isSpecificPlaceholderType(
+//           BuiltinType::OMPArraySection)) {
+//     ExprResult Result = CheckPlaceholderExpr(Base);
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Base = Result.get();
+//   }
+//   if (LowerBound && LowerBound->getType()->isNonOverloadPlaceholderType()) {
+//     ExprResult Result = CheckPlaceholderExpr(LowerBound);
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Result = DefaultLvalueConversion(Result.get());
+//     if (Result.isInvalid())
+//       return ExprError();
+//     LowerBound = Result.get();
+//   }
+//   if (Length && Length->getType()->isNonOverloadPlaceholderType()) {
+//     ExprResult Result = CheckPlaceholderExpr(Length);
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Result = DefaultLvalueConversion(Result.get());
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Length = Result.get();
+//   }
+//   if (Stride && Stride->getType()->isNonOverloadPlaceholderType()) {
+//     ExprResult Result = CheckPlaceholderExpr(Stride);
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Result = DefaultLvalueConversion(Result.get());
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Stride = Result.get();
+//   }
 
-  // Build an unanalyzed expression if either operand is type-dependent.
-  if (Base->isTypeDependent() ||
-      (LowerBound &&
-       (LowerBound->isTypeDependent() || LowerBound->isValueDependent())) ||
-      (Length && (Length->isTypeDependent() || Length->isValueDependent())) ||
-      (Stride && (Stride->isTypeDependent() || Stride->isValueDependent()))) {
-    return new (Context) OMPArraySectionExpr(
-        Base, LowerBound, Length, Stride, Context.DependentTy, VK_LValue,
-        OK_Ordinary, ColonLocFirst, ColonLocSecond, RBLoc);
-  }
+//   // Build an unanalyzed expression if either operand is type-dependent.
+//   if (Base->isTypeDependent() ||
+//       (LowerBound &&
+//        (LowerBound->isTypeDependent() || LowerBound->isValueDependent())) ||
+//       (Length && (Length->isTypeDependent() || Length->isValueDependent())) ||
+//       (Stride && (Stride->isTypeDependent() || Stride->isValueDependent()))) {
+//     return new (Context) OMPArraySectionExpr(
+//         Base, LowerBound, Length, Stride, Context.DependentTy, VK_LValue,
+//         OK_Ordinary, ColonLocFirst, ColonLocSecond, RBLoc);
+//   }
 
-  // Perform default conversions.
-  QualType OriginalTy = OMPArraySectionExpr::getBaseOriginalType(Base);
-  QualType ResultTy;
-  if (OriginalTy->isAnyPointerType()) {
-    ResultTy = OriginalTy->getPointeeType();
-  } else if (OriginalTy->isArrayType()) {
-    ResultTy = OriginalTy->getAsArrayTypeUnsafe()->getElementType();
-  } else {
-    return ExprError(
-        Diag(Base->getExprLoc(), diag::err_omp_typecheck_section_value)
-        << Base->getSourceRange());
-  }
-  // C99 6.5.2.1p1
-  if (LowerBound) {
-    auto Res = PerformOpenMPImplicitIntegerConversion(LowerBound->getExprLoc(),
-                                                      LowerBound);
-    if (Res.isInvalid())
-      return ExprError(Diag(LowerBound->getExprLoc(),
-                            diag::err_omp_typecheck_section_not_integer)
-                       << 0 << LowerBound->getSourceRange());
-    LowerBound = Res.get();
+//   // Perform default conversions.
+//   QualType OriginalTy = OMPArraySectionExpr::getBaseOriginalType(Base);
+//   QualType ResultTy;
+//   if (OriginalTy->isAnyPointerType()) {
+//     ResultTy = OriginalTy->getPointeeType();
+//   } else if (OriginalTy->isArrayType()) {
+//     ResultTy = OriginalTy->getAsArrayTypeUnsafe()->getElementType();
+//   } else {
+//     return ExprError(
+//         Diag(Base->getExprLoc(), diag::err_omp_typecheck_section_value)
+//         << Base->getSourceRange());
+//   }
+//   // C99 6.5.2.1p1
+//   if (LowerBound) {
+//     auto Res = PerformOpenMPImplicitIntegerConversion(LowerBound->getExprLoc(),
+//                                                       LowerBound);
+//     if (Res.isInvalid())
+//       return ExprError(Diag(LowerBound->getExprLoc(),
+//                             diag::err_omp_typecheck_section_not_integer)
+//                        << 0 << LowerBound->getSourceRange());
+//     LowerBound = Res.get();
 
-    if (LowerBound->getType()->isSpecificBuiltinType(BuiltinType::Char_S) ||
-        LowerBound->getType()->isSpecificBuiltinType(BuiltinType::Char_U))
-      Diag(LowerBound->getExprLoc(), diag::warn_omp_section_is_char)
-          << 0 << LowerBound->getSourceRange();
-  }
-  if (Length) {
-    auto Res =
-        PerformOpenMPImplicitIntegerConversion(Length->getExprLoc(), Length);
-    if (Res.isInvalid())
-      return ExprError(Diag(Length->getExprLoc(),
-                            diag::err_omp_typecheck_section_not_integer)
-                       << 1 << Length->getSourceRange());
-    Length = Res.get();
+//     if (LowerBound->getType()->isSpecificBuiltinType(BuiltinType::Char_S) ||
+//         LowerBound->getType()->isSpecificBuiltinType(BuiltinType::Char_U))
+//       Diag(LowerBound->getExprLoc(), diag::warn_omp_section_is_char)
+//           << 0 << LowerBound->getSourceRange();
+//   }
+//   if (Length) {
+//     auto Res =
+//         PerformOpenMPImplicitIntegerConversion(Length->getExprLoc(), Length);
+//     if (Res.isInvalid())
+//       return ExprError(Diag(Length->getExprLoc(),
+//                             diag::err_omp_typecheck_section_not_integer)
+//                        << 1 << Length->getSourceRange());
+//     Length = Res.get();
 
-    if (Length->getType()->isSpecificBuiltinType(BuiltinType::Char_S) ||
-        Length->getType()->isSpecificBuiltinType(BuiltinType::Char_U))
-      Diag(Length->getExprLoc(), diag::warn_omp_section_is_char)
-          << 1 << Length->getSourceRange();
-  }
-  if (Stride) {
-    ExprResult Res =
-        PerformOpenMPImplicitIntegerConversion(Stride->getExprLoc(), Stride);
-    if (Res.isInvalid())
-      return ExprError(Diag(Stride->getExprLoc(),
-                            diag::err_omp_typecheck_section_not_integer)
-                       << 1 << Stride->getSourceRange());
-    Stride = Res.get();
+//     if (Length->getType()->isSpecificBuiltinType(BuiltinType::Char_S) ||
+//         Length->getType()->isSpecificBuiltinType(BuiltinType::Char_U))
+//       Diag(Length->getExprLoc(), diag::warn_omp_section_is_char)
+//           << 1 << Length->getSourceRange();
+//   }
+//   if (Stride) {
+//     ExprResult Res =
+//         PerformOpenMPImplicitIntegerConversion(Stride->getExprLoc(), Stride);
+//     if (Res.isInvalid())
+//       return ExprError(Diag(Stride->getExprLoc(),
+//                             diag::err_omp_typecheck_section_not_integer)
+//                        << 1 << Stride->getSourceRange());
+//     Stride = Res.get();
 
-    if (Stride->getType()->isSpecificBuiltinType(BuiltinType::Char_S) ||
-        Stride->getType()->isSpecificBuiltinType(BuiltinType::Char_U))
-      Diag(Stride->getExprLoc(), diag::warn_omp_section_is_char)
-          << 1 << Stride->getSourceRange();
-  }
+//     if (Stride->getType()->isSpecificBuiltinType(BuiltinType::Char_S) ||
+//         Stride->getType()->isSpecificBuiltinType(BuiltinType::Char_U))
+//       Diag(Stride->getExprLoc(), diag::warn_omp_section_is_char)
+//           << 1 << Stride->getSourceRange();
+//   }
 
-  // C99 6.5.2.1p1: "shall have type "pointer to *object* type". Similarly,
-  // C++ [expr.sub]p1: The type "T" shall be a completely-defined object
-  // type. Note that functions are not objects, and that (in C99 parlance)
-  // incomplete types are not object types.
-  if (ResultTy->isFunctionType()) {
-    Diag(Base->getExprLoc(), diag::err_omp_section_function_type)
-        << ResultTy << Base->getSourceRange();
-    return ExprError();
-  }
+//   // C99 6.5.2.1p1: "shall have type "pointer to *object* type". Similarly,
+//   // C++ [expr.sub]p1: The type "T" shall be a completely-defined object
+//   // type. Note that functions are not objects, and that (in C99 parlance)
+//   // incomplete types are not object types.
+//   if (ResultTy->isFunctionType()) {
+//     Diag(Base->getExprLoc(), diag::err_omp_section_function_type)
+//         << ResultTy << Base->getSourceRange();
+//     return ExprError();
+//   }
 
-  if (RequireCompleteType(Base->getExprLoc(), ResultTy,
-                          diag::err_omp_section_incomplete_type, Base))
-    return ExprError();
+//   if (RequireCompleteType(Base->getExprLoc(), ResultTy,
+//                           diag::err_omp_section_incomplete_type, Base))
+//     return ExprError();
 
-  if (LowerBound && !OriginalTy->isAnyPointerType()) {
-    Expr::EvalResult Result;
-    if (LowerBound->EvaluateAsInt(Result, Context)) {
-      // OpenMP 5.0, [2.1.5 Array Sections]
-      // The array section must be a subset of the original array.
-      llvm::APSInt LowerBoundValue = Result.Val.getInt();
-      if (LowerBoundValue.isNegative()) {
-        Diag(LowerBound->getExprLoc(), diag::err_omp_section_not_subset_of_array)
-            << LowerBound->getSourceRange();
-        return ExprError();
-      }
-    }
-  }
+//   if (LowerBound && !OriginalTy->isAnyPointerType()) {
+//     Expr::EvalResult Result;
+//     if (LowerBound->EvaluateAsInt(Result, Context)) {
+//       // OpenMP 5.0, [2.1.5 Array Sections]
+//       // The array section must be a subset of the original array.
+//       llvm::APSInt LowerBoundValue = Result.Val.getInt();
+//       if (LowerBoundValue.isNegative()) {
+//         Diag(LowerBound->getExprLoc(), diag::err_omp_section_not_subset_of_array)
+//             << LowerBound->getSourceRange();
+//         return ExprError();
+//       }
+//     }
+//   }
 
-  if (Length) {
-    Expr::EvalResult Result;
-    if (Length->EvaluateAsInt(Result, Context)) {
-      // OpenMP 5.0, [2.1.5 Array Sections]
-      // The length must evaluate to non-negative integers.
-      llvm::APSInt LengthValue = Result.Val.getInt();
-      if (LengthValue.isNegative()) {
-        Diag(Length->getExprLoc(), diag::err_omp_section_length_negative)
-            << LengthValue.toString(/*Radix=*/10, /*Signed=*/true)
-            << Length->getSourceRange();
-        return ExprError();
-      }
-    }
-  } else if (ColonLocFirst.isValid() &&
-             (OriginalTy.isNull() || (!OriginalTy->isConstantArrayType() &&
-                                      !OriginalTy->isVariableArrayType()))) {
-    // OpenMP 5.0, [2.1.5 Array Sections]
-    // When the size of the array dimension is not known, the length must be
-    // specified explicitly.
-    Diag(ColonLocFirst, diag::err_omp_section_length_undefined)
-        << (!OriginalTy.isNull() && OriginalTy->isArrayType());
-    return ExprError();
-  }
+//   if (Length) {
+//     Expr::EvalResult Result;
+//     if (Length->EvaluateAsInt(Result, Context)) {
+//       // OpenMP 5.0, [2.1.5 Array Sections]
+//       // The length must evaluate to non-negative integers.
+//       llvm::APSInt LengthValue = Result.Val.getInt();
+//       if (LengthValue.isNegative()) {
+//         Diag(Length->getExprLoc(), diag::err_omp_section_length_negative)
+//             << LengthValue.toString(/*Radix=*/10, /*Signed=*/true)
+//             << Length->getSourceRange();
+//         return ExprError();
+//       }
+//     }
+//   } else if (ColonLocFirst.isValid() &&
+//              (OriginalTy.isNull() || (!OriginalTy->isConstantArrayType() &&
+//                                       !OriginalTy->isVariableArrayType()))) {
+//     // OpenMP 5.0, [2.1.5 Array Sections]
+//     // When the size of the array dimension is not known, the length must be
+//     // specified explicitly.
+//     Diag(ColonLocFirst, diag::err_omp_section_length_undefined)
+//         << (!OriginalTy.isNull() && OriginalTy->isArrayType());
+//     return ExprError();
+//   }
 
-  if (Stride) {
-    Expr::EvalResult Result;
-    if (Stride->EvaluateAsInt(Result, Context)) {
-      // OpenMP 5.0, [2.1.5 Array Sections]
-      // The stride must evaluate to a positive integer.
-      llvm::APSInt StrideValue = Result.Val.getInt();
-      if (!StrideValue.isStrictlyPositive()) {
-        Diag(Stride->getExprLoc(), diag::err_omp_section_stride_non_positive)
-            << StrideValue.toString(/*Radix=*/10, /*Signed=*/true)
-            << Stride->getSourceRange();
-        return ExprError();
-      }
-    }
-  }
+//   if (Stride) {
+//     Expr::EvalResult Result;
+//     if (Stride->EvaluateAsInt(Result, Context)) {
+//       // OpenMP 5.0, [2.1.5 Array Sections]
+//       // The stride must evaluate to a positive integer.
+//       llvm::APSInt StrideValue = Result.Val.getInt();
+//       if (!StrideValue.isStrictlyPositive()) {
+//         Diag(Stride->getExprLoc(), diag::err_omp_section_stride_non_positive)
+//             << StrideValue.toString(/*Radix=*/10, /*Signed=*/true)
+//             << Stride->getSourceRange();
+//         return ExprError();
+//       }
+//     }
+//   }
 
-  if (!Base->getType()->isSpecificPlaceholderType(
-          BuiltinType::OMPArraySection)) {
-    ExprResult Result = DefaultFunctionArrayLvalueConversion(Base);
-    if (Result.isInvalid())
-      return ExprError();
-    Base = Result.get();
-  }
-  return new (Context) OMPArraySectionExpr(
-      Base, LowerBound, Length, Stride, Context.OMPArraySectionTy, VK_LValue,
-      OK_Ordinary, ColonLocFirst, ColonLocSecond, RBLoc);
-}
+//   if (!Base->getType()->isSpecificPlaceholderType(
+//           BuiltinType::OMPArraySection)) {
+//     ExprResult Result = DefaultFunctionArrayLvalueConversion(Base);
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Base = Result.get();
+//   }
+//   return new (Context) OMPArraySectionExpr(
+//       Base, LowerBound, Length, Stride, Context.OMPArraySectionTy, VK_LValue,
+//       OK_Ordinary, ColonLocFirst, ColonLocSecond, RBLoc);
+// }
 
-ExprResult Sema::ActOnOMPArrayShapingExpr(Expr *Base, SourceLocation LParenLoc,
-                                          SourceLocation RParenLoc,
-                                          ArrayRef<Expr *> Dims,
-                                          ArrayRef<SourceRange> Brackets) {
-  if (Base->getType()->isPlaceholderType()) {
-    ExprResult Result = CheckPlaceholderExpr(Base);
-    if (Result.isInvalid())
-      return ExprError();
-    Result = DefaultLvalueConversion(Result.get());
-    if (Result.isInvalid())
-      return ExprError();
-    Base = Result.get();
-  }
-  QualType BaseTy = Base->getType();
-  // Delay analysis of the types/expressions if instantiation/specialization is
-  // required.
-  if (!BaseTy->isPointerType() && Base->isTypeDependent())
-    return OMPArrayShapingExpr::Create(Context, Context.DependentTy, Base,
-                                       LParenLoc, RParenLoc, Dims, Brackets);
-  if (!BaseTy->isPointerType() ||
-      (!Base->isTypeDependent() &&
-       BaseTy->getPointeeType()->isIncompleteType()))
-    return ExprError(Diag(Base->getExprLoc(),
-                          diag::err_omp_non_pointer_type_array_shaping_base)
-                     << Base->getSourceRange());
+// ExprResult Sema::ActOnOMPArrayShapingExpr(Expr *Base, SourceLocation LParenLoc,
+//                                           SourceLocation RParenLoc,
+//                                           ArrayRef<Expr *> Dims,
+//                                           ArrayRef<SourceRange> Brackets) {
+//   if (Base->getType()->isPlaceholderType()) {
+//     ExprResult Result = CheckPlaceholderExpr(Base);
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Result = DefaultLvalueConversion(Result.get());
+//     if (Result.isInvalid())
+//       return ExprError();
+//     Base = Result.get();
+//   }
+//   QualType BaseTy = Base->getType();
+//   // Delay analysis of the types/expressions if instantiation/specialization is
+//   // required.
+//   if (!BaseTy->isPointerType() && Base->isTypeDependent())
+//     return OMPArrayShapingExpr::Create(Context, Context.DependentTy, Base,
+//                                        LParenLoc, RParenLoc, Dims, Brackets);
+//   if (!BaseTy->isPointerType() ||
+//       (!Base->isTypeDependent() &&
+//        BaseTy->getPointeeType()->isIncompleteType()))
+//     return ExprError(Diag(Base->getExprLoc(),
+//                           diag::err_omp_non_pointer_type_array_shaping_base)
+//                      << Base->getSourceRange());
 
-  SmallVector<Expr *, 4> NewDims;
-  bool ErrorFound = false;
-  for (Expr *Dim : Dims) {
-    if (Dim->getType()->isPlaceholderType()) {
-      ExprResult Result = CheckPlaceholderExpr(Dim);
-      if (Result.isInvalid()) {
-        ErrorFound = true;
-        continue;
-      }
-      Result = DefaultLvalueConversion(Result.get());
-      if (Result.isInvalid()) {
-        ErrorFound = true;
-        continue;
-      }
-      Dim = Result.get();
-    }
-    if (!Dim->isTypeDependent()) {
-      ExprResult Result =
-          PerformOpenMPImplicitIntegerConversion(Dim->getExprLoc(), Dim);
-      if (Result.isInvalid()) {
-        ErrorFound = true;
-        Diag(Dim->getExprLoc(), diag::err_omp_typecheck_shaping_not_integer)
-            << Dim->getSourceRange();
-        continue;
-      }
-      Dim = Result.get();
-      Expr::EvalResult EvResult;
-      if (!Dim->isValueDependent() && Dim->EvaluateAsInt(EvResult, Context)) {
-        // OpenMP 5.0, [2.1.4 Array Shaping]
-        // Each si is an integral type expression that must evaluate to a
-        // positive integer.
-        llvm::APSInt Value = EvResult.Val.getInt();
-        if (!Value.isStrictlyPositive()) {
-          Diag(Dim->getExprLoc(), diag::err_omp_shaping_dimension_not_positive)
-              << Value.toString(/*Radix=*/10, /*Signed=*/true)
-              << Dim->getSourceRange();
-          ErrorFound = true;
-          continue;
-        }
-      }
-    }
-    NewDims.push_back(Dim);
-  }
-  if (ErrorFound)
-    return ExprError();
-  return OMPArrayShapingExpr::Create(Context, Context.OMPArrayShapingTy, Base,
-                                     LParenLoc, RParenLoc, NewDims, Brackets);
-}
+//   SmallVector<Expr *, 4> NewDims;
+//   bool ErrorFound = false;
+//   for (Expr *Dim : Dims) {
+//     if (Dim->getType()->isPlaceholderType()) {
+//       ExprResult Result = CheckPlaceholderExpr(Dim);
+//       if (Result.isInvalid()) {
+//         ErrorFound = true;
+//         continue;
+//       }
+//       Result = DefaultLvalueConversion(Result.get());
+//       if (Result.isInvalid()) {
+//         ErrorFound = true;
+//         continue;
+//       }
+//       Dim = Result.get();
+//     }
+//     if (!Dim->isTypeDependent()) {
+//       ExprResult Result =
+//           PerformOpenMPImplicitIntegerConversion(Dim->getExprLoc(), Dim);
+//       if (Result.isInvalid()) {
+//         ErrorFound = true;
+//         Diag(Dim->getExprLoc(), diag::err_omp_typecheck_shaping_not_integer)
+//             << Dim->getSourceRange();
+//         continue;
+//       }
+//       Dim = Result.get();
+//       Expr::EvalResult EvResult;
+//       if (!Dim->isValueDependent() && Dim->EvaluateAsInt(EvResult, Context)) {
+//         // OpenMP 5.0, [2.1.4 Array Shaping]
+//         // Each si is an integral type expression that must evaluate to a
+//         // positive integer.
+//         llvm::APSInt Value = EvResult.Val.getInt();
+//         if (!Value.isStrictlyPositive()) {
+//           Diag(Dim->getExprLoc(), diag::err_omp_shaping_dimension_not_positive)
+//               << Value.toString(/*Radix=*/10, /*Signed=*/true)
+//               << Dim->getSourceRange();
+//           ErrorFound = true;
+//           continue;
+//         }
+//       }
+//     }
+//     NewDims.push_back(Dim);
+//   }
+//   if (ErrorFound)
+//     return ExprError();
+//   return OMPArrayShapingExpr::Create(Context, Context.OMPArrayShapingTy, Base,
+//                                      LParenLoc, RParenLoc, NewDims, Brackets);
+// }
 
-ExprResult Sema::ActOnOMPIteratorExpr(Scope *S, SourceLocation IteratorKwLoc,
-                                      SourceLocation LLoc, SourceLocation RLoc,
-                                      ArrayRef<OMPIteratorData> Data) {
-  SmallVector<OMPIteratorExpr::IteratorDefinition, 4> ID;
-  bool IsCorrect = true;
-  for (const OMPIteratorData &D : Data) {
-    TypeSourceInfo *TInfo = nullptr;
-    SourceLocation StartLoc;
-    QualType DeclTy;
-    if (!D.Type.getAsOpaquePtr()) {
-      // OpenMP 5.0, 2.1.6 Iterators
-      // In an iterator-specifier, if the iterator-type is not specified then
-      // the type of that iterator is of int type.
-      DeclTy = Context.IntTy;
-      StartLoc = D.DeclIdentLoc;
-    } else {
-      DeclTy = GetTypeFromParser(D.Type, &TInfo);
-      StartLoc = TInfo->getTypeLoc().getBeginLoc();
-    }
+// ExprResult Sema::ActOnOMPIteratorExpr(Scope *S, SourceLocation IteratorKwLoc,
+//                                       SourceLocation LLoc, SourceLocation RLoc,
+//                                       ArrayRef<OMPIteratorData> Data) {
+//   SmallVector<OMPIteratorExpr::IteratorDefinition, 4> ID;
+//   bool IsCorrect = true;
+//   for (const OMPIteratorData &D : Data) {
+//     TypeSourceInfo *TInfo = nullptr;
+//     SourceLocation StartLoc;
+//     QualType DeclTy;
+//     if (!D.Type.getAsOpaquePtr()) {
+//       // OpenMP 5.0, 2.1.6 Iterators
+//       // In an iterator-specifier, if the iterator-type is not specified then
+//       // the type of that iterator is of int type.
+//       DeclTy = Context.IntTy;
+//       StartLoc = D.DeclIdentLoc;
+//     } else {
+//       DeclTy = GetTypeFromParser(D.Type, &TInfo);
+//       StartLoc = TInfo->getTypeLoc().getBeginLoc();
+//     }
 
-    bool IsDeclTyDependent = DeclTy->isDependentType() ||
-                             DeclTy->containsUnexpandedParameterPack() ||
-                             DeclTy->isInstantiationDependentType();
-    if (!IsDeclTyDependent) {
-      if (!DeclTy->isIntegralType(Context) && !DeclTy->isAnyPointerType()) {
-        // OpenMP 5.0, 2.1.6 Iterators, Restrictions, C/C++
-        // The iterator-type must be an integral or pointer type.
-        Diag(StartLoc, diag::err_omp_iterator_not_integral_or_pointer)
-            << DeclTy;
-        IsCorrect = false;
-        continue;
-      }
-      if (DeclTy.isConstant(Context)) {
-        // OpenMP 5.0, 2.1.6 Iterators, Restrictions, C/C++
-        // The iterator-type must not be const qualified.
-        Diag(StartLoc, diag::err_omp_iterator_not_integral_or_pointer)
-            << DeclTy;
-        IsCorrect = false;
-        continue;
-      }
-    }
+//     bool IsDeclTyDependent = DeclTy->isDependentType() ||
+//                              DeclTy->containsUnexpandedParameterPack() ||
+//                              DeclTy->isInstantiationDependentType();
+//     if (!IsDeclTyDependent) {
+//       if (!DeclTy->isIntegralType(Context) && !DeclTy->isAnyPointerType()) {
+//         // OpenMP 5.0, 2.1.6 Iterators, Restrictions, C/C++
+//         // The iterator-type must be an integral or pointer type.
+//         Diag(StartLoc, diag::err_omp_iterator_not_integral_or_pointer)
+//             << DeclTy;
+//         IsCorrect = false;
+//         continue;
+//       }
+//       if (DeclTy.isConstant(Context)) {
+//         // OpenMP 5.0, 2.1.6 Iterators, Restrictions, C/C++
+//         // The iterator-type must not be const qualified.
+//         Diag(StartLoc, diag::err_omp_iterator_not_integral_or_pointer)
+//             << DeclTy;
+//         IsCorrect = false;
+//         continue;
+//       }
+//     }
 
-    // Iterator declaration.
-    assert(D.DeclIdent && "Identifier expected.");
-    // Always try to create iterator declarator to avoid extra error messages
-    // about unknown declarations use.
-    auto *VD = VarDecl::Create(Context, CurContext, StartLoc, D.DeclIdentLoc,
-                               D.DeclIdent, DeclTy, TInfo, SC_None);
-    VD->setImplicit();
-    if (S) {
-      // Check for conflicting previous declaration.
-      DeclarationNameInfo NameInfo(VD->getDeclName(), D.DeclIdentLoc);
-      LookupResult Previous(*this, NameInfo, LookupOrdinaryName,
-                            ForVisibleRedeclaration);
-      Previous.suppressDiagnostics();
-      LookupName(Previous, S);
+//     // Iterator declaration.
+//     assert(D.DeclIdent && "Identifier expected.");
+//     // Always try to create iterator declarator to avoid extra error messages
+//     // about unknown declarations use.
+//     auto *VD = VarDecl::Create(Context, CurContext, StartLoc, D.DeclIdentLoc,
+//                                D.DeclIdent, DeclTy, TInfo, SC_None);
+//     VD->setImplicit();
+//     if (S) {
+//       // Check for conflicting previous declaration.
+//       DeclarationNameInfo NameInfo(VD->getDeclName(), D.DeclIdentLoc);
+//       LookupResult Previous(*this, NameInfo, LookupOrdinaryName,
+//                             ForVisibleRedeclaration);
+//       Previous.suppressDiagnostics();
+//       LookupName(Previous, S);
 
-      FilterLookupForScope(Previous, CurContext, S, /*ConsiderLinkage=*/false,
-                           /*AllowInlineNamespace=*/false);
-      if (!Previous.empty()) {
-        NamedDecl *Old = Previous.getRepresentativeDecl();
-        Diag(D.DeclIdentLoc, diag::err_redefinition) << VD->getDeclName();
-        Diag(Old->getLocation(), diag::note_previous_definition);
-      } else {
-        PushOnScopeChains(VD, S);
-      }
-    } else {
-      CurContext->addDecl(VD);
-    }
-    Expr *Begin = D.Range.Begin;
-    if (!IsDeclTyDependent && Begin && !Begin->isTypeDependent()) {
-      ExprResult BeginRes =
-          PerformImplicitConversion(Begin, DeclTy, AA_Converting);
-      Begin = BeginRes.get();
-    }
-    Expr *End = D.Range.End;
-    if (!IsDeclTyDependent && End && !End->isTypeDependent()) {
-      ExprResult EndRes = PerformImplicitConversion(End, DeclTy, AA_Converting);
-      End = EndRes.get();
-    }
-    Expr *Step = D.Range.Step;
-    if (!IsDeclTyDependent && Step && !Step->isTypeDependent()) {
-      if (!Step->getType()->isIntegralType(Context)) {
-        Diag(Step->getExprLoc(), diag::err_omp_iterator_step_not_integral)
-            << Step << Step->getSourceRange();
-        IsCorrect = false;
-        continue;
-      }
-      llvm::APSInt Result;
-      bool IsConstant = Step->isIntegerConstantExpr(Result, Context);
-      // OpenMP 5.0, 2.1.6 Iterators, Restrictions
-      // If the step expression of a range-specification equals zero, the
-      // behavior is unspecified.
-      if (IsConstant && Result.isNullValue()) {
-        Diag(Step->getExprLoc(), diag::err_omp_iterator_step_constant_zero)
-            << Step << Step->getSourceRange();
-        IsCorrect = false;
-        continue;
-      }
-    }
-    if (!Begin || !End || !IsCorrect) {
-      IsCorrect = false;
-      continue;
-    }
-    OMPIteratorExpr::IteratorDefinition &IDElem = ID.emplace_back();
-    IDElem.IteratorDecl = VD;
-    IDElem.AssignmentLoc = D.AssignLoc;
-    IDElem.Range.Begin = Begin;
-    IDElem.Range.End = End;
-    IDElem.Range.Step = Step;
-    IDElem.ColonLoc = D.ColonLoc;
-    IDElem.SecondColonLoc = D.SecColonLoc;
-  }
-  if (!IsCorrect) {
-    // Invalidate all created iterator declarations if error is found.
-    for (const OMPIteratorExpr::IteratorDefinition &D : ID) {
-      if (Decl *ID = D.IteratorDecl)
-        ID->setInvalidDecl();
-    }
-    return ExprError();
-  }
-  SmallVector<OMPIteratorHelperData, 4> Helpers;
-  if (!CurContext->isDependentContext()) {
-    // Build number of ityeration for each iteration range.
-    // Ni = ((Stepi > 0) ? ((Endi + Stepi -1 - Begini)/Stepi) :
-    // ((Begini-Stepi-1-Endi) / -Stepi);
-    for (OMPIteratorExpr::IteratorDefinition &D : ID) {
-      // (Endi - Begini)
-      ExprResult Res = CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub, D.Range.End,
-                                          D.Range.Begin);
-      if(!Res.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      ExprResult St, St1;
-      if (D.Range.Step) {
-        St = D.Range.Step;
-        // (Endi - Begini) + Stepi
-        Res = CreateBuiltinBinOp(D.AssignmentLoc, BO_Add, Res.get(), St.get());
-        if (!Res.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        // (Endi - Begini) + Stepi - 1
-        Res =
-            CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub, Res.get(),
-                               ActOnIntegerConstant(D.AssignmentLoc, 1).get());
-        if (!Res.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        // ((Endi - Begini) + Stepi - 1) / Stepi
-        Res = CreateBuiltinBinOp(D.AssignmentLoc, BO_Div, Res.get(), St.get());
-        if (!Res.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        St1 = CreateBuiltinUnaryOp(D.AssignmentLoc, UO_Minus, D.Range.Step);
-        // (Begini - Endi)
-        ExprResult Res1 = CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub,
-                                             D.Range.Begin, D.Range.End);
-        if (!Res1.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        // (Begini - Endi) - Stepi
-        Res1 =
-            CreateBuiltinBinOp(D.AssignmentLoc, BO_Add, Res1.get(), St1.get());
-        if (!Res1.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        // (Begini - Endi) - Stepi - 1
-        Res1 =
-            CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub, Res1.get(),
-                               ActOnIntegerConstant(D.AssignmentLoc, 1).get());
-        if (!Res1.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        // ((Begini - Endi) - Stepi - 1) / (-Stepi)
-        Res1 =
-            CreateBuiltinBinOp(D.AssignmentLoc, BO_Div, Res1.get(), St1.get());
-        if (!Res1.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        // Stepi > 0.
-        ExprResult CmpRes =
-            CreateBuiltinBinOp(D.AssignmentLoc, BO_GT, D.Range.Step,
-                               ActOnIntegerConstant(D.AssignmentLoc, 0).get());
-        if (!CmpRes.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-        Res = ActOnConditionalOp(D.AssignmentLoc, D.AssignmentLoc, CmpRes.get(),
-                                 Res.get(), Res1.get());
-        if (!Res.isUsable()) {
-          IsCorrect = false;
-          continue;
-        }
-      }
-      Res = ActOnFinishFullExpr(Res.get(), /*DiscardedValue=*/false);
-      if (!Res.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
+//       FilterLookupForScope(Previous, CurContext, S, /*ConsiderLinkage=*/false,
+//                            /*AllowInlineNamespace=*/false);
+//       if (!Previous.empty()) {
+//         NamedDecl *Old = Previous.getRepresentativeDecl();
+//         Diag(D.DeclIdentLoc, diag::err_redefinition) << VD->getDeclName();
+//         Diag(Old->getLocation(), diag::note_previous_definition);
+//       } else {
+//         PushOnScopeChains(VD, S);
+//       }
+//     } else {
+//       CurContext->addDecl(VD);
+//     }
+//     Expr *Begin = D.Range.Begin;
+//     if (!IsDeclTyDependent && Begin && !Begin->isTypeDependent()) {
+//       ExprResult BeginRes =
+//           PerformImplicitConversion(Begin, DeclTy, AA_Converting);
+//       Begin = BeginRes.get();
+//     }
+//     Expr *End = D.Range.End;
+//     if (!IsDeclTyDependent && End && !End->isTypeDependent()) {
+//       ExprResult EndRes = PerformImplicitConversion(End, DeclTy, AA_Converting);
+//       End = EndRes.get();
+//     }
+//     Expr *Step = D.Range.Step;
+//     if (!IsDeclTyDependent && Step && !Step->isTypeDependent()) {
+//       if (!Step->getType()->isIntegralType(Context)) {
+//         Diag(Step->getExprLoc(), diag::err_omp_iterator_step_not_integral)
+//             << Step << Step->getSourceRange();
+//         IsCorrect = false;
+//         continue;
+//       }
+//       llvm::APSInt Result;
+//       bool IsConstant = Step->isIntegerConstantExpr(Result, Context);
+//       // OpenMP 5.0, 2.1.6 Iterators, Restrictions
+//       // If the step expression of a range-specification equals zero, the
+//       // behavior is unspecified.
+//       if (IsConstant && Result.isNullValue()) {
+//         Diag(Step->getExprLoc(), diag::err_omp_iterator_step_constant_zero)
+//             << Step << Step->getSourceRange();
+//         IsCorrect = false;
+//         continue;
+//       }
+//     }
+//     if (!Begin || !End || !IsCorrect) {
+//       IsCorrect = false;
+//       continue;
+//     }
+//     OMPIteratorExpr::IteratorDefinition &IDElem = ID.emplace_back();
+//     IDElem.IteratorDecl = VD;
+//     IDElem.AssignmentLoc = D.AssignLoc;
+//     IDElem.Range.Begin = Begin;
+//     IDElem.Range.End = End;
+//     IDElem.Range.Step = Step;
+//     IDElem.ColonLoc = D.ColonLoc;
+//     IDElem.SecondColonLoc = D.SecColonLoc;
+//   }
+//   if (!IsCorrect) {
+//     // Invalidate all created iterator declarations if error is found.
+//     for (const OMPIteratorExpr::IteratorDefinition &D : ID) {
+//       if (Decl *ID = D.IteratorDecl)
+//         ID->setInvalidDecl();
+//     }
+//     return ExprError();
+//   }
+//   SmallVector<OMPIteratorHelperData, 4> Helpers;
+//   if (!CurContext->isDependentContext()) {
+//     // Build number of ityeration for each iteration range.
+//     // Ni = ((Stepi > 0) ? ((Endi + Stepi -1 - Begini)/Stepi) :
+//     // ((Begini-Stepi-1-Endi) / -Stepi);
+//     for (OMPIteratorExpr::IteratorDefinition &D : ID) {
+//       // (Endi - Begini)
+//       ExprResult Res = CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub, D.Range.End,
+//                                           D.Range.Begin);
+//       if(!Res.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       ExprResult St, St1;
+//       if (D.Range.Step) {
+//         St = D.Range.Step;
+//         // (Endi - Begini) + Stepi
+//         Res = CreateBuiltinBinOp(D.AssignmentLoc, BO_Add, Res.get(), St.get());
+//         if (!Res.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         // (Endi - Begini) + Stepi - 1
+//         Res =
+//             CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub, Res.get(),
+//                                ActOnIntegerConstant(D.AssignmentLoc, 1).get());
+//         if (!Res.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         // ((Endi - Begini) + Stepi - 1) / Stepi
+//         Res = CreateBuiltinBinOp(D.AssignmentLoc, BO_Div, Res.get(), St.get());
+//         if (!Res.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         St1 = CreateBuiltinUnaryOp(D.AssignmentLoc, UO_Minus, D.Range.Step);
+//         // (Begini - Endi)
+//         ExprResult Res1 = CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub,
+//                                              D.Range.Begin, D.Range.End);
+//         if (!Res1.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         // (Begini - Endi) - Stepi
+//         Res1 =
+//             CreateBuiltinBinOp(D.AssignmentLoc, BO_Add, Res1.get(), St1.get());
+//         if (!Res1.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         // (Begini - Endi) - Stepi - 1
+//         Res1 =
+//             CreateBuiltinBinOp(D.AssignmentLoc, BO_Sub, Res1.get(),
+//                                ActOnIntegerConstant(D.AssignmentLoc, 1).get());
+//         if (!Res1.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         // ((Begini - Endi) - Stepi - 1) / (-Stepi)
+//         Res1 =
+//             CreateBuiltinBinOp(D.AssignmentLoc, BO_Div, Res1.get(), St1.get());
+//         if (!Res1.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         // Stepi > 0.
+//         ExprResult CmpRes =
+//             CreateBuiltinBinOp(D.AssignmentLoc, BO_GT, D.Range.Step,
+//                                ActOnIntegerConstant(D.AssignmentLoc, 0).get());
+//         if (!CmpRes.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//         Res = ActOnConditionalOp(D.AssignmentLoc, D.AssignmentLoc, CmpRes.get(),
+//                                  Res.get(), Res1.get());
+//         if (!Res.isUsable()) {
+//           IsCorrect = false;
+//           continue;
+//         }
+//       }
+//       Res = ActOnFinishFullExpr(Res.get(), /*DiscardedValue=*/false);
+//       if (!Res.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
 
-      // Build counter update.
-      // Build counter.
-      auto *CounterVD =
-          VarDecl::Create(Context, CurContext, D.IteratorDecl->getBeginLoc(),
-                          D.IteratorDecl->getBeginLoc(), nullptr,
-                          Res.get()->getType(), nullptr, SC_None);
-      CounterVD->setImplicit();
-      ExprResult RefRes =
-          BuildDeclRefExpr(CounterVD, CounterVD->getType(), VK_LValue,
-                           D.IteratorDecl->getBeginLoc());
-      // Build counter update.
-      // I = Begini + counter * Stepi;
-      ExprResult UpdateRes;
-      if (D.Range.Step) {
-        UpdateRes = CreateBuiltinBinOp(
-            D.AssignmentLoc, BO_Mul,
-            DefaultLvalueConversion(RefRes.get()).get(), St.get());
-      } else {
-        UpdateRes = DefaultLvalueConversion(RefRes.get());
-      }
-      if (!UpdateRes.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      UpdateRes = CreateBuiltinBinOp(D.AssignmentLoc, BO_Add, D.Range.Begin,
-                                     UpdateRes.get());
-      if (!UpdateRes.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      ExprResult VDRes =
-          BuildDeclRefExpr(cast<VarDecl>(D.IteratorDecl),
-                           cast<VarDecl>(D.IteratorDecl)->getType(), VK_LValue,
-                           D.IteratorDecl->getBeginLoc());
-      UpdateRes = CreateBuiltinBinOp(D.AssignmentLoc, BO_Assign, VDRes.get(),
-                                     UpdateRes.get());
-      if (!UpdateRes.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      UpdateRes =
-          ActOnFinishFullExpr(UpdateRes.get(), /*DiscardedValue=*/true);
-      if (!UpdateRes.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      ExprResult CounterUpdateRes =
-          CreateBuiltinUnaryOp(D.AssignmentLoc, UO_PreInc, RefRes.get());
-      if (!CounterUpdateRes.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      CounterUpdateRes =
-          ActOnFinishFullExpr(CounterUpdateRes.get(), /*DiscardedValue=*/true);
-      if (!CounterUpdateRes.isUsable()) {
-        IsCorrect = false;
-        continue;
-      }
-      OMPIteratorHelperData &HD = Helpers.emplace_back();
-      HD.CounterVD = CounterVD;
-      HD.Upper = Res.get();
-      HD.Update = UpdateRes.get();
-      HD.CounterUpdate = CounterUpdateRes.get();
-    }
-  } else {
-    Helpers.assign(ID.size(), {});
-  }
-  if (!IsCorrect) {
-    // Invalidate all created iterator declarations if error is found.
-    for (const OMPIteratorExpr::IteratorDefinition &D : ID) {
-      if (Decl *ID = D.IteratorDecl)
-        ID->setInvalidDecl();
-    }
-    return ExprError();
-  }
-  return OMPIteratorExpr::Create(Context, Context.OMPIteratorTy, IteratorKwLoc,
-                                 LLoc, RLoc, ID, Helpers);
-}
+//       // Build counter update.
+//       // Build counter.
+//       auto *CounterVD =
+//           VarDecl::Create(Context, CurContext, D.IteratorDecl->getBeginLoc(),
+//                           D.IteratorDecl->getBeginLoc(), nullptr,
+//                           Res.get()->getType(), nullptr, SC_None);
+//       CounterVD->setImplicit();
+//       ExprResult RefRes =
+//           BuildDeclRefExpr(CounterVD, CounterVD->getType(), VK_LValue,
+//                            D.IteratorDecl->getBeginLoc());
+//       // Build counter update.
+//       // I = Begini + counter * Stepi;
+//       ExprResult UpdateRes;
+//       if (D.Range.Step) {
+//         UpdateRes = CreateBuiltinBinOp(
+//             D.AssignmentLoc, BO_Mul,
+//             DefaultLvalueConversion(RefRes.get()).get(), St.get());
+//       } else {
+//         UpdateRes = DefaultLvalueConversion(RefRes.get());
+//       }
+//       if (!UpdateRes.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       UpdateRes = CreateBuiltinBinOp(D.AssignmentLoc, BO_Add, D.Range.Begin,
+//                                      UpdateRes.get());
+//       if (!UpdateRes.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       ExprResult VDRes =
+//           BuildDeclRefExpr(cast<VarDecl>(D.IteratorDecl),
+//                            cast<VarDecl>(D.IteratorDecl)->getType(), VK_LValue,
+//                            D.IteratorDecl->getBeginLoc());
+//       UpdateRes = CreateBuiltinBinOp(D.AssignmentLoc, BO_Assign, VDRes.get(),
+//                                      UpdateRes.get());
+//       if (!UpdateRes.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       UpdateRes =
+//           ActOnFinishFullExpr(UpdateRes.get(), /*DiscardedValue=*/true);
+//       if (!UpdateRes.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       ExprResult CounterUpdateRes =
+//           CreateBuiltinUnaryOp(D.AssignmentLoc, UO_PreInc, RefRes.get());
+//       if (!CounterUpdateRes.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       CounterUpdateRes =
+//           ActOnFinishFullExpr(CounterUpdateRes.get(), /*DiscardedValue=*/true);
+//       if (!CounterUpdateRes.isUsable()) {
+//         IsCorrect = false;
+//         continue;
+//       }
+//       OMPIteratorHelperData &HD = Helpers.emplace_back();
+//       HD.CounterVD = CounterVD;
+//       HD.Upper = Res.get();
+//       HD.Update = UpdateRes.get();
+//       HD.CounterUpdate = CounterUpdateRes.get();
+//     }
+//   } else {
+//     Helpers.assign(ID.size(), {});
+//   }
+//   if (!IsCorrect) {
+//     // Invalidate all created iterator declarations if error is found.
+//     for (const OMPIteratorExpr::IteratorDefinition &D : ID) {
+//       if (Decl *ID = D.IteratorDecl)
+//         ID->setInvalidDecl();
+//     }
+//     return ExprError();
+//   }
+//   return OMPIteratorExpr::Create(Context, Context.OMPIteratorTy, IteratorKwLoc,
+//                                  LLoc, RLoc, ID, Helpers);
+// }
 
 ExprResult
 Sema::CreateBuiltinArraySubscriptExpr(Expr *Base, SourceLocation LLoc,
@@ -5848,14 +5848,14 @@ bool Sema::GatherArgumentsForCall(SourceLocation CallLoc, FunctionDecl *FDecl,
 
       // Strip the unbridged-cast placeholder expression off, if applicable.
       bool CFAudited = false;
-      if (Arg->getType() == Context.ARCUnbridgedCastTy &&
-          FDecl && FDecl->hasAttr<CFAuditedTransferAttr>() &&
-          (!Param || !Param->hasAttr<CFConsumedAttr>()))
-        Arg = stripARCUnbridgedCast(Arg);
-      else if (getLangOpts().ObjCAutoRefCount &&
-               FDecl && FDecl->hasAttr<CFAuditedTransferAttr>() &&
-               (!Param || !Param->hasAttr<CFConsumedAttr>()))
-        CFAudited = true;
+      // if (Arg->getType() == Context.ARCUnbridgedCastTy &&
+      //     FDecl && FDecl->hasAttr<CFAuditedTransferAttr>() &&
+      //     (!Param || !Param->hasAttr<CFConsumedAttr>()))
+      //   Arg = stripARCUnbridgedCast(Arg);
+      // else if (getLangOpts().ObjCAutoRefCount &&
+      //          FDecl && FDecl->hasAttr<CFAuditedTransferAttr>() &&
+      //          (!Param || !Param->hasAttr<CFConsumedAttr>()))
+      //   CFAudited = true;
 
       if (Proto->getExtParameterInfo(i).isNoEscape())
         if (auto *BE = dyn_cast<BlockExpr>(Arg->IgnoreParenNoopCasts(Context)))
@@ -6037,8 +6037,8 @@ static bool isPlaceholderToRemoveAsArg(QualType type) {
     return false;
 
   // Pseudo-objects should be converted as soon as possible.
-  // case BuiltinType::PseudoObject:
-  //   return true;
+  case BuiltinType::PseudoObject:
+    return true;
 
   // The debugger mode could theoretically but currently does not try
   // to resolve unknown-typed arguments based on known parameter types.
@@ -6290,9 +6290,9 @@ ExprResult Sema::ActOnCallExpr(Scope *Scope, Expr *Fn, SourceLocation LParenLoc,
     }
   }
 
-  if (LangOpts.OpenMP)
-    Call = ActOnOpenMPCall(Call, Scope, LParenLoc, ArgExprs, RParenLoc,
-                           ExecConfig);
+  // if (LangOpts.OpenMP)
+  //   Call = ActOnOpenMPCall(Call, Scope, LParenLoc, ArgExprs, RParenLoc,
+  //                          ExecConfig);
 
   return Call;
 }
@@ -6428,8 +6428,8 @@ ExprResult Sema::BuildCallExpr(Scope *Scope, Expr *Fn, SourceLocation LParenLoc,
                                       FD, /*Complain=*/true, Fn->getBeginLoc()))
       return ExprError();
 
-    if (getLangOpts().OpenCL && checkOpenCLDisabledDecl(*FD, *Fn))
-      return ExprError();
+    // if (getLangOpts().OpenCL && checkOpenCLDisabledDecl(*FD, *Fn))
+    //   return ExprError();
 
     checkDirectCallValidity(*this, Fn, FD, ArgExprs);
   }
@@ -6959,7 +6959,7 @@ void Sema::maybeExtendBlockObject(ExprResult &E) {
   assert(E.get()->isRValue());
 
   // Only do this in an r-value context.
-  if (!getLangOpts().ObjCAutoRefCount) return;
+  // if (!getLangOpts().ObjCAutoRefCount) return;
 
   E = ImplicitCastExpr::Create(Context, E.get()->getType(),
                                CK_ARCExtendBlockObject, E.get(),
@@ -6999,7 +6999,7 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
 
   case Type::STK_CPointer:
   case Type::STK_BlockPointer:
-  case Type::STK_ObjCObjectPointer:
+  // case Type::STK_ObjCObjectPointer:
     switch (DestTy->getScalarTypeKind()) {
     case Type::STK_CPointer: {
       LangAS SrcAS = SrcTy->getPointeeType().getAddressSpace();
@@ -7049,7 +7049,7 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
           << DestTy;
       return CK_IntegralCast;
     case Type::STK_CPointer:
-    case Type::STK_ObjCObjectPointer:
+    // case Type::STK_ObjCObjectPointer:
     case Type::STK_BlockPointer:
     case Type::STK_MemberPointer:
       llvm_unreachable("illegal cast to pointer type");
@@ -7060,7 +7060,7 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
   case Type::STK_Integral:
     switch (DestTy->getScalarTypeKind()) {
     case Type::STK_CPointer:
-    case Type::STK_ObjCObjectPointer:
+    // case Type::STK_ObjCObjectPointer:
     case Type::STK_BlockPointer:
       if (Src.get()->isNullPointerConstant(Context,
                                            Expr::NPC_ValueDependentIsNull))
@@ -7108,7 +7108,7 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
                               CK_FloatingToIntegral);
       return CK_IntegralRealToComplex;
     case Type::STK_CPointer:
-    case Type::STK_ObjCObjectPointer:
+    // case Type::STK_ObjCObjectPointer:
     case Type::STK_BlockPointer:
       llvm_unreachable("valid float->pointer cast?");
     case Type::STK_MemberPointer:
@@ -7142,7 +7142,7 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
                               CK_FloatingComplexToReal);
       return CK_FloatingToIntegral;
     case Type::STK_CPointer:
-    case Type::STK_ObjCObjectPointer:
+    // case Type::STK_ObjCObjectPointer:
     case Type::STK_BlockPointer:
       llvm_unreachable("valid complex float->pointer cast?");
     case Type::STK_MemberPointer:
@@ -7176,7 +7176,7 @@ CastKind Sema::PrepareScalarCast(ExprResult &Src, QualType DestTy) {
                               CK_IntegralComplexToReal);
       return CK_IntegralToFloating;
     case Type::STK_CPointer:
-    case Type::STK_ObjCObjectPointer:
+    // case Type::STK_ObjCObjectPointer:
     case Type::STK_BlockPointer:
       llvm_unreachable("valid complex int->pointer cast?");
     case Type::STK_MemberPointer:
@@ -7394,7 +7394,7 @@ Sema::ActOnCastExpr(Scope *S, SourceLocation LParenLoc,
   // i.e. all the elements are integer constants.
   ParenExpr *PE = dyn_cast<ParenExpr>(CastExpr);
   ParenListExpr *PLE = dyn_cast<ParenListExpr>(CastExpr);
-  if ((getLangOpts().AltiVec || getLangOpts().ZVector || getLangOpts().OpenCL)
+  if ((getLangOpts().AltiVec || getLangOpts().ZVector /*|| getLangOpts().OpenCL*/)
        && castType->isVectorType() && (PE || PLE)) {
     if (PLE && PLE->getNumExprs() == 0) {
       Diag(PLE->getExprLoc(), diag::err_altivec_empty_initializer);
@@ -7427,7 +7427,7 @@ Sema::ActOnCastExpr(Scope *S, SourceLocation LParenLoc,
       !getSourceManager().isInSystemMacro(LParenLoc))
     Diag(LParenLoc, diag::warn_old_style_cast) << CastExpr->getSourceRange();
 
-  CheckTollFreeBridgeCast(castType, CastExpr);
+  // CheckTollFreeBridgeCast(castType, CastExpr);
 
   // CheckObjCBridgeRelatedCast(castType, CastExpr);
 
@@ -7742,13 +7742,13 @@ static QualType checkConditionalPointerCompatibility(Sema &S, ExprResult &LHS,
   // which is a superset of address spaces of both the 2nd and the 3rd
   // operands of the conditional operator.
   QualType ResultTy = [&, ResultAddrSpace]() {
-    if (S.getLangOpts().OpenCL) {
-      Qualifiers CompositeQuals = CompositeTy.getQualifiers();
-      CompositeQuals.setAddressSpace(ResultAddrSpace);
-      return S.Context
-          .getQualifiedType(CompositeTy.getUnqualifiedType(), CompositeQuals)
-          .withCVRQualifiers(MergedCVRQual);
-    }
+    // if (S.getLangOpts().OpenCL) {
+    //   Qualifiers CompositeQuals = CompositeTy.getQualifiers();
+    //   CompositeQuals.setAddressSpace(ResultAddrSpace);
+    //   return S.Context
+    //       .getQualifiedType(CompositeTy.getUnqualifiedType(), CompositeQuals)
+    //       .withCVRQualifiers(MergedCVRQual);
+    // }
     return CompositeTy.withCVRQualifiers(MergedCVRQual);
   }();
   if (IsBlockPointer)
@@ -8659,12 +8659,12 @@ checkPointerTypesForAssignment(Sema &S, QualType LHSType, QualType RHSType) {
   // qualifiers of the type *pointed to* by the right;
 
   // As a special case, 'non-__weak A *' -> 'non-__weak const *' is okay.
-  if (lhq.getObjCLifetime() != rhq.getObjCLifetime() &&
-      lhq.compatiblyIncludesObjCLifetime(rhq)) {
-    // Ignore lifetime for further calculation.
-    lhq.removeObjCLifetime();
-    rhq.removeObjCLifetime();
-  }
+  // if (lhq.getObjCLifetime() != rhq.getObjCLifetime() &&
+  //     lhq.compatiblyIncludesObjCLifetime(rhq)) {
+  //   // Ignore lifetime for further calculation.
+  //   lhq.removeObjCLifetime();
+  //   rhq.removeObjCLifetime();
+  // }
 
   if (!lhq.compatiblyIncludes(rhq)) {
     // Treat address-space mismatches as fatal.
@@ -8673,15 +8673,15 @@ checkPointerTypesForAssignment(Sema &S, QualType LHSType, QualType RHSType) {
 
     // It's okay to add or remove GC or lifetime qualifiers when converting to
     // and from void*.
-    else if (lhq.withoutObjCGCAttr().withoutObjCLifetime()
-                        .compatiblyIncludes(
-                                rhq.withoutObjCGCAttr().withoutObjCLifetime())
-             && (lhptee->isVoidType() || rhptee->isVoidType()))
-      ; // keep old
+    // else if (lhq.withoutObjCGCAttr().withoutObjCLifetime()
+    //                     .compatiblyIncludes(
+    //                             rhq.withoutObjCGCAttr().withoutObjCLifetime())
+    //          && (lhptee->isVoidType() || rhptee->isVoidType()))
+    //   ; // keep old
 
     // Treat lifetime mismatches as fatal.
-    else if (lhq.getObjCLifetime() != rhq.getObjCLifetime())
-      ConvTy = Sema::IncompatiblePointerDiscardsQualifiers;
+    // else if (lhq.getObjCLifetime() != rhq.getObjCLifetime())
+    //   ConvTy = Sema::IncompatiblePointerDiscardsQualifiers;
 
     // For GCC/MS compatibility, other qualifier mismatches are treated
     // as still compatible in C.
@@ -8802,10 +8802,10 @@ checkBlockPointerTypesForAssignment(Sema &S, QualType LHSType,
   // For blocks we enforce that qualifiers are identical.
   Qualifiers LQuals = lhptee.getLocalQualifiers();
   Qualifiers RQuals = rhptee.getLocalQualifiers();
-  if (S.getLangOpts().OpenCL) {
-    LQuals.removeAddressSpace();
-    RQuals.removeAddressSpace();
-  }
+  // if (S.getLangOpts().OpenCL) {
+  //   LQuals.removeAddressSpace();
+  //   RQuals.removeAddressSpace();
+  // }
   if (LQuals != RQuals)
     ConvTy = Sema::CompatiblePointerDiscardsQualifiers;
 
@@ -8819,12 +8819,13 @@ checkBlockPointerTypesForAssignment(Sema &S, QualType LHSType,
   //  * CVR and address space of LHS should be a superset of CVR and address
   //  space of RHS.
   //  * unqualified types should be compatible.
-  if (S.getLangOpts().OpenCL) {
-    if (!S.Context.typesAreBlockPointerCompatible(
-            S.Context.getQualifiedType(LHSType.getUnqualifiedType(), LQuals),
-            S.Context.getQualifiedType(RHSType.getUnqualifiedType(), RQuals)))
-      return Sema::IncompatibleBlockPointer;
-  } else if (!S.Context.typesAreBlockPointerCompatible(LHSType, RHSType))
+  // if (S.getLangOpts().OpenCL) {
+  //   if (!S.Context.typesAreBlockPointerCompatible(
+  //           S.Context.getQualifiedType(LHSType.getUnqualifiedType(), LQuals),
+  //           S.Context.getQualifiedType(RHSType.getUnqualifiedType(), RQuals)))
+  //     return Sema::IncompatibleBlockPointer;
+  // } else 
+  if (!S.Context.typesAreBlockPointerCompatible(LHSType, RHSType))
     return Sema::IncompatibleBlockPointer;
 
   return ConvTy;
@@ -9099,10 +9100,10 @@ Sema::CheckAssignmentConstraints(QualType LHSType, ExprResult &RHS,
     }
 
     // id -> T^
-    if (getLangOpts().ObjC && RHSType->isObjCIdType()) {
-      Kind = CK_AnyPointerToBlockPointerCast;
-      return Compatible;
-    }
+    // if (getLangOpts().ObjC && RHSType->isObjCIdType()) {
+    //   Kind = CK_AnyPointerToBlockPointerCast;
+    //   return Compatible;
+    // }
 
     // void* -> T^
     if (const PointerType *RHSPT = RHSType->getAs<PointerType>())
@@ -9339,9 +9340,9 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &CallerRHS,
       if (RHS.isInvalid())
         return Incompatible;
       Sema::AssignConvertType result = Compatible;
-      if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
-          !CheckObjCARCUnavailableWeakConversion(LHSType, RHSType))
-        result = IncompatibleObjCWeakRef;
+      // if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
+      //     !CheckObjCARCUnavailableWeakConversion(LHSType, RHSType))
+      //   result = IncompatibleObjCWeakRef;
       return result;
     }
 
@@ -9378,11 +9379,11 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &CallerRHS,
   }
 
   // OpenCL queue_t type assignment.
-  if (LHSType->isQueueT() && RHS.get()->isNullPointerConstant(
-                                 Context, Expr::NPC_ValueDependentIsNull)) {
-    RHS = ImpCastExprToType(RHS.get(), LHSType, CK_NullToPointer);
-    return Compatible;
-  }
+  // if (LHSType->isQueueT() && RHS.get()->isNullPointerConstant(
+  //                                Context, Expr::NPC_ValueDependentIsNull)) {
+  //   RHS = ImpCastExprToType(RHS.get(), LHSType, CK_NullToPointer);
+  //   return Compatible;
+  // }
 
   // This check seems unnatural, however it is necessary to ensure the proper
   // conversion of functions/arrays. If the conversion were done for all
@@ -9413,12 +9414,12 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &CallerRHS,
     // Check for various Objective-C errors. If we are not reporting
     // diagnostics and just checking for errors, e.g., during overload
     // resolution, return Incompatible to indicate the failure.
-    if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
-        CheckObjCConversion(SourceRange(), Ty, E, CCK_ImplicitConversion,
-                            Diagnose, DiagnoseCFAudited) != ACR_okay) {
-      if (!Diagnose)
-        return Incompatible;
-    }
+    // if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers() &&
+    //     CheckObjCConversion(SourceRange(), Ty, E, CCK_ImplicitConversion,
+    //                         Diagnose, DiagnoseCFAudited) != ACR_okay) {
+    //   if (!Diagnose)
+    //     return Incompatible;
+    // }
     // if (getLangOpts().ObjC &&
     //     (CheckObjCBridgeRelatedConversions(E->getBeginLoc(), LHSType,
     //                                        E->getType(), E, Diagnose) ||
@@ -10572,8 +10573,8 @@ static void DiagnoseBadShiftValues(Sema& S, ExprResult &LHS, ExprResult &RHS,
                                    QualType LHSType) {
   // OpenCL 6.3j: shift values are effectively % word size of LHS (more defined),
   // so skip remaining warnings as we don't want to modify values within Sema.
-  if (S.getLangOpts().OpenCL)
-    return;
+  // if (S.getLangOpts().OpenCL)
+  //   return;
 
   // Check right/shifter operand
   Expr::EvalResult RHSResult;
@@ -11827,25 +11828,25 @@ QualType Sema::CheckCompareOperands(ExprResult &LHS, ExprResult &RHS,
     return computeResultTy();
   }
 
-  if (getLangOpts().OpenCLVersion >= 200 || getLangOpts().OpenCLCPlusPlus) {
-    if (LHSType->isClkEventT() && RHSType->isClkEventT()) {
-      return computeResultTy();
-    }
+  // if (/*getLangOpts().OpenCLVersion >= 200 ||*/ getLangOpts().OpenCLCPlusPlus) {
+  //   // if (LHSType->isClkEventT() && RHSType->isClkEventT()) {
+  //   //   return computeResultTy();
+  //   // }
 
-    if (LHSType->isQueueT() && RHSType->isQueueT()) {
-      return computeResultTy();
-    }
+  //   // if (LHSType->isQueueT() && RHSType->isQueueT()) {
+  //   //   return computeResultTy();
+  //   // }
 
-    if (LHSIsNull && RHSType->isQueueT()) {
-      LHS = ImpCastExprToType(LHS.get(), RHSType, CK_NullToPointer);
-      return computeResultTy();
-    }
+  //   // if (LHSIsNull && RHSType->isQueueT()) {
+  //   //   LHS = ImpCastExprToType(LHS.get(), RHSType, CK_NullToPointer);
+  //   //   return computeResultTy();
+  //   // }
 
-    if (LHSType->isQueueT() && RHSIsNull) {
-      RHS = ImpCastExprToType(RHS.get(), LHSType, CK_NullToPointer);
-      return computeResultTy();
-    }
-  }
+  //   // if (LHSType->isQueueT() && RHSIsNull) {
+  //   //   RHS = ImpCastExprToType(RHS.get(), LHSType, CK_NullToPointer);
+  //   //   return computeResultTy();
+  //   // }
+  // }
 
   return InvalidOperands(Loc, LHS, RHS);
 }
@@ -12742,12 +12743,12 @@ QualType Sema::CheckAssignmentOperands(Expr *LHSExpr, ExprResult &RHS,
   // OpenCL v1.2 s6.1.1.1 p2:
   // The half data type can only be used to declare a pointer to a buffer that
   // contains half values
-  if (getLangOpts().OpenCL && !getOpenCLOptions().isEnabled("cl_khr_fp16") &&
-    LHSType->isHalfType()) {
-    Diag(Loc, diag::err_opencl_half_load_store) << 1
-        << LHSType.getUnqualifiedType();
-    return QualType();
-  }
+  // if (getLangOpts().OpenCL && !getOpenCLOptions().isEnabled("cl_khr_fp16") &&
+  //   LHSType->isHalfType()) {
+  //   Diag(Loc, diag::err_opencl_half_load_store) << 1
+  //       << LHSType.getUnqualifiedType();
+  //   return QualType();
+  // }
 
   AssignConvertType ConvTy;
   if (CompoundType.isNull()) {
@@ -13230,9 +13231,9 @@ QualType Sema::CheckAddressOfOperand(ExprResult &OrigOp, SourceLocation OpLoc) {
     // Materialize the temporary as an lvalue so that we can take its address.
     OrigOp = op =
         CreateMaterializeTemporaryExpr(op->getType(), OrigOp.get(), true);
-  } else if (isa<ObjCSelectorExpr>(op)) {
+  } /*else if (isa<ObjCSelectorExpr>(op)) {
     return Context.getPointerType(op->getType());
-  } else if (lval == Expr::LV_MemberFunction) {
+  }*/ else if (lval == Expr::LV_MemberFunction) {
     // If it's an instance method, make a member pointer.
     // The expression must have exactly the form &A::foo.
 
@@ -13714,30 +13715,30 @@ ExprResult Sema::CreateBuiltinBinOp(SourceLocation OpLoc,
   if (!LHS.isUsable() || !RHS.isUsable())
     return ExprError();
 
-  if (getLangOpts().OpenCL) {
-    QualType LHSTy = LHSExpr->getType();
-    QualType RHSTy = RHSExpr->getType();
-    // OpenCLC v2.0 s6.13.11.1 allows atomic variables to be initialized by
-    // the ATOMIC_VAR_INIT macro.
-    if (LHSTy->isAtomicType() || RHSTy->isAtomicType()) {
-      SourceRange SR(LHSExpr->getBeginLoc(), RHSExpr->getEndLoc());
-      if (BO_Assign == Opc)
-        Diag(OpLoc, diag::err_opencl_atomic_init) << 0 << SR;
-      else
-        ResultTy = InvalidOperands(OpLoc, LHS, RHS);
-      return ExprError();
-    }
+  // if (getLangOpts().OpenCL) {
+  //   QualType LHSTy = LHSExpr->getType();
+  //   QualType RHSTy = RHSExpr->getType();
+  //   // OpenCLC v2.0 s6.13.11.1 allows atomic variables to be initialized by
+  //   // the ATOMIC_VAR_INIT macro.
+  //   if (LHSTy->isAtomicType() || RHSTy->isAtomicType()) {
+  //     SourceRange SR(LHSExpr->getBeginLoc(), RHSExpr->getEndLoc());
+  //     if (BO_Assign == Opc)
+  //       Diag(OpLoc, diag::err_opencl_atomic_init) << 0 << SR;
+  //     else
+  //       ResultTy = InvalidOperands(OpLoc, LHS, RHS);
+  //     return ExprError();
+  //   }
 
-    // OpenCL special types - image, sampler, pipe, and blocks are to be used
-    // only with a builtin functions and therefore should be disallowed here.
-    if (LHSTy->isImageType() || RHSTy->isImageType() ||
-        LHSTy->isSamplerT() || RHSTy->isSamplerT() ||
-        LHSTy->isPipeType() || RHSTy->isPipeType() ||
-        LHSTy->isBlockPointerType() || RHSTy->isBlockPointerType()) {
-      ResultTy = InvalidOperands(OpLoc, LHS, RHS);
-      return ExprError();
-    }
-  }
+  //   // OpenCL special types - image, sampler, pipe, and blocks are to be used
+  //   // only with a builtin functions and therefore should be disallowed here.
+  //   if (LHSTy->isImageType() || RHSTy->isImageType() ||
+  //       LHSTy->isSamplerT() || RHSTy->isSamplerT() ||
+  //       LHSTy->isPipeType() || RHSTy->isPipeType() ||
+  //       LHSTy->isBlockPointerType() || RHSTy->isBlockPointerType()) {
+  //     ResultTy = InvalidOperands(OpLoc, LHS, RHS);
+  //     return ExprError();
+  //   }
+  // }
 
   switch (Opc) {
   case BO_Assign:
@@ -14231,9 +14232,9 @@ ExprResult Sema::BuildBinOp(Scope *S, SourceLocation OpLoc,
   // Handle pseudo-objects in the LHS.
   if (const BuiltinType *pty = LHSExpr->getType()->getAsPlaceholderType()) {
     // Assignments with a pseudo-object l-value need special analysis.
-    // if (pty->getKind() == BuiltinType::PseudoObject &&
-    //     BinaryOperator::isAssignmentOp(Opc))
-    //   return checkPseudoObjectAssignment(S, OpLoc, Opc, LHSExpr, RHSExpr);
+    if (pty->getKind() == BuiltinType::PseudoObject &&
+        BinaryOperator::isAssignmentOp(Opc))
+      return checkPseudoObjectAssignment(S, OpLoc, Opc, LHSExpr, RHSExpr);
 
     // Don't resolve overloads if the other type is overloadable.
     if (getLangOpts().CPlusPlus && pty->getKind() == BuiltinType::Overload) {
@@ -14338,19 +14339,19 @@ ExprResult Sema::CreateBuiltinUnaryOp(SourceLocation OpLoc,
   bool CanOverflow = false;
 
   bool ConvertHalfVec = false;
-  if (getLangOpts().OpenCL) {
-    QualType Ty = InputExpr->getType();
-    // The only legal unary operation for atomics is '&'.
-    if ((Opc != UO_AddrOf && Ty->isAtomicType()) ||
-    // OpenCL special types - image, sampler, pipe, and blocks are to be used
-    // only with a builtin functions and therefore should be disallowed here.
-        (Ty->isImageType() || Ty->isSamplerT() || Ty->isPipeType()
-        || Ty->isBlockPointerType())) {
-      return ExprError(Diag(OpLoc, diag::err_typecheck_unary_expr)
-                       << InputExpr->getType()
-                       << Input.get()->getSourceRange());
-    }
-  }
+  // if (getLangOpts().OpenCL) {
+  //   QualType Ty = InputExpr->getType();
+  //   // The only legal unary operation for atomics is '&'.
+  //   if ((Opc != UO_AddrOf && Ty->isAtomicType()) ||
+  //   // OpenCL special types - image, sampler, pipe, and blocks are to be used
+  //   // only with a builtin functions and therefore should be disallowed here.
+  //       (Ty->isImageType() || Ty->isSamplerT() || Ty->isPipeType()
+  //       || Ty->isBlockPointerType())) {
+  //     return ExprError(Diag(OpLoc, diag::err_typecheck_unary_expr)
+  //                      << InputExpr->getType()
+  //                      << Input.get()->getSourceRange());
+  //   }
+  // }
 
   switch (Opc) {
   case UO_PreInc:
@@ -14596,9 +14597,9 @@ ExprResult Sema::BuildUnaryOp(Scope *S, SourceLocation OpLoc,
   // overloaded-operator check considers the right type.
   if (const BuiltinType *pty = Input->getType()->getAsPlaceholderType()) {
     // Increment and decrement of pseudo-object references.
-    // if (pty->getKind() == BuiltinType::PseudoObject &&
-    //     UnaryOperator::isIncrementDecrementOp(Opc))
-    //   return checkPseudoObjectIncDec(S, OpLoc, Opc, Input);
+    if (pty->getKind() == BuiltinType::PseudoObject &&
+        UnaryOperator::isIncrementDecrementOp(Opc))
+      return checkPseudoObjectIncDec(S, OpLoc, Opc, Input);
 
     // extension is always a builtin operator.
     if (Opc == UO_Extension)
@@ -15328,9 +15329,9 @@ ExprResult Sema::BuildVAArgExpr(SourceLocation BuiltinLoc,
   }
 
   // NVPTX does not support va_arg expression.
-  if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
-      Context.getTargetInfo().getTriple().isNVPTX())
-    targetDiag(E->getBeginLoc(), diag::err_va_arg_in_device);
+  // if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
+  //     Context.getTargetInfo().getTriple().isNVPTX())
+  //   targetDiag(E->getBeginLoc(), diag::err_va_arg_in_device);
 
   // It might be a __builtin_ms_va_list. (But don't ever mark a va_arg()
   // as Microsoft ABI on an actual Microsoft platform, where
@@ -15397,9 +15398,9 @@ ExprResult Sema::BuildVAArgExpr(SourceLocation BuiltinLoc,
 
     if (!TInfo->getType().isPODType(Context)) {
       Diag(TInfo->getTypeLoc().getBeginLoc(),
-           TInfo->getType()->isObjCLifetimeType()
+           /*TInfo->getType()->isObjCLifetimeType()
              ? diag::warn_second_parameter_to_va_arg_ownership_qualified
-             : diag::warn_second_parameter_to_va_arg_not_pod)
+             :*/ diag::warn_second_parameter_to_va_arg_not_pod)
         << TInfo->getType()
         << TInfo->getTypeLoc().getSourceRange();
     }
@@ -15722,10 +15723,10 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
       DiagKind = diag::warn_incompatible_vectors;
     }
     break;
-  case IncompatibleObjCWeakRef:
-    DiagKind = diag::err_arc_weak_unavailable_assign;
-    isInvalid = true;
-    break;
+  // case IncompatibleObjCWeakRef:
+  //   DiagKind = diag::err_arc_weak_unavailable_assign;
+  //   isInvalid = true;
+  //   break;
   case Incompatible:
     if (maybeDiagnoseAssignmentToFunction(*this, DstType, SrcExpr)) {
       if (Complained)
@@ -15782,11 +15783,11 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
     HandleFunctionTypeMismatch(FDiag, SecondType, FirstType);
 
   Diag(Loc, FDiag);
-  if ((DiagKind == diag::warn_incompatible_qualified_id ||
-       DiagKind == diag::err_incompatible_qualified_id) &&
-      PDecl && IFace && !IFace->hasDefinition())
-    Diag(IFace->getLocation(), diag::note_incomplete_class_and_qualified_id)
-        << IFace << PDecl;
+  // if ((DiagKind == diag::warn_incompatible_qualified_id ||
+  //      DiagKind == diag::err_incompatible_qualified_id) &&
+  //     PDecl && IFace && !IFace->hasDefinition())
+  //   Diag(IFace->getLocation(), diag::note_incomplete_class_and_qualified_id)
+  //       << IFace << PDecl;
 
   if (SecondType == Context.OverloadTy)
     NoteAllOverloadCandidates(OverloadExpr::find(SrcExpr).Expression,
@@ -15795,8 +15796,8 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
   if (CheckInferredResultType)
     EmitRelatedResultTypeNote(SrcExpr);
 
-  if (Action == AA_Returning && ConvTy == IncompatiblePointer)
-    EmitRelatedResultTypeNoteForReturn(DstType);
+  // if (Action == AA_Returning && ConvTy == IncompatiblePointer)
+  //   EmitRelatedResultTypeNoteForReturn(DstType);
 
   if (Complained)
     *Complained = true;
@@ -16797,8 +16798,8 @@ MarkVarDeclODRUsed(VarDecl *Var, SourceLocation Loc, Sema &SemaRef,
       old = Loc;
   }
   QualType CaptureType, DeclRefType;
-  if (SemaRef.LangOpts.OpenMP)
-    SemaRef.tryCaptureOpenMPLambdas(Var);
+  // if (SemaRef.LangOpts.OpenMP)
+  //   SemaRef.tryCaptureOpenMPLambdas(Var);
   SemaRef.tryCaptureVariable(Var, Loc, Sema::TryCapture_Implicit,
     /*EllipsisLoc*/ SourceLocation(),
     /*BuildAndDiagnose*/ true,
@@ -16995,18 +16996,18 @@ static bool captureInBlock(BlockScopeInfo *BSI, VarDecl *Var,
   }
 
   // Forbid the block-capture of autoreleasing variables.
-  if (!Invalid &&
-      CaptureType.getObjCLifetime() == Qualifiers::OCL_Autoreleasing) {
-    if (BuildAndDiagnose) {
-      S.Diag(Loc, diag::err_arc_autoreleasing_capture)
-        << /*block*/ 0;
-      S.Diag(Var->getLocation(), diag::note_previous_decl)
-        << Var->getDeclName();
-      Invalid = true;
-    } else {
-      return false;
-    }
-  }
+  // if (!Invalid &&
+  //     CaptureType.getObjCLifetime() == Qualifiers::OCL_Autoreleasing) {
+  //   if (BuildAndDiagnose) {
+  //     S.Diag(Loc, diag::err_arc_autoreleasing_capture)
+  //       << /*block*/ 0;
+  //     S.Diag(Var->getLocation(), diag::note_previous_decl)
+  //       << Var->getDeclName();
+  //     Invalid = true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   // Warn about implicitly autoreleasing indirect parameters captured by blocks.
   // if (const auto *PT = CaptureType->getAs<PointerType>()) {
@@ -17024,16 +17025,16 @@ static bool captureInBlock(BlockScopeInfo *BSI, VarDecl *Var,
   // }
 
   const bool HasBlocksAttr = Var->hasAttr<BlocksAttr>();
-  if (HasBlocksAttr || CaptureType->isReferenceType() ||
-      (S.getLangOpts().OpenMP && S.isOpenMPCapturedDecl(Var))) {
-    // Block capture by reference does not change the capture or
-    // declaration reference types.
-    ByRef = true;
-  } else {
+  // if (HasBlocksAttr || CaptureType->isReferenceType() ||
+  //     (S.getLangOpts().OpenMP && S.isOpenMPCapturedDecl(Var))) {
+  //   // Block capture by reference does not change the capture or
+  //   // declaration reference types.
+  //   ByRef = true;
+  // } else {
     // Block capture by copy introduces 'const'.
     CaptureType = CaptureType.getNonReferenceType().withConst();
     DeclRefType = CaptureType;
-  }
+  // }
 
   // Actually capture the variable.
   if (BuildAndDiagnose)
@@ -17056,21 +17057,21 @@ static bool captureInCapturedRegion(CapturedRegionScopeInfo *RSI,
   // By default, capture variables by reference.
   bool ByRef = true;
   // Using an LValue reference type is consistent with Lambdas (see below).
-  if (S.getLangOpts().OpenMP && RSI->CapRegionKind == CR_OpenMP) {
-    if (S.isOpenMPCapturedDecl(Var)) {
-      bool HasConst = DeclRefType.isConstQualified();
-      DeclRefType = DeclRefType.getUnqualifiedType();
-      // Don't lose diagnostics about assignments to const.
-      if (HasConst)
-        DeclRefType.addConst();
-    }
-    // Do not capture firstprivates in tasks.
-    if (S.isOpenMPPrivateDecl(Var, RSI->OpenMPLevel, RSI->OpenMPCaptureLevel) !=
-        OMPC_unknown)
-      return true;
-    ByRef = S.isOpenMPCapturedByRef(Var, RSI->OpenMPLevel,
-                                    RSI->OpenMPCaptureLevel);
-  }
+  // if (S.getLangOpts().OpenMP && RSI->CapRegionKind == CR_OpenMP) {
+  //   if (S.isOpenMPCapturedDecl(Var)) {
+  //     bool HasConst = DeclRefType.isConstQualified();
+  //     DeclRefType = DeclRefType.getUnqualifiedType();
+  //     // Don't lose diagnostics about assignments to const.
+  //     if (HasConst)
+  //       DeclRefType.addConst();
+  //   }
+  //   // Do not capture firstprivates in tasks.
+  //   if (S.isOpenMPPrivateDecl(Var, RSI->OpenMPLevel, RSI->OpenMPCaptureLevel) !=
+  //       OMPC_unknown)
+  //     return true;
+  //   ByRef = S.isOpenMPCapturedByRef(Var, RSI->OpenMPLevel,
+  //                                   RSI->OpenMPCaptureLevel);
+  // }
 
   if (ByRef)
     CaptureType = S.Context.getLValueReferenceType(DeclRefType);
@@ -17137,17 +17138,17 @@ static bool captureInLambda(LambdaScopeInfo *LSI,
     }
 
     // Forbid the lambda copy-capture of autoreleasing variables.
-    if (!Invalid &&
-        CaptureType.getObjCLifetime() == Qualifiers::OCL_Autoreleasing) {
-      if (BuildAndDiagnose) {
-        S.Diag(Loc, diag::err_arc_autoreleasing_capture) << /*lambda*/ 1;
-        S.Diag(Var->getLocation(), diag::note_previous_decl)
-          << Var->getDeclName();
-        Invalid = true;
-      } else {
-        return false;
-      }
-    }
+    // if (!Invalid &&
+    //     CaptureType.getObjCLifetime() == Qualifiers::OCL_Autoreleasing) {
+    //   if (BuildAndDiagnose) {
+    //     S.Diag(Loc, diag::err_arc_autoreleasing_capture) << /*lambda*/ 1;
+    //     S.Diag(Var->getLocation(), diag::note_previous_decl)
+    //       << Var->getDeclName();
+    //     Invalid = true;
+    //   } else {
+    //     return false;
+    //   }
+    // }
 
     // Make sure that by-copy captures are of a complete and non-abstract type.
     if (!Invalid && BuildAndDiagnose) {
@@ -17216,10 +17217,10 @@ bool Sema::tryCaptureVariable(
   // Capture global variables if it is required to use private copy of this
   // variable.
   bool IsGlobal = !Var->hasLocalStorage();
-  if (IsGlobal &&
-      !(LangOpts.OpenMP && isOpenMPCapturedDecl(Var, /*CheckScopeInfo=*/true,
-                                                MaxFunctionScopesIndex)))
-    return true;
+  // if (IsGlobal &&
+  //     !(LangOpts.OpenMP && isOpenMPCapturedDecl(Var, /*CheckScopeInfo=*/true,
+  //                                               MaxFunctionScopesIndex)))
+  //   return true;
   Var = Var->getCanonicalDecl();
 
   // Walk up the stack to determine whether we can capture the variable,
@@ -17291,58 +17292,58 @@ bool Sema::tryCaptureVariable(
       captureVariablyModifiedType(Context, QTy, CSI);
     }
 
-    if (getLangOpts().OpenMP) {
-      if (auto *RSI = dyn_cast<CapturedRegionScopeInfo>(CSI)) {
-        // OpenMP private variables should not be captured in outer scope, so
-        // just break here. Similarly, global variables that are captured in a
-        // target region should not be captured outside the scope of the region.
-        if (RSI->CapRegionKind == CR_OpenMP) {
-          OpenMPClauseKind IsOpenMPPrivateDecl = isOpenMPPrivateDecl(
-              Var, RSI->OpenMPLevel, RSI->OpenMPCaptureLevel);
-          // If the variable is private (i.e. not captured) and has variably
-          // modified type, we still need to capture the type for correct
-          // codegen in all regions, associated with the construct. Currently,
-          // it is captured in the innermost captured region only.
-          if (IsOpenMPPrivateDecl != OMPC_unknown &&
-              Var->getType()->isVariablyModifiedType()) {
-            QualType QTy = Var->getType();
-            if (ParmVarDecl *PVD = dyn_cast_or_null<ParmVarDecl>(Var))
-              QTy = PVD->getOriginalType();
-            for (int I = 1, E = getNumberOfConstructScopes(RSI->OpenMPLevel);
-                 I < E; ++I) {
-              auto *OuterRSI = cast<CapturedRegionScopeInfo>(
-                  FunctionScopes[FunctionScopesIndex - I]);
-              assert(RSI->OpenMPLevel == OuterRSI->OpenMPLevel &&
-                     "Wrong number of captured regions associated with the "
-                     "OpenMP construct.");
-              captureVariablyModifiedType(Context, QTy, OuterRSI);
-            }
-          }
-          bool IsTargetCap =
-              IsOpenMPPrivateDecl != OMPC_private &&
-              isOpenMPTargetCapturedDecl(Var, RSI->OpenMPLevel,
-                                         RSI->OpenMPCaptureLevel);
-          // Do not capture global if it is not privatized in outer regions.
-          bool IsGlobalCap =
-              IsGlobal && isOpenMPGlobalCapturedDecl(Var, RSI->OpenMPLevel,
-                                                     RSI->OpenMPCaptureLevel);
+    // if (getLangOpts().OpenMP) {
+    //   if (auto *RSI = dyn_cast<CapturedRegionScopeInfo>(CSI)) {
+    //     // OpenMP private variables should not be captured in outer scope, so
+    //     // just break here. Similarly, global variables that are captured in a
+    //     // target region should not be captured outside the scope of the region.
+    //     if (RSI->CapRegionKind == CR_OpenMP) {
+    //       OpenMPClauseKind IsOpenMPPrivateDecl = isOpenMPPrivateDecl(
+    //           Var, RSI->OpenMPLevel, RSI->OpenMPCaptureLevel);
+    //       // If the variable is private (i.e. not captured) and has variably
+    //       // modified type, we still need to capture the type for correct
+    //       // codegen in all regions, associated with the construct. Currently,
+    //       // it is captured in the innermost captured region only.
+    //       if (IsOpenMPPrivateDecl != OMPC_unknown &&
+    //           Var->getType()->isVariablyModifiedType()) {
+    //         QualType QTy = Var->getType();
+    //         if (ParmVarDecl *PVD = dyn_cast_or_null<ParmVarDecl>(Var))
+    //           QTy = PVD->getOriginalType();
+    //         for (int I = 1, E = getNumberOfConstructScopes(RSI->OpenMPLevel);
+    //              I < E; ++I) {
+    //           auto *OuterRSI = cast<CapturedRegionScopeInfo>(
+    //               FunctionScopes[FunctionScopesIndex - I]);
+    //           assert(RSI->OpenMPLevel == OuterRSI->OpenMPLevel &&
+    //                  "Wrong number of captured regions associated with the "
+    //                  "OpenMP construct.");
+    //           captureVariablyModifiedType(Context, QTy, OuterRSI);
+    //         }
+    //       }
+    //       bool IsTargetCap =
+    //           IsOpenMPPrivateDecl != OMPC_private &&
+    //           isOpenMPTargetCapturedDecl(Var, RSI->OpenMPLevel,
+    //                                      RSI->OpenMPCaptureLevel);
+    //       // Do not capture global if it is not privatized in outer regions.
+    //       bool IsGlobalCap =
+    //           IsGlobal && isOpenMPGlobalCapturedDecl(Var, RSI->OpenMPLevel,
+    //                                                  RSI->OpenMPCaptureLevel);
 
-          // When we detect target captures we are looking from inside the
-          // target region, therefore we need to propagate the capture from the
-          // enclosing region. Therefore, the capture is not initially nested.
-          if (IsTargetCap)
-            adjustOpenMPTargetScopeIndex(FunctionScopesIndex, RSI->OpenMPLevel);
+    //       // When we detect target captures we are looking from inside the
+    //       // target region, therefore we need to propagate the capture from the
+    //       // enclosing region. Therefore, the capture is not initially nested.
+    //       if (IsTargetCap)
+    //         adjustOpenMPTargetScopeIndex(FunctionScopesIndex, RSI->OpenMPLevel);
 
-          if (IsTargetCap || IsOpenMPPrivateDecl == OMPC_private ||
-              (IsGlobal && !IsGlobalCap)) {
-            Nested = !IsTargetCap;
-            DeclRefType = DeclRefType.getUnqualifiedType();
-            CaptureType = Context.getLValueReferenceType(DeclRefType);
-            break;
-          }
-        }
-      }
-    }
+    //       if (IsTargetCap || IsOpenMPPrivateDecl == OMPC_private ||
+    //           (IsGlobal && !IsGlobalCap)) {
+    //         Nested = !IsTargetCap;
+    //         DeclRefType = DeclRefType.getUnqualifiedType();
+    //         CaptureType = Context.getLValueReferenceType(DeclRefType);
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
     if (CSI->ImpCaptureStyle == CapturingScopeInfo::ImpCap_None && !Explicit) {
       // No capture-default, and this is not an explicit capture
       // so cannot capture this variable.
@@ -18040,8 +18041,8 @@ void Sema::MarkVariableReferenced(SourceLocation Loc, VarDecl *Var) {
 
 static void MarkExprReferenced(Sema &SemaRef, SourceLocation Loc,
                                Decl *D, Expr *E, bool MightBeOdrUse) {
-  if (SemaRef.isInOpenMPDeclareTargetContext())
-    SemaRef.checkDeclIsAllowedInOpenMPTarget(E, D);
+  // if (SemaRef.isInOpenMPDeclareTargetContext())
+  //   SemaRef.checkDeclIsAllowedInOpenMPTarget(E, D);
 
   if (VarDecl *Var = dyn_cast<VarDecl>(D)) {
     DoMarkVarDeclReferenced(SemaRef, Loc, Var, E);
@@ -19055,19 +19056,19 @@ ExprResult Sema::CheckPlaceholderExpr(Expr *E) {
   }
 
   // ARC unbridged casts.
-  case BuiltinType::ARCUnbridgedCast: {
-    Expr *realCast = stripARCUnbridgedCast(E);
-    diagnoseARCUnbridgedCast(realCast);
-    return realCast;
-  }
+  // case BuiltinType::ARCUnbridgedCast: {
+  //   Expr *realCast = stripARCUnbridgedCast(E);
+  //   diagnoseARCUnbridgedCast(realCast);
+  //   return realCast;
+  // }
 
   // Expressions of unknown type.
   case BuiltinType::UnknownAny:
     return diagnoseUnknownAnyExpr(*this, E);
 
   // Pseudo-objects.
-  // case BuiltinType::PseudoObject:
-  //   return checkPseudoObjectRValue(E);
+  case BuiltinType::PseudoObject:
+    return checkPseudoObjectRValue(E);
 
   case BuiltinType::BuiltinFn: {
     // Accept __noop without parens by implicitly converting it to a call expr.
@@ -19095,16 +19096,16 @@ ExprResult Sema::CheckPlaceholderExpr(Expr *E) {
     return ExprError();
 
   // Expressions of unknown type.
-  case BuiltinType::OMPArraySection:
-    Diag(E->getBeginLoc(), diag::err_omp_array_section_use);
-    return ExprError();
+  // case BuiltinType::OMPArraySection:
+  //   Diag(E->getBeginLoc(), diag::err_omp_array_section_use);
+  //   return ExprError();
 
   // Expressions of unknown type.
-  case BuiltinType::OMPArrayShaping:
-    return ExprError(Diag(E->getBeginLoc(), diag::err_omp_array_shaping_use));
+  // case BuiltinType::OMPArrayShaping:
+  //   return ExprError(Diag(E->getBeginLoc(), diag::err_omp_array_shaping_use));
 
-  case BuiltinType::OMPIterator:
-    return ExprError(Diag(E->getBeginLoc(), diag::err_omp_iterator_use));
+  // case BuiltinType::OMPIterator:
+  //   return ExprError(Diag(E->getBeginLoc(), diag::err_omp_iterator_use));
 
   // Everything else should be impossible.
 // #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
@@ -19154,30 +19155,30 @@ bool Sema::CheckCaseExpression(Expr *E) {
 //       ObjCBoolLiteralExpr(Kind == tok::kw___objc_yes, BoolT, OpLoc);
 // }
 
-ExprResult Sema::ActOnObjCAvailabilityCheckExpr(
-    llvm::ArrayRef<AvailabilitySpec> AvailSpecs, SourceLocation AtLoc,
-    SourceLocation RParen) {
+// ExprResult Sema::ActOnObjCAvailabilityCheckExpr(
+//     llvm::ArrayRef<AvailabilitySpec> AvailSpecs, SourceLocation AtLoc,
+//     SourceLocation RParen) {
 
-  StringRef Platform = getASTContext().getTargetInfo().getPlatformName();
+//   StringRef Platform = getASTContext().getTargetInfo().getPlatformName();
 
-  auto Spec = llvm::find_if(AvailSpecs, [&](const AvailabilitySpec &Spec) {
-    return Spec.getPlatform() == Platform;
-  });
+//   auto Spec = llvm::find_if(AvailSpecs, [&](const AvailabilitySpec &Spec) {
+//     return Spec.getPlatform() == Platform;
+//   });
 
-  VersionTuple Version;
-  if (Spec != AvailSpecs.end())
-    Version = Spec->getVersion();
+//   VersionTuple Version;
+//   if (Spec != AvailSpecs.end())
+//     Version = Spec->getVersion();
 
-  // The use of `@available` in the enclosing function should be analyzed to
-  // warn when it's used inappropriately (i.e. not if(@available)).
-  if (getCurFunctionOrMethodDecl())
-    getEnclosingFunction()->HasPotentialAvailabilityViolations = true;
-  else if (getCurBlock() || getCurLambda())
-    getCurFunction()->HasPotentialAvailabilityViolations = true;
+//   // The use of `@available` in the enclosing function should be analyzed to
+//   // warn when it's used inappropriately (i.e. not if(@available)).
+//   if (getCurFunctionOrMethodDecl())
+//     getEnclosingFunction()->HasPotentialAvailabilityViolations = true;
+//   else if (getCurBlock() || getCurLambda())
+//     getCurFunction()->HasPotentialAvailabilityViolations = true;
 
-  return new (Context)
-      ObjCAvailabilityCheckExpr(Version, AtLoc, RParen, Context.BoolTy);
-}
+//   return new (Context)
+//       ObjCAvailabilityCheckExpr(Version, AtLoc, RParen, Context.BoolTy);
+// }
 
 ExprResult Sema::CreateRecoveryExpr(SourceLocation Begin, SourceLocation End,
                                     ArrayRef<Expr *> SubExprs, QualType T) {

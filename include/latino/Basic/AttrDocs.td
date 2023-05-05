@@ -3374,86 +3374,86 @@ where clause is one of the following:
   }];
 }
 
-def OMPDeclareTargetDocs : Documentation {
-  let Category = DocCatFunction;
-  let Heading = "#pragma omp declare target";
-  let Content = [{
-The ``declare target`` directive specifies that variables and functions are mapped
-to a device for OpenMP offload mechanism.
+// def OMPDeclareTargetDocs : Documentation {
+//   let Category = DocCatFunction;
+//   let Heading = "#pragma omp declare target";
+//   let Content = [{
+// The ``declare target`` directive specifies that variables and functions are mapped
+// to a device for OpenMP offload mechanism.
 
-The syntax of the declare target directive is as follows:
+// The syntax of the declare target directive is as follows:
 
-  .. code-block:: c
+//   .. code-block:: c
 
-    #pragma omp declare target new-line
-    declarations-definition-seq
-    #pragma omp end declare target new-line
+//     #pragma omp declare target new-line
+//     declarations-definition-seq
+//     #pragma omp end declare target new-line
 
-or
+// or
 
-  .. code-block:: c
+//   .. code-block:: c
 
-    #pragma omp declare target (extended-list) new-line
+//     #pragma omp declare target (extended-list) new-line
 
-or
+// or
 
-  .. code-block:: c
+//   .. code-block:: c
 
-    #pragma omp declare target clause[ [,] clause ... ] new-line
+//     #pragma omp declare target clause[ [,] clause ... ] new-line
 
-where clause is one of the following:
+// where clause is one of the following:
 
 
-  .. code-block:: c
+//   .. code-block:: c
 
-     to(extended-list)
-     link(list)
-     device_type(host | nohost | any)
-  }];
-}
+//      to(extended-list)
+//      link(list)
+//      device_type(host | nohost | any)
+//   }];
+// }
 
-def OMPDeclareVariantDocs : Documentation {
-  let Category = DocCatFunction;
-  let Heading = "#pragma omp declare variant";
-  let Content = [{
-The ``declare variant`` directive declares a specialized variant of a base
-function and specifies the context in which that specialized variant is used.
-The declare variant directive is a declarative directive.
-The syntax of the ``declare variant`` construct is as follows:
+// def OMPDeclareVariantDocs : Documentation {
+//   let Category = DocCatFunction;
+//   let Heading = "#pragma omp declare variant";
+//   let Content = [{
+// The ``declare variant`` directive declares a specialized variant of a base
+// function and specifies the context in which that specialized variant is used.
+// The declare variant directive is a declarative directive.
+// The syntax of the ``declare variant`` construct is as follows:
 
-  .. code-block:: none
+//   .. code-block:: none
 
-    #pragma omp declare variant(variant-func-id) clause new-line
-    [#pragma omp declare variant(variant-func-id) clause new-line]
-    [...]
-    function definition or declaration
+//     #pragma omp declare variant(variant-func-id) clause new-line
+//     [#pragma omp declare variant(variant-func-id) clause new-line]
+//     [...]
+//     function definition or declaration
 
-where clause is one of the following:
+// where clause is one of the following:
 
-  .. code-block:: none
+//   .. code-block:: none
 
-    match(context-selector-specification)
+//     match(context-selector-specification)
 
-and where ``variant-func-id`` is the name of a function variant that is either a
-base language identifier or, for C++, a template-id.
+// and where ``variant-func-id`` is the name of a function variant that is either a
+// base language identifier or, for C++, a template-id.
 
-Clang provides the following context selector extensions, used via
-``implementation={extension(EXTENSION)}``:
+// Clang provides the following context selector extensions, used via
+// ``implementation={extension(EXTENSION)}``:
 
-  .. code-block:: none
+//   .. code-block:: none
 
-    match_all
-    match_any
-    match_none
+//     match_all
+//     match_any
+//     match_none
 
-The match extensions change when the *entire* context selector is considered a
-match for an OpenMP context. The default is ``all``, with ``none`` no trait in the
-selector is allowed to be in the OpenMP context, with ``any`` a single trait in
-both the selector and OpenMP context is sufficient. Only a single match
-extension trait is allowed per context selector.
+// The match extensions change when the *entire* context selector is considered a
+// match for an OpenMP context. The default is ``all``, with ``none`` no trait in the
+// selector is allowed to be in the OpenMP context, with ``any`` a single trait in
+// both the selector and OpenMP context is sufficient. Only a single match
+// extension trait is allowed per context selector.
 
-  }];
-}
+//   }];
+// }
 
 def NoStackProtectorDocs : Documentation {
   let Category = DocCatFunction;

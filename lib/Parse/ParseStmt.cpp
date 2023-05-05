@@ -1859,7 +1859,7 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
       FirstPart = StmtResult();
     } else if (Tok.is(tok::semi)) {  // for (int x = 4;
       ConsumeToken();
-    } else if ((ForEach = isTokIdentifier_in())) {
+    }/* else if ((ForEach = isTokIdentifier_in())) {
       Actions.ActOnForEachDeclStmt(DG);
       // ObjC: for (id x in expr)
       ConsumeToken(); // consume 'in'
@@ -1870,20 +1870,20 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
       //   return StmtError();
       // }
       Collection = ParseExpression();
-    } else {
+    }*/ else {
       Diag(Tok, diag::err_expected_semi_for);
     }
   } else {
     ProhibitAttributes(attrs);
     Value = Actions.CorrectDelayedTyposInExpr(ParseExpression());
 
-    ForEach = isTokIdentifier_in();
+    // ForEach = isTokIdentifier_in();
 
     // Turn the expression into a stmt.
     if (!Value.isInvalid()) {
-      if (ForEach)
-        FirstPart = Actions.ActOnForEachLValueExpr(Value.get());
-      else {
+      // if (ForEach)
+      //   FirstPart = Actions.ActOnForEachLValueExpr(Value.get());
+      // else {
         // We already know this is not an init-statement within a for loop, so
         // if we are parsing a C++11 range-based for loop, we should treat this
         // expression statement as being a discarded value expression because
@@ -1892,7 +1892,7 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
         bool IsRangeBasedFor =
             getLangOpts().CPlusPlus11 && !ForEach && Tok.is(tok::colon);
         FirstPart = Actions.ActOnExprStmt(Value, !IsRangeBasedFor);
-      }
+      // }
     }
 
     if (Tok.is(tok::semi)) {
@@ -2022,13 +2022,13 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
                                                      FirstPart.get(),
                                                      Collection.get(),
                                                      T.getCloseLocation());
-  } */else {
+  } else {
     // In OpenMP loop region loop control variable must be captured and be
     // private. Perform analysis of first part (if any).
     if (getLangOpts().OpenMP && FirstPart.isUsable()) {
       Actions.ActOnOpenMPLoopInitialization(ForLoc, FirstPart.get());
     }
-  }
+  }*/
 
   // C99 6.8.5p5 - In C99, the body of the for statement is a scope, even if
   // there is no compound stmt.  C90 does not have this clause.  We only do this

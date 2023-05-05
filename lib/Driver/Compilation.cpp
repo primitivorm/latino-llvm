@@ -69,12 +69,12 @@ Compilation::getArgsForToolChain(const ToolChain *TC, StringRef BoundArch,
     SmallVector<Arg *, 4> AllocatedArgs;
     DerivedArgList *OpenMPArgs = nullptr;
     // Translate OpenMP toolchain arguments provided via the -Xopenmp-target flags.
-    if (DeviceOffloadKind == Action::OFK_OpenMP) {
-      const ToolChain *HostTC = getSingleOffloadToolChain<Action::OFK_Host>();
-      bool SameTripleAsHost = (TC->getTriple() == HostTC->getTriple());
-      OpenMPArgs = TC->TranslateOpenMPTargetArgs(
-          *TranslatedArgs, SameTripleAsHost, AllocatedArgs);
-    }
+    // if (DeviceOffloadKind == Action::OFK_OpenMP) {
+    //   const ToolChain *HostTC = getSingleOffloadToolChain<Action::OFK_Host>();
+    //   bool SameTripleAsHost = (TC->getTriple() == HostTC->getTriple());
+    //   OpenMPArgs = TC->TranslateOpenMPTargetArgs(
+    //       *TranslatedArgs, SameTripleAsHost, AllocatedArgs);
+    // }
 
     DerivedArgList *NewDAL = nullptr;
     if (!OpenMPArgs) {

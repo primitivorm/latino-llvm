@@ -1136,8 +1136,8 @@ def warn_implements_nscopying : Warning<
 
 // def warn_multiple_method_decl : Warning<"multiple methods named %0 found">,
 //   InGroup<ObjCMultipleMethodNames>;
-def warn_strict_multiple_method_decl : Warning<
-  "multiple methods named %0 found">, InGroup<StrictSelector>, DefaultIgnore;
+// def warn_strict_multiple_method_decl : Warning<
+//   "multiple methods named %0 found">, InGroup<StrictSelector>, DefaultIgnore;
 def warn_accessor_property_type_mismatch : Warning<
   "type of property %0 does not match type of accessor %1">;
 def note_conv_function_declared_at : Note<"type conversion function declared here">;
@@ -1301,11 +1301,11 @@ def err_bad_property_context : Error<
 def err_missing_property_ivar_decl : Error<
   "synthesized property %0 must either be named the same as a compatible"
   " instance variable or must explicitly name an instance variable">;
-def err_arc_perform_selector_retains : Error<
-  "performSelector names a selector which retains the object">;
-def warn_arc_perform_selector_leaks : Warning<
-  "performSelector may cause a leak because its selector is unknown">,
-  InGroup<DiagGroup<"arc-performSelector-leaks">>;
+// def err_arc_perform_selector_retains : Error<
+//   "performSelector names a selector which retains the object">;
+// def warn_arc_perform_selector_leaks : Warning<
+//   "performSelector may cause a leak because its selector is unknown">,
+//   InGroup<DiagGroup<"arc-performSelector-leaks">>;
 def warn_dealloc_in_category : Warning<
 "-dealloc is being overridden in a category">,
 InGroup<DeallocInCategory>;
@@ -1353,11 +1353,11 @@ def err_property_implemented : Error<"property %0 is already implemented">;
 def err_dealloc_bad_result_type : Error<
   "dealloc return type must be correctly specified as 'void' under ARC, "
   "instead of %0">;
-def warn_undeclared_selector : Warning<
-  "undeclared selector %0">, InGroup<UndeclaredSelector>, DefaultIgnore;
-def warn_undeclared_selector_with_typo : Warning<
-  "undeclared selector %0; did you mean %1?">,
-  InGroup<UndeclaredSelector>, DefaultIgnore;
+// def warn_undeclared_selector : Warning<
+//   "undeclared selector %0">, InGroup<UndeclaredSelector>, DefaultIgnore;
+// def warn_undeclared_selector_with_typo : Warning<
+//   "undeclared selector %0; did you mean %1?">,
+//   InGroup<UndeclaredSelector>, DefaultIgnore;
 def warn_implicit_atomic_property : Warning<
   "property is assumed atomic by default">, InGroup<ImplicitAtomic>, DefaultIgnore;
 def note_auto_readonly_iboutlet_fixup_suggest : Note<
@@ -1369,15 +1369,15 @@ def warn_auto_readonly_iboutlet_property : Warning<
 def warn_auto_implicit_atomic_property : Warning<
   "property is assumed atomic when auto-synthesizing the property">,
   InGroup<ImplicitAtomic>, DefaultIgnore;
-def warn_unimplemented_selector:  Warning<
-  "no method with selector %0 is implemented in this translation unit">,
-  InGroup<Selector>, DefaultIgnore;
+// def warn_unimplemented_selector:  Warning<
+//   "no method with selector %0 is implemented in this translation unit">,
+//   InGroup<Selector>, DefaultIgnore;
 def warn_unimplemented_protocol_method : Warning<
   "method %0 in protocol %1 not implemented">, InGroup<Protocol>;
-def warn_multiple_selectors: Warning<
-  "several methods with selector %0 of mismatched types are found "
-  "for the @selector expression">,
-  InGroup<SelectorTypeMismatch>, DefaultIgnore;
+// def warn_multiple_selectors: Warning<
+//   "several methods with selector %0 of mismatched types are found "
+//   "for the @selector expression">,
+//   InGroup<SelectorTypeMismatch>, DefaultIgnore;
 def err_direct_selector_expression : Error<
   "@selector expression formed with direct selector %0">;
 // def warn_potentially_direct_selector_expression : Warning<
@@ -3882,9 +3882,9 @@ def warn_ns_attribute_wrong_return_type : Warning<
   "%0 attribute only applies to %select{functions|methods|properties}1 that "
   "return %select{an Objective-C object|a pointer|a non-retainable pointer}2">,
   InGroup<IgnoredAttributes>;
-def err_ns_attribute_wrong_parameter_type : Error<
-  "%0 attribute only applies to "
-  "%select{Objective-C object|pointer|pointer-to-CF-pointer}1 parameters">;
+// def err_ns_attribute_wrong_parameter_type : Error<
+//   "%0 attribute only applies to "
+//   "%select{Objective-C object|pointer|pointer-to-CF-pointer}1 parameters">;
 def warn_ns_attribute_wrong_parameter_type : Warning<
   "%0 attribute only applies to "
   "%select{Objective-C object|pointer|pointer-to-CF-pointer|pointer/reference-to-OSObject-pointer}1 parameters">,
@@ -5773,8 +5773,8 @@ def err_synthesizing_arc_weak_property_no_runtime : Error<
   "does not support weak references">;
 def err_arc_unsupported_weak_class : Error<
   "class is incompatible with __weak references">;
-def err_arc_weak_unavailable_assign : Error<
-  "assignment of a weak-unavailable object to a __weak object">;
+// def err_arc_weak_unavailable_assign : Error<
+//   "assignment of a weak-unavailable object to a __weak object">;
 def err_arc_weak_unavailable_property : Error<
   "synthesizing __weak instance variable of type %0, which does not "
   "support weak references">;
@@ -5874,13 +5874,13 @@ def err_arc_autoreleasing_capture : Error<
   "%select{block|lambda by copy}0">;
 def err_arc_thread_ownership : Error<
   "thread-local variable has non-trivial ownership: type is %0">;
-def err_arc_indirect_no_ownership : Error<
-  "%select{pointer|reference}1 to non-const type %0 with no explicit ownership">;
+// def err_arc_indirect_no_ownership : Error<
+//   "%select{pointer|reference}1 to non-const type %0 with no explicit ownership">;
 def err_arc_array_param_no_ownership : Error<
   "must explicitly describe intended ownership of an object array parameter">;
-def err_arc_pseudo_dtor_inconstant_quals : Error<
-  "pseudo-destructor destroys object of type %0 with inconsistently-qualified "
-  "type %1">;
+// def err_arc_pseudo_dtor_inconstant_quals : Error<
+//   "pseudo-destructor destroys object of type %0 with inconsistently-qualified "
+//   "type %1">;
 def err_arc_init_method_unrelated_result_type : Error<
   "init methods must return a type related to the receiver type">;
 def err_arc_nonlocal_writeback : Error<
@@ -6029,8 +6029,8 @@ def ext_sizeof_alignof_function_type : Extension<
   "invalid application of '%0' to a function type">, InGroup<PointerArith>;
 def ext_sizeof_alignof_void_type : Extension<
   "invalid application of '%0' to a void type">, InGroup<PointerArith>;
-def err_opencl_sizeof_alignof_type : Error<
-  "invalid application of '%0' to a void type">;
+// def err_opencl_sizeof_alignof_type : Error<
+//   "invalid application of '%0' to a void type">;
 def err_sizeof_alignof_incomplete_or_sizeless_type : Error<
   "invalid application of '%0' to %select{an incomplete|sizeless}1 type %2">;
 def err_sizeof_alignof_function_type : Error<
@@ -9227,9 +9227,9 @@ def err_second_parameter_to_va_arg_abstract: Error<
 def warn_second_parameter_to_va_arg_not_pod : Warning<
   "second argument to 'va_arg' is of non-POD type %0">,
   InGroup<NonPODVarargs>, DefaultError;
-def warn_second_parameter_to_va_arg_ownership_qualified : Warning<
-  "second argument to 'va_arg' is of ARC ownership-qualified type %0">,
-  InGroup<NonPODVarargs>, DefaultError;
+// def warn_second_parameter_to_va_arg_ownership_qualified : Warning<
+//   "second argument to 'va_arg' is of ARC ownership-qualified type %0">,
+//   InGroup<NonPODVarargs>, DefaultError;
 def warn_second_parameter_to_va_arg_never_compatible : Warning<
   "second argument to 'va_arg' is of promotable type %0; this va_arg has "
   "undefined behavior because arguments will be promoted to %1">, InGroup<Varargs>;
@@ -10251,8 +10251,8 @@ def warn_mig_server_routine_does_not_return_kern_return_t : Warning<
 //   "expected loop invariant expression or '<invariant1> * %0 + <invariant2>' kind of expression">;
 // def err_omp_wrong_dependency_iterator_type : Error<
 //   "expected an integer or a pointer type of the outer loop counter '%0' for non-rectangular nests">;
-// def err_device_unsupported_type : Error <
-//   "%0 requires %1 bit size %2 type support, but device '%3' does not support it">;
+def err_device_unsupported_type : Error <
+  "%0 requires %1 bit size %2 type support, but device '%3' does not support it">;
 // def err_omp_lambda_capture_in_declare_target_not_to : Error<
 //   "variable captured in declare target region must appear in a to clause">;
 // def err_omp_device_type_mismatch : Error<
@@ -10486,8 +10486,8 @@ def err_return_in_coroutine : Error<
   "return statement not allowed in coroutine; did you mean 'co_return'?">;
 def note_declared_coroutine_here : Note<
   "function is a coroutine due to use of '%0' here">;
-def err_coroutine_objc_method : Error<
-  "Objective-C methods as coroutines are not yet supported">;
+// def err_coroutine_objc_method : Error<
+//   "Objective-C methods as coroutines are not yet supported">;
 def err_coroutine_unevaluated_context : Error<
   "'%0' cannot be used in an unevaluated context">;
 def err_coroutine_within_handler : Error<
@@ -10569,9 +10569,9 @@ def warn_not_a_doxygen_trailing_member_comment : Warning<
 
 let CategoryName = "Nullability Issue" in {
 
-def warn_mismatched_nullability_attr : Warning<
-  "nullability specifier %0 conflicts with existing specifier %1">,
-  InGroup<Nullability>;
+// def warn_mismatched_nullability_attr : Warning<
+//   "nullability specifier %0 conflicts with existing specifier %1">,
+//   InGroup<Nullability>;
 
 def warn_nullability_declspec : Warning<
   "nullability specifier %0 cannot be applied "

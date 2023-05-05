@@ -207,7 +207,7 @@ struct ParenState {
         BreakBeforeParameter(false), NoLineBreak(NoLineBreak),
         NoLineBreakInOperand(false), LastOperatorWrapped(true),
         ContainsLineBreak(false), ContainsUnwrappedBuilder(false),
-        AlignColons(true), ObjCSelectorNameFound(false),
+        AlignColons(true), /*ObjCSelectorNameFound(false),*/
         HasMultipleNestedBlocks(false), NestedBlockInlined(false),
         /*IsInsideObjCArrayLiteral(false),*/ IsCSharpGenericTypeConstraint(false),
         IsChainedConditional(false), IsWrappedConditional(false),
@@ -319,7 +319,7 @@ struct ParenState {
   ///
   /// Not considered for memoization as it will always have the same value at
   /// the same token.
-  bool ObjCSelectorNameFound : 1;
+  // bool ObjCSelectorNameFound : 1;
 
   /// \c true if there are multiple nested blocks inside these parens.
   ///

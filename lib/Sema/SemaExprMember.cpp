@@ -12,7 +12,7 @@
 #include "latino/Sema/Overload.h"
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -341,14 +341,14 @@ CheckExtVectorComponent(Sema &S, QualType baseType, ExprValueKind &VK,
     } while (*compStr && (Idx = vecType->getPointAccessorIdx(*compStr)) != -1);
 
     // Emit a warning if an rgba selector is used earlier than OpenCL 2.2
-    if (HasRGBA || (*compStr && IsRGBA(*compStr))) {
-      if (S.getLangOpts().OpenCL && S.getLangOpts().OpenCLVersion < 220) {
-        const char *DiagBegin = HasRGBA ? CompName->getNameStart() : compStr;
-        S.Diag(OpLoc, diag::ext_opencl_ext_vector_type_rgba_selector)
-          << StringRef(DiagBegin, 1)
-          << S.getLangOpts().OpenCLVersion << SourceRange(CompLoc);
-      }
-    }
+    // if (HasRGBA || (*compStr && IsRGBA(*compStr))) {
+    //   if (S.getLangOpts().OpenCL && S.getLangOpts().OpenCLVersion < 220) {
+    //     const char *DiagBegin = HasRGBA ? CompName->getNameStart() : compStr;
+    //     S.Diag(OpLoc, diag::ext_opencl_ext_vector_type_rgba_selector)
+    //       << StringRef(DiagBegin, 1)
+    //       << S.getLangOpts().OpenCLVersion << SourceRange(CompLoc);
+    //   }
+    // }
   } else {
     if (HexSwizzle) compStr++;
     while ((Idx = vecType->getNumericAccessorIdx(*compStr)) != -1) {
@@ -1796,7 +1796,7 @@ Sema::BuildFieldReferenceExpr(Expr *BaseExpr, bool IsArrow,
     Qualifiers BaseQuals = BaseType.getQualifiers();
 
     // GC attributes are never picked up by members.
-    BaseQuals.removeObjCGCAttr();
+    // BaseQuals.removeObjCGCAttr();
 
     // CVR attributes from the base are picked up by members,
     // except that 'mutable' members don't pick up 'const'.
@@ -1823,14 +1823,14 @@ Sema::BuildFieldReferenceExpr(Expr *BaseExpr, bool IsArrow,
 
   // Build a reference to a private copy for non-static data members in
   // non-static member functions, privatized by OpenMP constructs.
-  if (getLangOpts().OpenMP && IsArrow &&
-      !CurContext->isDependentContext() &&
-      isa<CXXThisExpr>(Base.get()->IgnoreParenImpCasts())) {
-    if (auto *PrivateCopy = isOpenMPCapturedDecl(Field)) {
-      return getOpenMPCapturedExpr(PrivateCopy, VK, OK,
-                                   MemberNameInfo.getLoc());
-    }
-  }
+  // if (getLangOpts().OpenMP && IsArrow &&
+  //     !CurContext->isDependentContext() &&
+  //     isa<CXXThisExpr>(Base.get()->IgnoreParenImpCasts())) {
+  //   if (auto *PrivateCopy = isOpenMPCapturedDecl(Field)) {
+  //     return getOpenMPCapturedExpr(PrivateCopy, VK, OK,
+  //                                  MemberNameInfo.getLoc());
+  //   }
+  // }
 
   return BuildMemberExpr(Base.get(), IsArrow, OpLoc, &SS,
                          /*TemplateKWLoc=*/SourceLocation(), Field, FoundDecl,

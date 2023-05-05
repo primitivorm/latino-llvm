@@ -63,7 +63,7 @@ private:
     : P(r, k), Data(offset) {
     assert(r && "Must have known regions.");
     assert(getOffset() == offset && "Failed to store offset");
-    assert((r == r->getBaseRegion() || isa<ObjCIvarRegion>(r) ||
+    assert((r == r->getBaseRegion() || /*isa<ObjCIvarRegion>(r) ||*/
             isa <CXXDerivedObjectRegion>(r)) &&
            "Not a base");
   }
@@ -565,7 +565,7 @@ public: // Part of public interface to class.
 
   SVal getBindingForField(RegionBindingsConstRef B, const FieldRegion *R);
 
-  SVal getBindingForObjCIvar(RegionBindingsConstRef B, const ObjCIvarRegion *R);
+  // SVal getBindingForObjCIvar(RegionBindingsConstRef B, const ObjCIvarRegion *R);
 
   SVal getBindingForVar(RegionBindingsConstRef B, const VarRegion *R);
 
@@ -1490,15 +1490,15 @@ SVal RegionStoreManager::getBinding(RegionBindingsConstRef B, Loc L, QualType T)
     return CastRetrievedVal(getBindingForElement(B, ER), ER, T);
   }
 
-  if (const ObjCIvarRegion *IVR = dyn_cast<ObjCIvarRegion>(R)) {
-    // FIXME: Here we actually perform an implicit conversion from the loaded
-    // value to the ivar type.  What we should model is stores to ivars
-    // that blow past the extent of the ivar.  If the address of the ivar is
-    // reinterpretted, it is possible we stored a different value that could
-    // fit within the ivar.  Either we need to cast these when storing them
-    // or reinterpret them lazily (as we do here).
-    return CastRetrievedVal(getBindingForObjCIvar(B, IVR), IVR, T);
-  }
+  // if (const ObjCIvarRegion *IVR = dyn_cast<ObjCIvarRegion>(R)) {
+  //   // FIXME: Here we actually perform an implicit conversion from the loaded
+  //   // value to the ivar type.  What we should model is stores to ivars
+  //   // that blow past the extent of the ivar.  If the address of the ivar is
+  //   // reinterpretted, it is possible we stored a different value that could
+  //   // fit within the ivar.  Either we need to cast these when storing them
+  //   // or reinterpret them lazily (as we do here).
+  //   return CastRetrievedVal(getBindingForObjCIvar(B, IVR), IVR, T);
+  // }
 
   if (const VarRegion *VR = dyn_cast<VarRegion>(R)) {
     // FIXME: Here we actually perform an implicit conversion from the loaded
@@ -1917,25 +1917,25 @@ RegionStoreManager::getBindingForFieldOrElementCommon(RegionBindingsConstRef B,
   return svalBuilder.getRegionValueSymbolVal(R);
 }
 
-SVal RegionStoreManager::getBindingForObjCIvar(RegionBindingsConstRef B,
-                                               const ObjCIvarRegion* R) {
-  // Check if the region has a binding.
-  if (const Optional<SVal> &V = B.getDirectBinding(R))
-    return *V;
+// SVal RegionStoreManager::getBindingForObjCIvar(RegionBindingsConstRef B,
+//                                                const ObjCIvarRegion* R) {
+//   // Check if the region has a binding.
+//   if (const Optional<SVal> &V = B.getDirectBinding(R))
+//     return *V;
 
-  const MemRegion *superR = R->getSuperRegion();
+//   const MemRegion *superR = R->getSuperRegion();
 
-  // Check if the super region has a default binding.
-  if (const Optional<SVal> &V = B.getDefaultBinding(superR)) {
-    if (SymbolRef parentSym = V->getAsSymbol())
-      return svalBuilder.getDerivedRegionValueSymbolVal(parentSym, R);
+//   // Check if the super region has a default binding.
+//   if (const Optional<SVal> &V = B.getDefaultBinding(superR)) {
+//     if (SymbolRef parentSym = V->getAsSymbol())
+//       return svalBuilder.getDerivedRegionValueSymbolVal(parentSym, R);
 
-    // Other cases: give up.
-    return UnknownVal();
-  }
+//     // Other cases: give up.
+//     return UnknownVal();
+//   }
 
-  return getBindingForLazySymbol(R);
-}
+//   return getBindingForLazySymbol(R);
+// }
 
 SVal RegionStoreManager::getBindingForVar(RegionBindingsConstRef B,
                                           const VarRegion *R) {

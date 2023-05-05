@@ -197,10 +197,10 @@ public:
       llvm_unreachable("A variable is either local or global");
   }
 
-  std::string VisitObjCIvarRegion(const ObjCIvarRegion *R) {
-    return "instance variable '" + R->getDecl()->getNameAsString() + "' of " +
-           Visit(R->getSuperRegion());
-  }
+  // std::string VisitObjCIvarRegion(const ObjCIvarRegion *R) {
+  //   return "instance variable '" + R->getDecl()->getNameAsString() + "' of " +
+  //          Visit(R->getSuperRegion());
+  // }
 
   std::string VisitFieldRegion(const FieldRegion *R) {
     return "field '" + R->getDecl()->getNameAsString() + "' of " +

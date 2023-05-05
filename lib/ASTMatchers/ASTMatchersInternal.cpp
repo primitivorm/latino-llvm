@@ -699,8 +699,8 @@ std::shared_ptr<llvm::Regex> createAndVerifyRegex(StringRef Regex,
 }
 } // end namespace internal
 
-const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAutoreleasePoolStmt>
-    autoreleasePoolStmt;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, ObjCAutoreleasePoolStmt>
+//     autoreleasePoolStmt;
 const internal::VariadicDynCastAllOfMatcher<Decl, TranslationUnitDecl>
     translationUnitDecl;
 const internal::VariadicDynCastAllOfMatcher<Decl, TypedefDecl> typedefDecl;
@@ -1013,10 +1013,10 @@ AST_TYPELOC_TRAVERSE_MATCHER_DEF(
     AST_POLYMORPHIC_SUPPORTED_TYPES(BlockPointerType, MemberPointerType,
                                     PointerType, ReferenceType));
 
-const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
-    ompExecutableDirective;
-const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
-    ompDefaultClause;
+// const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
+//     ompExecutableDirective;
+// const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
+//     ompDefaultClause;
 const internal::VariadicDynCastAllOfMatcher<Decl, CXXDeductionGuideDecl>
     cxxDeductionGuideDecl;
 

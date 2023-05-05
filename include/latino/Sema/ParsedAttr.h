@@ -600,22 +600,22 @@ public:
 
   /// If this is an OpenCL addr space attribute returns its representation
   /// in LangAS, otherwise returns default addr space.
-  LangAS asOpenCLLangAS() const {
-    switch (getParsedKind()) {
-    case ParsedAttr::AT_OpenCLConstantAddressSpace:
-      return LangAS::opencl_constant;
-    case ParsedAttr::AT_OpenCLGlobalAddressSpace:
-      return LangAS::opencl_global;
-    case ParsedAttr::AT_OpenCLLocalAddressSpace:
-      return LangAS::opencl_local;
-    case ParsedAttr::AT_OpenCLPrivateAddressSpace:
-      return LangAS::opencl_private;
-    case ParsedAttr::AT_OpenCLGenericAddressSpace:
-      return LangAS::opencl_generic;
-    default:
-      return LangAS::Default;
-    }
-  }
+  // LangAS asOpenCLLangAS() const {
+  //   switch (getParsedKind()) {
+  //   case ParsedAttr::AT_OpenCLConstantAddressSpace:
+  //     return LangAS::opencl_constant;
+  //   case ParsedAttr::AT_OpenCLGlobalAddressSpace:
+  //     return LangAS::opencl_global;
+  //   case ParsedAttr::AT_OpenCLLocalAddressSpace:
+  //     return LangAS::opencl_local;
+  //   case ParsedAttr::AT_OpenCLPrivateAddressSpace:
+  //     return LangAS::opencl_private;
+  //   case ParsedAttr::AT_OpenCLGenericAddressSpace:
+  //     return LangAS::opencl_generic;
+  //   default:
+  //     return LangAS::Default;
+  //   }
+  // }
 
   AttributeCommonInfo::Kind getKind() const {
     return AttributeCommonInfo::Kind(Info.AttrKind);

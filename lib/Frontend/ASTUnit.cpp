@@ -18,7 +18,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclGroup.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/ExternalASTSource.h"
@@ -810,7 +810,7 @@ std::unique_ptr<ASTUnit> ASTUnit::LoadFromASTFile(
 
   if (ToLoad >= LoadASTOnly)
     AST->Ctx = new ASTContext(*AST->LangOpts, AST->getSourceManager(),
-                              PP.getIdentifierTable(), PP.getSelectorTable(),
+                              PP.getIdentifierTable(), /*PP.getSelectorTable(),*/
                               PP.getBuiltinInfo());
 
   bool disableValid = false;
@@ -2002,7 +2002,7 @@ static void CalculateHiddenNames(const CodeCompletionContext &Context,
   case CodeCompletionContext::CCC_PreprocessorExpression:
   case CodeCompletionContext::CCC_PreprocessorDirective:
   case CodeCompletionContext::CCC_NaturalLanguage:
-  case CodeCompletionContext::CCC_SelectorName:
+  // case CodeCompletionContext::CCC_SelectorName:
   case CodeCompletionContext::CCC_TypeQualifiers:
   case CodeCompletionContext::CCC_Other:
   case CodeCompletionContext::CCC_OtherWithMacros:
@@ -2670,9 +2670,10 @@ InputKind ASTUnit::getInputKind() const {
   auto &LangOpts = getLangOpts();
 
   Language Lang;
-  if (LangOpts.OpenCL)
-    Lang = Language::OpenCL;
-  else if (LangOpts.CUDA)
+  // if (LangOpts.OpenCL)
+  //   Lang = Language::OpenCL;
+  // else 
+  if (LangOpts.CUDA)
     Lang = Language::CUDA;
   else if (LangOpts.RenderScript)
     Lang = Language::RenderScript;

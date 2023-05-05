@@ -115,7 +115,7 @@ static bool hasFeature(StringRef Feature, const LangOptions &LangOpts,
                         .Case("gnuinlineasm", LangOpts.GNUAsm)
                         // .Case("objc", LangOpts.ObjC)
                         // .Case("objc_arc", LangOpts.ObjCAutoRefCount)
-                        .Case("opencl", LangOpts.OpenCL)
+                        // .Case("opencl", LangOpts.OpenCL)
                         .Case("tls", Target.isTLSSupported())
                         .Case("zvector", LangOpts.ZVector)
                         .Default(Target.hasFeature(Feature) ||

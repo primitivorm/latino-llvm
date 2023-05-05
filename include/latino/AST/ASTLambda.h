@@ -85,6 +85,6 @@ inline DeclContext *getLambdaAwareParentOfDeclContext(DeclContext *DC) {
     return DC->getParent();
 }
 
-} // clang
+} // latino
 
 #endif

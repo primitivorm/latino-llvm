@@ -9,7 +9,7 @@
 #include "IndexingContext.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/SourceManager.h"
@@ -262,8 +262,8 @@ static bool isDeclADefinition(const Decl *D, const DeclContext *ContainerDC, AST
   if (isa<TypedefNameDecl>(D) ||
       isa<EnumConstantDecl>(D) ||
       isa<FieldDecl>(D) ||
-      isa<MSPropertyDecl>(D) ||
-      /*isa<ObjCImplDecl>(D) ||
+      isa<MSPropertyDecl>(D) /*||
+      isa<ObjCImplDecl>(D) ||
       isa<ObjCPropertyImplDecl>(D)*/)
     return true;
 
@@ -272,8 +272,8 @@ static bool isDeclADefinition(const Decl *D, const DeclContext *ContainerDC, AST
 
 /// Whether the given NamedDecl should be skipped because it has no name.
 static bool shouldSkipNamelessDecl(const NamedDecl *ND) {
-  return (ND->getDeclName().isEmpty() && !isa<TagDecl>(ND) &&
-          /*!isa<ObjCCategoryDecl>(ND)) ||*/ isa<CXXDeductionGuideDecl>(ND);
+  return (ND->getDeclName().isEmpty() && !isa<TagDecl>(ND) /*&&
+          !isa<ObjCCategoryDecl>(ND)*/) || isa<CXXDeductionGuideDecl>(ND);
 }
 
 static const Decl *adjustParent(const Decl *Parent) {

@@ -350,9 +350,9 @@ static bool isIdenticalStmt(const ASTContext &Ctx, const Stmt *Stmt1,
     return false;
   case Stmt::CallExprClass:
   case Stmt::ArraySubscriptExprClass:
-  case Stmt::OMPArraySectionExprClass:
-  case Stmt::OMPArrayShapingExprClass:
-  case Stmt::OMPIteratorExprClass:
+  // case Stmt::OMPArraySectionExprClass:
+  // case Stmt::OMPArrayShapingExprClass:
+  // case Stmt::OMPIteratorExprClass:
   case Stmt::ImplicitCastExprClass:
   case Stmt::ParenExprClass:
   case Stmt::BreakStmtClass:

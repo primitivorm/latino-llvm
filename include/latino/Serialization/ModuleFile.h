@@ -393,29 +393,29 @@ public:
   /// The number of selectors new to this file.
   ///
   /// This is the number of entries in SelectorOffsets.
-  unsigned LocalNumSelectors = 0;
+  // unsigned LocalNumSelectors = 0;
 
   /// Offsets into the selector lookup table's data array
   /// where each selector resides.
-  const uint32_t *SelectorOffsets = nullptr;
+  // const uint32_t *SelectorOffsets = nullptr;
 
   /// Base selector ID for selectors local to this module.
-  serialization::SelectorID BaseSelectorID = 0;
+  // serialization::SelectorID BaseSelectorID = 0;
 
   /// Remapping table for selector IDs in this module.
-  ContinuousRangeMap<uint32_t, int, 2> SelectorRemap;
+  // ContinuousRangeMap<uint32_t, int, 2> SelectorRemap;
 
   /// A pointer to the character data that comprises the selector table
   ///
   /// The SelectorOffsets table refers into this memory.
-  const unsigned char *SelectorLookupTableData = nullptr;
+  // const unsigned char *SelectorLookupTableData = nullptr;
 
   /// A pointer to an on-disk hash table of opaque type
   /// ASTSelectorLookupTable.
   ///
   /// This hash table provides the IDs of all selectors, and the associated
   /// instance and factory methods.
-  void *SelectorLookupTable = nullptr;
+  // void *SelectorLookupTable = nullptr;
 
   // === Declarations ===
 

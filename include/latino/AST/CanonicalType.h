@@ -300,7 +300,7 @@ public:
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isOverloadableType)
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, isArrayType)
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, hasPointerRepresentation)
-  LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, hasObjCPointerRepresentation)
+  // LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, hasObjCPointerRepresentation)
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, hasIntegerRepresentation)
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, hasSignedIntegerRepresentation)
   LLVM_LATINO_CANPROXY_SIMPLE_ACCESSOR(bool, hasUnsignedIntegerRepresentation)

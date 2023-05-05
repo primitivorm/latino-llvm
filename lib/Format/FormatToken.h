@@ -75,14 +75,14 @@ namespace format {
   TYPE(MacroBlockBegin)                                                        \
   TYPE(MacroBlockEnd)                                                          \
   TYPE(NamespaceMacro)                                                         \
-  // TYPE(ObjCBlockLBrace)                                                        \
-  // TYPE(ObjCBlockLParen)                                                        \
-  // TYPE(ObjCDecl)                                                               \
-  // TYPE(ObjCForIn)                                                              \
-  // TYPE(ObjCMethodExpr)                                                         \
-  // TYPE(ObjCMethodSpecifier)                                                    \
-  // TYPE(ObjCProperty)                                                           \
-  // TYPE(ObjCStringLiteral)                                                      \
+  TYPE(ObjCBlockLBrace)                                                        \
+  TYPE(ObjCBlockLParen)                                                        \
+  TYPE(ObjCDecl)                                                               \
+  TYPE(ObjCForIn)                                                              \
+  TYPE(ObjCMethodExpr)                                                         \
+  TYPE(ObjCMethodSpecifier)                                                    \
+  TYPE(ObjCProperty)                                                           \
+  TYPE(ObjCStringLiteral)                                                      \
   TYPE(OverloadedOperator)                                                     \
   TYPE(OverloadedOperatorLParen)                                               \
   TYPE(PointerOrReference)                                                     \

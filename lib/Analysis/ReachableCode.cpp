@@ -41,7 +41,7 @@ static bool isEnumConstant(const Expr *Ex) {
 static bool isTrivialExpression(const Expr *Ex) {
   Ex = Ex->IgnoreParenCasts();
   return isa<IntegerLiteral>(Ex) || isa<StringLiteral>(Ex) ||
-         isa<CXXBoolLiteralExpr>(Ex) || isa<ObjCBoolLiteralExpr>(Ex) ||
+         isa<CXXBoolLiteralExpr>(Ex) || /*isa<ObjCBoolLiteralExpr>(Ex) ||*/
          isa<CharacterLiteral>(Ex) ||
          isEnumConstant(Ex);
 }

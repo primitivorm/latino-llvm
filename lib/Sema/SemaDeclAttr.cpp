@@ -15,7 +15,7 @@
 #include "latino/AST/ASTMutationListener.h"
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -69,8 +69,8 @@ static bool isFunctionOrMethodOrBlock(const Decl *D) {
 /// been processed by Sema::GetTypeForDeclarator.
 static bool hasDeclarator(const Decl *D) {
   // In some sense, TypedefDecl really *ought* to be a DeclaratorDecl.
-  return isa<DeclaratorDecl>(D) || isa<BlockDecl>(D) || isa<TypedefNameDecl>(D) ||
-         isa<ObjCPropertyDecl>(D);
+  return isa<DeclaratorDecl>(D) || isa<BlockDecl>(D) || isa<TypedefNameDecl>(D) /*||
+         isa<ObjCPropertyDecl>(D)*/;
 }
 
 /// hasFunctionProto - Return true if the given decl has a argument
@@ -156,11 +156,12 @@ static inline bool isNSStringType(QualType T, ASTContext &Ctx) {
   // if (!Cls)
   //   return false;
 
-  IdentifierInfo* ClsName = Cls->getIdentifier();
+  // IdentifierInfo* ClsName = Cls->getIdentifier();
 
   // FIXME: Should we walk the chain of classes?
-  return ClsName == &Ctx.Idents.get("NSString") ||
-         ClsName == &Ctx.Idents.get("NSMutableString");
+  // return ClsName == &Ctx.Idents.get("NSString") ||
+  //        ClsName == &Ctx.Idents.get("NSMutableString");
+  return false;
 }
 
 static inline bool isCFStringType(QualType T, ASTContext &Ctx) {
@@ -2865,7 +2866,7 @@ static void handleWeakImportAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
         << "weak_import";
     /*else if (isa<ObjCPropertyDecl>(D) || isa<ObjCMethodDecl>(D) ||
              (S.Context.getTargetInfo().getTriple().isOSDarwin() &&
-              (/*isa<ObjCInterfaceDecl>(D) ||*/ isa<EnumDecl>(D)))) {
+              (isa<ObjCInterfaceDecl>(D) || isa<EnumDecl>(D)))) {
       // Nothing to warn about here.
     }*/ else
       S.Diag(AL.getLoc(), diag::warn_attribute_wrong_decl_type)
@@ -2915,13 +2916,13 @@ static void handleSubGroupSize(Sema &S, Decl *D, const ParsedAttr &AL) {
     return;
   }
 
-  OpenCLIntelReqdSubGroupSizeAttr *Existing =
-      D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>();
-  if (Existing && Existing->getSubGroupSize() != SGSize)
-    S.Diag(AL.getLoc(), diag::warn_duplicate_attribute) << AL;
+  // OpenCLIntelReqdSubGroupSizeAttr *Existing =
+  //     D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>();
+  // if (Existing && Existing->getSubGroupSize() != SGSize)
+  //   S.Diag(AL.getLoc(), diag::warn_duplicate_attribute) << AL;
 
-  D->addAttr(::new (S.Context)
-                 OpenCLIntelReqdSubGroupSizeAttr(S.Context, AL, SGSize));
+  // D->addAttr(::new (S.Context)
+  //                OpenCLIntelReqdSubGroupSizeAttr(S.Context, AL, SGSize));
 }
 
 static void handleVecTypeHint(Sema &S, Decl *D, const ParsedAttr &AL) {
@@ -5088,19 +5089,19 @@ void Sema::AddXConsumedAttr(Decl *D, const AttributeCommonInfo &CI,
         diag::warn_ns_attribute_wrong_parameter_type,
         /*ExtraArgs=*/CI.getRange(), "os_consumed", /*pointers*/ 1);
     return;
-  case RetainOwnershipKind::NS:
-    handleSimpleAttributeOrDiagnose<NSConsumedAttr>(
-        *this, VD, CI, isValidSubjectOfNSAttribute(VD->getType()),
+  // case RetainOwnershipKind::NS:
+  //   handleSimpleAttributeOrDiagnose<NSConsumedAttr>(
+  //       *this, VD, CI, isValidSubjectOfNSAttribute(VD->getType()),
 
-        // These attributes are normally just advisory, but in ARC, ns_consumed
-        // is significant.  Allow non-dependent code to contain inappropriate
-        // attributes even in ARC, but require template instantiations to be
-        // set up correctly.
-        ((IsTemplateInstantiation && getLangOpts().ObjCAutoRefCount)
-             ? diag::err_ns_attribute_wrong_parameter_type
-             : diag::warn_ns_attribute_wrong_parameter_type),
-        /*ExtraArgs=*/CI.getRange(), "ns_consumed", /*objc pointers*/ 0);
-    return;
+  //       // These attributes are normally just advisory, but in ARC, ns_consumed
+  //       // is significant.  Allow non-dependent code to contain inappropriate
+  //       // attributes even in ARC, but require template instantiations to be
+  //       // set up correctly.
+  //       ((/*IsTemplateInstantiation && getLangOpts().ObjCAutoRefCount)
+  //            ? diag::err_ns_attribute_wrong_parameter_type
+  //            :*/ diag::warn_ns_attribute_wrong_parameter_type),
+  //       /*ExtraArgs=*/CI.getRange(), "ns_consumed", /*objc pointers*/ 0);
+  //   return;
   case RetainOwnershipKind::CF:
     handleSimpleAttributeOrDiagnose<CFConsumedAttr>(
         *this, VD, CI, isValidSubjectOfCFAttribute(VD->getType()),
@@ -5161,12 +5162,12 @@ static void handleXReturnsXRetainedAttr(Sema &S, Decl *D,
 
   /*if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
     ReturnType = MD->getReturnType();
-  } else*/ if (S.getLangOpts().ObjCAutoRefCount && hasDeclarator(D) &&
+  } else if (S.getLangOpts().ObjCAutoRefCount && hasDeclarator(D) &&
              (AL.getKind() == ParsedAttr::AT_NSReturnsRetained)) {
     return; // ignore: was handled as a type attribute
   } else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(D)) {
     ReturnType = PD->getType();
-  } else if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
+  } else*/ if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
     ReturnType = FD->getReturnType();
   } else if (const auto *Param = dyn_cast<ParmVarDecl>(D)) {
     // Attributes on parameters are used for out-parameters,
@@ -5250,8 +5251,8 @@ static void handleXReturnsXRetainedAttr(Sema &S, Decl *D,
       } SubjectKind = Function;
       // if (isa<ObjCMethodDecl>(D))
       //   SubjectKind = Method;
-      else if (isa<ObjCPropertyDecl>(D))
-        SubjectKind = Property;
+      // else if (isa<ObjCPropertyDecl>(D))
+      //   SubjectKind = Property;
       S.Diag(D->getBeginLoc(), diag::warn_ns_attribute_wrong_return_type)
           << AL << SubjectKind << Cf << AL.getRange();
     }
@@ -5412,39 +5413,39 @@ static void handleXReturnsXRetainedAttr(Sema &S, Decl *D,
 //   D->addAttr(::new (S.Context) ObjCDesignatedInitializerAttr(S.Context, AL));
 // }
 
-static void handleObjCRuntimeName(Sema &S, Decl *D, const ParsedAttr &AL) {
-  StringRef MetaDataName;
-  if (!S.checkStringLiteralArgumentAttr(AL, 0, MetaDataName))
-    return;
-  D->addAttr(::new (S.Context)
-                 ObjCRuntimeNameAttr(S.Context, AL, MetaDataName));
-}
+// static void handleObjCRuntimeName(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   StringRef MetaDataName;
+//   if (!S.checkStringLiteralArgumentAttr(AL, 0, MetaDataName))
+//     return;
+//   D->addAttr(::new (S.Context)
+//                  ObjCRuntimeNameAttr(S.Context, AL, MetaDataName));
+// }
 
 // When a user wants to use objc_boxable with a union or struct
 // but they don't have access to the declaration (legacy/third-party code)
 // then they can 'enable' this feature with a typedef:
 // typedef struct __attribute((objc_boxable)) legacy_struct legacy_struct;
-static void handleObjCBoxable(Sema &S, Decl *D, const ParsedAttr &AL) {
-  bool notify = false;
+// static void handleObjCBoxable(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   bool notify = false;
 
-  auto *RD = dyn_cast<RecordDecl>(D);
-  if (RD && RD->getDefinition()) {
-    RD = RD->getDefinition();
-    notify = true;
-  }
+//   auto *RD = dyn_cast<RecordDecl>(D);
+//   if (RD && RD->getDefinition()) {
+//     RD = RD->getDefinition();
+//     notify = true;
+//   }
 
-  if (RD) {
-    ObjCBoxableAttr *BoxableAttr =
-        ::new (S.Context) ObjCBoxableAttr(S.Context, AL);
-    RD->addAttr(BoxableAttr);
-    if (notify) {
-      // we need to notify ASTReader/ASTWriter about
-      // modification of existing declaration
-      if (ASTMutationListener *L = S.getASTMutationListener())
-        L->AddedAttributeToRecord(BoxableAttr, RD);
-    }
-  }
-}
+//   if (RD) {
+//     ObjCBoxableAttr *BoxableAttr =
+//         ::new (S.Context) ObjCBoxableAttr(S.Context, AL);
+//     RD->addAttr(BoxableAttr);
+//     if (notify) {
+//       // we need to notify ASTReader/ASTWriter about
+//       // modification of existing declaration
+//       if (ASTMutationListener *L = S.getASTMutationListener())
+//         L->AddedAttributeToRecord(BoxableAttr, RD);
+//     }
+//   }
+// }
 
 // static void handleObjCOwnershipAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
 //   if (hasDeclarator(D)) return;
@@ -6487,14 +6488,14 @@ static void handleInternalLinkageAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
     D->addAttr(Internal);
 }
 
-static void handleOpenCLNoSVMAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-  if (S.LangOpts.OpenCLVersion != 200)
-    S.Diag(AL.getLoc(), diag::err_attribute_requires_opencl_version)
-        << AL << "2.0" << 0;
-  else
-    S.Diag(AL.getLoc(), diag::warn_opencl_attr_deprecated_ignored) << AL
-                                                                   << "2.0";
-}
+// static void handleOpenCLNoSVMAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   if (S.LangOpts.OpenCLVersion != 200)
+//     S.Diag(AL.getLoc(), diag::err_attribute_requires_opencl_version)
+//         << AL << "2.0" << 0;
+//   else
+//     S.Diag(AL.getLoc(), diag::warn_opencl_attr_deprecated_ignored) << AL
+//                                                                    << "2.0";
+// }
 
 /// Handles semantic checking for features that are common to all attributes,
 /// such as checking whether a parameter was properly specified, or the correct
@@ -6539,45 +6540,45 @@ static bool handleCommonAttributeFeatures(Sema &S, Decl *D,
   return false;
 }
 
-static void handleOpenCLAccessAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-  if (D->isInvalidDecl())
-    return;
+// static void handleOpenCLAccessAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+//   if (D->isInvalidDecl())
+//     return;
 
-  // Check if there is only one access qualifier.
-  if (D->hasAttr<OpenCLAccessAttr>()) {
-    if (D->getAttr<OpenCLAccessAttr>()->getSemanticSpelling() ==
-        AL.getSemanticSpelling()) {
-      S.Diag(AL.getLoc(), diag::warn_duplicate_declspec)
-          << AL.getAttrName()->getName() << AL.getRange();
-    } else {
-      S.Diag(AL.getLoc(), diag::err_opencl_multiple_access_qualifiers)
-          << D->getSourceRange();
-      D->setInvalidDecl(true);
-      return;
-    }
-  }
+//   // Check if there is only one access qualifier.
+//   if (D->hasAttr<OpenCLAccessAttr>()) {
+//     if (D->getAttr<OpenCLAccessAttr>()->getSemanticSpelling() ==
+//         AL.getSemanticSpelling()) {
+//       S.Diag(AL.getLoc(), diag::warn_duplicate_declspec)
+//           << AL.getAttrName()->getName() << AL.getRange();
+//     } else {
+//       S.Diag(AL.getLoc(), diag::err_opencl_multiple_access_qualifiers)
+//           << D->getSourceRange();
+//       D->setInvalidDecl(true);
+//       return;
+//     }
+//   }
 
-  // OpenCL v2.0 s6.6 - read_write can be used for image types to specify that an
-  // image object can be read and written.
-  // OpenCL v2.0 s6.13.6 - A kernel cannot read from and write to the same pipe
-  // object. Using the read_write (or __read_write) qualifier with the pipe
-  // qualifier is a compilation error.
-  if (const auto *PDecl = dyn_cast<ParmVarDecl>(D)) {
-    const Type *DeclTy = PDecl->getType().getCanonicalType().getTypePtr();
-    if (AL.getAttrName()->getName().find("read_write") != StringRef::npos) {
-      if ((!S.getLangOpts().OpenCLCPlusPlus &&
-           S.getLangOpts().OpenCLVersion < 200) ||
-          DeclTy->isPipeType()) {
-        S.Diag(AL.getLoc(), diag::err_opencl_invalid_read_write)
-            << AL << PDecl->getType() << DeclTy->isImageType();
-        D->setInvalidDecl(true);
-        return;
-      }
-    }
-  }
+//   // OpenCL v2.0 s6.6 - read_write can be used for image types to specify that an
+//   // image object can be read and written.
+//   // OpenCL v2.0 s6.13.6 - A kernel cannot read from and write to the same pipe
+//   // object. Using the read_write (or __read_write) qualifier with the pipe
+//   // qualifier is a compilation error.
+//   // if (const auto *PDecl = dyn_cast<ParmVarDecl>(D)) {
+//   //   const Type *DeclTy = PDecl->getType().getCanonicalType().getTypePtr();
+//   //   if (AL.getAttrName()->getName().find("read_write") != StringRef::npos) {
+//   //     if ((!S.getLangOpts().OpenCLCPlusPlus &&
+//   //          S.getLangOpts().OpenCLVersion < 200) ||
+//   //         DeclTy->isPipeType()) {
+//   //       S.Diag(AL.getLoc(), diag::err_opencl_invalid_read_write)
+//   //           << AL << PDecl->getType() /*<< DeclTy->isImageType()*/;
+//   //       D->setInvalidDecl(true);
+//   //       return;
+//   //     }
+//   //   }
+//   // }
 
-  D->addAttr(::new (S.Context) OpenCLAccessAttr(S.Context, AL));
-}
+//   D->addAttr(::new (S.Context) OpenCLAccessAttr(S.Context, AL));
+// }
 
 static void handleSYCLKernelAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   // The 'sycl_kernel' attribute applies only to function templates.
@@ -6637,80 +6638,80 @@ static void handleUninitializedAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   D->addAttr(::new (S.Context) UninitializedAttr(S.Context, AL));
 }
 
-static bool tryMakeVariablePseudoStrong(Sema &S, VarDecl *VD,
-                                        bool DiagnoseFailure) {
-  QualType Ty = VD->getType();
-  if (!Ty->isObjCRetainableType()) {
-    if (DiagnoseFailure) {
-      S.Diag(VD->getBeginLoc(), diag::warn_ignored_objc_externally_retained)
-          << 0;
-    }
-    return false;
-  }
+// static bool tryMakeVariablePseudoStrong(Sema &S, VarDecl *VD,
+//                                         bool DiagnoseFailure) {
+//   QualType Ty = VD->getType();
+//   // if (!Ty->isObjCRetainableType()) {
+//   //   if (DiagnoseFailure) {
+//   //     S.Diag(VD->getBeginLoc(), diag::warn_ignored_objc_externally_retained)
+//   //         << 0;
+//   //   }
+//   //   return false;
+//   // }
 
-  Qualifiers::ObjCLifetime LifetimeQual = Ty.getQualifiers().getObjCLifetime();
+//   // Qualifiers::ObjCLifetime LifetimeQual = Ty.getQualifiers().getObjCLifetime();
 
-  // Sema::inferObjCARCLifetime must run after processing decl attributes
-  // (because __block lowers to an attribute), so if the lifetime hasn't been
-  // explicitly specified, infer it locally now.
-  if (LifetimeQual == Qualifiers::OCL_None)
-    LifetimeQual = Ty->getObjCARCImplicitLifetime();
+//   // Sema::inferObjCARCLifetime must run after processing decl attributes
+//   // (because __block lowers to an attribute), so if the lifetime hasn't been
+//   // explicitly specified, infer it locally now.
+//   if (LifetimeQual == Qualifiers::OCL_None)
+//     LifetimeQual = Ty->getObjCARCImplicitLifetime();
 
-  // The attributes only really makes sense for __strong variables; ignore any
-  // attempts to annotate a parameter with any other lifetime qualifier.
-  if (LifetimeQual != Qualifiers::OCL_Strong) {
-    if (DiagnoseFailure) {
-      S.Diag(VD->getBeginLoc(), diag::warn_ignored_objc_externally_retained)
-          << 1;
-    }
-    return false;
-  }
+//   // The attributes only really makes sense for __strong variables; ignore any
+//   // attempts to annotate a parameter with any other lifetime qualifier.
+//   if (LifetimeQual != Qualifiers::OCL_Strong) {
+//     if (DiagnoseFailure) {
+//       S.Diag(VD->getBeginLoc(), diag::warn_ignored_objc_externally_retained)
+//           << 1;
+//     }
+//     return false;
+//   }
 
-  // Tampering with the type of a VarDecl here is a bit of a hack, but we need
-  // to ensure that the variable is 'const' so that we can error on
-  // modification, which can otherwise over-release.
-  VD->setType(Ty.withConst());
-  VD->setARCPseudoStrong(true);
-  return true;
-}
+//   // Tampering with the type of a VarDecl here is a bit of a hack, but we need
+//   // to ensure that the variable is 'const' so that we can error on
+//   // modification, which can otherwise over-release.
+//   VD->setType(Ty.withConst());
+//   VD->setARCPseudoStrong(true);
+//   return true;
+// }
 
-static void handleObjCExternallyRetainedAttr(Sema &S, Decl *D,
-                                             const ParsedAttr &AL) {
-  if (auto *VD = dyn_cast<VarDecl>(D)) {
-    assert(!isa<ParmVarDecl>(VD) && "should be diagnosed automatically");
-    if (!VD->hasLocalStorage()) {
-      S.Diag(D->getBeginLoc(), diag::warn_ignored_objc_externally_retained)
-          << 0;
-      return;
-    }
+// static void handleObjCExternallyRetainedAttr(Sema &S, Decl *D,
+//                                              const ParsedAttr &AL) {
+//   if (auto *VD = dyn_cast<VarDecl>(D)) {
+//     assert(!isa<ParmVarDecl>(VD) && "should be diagnosed automatically");
+//     if (!VD->hasLocalStorage()) {
+//       S.Diag(D->getBeginLoc(), diag::warn_ignored_objc_externally_retained)
+//           << 0;
+//       return;
+//     }
 
-    if (!tryMakeVariablePseudoStrong(S, VD, /*DiagnoseFailure=*/true))
-      return;
+//     if (!tryMakeVariablePseudoStrong(S, VD, /*DiagnoseFailure=*/true))
+//       return;
 
-    handleSimpleAttribute<ObjCExternallyRetainedAttr>(S, D, AL);
-    return;
-  }
+//     handleSimpleAttribute<ObjCExternallyRetainedAttr>(S, D, AL);
+//     return;
+//   }
 
-  // If D is a function-like declaration (method, block, or function), then we
-  // make every parameter psuedo-strong.
-  unsigned NumParams =
-      hasFunctionProto(D) ? getFunctionOrMethodNumParams(D) : 0;
-  for (unsigned I = 0; I != NumParams; ++I) {
-    auto *PVD = const_cast<ParmVarDecl *>(getFunctionOrMethodParam(D, I));
-    QualType Ty = PVD->getType();
+//   // If D is a function-like declaration (method, block, or function), then we
+//   // make every parameter psuedo-strong.
+//   unsigned NumParams =
+//       hasFunctionProto(D) ? getFunctionOrMethodNumParams(D) : 0;
+//   for (unsigned I = 0; I != NumParams; ++I) {
+//     auto *PVD = const_cast<ParmVarDecl *>(getFunctionOrMethodParam(D, I));
+//     QualType Ty = PVD->getType();
 
-    // If a user wrote a parameter with __strong explicitly, then assume they
-    // want "real" strong semantics for that parameter. This works because if
-    // the parameter was written with __strong, then the strong qualifier will
-    // be non-local.
-    if (Ty.getLocalUnqualifiedType().getQualifiers().getObjCLifetime() ==
-        Qualifiers::OCL_Strong)
-      continue;
+//     // If a user wrote a parameter with __strong explicitly, then assume they
+//     // want "real" strong semantics for that parameter. This works because if
+//     // the parameter was written with __strong, then the strong qualifier will
+//     // be non-local.
+//     // if (Ty.getLocalUnqualifiedType().getQualifiers().getObjCLifetime() ==
+//     //     Qualifiers::OCL_Strong)
+//     //   continue;
 
-    tryMakeVariablePseudoStrong(S, PVD, /*DiagnoseFailure=*/false);
-  }
-  handleSimpleAttribute<ObjCExternallyRetainedAttr>(S, D, AL);
-}
+//     tryMakeVariablePseudoStrong(S, PVD, /*DiagnoseFailure=*/false);
+//   }
+//   handleSimpleAttribute<ObjCExternallyRetainedAttr>(S, D, AL);
+// }
 
 static void handleMIGServerRoutineAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   // Check that the return type is a `typedef int kern_return_t` or a typedef
@@ -7143,9 +7144,9 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_ReqdWorkGroupSize:
     handleWorkGroupSize<ReqdWorkGroupSizeAttr>(S, D, AL);
     break;
-  case ParsedAttr::AT_OpenCLIntelReqdSubGroupSize:
-    handleSubGroupSize(S, D, AL);
-    break;
+  // case ParsedAttr::AT_OpenCLIntelReqdSubGroupSize:
+  //   handleSubGroupSize(S, D, AL);
+  //   break;
   case ParsedAttr::AT_VecTypeHint:
     handleVecTypeHint(S, D, AL);
     break;
@@ -7183,16 +7184,16 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_Unavailable:
     handleAttrWithMessage<UnavailableAttr>(S, D, AL);
     break;
-  case ParsedAttr::AT_ObjCDirect:
-    handleObjCDirectAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCDirectMembers:
-    handleObjCDirectMembersAttr(S, D, AL);
-    handleSimpleAttribute<ObjCDirectMembersAttr>(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCExplicitProtocolImpl:
-    handleObjCSuppresProtocolAttr(S, D, AL);
-    break;
+  // case ParsedAttr::AT_ObjCDirect:
+  //   handleObjCDirectAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCDirectMembers:
+  //   handleObjCDirectMembersAttr(S, D, AL);
+  //   handleSimpleAttribute<ObjCDirectMembersAttr>(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCExplicitProtocolImpl:
+  //   handleObjCSuppresProtocolAttr(S, D, AL);
+  //   break;
   case ParsedAttr::AT_Unused:
     handleUnusedAttr(S, D, AL);
     break;
@@ -7222,15 +7223,15 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_TransparentUnion:
     handleTransparentUnionAttr(S, D, AL);
     break;
-  case ParsedAttr::AT_ObjCMethodFamily:
-    handleObjCMethodFamilyAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCNSObject:
-    handleObjCNSObject(S, D, AL);
-    break;
-  case ParsedAttr::AT_ObjCIndependentClass:
-    handleObjCIndependentClass(S, D, AL);
-    break;
+  // case ParsedAttr::AT_ObjCMethodFamily:
+  //   handleObjCMethodFamilyAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCNSObject:
+  //   handleObjCNSObject(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_ObjCIndependentClass:
+  //   handleObjCIndependentClass(S, D, AL);
+  //   break;
   case ParsedAttr::AT_Blocks:
     handleBlocksAttr(S, D, AL);
     break;
@@ -7270,12 +7271,12 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_Pointer:
     handleLifetimeCategoryAttr(S, D, AL);
     break;
-  case ParsedAttr::AT_OpenCLAccess:
-    handleOpenCLAccessAttr(S, D, AL);
-    break;
-  case ParsedAttr::AT_OpenCLNoSVM:
-    handleOpenCLNoSVMAttr(S, D, AL);
-    break;
+  // case ParsedAttr::AT_OpenCLAccess:
+  //   handleOpenCLAccessAttr(S, D, AL);
+  //   break;
+  // case ParsedAttr::AT_OpenCLNoSVM:
+  //   handleOpenCLNoSVMAttr(S, D, AL);
+  //   break;
   case ParsedAttr::AT_SwiftContext:
     S.AddParameterABIAttr(D, AL, ParameterABI::SwiftContext);
     break;
@@ -7423,9 +7424,9 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
     handleSimpleAttribute<LoaderUninitializedAttr>(S, D, AL);
     break;
 
-  case ParsedAttr::AT_ObjCExternallyRetained:
-    handleObjCExternallyRetainedAttr(S, D, AL);
-    break;
+  // case ParsedAttr::AT_ObjCExternallyRetained:
+  //   handleObjCExternallyRetainedAttr(S, D, AL);
+  //   break;
 
   case ParsedAttr::AT_MIGServerRoutine:
     handleMIGServerRoutineAttr(S, D, AL);
@@ -7479,7 +7480,7 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
   // good to have a way to specify "these attributes must appear as a group",
   // for these. Additionally, it would be good to have a way to specify "these
   // attribute must never appear as a group" for attributes like cold and hot.
-  if (!D->hasAttr<OpenCLKernelAttr>()) {
+  // if (!D->hasAttr<OpenCLKernelAttr>()) {
     // These attributes cannot be applied to a non-kernel function.
     if (const auto *A = D->getAttr<ReqdWorkGroupSizeAttr>()) {
       // FIXME: This emits a different error message than
@@ -7492,10 +7493,10 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
     } else if (const auto *A = D->getAttr<VecTypeHintAttr>()) {
       Diag(D->getLocation(), diag::err_opencl_kernel_attr) << A;
       D->setInvalidDecl();
-    } else if (const auto *A = D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>()) {
+    }/* else if (const auto *A = D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>()) {
       Diag(D->getLocation(), diag::err_opencl_kernel_attr) << A;
       D->setInvalidDecl();
-    } else if (!D->hasAttr<CUDAGlobalAttr>()) {
+    }*/ else if (!D->hasAttr<CUDAGlobalAttr>()) {
       if (const auto *A = D->getAttr<AMDGPUFlatWorkGroupSizeAttr>()) {
         Diag(D->getLocation(), diag::err_attribute_wrong_decl_type)
             << A << ExpectedKernelFunction;
@@ -7514,7 +7515,7 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
         D->setInvalidDecl();
       }
     }
-  }
+  // }
 
   // Do this check after processing D's attributes because the attribute
   // objc_method_family can change whether the given method is in the init
@@ -7718,7 +7719,7 @@ static bool isForbiddenTypeAllowed(Sema &S, Decl *D,
   // Private ivars are always okay.  Unfortunately, people don't
   // always properly make their ivars private, even in system headers.
   // Plus we need to make fields okay, too.
-  if (!isa<FieldDecl>(D) && !isa<ObjCPropertyDecl>(D) &&
+  if (/*!isa<FieldDecl>(D) && !isa<ObjCPropertyDecl>(D) &&*/
       !isa<FunctionDecl>(D))
     return false;
 
@@ -7755,17 +7756,17 @@ static void handleDelayedForbiddenType(Sema &S, DelayedDiagnostic &DD,
     D->addAttr(UnavailableAttr::CreateImplicit(S.Context, "", Reason, DD.Loc));
     return;
   }
-  if (S.getLangOpts().ObjCAutoRefCount)
-    if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
-      // FIXME: we may want to suppress diagnostics for all
-      // kind of forbidden type messages on unavailable functions.
-      if (FD->hasAttr<UnavailableAttr>() &&
-          DD.getForbiddenTypeDiagnostic() ==
-              diag::err_arc_array_param_no_ownership) {
-        DD.Triggered = true;
-        return;
-      }
-    }
+  // if (S.getLangOpts().ObjCAutoRefCount)
+  //   if (const auto *FD = dyn_cast<FunctionDecl>(D)) {
+  //     // FIXME: we may want to suppress diagnostics for all
+  //     // kind of forbidden type messages on unavailable functions.
+  //     if (FD->hasAttr<UnavailableAttr>() &&
+  //         DD.getForbiddenTypeDiagnostic() ==
+  //             diag::err_arc_array_param_no_ownership) {
+  //       DD.Triggered = true;
+  //       return;
+  //     }
+  //   }
 
   S.Diag(DD.Loc, DD.getForbiddenTypeDiagnostic())
       << DD.getForbiddenTypeOperand() << DD.getForbiddenTypeArgument();

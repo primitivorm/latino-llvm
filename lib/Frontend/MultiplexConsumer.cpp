@@ -55,11 +55,11 @@ void MultiplexASTDeserializationListener::DeclRead(
     Listeners[i]->DeclRead(ID, D);
 }
 
-void MultiplexASTDeserializationListener::SelectorRead(
-    serialization::SelectorID ID, Selector Sel) {
-  for (size_t i = 0, e = Listeners.size(); i != e; ++i)
-    Listeners[i]->SelectorRead(ID, Sel);
-}
+// void MultiplexASTDeserializationListener::SelectorRead(
+//     serialization::SelectorID ID, Selector Sel) {
+//   for (size_t i = 0, e = Listeners.size(); i != e; ++i)
+//     Listeners[i]->SelectorRead(ID, Sel);
+// }
 
 void MultiplexASTDeserializationListener::MacroDefinitionRead(
     serialization::PreprocessedEntityID ID, MacroDefinitionRecord *MD) {
@@ -102,10 +102,10 @@ public:
   // void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
   //                                   const ObjCInterfaceDecl *IFD) override;
   void DeclarationMarkedUsed(const Decl *D) override;
-  void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
-  void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
-  void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
-                                            const Attr *Attr) override;
+  // void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
+  // void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
+  // void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
+  //                                           const Attr *Attr) override;
   void RedefinedHiddenDefinition(const NamedDecl *D, Module *M) override;
   void AddedAttributeToRecord(const Attr *Attr,
                               const RecordDecl *Record) override;
@@ -204,21 +204,21 @@ void MultiplexASTMutationListener::DeclarationMarkedUsed(const Decl *D) {
   for (size_t i = 0, e = Listeners.size(); i != e; ++i)
     Listeners[i]->DeclarationMarkedUsed(D);
 }
-void MultiplexASTMutationListener::DeclarationMarkedOpenMPThreadPrivate(
-    const Decl *D) {
-  for (size_t i = 0, e = Listeners.size(); i != e; ++i)
-    Listeners[i]->DeclarationMarkedOpenMPThreadPrivate(D);
-}
-void MultiplexASTMutationListener::DeclarationMarkedOpenMPAllocate(
-    const Decl *D, const Attr *A) {
-  for (ASTMutationListener *L : Listeners)
-    L->DeclarationMarkedOpenMPAllocate(D, A);
-}
-void MultiplexASTMutationListener::DeclarationMarkedOpenMPDeclareTarget(
-    const Decl *D, const Attr *Attr) {
-  for (auto *L : Listeners)
-    L->DeclarationMarkedOpenMPDeclareTarget(D, Attr);
-}
+// void MultiplexASTMutationListener::DeclarationMarkedOpenMPThreadPrivate(
+//     const Decl *D) {
+//   for (size_t i = 0, e = Listeners.size(); i != e; ++i)
+//     Listeners[i]->DeclarationMarkedOpenMPThreadPrivate(D);
+// }
+// void MultiplexASTMutationListener::DeclarationMarkedOpenMPAllocate(
+//     const Decl *D, const Attr *A) {
+//   for (ASTMutationListener *L : Listeners)
+//     L->DeclarationMarkedOpenMPAllocate(D, A);
+// }
+// void MultiplexASTMutationListener::DeclarationMarkedOpenMPDeclareTarget(
+//     const Decl *D, const Attr *Attr) {
+//   for (auto *L : Listeners)
+//     L->DeclarationMarkedOpenMPDeclareTarget(D, Attr);
+// }
 void MultiplexASTMutationListener::RedefinedHiddenDefinition(const NamedDecl *D,
                                                              Module *M) {
   for (auto *L : Listeners)

@@ -21,7 +21,7 @@
 #include "latino/Basic/AttributeCommonInfo.h"
 #include "latino/Basic/LangOptions.h"
 #include "latino/Basic/LLVM.h"
-#include "latino/Basic/OpenMPKinds.h"
+// #include "latino/Basic/OpenMPKinds.h"
 #include "latino/Basic/Sanitizers.h"
 #include "latino/Basic/SourceLocation.h"
 #include "llvm/ADT/StringSwitch.h"
@@ -40,7 +40,7 @@ class Expr;
 class QualType;
 class FunctionDecl;
 class TypeSourceInfo;
-class OMPTraitInfo;
+// class OMPTraitInfo;
 
 /// Attr - This represents one attribute.
 class Attr : public AttributeCommonInfo {

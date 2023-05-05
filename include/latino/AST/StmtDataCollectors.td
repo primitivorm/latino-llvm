@@ -118,11 +118,11 @@ class CXXDeleteExpr {
 }
 
 //--- Casts --------------------------------------------------------------//
-class ObjCBridgedCastExpr {
-  code Code = [{
-    addData(S->getBridgeKind());
-  }];
-}
+// class ObjCBridgedCastExpr {
+//   code Code = [{
+//     addData(S->getBridgeKind());
+//   }];
+// }
 
 //--- Miscellaneous Exprs ------------------------------------------------//
 class BinaryOperator {

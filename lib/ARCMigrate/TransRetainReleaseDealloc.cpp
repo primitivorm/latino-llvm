@@ -39,15 +39,15 @@ class RetainReleaseDeallocRemover :
   ExprSet Removables;
   std::unique_ptr<ParentMap> StmtMap;
 
-  Selector DelegateSel, FinalizeSel;
+  // Selector DelegateSel, FinalizeSel;
 
 public:
   RetainReleaseDeallocRemover(MigrationPass &pass)
     : Body(nullptr), Pass(pass) {
-    DelegateSel =
-        Pass.Ctx.Selectors.getNullarySelector(&Pass.Ctx.Idents.get("delegate"));
-    FinalizeSel =
-        Pass.Ctx.Selectors.getNullarySelector(&Pass.Ctx.Idents.get("finalize"));
+    // DelegateSel =
+    //     Pass.Ctx.Selectors.getNullarySelector(&Pass.Ctx.Idents.get("delegate"));
+    // FinalizeSel =
+    //     Pass.Ctx.Selectors.getNullarySelector(&Pass.Ctx.Idents.get("finalize"));
   }
 
   void transformBody(Stmt *body, Decl *ParentD) {

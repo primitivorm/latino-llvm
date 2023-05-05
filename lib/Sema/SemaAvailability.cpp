@@ -59,58 +59,58 @@ static const AvailabilityAttr *getAttrForPlatform(ASTContext &Context,
 /// the availability attribute that is selected.
 /// \param ClassReceiver If we're checking the the method of a class message
 /// send, the class. Otherwise nullptr.
-// static std::pair<AvailabilityResult, const NamedDecl *>
-// ShouldDiagnoseAvailabilityOfDecl(Sema &S, const NamedDecl *D,
-//                                  std::string *Message,
-//                                  ObjCInterfaceDecl *ClassReceiver) {
-//   AvailabilityResult Result = D->getAvailability(Message);
+static std::pair<AvailabilityResult, const NamedDecl *>
+ShouldDiagnoseAvailabilityOfDecl(Sema &S, const NamedDecl *D,
+                                 std::string *Message/*,
+                                 ObjCInterfaceDecl *ClassReceiver*/) {
+  AvailabilityResult Result = D->getAvailability(Message);
 
-//   // For typedefs, if the typedef declaration appears available look
-//   // to the underlying type to see if it is more restrictive.
-//   while (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
-//     if (Result == AR_Available) {
-//       if (const auto *TT = TD->getUnderlyingType()->getAs<TagType>()) {
-//         D = TT->getDecl();
-//         Result = D->getAvailability(Message);
-//         continue;
-//       }
-//     }
-//     break;
-//   }
+  // For typedefs, if the typedef declaration appears available look
+  // to the underlying type to see if it is more restrictive.
+  while (const auto *TD = dyn_cast<TypedefNameDecl>(D)) {
+    if (Result == AR_Available) {
+      if (const auto *TT = TD->getUnderlyingType()->getAs<TagType>()) {
+        D = TT->getDecl();
+        Result = D->getAvailability(Message);
+        continue;
+      }
+    }
+    break;
+  }
 
-//   // Forward class declarations get their attributes from their definition.
-//   // if (const auto *IDecl = dyn_cast<ObjCInterfaceDecl>(D)) {
-//   //   if (IDecl->getDefinition()) {
-//   //     D = IDecl->getDefinition();
-//   //     Result = D->getAvailability(Message);
-//   //   }
-//   // }
+  // Forward class declarations get their attributes from their definition.
+  // if (const auto *IDecl = dyn_cast<ObjCInterfaceDecl>(D)) {
+  //   if (IDecl->getDefinition()) {
+  //     D = IDecl->getDefinition();
+  //     Result = D->getAvailability(Message);
+  //   }
+  // }
 
-//   if (const auto *ECD = dyn_cast<EnumConstantDecl>(D))
-//     if (Result == AR_Available) {
-//       const DeclContext *DC = ECD->getDeclContext();
-//       if (const auto *TheEnumDecl = dyn_cast<EnumDecl>(DC)) {
-//         Result = TheEnumDecl->getAvailability(Message);
-//         D = TheEnumDecl;
-//       }
-//     }
+  if (const auto *ECD = dyn_cast<EnumConstantDecl>(D))
+    if (Result == AR_Available) {
+      const DeclContext *DC = ECD->getDeclContext();
+      if (const auto *TheEnumDecl = dyn_cast<EnumDecl>(DC)) {
+        Result = TheEnumDecl->getAvailability(Message);
+        D = TheEnumDecl;
+      }
+    }
 
-//   // For +new, infer availability from -init.
-//   if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
-//     if (S.NSAPIObj && ClassReceiver) {
-//       ObjCMethodDecl *Init = ClassReceiver->lookupInstanceMethod(
-//           S.NSAPIObj->getInitSelector());
-//       if (Init && Result == AR_Available && MD->isClassMethod() &&
-//           MD->getSelector() == S.NSAPIObj->getNewSelector() &&
-//           MD->definedInNSObject(S.getASTContext())) {
-//         Result = Init->getAvailability(Message);
-//         D = Init;
-//       }
-//     }
-//   }
+  // For +new, infer availability from -init.
+  // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
+  //   if (S.NSAPIObj && ClassReceiver) {
+  //     ObjCMethodDecl *Init = ClassReceiver->lookupInstanceMethod(
+  //         S.NSAPIObj->getInitSelector());
+  //     if (Init && Result == AR_Available && MD->isClassMethod() &&
+  //         MD->getSelector() == S.NSAPIObj->getNewSelector() &&
+  //         MD->definedInNSObject(S.getASTContext())) {
+  //       Result = Init->getAvailability(Message);
+  //       D = Init;
+  //     }
+  //   }
+  // }
 
-//   return {Result, D};
-// }
+  return {Result, D};
+}
 
 
 /// whether we should emit a diagnostic for \c K and \c DeclVersion in
@@ -206,11 +206,11 @@ static NamedDecl *findEnclosingDeclToAnnotate(Decl *OrigCtx) {
        Ctx = cast_or_null<Decl>(Ctx->getDeclContext())) {
     if (isa<TagDecl>(Ctx) || isa<FunctionDecl>(Ctx) /*|| isa<ObjCMethodDecl>(Ctx)*/)
       return cast<NamedDecl>(Ctx);
-    if (auto *CD = dyn_cast<ObjCContainerDecl>(Ctx)) {
-      if (auto *Imp = dyn_cast<ObjCImplDecl>(Ctx))
-        return Imp->getClassInterface();
-      return CD;
-    }
+    // if (auto *CD = dyn_cast<ObjCContainerDecl>(Ctx)) {
+    //   if (auto *Imp = dyn_cast<ObjCImplDecl>(Ctx))
+    //     return Imp->getClassInterface();
+    //   return CD;
+    // }
   }
 
   return dyn_cast<NamedDecl>(OrigCtx);
@@ -280,8 +280,8 @@ tryParseObjCMethodName(StringRef Name, SmallVectorImpl<StringRef> &SlotNames,
 static Optional<AttributeInsertion>
 createAttributeInsertion(const NamedDecl *D, const SourceManager &SM,
                          const LangOptions &LangOpts) {
-  if (isa<ObjCPropertyDecl>(D))
-    return AttributeInsertion::createInsertionAfter(D);
+  // if (isa<ObjCPropertyDecl>(D))
+  //   return AttributeInsertion::createInsertionAfter(D);
   // if (const auto *MD = dyn_cast<ObjCMethodDecl>(D)) {
   //   if (MD->hasBody())
   //     return None;
@@ -657,8 +657,8 @@ class DiagnoseUnguardedAvailability
   SmallVector<VersionTuple, 8> AvailabilityStack;
   SmallVector<const Stmt *, 16> StmtStack;
 
-  // void DiagnoseDeclAvailability(NamedDecl *D, SourceRange Range,
-  //                               ObjCInterfaceDecl *ClassReceiver = nullptr);
+  void DiagnoseDeclAvailability(NamedDecl *D, SourceRange Range/*,
+                                ObjCInterfaceDecl *ClassReceiver = nullptr*/);
 
 public:
   DiagnoseUnguardedAvailability(Sema &SemaRef, Decl *Ctx)
@@ -724,135 +724,135 @@ public:
     return true;
   }
 
-  bool VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
-    SemaRef.Diag(E->getBeginLoc(), diag::warn_at_available_unchecked_use)
-        << (!SemaRef.getLangOpts().ObjC);
-    return true;
-  }
+  // bool VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
+  //   SemaRef.Diag(E->getBeginLoc(), diag::warn_at_available_unchecked_use)
+  //       << (!SemaRef.getLangOpts().ObjC);
+  //   return true;
+  // }
 
   bool VisitTypeLoc(TypeLoc Ty);
 };
 
-// void DiagnoseUnguardedAvailability::DiagnoseDeclAvailability(
-//     NamedDecl *D, SourceRange Range, ObjCInterfaceDecl *ReceiverClass) {
-//   AvailabilityResult Result;
-//   const NamedDecl *OffendingDecl;
-//   std::tie(Result, OffendingDecl) =
-//       ShouldDiagnoseAvailabilityOfDecl(SemaRef, D, nullptr, ReceiverClass);
-//   if (Result != AR_Available) {
-//     // All other diagnostic kinds have already been handled in
-//     // DiagnoseAvailabilityOfDecl.
-//     if (Result != AR_NotYetIntroduced)
-//       return;
+void DiagnoseUnguardedAvailability::DiagnoseDeclAvailability(
+    NamedDecl *D, SourceRange Range/*, ObjCInterfaceDecl *ReceiverClass*/) {
+  AvailabilityResult Result;
+  const NamedDecl *OffendingDecl;
+  std::tie(Result, OffendingDecl) =
+      ShouldDiagnoseAvailabilityOfDecl(SemaRef, D, nullptr/*, ReceiverClass*/);
+  if (Result != AR_Available) {
+    // All other diagnostic kinds have already been handled in
+    // DiagnoseAvailabilityOfDecl.
+    if (Result != AR_NotYetIntroduced)
+      return;
 
-//     const AvailabilityAttr *AA =
-//       getAttrForPlatform(SemaRef.getASTContext(), OffendingDecl);
-//     VersionTuple Introduced = AA->getIntroduced();
+    const AvailabilityAttr *AA =
+      getAttrForPlatform(SemaRef.getASTContext(), OffendingDecl);
+    VersionTuple Introduced = AA->getIntroduced();
 
-//     if (AvailabilityStack.back() >= Introduced)
-//       return;
+    if (AvailabilityStack.back() >= Introduced)
+      return;
 
-//     // If the context of this function is less available than D, we should not
-//     // emit a diagnostic.
-//     if (!ShouldDiagnoseAvailabilityInContext(SemaRef, Result, Introduced, Ctx,
-//                                              OffendingDecl))
-//       return;
+    // If the context of this function is less available than D, we should not
+    // emit a diagnostic.
+    if (!ShouldDiagnoseAvailabilityInContext(SemaRef, Result, Introduced, Ctx,
+                                             OffendingDecl))
+      return;
 
-//     // We would like to emit the diagnostic even if -Wunguarded-availability is
-//     // not specified for deployment targets >= to iOS 11 or equivalent or
-//     // for declarations that were introduced in iOS 11 (macOS 10.13, ...) or
-//     // later.
-//     unsigned DiagKind =
-//         shouldDiagnoseAvailabilityByDefault(
-//             SemaRef.Context,
-//             SemaRef.Context.getTargetInfo().getPlatformMinVersion(), Introduced)
-//             ? diag::warn_unguarded_availability_new
-//             : diag::warn_unguarded_availability;
+    // We would like to emit the diagnostic even if -Wunguarded-availability is
+    // not specified for deployment targets >= to iOS 11 or equivalent or
+    // for declarations that were introduced in iOS 11 (macOS 10.13, ...) or
+    // later.
+    unsigned DiagKind =
+        shouldDiagnoseAvailabilityByDefault(
+            SemaRef.Context,
+            SemaRef.Context.getTargetInfo().getPlatformMinVersion(), Introduced)
+            ? diag::warn_unguarded_availability_new
+            : diag::warn_unguarded_availability;
 
-//     std::string PlatformName(AvailabilityAttr::getPrettyPlatformName(
-//         SemaRef.getASTContext().getTargetInfo().getPlatformName()));
+    std::string PlatformName(AvailabilityAttr::getPrettyPlatformName(
+        SemaRef.getASTContext().getTargetInfo().getPlatformName()));
 
-//     SemaRef.Diag(Range.getBegin(), DiagKind)
-//         << Range << D << PlatformName << Introduced.getAsString();
+    SemaRef.Diag(Range.getBegin(), DiagKind)
+        << Range << D << PlatformName << Introduced.getAsString();
 
-//     SemaRef.Diag(OffendingDecl->getLocation(),
-//                  diag::note_partial_availability_specified_here)
-//         << OffendingDecl << PlatformName << Introduced.getAsString()
-//         << SemaRef.Context.getTargetInfo()
-//                .getPlatformMinVersion()
-//                .getAsString();
+    SemaRef.Diag(OffendingDecl->getLocation(),
+                 diag::note_partial_availability_specified_here)
+        << OffendingDecl << PlatformName << Introduced.getAsString()
+        << SemaRef.Context.getTargetInfo()
+               .getPlatformMinVersion()
+               .getAsString();
 
-//     auto FixitDiag =
-//         SemaRef.Diag(Range.getBegin(), diag::note_unguarded_available_silence)
-//         << Range << D
-//         << (SemaRef.getLangOpts().ObjC ? /*@available*/ 0
-//                                        : /*__builtin_available*/ 1);
+    auto FixitDiag =
+        SemaRef.Diag(Range.getBegin(), diag::note_unguarded_available_silence)
+        << Range << D
+        << (SemaRef.getLangOpts().ObjC ? /*@available*/ 0
+                                       : /*__builtin_available*/ 1);
 
-//     // Find the statement which should be enclosed in the if @available check.
-//     if (StmtStack.empty())
-//       return;
-//     const Stmt *StmtOfUse = StmtStack.back();
-//     const CompoundStmt *Scope = nullptr;
-//     for (const Stmt *S : llvm::reverse(StmtStack)) {
-//       if (const auto *CS = dyn_cast<CompoundStmt>(S)) {
-//         Scope = CS;
-//         break;
-//       }
-//       if (isBodyLikeChildStmt(StmtOfUse, S)) {
-//         // The declaration won't be seen outside of the statement, so we don't
-//         // have to wrap the uses of any declared variables in if (@available).
-//         // Therefore we can avoid setting Scope here.
-//         break;
-//       }
-//       StmtOfUse = S;
-//     }
-//     const Stmt *LastStmtOfUse = nullptr;
-//     if (isa<DeclStmt>(StmtOfUse) && Scope) {
-//       for (const Decl *D : cast<DeclStmt>(StmtOfUse)->decls()) {
-//         if (StmtUSEFinder::isContained(StmtStack.back(), D)) {
-//           LastStmtOfUse = LastDeclUSEFinder::findLastStmtThatUsesDecl(D, Scope);
-//           break;
-//         }
-//       }
-//     }
+    // Find the statement which should be enclosed in the if @available check.
+    if (StmtStack.empty())
+      return;
+    const Stmt *StmtOfUse = StmtStack.back();
+    const CompoundStmt *Scope = nullptr;
+    for (const Stmt *S : llvm::reverse(StmtStack)) {
+      if (const auto *CS = dyn_cast<CompoundStmt>(S)) {
+        Scope = CS;
+        break;
+      }
+      if (isBodyLikeChildStmt(StmtOfUse, S)) {
+        // The declaration won't be seen outside of the statement, so we don't
+        // have to wrap the uses of any declared variables in if (@available).
+        // Therefore we can avoid setting Scope here.
+        break;
+      }
+      StmtOfUse = S;
+    }
+    const Stmt *LastStmtOfUse = nullptr;
+    if (isa<DeclStmt>(StmtOfUse) && Scope) {
+      for (const Decl *D : cast<DeclStmt>(StmtOfUse)->decls()) {
+        if (StmtUSEFinder::isContained(StmtStack.back(), D)) {
+          LastStmtOfUse = LastDeclUSEFinder::findLastStmtThatUsesDecl(D, Scope);
+          break;
+        }
+      }
+    }
 
-//     const SourceManager &SM = SemaRef.getSourceManager();
-//     SourceLocation IfInsertionLoc =
-//         SM.getExpansionLoc(StmtOfUse->getBeginLoc());
-//     SourceLocation StmtEndLoc =
-//         SM.getExpansionRange(
-//               (LastStmtOfUse ? LastStmtOfUse : StmtOfUse)->getEndLoc())
-//             .getEnd();
-//     if (SM.getFileID(IfInsertionLoc) != SM.getFileID(StmtEndLoc))
-//       return;
+    const SourceManager &SM = SemaRef.getSourceManager();
+    SourceLocation IfInsertionLoc =
+        SM.getExpansionLoc(StmtOfUse->getBeginLoc());
+    SourceLocation StmtEndLoc =
+        SM.getExpansionRange(
+              (LastStmtOfUse ? LastStmtOfUse : StmtOfUse)->getEndLoc())
+            .getEnd();
+    if (SM.getFileID(IfInsertionLoc) != SM.getFileID(StmtEndLoc))
+      return;
 
-//     StringRef Indentation = Lexer::getIndentationForLine(IfInsertionLoc, SM);
-//     const char *ExtraIndentation = "    ";
-//     std::string FixItString;
-//     llvm::raw_string_ostream FixItOS(FixItString);
-//     FixItOS << "if (" << (SemaRef.getLangOpts().ObjC ? "@available"
-//                                                      : "__builtin_available")
-//             << "("
-//             << AvailabilityAttr::getPlatformNameSourceSpelling(
-//                    SemaRef.getASTContext().getTargetInfo().getPlatformName())
-//             << " " << Introduced.getAsString() << ", *)) {\n"
-//             << Indentation << ExtraIndentation;
-//     FixitDiag << FixItHint::CreateInsertion(IfInsertionLoc, FixItOS.str());
-//     SourceLocation ElseInsertionLoc = Lexer::findLocationAfterToken(
-//         StmtEndLoc, tok::semi, SM, SemaRef.getLangOpts(),
-//         /*SkipTrailingWhitespaceAndNewLine=*/false);
-//     if (ElseInsertionLoc.isInvalid())
-//       ElseInsertionLoc =
-//           Lexer::getLocForEndOfToken(StmtEndLoc, 0, SM, SemaRef.getLangOpts());
-//     FixItOS.str().clear();
-//     FixItOS << "\n"
-//             << Indentation << "} else {\n"
-//             << Indentation << ExtraIndentation
-//             << "// Fallback on earlier versions\n"
-//             << Indentation << "}";
-//     FixitDiag << FixItHint::CreateInsertion(ElseInsertionLoc, FixItOS.str());
-//   }
-// }
+    StringRef Indentation = Lexer::getIndentationForLine(IfInsertionLoc, SM);
+    const char *ExtraIndentation = "    ";
+    std::string FixItString;
+    llvm::raw_string_ostream FixItOS(FixItString);
+    FixItOS << "if (" << (SemaRef.getLangOpts().ObjC ? "@available"
+                                                     : "__builtin_available")
+            << "("
+            << AvailabilityAttr::getPlatformNameSourceSpelling(
+                   SemaRef.getASTContext().getTargetInfo().getPlatformName())
+            << " " << Introduced.getAsString() << ", *)) {\n"
+            << Indentation << ExtraIndentation;
+    FixitDiag << FixItHint::CreateInsertion(IfInsertionLoc, FixItOS.str());
+    SourceLocation ElseInsertionLoc = Lexer::findLocationAfterToken(
+        StmtEndLoc, tok::semi, SM, SemaRef.getLangOpts(),
+        /*SkipTrailingWhitespaceAndNewLine=*/false);
+    if (ElseInsertionLoc.isInvalid())
+      ElseInsertionLoc =
+          Lexer::getLocForEndOfToken(StmtEndLoc, 0, SM, SemaRef.getLangOpts());
+    FixItOS.str().clear();
+    FixItOS << "\n"
+            << Indentation << "} else {\n"
+            << Indentation << ExtraIndentation
+            << "// Fallback on earlier versions\n"
+            << Indentation << "}";
+    FixitDiag << FixItHint::CreateInsertion(ElseInsertionLoc, FixItOS.str());
+  }
+}
 
 bool DiagnoseUnguardedAvailability::VisitTypeLoc(TypeLoc Ty) {
   const Type *TyPtr = Ty.getTypePtr();
@@ -879,17 +879,17 @@ bool DiagnoseUnguardedAvailability::VisitTypeLoc(TypeLoc Ty) {
 
 bool DiagnoseUnguardedAvailability::TraverseIfStmt(IfStmt *If) {
   VersionTuple CondVersion;
-  if (auto *E = dyn_cast<ObjCAvailabilityCheckExpr>(If->getCond())) {
-    CondVersion = E->getVersion();
+  // if (auto *E = dyn_cast<ObjCAvailabilityCheckExpr>(If->getCond())) {
+  //   CondVersion = E->getVersion();
 
-    // If we're using the '*' case here or if this check is redundant, then we
-    // use the enclosing version to check both branches.
-    if (CondVersion.empty() || CondVersion <= AvailabilityStack.back())
-      return TraverseStmt(If->getThen()) && TraverseStmt(If->getElse());
-  } else {
+  //   // If we're using the '*' case here or if this check is redundant, then we
+  //   // use the enclosing version to check both branches.
+  //   if (CondVersion.empty() || CondVersion <= AvailabilityStack.back())
+  //     return TraverseStmt(If->getThen()) && TraverseStmt(If->getElse());
+  // } else {
     // This isn't an availability checking 'if', we can just continue.
     return Base::TraverseIfStmt(If);
-  }
+  // }
 
   AvailabilityStack.push_back(CondVersion);
   bool ShouldContinue = TraverseStmt(If->getThen());

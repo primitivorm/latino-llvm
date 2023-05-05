@@ -239,7 +239,7 @@ class Preprocessor {
   ///
   /// FIXME: Make sure the lifetime of Identifiers/Selectors *isn't* tied to
   /// the lifetime of the preprocessor.
-  SelectorTable Selectors;
+  // SelectorTable Selectors;
 
   /// Information about builtins.
   std::unique_ptr<Builtin::Context> BuiltinInfo;
@@ -921,7 +921,7 @@ public:
 
   IdentifierTable &getIdentifierTable() { return Identifiers; }
   const IdentifierTable &getIdentifierTable() const { return Identifiers; }
-  SelectorTable &getSelectorTable() { return Selectors; }
+  // SelectorTable &getSelectorTable() { return Selectors; }
   Builtin::Context &getBuiltinInfo() { return *BuiltinInfo; }
   llvm::BumpPtrAllocator &getPreprocessorAllocator() { return BP; }
 

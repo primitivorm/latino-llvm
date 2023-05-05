@@ -17,9 +17,9 @@
 #include "CGCall.h"
 #include "CGDebugInfo.h"
 // #include "CGObjCRuntime.h"
-#include "CGOpenCLRuntime.h"
-#include "CGOpenMPRuntime.h"
-#include "CGOpenMPRuntimeNVPTX.h"
+// #include "CGOpenCLRuntime.h"
+// #include "CGOpenMPRuntime.h"
+// #include "CGOpenMPRuntimeNVPTX.h"
 #include "CodeGenFunction.h"
 #include "CodeGenPGO.h"
 #include "ConstantEmitter.h"
@@ -28,7 +28,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Mangle.h"
 #include "latino/AST/RecordLayout.h"
@@ -48,7 +48,7 @@
 #include "llvm/ADT/StringSwitch.h"
 #include "llvm/ADT/Triple.h"
 #include "llvm/Analysis/TargetLibraryInfo.h"
-#include "llvm/Frontend/OpenMP/OMPIRBuilder.h"
+// #include "llvm/Frontend/OpenMP/OMPIRBuilder.h"
 #include "llvm/IR/CallingConv.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Intrinsics.h"
@@ -135,12 +135,12 @@ CodeGenModule::CodeGenModule(ASTContext &C, const HeaderSearchOptions &HSO,
 
   // if (LangOpts.ObjC)
   //   createObjCRuntime();
-  if (LangOpts.OpenCL)
-    createOpenCLRuntime();
-  if (LangOpts.OpenMP)
-    createOpenMPRuntime();
-  if (LangOpts.CUDA)
-    createCUDARuntime();
+  // if (LangOpts.OpenCL)
+  //   createOpenCLRuntime();
+  // if (LangOpts.OpenMP)
+  //   createOpenMPRuntime();
+  // if (LangOpts.CUDA)
+  //   createCUDARuntime();
 
   // Enable TBAA unless it's suppressed. ThreadSanitizer needs TBAA even at O0.
   if (LangOpts.Sanitize.has(SanitizerKind::Thread) ||
@@ -181,48 +181,48 @@ CodeGenModule::CodeGenModule(ASTContext &C, const HeaderSearchOptions &HSO,
 
 CodeGenModule::~CodeGenModule() {}
 
-void CodeGenModule::createObjCRuntime() {
-  // This is just isGNUFamily(), but we want to force implementors of
-  // new ABIs to decide how best to do this.
-  switch (LangOpts.ObjCRuntime.getKind()) {
-  case ObjCRuntime::GNUstep:
-  case ObjCRuntime::GCC:
-  case ObjCRuntime::ObjFW:
-    ObjCRuntime.reset(CreateGNUObjCRuntime(*this));
-    return;
+// void CodeGenModule::createObjCRuntime() {
+//   // This is just isGNUFamily(), but we want to force implementors of
+//   // new ABIs to decide how best to do this.
+//   switch (LangOpts.ObjCRuntime.getKind()) {
+//   case ObjCRuntime::GNUstep:
+//   case ObjCRuntime::GCC:
+//   case ObjCRuntime::ObjFW:
+//     ObjCRuntime.reset(CreateGNUObjCRuntime(*this));
+//     return;
 
-  case ObjCRuntime::FragileMacOSX:
-  case ObjCRuntime::MacOSX:
-  case ObjCRuntime::iOS:
-  case ObjCRuntime::WatchOS:
-    ObjCRuntime.reset(CreateMacObjCRuntime(*this));
-    return;
-  }
-  llvm_unreachable("bad runtime kind");
-}
+//   case ObjCRuntime::FragileMacOSX:
+//   case ObjCRuntime::MacOSX:
+//   case ObjCRuntime::iOS:
+//   case ObjCRuntime::WatchOS:
+//     ObjCRuntime.reset(CreateMacObjCRuntime(*this));
+//     return;
+//   }
+//   llvm_unreachable("bad runtime kind");
+// }
 
-void CodeGenModule::createOpenCLRuntime() {
-  OpenCLRuntime.reset(new CGOpenCLRuntime(*this));
-}
+// void CodeGenModule::createOpenCLRuntime() {
+//   OpenCLRuntime.reset(new CGOpenCLRuntime(*this));
+// }
 
-void CodeGenModule::createOpenMPRuntime() {
-  // Select a specialized code generation class based on the target, if any.
-  // If it does not exist use the default implementation.
-  switch (getTriple().getArch()) {
-  case llvm::Triple::nvptx:
-  case llvm::Triple::nvptx64:
-    assert(getLangOpts().OpenMPIsDevice &&
-           "OpenMP NVPTX is only prepared to deal with device code.");
-    OpenMPRuntime.reset(new CGOpenMPRuntimeNVPTX(*this));
-    break;
-  default:
-    if (LangOpts.OpenMPSimd)
-      OpenMPRuntime.reset(new CGOpenMPSIMDRuntime(*this));
-    else
-      OpenMPRuntime.reset(new CGOpenMPRuntime(*this));
-    break;
-  }
-}
+// void CodeGenModule::createOpenMPRuntime() {
+//   // Select a specialized code generation class based on the target, if any.
+//   // If it does not exist use the default implementation.
+//   switch (getTriple().getArch()) {
+//   case llvm::Triple::nvptx:
+//   case llvm::Triple::nvptx64:
+//     assert(getLangOpts().OpenMPIsDevice &&
+//            "OpenMP NVPTX is only prepared to deal with device code.");
+//     OpenMPRuntime.reset(new CGOpenMPRuntimeNVPTX(*this));
+//     break;
+//   default:
+//     if (LangOpts.OpenMPSimd)
+//       OpenMPRuntime.reset(new CGOpenMPSIMDRuntime(*this));
+//     else
+//       OpenMPRuntime.reset(new CGOpenMPRuntime(*this));
+//     break;
+//   }
+// }
 
 void CodeGenModule::createCUDARuntime() {
   CUDARuntime.reset(CreateNVCUDARuntime(*this));
@@ -374,8 +374,8 @@ void CodeGenModule::checkAliases() {
 
 void CodeGenModule::clear() {
   DeferredDeclsToEmit.clear();
-  if (OpenMPRuntime)
-    OpenMPRuntime->clear();
+  // if (OpenMPRuntime)
+  //   OpenMPRuntime->clear();
 }
 
 void InstrProfStats::reportDiagnostics(DiagnosticsEngine &Diags,
@@ -415,14 +415,14 @@ void CodeGenModule::Release() {
             CUDARuntime->makeModuleCtorFunction())
       AddGlobalCtor(CudaCtorFunction);
   }
-  if (OpenMPRuntime) {
-    if (llvm::Function *OpenMPRequiresDirectiveRegFun =
-            OpenMPRuntime->emitRequiresDirectiveRegFun()) {
-      AddGlobalCtor(OpenMPRequiresDirectiveRegFun, 0);
-    }
-    OpenMPRuntime->createOffloadEntriesAndInfoMetadata();
-    OpenMPRuntime->clear();
-  }
+  // if (OpenMPRuntime) {
+  //   if (llvm::Function *OpenMPRequiresDirectiveRegFun =
+  //           OpenMPRuntime->emitRequiresDirectiveRegFun()) {
+  //     AddGlobalCtor(OpenMPRequiresDirectiveRegFun, 0);
+  //   }
+  //   OpenMPRuntime->createOffloadEntriesAndInfoMetadata();
+  //   OpenMPRuntime->clear();
+  // }
   if (PGOReader) {
     getModule().setProfileSummary(
         PGOReader->getSummary(/* UseCS */ false).getMD(VMContext),
@@ -441,7 +441,7 @@ void CodeGenModule::Release() {
     CodeGenFunction(*this).EmitCfiCheckFail();
     CodeGenFunction(*this).EmitCfiCheckStub();
   }
-  emitAtAvailableLinkGuard();
+  // emitAtAvailableLinkGuard();
   if (Context.getTargetInfo().getTriple().isWasm() &&
       !Context.getTargetInfo().getTriple().isOSEmscripten()) {
     EmitMainVoidAlias();
@@ -594,25 +594,25 @@ void CodeGenModule::Release() {
   }
 
   // Emit OpenCL specific module metadata: OpenCL/SPIR version.
-  if (LangOpts.OpenCL) {
-    EmitOpenCLMetadata();
-    // Emit SPIR version.
-    if (getTriple().isSPIR()) {
-      // SPIR v2.0 s2.12 - The SPIR version used by the module is stored in the
-      // opencl.spir.version named metadata.
-      // C++ is backwards compatible with OpenCL v2.0.
-      auto Version = LangOpts.OpenCLCPlusPlus ? 200 : LangOpts.OpenCLVersion;
-      llvm::Metadata *SPIRVerElts[] = {
-          llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
-              Int32Ty, Version / 100)),
-          llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
-              Int32Ty, (Version / 100 > 1) ? 0 : 2))};
-      llvm::NamedMDNode *SPIRVerMD =
-          TheModule.getOrInsertNamedMetadata("opencl.spir.version");
-      llvm::LLVMContext &Ctx = TheModule.getContext();
-      SPIRVerMD->addOperand(llvm::MDNode::get(Ctx, SPIRVerElts));
-    }
-  }
+  // if (LangOpts.OpenCL) {
+  //   EmitOpenCLMetadata();
+  //   // Emit SPIR version.
+  //   if (getTriple().isSPIR()) {
+  //     // SPIR v2.0 s2.12 - The SPIR version used by the module is stored in the
+  //     // opencl.spir.version named metadata.
+  //     // C++ is backwards compatible with OpenCL v2.0.
+  //     auto Version = LangOpts.OpenCLCPlusPlus ? 200 : LangOpts.OpenCLVersion;
+  //     llvm::Metadata *SPIRVerElts[] = {
+  //         llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
+  //             Int32Ty, Version / 100)),
+  //         llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
+  //             Int32Ty, (Version / 100 > 1) ? 0 : 2))};
+  //     llvm::NamedMDNode *SPIRVerMD =
+  //         TheModule.getOrInsertNamedMetadata("opencl.spir.version");
+  //     llvm::LLVMContext &Ctx = TheModule.getContext();
+  //     SPIRVerMD->addOperand(llvm::MDNode::get(Ctx, SPIRVerElts));
+  //   }
+  // }
 
   if (uint32_t PLevel = Context.getLangOpts().PICLevel) {
     assert(PLevel < 3 && "Invalid PIC Level");
@@ -1330,174 +1330,174 @@ static unsigned ArgInfoAddressSpace(LangAS AS) {
   }
 }
 
-void CodeGenModule::GenOpenCLArgMetadata(llvm::Function *Fn,
-                                         const FunctionDecl *FD,
-                                         CodeGenFunction *CGF) {
-  assert(((FD && CGF) || (!FD && !CGF)) &&
-         "Incorrect use - FD and CGF should either be both null or not!");
-  // Create MDNodes that represent the kernel arg metadata.
-  // Each MDNode is a list in the form of "key", N number of values which is
-  // the same number of values as their are kernel arguments.
+// void CodeGenModule::GenOpenCLArgMetadata(llvm::Function *Fn,
+//                                          const FunctionDecl *FD,
+//                                          CodeGenFunction *CGF) {
+//   assert(((FD && CGF) || (!FD && !CGF)) &&
+//          "Incorrect use - FD and CGF should either be both null or not!");
+//   // Create MDNodes that represent the kernel arg metadata.
+//   // Each MDNode is a list in the form of "key", N number of values which is
+//   // the same number of values as their are kernel arguments.
 
-  const PrintingPolicy &Policy = Context.getPrintingPolicy();
+//   const PrintingPolicy &Policy = Context.getPrintingPolicy();
 
-  // MDNode for the kernel argument address space qualifiers.
-  SmallVector<llvm::Metadata *, 8> addressQuals;
+//   // MDNode for the kernel argument address space qualifiers.
+//   SmallVector<llvm::Metadata *, 8> addressQuals;
 
-  // MDNode for the kernel argument access qualifiers (images only).
-  SmallVector<llvm::Metadata *, 8> accessQuals;
+//   // MDNode for the kernel argument access qualifiers (images only).
+//   SmallVector<llvm::Metadata *, 8> accessQuals;
 
-  // MDNode for the kernel argument type names.
-  SmallVector<llvm::Metadata *, 8> argTypeNames;
+//   // MDNode for the kernel argument type names.
+//   SmallVector<llvm::Metadata *, 8> argTypeNames;
 
-  // MDNode for the kernel argument base type names.
-  SmallVector<llvm::Metadata *, 8> argBaseTypeNames;
+//   // MDNode for the kernel argument base type names.
+//   SmallVector<llvm::Metadata *, 8> argBaseTypeNames;
 
-  // MDNode for the kernel argument type qualifiers.
-  SmallVector<llvm::Metadata *, 8> argTypeQuals;
+//   // MDNode for the kernel argument type qualifiers.
+//   SmallVector<llvm::Metadata *, 8> argTypeQuals;
 
-  // MDNode for the kernel argument names.
-  SmallVector<llvm::Metadata *, 8> argNames;
+//   // MDNode for the kernel argument names.
+//   SmallVector<llvm::Metadata *, 8> argNames;
 
-  if (FD && CGF)
-    for (unsigned i = 0, e = FD->getNumParams(); i != e; ++i) {
-      const ParmVarDecl *parm = FD->getParamDecl(i);
-      QualType ty = parm->getType();
-      std::string typeQuals;
+//   if (FD && CGF)
+//     for (unsigned i = 0, e = FD->getNumParams(); i != e; ++i) {
+//       const ParmVarDecl *parm = FD->getParamDecl(i);
+//       QualType ty = parm->getType();
+//       std::string typeQuals;
 
-      if (ty->isPointerType()) {
-        QualType pointeeTy = ty->getPointeeType();
+//       if (ty->isPointerType()) {
+//         QualType pointeeTy = ty->getPointeeType();
 
-        // Get address qualifier.
-        addressQuals.push_back(
-            llvm::ConstantAsMetadata::get(CGF->Builder.getInt32(
-                ArgInfoAddressSpace(pointeeTy.getAddressSpace()))));
+//         // Get address qualifier.
+//         addressQuals.push_back(
+//             llvm::ConstantAsMetadata::get(CGF->Builder.getInt32(
+//                 ArgInfoAddressSpace(pointeeTy.getAddressSpace()))));
 
-        // Get argument type name.
-        std::string typeName =
-            pointeeTy.getUnqualifiedType().getAsString(Policy) + "*";
+//         // Get argument type name.
+//         std::string typeName =
+//             pointeeTy.getUnqualifiedType().getAsString(Policy) + "*";
 
-        // Turn "unsigned type" to "utype"
-        std::string::size_type pos = typeName.find("unsigned");
-        if (pointeeTy.isCanonical() && pos != std::string::npos)
-          typeName.erase(pos + 1, 8);
+//         // Turn "unsigned type" to "utype"
+//         std::string::size_type pos = typeName.find("unsigned");
+//         if (pointeeTy.isCanonical() && pos != std::string::npos)
+//           typeName.erase(pos + 1, 8);
 
-        argTypeNames.push_back(llvm::MDString::get(VMContext, typeName));
+//         argTypeNames.push_back(llvm::MDString::get(VMContext, typeName));
 
-        std::string baseTypeName =
-            pointeeTy.getUnqualifiedType().getCanonicalType().getAsString(
-                Policy) +
-            "*";
+//         std::string baseTypeName =
+//             pointeeTy.getUnqualifiedType().getCanonicalType().getAsString(
+//                 Policy) +
+//             "*";
 
-        // Turn "unsigned type" to "utype"
-        pos = baseTypeName.find("unsigned");
-        if (pos != std::string::npos)
-          baseTypeName.erase(pos + 1, 8);
+//         // Turn "unsigned type" to "utype"
+//         pos = baseTypeName.find("unsigned");
+//         if (pos != std::string::npos)
+//           baseTypeName.erase(pos + 1, 8);
 
-        argBaseTypeNames.push_back(
-            llvm::MDString::get(VMContext, baseTypeName));
+//         argBaseTypeNames.push_back(
+//             llvm::MDString::get(VMContext, baseTypeName));
 
-        // Get argument type qualifiers:
-        if (ty.isRestrictQualified())
-          typeQuals = "restrict";
-        if (pointeeTy.isConstQualified() ||
-            (pointeeTy.getAddressSpace() == LangAS::opencl_constant))
-          typeQuals += typeQuals.empty() ? "const" : " const";
-        if (pointeeTy.isVolatileQualified())
-          typeQuals += typeQuals.empty() ? "volatile" : " volatile";
-      } else {
-        uint32_t AddrSpc = 0;
-        bool isPipe = ty->isPipeType();
-        if (ty->isImageType() || isPipe)
-          AddrSpc = ArgInfoAddressSpace(LangAS::opencl_global);
+//         // Get argument type qualifiers:
+//         if (ty.isRestrictQualified())
+//           typeQuals = "restrict";
+//         if (pointeeTy.isConstQualified() ||
+//             (pointeeTy.getAddressSpace() == LangAS::opencl_constant))
+//           typeQuals += typeQuals.empty() ? "const" : " const";
+//         if (pointeeTy.isVolatileQualified())
+//           typeQuals += typeQuals.empty() ? "volatile" : " volatile";
+//       } else {
+//         uint32_t AddrSpc = 0;
+//         bool isPipe = ty->isPipeType();
+//         // if (ty->isImageType() || isPipe)
+//         //   AddrSpc = ArgInfoAddressSpace(LangAS::opencl_global);
 
-        addressQuals.push_back(
-            llvm::ConstantAsMetadata::get(CGF->Builder.getInt32(AddrSpc)));
+//         addressQuals.push_back(
+//             llvm::ConstantAsMetadata::get(CGF->Builder.getInt32(AddrSpc)));
 
-        // Get argument type name.
-        std::string typeName;
-        if (isPipe)
-          typeName = ty.getCanonicalType()
-                         ->castAs<PipeType>()
-                         ->getElementType()
-                         .getAsString(Policy);
-        else
-          typeName = ty.getUnqualifiedType().getAsString(Policy);
+//         // Get argument type name.
+//         std::string typeName;
+//         if (isPipe)
+//           typeName = ty.getCanonicalType()
+//                          ->castAs<PipeType>()
+//                          ->getElementType()
+//                          .getAsString(Policy);
+//         else
+//           typeName = ty.getUnqualifiedType().getAsString(Policy);
 
-        // Turn "unsigned type" to "utype"
-        std::string::size_type pos = typeName.find("unsigned");
-        if (ty.isCanonical() && pos != std::string::npos)
-          typeName.erase(pos + 1, 8);
+//         // Turn "unsigned type" to "utype"
+//         std::string::size_type pos = typeName.find("unsigned");
+//         if (ty.isCanonical() && pos != std::string::npos)
+//           typeName.erase(pos + 1, 8);
 
-        std::string baseTypeName;
-        if (isPipe)
-          baseTypeName = ty.getCanonicalType()
-                             ->castAs<PipeType>()
-                             ->getElementType()
-                             .getCanonicalType()
-                             .getAsString(Policy);
-        else
-          baseTypeName =
-              ty.getUnqualifiedType().getCanonicalType().getAsString(Policy);
+//         std::string baseTypeName;
+//         if (isPipe)
+//           baseTypeName = ty.getCanonicalType()
+//                              ->castAs<PipeType>()
+//                              ->getElementType()
+//                              .getCanonicalType()
+//                              .getAsString(Policy);
+//         else
+//           baseTypeName =
+//               ty.getUnqualifiedType().getCanonicalType().getAsString(Policy);
 
-        // Remove access qualifiers on images
-        // (as they are inseparable from type in clang implementation,
-        // but OpenCL spec provides a special query to get access qualifier
-        // via clGetKernelArgInfo with CL_KERNEL_ARG_ACCESS_QUALIFIER):
-        if (ty->isImageType()) {
-          removeImageAccessQualifier(typeName);
-          removeImageAccessQualifier(baseTypeName);
-        }
+//         // Remove access qualifiers on images
+//         // (as they are inseparable from type in clang implementation,
+//         // but OpenCL spec provides a special query to get access qualifier
+//         // via clGetKernelArgInfo with CL_KERNEL_ARG_ACCESS_QUALIFIER):
+//         if (ty->isImageType()) {
+//           removeImageAccessQualifier(typeName);
+//           removeImageAccessQualifier(baseTypeName);
+//         }
 
-        argTypeNames.push_back(llvm::MDString::get(VMContext, typeName));
+//         argTypeNames.push_back(llvm::MDString::get(VMContext, typeName));
 
-        // Turn "unsigned type" to "utype"
-        pos = baseTypeName.find("unsigned");
-        if (pos != std::string::npos)
-          baseTypeName.erase(pos + 1, 8);
+//         // Turn "unsigned type" to "utype"
+//         pos = baseTypeName.find("unsigned");
+//         if (pos != std::string::npos)
+//           baseTypeName.erase(pos + 1, 8);
 
-        argBaseTypeNames.push_back(
-            llvm::MDString::get(VMContext, baseTypeName));
+//         argBaseTypeNames.push_back(
+//             llvm::MDString::get(VMContext, baseTypeName));
 
-        if (isPipe)
-          typeQuals = "pipe";
-      }
+//         if (isPipe)
+//           typeQuals = "pipe";
+//       }
 
-      argTypeQuals.push_back(llvm::MDString::get(VMContext, typeQuals));
+//       argTypeQuals.push_back(llvm::MDString::get(VMContext, typeQuals));
 
-      // Get image and pipe access qualifier:
-      if (ty->isImageType() || ty->isPipeType()) {
-        const Decl *PDecl = parm;
-        if (auto *TD = dyn_cast<TypedefType>(ty))
-          PDecl = TD->getDecl();
-        const OpenCLAccessAttr *A = PDecl->getAttr<OpenCLAccessAttr>();
-        if (A && A->isWriteOnly())
-          accessQuals.push_back(llvm::MDString::get(VMContext, "write_only"));
-        else if (A && A->isReadWrite())
-          accessQuals.push_back(llvm::MDString::get(VMContext, "read_write"));
-        else
-          accessQuals.push_back(llvm::MDString::get(VMContext, "read_only"));
-      } else
-        accessQuals.push_back(llvm::MDString::get(VMContext, "none"));
+//       // Get image and pipe access qualifier:
+//       if (ty->isImageType() || ty->isPipeType()) {
+//         const Decl *PDecl = parm;
+//         if (auto *TD = dyn_cast<TypedefType>(ty))
+//           PDecl = TD->getDecl();
+//         const OpenCLAccessAttr *A = PDecl->getAttr<OpenCLAccessAttr>();
+//         if (A && A->isWriteOnly())
+//           accessQuals.push_back(llvm::MDString::get(VMContext, "write_only"));
+//         else if (A && A->isReadWrite())
+//           accessQuals.push_back(llvm::MDString::get(VMContext, "read_write"));
+//         else
+//           accessQuals.push_back(llvm::MDString::get(VMContext, "read_only"));
+//       } else
+//         accessQuals.push_back(llvm::MDString::get(VMContext, "none"));
 
-      // Get argument name.
-      argNames.push_back(llvm::MDString::get(VMContext, parm->getName()));
-    }
+//       // Get argument name.
+//       argNames.push_back(llvm::MDString::get(VMContext, parm->getName()));
+//     }
 
-  Fn->setMetadata("kernel_arg_addr_space",
-                  llvm::MDNode::get(VMContext, addressQuals));
-  Fn->setMetadata("kernel_arg_access_qual",
-                  llvm::MDNode::get(VMContext, accessQuals));
-  Fn->setMetadata("kernel_arg_type",
-                  llvm::MDNode::get(VMContext, argTypeNames));
-  Fn->setMetadata("kernel_arg_base_type",
-                  llvm::MDNode::get(VMContext, argBaseTypeNames));
-  Fn->setMetadata("kernel_arg_type_qual",
-                  llvm::MDNode::get(VMContext, argTypeQuals));
-  if (getCodeGenOpts().EmitOpenCLArgMetadata)
-    Fn->setMetadata("kernel_arg_name",
-                    llvm::MDNode::get(VMContext, argNames));
-}
+//   Fn->setMetadata("kernel_arg_addr_space",
+//                   llvm::MDNode::get(VMContext, addressQuals));
+//   Fn->setMetadata("kernel_arg_access_qual",
+//                   llvm::MDNode::get(VMContext, accessQuals));
+//   Fn->setMetadata("kernel_arg_type",
+//                   llvm::MDNode::get(VMContext, argTypeNames));
+//   Fn->setMetadata("kernel_arg_base_type",
+//                   llvm::MDNode::get(VMContext, argBaseTypeNames));
+//   Fn->setMetadata("kernel_arg_type_qual",
+//                   llvm::MDNode::get(VMContext, argTypeQuals));
+//   if (getCodeGenOpts().EmitOpenCLArgMetadata)
+//     Fn->setMetadata("kernel_arg_name",
+//                     llvm::MDNode::get(VMContext, argNames));
+// }
 
 /// Determines whether the language options require us to model
 /// unwind exceptions.  We treat -fexceptions as mandating this
@@ -1512,9 +1512,9 @@ static bool hasUnwindExceptions(const LangOptions &LangOpts) {
   if (LangOpts.CXXExceptions) return true;
 
   // If ObjC exceptions are enabled, this depends on the ABI.
-  if (LangOpts.ObjCExceptions) {
-    return LangOpts.ObjCRuntime.hasUnwindExceptions();
-  }
+  // if (LangOpts.ObjCExceptions) {
+  //   return LangOpts.ObjCRuntime.hasUnwindExceptions();
+  // }
 
   return true;
 }
@@ -1937,8 +1937,8 @@ void CodeGenModule::SetFunctionAttributes(GlobalDecl GD, llvm::Function *F,
       !CodeGenOpts.SanitizeCfiCanonicalJumpTables)
     CreateFunctionTypeMetadataForIcall(FD, F);
 
-  if (getLangOpts().OpenMP && FD->hasAttr<OMPDeclareSimdDeclAttr>())
-    getOpenMPRuntime().emitDeclareSimdFunction(FD, F);
+  // if (getLangOpts().OpenMP && FD->hasAttr<OMPDeclareSimdDeclAttr>())
+  //   getOpenMPRuntime().emitDeclareSimdFunction(FD, F);
 
   if (const auto *CB = FD->getAttr<CallbackAttr>()) {
     // Annotate the callback behavior as metadata:
@@ -2149,8 +2149,8 @@ void CodeGenModule::EmitModuleLinkOptions() {
 
 void CodeGenModule::EmitDeferred() {
   // Emit deferred declare target declarations.
-  if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd)
-    getOpenMPRuntime().emitDeferredTargetDecls();
+  // if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd)
+  //   getOpenMPRuntime().emitDeferredTargetDecls();
 
   // Emit code for any potentially referenced deferred decls.  Since a
   // previously unused static decl may become used during the generation of code
@@ -2201,8 +2201,8 @@ void CodeGenModule::EmitDeferred() {
       continue;
 
     // If this is OpenMP, check if it is legal to emit this global normally.
-    if (LangOpts.OpenMP && OpenMPRuntime && OpenMPRuntime->emitTargetGlobal(D))
-      continue;
+    // if (LangOpts.OpenMP && OpenMPRuntime && OpenMPRuntime->emitTargetGlobal(D))
+    //   continue;
 
     // Otherwise, emit the definition and move on to the next one.
     EmitGlobalDefinition(D, GV);
@@ -2414,11 +2414,11 @@ bool CodeGenModule::MayBeEmittedEagerly(const ValueDecl *Global) {
     // In OpenMP 5.0 function may be marked as device_type(nohost) and we should
     // not emit them eagerly unless we sure that the function must be emitted on
     // the host.
-    if (LangOpts.OpenMP >= 50 && !LangOpts.OpenMPSimd &&
-        !LangOpts.OpenMPIsDevice &&
-        !OMPDeclareTargetDeclAttr::getDeviceType(FD) &&
-        !FD->isUsed(/*CheckUsedAttr=*/false) && !FD->isReferenced())
-      return false;
+    // if (LangOpts.OpenMP >= 50 && !LangOpts.OpenMPSimd &&
+    //     !LangOpts.OpenMPIsDevice &&
+    //     !OMPDeclareTargetDeclAttr::getDeviceType(FD) &&
+    //     !FD->isUsed(/*CheckUsedAttr=*/false) && !FD->isReferenced())
+    //   return false;
   }
   if (const auto *VD = dyn_cast<VarDecl>(Global))
     if (Context.getInlineVariableDefinitionKind(VD) ==
@@ -2428,11 +2428,11 @@ bool CodeGenModule::MayBeEmittedEagerly(const ValueDecl *Global) {
       return false;
   // If OpenMP is enabled and threadprivates must be generated like TLS, delay
   // codegen for global variables, because they may be marked as threadprivate.
-  if (LangOpts.OpenMP && LangOpts.OpenMPUseTLS &&
-      getContext().getTargetInfo().isTLSSupported() && isa<VarDecl>(Global) &&
-      !isTypeConstant(Global->getType(), false) &&
-      !OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(Global))
-    return false;
+  // if (LangOpts.OpenMP && LangOpts.OpenMPUseTLS &&
+  //     getContext().getTargetInfo().isTLSSupported() && isa<VarDecl>(Global) &&
+  //     !isTypeConstant(Global->getType(), false) &&
+  //     !OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(Global))
+  //   return false;
 
   return true;
 }
@@ -2568,20 +2568,20 @@ void CodeGenModule::EmitGlobal(GlobalDecl GD) {
     }
   }
 
-  if (LangOpts.OpenMP) {
-    // If this is OpenMP, check if it is legal to emit this global normally.
-    if (OpenMPRuntime && OpenMPRuntime->emitTargetGlobal(GD))
-      return;
-    if (auto *DRD = dyn_cast<OMPDeclareReductionDecl>(Global)) {
-      if (MustBeEmitted(Global))
-        EmitOMPDeclareReduction(DRD);
-      return;
-    } else if (auto *DMD = dyn_cast<OMPDeclareMapperDecl>(Global)) {
-      if (MustBeEmitted(Global))
-        EmitOMPDeclareMapper(DMD);
-      return;
-    }
-  }
+  // if (LangOpts.OpenMP) {
+  //   // If this is OpenMP, check if it is legal to emit this global normally.
+  //   if (OpenMPRuntime && OpenMPRuntime->emitTargetGlobal(GD))
+  //     return;
+  //   if (auto *DRD = dyn_cast<OMPDeclareReductionDecl>(Global)) {
+  //     if (MustBeEmitted(Global))
+  //       EmitOMPDeclareReduction(DRD);
+  //     return;
+  //   } else if (auto *DMD = dyn_cast<OMPDeclareMapperDecl>(Global)) {
+  //     if (MustBeEmitted(Global))
+  //       EmitOMPDeclareMapper(DMD);
+  //     return;
+  //   }
+  // }
 
   // Ignore declarations, they will be emitted on their first use.
   if (const auto *FD = dyn_cast<FunctionDecl>(Global)) {
@@ -2605,26 +2605,26 @@ void CodeGenModule::EmitGlobal(GlobalDecl GD) {
     assert(VD->isFileVarDecl() && "Cannot emit local var decl as global.");
     if (VD->isThisDeclarationADefinition() != VarDecl::Definition &&
         !Context.isMSStaticDataMemberInlineDefinition(VD)) {
-      if (LangOpts.OpenMP) {
-        // Emit declaration of the must-be-emitted declare target variable.
-        if (llvm::Optional<OMPDeclareTargetDeclAttr::MapTypeTy> Res =
-                OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(VD)) {
-          bool UnifiedMemoryEnabled =
-              getOpenMPRuntime().hasRequiresUnifiedSharedMemory();
-          if (*Res == OMPDeclareTargetDeclAttr::MT_To &&
-              !UnifiedMemoryEnabled) {
-            (void)GetAddrOfGlobalVar(VD);
-          } else {
-            assert(((*Res == OMPDeclareTargetDeclAttr::MT_Link) ||
-                    (*Res == OMPDeclareTargetDeclAttr::MT_To &&
-                     UnifiedMemoryEnabled)) &&
-                   "Link clause or to clause with unified memory expected.");
-            (void)getOpenMPRuntime().getAddrOfDeclareTargetVar(VD);
-          }
+      // if (LangOpts.OpenMP) {
+      //   // Emit declaration of the must-be-emitted declare target variable.
+      //   if (llvm::Optional<OMPDeclareTargetDeclAttr::MapTypeTy> Res =
+      //           OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(VD)) {
+      //     bool UnifiedMemoryEnabled =
+      //         getOpenMPRuntime().hasRequiresUnifiedSharedMemory();
+      //     if (*Res == OMPDeclareTargetDeclAttr::MT_To &&
+      //         !UnifiedMemoryEnabled) {
+      //       (void)GetAddrOfGlobalVar(VD);
+      //     } else {
+      //       assert(((*Res == OMPDeclareTargetDeclAttr::MT_Link) ||
+      //               (*Res == OMPDeclareTargetDeclAttr::MT_To &&
+      //                UnifiedMemoryEnabled)) &&
+      //              "Link clause or to clause with unified memory expected.");
+      //       (void)getOpenMPRuntime().getAddrOfDeclareTargetVar(VD);
+      //     }
 
-          return;
-        }
-      }
+      //     return;
+      //   }
+      // }
       // If this declaration may have caused an inline variable definition to
       // change linkage, make sure that it's emitted.
       if (Context.getInlineVariableDefinitionKind(VD) ==
@@ -3148,20 +3148,20 @@ llvm::Constant *CodeGenModule::GetOrCreateLLVMFunction(
   // the iFunc instead. Name Mangling will handle the rest of the changes.
   if (const FunctionDecl *FD = cast_or_null<FunctionDecl>(D)) {
     // For the device mark the function as one that should be emitted.
-    if (getLangOpts().OpenMPIsDevice && OpenMPRuntime &&
-        !OpenMPRuntime->markAsGlobalTarget(GD) && FD->isDefined() &&
-        !DontDefer && !IsForDefinition) {
-      if (const FunctionDecl *FDDef = FD->getDefinition()) {
-        GlobalDecl GDDef;
-        if (const auto *CD = dyn_cast<CXXConstructorDecl>(FDDef))
-          GDDef = GlobalDecl(CD, GD.getCtorType());
-        else if (const auto *DD = dyn_cast<CXXDestructorDecl>(FDDef))
-          GDDef = GlobalDecl(DD, GD.getDtorType());
-        else
-          GDDef = GlobalDecl(FDDef);
-        EmitGlobal(GDDef);
-      }
-    }
+    // if (getLangOpts().OpenMPIsDevice && OpenMPRuntime &&
+    //     !OpenMPRuntime->markAsGlobalTarget(GD) && FD->isDefined() &&
+    //     !DontDefer && !IsForDefinition) {
+    //   if (const FunctionDecl *FDDef = FD->getDefinition()) {
+    //     GlobalDecl GDDef;
+    //     if (const auto *CD = dyn_cast<CXXConstructorDecl>(FDDef))
+    //       GDDef = GlobalDecl(CD, GD.getCtorType());
+    //     else if (const auto *DD = dyn_cast<CXXDestructorDecl>(FDDef))
+    //       GDDef = GlobalDecl(DD, GD.getDtorType());
+    //     else
+    //       GDDef = GlobalDecl(FDDef);
+    //     EmitGlobal(GDDef);
+    //   }
+    // }
 
     if (FD->isMultiVersion()) {
       if (FD->hasAttr<TargetAttr>())
@@ -3479,8 +3479,8 @@ CodeGenModule::GetOrCreateLLVMGlobal(StringRef MangledName,
     if (D && !D->hasAttr<DLLImportAttr>() && !D->hasAttr<DLLExportAttr>())
       Entry->setDLLStorageClass(llvm::GlobalValue::DefaultStorageClass);
 
-    if (LangOpts.OpenMP && !LangOpts.OpenMPSimd && D)
-      getOpenMPRuntime().registerTargetGlobalVariable(D, Entry);
+    // if (LangOpts.OpenMP && !LangOpts.OpenMPSimd && D)
+    //   getOpenMPRuntime().registerTargetGlobalVariable(D, Entry);
 
     if (Entry->getType() == Ty)
       return Entry;
@@ -3550,8 +3550,8 @@ CodeGenModule::GetOrCreateLLVMGlobal(StringRef MangledName,
 
   // Handle things which are present even on external declarations.
   if (D) {
-    if (LangOpts.OpenMP && !LangOpts.OpenMPSimd)
-      getOpenMPRuntime().registerTargetGlobalVariable(D, GV);
+    // if (LangOpts.OpenMP && !LangOpts.OpenMPSimd)
+    //   getOpenMPRuntime().registerTargetGlobalVariable(D, GV);
 
     // FIXME: This code is overly simple and should be merged with other global
     // handling.
@@ -3637,7 +3637,7 @@ CodeGenModule::GetOrCreateLLVMGlobal(StringRef MangledName,
 
   LangAS ExpectedAS =
       D ? D->getType().getAddressSpace()
-        : (LangOpts.OpenCL ? LangAS::opencl_global : LangAS::Default);
+        : (/*LangOpts.OpenCL ? LangAS::opencl_global :*/ LangAS::Default);
   assert(getContext().getTargetAddressSpace(ExpectedAS) ==
          Ty->getPointerAddressSpace());
   if (AddrSpace != ExpectedAS)
@@ -3743,10 +3743,10 @@ llvm::Constant *
 CodeGenModule::CreateRuntimeVariable(llvm::Type *Ty,
                                      StringRef Name) {
   auto PtrTy =
-      getContext().getLangOpts().OpenCL
+      /*getContext().getLangOpts().OpenCL
           ? llvm::PointerType::get(
                 Ty, getContext().getTargetAddressSpace(LangAS::opencl_global))
-          : llvm::PointerType::getUnqual(Ty);
+          :*/ llvm::PointerType::getUnqual(Ty);
   auto *Ret = GetOrCreateLLVMGlobal(Name, PtrTy, nullptr);
   setDSOLocal(cast<llvm::GlobalValue>(Ret->stripPointerCasts()));
   return Ret;
@@ -3786,14 +3786,14 @@ CharUnits CodeGenModule::GetTargetTypeStoreSize(llvm::Type *Ty) const {
 
 LangAS CodeGenModule::GetGlobalVarAddressSpace(const VarDecl *D) {
   LangAS AddrSpace = LangAS::Default;
-  if (LangOpts.OpenCL) {
-    AddrSpace = D ? D->getType().getAddressSpace() : LangAS::opencl_global;
-    assert(AddrSpace == LangAS::opencl_global ||
-           AddrSpace == LangAS::opencl_constant ||
-           AddrSpace == LangAS::opencl_local ||
-           AddrSpace >= LangAS::FirstTargetAddressSpace);
-    return AddrSpace;
-  }
+  // if (LangOpts.OpenCL) {
+  //   AddrSpace = D ? D->getType().getAddressSpace() : LangAS::opencl_global;
+  //   assert(AddrSpace == LangAS::opencl_global ||
+  //          AddrSpace == LangAS::opencl_constant ||
+  //          AddrSpace == LangAS::opencl_local ||
+  //          AddrSpace >= LangAS::FirstTargetAddressSpace);
+  //   return AddrSpace;
+  // }
 
   if (LangOpts.CUDA && LangOpts.CUDAIsDevice) {
     if (D && D->hasAttr<CUDAConstantAttr>())
@@ -3808,18 +3808,18 @@ LangAS CodeGenModule::GetGlobalVarAddressSpace(const VarDecl *D) {
       return LangAS::cuda_device;
   }
 
-  if (LangOpts.OpenMP) {
-    LangAS AS;
-    if (OpenMPRuntime->hasAllocateAttributeForGlobalVar(D, AS))
-      return AS;
-  }
+  // if (LangOpts.OpenMP) {
+  //   LangAS AS;
+  //   if (OpenMPRuntime->hasAllocateAttributeForGlobalVar(D, AS))
+  //     return AS;
+  // }
   return getTargetCodeGenInfo().getGlobalVarAddressSpace(*this, D);
 }
 
 LangAS CodeGenModule::getStringLiteralAddressSpace() const {
   // OpenCL v1.2 s6.5.3: a string literal is in the constant address space.
-  if (LangOpts.OpenCL)
-    return LangAS::opencl_constant;
+  // if (LangOpts.OpenCL)
+  //   return LangAS::opencl_constant;
   if (auto AS = getTarget().getConstantAddressSpace())
     return AS.getValue();
   return LangAS::Default;
@@ -3837,7 +3837,7 @@ static llvm::Constant *
 castStringLiteralToDefaultAddressSpace(CodeGenModule &CGM,
                                        llvm::GlobalVariable *GV) {
   llvm::Constant *Cast = GV;
-  if (!CGM.getLangOpts().OpenCL) {
+  // if (!CGM.getLangOpts().OpenCL) {
     if (auto AS = CGM.getTarget().getConstantAddressSpace()) {
       if (AS != LangAS::Default)
         Cast = CGM.getTargetCodeGenInfo().performAddrSpaceCast(
@@ -3845,7 +3845,7 @@ castStringLiteralToDefaultAddressSpace(CodeGenModule &CGM,
             GV->getValueType()->getPointerTo(
                 CGM.getContext().getTargetAddressSpace(LangAS::Default)));
     }
-  }
+  // }
   return Cast;
 }
 
@@ -3925,14 +3925,14 @@ void CodeGenModule::EmitGlobalVarDefinition(const VarDecl *D,
   // OpenCL global variables of sampler type are translated to function calls,
   // therefore no need to be translated.
   QualType ASTTy = D->getType();
-  if (getLangOpts().OpenCL && ASTTy->isSamplerT())
-    return;
+  // if (getLangOpts().OpenCL && ASTTy->isSamplerT())
+  //   return;
 
   // If this is OpenMP device, check if it is legal to emit this global
   // normally.
-  if (LangOpts.OpenMPIsDevice && OpenMPRuntime &&
-      OpenMPRuntime->emitTargetGlobalVariable(D))
-    return;
+  // if (LangOpts.OpenMPIsDevice && OpenMPRuntime &&
+  //     OpenMPRuntime->emitTargetGlobalVariable(D))
+  //   return;
 
   llvm::Constant *Init = nullptr;
   bool NeedsGlobalCtor = false;
@@ -4923,7 +4923,7 @@ QualType CodeGenModule::getObjCFastEnumerationStateType() {
 
     QualType FieldTypes[] = {
       Context.UnsignedLongTy,
-      Context.getPointerType(Context.getObjCIdType()),
+      // Context.getPointerType(Context.getObjCIdType()),
       Context.getPointerType(Context.UnsignedLongTy),
       Context.getConstantArrayType(Context.UnsignedLongTy,
                            llvm::APInt(32, 5), nullptr, ArrayType::Normal, 0)
@@ -5312,10 +5312,10 @@ void CodeGenModule::EmitDeclContext(const DeclContext *DC) {
     // ObjCImplDecl does not recursively visit them. We need to do that in
     // case they're nested inside another construct (LinkageSpecDecl /
     // ExportDecl) that does stop them from being considered "top-level".
-    if (auto *OID = dyn_cast<ObjCImplDecl>(I)) {
-      for (auto *M : OID->methods())
-        EmitTopLevelDecl(M);
-    }
+    // if (auto *OID = dyn_cast<ObjCImplDecl>(I)) {
+    //   for (auto *M : OID->methods())
+    //     EmitTopLevelDecl(M);
+    // }
 
     EmitTopLevelDecl(I);
   }
@@ -5495,8 +5495,8 @@ void CodeGenModule::EmitTopLevelDecl(Decl *D) {
     if (LangOpts.CUDA && LangOpts.CUDAIsDevice)
       break;
     // File-scope asm is ignored during device-side OpenMP compilation.
-    if (LangOpts.OpenMPIsDevice)
-      break;
+    // if (LangOpts.OpenMPIsDevice)
+    //   break;
     auto *AD = cast<FileScopeAsmDecl>(D);
     getModule().appendModuleInlineAsm(AD->getAsmString()->getString());
     break;
@@ -5549,24 +5549,24 @@ void CodeGenModule::EmitTopLevelDecl(Decl *D) {
     EmitDeclContext(cast<ExportDecl>(D));
     break;
 
-  case Decl::OMPThreadPrivate:
-    EmitOMPThreadPrivateDecl(cast<OMPThreadPrivateDecl>(D));
-    break;
+  // case Decl::OMPThreadPrivate:
+  //   EmitOMPThreadPrivateDecl(cast<OMPThreadPrivateDecl>(D));
+  //   break;
 
-  case Decl::OMPAllocate:
-    break;
+  // case Decl::OMPAllocate:
+  //   break;
 
-  case Decl::OMPDeclareReduction:
-    EmitOMPDeclareReduction(cast<OMPDeclareReductionDecl>(D));
-    break;
+  // case Decl::OMPDeclareReduction:
+  //   EmitOMPDeclareReduction(cast<OMPDeclareReductionDecl>(D));
+  //   break;
 
-  case Decl::OMPDeclareMapper:
-    EmitOMPDeclareMapper(cast<OMPDeclareMapperDecl>(D));
-    break;
+  // case Decl::OMPDeclareMapper:
+  //   EmitOMPDeclareMapper(cast<OMPDeclareMapperDecl>(D));
+  //   break;
 
-  case Decl::OMPRequires:
-    EmitOMPRequiresDecl(cast<OMPRequiresDecl>(D));
-    break;
+  // case Decl::OMPRequires:
+  //   EmitOMPRequiresDecl(cast<OMPRequiresDecl>(D));
+  //   break;
 
   default:
     // Make sure we handled everything we should, every other kind is a
@@ -5810,10 +5810,10 @@ llvm::Constant *CodeGenModule::GetAddrOfRTTIDescriptor(QualType Ty,
   // Return a bogus pointer if RTTI is disabled, unless it's for EH.
   // FIXME: should we even be calling this method if RTTI is disabled
   // and it's not for EH?
-  if ((!ForEH && !getLangOpts().RTTI) || getLangOpts().CUDAIsDevice ||
-      (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
-       getTriple().isNVPTX()))
-    return llvm::Constant::getNullValue(Int8PtrTy);
+  // if ((!ForEH && !getLangOpts().RTTI) || getLangOpts().CUDAIsDevice ||
+  //     (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
+  //      getTriple().isNVPTX()))
+  //   return llvm::Constant::getNullValue(Int8PtrTy);
 
   // if (ForEH && Ty->isObjCObjectPointerType() &&
   //     LangOpts.ObjCRuntime.isGNUFamily())
@@ -5822,23 +5822,23 @@ llvm::Constant *CodeGenModule::GetAddrOfRTTIDescriptor(QualType Ty,
   return getCXXABI().getAddrOfRTTIDescriptor(Ty);
 }
 
-void CodeGenModule::EmitOMPThreadPrivateDecl(const OMPThreadPrivateDecl *D) {
-  // Do not emit threadprivates in simd-only mode.
-  if (LangOpts.OpenMP && LangOpts.OpenMPSimd)
-    return;
-  for (auto RefExpr : D->varlists()) {
-    auto *VD = cast<VarDecl>(cast<DeclRefExpr>(RefExpr)->getDecl());
-    bool PerformInit =
-        VD->getAnyInitializer() &&
-        !VD->getAnyInitializer()->isConstantInitializer(getContext(),
-                                                        /*ForRef=*/false);
+// void CodeGenModule::EmitOMPThreadPrivateDecl(const OMPThreadPrivateDecl *D) {
+//   // Do not emit threadprivates in simd-only mode.
+//   if (LangOpts.OpenMP && LangOpts.OpenMPSimd)
+//     return;
+//   for (auto RefExpr : D->varlists()) {
+//     auto *VD = cast<VarDecl>(cast<DeclRefExpr>(RefExpr)->getDecl());
+//     bool PerformInit =
+//         VD->getAnyInitializer() &&
+//         !VD->getAnyInitializer()->isConstantInitializer(getContext(),
+//                                                         /*ForRef=*/false);
 
-    Address Addr(GetAddrOfGlobalVar(VD), getContext().getDeclAlign(VD));
-    if (auto InitFunction = getOpenMPRuntime().emitThreadPrivateVarDefinition(
-            VD, Addr, RefExpr->getBeginLoc(), PerformInit))
-      CXXGlobalInits.push_back(InitFunction);
-  }
-}
+//     Address Addr(GetAddrOfGlobalVar(VD), getContext().getDeclAlign(VD));
+//     if (auto InitFunction = getOpenMPRuntime().emitThreadPrivateVarDefinition(
+//             VD, Addr, RefExpr->getBeginLoc(), PerformInit))
+//       CXXGlobalInits.push_back(InitFunction);
+//   }
+// }
 
 llvm::Metadata *
 CodeGenModule::CreateMetadataIdentifierImpl(QualType T, MetadataTypeMap &Map,
@@ -5946,16 +5946,16 @@ llvm::SanitizerStatReport &CodeGenModule::getSanStats() {
 
   return *SanStats;
 }
-llvm::Value *
-CodeGenModule::createOpenCLIntToSamplerConversion(const Expr *E,
-                                                  CodeGenFunction &CGF) {
-  llvm::Constant *C = ConstantEmitter(CGF).emitAbstract(E, E->getType());
-  auto SamplerT = getOpenCLRuntime().getSamplerType(E->getType().getTypePtr());
-  auto FTy = llvm::FunctionType::get(SamplerT, {C->getType()}, false);
-  return CGF.Builder.CreateCall(CreateRuntimeFunction(FTy,
-                                "__translate_sampler_initializer"),
-                                {C});
-}
+// llvm::Value *
+// CodeGenModule::createOpenCLIntToSamplerConversion(const Expr *E,
+//                                                   CodeGenFunction &CGF) {
+//   llvm::Constant *C = ConstantEmitter(CGF).emitAbstract(E, E->getType());
+//   auto SamplerT = getOpenCLRuntime().getSamplerType(E->getType().getTypePtr());
+//   auto FTy = llvm::FunctionType::get(SamplerT, {C->getType()}, false);
+//   return CGF.Builder.CreateCall(CreateRuntimeFunction(FTy,
+//                                 "__translate_sampler_initializer"),
+//                                 {C});
+// }
 
 CharUnits CodeGenModule::getNaturalPointeeTypeAlignment(
     QualType T, LValueBaseInfo *BaseInfo, TBAAAccessInfo *TBAAInfo) {

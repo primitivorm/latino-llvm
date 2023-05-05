@@ -17,7 +17,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclTemplate.h"
-#include "latino/AST/OpenMPClause.h"
+// #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/Type.h"
 #include "latino/AST/TypeLoc.h"
@@ -59,32 +59,32 @@ int DeclarationName::compare(DeclarationName LHS, DeclarationName RHS) {
     return LII->getName().compare(RII->getName());
   }
 
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector: {
-    Selector LHSSelector = LHS.getObjCSelector();
-    Selector RHSSelector = RHS.getObjCSelector();
-    // getNumArgs for ZeroArgSelector returns 0, but we still need to compare.
-    if (LHS.getNameKind() == DeclarationName::ObjCZeroArgSelector &&
-        RHS.getNameKind() == DeclarationName::ObjCZeroArgSelector) {
-      return LHSSelector.getAsIdentifierInfo()->getName().compare(
-          RHSSelector.getAsIdentifierInfo()->getName());
-    }
-    unsigned LN = LHSSelector.getNumArgs(), RN = RHSSelector.getNumArgs();
-    for (unsigned I = 0, N = std::min(LN, RN); I != N; ++I) {
-      switch (LHSSelector.getNameForSlot(I).compare(
-          RHSSelector.getNameForSlot(I))) {
-      case -1:
-        return -1;
-      case 1:
-        return 1;
-      default:
-        break;
-      }
-    }
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector: {
+  //   Selector LHSSelector = LHS.getObjCSelector();
+  //   Selector RHSSelector = RHS.getObjCSelector();
+  //   // getNumArgs for ZeroArgSelector returns 0, but we still need to compare.
+  //   if (LHS.getNameKind() == DeclarationName::ObjCZeroArgSelector &&
+  //       RHS.getNameKind() == DeclarationName::ObjCZeroArgSelector) {
+  //     return LHSSelector.getAsIdentifierInfo()->getName().compare(
+  //         RHSSelector.getAsIdentifierInfo()->getName());
+  //   }
+  //   unsigned LN = LHSSelector.getNumArgs(), RN = RHSSelector.getNumArgs();
+  //   for (unsigned I = 0, N = std::min(LN, RN); I != N; ++I) {
+  //     switch (LHSSelector.getNameForSlot(I).compare(
+  //         RHSSelector.getNameForSlot(I))) {
+  //     case -1:
+  //       return -1;
+  //     case 1:
+  //       return 1;
+  //     default:
+  //       break;
+  //     }
+  //   }
 
-    return compareInt(LN, RN);
-  }
+  //   return compareInt(LN, RN);
+  // }
 
   case DeclarationName::CXXConstructorName:
   case DeclarationName::CXXDestructorName:
@@ -143,22 +143,22 @@ void DeclarationName::print(raw_ostream &OS,
       StringRef Name = II->getName();
       // If this is a mangled OpenMP variant name we strip off the mangling for
       // printing. It should not be visible to the user at all.
-      if (II->isMangledOpenMPVariantName()) {
-        std::pair<StringRef, StringRef> NameContextPair =
-            Name.split(getOpenMPVariantManglingSeparatorStr());
-        OS << NameContextPair.first << "["
-           << OMPTraitInfo(NameContextPair.second) << "]";
-      } else {
+      // if (II->isMangledOpenMPVariantName()) {
+      //   std::pair<StringRef, StringRef> NameContextPair =
+      //       Name.split(getOpenMPVariantManglingSeparatorStr());
+      //   OS << NameContextPair.first << "["
+      //      << OMPTraitInfo(NameContextPair.second) << "]";
+      // } else {
         OS << Name;
-      }
+      // }
     }
     return;
 
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
-    getObjCSelector().print(OS);
-    return;
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  //   getObjCSelector().print(OS);
+  //   return;
 
   case DeclarationName::CXXConstructorName:
     return printCXXConstructorDestructorName(getCXXNameType(), OS, Policy);
@@ -401,11 +401,11 @@ DeclarationNameLoc::DeclarationNameLoc(DeclarationName Name) {
   case DeclarationName::CXXLiteralOperatorName:
     CXXLiteralOperatorName.OpNameLoc = SourceLocation().getRawEncoding();
     break;
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
-    // FIXME: ?
-    break;
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  //   // FIXME: ?
+  //   break;
   case DeclarationName::CXXUsingDirective:
     break;
   }
@@ -414,9 +414,9 @@ DeclarationNameLoc::DeclarationNameLoc(DeclarationName Name) {
 bool DeclarationNameInfo::containsUnexpandedParameterPack() const {
   switch (Name.getNameKind()) {
   case DeclarationName::Identifier:
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
   case DeclarationName::CXXOperatorName:
   case DeclarationName::CXXLiteralOperatorName:
   case DeclarationName::CXXUsingDirective:
@@ -437,9 +437,9 @@ bool DeclarationNameInfo::containsUnexpandedParameterPack() const {
 bool DeclarationNameInfo::isInstantiationDependent() const {
   switch (Name.getNameKind()) {
   case DeclarationName::Identifier:
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
   case DeclarationName::CXXOperatorName:
   case DeclarationName::CXXLiteralOperatorName:
   case DeclarationName::CXXUsingDirective:
@@ -473,9 +473,9 @@ raw_ostream &latino::operator<<(raw_ostream &OS, DeclarationNameInfo DNInfo) {
 void DeclarationNameInfo::printName(raw_ostream &OS, PrintingPolicy Policy) const {
   switch (Name.getNameKind()) {
   case DeclarationName::Identifier:
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
   case DeclarationName::CXXOperatorName:
   case DeclarationName::CXXLiteralOperatorName:
   case DeclarationName::CXXUsingDirective:
@@ -527,11 +527,11 @@ SourceLocation DeclarationNameInfo::getEndLocPrivate() const {
       return NameLoc;
 
     // DNInfo work in progress: FIXME.
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
-  case DeclarationName::CXXUsingDirective:
-    return NameLoc;
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::CXXUsingDirective:
+  //   return NameLoc;
   }
   llvm_unreachable("Unexpected declaration name kind");
 }

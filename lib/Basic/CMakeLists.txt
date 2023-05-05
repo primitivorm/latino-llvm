@@ -54,7 +54,7 @@ add_latino_library(latinoBasic
   LangStandards.cpp
   Module.cpp
   # ObjCRuntime.cpp
-  OpenMPKinds.cpp
+  # OpenMPKinds.cpp
   OperatorPrecedence.cpp
   SanitizerBlacklist.cpp
   SanitizerSpecialCaseList.cpp

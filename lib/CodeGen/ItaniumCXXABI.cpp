@@ -3065,12 +3065,12 @@ static bool TypeInfoIsInStandardLibrary(const BuiltinType *Ty) {
     case BuiltinType::ULong:
     case BuiltinType::LongLong:
     case BuiltinType::ULongLong:
-    case BuiltinType::Half:
+    // case BuiltinType::Half:
     case BuiltinType::Float:
     case BuiltinType::Double:
     case BuiltinType::LongDouble:
-    case BuiltinType::Float16:
-    case BuiltinType::Float128:
+    // case BuiltinType::Float16:
+    // case BuiltinType::Float128:
     case BuiltinType::Char8:
     case BuiltinType::Char16:
     case BuiltinType::Char32:
@@ -4320,21 +4320,21 @@ static void InitCatchParam(CodeGenFunction &CGF,
       llvm::Value *CastExn =
         CGF.Builder.CreateBitCast(AdjustedExn, LLVMCatchTy, "exn.casted");
 
-      switch (CatchType.getQualifiers().getObjCLifetime()) {
-      case Qualifiers::OCL_Strong:
-        CastExn = CGF.EmitARCRetainNonBlock(CastExn);
-        LLVM_FALLTHROUGH;
+      // switch (CatchType.getQualifiers().getObjCLifetime()) {
+      // case Qualifiers::OCL_Strong:
+      //   CastExn = CGF.EmitARCRetainNonBlock(CastExn);
+      //   LLVM_FALLTHROUGH;
 
-      case Qualifiers::OCL_None:
-      case Qualifiers::OCL_ExplicitNone:
-      case Qualifiers::OCL_Autoreleasing:
-        CGF.Builder.CreateStore(CastExn, ParamAddr);
-        return;
+      // case Qualifiers::OCL_None:
+      // case Qualifiers::OCL_ExplicitNone:
+      // case Qualifiers::OCL_Autoreleasing:
+      //   CGF.Builder.CreateStore(CastExn, ParamAddr);
+      //   return;
 
-      case Qualifiers::OCL_Weak:
-        CGF.EmitARCInitWeak(ParamAddr, CastExn);
-        return;
-      }
+      // case Qualifiers::OCL_Weak:
+      //   CGF.EmitARCInitWeak(ParamAddr, CastExn);
+      //   return;
+      // }
       llvm_unreachable("bad ownership qualifier!");
     }
 

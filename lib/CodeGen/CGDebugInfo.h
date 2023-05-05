@@ -40,7 +40,7 @@ class ClassTemplateSpecializationDecl;
 class GlobalDecl;
 class ModuleMap;
 // class ObjCInterfaceDecl;
-// class ObjCIvarDecl;
+class ObjCIvarDecl;
 class UsingDecl;
 class VarDecl;
 enum class DynamicInitKind : unsigned;
@@ -184,9 +184,9 @@ class CGDebugInfo {
   void CollectContainingType(const CXXRecordDecl *RD,
                              llvm::DICompositeType *CT);
   /// Get Objective-C interface type.
-  llvm::DIType *CreateType(const ObjCInterfaceType *Ty, llvm::DIFile *F);
-  llvm::DIType *CreateTypeDefinition(const ObjCInterfaceType *Ty,
-                                     llvm::DIFile *F);
+  // llvm::DIType *CreateType(const ObjCInterfaceType *Ty, llvm::DIFile *F);
+  // llvm::DIType *CreateTypeDefinition(const ObjCInterfaceType *Ty,
+  //                                    llvm::DIFile *F);
   /// Get Objective-C object type.
   // llvm::DIType *CreateType(const ObjCObjectType *Ty, llvm::DIFile *F);
   // llvm::DIType *CreateType(const ObjCTypeParamType *Ty, llvm::DIFile *Unit);
@@ -683,7 +683,7 @@ private:
 
   /// Return selector name. This is used for debugging
   /// info.
-  StringRef getSelectorName(Selector S);
+  // StringRef getSelectorName(Selector S);
 
   /// Get class name including template argument list.
   StringRef getClassName(const RecordDecl *RD);

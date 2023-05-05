@@ -1161,31 +1161,31 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     SourceLocation ILoc = ConsumeToken();
 
     // Support 'Class.property' and 'super.property' notation.
-    if (getLangOpts().ObjC && Tok.is(tok::period) &&
-        (Actions.getTypeName(II, ILoc, getCurScope()) ||
-         // Allow the base to be 'super' if in an objc-method.
-         (&II == Ident_super && getCurScope()->isInObjcMethodScope()))) {
-      ConsumeToken();
+    // if (getLangOpts().ObjC && Tok.is(tok::period) &&
+    //     (Actions.getTypeName(II, ILoc, getCurScope()) ||
+    //      // Allow the base to be 'super' if in an objc-method.
+    //      (&II == Ident_super && getCurScope()->isInObjcMethodScope()))) {
+    //   ConsumeToken();
 
-      // if (Tok.is(tok::code_completion) && &II != Ident_super) {
-      //   Actions.CodeCompleteObjCClassPropertyRefExpr(
-      //       getCurScope(), II, ILoc, ExprStatementTokLoc == ILoc);
-      //   cutOffParsing();
-      //   return ExprError();
-      // }
-      // Allow either an identifier or the keyword 'class' (in C++).
-      if (Tok.isNot(tok::identifier) &&
-          !(getLangOpts().CPlusPlus && Tok.is(tok::kw_clase))) {
-        Diag(Tok, diag::err_expected_property_name);
-        return ExprError();
-      }
-      IdentifierInfo &PropertyName = *Tok.getIdentifierInfo();
-      SourceLocation PropertyLoc = ConsumeToken();
+    //   // if (Tok.is(tok::code_completion) && &II != Ident_super) {
+    //   //   Actions.CodeCompleteObjCClassPropertyRefExpr(
+    //   //       getCurScope(), II, ILoc, ExprStatementTokLoc == ILoc);
+    //   //   cutOffParsing();
+    //   //   return ExprError();
+    //   // }
+    //   // Allow either an identifier or the keyword 'class' (in C++).
+    //   if (Tok.isNot(tok::identifier) &&
+    //       !(getLangOpts().CPlusPlus && Tok.is(tok::kw_clase))) {
+    //     Diag(Tok, diag::err_expected_property_name);
+    //     return ExprError();
+    //   }
+    //   IdentifierInfo &PropertyName = *Tok.getIdentifierInfo();
+    //   SourceLocation PropertyLoc = ConsumeToken();
 
-      Res = Actions.ActOnClassPropertyRefExpr(II, PropertyName,
-                                              ILoc, PropertyLoc);
-      break;
-    }
+    //   Res = Actions.ActOnClassPropertyRefExpr(II, PropertyName,
+    //                                           ILoc, PropertyLoc);
+    //   break;
+    // }
 
     // In an Objective-C method, if we have "super" followed by an identifier,
     // the token sequence is ill-formed. However, if there's a ':' or ']' after
@@ -1822,15 +1822,15 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   // These can be followed by postfix-expr pieces.
   PreferredType = SavedType;
   Res = ParsePostfixExpressionSuffix(Res);
-  if (getLangOpts().OpenCL)
-    if (Expr *PostfixExpr = Res.get()) {
-      QualType Ty = PostfixExpr->getType();
-      if (!Ty.isNull() && Ty->isFunctionType()) {
-        Diag(PostfixExpr->getExprLoc(),
-             diag::err_opencl_taking_function_address_parser);
-        return ExprError();
-      }
-    }
+  // if (getLangOpts().OpenCL)
+  //   if (Expr *PostfixExpr = Res.get()) {
+  //     QualType Ty = PostfixExpr->getType();
+  //     if (!Ty.isNull() && Ty->isFunctionType()) {
+  //       Diag(PostfixExpr->getExprLoc(),
+  //            diag::err_opencl_taking_function_address_parser);
+  //       return ExprError();
+  //     }
+  //   }
 
   return Res;
 }
@@ -1916,7 +1916,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       if (getLangOpts().CPlusPlus11 && Tok.is(tok::l_brace)) {
         Diag(Tok, diag::warn_cxx98_compat_generalized_initializer_lists);
         Idx = ParseBraceInitializer();
-      } else if (getLangOpts().OpenMP) {
+      } /*else if (getLangOpts().OpenMP) {
         ColonProtectionRAIIObject RAII(*this);
         // Parse [: or [ expr or [ expr :
         if (!Tok.is(tok::colon)) {
@@ -1941,7 +1941,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
             Stride = ParseExpression();
           }
         }
-      } else
+      }*/ else
         Idx = ParseExpression();
 
       SourceLocation RLoc = Tok.getLocation();
@@ -1951,14 +1951,14 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       Length = Actions.CorrectDelayedTyposInExpr(Length);
       if (!LHS.isInvalid() && !Idx.isInvalid() && !Length.isInvalid() &&
           !Stride.isInvalid() && Tok.is(tok::r_square)) {
-        if (ColonLocFirst.isValid() || ColonLocSecond.isValid()) {
-          LHS = Actions.ActOnOMPArraySectionExpr(
-              LHS.get(), Loc, Idx.get(), ColonLocFirst, ColonLocSecond,
-              Length.get(), Stride.get(), RLoc);
-        } else {
+        // if (ColonLocFirst.isValid() || ColonLocSecond.isValid()) {
+        //   LHS = Actions.ActOnOMPArraySectionExpr(
+        //       LHS.get(), Loc, Idx.get(), ColonLocFirst, ColonLocSecond,
+        //       Length.get(), Stride.get(), RLoc);
+        // } else {
           LHS = Actions.ActOnArraySubscriptExpr(getCurScope(), LHS.get(), Loc,
                                                 Idx.get(), RLoc);
-        }
+        // }
       } else {
         LHS = ExprError();
         Idx = ExprError();
@@ -2201,11 +2201,11 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
         LHS = ExprError();
       }
 
-      if (!LHS.isInvalid())
-        LHS = Actions.ActOnMemberAccessExpr(getCurScope(), LHS.get(), OpLoc,
-                                            OpKind, SS, TemplateKWLoc, Name,
-                                 CurParsedObjCImpl ? CurParsedObjCImpl->Dcl
-                                                   : nullptr);
+      // if (!LHS.isInvalid())
+      //   LHS = Actions.ActOnMemberAccessExpr(getCurScope(), LHS.get(), OpLoc,
+      //                                       OpKind, SS, TemplateKWLoc, Name,
+      //                            CurParsedObjCImpl ? CurParsedObjCImpl->Dcl
+      //                                              : nullptr);
       if (!LHS.isInvalid()) {
         if (Tok.is(tok::less))
           checkPotentialAngleBracket(LHS);
@@ -2970,47 +2970,47 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
         return ParseCompoundLiteralExpression(Ty.get(), OpenLoc, RParenLoc);
       }
 
-      if (Tok.is(tok::l_paren)) {
-        // This could be OpenCL vector Literals
-        if (getLangOpts().OpenCL)
-        {
-          TypeResult Ty;
-          {
-            InMessageExpressionRAIIObject InMessage(*this, false);
-            Ty = Actions.ActOnTypeName(getCurScope(), DeclaratorInfo);
-          }
-          if(Ty.isInvalid())
-          {
-             return ExprError();
-          }
-          QualType QT = Ty.get().get().getCanonicalType();
-          if (QT->isVectorType())
-          {
-            // We parsed '(' vector-type-name ')' followed by '('
+      // if (Tok.is(tok::l_paren)) {
+      //   // This could be OpenCL vector Literals
+      //   if (getLangOpts().OpenCL)
+      //   {
+      //     TypeResult Ty;
+      //     {
+      //       InMessageExpressionRAIIObject InMessage(*this, false);
+      //       Ty = Actions.ActOnTypeName(getCurScope(), DeclaratorInfo);
+      //     }
+      //     if(Ty.isInvalid())
+      //     {
+      //        return ExprError();
+      //     }
+      //     QualType QT = Ty.get().get().getCanonicalType();
+      //     if (QT->isVectorType())
+      //     {
+      //       // We parsed '(' vector-type-name ')' followed by '('
 
-            // Parse the cast-expression that follows it next.
-            // isVectorLiteral = true will make sure we don't parse any
-            // Postfix expression yet
-            Result = ParseCastExpression(/*isUnaryExpression=*/AnyCastExpr,
-                                         /*isAddressOfOperand=*/false,
-                                         /*isTypeCast=*/IsTypeCast,
-                                         /*isVectorLiteral=*/true);
+      //       // Parse the cast-expression that follows it next.
+      //       // isVectorLiteral = true will make sure we don't parse any
+      //       // Postfix expression yet
+      //       Result = ParseCastExpression(/*isUnaryExpression=*/AnyCastExpr,
+      //                                    /*isAddressOfOperand=*/false,
+      //                                    /*isTypeCast=*/IsTypeCast,
+      //                                    /*isVectorLiteral=*/true);
 
-            if (!Result.isInvalid()) {
-              Result = Actions.ActOnCastExpr(getCurScope(), OpenLoc,
-                                             DeclaratorInfo, CastTy,
-                                             RParenLoc, Result.get());
-            }
+      //       if (!Result.isInvalid()) {
+      //         Result = Actions.ActOnCastExpr(getCurScope(), OpenLoc,
+      //                                        DeclaratorInfo, CastTy,
+      //                                        RParenLoc, Result.get());
+      //       }
 
-            // After we performed the cast we can check for postfix-expr pieces.
-            if (!Result.isInvalid()) {
-              Result = ParsePostfixExpressionSuffix(Result);
-            }
+      //       // After we performed the cast we can check for postfix-expr pieces.
+      //       if (!Result.isInvalid()) {
+      //         Result = ParsePostfixExpressionSuffix(Result);
+      //       }
 
-            return Result;
-          }
-        }
-      }
+      //       return Result;
+      //     }
+      //   }
+      // }
 
       if (ExprType == CastExpr) {
         // We parsed '(' type-name ')' and the thing after it wasn't a '{'.

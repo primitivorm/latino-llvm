@@ -26,7 +26,7 @@
 #include "latino/ASTMatchers/Dynamic/VariantValue.h"
 #include "latino/Basic/AttrKinds.h"
 #include "latino/Basic/LLVM.h"
-#include "latino/Basic/OpenMPKinds.h"
+// #include "latino/Basic/OpenMPKinds.h"
 #include "latino/Basic/TypeTraits.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/None.h"
@@ -211,28 +211,28 @@ public:
   static llvm::Optional<std::string> getBestGuess(const VariantValue &Value);
 };
 
-template <> struct ArgTypeTraits<OpenMPClauseKind> {
-private:
-  static Optional<OpenMPClauseKind> getClauseKind(llvm::StringRef ClauseKind) {
-    return llvm::StringSwitch<Optional<OpenMPClauseKind>>(ClauseKind)
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) .Case(#Enum, llvm::omp::Clause::Enum)
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
-        .Default(llvm::None);
-  }
+// template <> struct ArgTypeTraits<OpenMPClauseKind> {
+// private:
+//   static Optional<OpenMPClauseKind> getClauseKind(llvm::StringRef ClauseKind) {
+//     return llvm::StringSwitch<Optional<OpenMPClauseKind>>(ClauseKind)
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) .Case(#Enum, llvm::omp::Clause::Enum)
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
+//         .Default(llvm::None);
+//   }
 
-public:
-  static bool is(const VariantValue &Value) {
-    return Value.isString() && getClauseKind(Value.getString());
-  }
+// public:
+//   static bool is(const VariantValue &Value) {
+//     return Value.isString() && getClauseKind(Value.getString());
+//   }
 
-  static OpenMPClauseKind get(const VariantValue &Value) {
-    return *getClauseKind(Value.getString());
-  }
+//   static OpenMPClauseKind get(const VariantValue &Value) {
+//     return *getClauseKind(Value.getString());
+//   }
 
-  static ArgKind getKind() { return ArgKind(ArgKind::AK_String); }
+//   static ArgKind getKind() { return ArgKind(ArgKind::AK_String); }
 
-  static llvm::Optional<std::string> getBestGuess(const VariantValue &Value);
-};
+//   static llvm::Optional<std::string> getBestGuess(const VariantValue &Value);
+// };
 
 template <> struct ArgTypeTraits<UnaryExprOrTypeTrait> {
 private:

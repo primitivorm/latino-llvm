@@ -19,8 +19,8 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
-#include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprConcepts.h"
@@ -63,8 +63,8 @@ static const DeclContext *getEffectiveDeclContext(const Decl *D) {
   }
 
   const DeclContext *DC = D->getDeclContext();
-  if (isa<CapturedDecl>(DC) || isa<OMPDeclareReductionDecl>(DC) ||
-      isa<OMPDeclareMapperDecl>(DC)) {
+  if (isa<CapturedDecl>(DC) /*|| isa<OMPDeclareReductionDecl>(DC) ||
+      isa<OMPDeclareMapperDecl>(DC)*/) {
     return getEffectiveDeclContext(cast<Decl>(DC));
   }
 
@@ -1250,10 +1250,10 @@ void CXXNameMangler::mangleUnresolvedName(
       llvm_unreachable("Can't mangle a using directive name!");
     case DeclarationName::CXXDeductionGuideName:
       llvm_unreachable("Can't mangle a deduction guide name!");
-    case DeclarationName::ObjCMultiArgSelector:
-    case DeclarationName::ObjCOneArgSelector:
-    case DeclarationName::ObjCZeroArgSelector:
-      llvm_unreachable("Can't mangle Objective-C selector names here!");
+    // case DeclarationName::ObjCMultiArgSelector:
+    // case DeclarationName::ObjCOneArgSelector:
+    // case DeclarationName::ObjCZeroArgSelector:
+    //   llvm_unreachable("Can't mangle Objective-C selector names here!");
   }
 
   // The <simple-id> and on <operator-name> productions end in an optional
@@ -1444,10 +1444,10 @@ void CXXNameMangler::mangleUnqualifiedName(GlobalDecl GD,
     break;
   }
 
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
-    llvm_unreachable("Can't mangle Objective-C selector names here!");
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  //   llvm_unreachable("Can't mangle Objective-C selector names here!");
 
   case DeclarationName::CXXConstructorName: {
     const CXXRecordDecl *InheritedFrom = nullptr;
@@ -2221,9 +2221,9 @@ void CXXNameMangler::mangleOperatorName(DeclarationName Name, unsigned Arity) {
   case DeclarationName::CXXDeductionGuideName:
   case DeclarationName::CXXUsingDirective:
   case DeclarationName::Identifier:
-  case DeclarationName::ObjCMultiArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCZeroArgSelector:
     llvm_unreachable("Not an operator name");
 
   case DeclarationName::CXXConversionFunctionName:
@@ -2423,40 +2423,40 @@ void CXXNameMangler::mangleQualifiers(Qualifiers Quals, const DependentAddressSp
   //
   // Note: we emit __weak first to preserve the order as
   // required by the Itanium ABI.
-  if (Quals.getObjCLifetime() == Qualifiers::OCL_Weak)
-    mangleVendorQualifier("__weak");
+  // if (Quals.getObjCLifetime() == Qualifiers::OCL_Weak)
+  //   mangleVendorQualifier("__weak");
 
   // __unaligned (from -fms-extensions)
   if (Quals.hasUnaligned())
     mangleVendorQualifier("__unaligned");
 
   // Remaining ARC ownership qualifiers.
-  switch (Quals.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-    break;
+  // switch (Quals.getObjCLifetime()) {
+  // case Qualifiers::OCL_None:
+  //   break;
 
-  case Qualifiers::OCL_Weak:
-    // Do nothing as we already handled this case above.
-    break;
+  // case Qualifiers::OCL_Weak:
+  //   // Do nothing as we already handled this case above.
+  //   break;
 
-  case Qualifiers::OCL_Strong:
-    mangleVendorQualifier("__strong");
-    break;
+  // case Qualifiers::OCL_Strong:
+  //   mangleVendorQualifier("__strong");
+  //   break;
 
-  case Qualifiers::OCL_Autoreleasing:
-    mangleVendorQualifier("__autoreleasing");
-    break;
+  // case Qualifiers::OCL_Autoreleasing:
+  //   mangleVendorQualifier("__autoreleasing");
+  //   break;
 
-  case Qualifiers::OCL_ExplicitNone:
-    // The __unsafe_unretained qualifier is *not* mangled, so that
-    // __unsafe_unretained types in ARC produce the same manglings as the
-    // equivalent (but, naturally, unqualified) types in non-ARC, providing
-    // better ABI compatibility.
-    //
-    // It's safe to do this because unqualified 'id' won't show up
-    // in any type signatures that need to be mangled.
-    break;
-  }
+  // case Qualifiers::OCL_ExplicitNone:
+  //   // The __unsafe_unretained qualifier is *not* mangled, so that
+  //   // __unsafe_unretained types in ARC produce the same manglings as the
+  //   // equivalent (but, naturally, unqualified) types in non-ARC, providing
+  //   // better ABI compatibility.
+  //   //
+  //   // It's safe to do this because unqualified 'id' won't show up
+  //   // in any type signatures that need to be mangled.
+  //   break;
+  // }
 
   // <CV-qualifiers> ::= [r] [V] [K]    # restrict (C99), volatile, const
   if (Quals.hasRestrict())
@@ -2498,8 +2498,8 @@ static bool isTypeSubstitutable(Qualifiers Quals, const Type *Ty,
     return true;
   // if (Ty->isSpecificBuiltinType(BuiltinType::ObjCSel))
   //   return true;
-  if (Ty->isOpenCLSpecificType())
-    return true;
+  // if (Ty->isOpenCLSpecificType())
+  //   return true;
   if (Ty->isBuiltinType())
     return false;
   // Through to Clang 6.0, we accidentally treated undeduced auto types as
@@ -2712,9 +2712,9 @@ void CXXNameMangler::mangleType(const BuiltinType *T) {
   case BuiltinType::Int128:
     Out << 'n';
     break;
-  case BuiltinType::Float16:
-    Out << "DF16_";
-    break;
+  // case BuiltinType::Float16:
+  //   Out << "DF16_";
+  //   break;
   case BuiltinType::ShortAccum:
   case BuiltinType::Accum:
   case BuiltinType::LongAccum:
@@ -2740,31 +2740,31 @@ void CXXNameMangler::mangleType(const BuiltinType *T) {
   case BuiltinType::SatUFract:
   case BuiltinType::SatULongFract:
     llvm_unreachable("Fixed point types are disabled for c++");
-  case BuiltinType::Half:
-    Out << "Dh";
-    break;
+  // case BuiltinType::Half:
+  //   Out << "Dh";
+  //   break;
   case BuiltinType::Float:
     Out << 'f';
     break;
   case BuiltinType::Double:
     Out << 'd';
     break;
-  case BuiltinType::LongDouble: {
-    const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
-                                   getASTContext().getLangOpts().OpenMPIsDevice
-                               ? getASTContext().getAuxTargetInfo()
-                               : &getASTContext().getTargetInfo();
-    Out << TI->getLongDoubleMangling();
-    break;
-  }
-  case BuiltinType::Float128: {
-    const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
-                                   getASTContext().getLangOpts().OpenMPIsDevice
-                               ? getASTContext().getAuxTargetInfo()
-                               : &getASTContext().getTargetInfo();
-    Out << TI->getFloat128Mangling();
-    break;
-  }
+  // case BuiltinType::LongDouble: {
+  //   const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
+  //                                  getASTContext().getLangOpts().OpenMPIsDevice
+  //                              ? getASTContext().getAuxTargetInfo()
+  //                              : &getASTContext().getTargetInfo();
+  //   Out << TI->getLongDoubleMangling();
+  //   break;
+  // }
+  // case BuiltinType::Float128: {
+  //   const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
+  //                                  getASTContext().getLangOpts().OpenMPIsDevice
+  //                              ? getASTContext().getAuxTargetInfo()
+  //                              : &getASTContext().getTargetInfo();
+  //   Out << TI->getFloat128Mangling();
+  //   break;
+  // }
   case BuiltinType::BFloat16: {
     const TargetInfo *TI = &getASTContext().getTargetInfo();
     Out << TI->getBFloat16Mangling();
@@ -2995,11 +2995,11 @@ void CXXNameMangler::mangleBareFunctionType(const FunctionProtoType *Proto,
 
     // Mangle the return type without any direct ARC ownership qualifiers.
     QualType ReturnTy = Proto->getReturnType();
-    if (ReturnTy.getObjCLifetime()) {
-      auto SplitReturnTy = ReturnTy.split();
-      SplitReturnTy.Quals.removeObjCLifetime();
-      ReturnTy = getASTContext().getQualifiedType(SplitReturnTy);
-    }
+    // if (ReturnTy.getObjCLifetime()) {
+    //   auto SplitReturnTy = ReturnTy.split();
+    //   SplitReturnTy.Quals.removeObjCLifetime();
+    //   ReturnTy = getASTContext().getQualifiedType(SplitReturnTy);
+    // }
     mangleType(ReturnTy);
 
     FunctionTypeDepth.leaveResultType();
@@ -3194,7 +3194,7 @@ void CXXNameMangler::mangleNeonVectorType(const VectorType *T) {
     case BuiltinType::ULongLong: EltName = "uint64_t"; break;
     case BuiltinType::Double:    EltName = "float64_t"; break;
     case BuiltinType::Float:     EltName = "float32_t"; break;
-    case BuiltinType::Half:      EltName = "float16_t"; break;
+    // case BuiltinType::Half:      EltName = "float16_t"; break;
     case BuiltinType::BFloat16:  EltName = "bfloat16_t"; break;
     default:
       llvm_unreachable("unexpected Neon vector element type");
@@ -3241,8 +3241,8 @@ static StringRef mangleAArch64VectorBase(const BuiltinType *EltType) {
   case BuiltinType::ULong:
   case BuiltinType::ULongLong:
     return "Uint64";
-  case BuiltinType::Half:
-    return "Float16";
+  // case BuiltinType::Half:
+  //   return "Float16";
   case BuiltinType::Float:
     return "Float32";
   case BuiltinType::Double:
@@ -3400,9 +3400,9 @@ void CXXNameMangler::mangleType(const PackExpansionType *T) {
   mangleType(T->getPattern());
 }
 
-void CXXNameMangler::mangleType(const ObjCInterfaceType *T) {
-  mangleSourceName(T->getDecl()->getIdentifier());
-}
+// void CXXNameMangler::mangleType(const ObjCInterfaceType *T) {
+//   mangleSourceName(T->getDecl()->getIdentifier());
+// }
 
 // void CXXNameMangler::mangleType(const ObjCObjectType *T) {
 //   // Treat __kindof as a vendor extended type qualifier.
@@ -3796,9 +3796,9 @@ recurse:
   case Expr::MSPropertySubscriptExprClass:
   case Expr::TypoExprClass: // This should no longer exist in the AST by now.
   case Expr::RecoveryExprClass:
-  case Expr::OMPArraySectionExprClass:
-  case Expr::OMPArrayShapingExprClass:
-  case Expr::OMPIteratorExprClass:
+  // case Expr::OMPArraySectionExprClass:
+  // case Expr::OMPArrayShapingExprClass:
+  // case Expr::OMPIteratorExprClass:
   case Expr::CXXInheritedCtorInitExprClass:
     llvm_unreachable("unexpected statement kind");
 
@@ -3838,7 +3838,7 @@ recurse:
   case Expr::VAArgExprClass:
   case Expr::CUDAKernelCallExprClass:
   case Expr::AsTypeExprClass:
-  // case Expr::PseudoObjectExprClass:
+  case Expr::PseudoObjectExprClass:
   case Expr::AtomicExprClass:
   case Expr::SourceLocExprClass:
   case Expr::FixedPointLiteralClass:
@@ -4300,14 +4300,14 @@ recurse:
     goto recurse;
   }
 
-  case Expr::ObjCBridgedCastExprClass: {
-    // Mangle ownership casts as a vendor extended operator __bridge,
-    // __bridge_transfer, or __bridge_retain.
-    StringRef Kind = cast<ObjCBridgedCastExpr>(E)->getBridgeKindName();
-    Out << "v1U" << Kind.size() << Kind;
-  }
+  // case Expr::ObjCBridgedCastExprClass: {
+  //   // Mangle ownership casts as a vendor extended operator __bridge,
+  //   // __bridge_transfer, or __bridge_retain.
+  //   StringRef Kind = cast<ObjCBridgedCastExpr>(E)->getBridgeKindName();
+  //   Out << "v1U" << Kind.size() << Kind;
+  // }
   // Fall through to mangle the cast itself.
-  LLVM_FALLTHROUGH;
+  // LLVM_FALLTHROUGH;
 
   case Expr::CStyleCastExprClass:
     mangleCastExpression(E, "cv");

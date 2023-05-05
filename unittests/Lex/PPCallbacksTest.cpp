@@ -256,53 +256,53 @@ protected:
     return Callbacks->Results;
   }
 
-  PragmaOpenCLExtensionCallbacks::CallbackParameters
-  PragmaOpenCLExtensionCall(const char *SourceText) {
-    LangOptions OpenCLLangOpts;
-    OpenCLLangOpts.OpenCL = 1;
+  // PragmaOpenCLExtensionCallbacks::CallbackParameters
+  // PragmaOpenCLExtensionCall(const char *SourceText) {
+  //   LangOptions OpenCLLangOpts;
+  //   OpenCLLangOpts.OpenCL = 1;
 
-    std::unique_ptr<llvm::MemoryBuffer> SourceBuf =
-        llvm::MemoryBuffer::getMemBuffer(SourceText, "test.cl");
-    SourceMgr.setMainFileID(SourceMgr.createFileID(std::move(SourceBuf)));
+  //   std::unique_ptr<llvm::MemoryBuffer> SourceBuf =
+  //       llvm::MemoryBuffer::getMemBuffer(SourceText, "test.cl");
+  //   SourceMgr.setMainFileID(SourceMgr.createFileID(std::move(SourceBuf)));
 
-    TrivialModuleLoader ModLoader;
-    HeaderSearch HeaderInfo(std::make_shared<HeaderSearchOptions>(), SourceMgr,
-                            Diags, OpenCLLangOpts, Target.get());
+  //   TrivialModuleLoader ModLoader;
+  //   HeaderSearch HeaderInfo(std::make_shared<HeaderSearchOptions>(), SourceMgr,
+  //                           Diags, OpenCLLangOpts, Target.get());
 
-    Preprocessor PP(std::make_shared<PreprocessorOptions>(), Diags,
-                    OpenCLLangOpts, SourceMgr, HeaderInfo, ModLoader,
-                    /*IILookup =*/nullptr,
-                    /*OwnsHeaderSearch =*/false);
-    PP.Initialize(*Target);
+  //   Preprocessor PP(std::make_shared<PreprocessorOptions>(), Diags,
+  //                   OpenCLLangOpts, SourceMgr, HeaderInfo, ModLoader,
+  //                   /*IILookup =*/nullptr,
+  //                   /*OwnsHeaderSearch =*/false);
+  //   PP.Initialize(*Target);
 
-    // parser actually sets correct pragma handlers for preprocessor
-    // according to LangOptions, so we init Parser to register opencl
-    // pragma handlers
-    ASTContext Context(OpenCLLangOpts, SourceMgr, PP.getIdentifierTable(),
-                       PP.getSelectorTable(), PP.getBuiltinInfo());
-    Context.InitBuiltinTypes(*Target);
+  //   // parser actually sets correct pragma handlers for preprocessor
+  //   // according to LangOptions, so we init Parser to register opencl
+  //   // pragma handlers
+  //   ASTContext Context(OpenCLLangOpts, SourceMgr, PP.getIdentifierTable(),
+  //                      PP.getSelectorTable(), PP.getBuiltinInfo());
+  //   Context.InitBuiltinTypes(*Target);
 
-    ASTConsumer Consumer;
-    Sema S(PP, Context, Consumer);
-    Parser P(PP, S, false);
-    PragmaOpenCLExtensionCallbacks* Callbacks = new PragmaOpenCLExtensionCallbacks;
-    PP.addPPCallbacks(std::unique_ptr<PPCallbacks>(Callbacks));
+  //   ASTConsumer Consumer;
+  //   Sema S(PP, Context, Consumer);
+  //   Parser P(PP, S, false);
+  //   PragmaOpenCLExtensionCallbacks* Callbacks = new PragmaOpenCLExtensionCallbacks;
+  //   PP.addPPCallbacks(std::unique_ptr<PPCallbacks>(Callbacks));
 
-    // Lex source text.
-    PP.EnterMainSourceFile();
-    while (true) {
-      Token Tok;
-      PP.Lex(Tok);
-      if (Tok.is(tok::eof))
-        break;
-    }
+  //   // Lex source text.
+  //   PP.EnterMainSourceFile();
+  //   while (true) {
+  //     Token Tok;
+  //     PP.Lex(Tok);
+  //     if (Tok.is(tok::eof))
+  //       break;
+  //   }
 
-    PragmaOpenCLExtensionCallbacks::CallbackParameters RetVal = {
-      Callbacks->Name,
-      Callbacks->State
-    };
-    return RetVal;
-  }
+  //   PragmaOpenCLExtensionCallbacks::CallbackParameters RetVal = {
+  //     Callbacks->Name,
+  //     Callbacks->State
+  //   };
+  //   return RetVal;
+  // }
 };
 
 TEST_F(PPCallbacksTest, UserFileCharacteristics) {
@@ -400,29 +400,29 @@ TEST_F(PPCallbacksTest, TrigraphInMacro) {
   ASSERT_EQ("\"tri\?\?-graph.h\"", GetSourceString(Range));
 }
 
-TEST_F(PPCallbacksTest, OpenCLExtensionPragmaEnabled) {
-  const char* Source =
-    "#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n";
+// TEST_F(PPCallbacksTest, OpenCLExtensionPragmaEnabled) {
+//   const char* Source =
+//     "#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n";
 
-  PragmaOpenCLExtensionCallbacks::CallbackParameters Parameters =
-    PragmaOpenCLExtensionCall(Source);
+//   PragmaOpenCLExtensionCallbacks::CallbackParameters Parameters =
+//     PragmaOpenCLExtensionCall(Source);
 
-  ASSERT_EQ("cl_khr_fp64", Parameters.Name);
-  unsigned ExpectedState = 1;
-  ASSERT_EQ(ExpectedState, Parameters.State);
-}
+//   ASSERT_EQ("cl_khr_fp64", Parameters.Name);
+//   unsigned ExpectedState = 1;
+//   ASSERT_EQ(ExpectedState, Parameters.State);
+// }
 
-TEST_F(PPCallbacksTest, OpenCLExtensionPragmaDisabled) {
-  const char* Source =
-    "#pragma OPENCL EXTENSION cl_khr_fp16 : disable\n";
+// TEST_F(PPCallbacksTest, OpenCLExtensionPragmaDisabled) {
+//   const char* Source =
+//     "#pragma OPENCL EXTENSION cl_khr_fp16 : disable\n";
 
-  PragmaOpenCLExtensionCallbacks::CallbackParameters Parameters =
-    PragmaOpenCLExtensionCall(Source);
+//   PragmaOpenCLExtensionCallbacks::CallbackParameters Parameters =
+//     PragmaOpenCLExtensionCall(Source);
 
-  ASSERT_EQ("cl_khr_fp16", Parameters.Name);
-  unsigned ExpectedState = 0;
-  ASSERT_EQ(ExpectedState, Parameters.State);
-}
+//   ASSERT_EQ("cl_khr_fp16", Parameters.Name);
+//   unsigned ExpectedState = 0;
+//   ASSERT_EQ(ExpectedState, Parameters.State);
+// }
 
 TEST_F(PPCallbacksTest, DirectiveExprRanges) {
   const auto &Results1 = DirectiveExprRange("#if FLUZZY_FLOOF\n#endif\n");

@@ -14,14 +14,14 @@
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
 // #include "CGObjCRuntime.h"
-#include "CGOpenMPRuntime.h"
+// #include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/AST/StmtVisitor.h"
@@ -524,23 +524,23 @@ public:
   //   return V;
   // }
 
-  Value *VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
-    VersionTuple Version = E->getVersion();
+  // Value *VisitObjCAvailabilityCheckExpr(ObjCAvailabilityCheckExpr *E) {
+  //   VersionTuple Version = E->getVersion();
 
-    // If we're checking for a platform older than our minimum deployment
-    // target, we can fold the check away.
-    if (Version <= CGF.CGM.getTarget().getPlatformMinVersion())
-      return llvm::ConstantInt::get(Builder.getInt1Ty(), 1);
+  //   // If we're checking for a platform older than our minimum deployment
+  //   // target, we can fold the check away.
+  //   if (Version <= CGF.CGM.getTarget().getPlatformMinVersion())
+  //     return llvm::ConstantInt::get(Builder.getInt1Ty(), 1);
 
-    Optional<unsigned> Min = Version.getMinor(), SMin = Version.getSubminor();
-    llvm::Value *Args[] = {
-        llvm::ConstantInt::get(CGF.CGM.Int32Ty, Version.getMajor()),
-        llvm::ConstantInt::get(CGF.CGM.Int32Ty, Min ? *Min : 0),
-        llvm::ConstantInt::get(CGF.CGM.Int32Ty, SMin ? *SMin : 0),
-    };
+  //   Optional<unsigned> Min = Version.getMinor(), SMin = Version.getSubminor();
+  //   llvm::Value *Args[] = {
+  //       llvm::ConstantInt::get(CGF.CGM.Int32Ty, Version.getMajor()),
+  //       llvm::ConstantInt::get(CGF.CGM.Int32Ty, Min ? *Min : 0),
+  //       llvm::ConstantInt::get(CGF.CGM.Int32Ty, SMin ? *SMin : 0),
+  //   };
 
-    return CGF.EmitBuiltinAvailable(Args);
-  }
+  //   return CGF.EmitBuiltinAvailable(Args);
+  // }
 
   Value *VisitArraySubscriptExpr(ArraySubscriptExpr *E);
   Value *VisitMatrixSubscriptExpr(MatrixSubscriptExpr *E);
@@ -2177,17 +2177,17 @@ Value *ScalarExprEmitter::VisitCastExpr(CastExpr *CE) {
     return CGF.CGM.getCXXABI().EmitMemberPointerConversion(CGF, CE, Src);
   }
 
-  case CK_ARCProduceObject:
-    return CGF.EmitARCRetainScalarExpr(E);
-  case CK_ARCConsumeObject:
-    return CGF.EmitObjCConsumeObject(E->getType(), Visit(E));
-  case CK_ARCReclaimReturnedObject:
-    return CGF.EmitARCReclaimReturnedObject(E, /*allowUnsafe*/ Ignored);
-  case CK_ARCExtendBlockObject:
-    return CGF.EmitARCExtendBlockObject(E);
+  // case CK_ARCProduceObject:
+  //   return CGF.EmitARCRetainScalarExpr(E);
+  // case CK_ARCConsumeObject:
+  //   return CGF.EmitObjCConsumeObject(E->getType(), Visit(E));
+  // case CK_ARCReclaimReturnedObject:
+  //   return CGF.EmitARCReclaimReturnedObject(E, /*allowUnsafe*/ Ignored);
+  // case CK_ARCExtendBlockObject:
+  //   return CGF.EmitARCExtendBlockObject(E);
 
-  case CK_CopyAndAutoreleaseBlockObject:
-    return CGF.EmitBlockCopyAndAutorelease(Visit(E), E->getType());
+  // case CK_CopyAndAutoreleaseBlockObject:
+  //   return CGF.EmitBlockCopyAndAutorelease(Visit(E), E->getType());
 
   case CK_FloatingRealToComplex:
   case CK_FloatingComplexCast:
@@ -2407,9 +2407,9 @@ public:
                                       const UnaryOperator *E)
       : CGF(CGF), E(E) {}
   ~OMPLastprivateConditionalUpdateRAII() {
-    if (CGF.getLangOpts().OpenMP)
-      CGF.CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(
-          CGF, E->getSubExpr());
+    // if (CGF.getLangOpts().OpenMP)
+    //   CGF.CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(
+    //       CGF, E->getSubExpr());
   }
 };
 } // namespace
@@ -3091,9 +3091,9 @@ LValue ScalarExprEmitter::EmitCompoundAssignLValue(
   else
     CGF.EmitStoreThroughLValue(RValue::get(Result), LHSLV);
 
-  if (CGF.getLangOpts().OpenMP)
-    CGF.CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(CGF,
-                                                                  E->getLHS());
+  // if (CGF.getLangOpts().OpenMP)
+  //   CGF.CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(CGF,
+  //                                                                 E->getLHS());
   return LHSLV;
 }
 
@@ -3173,19 +3173,19 @@ Value *ScalarExprEmitter::EmitDiv(const BinOpInfo &Ops) {
     llvm::Value *Val;
     CodeGenFunction::CGFPOptionsRAII FPOptsRAII(CGF, Ops.FPFeatures);
     Val = Builder.CreateFDiv(Ops.LHS, Ops.RHS, "div");
-    if (CGF.getLangOpts().OpenCL &&
-        !CGF.CGM.getCodeGenOpts().CorrectlyRoundedDivSqrt) {
-      // OpenCL v1.1 s7.4: minimum accuracy of single precision / is 2.5ulp
-      // OpenCL v1.2 s5.6.4.2: The -cl-fp32-correctly-rounded-divide-sqrt
-      // build option allows an application to specify that single precision
-      // floating-point divide (x/y and 1/x) and sqrt used in the program
-      // source are correctly rounded.
-      llvm::Type *ValTy = Val->getType();
-      if (ValTy->isFloatTy() ||
-          (isa<llvm::VectorType>(ValTy) &&
-           cast<llvm::VectorType>(ValTy)->getElementType()->isFloatTy()))
-        CGF.SetFPAccuracy(Val, 2.5);
-    }
+    // if (CGF.getLangOpts().OpenCL &&
+    //     !CGF.CGM.getCodeGenOpts().CorrectlyRoundedDivSqrt) {
+    //   // OpenCL v1.1 s7.4: minimum accuracy of single precision / is 2.5ulp
+    //   // OpenCL v1.2 s5.6.4.2: The -cl-fp32-correctly-rounded-divide-sqrt
+    //   // build option allows an application to specify that single precision
+    //   // floating-point divide (x/y and 1/x) and sqrt used in the program
+    //   // source are correctly rounded.
+    //   llvm::Type *ValTy = Val->getType();
+    //   if (ValTy->isFloatTy() ||
+    //       (isa<llvm::VectorType>(ValTy) &&
+    //        cast<llvm::VectorType>(ValTy)->getElementType()->isFloatTy()))
+    //     CGF.SetFPAccuracy(Val, 2.5);
+    // }
     return Val;
   }
   else if (Ops.isFixedPointOp())
@@ -3841,9 +3841,10 @@ Value *ScalarExprEmitter::EmitShl(const BinOpInfo &Ops) {
                       !CGF.getLangOpts().CPlusPlus20;
   bool SanitizeExponent = CGF.SanOpts.has(SanitizerKind::ShiftExponent);
   // OpenCL 6.3j: shift values are effectively % word size of LHS.
-  if (CGF.getLangOpts().OpenCL)
-    RHS = ConstrainShiftValue(Ops.LHS, RHS, "shl.mask");
-  else if ((SanitizeBase || SanitizeExponent) &&
+  // if (CGF.getLangOpts().OpenCL)
+  //   RHS = ConstrainShiftValue(Ops.LHS, RHS, "shl.mask");
+  // else 
+  if ((SanitizeBase || SanitizeExponent) &&
            isa<llvm::IntegerType>(Ops.LHS->getType())) {
     CodeGenFunction::SanitizerScope SanScope(&CGF);
     SmallVector<std::pair<Value *, SanitizerMask>, 2> Checks;
@@ -3903,9 +3904,10 @@ Value *ScalarExprEmitter::EmitShr(const BinOpInfo &Ops) {
     RHS = Builder.CreateIntCast(RHS, Ops.LHS->getType(), false, "sh_prom");
 
   // OpenCL 6.3j: shift values are effectively % word size of LHS.
-  if (CGF.getLangOpts().OpenCL)
-    RHS = ConstrainShiftValue(Ops.LHS, RHS, "shr.mask");
-  else if (CGF.SanOpts.has(SanitizerKind::ShiftExponent) &&
+  // if (CGF.getLangOpts().OpenCL)
+  //   RHS = ConstrainShiftValue(Ops.LHS, RHS, "shr.mask");
+  // else 
+  if (CGF.SanOpts.has(SanitizerKind::ShiftExponent) &&
            isa<llvm::IntegerType>(Ops.LHS->getType())) {
     CodeGenFunction::SanitizerScope SanScope(&CGF);
     llvm::Value *Valid =
@@ -4151,42 +4153,42 @@ Value *ScalarExprEmitter::VisitBinAssign(const BinaryOperator *E) {
   Value *RHS;
   LValue LHS;
 
-  switch (E->getLHS()->getType().getObjCLifetime()) {
-  case Qualifiers::OCL_Strong:
-    std::tie(LHS, RHS) = CGF.EmitARCStoreStrong(E, Ignore);
-    break;
+  // switch (E->getLHS()->getType().getObjCLifetime()) {
+  // case Qualifiers::OCL_Strong:
+  //   std::tie(LHS, RHS) = CGF.EmitARCStoreStrong(E, Ignore);
+  //   break;
 
-  case Qualifiers::OCL_Autoreleasing:
-    std::tie(LHS, RHS) = CGF.EmitARCStoreAutoreleasing(E);
-    break;
+  // case Qualifiers::OCL_Autoreleasing:
+  //   std::tie(LHS, RHS) = CGF.EmitARCStoreAutoreleasing(E);
+  //   break;
 
-  case Qualifiers::OCL_ExplicitNone:
-    std::tie(LHS, RHS) = CGF.EmitARCStoreUnsafeUnretained(E, Ignore);
-    break;
+  // case Qualifiers::OCL_ExplicitNone:
+  //   std::tie(LHS, RHS) = CGF.EmitARCStoreUnsafeUnretained(E, Ignore);
+  //   break;
 
-  case Qualifiers::OCL_Weak:
-    RHS = Visit(E->getRHS());
-    LHS = EmitCheckedLValue(E->getLHS(), CodeGenFunction::TCK_Store);
-    RHS = CGF.EmitARCStoreWeak(LHS.getAddress(CGF), RHS, Ignore);
-    break;
+  // case Qualifiers::OCL_Weak:
+  //   RHS = Visit(E->getRHS());
+  //   LHS = EmitCheckedLValue(E->getLHS(), CodeGenFunction::TCK_Store);
+  //   RHS = CGF.EmitARCStoreWeak(LHS.getAddress(CGF), RHS, Ignore);
+  //   break;
 
-  case Qualifiers::OCL_None:
-    // __block variables need to have the rhs evaluated first, plus
-    // this should improve codegen just a little.
-    RHS = Visit(E->getRHS());
-    LHS = EmitCheckedLValue(E->getLHS(), CodeGenFunction::TCK_Store);
+  // case Qualifiers::OCL_None:
+  //   // __block variables need to have the rhs evaluated first, plus
+  //   // this should improve codegen just a little.
+  //   RHS = Visit(E->getRHS());
+  //   LHS = EmitCheckedLValue(E->getLHS(), CodeGenFunction::TCK_Store);
 
-    // Store the value into the LHS.  Bit-fields are handled specially
-    // because the result is altered by the store, i.e., [C99 6.5.16p1]
-    // 'An assignment expression has the value of the left operand after
-    // the assignment...'.
-    if (LHS.isBitField()) {
-      CGF.EmitStoreThroughBitfieldLValue(RValue::get(RHS), LHS, &RHS);
-    } else {
-      CGF.EmitNullabilityCheck(LHS, RHS, E->getExprLoc());
-      CGF.EmitStoreThroughLValue(RValue::get(RHS), LHS);
-    }
-  }
+  //   // Store the value into the LHS.  Bit-fields are handled specially
+  //   // because the result is altered by the store, i.e., [C99 6.5.16p1]
+  //   // 'An assignment expression has the value of the left operand after
+  //   // the assignment...'.
+  //   if (LHS.isBitField()) {
+  //     CGF.EmitStoreThroughBitfieldLValue(RValue::get(RHS), LHS, &RHS);
+  //   } else {
+  //     CGF.EmitNullabilityCheck(LHS, RHS, E->getExprLoc());
+  //     CGF.EmitStoreThroughLValue(RValue::get(RHS), LHS);
+  //   }
+  // }
 
   // If the result is clearly ignored, return now.
   if (Ignore)
@@ -4434,45 +4436,45 @@ VisitAbstractConditionalOperator(const AbstractConditionalOperator *E) {
 
   // OpenCL: If the condition is a vector, we can treat this condition like
   // the select function.
-  if ((CGF.getLangOpts().OpenCL && condExpr->getType()->isVectorType()) ||
-      condExpr->getType()->isExtVectorType()) {
-    CGF.incrementProfileCounter(E);
+  // if ((CGF.getLangOpts().OpenCL && condExpr->getType()->isVectorType()) ||
+  //     condExpr->getType()->isExtVectorType()) {
+  //   CGF.incrementProfileCounter(E);
 
-    llvm::Value *CondV = CGF.EmitScalarExpr(condExpr);
-    llvm::Value *LHS = Visit(lhsExpr);
-    llvm::Value *RHS = Visit(rhsExpr);
+  //   llvm::Value *CondV = CGF.EmitScalarExpr(condExpr);
+  //   llvm::Value *LHS = Visit(lhsExpr);
+  //   llvm::Value *RHS = Visit(rhsExpr);
 
-    llvm::Type *condType = ConvertType(condExpr->getType());
-    llvm::VectorType *vecTy = cast<llvm::VectorType>(condType);
+  //   llvm::Type *condType = ConvertType(condExpr->getType());
+  //   llvm::VectorType *vecTy = cast<llvm::VectorType>(condType);
 
-    unsigned numElem = vecTy->getNumElements();
-    llvm::Type *elemType = vecTy->getElementType();
+  //   unsigned numElem = vecTy->getNumElements();
+  //   llvm::Type *elemType = vecTy->getElementType();
 
-    llvm::Value *zeroVec = llvm::Constant::getNullValue(vecTy);
-    llvm::Value *TestMSB = Builder.CreateICmpSLT(CondV, zeroVec);
-    llvm::Value *tmp = Builder.CreateSExt(
-        TestMSB, llvm::FixedVectorType::get(elemType, numElem), "sext");
-    llvm::Value *tmp2 = Builder.CreateNot(tmp);
+  //   llvm::Value *zeroVec = llvm::Constant::getNullValue(vecTy);
+  //   llvm::Value *TestMSB = Builder.CreateICmpSLT(CondV, zeroVec);
+  //   llvm::Value *tmp = Builder.CreateSExt(
+  //       TestMSB, llvm::FixedVectorType::get(elemType, numElem), "sext");
+  //   llvm::Value *tmp2 = Builder.CreateNot(tmp);
 
-    // Cast float to int to perform ANDs if necessary.
-    llvm::Value *RHSTmp = RHS;
-    llvm::Value *LHSTmp = LHS;
-    bool wasCast = false;
-    llvm::VectorType *rhsVTy = cast<llvm::VectorType>(RHS->getType());
-    if (rhsVTy->getElementType()->isFloatingPointTy()) {
-      RHSTmp = Builder.CreateBitCast(RHS, tmp2->getType());
-      LHSTmp = Builder.CreateBitCast(LHS, tmp->getType());
-      wasCast = true;
-    }
+  //   // Cast float to int to perform ANDs if necessary.
+  //   llvm::Value *RHSTmp = RHS;
+  //   llvm::Value *LHSTmp = LHS;
+  //   bool wasCast = false;
+  //   llvm::VectorType *rhsVTy = cast<llvm::VectorType>(RHS->getType());
+  //   if (rhsVTy->getElementType()->isFloatingPointTy()) {
+  //     RHSTmp = Builder.CreateBitCast(RHS, tmp2->getType());
+  //     LHSTmp = Builder.CreateBitCast(LHS, tmp->getType());
+  //     wasCast = true;
+  //   }
 
-    llvm::Value *tmp3 = Builder.CreateAnd(RHSTmp, tmp2);
-    llvm::Value *tmp4 = Builder.CreateAnd(LHSTmp, tmp);
-    llvm::Value *tmp5 = Builder.CreateOr(tmp3, tmp4, "cond");
-    if (wasCast)
-      tmp5 = Builder.CreateBitCast(tmp5, RHS->getType());
+  //   llvm::Value *tmp3 = Builder.CreateAnd(RHSTmp, tmp2);
+  //   llvm::Value *tmp4 = Builder.CreateAnd(LHSTmp, tmp);
+  //   llvm::Value *tmp5 = Builder.CreateOr(tmp3, tmp4, "cond");
+  //   if (wasCast)
+  //     tmp5 = Builder.CreateBitCast(tmp5, RHS->getType());
 
-    return tmp5;
-  }
+  //   return tmp5;
+  // }
 
   if (condExpr->getType()->isVectorType()) {
     CGF.incrementProfileCounter(E);

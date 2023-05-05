@@ -12,14 +12,14 @@
 //===----------------------------------------------------------------------===//
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/ODRHash.h"
-#include "latino/AST/OpenMPClause.h"
+// #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/StmtVisitor.h"
 #include "llvm/ADT/FoldingSet.h"
 using namespace latino;
@@ -405,709 +405,709 @@ void StmtProfiler::VisitCapturedStmt(const CapturedStmt *S) {
 //   VisitStmt(S);
 // }
 
-namespace {
-class OMPClauseProfiler : public ConstOMPClauseVisitor<OMPClauseProfiler> {
-  StmtProfiler *Profiler;
-  /// Process clauses with list of variables.
-  template <typename T>
-  void VisitOMPClauseList(T *Node);
-
-public:
-  OMPClauseProfiler(StmtProfiler *P) : Profiler(P) { }
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) void Visit##Class(const Class *C);
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
-  void VistOMPClauseWithPreInit(const OMPClauseWithPreInit *C);
-  void VistOMPClauseWithPostUpdate(const OMPClauseWithPostUpdate *C);
-};
-
-void OMPClauseProfiler::VistOMPClauseWithPreInit(
-    const OMPClauseWithPreInit *C) {
-  if (auto *S = C->getPreInitStmt())
-    Profiler->VisitStmt(S);
-}
+// namespace {
+// class OMPClauseProfiler : public ConstOMPClauseVisitor<OMPClauseProfiler> {
+//   StmtProfiler *Profiler;
+//   /// Process clauses with list of variables.
+//   template <typename T>
+//   void VisitOMPClauseList(T *Node);
+
+// public:
+//   OMPClauseProfiler(StmtProfiler *P) : Profiler(P) { }
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) void Visit##Class(const Class *C);
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
+//   void VistOMPClauseWithPreInit(const OMPClauseWithPreInit *C);
+//   void VistOMPClauseWithPostUpdate(const OMPClauseWithPostUpdate *C);
+// };
+
+// void OMPClauseProfiler::VistOMPClauseWithPreInit(
+//     const OMPClauseWithPreInit *C) {
+//   if (auto *S = C->getPreInitStmt())
+//     Profiler->VisitStmt(S);
+// }
 
-void OMPClauseProfiler::VistOMPClauseWithPostUpdate(
-    const OMPClauseWithPostUpdate *C) {
-  VistOMPClauseWithPreInit(C);
-  if (auto *E = C->getPostUpdateExpr())
-    Profiler->VisitStmt(E);
-}
+// void OMPClauseProfiler::VistOMPClauseWithPostUpdate(
+//     const OMPClauseWithPostUpdate *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (auto *E = C->getPostUpdateExpr())
+//     Profiler->VisitStmt(E);
+// }
 
-void OMPClauseProfiler::VisitOMPIfClause(const OMPIfClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getCondition())
-    Profiler->VisitStmt(C->getCondition());
-}
+// void OMPClauseProfiler::VisitOMPIfClause(const OMPIfClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getCondition())
+//     Profiler->VisitStmt(C->getCondition());
+// }
 
-void OMPClauseProfiler::VisitOMPFinalClause(const OMPFinalClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getCondition())
-    Profiler->VisitStmt(C->getCondition());
-}
+// void OMPClauseProfiler::VisitOMPFinalClause(const OMPFinalClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getCondition())
+//     Profiler->VisitStmt(C->getCondition());
+// }
 
-void OMPClauseProfiler::VisitOMPNumThreadsClause(const OMPNumThreadsClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getNumThreads())
-    Profiler->VisitStmt(C->getNumThreads());
-}
+// void OMPClauseProfiler::VisitOMPNumThreadsClause(const OMPNumThreadsClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getNumThreads())
+//     Profiler->VisitStmt(C->getNumThreads());
+// }
 
-void OMPClauseProfiler::VisitOMPSafelenClause(const OMPSafelenClause *C) {
-  if (C->getSafelen())
-    Profiler->VisitStmt(C->getSafelen());
-}
+// void OMPClauseProfiler::VisitOMPSafelenClause(const OMPSafelenClause *C) {
+//   if (C->getSafelen())
+//     Profiler->VisitStmt(C->getSafelen());
+// }
 
-void OMPClauseProfiler::VisitOMPSimdlenClause(const OMPSimdlenClause *C) {
-  if (C->getSimdlen())
-    Profiler->VisitStmt(C->getSimdlen());
-}
-
-void OMPClauseProfiler::VisitOMPAllocatorClause(const OMPAllocatorClause *C) {
-  if (C->getAllocator())
-    Profiler->VisitStmt(C->getAllocator());
-}
-
-void OMPClauseProfiler::VisitOMPCollapseClause(const OMPCollapseClause *C) {
-  if (C->getNumForLoops())
-    Profiler->VisitStmt(C->getNumForLoops());
-}
-
-void OMPClauseProfiler::VisitOMPDetachClause(const OMPDetachClause *C) {
-  if (Expr *Evt = C->getEventHandler())
-    Profiler->VisitStmt(Evt);
-}
-
-void OMPClauseProfiler::VisitOMPDefaultClause(const OMPDefaultClause *C) { }
-
-void OMPClauseProfiler::VisitOMPProcBindClause(const OMPProcBindClause *C) { }
-
-void OMPClauseProfiler::VisitOMPUnifiedAddressClause(
-    const OMPUnifiedAddressClause *C) {}
-
-void OMPClauseProfiler::VisitOMPUnifiedSharedMemoryClause(
-    const OMPUnifiedSharedMemoryClause *C) {}
-
-void OMPClauseProfiler::VisitOMPReverseOffloadClause(
-    const OMPReverseOffloadClause *C) {}
-
-void OMPClauseProfiler::VisitOMPDynamicAllocatorsClause(
-    const OMPDynamicAllocatorsClause *C) {}
-
-void OMPClauseProfiler::VisitOMPAtomicDefaultMemOrderClause(
-    const OMPAtomicDefaultMemOrderClause *C) {}
-
-void OMPClauseProfiler::VisitOMPScheduleClause(const OMPScheduleClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (auto *S = C->getChunkSize())
-    Profiler->VisitStmt(S);
-}
-
-void OMPClauseProfiler::VisitOMPOrderedClause(const OMPOrderedClause *C) {
-  if (auto *Num = C->getNumForLoops())
-    Profiler->VisitStmt(Num);
-}
-
-void OMPClauseProfiler::VisitOMPNowaitClause(const OMPNowaitClause *) {}
-
-void OMPClauseProfiler::VisitOMPUntiedClause(const OMPUntiedClause *) {}
-
-void OMPClauseProfiler::VisitOMPMergeableClause(const OMPMergeableClause *) {}
-
-void OMPClauseProfiler::VisitOMPReadClause(const OMPReadClause *) {}
-
-void OMPClauseProfiler::VisitOMPWriteClause(const OMPWriteClause *) {}
-
-void OMPClauseProfiler::VisitOMPUpdateClause(const OMPUpdateClause *) {}
-
-void OMPClauseProfiler::VisitOMPCaptureClause(const OMPCaptureClause *) {}
-
-void OMPClauseProfiler::VisitOMPSeqCstClause(const OMPSeqCstClause *) {}
-
-void OMPClauseProfiler::VisitOMPAcqRelClause(const OMPAcqRelClause *) {}
-
-void OMPClauseProfiler::VisitOMPAcquireClause(const OMPAcquireClause *) {}
-
-void OMPClauseProfiler::VisitOMPReleaseClause(const OMPReleaseClause *) {}
-
-void OMPClauseProfiler::VisitOMPRelaxedClause(const OMPRelaxedClause *) {}
-
-void OMPClauseProfiler::VisitOMPThreadsClause(const OMPThreadsClause *) {}
-
-void OMPClauseProfiler::VisitOMPSIMDClause(const OMPSIMDClause *) {}
-
-void OMPClauseProfiler::VisitOMPNogroupClause(const OMPNogroupClause *) {}
-
-void OMPClauseProfiler::VisitOMPDestroyClause(const OMPDestroyClause *) {}
-
-template<typename T>
-void OMPClauseProfiler::VisitOMPClauseList(T *Node) {
-  for (auto *E : Node->varlists()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-
-void OMPClauseProfiler::VisitOMPPrivateClause(const OMPPrivateClause *C) {
-  VisitOMPClauseList(C);
-  for (auto *E : C->private_copies()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void
-OMPClauseProfiler::VisitOMPFirstprivateClause(const OMPFirstprivateClause *C) {
-  VisitOMPClauseList(C);
-  VistOMPClauseWithPreInit(C);
-  for (auto *E : C->private_copies()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->inits()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void
-OMPClauseProfiler::VisitOMPLastprivateClause(const OMPLastprivateClause *C) {
-  VisitOMPClauseList(C);
-  VistOMPClauseWithPostUpdate(C);
-  for (auto *E : C->source_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->destination_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->assignment_ops()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void OMPClauseProfiler::VisitOMPSharedClause(const OMPSharedClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPReductionClause(
-                                         const OMPReductionClause *C) {
-  Profiler->VisitNestedNameSpecifier(
-      C->getQualifierLoc().getNestedNameSpecifier());
-  Profiler->VisitName(C->getNameInfo().getName());
-  VisitOMPClauseList(C);
-  VistOMPClauseWithPostUpdate(C);
-  for (auto *E : C->privates()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->lhs_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->rhs_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->reduction_ops()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  if (C->getModifier() == latino::OMPC_REDUCTION_inscan) {
-    for (auto *E : C->copy_ops()) {
-      if (E)
-        Profiler->VisitStmt(E);
-    }
-    for (auto *E : C->copy_array_temps()) {
-      if (E)
-        Profiler->VisitStmt(E);
-    }
-    for (auto *E : C->copy_array_elems()) {
-      if (E)
-        Profiler->VisitStmt(E);
-    }
-  }
-}
-void OMPClauseProfiler::VisitOMPTaskReductionClause(
-    const OMPTaskReductionClause *C) {
-  Profiler->VisitNestedNameSpecifier(
-      C->getQualifierLoc().getNestedNameSpecifier());
-  Profiler->VisitName(C->getNameInfo().getName());
-  VisitOMPClauseList(C);
-  VistOMPClauseWithPostUpdate(C);
-  for (auto *E : C->privates()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->lhs_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->rhs_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->reduction_ops()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void OMPClauseProfiler::VisitOMPInReductionClause(
-    const OMPInReductionClause *C) {
-  Profiler->VisitNestedNameSpecifier(
-      C->getQualifierLoc().getNestedNameSpecifier());
-  Profiler->VisitName(C->getNameInfo().getName());
-  VisitOMPClauseList(C);
-  VistOMPClauseWithPostUpdate(C);
-  for (auto *E : C->privates()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->lhs_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->rhs_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->reduction_ops()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->taskgroup_descriptors()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void OMPClauseProfiler::VisitOMPLinearClause(const OMPLinearClause *C) {
-  VisitOMPClauseList(C);
-  VistOMPClauseWithPostUpdate(C);
-  for (auto *E : C->privates()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->inits()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->updates()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->finals()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  if (C->getStep())
-    Profiler->VisitStmt(C->getStep());
-  if (C->getCalcStep())
-    Profiler->VisitStmt(C->getCalcStep());
-}
-void OMPClauseProfiler::VisitOMPAlignedClause(const OMPAlignedClause *C) {
-  VisitOMPClauseList(C);
-  if (C->getAlignment())
-    Profiler->VisitStmt(C->getAlignment());
-}
-void OMPClauseProfiler::VisitOMPCopyinClause(const OMPCopyinClause *C) {
-  VisitOMPClauseList(C);
-  for (auto *E : C->source_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->destination_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->assignment_ops()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void
-OMPClauseProfiler::VisitOMPCopyprivateClause(const OMPCopyprivateClause *C) {
-  VisitOMPClauseList(C);
-  for (auto *E : C->source_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->destination_exprs()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-  for (auto *E : C->assignment_ops()) {
-    if (E)
-      Profiler->VisitStmt(E);
-  }
-}
-void OMPClauseProfiler::VisitOMPFlushClause(const OMPFlushClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPDepobjClause(const OMPDepobjClause *C) {
-  if (const Expr *Depobj = C->getDepobj())
-    Profiler->VisitStmt(Depobj);
-}
-void OMPClauseProfiler::VisitOMPDependClause(const OMPDependClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPDeviceClause(const OMPDeviceClause *C) {
-  if (C->getDevice())
-    Profiler->VisitStmt(C->getDevice());
-}
-void OMPClauseProfiler::VisitOMPMapClause(const OMPMapClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPAllocateClause(const OMPAllocateClause *C) {
-  if (Expr *Allocator = C->getAllocator())
-    Profiler->VisitStmt(Allocator);
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPNumTeamsClause(const OMPNumTeamsClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getNumTeams())
-    Profiler->VisitStmt(C->getNumTeams());
-}
-void OMPClauseProfiler::VisitOMPThreadLimitClause(
-    const OMPThreadLimitClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getThreadLimit())
-    Profiler->VisitStmt(C->getThreadLimit());
-}
-void OMPClauseProfiler::VisitOMPPriorityClause(const OMPPriorityClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getPriority())
-    Profiler->VisitStmt(C->getPriority());
-}
-void OMPClauseProfiler::VisitOMPGrainsizeClause(const OMPGrainsizeClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getGrainsize())
-    Profiler->VisitStmt(C->getGrainsize());
-}
-void OMPClauseProfiler::VisitOMPNumTasksClause(const OMPNumTasksClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (C->getNumTasks())
-    Profiler->VisitStmt(C->getNumTasks());
-}
-void OMPClauseProfiler::VisitOMPHintClause(const OMPHintClause *C) {
-  if (C->getHint())
-    Profiler->VisitStmt(C->getHint());
-}
-void OMPClauseProfiler::VisitOMPToClause(const OMPToClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPFromClause(const OMPFromClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPUseDevicePtrClause(
-    const OMPUseDevicePtrClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPUseDeviceAddrClause(
-    const OMPUseDeviceAddrClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPIsDevicePtrClause(
-    const OMPIsDevicePtrClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPNontemporalClause(
-    const OMPNontemporalClause *C) {
-  VisitOMPClauseList(C);
-  for (auto *E : C->private_refs())
-    Profiler->VisitStmt(E);
-}
-void OMPClauseProfiler::VisitOMPInclusiveClause(const OMPInclusiveClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPExclusiveClause(const OMPExclusiveClause *C) {
-  VisitOMPClauseList(C);
-}
-void OMPClauseProfiler::VisitOMPUsesAllocatorsClause(
-    const OMPUsesAllocatorsClause *C) {
-  for (unsigned I = 0, E = C->getNumberOfAllocators(); I < E; ++I) {
-    OMPUsesAllocatorsClause::Data D = C->getAllocatorData(I);
-    Profiler->VisitStmt(D.Allocator);
-    if (D.AllocatorTraits)
-      Profiler->VisitStmt(D.AllocatorTraits);
-  }
-}
-void OMPClauseProfiler::VisitOMPAffinityClause(const OMPAffinityClause *C) {
-  if (const Expr *Modifier = C->getModifier())
-    Profiler->VisitStmt(Modifier);
-  for (const Expr *E : C->varlists())
-    Profiler->VisitStmt(E);
-}
-void OMPClauseProfiler::VisitOMPOrderClause(const OMPOrderClause *C) {}
-} // namespace
-
-void
-StmtProfiler::VisitOMPExecutableDirective(const OMPExecutableDirective *S) {
-  VisitStmt(S);
-  OMPClauseProfiler P(this);
-  ArrayRef<OMPClause *> Clauses = S->clauses();
-  for (ArrayRef<OMPClause *>::iterator I = Clauses.begin(), E = Clauses.end();
-       I != E; ++I)
-    if (*I)
-      P.Visit(*I);
-}
-
-void StmtProfiler::VisitOMPLoopDirective(const OMPLoopDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPParallelDirective(const OMPParallelDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPSimdDirective(const OMPSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPForDirective(const OMPForDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPForSimdDirective(const OMPForSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPSectionsDirective(const OMPSectionsDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPSectionDirective(const OMPSectionDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPSingleDirective(const OMPSingleDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPMasterDirective(const OMPMasterDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPCriticalDirective(const OMPCriticalDirective *S) {
-  VisitOMPExecutableDirective(S);
-  VisitName(S->getDirectiveName().getName());
-}
-
-void
-StmtProfiler::VisitOMPParallelForDirective(const OMPParallelForDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPParallelForSimdDirective(
-    const OMPParallelForSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPParallelMasterDirective(
-    const OMPParallelMasterDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPParallelSectionsDirective(
-    const OMPParallelSectionsDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTaskDirective(const OMPTaskDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTaskyieldDirective(const OMPTaskyieldDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPBarrierDirective(const OMPBarrierDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTaskwaitDirective(const OMPTaskwaitDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTaskgroupDirective(const OMPTaskgroupDirective *S) {
-  VisitOMPExecutableDirective(S);
-  if (const Expr *E = S->getReductionRef())
-    VisitStmt(E);
-}
-
-void StmtProfiler::VisitOMPFlushDirective(const OMPFlushDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPDepobjDirective(const OMPDepobjDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPScanDirective(const OMPScanDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPOrderedDirective(const OMPOrderedDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPAtomicDirective(const OMPAtomicDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetDirective(const OMPTargetDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetDataDirective(const OMPTargetDataDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetEnterDataDirective(
-    const OMPTargetEnterDataDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetExitDataDirective(
-    const OMPTargetExitDataDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetParallelDirective(
-    const OMPTargetParallelDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetParallelForDirective(
-    const OMPTargetParallelForDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTeamsDirective(const OMPTeamsDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPCancellationPointDirective(
-    const OMPCancellationPointDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPCancelDirective(const OMPCancelDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTaskLoopDirective(const OMPTaskLoopDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTaskLoopSimdDirective(
-    const OMPTaskLoopSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPMasterTaskLoopDirective(
-    const OMPMasterTaskLoopDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPMasterTaskLoopSimdDirective(
-    const OMPMasterTaskLoopSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPParallelMasterTaskLoopDirective(
-    const OMPParallelMasterTaskLoopDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPParallelMasterTaskLoopSimdDirective(
-    const OMPParallelMasterTaskLoopSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPDistributeDirective(
-    const OMPDistributeDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void OMPClauseProfiler::VisitOMPDistScheduleClause(
-    const OMPDistScheduleClause *C) {
-  VistOMPClauseWithPreInit(C);
-  if (auto *S = C->getChunkSize())
-    Profiler->VisitStmt(S);
-}
-
-void OMPClauseProfiler::VisitOMPDefaultmapClause(const OMPDefaultmapClause *) {}
-
-void StmtProfiler::VisitOMPTargetUpdateDirective(
-    const OMPTargetUpdateDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPDistributeParallelForDirective(
-    const OMPDistributeParallelForDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPDistributeParallelForSimdDirective(
-    const OMPDistributeParallelForSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPDistributeSimdDirective(
-    const OMPDistributeSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetParallelForSimdDirective(
-    const OMPTargetParallelForSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetSimdDirective(
-    const OMPTargetSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTeamsDistributeDirective(
-    const OMPTeamsDistributeDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTeamsDistributeSimdDirective(
-    const OMPTeamsDistributeSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTeamsDistributeParallelForSimdDirective(
-    const OMPTeamsDistributeParallelForSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTeamsDistributeParallelForDirective(
-    const OMPTeamsDistributeParallelForDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetTeamsDirective(
-    const OMPTargetTeamsDirective *S) {
-  VisitOMPExecutableDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetTeamsDistributeDirective(
-    const OMPTargetTeamsDistributeDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetTeamsDistributeParallelForDirective(
-    const OMPTargetTeamsDistributeParallelForDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetTeamsDistributeParallelForSimdDirective(
-    const OMPTargetTeamsDistributeParallelForSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
-
-void StmtProfiler::VisitOMPTargetTeamsDistributeSimdDirective(
-    const OMPTargetTeamsDistributeSimdDirective *S) {
-  VisitOMPLoopDirective(S);
-}
+// void OMPClauseProfiler::VisitOMPSimdlenClause(const OMPSimdlenClause *C) {
+//   if (C->getSimdlen())
+//     Profiler->VisitStmt(C->getSimdlen());
+// }
+
+// void OMPClauseProfiler::VisitOMPAllocatorClause(const OMPAllocatorClause *C) {
+//   if (C->getAllocator())
+//     Profiler->VisitStmt(C->getAllocator());
+// }
+
+// void OMPClauseProfiler::VisitOMPCollapseClause(const OMPCollapseClause *C) {
+//   if (C->getNumForLoops())
+//     Profiler->VisitStmt(C->getNumForLoops());
+// }
+
+// void OMPClauseProfiler::VisitOMPDetachClause(const OMPDetachClause *C) {
+//   if (Expr *Evt = C->getEventHandler())
+//     Profiler->VisitStmt(Evt);
+// }
+
+// void OMPClauseProfiler::VisitOMPDefaultClause(const OMPDefaultClause *C) { }
+
+// void OMPClauseProfiler::VisitOMPProcBindClause(const OMPProcBindClause *C) { }
+
+// void OMPClauseProfiler::VisitOMPUnifiedAddressClause(
+//     const OMPUnifiedAddressClause *C) {}
+
+// void OMPClauseProfiler::VisitOMPUnifiedSharedMemoryClause(
+//     const OMPUnifiedSharedMemoryClause *C) {}
+
+// void OMPClauseProfiler::VisitOMPReverseOffloadClause(
+//     const OMPReverseOffloadClause *C) {}
+
+// void OMPClauseProfiler::VisitOMPDynamicAllocatorsClause(
+//     const OMPDynamicAllocatorsClause *C) {}
+
+// void OMPClauseProfiler::VisitOMPAtomicDefaultMemOrderClause(
+//     const OMPAtomicDefaultMemOrderClause *C) {}
+
+// void OMPClauseProfiler::VisitOMPScheduleClause(const OMPScheduleClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (auto *S = C->getChunkSize())
+//     Profiler->VisitStmt(S);
+// }
+
+// void OMPClauseProfiler::VisitOMPOrderedClause(const OMPOrderedClause *C) {
+//   if (auto *Num = C->getNumForLoops())
+//     Profiler->VisitStmt(Num);
+// }
+
+// void OMPClauseProfiler::VisitOMPNowaitClause(const OMPNowaitClause *) {}
+
+// void OMPClauseProfiler::VisitOMPUntiedClause(const OMPUntiedClause *) {}
+
+// void OMPClauseProfiler::VisitOMPMergeableClause(const OMPMergeableClause *) {}
+
+// void OMPClauseProfiler::VisitOMPReadClause(const OMPReadClause *) {}
+
+// void OMPClauseProfiler::VisitOMPWriteClause(const OMPWriteClause *) {}
+
+// void OMPClauseProfiler::VisitOMPUpdateClause(const OMPUpdateClause *) {}
+
+// void OMPClauseProfiler::VisitOMPCaptureClause(const OMPCaptureClause *) {}
+
+// void OMPClauseProfiler::VisitOMPSeqCstClause(const OMPSeqCstClause *) {}
+
+// void OMPClauseProfiler::VisitOMPAcqRelClause(const OMPAcqRelClause *) {}
+
+// void OMPClauseProfiler::VisitOMPAcquireClause(const OMPAcquireClause *) {}
+
+// void OMPClauseProfiler::VisitOMPReleaseClause(const OMPReleaseClause *) {}
+
+// void OMPClauseProfiler::VisitOMPRelaxedClause(const OMPRelaxedClause *) {}
+
+// void OMPClauseProfiler::VisitOMPThreadsClause(const OMPThreadsClause *) {}
+
+// void OMPClauseProfiler::VisitOMPSIMDClause(const OMPSIMDClause *) {}
+
+// void OMPClauseProfiler::VisitOMPNogroupClause(const OMPNogroupClause *) {}
+
+// void OMPClauseProfiler::VisitOMPDestroyClause(const OMPDestroyClause *) {}
+
+// template<typename T>
+// void OMPClauseProfiler::VisitOMPClauseList(T *Node) {
+//   for (auto *E : Node->varlists()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+
+// void OMPClauseProfiler::VisitOMPPrivateClause(const OMPPrivateClause *C) {
+//   VisitOMPClauseList(C);
+//   for (auto *E : C->private_copies()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void
+// OMPClauseProfiler::VisitOMPFirstprivateClause(const OMPFirstprivateClause *C) {
+//   VisitOMPClauseList(C);
+//   VistOMPClauseWithPreInit(C);
+//   for (auto *E : C->private_copies()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->inits()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void
+// OMPClauseProfiler::VisitOMPLastprivateClause(const OMPLastprivateClause *C) {
+//   VisitOMPClauseList(C);
+//   VistOMPClauseWithPostUpdate(C);
+//   for (auto *E : C->source_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->destination_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->assignment_ops()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void OMPClauseProfiler::VisitOMPSharedClause(const OMPSharedClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPReductionClause(
+//                                          const OMPReductionClause *C) {
+//   Profiler->VisitNestedNameSpecifier(
+//       C->getQualifierLoc().getNestedNameSpecifier());
+//   Profiler->VisitName(C->getNameInfo().getName());
+//   VisitOMPClauseList(C);
+//   VistOMPClauseWithPostUpdate(C);
+//   for (auto *E : C->privates()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->lhs_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->rhs_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->reduction_ops()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   if (C->getModifier() == latino::OMPC_REDUCTION_inscan) {
+//     for (auto *E : C->copy_ops()) {
+//       if (E)
+//         Profiler->VisitStmt(E);
+//     }
+//     for (auto *E : C->copy_array_temps()) {
+//       if (E)
+//         Profiler->VisitStmt(E);
+//     }
+//     for (auto *E : C->copy_array_elems()) {
+//       if (E)
+//         Profiler->VisitStmt(E);
+//     }
+//   }
+// }
+// void OMPClauseProfiler::VisitOMPTaskReductionClause(
+//     const OMPTaskReductionClause *C) {
+//   Profiler->VisitNestedNameSpecifier(
+//       C->getQualifierLoc().getNestedNameSpecifier());
+//   Profiler->VisitName(C->getNameInfo().getName());
+//   VisitOMPClauseList(C);
+//   VistOMPClauseWithPostUpdate(C);
+//   for (auto *E : C->privates()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->lhs_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->rhs_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->reduction_ops()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void OMPClauseProfiler::VisitOMPInReductionClause(
+//     const OMPInReductionClause *C) {
+//   Profiler->VisitNestedNameSpecifier(
+//       C->getQualifierLoc().getNestedNameSpecifier());
+//   Profiler->VisitName(C->getNameInfo().getName());
+//   VisitOMPClauseList(C);
+//   VistOMPClauseWithPostUpdate(C);
+//   for (auto *E : C->privates()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->lhs_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->rhs_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->reduction_ops()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->taskgroup_descriptors()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void OMPClauseProfiler::VisitOMPLinearClause(const OMPLinearClause *C) {
+//   VisitOMPClauseList(C);
+//   VistOMPClauseWithPostUpdate(C);
+//   for (auto *E : C->privates()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->inits()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->updates()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->finals()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   if (C->getStep())
+//     Profiler->VisitStmt(C->getStep());
+//   if (C->getCalcStep())
+//     Profiler->VisitStmt(C->getCalcStep());
+// }
+// void OMPClauseProfiler::VisitOMPAlignedClause(const OMPAlignedClause *C) {
+//   VisitOMPClauseList(C);
+//   if (C->getAlignment())
+//     Profiler->VisitStmt(C->getAlignment());
+// }
+// void OMPClauseProfiler::VisitOMPCopyinClause(const OMPCopyinClause *C) {
+//   VisitOMPClauseList(C);
+//   for (auto *E : C->source_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->destination_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->assignment_ops()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void
+// OMPClauseProfiler::VisitOMPCopyprivateClause(const OMPCopyprivateClause *C) {
+//   VisitOMPClauseList(C);
+//   for (auto *E : C->source_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->destination_exprs()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+//   for (auto *E : C->assignment_ops()) {
+//     if (E)
+//       Profiler->VisitStmt(E);
+//   }
+// }
+// void OMPClauseProfiler::VisitOMPFlushClause(const OMPFlushClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPDepobjClause(const OMPDepobjClause *C) {
+//   if (const Expr *Depobj = C->getDepobj())
+//     Profiler->VisitStmt(Depobj);
+// }
+// void OMPClauseProfiler::VisitOMPDependClause(const OMPDependClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPDeviceClause(const OMPDeviceClause *C) {
+//   if (C->getDevice())
+//     Profiler->VisitStmt(C->getDevice());
+// }
+// void OMPClauseProfiler::VisitOMPMapClause(const OMPMapClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPAllocateClause(const OMPAllocateClause *C) {
+//   if (Expr *Allocator = C->getAllocator())
+//     Profiler->VisitStmt(Allocator);
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPNumTeamsClause(const OMPNumTeamsClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getNumTeams())
+//     Profiler->VisitStmt(C->getNumTeams());
+// }
+// void OMPClauseProfiler::VisitOMPThreadLimitClause(
+//     const OMPThreadLimitClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getThreadLimit())
+//     Profiler->VisitStmt(C->getThreadLimit());
+// }
+// void OMPClauseProfiler::VisitOMPPriorityClause(const OMPPriorityClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getPriority())
+//     Profiler->VisitStmt(C->getPriority());
+// }
+// void OMPClauseProfiler::VisitOMPGrainsizeClause(const OMPGrainsizeClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getGrainsize())
+//     Profiler->VisitStmt(C->getGrainsize());
+// }
+// void OMPClauseProfiler::VisitOMPNumTasksClause(const OMPNumTasksClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (C->getNumTasks())
+//     Profiler->VisitStmt(C->getNumTasks());
+// }
+// void OMPClauseProfiler::VisitOMPHintClause(const OMPHintClause *C) {
+//   if (C->getHint())
+//     Profiler->VisitStmt(C->getHint());
+// }
+// void OMPClauseProfiler::VisitOMPToClause(const OMPToClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPFromClause(const OMPFromClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPUseDevicePtrClause(
+//     const OMPUseDevicePtrClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPUseDeviceAddrClause(
+//     const OMPUseDeviceAddrClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPIsDevicePtrClause(
+//     const OMPIsDevicePtrClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPNontemporalClause(
+//     const OMPNontemporalClause *C) {
+//   VisitOMPClauseList(C);
+//   for (auto *E : C->private_refs())
+//     Profiler->VisitStmt(E);
+// }
+// void OMPClauseProfiler::VisitOMPInclusiveClause(const OMPInclusiveClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPExclusiveClause(const OMPExclusiveClause *C) {
+//   VisitOMPClauseList(C);
+// }
+// void OMPClauseProfiler::VisitOMPUsesAllocatorsClause(
+//     const OMPUsesAllocatorsClause *C) {
+//   for (unsigned I = 0, E = C->getNumberOfAllocators(); I < E; ++I) {
+//     OMPUsesAllocatorsClause::Data D = C->getAllocatorData(I);
+//     Profiler->VisitStmt(D.Allocator);
+//     if (D.AllocatorTraits)
+//       Profiler->VisitStmt(D.AllocatorTraits);
+//   }
+// }
+// void OMPClauseProfiler::VisitOMPAffinityClause(const OMPAffinityClause *C) {
+//   if (const Expr *Modifier = C->getModifier())
+//     Profiler->VisitStmt(Modifier);
+//   for (const Expr *E : C->varlists())
+//     Profiler->VisitStmt(E);
+// }
+// void OMPClauseProfiler::VisitOMPOrderClause(const OMPOrderClause *C) {}
+// } // namespace
+
+// void
+// StmtProfiler::VisitOMPExecutableDirective(const OMPExecutableDirective *S) {
+//   VisitStmt(S);
+//   OMPClauseProfiler P(this);
+//   ArrayRef<OMPClause *> Clauses = S->clauses();
+//   for (ArrayRef<OMPClause *>::iterator I = Clauses.begin(), E = Clauses.end();
+//        I != E; ++I)
+//     if (*I)
+//       P.Visit(*I);
+// }
+
+// void StmtProfiler::VisitOMPLoopDirective(const OMPLoopDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPParallelDirective(const OMPParallelDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPSimdDirective(const OMPSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPForDirective(const OMPForDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPForSimdDirective(const OMPForSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPSectionsDirective(const OMPSectionsDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPSectionDirective(const OMPSectionDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPSingleDirective(const OMPSingleDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPMasterDirective(const OMPMasterDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPCriticalDirective(const OMPCriticalDirective *S) {
+//   VisitOMPExecutableDirective(S);
+//   VisitName(S->getDirectiveName().getName());
+// }
+
+// void
+// StmtProfiler::VisitOMPParallelForDirective(const OMPParallelForDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPParallelForSimdDirective(
+//     const OMPParallelForSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPParallelMasterDirective(
+//     const OMPParallelMasterDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPParallelSectionsDirective(
+//     const OMPParallelSectionsDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTaskDirective(const OMPTaskDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTaskyieldDirective(const OMPTaskyieldDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPBarrierDirective(const OMPBarrierDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTaskwaitDirective(const OMPTaskwaitDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTaskgroupDirective(const OMPTaskgroupDirective *S) {
+//   VisitOMPExecutableDirective(S);
+//   if (const Expr *E = S->getReductionRef())
+//     VisitStmt(E);
+// }
+
+// void StmtProfiler::VisitOMPFlushDirective(const OMPFlushDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPDepobjDirective(const OMPDepobjDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPScanDirective(const OMPScanDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPOrderedDirective(const OMPOrderedDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPAtomicDirective(const OMPAtomicDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetDirective(const OMPTargetDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetDataDirective(const OMPTargetDataDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetEnterDataDirective(
+//     const OMPTargetEnterDataDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetExitDataDirective(
+//     const OMPTargetExitDataDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetParallelDirective(
+//     const OMPTargetParallelDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetParallelForDirective(
+//     const OMPTargetParallelForDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTeamsDirective(const OMPTeamsDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPCancellationPointDirective(
+//     const OMPCancellationPointDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPCancelDirective(const OMPCancelDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTaskLoopDirective(const OMPTaskLoopDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTaskLoopSimdDirective(
+//     const OMPTaskLoopSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPMasterTaskLoopDirective(
+//     const OMPMasterTaskLoopDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPMasterTaskLoopSimdDirective(
+//     const OMPMasterTaskLoopSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPParallelMasterTaskLoopDirective(
+//     const OMPParallelMasterTaskLoopDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPParallelMasterTaskLoopSimdDirective(
+//     const OMPParallelMasterTaskLoopSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPDistributeDirective(
+//     const OMPDistributeDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void OMPClauseProfiler::VisitOMPDistScheduleClause(
+//     const OMPDistScheduleClause *C) {
+//   VistOMPClauseWithPreInit(C);
+//   if (auto *S = C->getChunkSize())
+//     Profiler->VisitStmt(S);
+// }
+
+// void OMPClauseProfiler::VisitOMPDefaultmapClause(const OMPDefaultmapClause *) {}
+
+// void StmtProfiler::VisitOMPTargetUpdateDirective(
+//     const OMPTargetUpdateDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPDistributeParallelForDirective(
+//     const OMPDistributeParallelForDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPDistributeParallelForSimdDirective(
+//     const OMPDistributeParallelForSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPDistributeSimdDirective(
+//     const OMPDistributeSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetParallelForSimdDirective(
+//     const OMPTargetParallelForSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetSimdDirective(
+//     const OMPTargetSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTeamsDistributeDirective(
+//     const OMPTeamsDistributeDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTeamsDistributeSimdDirective(
+//     const OMPTeamsDistributeSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTeamsDistributeParallelForSimdDirective(
+//     const OMPTeamsDistributeParallelForSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTeamsDistributeParallelForDirective(
+//     const OMPTeamsDistributeParallelForDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetTeamsDirective(
+//     const OMPTargetTeamsDirective *S) {
+//   VisitOMPExecutableDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetTeamsDistributeDirective(
+//     const OMPTargetTeamsDistributeDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetTeamsDistributeParallelForDirective(
+//     const OMPTargetTeamsDistributeParallelForDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetTeamsDistributeParallelForSimdDirective(
+//     const OMPTargetTeamsDistributeParallelForSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
+
+// void StmtProfiler::VisitOMPTargetTeamsDistributeSimdDirective(
+//     const OMPTargetTeamsDistributeSimdDirective *S) {
+//   VisitOMPLoopDirective(S);
+// }
 
 void StmtProfiler::VisitExpr(const Expr *S) {
   VisitStmt(S);
@@ -1226,19 +1226,19 @@ void StmtProfiler::VisitMatrixSubscriptExpr(const MatrixSubscriptExpr *S) {
   VisitExpr(S);
 }
 
-void StmtProfiler::VisitOMPArraySectionExpr(const OMPArraySectionExpr *S) {
-  VisitExpr(S);
-}
+// void StmtProfiler::VisitOMPArraySectionExpr(const OMPArraySectionExpr *S) {
+//   VisitExpr(S);
+// }
 
-void StmtProfiler::VisitOMPArrayShapingExpr(const OMPArrayShapingExpr *S) {
-  VisitExpr(S);
-}
+// void StmtProfiler::VisitOMPArrayShapingExpr(const OMPArrayShapingExpr *S) {
+//   VisitExpr(S);
+// }
 
-void StmtProfiler::VisitOMPIteratorExpr(const OMPIteratorExpr *S) {
-  VisitExpr(S);
-  for (unsigned I = 0, E = S->numOfIterators(); I < E; ++I)
-    VisitDecl(S->getIteratorDecl(I));
-}
+// void StmtProfiler::VisitOMPIteratorExpr(const OMPIteratorExpr *S) {
+//   VisitExpr(S);
+//   for (unsigned I = 0, E = S->numOfIterators(); I < E; ++I)
+//     VisitDecl(S->getIteratorDecl(I));
+// }
 
 void StmtProfiler::VisitCallExpr(const CallExpr *S) {
   VisitExpr(S);
@@ -2164,10 +2164,10 @@ void StmtProfiler::VisitRecoveryExpr(const RecoveryExpr *E) { VisitExpr(E); }
 //   ID.AddBoolean(S->getBridgeKind());
 // }
 
-void StmtProfiler::VisitObjCAvailabilityCheckExpr(
-    const ObjCAvailabilityCheckExpr *S) {
-  VisitExpr(S);
-}
+// void StmtProfiler::VisitObjCAvailabilityCheckExpr(
+//     const ObjCAvailabilityCheckExpr *S) {
+//   VisitExpr(S);
+// }
 
 void StmtProfiler::VisitTemplateArguments(const TemplateArgumentLoc *Args,
                                           unsigned NumArgs) {

@@ -13,12 +13,12 @@
 #include "CodeGenTypes.h"
 #include "CGCXXABI.h"
 #include "CGCall.h"
-#include "CGOpenCLRuntime.h"
+// #include "CGOpenCLRuntime.h"
 #include "CGRecordLayout.h"
 #include "TargetInfo.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
 #include "latino/CodeGen/CGFunctionInfo.h"
@@ -487,24 +487,24 @@ llvm::Type *CodeGenTypes::ConvertType(QualType T) {
                                  static_cast<unsigned>(Context.getTypeSize(T)));
       break;
 
-    case BuiltinType::Float16:
-      ResultType =
-          getTypeForFormat(getLLVMContext(), Context.getFloatTypeSemantics(T),
-                           /* UseNativeHalf = */ true);
-      break;
+    // case BuiltinType::Float16:
+    //   ResultType =
+    //       getTypeForFormat(getLLVMContext(), Context.getFloatTypeSemantics(T),
+    //                        /* UseNativeHalf = */ true);
+    //   break;
 
-    case BuiltinType::Half:
-      // Half FP can either be storage-only (lowered to i16) or native.
-      ResultType = getTypeForFormat(
-          getLLVMContext(), Context.getFloatTypeSemantics(T),
-          Context.getLangOpts().NativeHalfType ||
-              !Context.getTargetInfo().useFP16ConversionIntrinsics());
-      break;
+    // case BuiltinType::Half:
+    //   // Half FP can either be storage-only (lowered to i16) or native.
+    //   ResultType = getTypeForFormat(
+    //       getLLVMContext(), Context.getFloatTypeSemantics(T),
+    //       Context.getLangOpts().NativeHalfType ||
+    //           !Context.getTargetInfo().useFP16ConversionIntrinsics());
+    //   break;
     case BuiltinType::BFloat16:
     case BuiltinType::Float:
     case BuiltinType::Double:
     case BuiltinType::LongDouble:
-    case BuiltinType::Float128:
+    // case BuiltinType::Float128:
       ResultType = getTypeForFormat(getLLVMContext(),
                                     Context.getFloatTypeSemantics(T),
                                     /* UseNativeHalf = */ false);
@@ -721,9 +721,9 @@ llvm::Type *CodeGenTypes::ConvertType(QualType T) {
 
   case Type::BlockPointer: {
     const QualType FTy = cast<BlockPointerType>(Ty)->getPointeeType();
-    llvm::Type *PointeeType = CGM.getLangOpts().OpenCL
+    llvm::Type *PointeeType = /*CGM.getLangOpts().OpenCL
                                   ? CGM.getGenericBlockLiteralType()
-                                  : ConvertTypeForMem(FTy);
+                                  :*/ ConvertTypeForMem(FTy);
     unsigned AS = Context.getTargetAddressSpace(FTy);
     ResultType = llvm::PointerType::get(PointeeType, AS);
     break;
@@ -758,10 +758,10 @@ llvm::Type *CodeGenTypes::ConvertType(QualType T) {
     }
     break;
   }
-  case Type::Pipe: {
-    ResultType = CGM.getOpenCLRuntime().getPipeType(cast<PipeType>(Ty));
-    break;
-  }
+  // case Type::Pipe: {
+  //   ResultType = CGM.getOpenCLRuntime().getPipeType(cast<PipeType>(Ty));
+  //   break;
+  // }
   case Type::ExtInt: {
     const auto &EIT = cast<ExtIntType>(Ty);
     ResultType = llvm::Type::getIntNTy(getLLVMContext(), EIT->getNumBits());

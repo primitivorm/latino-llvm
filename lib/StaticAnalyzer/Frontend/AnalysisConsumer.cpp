@@ -14,7 +14,7 @@
 #include "ModelInjector.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"
 #include "latino/Analysis/Analyses/LiveVariables.h"
 #include "latino/Analysis/CFG.h"

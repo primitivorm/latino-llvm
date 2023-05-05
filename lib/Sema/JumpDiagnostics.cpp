@@ -16,7 +16,7 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "llvm/ADT/BitVector.h"
 using namespace latino;
 
@@ -149,13 +149,13 @@ static ScopePair GetDiagForGotoScopeDecl(Sema &S, const Decl *D) {
 
     if (VD->hasLocalStorage()) {
       switch (VD->getType().isDestructedType()) {
-      case QualType::DK_objc_strong_lifetime:
-        return ScopePair(diag::note_protected_by_objc_strong_init,
-                         diag::note_exits_objc_strong);
+      // case QualType::DK_objc_strong_lifetime:
+      //   return ScopePair(diag::note_protected_by_objc_strong_init,
+      //                    diag::note_exits_objc_strong);
 
-      case QualType::DK_objc_weak_lifetime:
-        return ScopePair(diag::note_protected_by_objc_weak_init,
-                         diag::note_exits_objc_weak);
+      // case QualType::DK_objc_weak_lifetime:
+      //   return ScopePair(diag::note_protected_by_objc_weak_init,
+      //                    diag::note_exits_objc_weak);
 
       case QualType::DK_nontrivial_c_struct:
         return ScopePair(diag::note_protected_by_non_trivial_c_struct_init,
@@ -253,14 +253,14 @@ void JumpScopeChecker::BuildScopeInformation(VarDecl *D,
         Diags = ScopePair(diag::note_enters_block_captures_cxx_obj,
                           diag::note_exits_block_captures_cxx_obj);
         break;
-      case QualType::DK_objc_strong_lifetime:
-        Diags = ScopePair(diag::note_enters_block_captures_strong,
-                          diag::note_exits_block_captures_strong);
-        break;
-      case QualType::DK_objc_weak_lifetime:
-        Diags = ScopePair(diag::note_enters_block_captures_weak,
-                          diag::note_exits_block_captures_weak);
-        break;
+      // case QualType::DK_objc_strong_lifetime:
+      //   Diags = ScopePair(diag::note_enters_block_captures_strong,
+      //                     diag::note_exits_block_captures_strong);
+      //   break;
+      // case QualType::DK_objc_weak_lifetime:
+      //   Diags = ScopePair(diag::note_enters_block_captures_weak,
+      //                     diag::note_exits_block_captures_weak);
+      //   break;
       case QualType::DK_nontrivial_c_struct:
         Diags = ScopePair(diag::note_enters_block_captures_non_trivial_c_struct,
                           diag::note_exits_block_captures_non_trivial_c_struct);
@@ -367,7 +367,7 @@ void JumpScopeChecker::BuildScopeInformation(Stmt *S,
 
   case Stmt::IfStmtClass: {
     IfStmt *IS = cast<IfStmt>(S);
-    if (!(IS->isConstexpr() || IS->isObjCAvailabilityCheck()))
+    if (!(IS->isConstexpr() /*|| IS->isObjCAvailabilityCheck()*/))
       break;
 
     unsigned Diag = IS->isConstexpr() ? diag::note_protected_by_constexpr_if

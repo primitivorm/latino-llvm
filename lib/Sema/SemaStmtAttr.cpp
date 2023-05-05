@@ -316,46 +316,46 @@ CheckForIncompatibleAttributes(Sema &S,
   }
 }
 
-static Attr *handleOpenCLUnrollHint(Sema &S, Stmt *St, const ParsedAttr &A,
-                                    SourceRange Range) {
-  // Although the feature was introduced only in OpenCL C v2.0 s6.11.5, it's
-  // useful for OpenCL 1.x too and doesn't require HW support.
-  // opencl_unroll_hint can have 0 arguments (compiler
-  // determines unrolling factor) or 1 argument (the unroll factor provided
-  // by the user).
+// static Attr *handleOpenCLUnrollHint(Sema &S, Stmt *St, const ParsedAttr &A,
+//                                     SourceRange Range) {
+//   // Although the feature was introduced only in OpenCL C v2.0 s6.11.5, it's
+//   // useful for OpenCL 1.x too and doesn't require HW support.
+//   // opencl_unroll_hint can have 0 arguments (compiler
+//   // determines unrolling factor) or 1 argument (the unroll factor provided
+//   // by the user).
 
-  unsigned NumArgs = A.getNumArgs();
+//   unsigned NumArgs = A.getNumArgs();
 
-  if (NumArgs > 1) {
-    S.Diag(A.getLoc(), diag::err_attribute_too_many_arguments) << A << 1;
-    return nullptr;
-  }
+//   if (NumArgs > 1) {
+//     S.Diag(A.getLoc(), diag::err_attribute_too_many_arguments) << A << 1;
+//     return nullptr;
+//   }
 
-  unsigned UnrollFactor = 0;
+//   unsigned UnrollFactor = 0;
 
-  if (NumArgs == 1) {
-    Expr *E = A.getArgAsExpr(0);
-    llvm::APSInt ArgVal(32);
+//   if (NumArgs == 1) {
+//     Expr *E = A.getArgAsExpr(0);
+//     llvm::APSInt ArgVal(32);
 
-    if (!E->isIntegerConstantExpr(ArgVal, S.Context)) {
-      S.Diag(A.getLoc(), diag::err_attribute_argument_type)
-          << A << AANT_ArgumentIntegerConstant << E->getSourceRange();
-      return nullptr;
-    }
+//     if (!E->isIntegerConstantExpr(ArgVal, S.Context)) {
+//       S.Diag(A.getLoc(), diag::err_attribute_argument_type)
+//           << A << AANT_ArgumentIntegerConstant << E->getSourceRange();
+//       return nullptr;
+//     }
 
-    int Val = ArgVal.getSExtValue();
+//     int Val = ArgVal.getSExtValue();
 
-    if (Val <= 0) {
-      S.Diag(A.getRange().getBegin(),
-             diag::err_attribute_requires_positive_integer)
-          << A << /* positive */ 0;
-      return nullptr;
-    }
-    UnrollFactor = Val;
-  }
+//     if (Val <= 0) {
+//       S.Diag(A.getRange().getBegin(),
+//              diag::err_attribute_requires_positive_integer)
+//           << A << /* positive */ 0;
+//       return nullptr;
+//     }
+//     UnrollFactor = Val;
+//   }
 
-  return OpenCLUnrollHintAttr::CreateImplicit(S.Context, UnrollFactor);
-}
+//   return OpenCLUnrollHintAttr::CreateImplicit(S.Context, UnrollFactor);
+// }
 
 static Attr *ProcessStmtAttribute(Sema &S, Stmt *St, const ParsedAttr &A,
                                   SourceRange Range) {
@@ -370,8 +370,8 @@ static Attr *ProcessStmtAttribute(Sema &S, Stmt *St, const ParsedAttr &A,
     return handleFallThroughAttr(S, St, A, Range);
   case ParsedAttr::AT_LoopHint:
     return handleLoopHintAttr(S, St, A, Range);
-  case ParsedAttr::AT_OpenCLUnrollHint:
-    return handleOpenCLUnrollHint(S, St, A, Range);
+  // case ParsedAttr::AT_OpenCLUnrollHint:
+  //   return handleOpenCLUnrollHint(S, St, A, Range);
   case ParsedAttr::AT_Suppress:
     return handleSuppressAttr(S, St, A, Range);
   case ParsedAttr::AT_NoMerge:

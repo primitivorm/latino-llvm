@@ -582,7 +582,7 @@ public:
   bool needsExtraLocalData() const {
     BuiltinType::Kind bk = getTypePtr()->getKind();
     return (bk >= BuiltinType::UShort && bk <= BuiltinType::UInt128)
-      || (bk >= BuiltinType::Short && bk <= BuiltinType::Float128)
+      // || (bk >= BuiltinType::Short && bk <= BuiltinType::Float128)
       || bk == BuiltinType::UChar
       || bk == BuiltinType::SChar;
   }
@@ -745,89 +745,89 @@ struct ObjCTypeParamTypeLocInfo {
 
 /// ProtocolLAngleLoc, ProtocolRAngleLoc, and the source locations for
 /// protocol qualifiers are stored after Info.
-class ObjCTypeParamTypeLoc : public ConcreteTypeLoc<UnqualTypeLoc,
-                                     ObjCTypeParamTypeLoc,
-                                     ObjCTypeParamType,
-                                     ObjCTypeParamTypeLocInfo> {
-  // SourceLocations are stored after Info, one for each protocol qualifier.
-  SourceLocation *getProtocolLocArray() const {
-    return (SourceLocation*)this->getExtraLocalData() + 2;
-  }
+// class ObjCTypeParamTypeLoc : public ConcreteTypeLoc<UnqualTypeLoc,
+//                                      ObjCTypeParamTypeLoc,
+//                                      ObjCTypeParamType,
+// //                                      ObjCTypeParamTypeLocInfo> {
+//   // SourceLocations are stored after Info, one for each protocol qualifier.
+//   SourceLocation *getProtocolLocArray() const {
+//     return (SourceLocation*)this->getExtraLocalData() + 2;
+//   }
 
-public:
-  ObjCTypeParamDecl *getDecl() const { return getTypePtr()->getDecl(); }
+// public:
+//   ObjCTypeParamDecl *getDecl() const { return getTypePtr()->getDecl(); }
 
-  SourceLocation getNameLoc() const {
-    return this->getLocalData()->NameLoc;
-  }
+//   SourceLocation getNameLoc() const {
+//     return this->getLocalData()->NameLoc;
+//   }
 
-  void setNameLoc(SourceLocation Loc) {
-    this->getLocalData()->NameLoc = Loc;
-  }
+//   void setNameLoc(SourceLocation Loc) {
+//     this->getLocalData()->NameLoc = Loc;
+//   }
 
-  SourceLocation getProtocolLAngleLoc() const {
-    return getNumProtocols()  ?
-      *((SourceLocation*)this->getExtraLocalData()) :
-      SourceLocation();
-  }
+//   SourceLocation getProtocolLAngleLoc() const {
+//     return getNumProtocols()  ?
+//       *((SourceLocation*)this->getExtraLocalData()) :
+//       SourceLocation();
+//   }
 
-  void setProtocolLAngleLoc(SourceLocation Loc) {
-    *((SourceLocation*)this->getExtraLocalData()) = Loc;
-  }
+//   void setProtocolLAngleLoc(SourceLocation Loc) {
+//     *((SourceLocation*)this->getExtraLocalData()) = Loc;
+//   }
 
-  SourceLocation getProtocolRAngleLoc() const {
-    return getNumProtocols()  ?
-      *((SourceLocation*)this->getExtraLocalData() + 1) :
-      SourceLocation();
-  }
+//   SourceLocation getProtocolRAngleLoc() const {
+//     return getNumProtocols()  ?
+//       *((SourceLocation*)this->getExtraLocalData() + 1) :
+//       SourceLocation();
+//   }
 
-  void setProtocolRAngleLoc(SourceLocation Loc) {
-    *((SourceLocation*)this->getExtraLocalData() + 1) = Loc;
-  }
+//   void setProtocolRAngleLoc(SourceLocation Loc) {
+//     *((SourceLocation*)this->getExtraLocalData() + 1) = Loc;
+//   }
 
-  unsigned getNumProtocols() const {
-    return this->getTypePtr()->getNumProtocols();
-  }
+//   unsigned getNumProtocols() const {
+//     return this->getTypePtr()->getNumProtocols();
+//   }
 
-  SourceLocation getProtocolLoc(unsigned i) const {
-    assert(i < getNumProtocols() && "Index is out of bounds!");
-    return getProtocolLocArray()[i];
-  }
+//   SourceLocation getProtocolLoc(unsigned i) const {
+//     assert(i < getNumProtocols() && "Index is out of bounds!");
+//     return getProtocolLocArray()[i];
+//   }
 
-  void setProtocolLoc(unsigned i, SourceLocation Loc) {
-    assert(i < getNumProtocols() && "Index is out of bounds!");
-    getProtocolLocArray()[i] = Loc;
-  }
+//   void setProtocolLoc(unsigned i, SourceLocation Loc) {
+//     assert(i < getNumProtocols() && "Index is out of bounds!");
+//     getProtocolLocArray()[i] = Loc;
+//   }
 
-  // ObjCProtocolDecl *getProtocol(unsigned i) const {
-  //   assert(i < getNumProtocols() && "Index is out of bounds!");
-  //   return *(this->getTypePtr()->qual_begin() + i);
-  // }
+//   // ObjCProtocolDecl *getProtocol(unsigned i) const {
+//   //   assert(i < getNumProtocols() && "Index is out of bounds!");
+//   //   return *(this->getTypePtr()->qual_begin() + i);
+//   // }
 
-  ArrayRef<SourceLocation> getProtocolLocs() const {
-    return llvm::makeArrayRef(getProtocolLocArray(), getNumProtocols());
-  }
+//   ArrayRef<SourceLocation> getProtocolLocs() const {
+//     return llvm::makeArrayRef(getProtocolLocArray(), getNumProtocols());
+//   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+//   void initializeLocal(ASTContext &Context, SourceLocation Loc);
 
-  unsigned getExtraLocalDataSize() const {
-    if (!this->getNumProtocols()) return 0;
-    // When there are protocol qualifers, we have LAngleLoc and RAngleLoc
-    // as well.
-    return (this->getNumProtocols() + 2) * sizeof(SourceLocation) ;
-  }
+//   unsigned getExtraLocalDataSize() const {
+//     if (!this->getNumProtocols()) return 0;
+//     // When there are protocol qualifers, we have LAngleLoc and RAngleLoc
+//     // as well.
+//     return (this->getNumProtocols() + 2) * sizeof(SourceLocation) ;
+//   }
 
-  unsigned getExtraLocalDataAlignment() const {
-    return alignof(SourceLocation);
-  }
+//   unsigned getExtraLocalDataAlignment() const {
+//     return alignof(SourceLocation);
+//   }
 
-  SourceRange getLocalSourceRange() const {
-    SourceLocation start = getNameLoc();
-    SourceLocation end = getProtocolRAngleLoc();
-    if (end.isInvalid()) return SourceRange(start, start);
-    return SourceRange(start, end);
-  }
-};
+//   SourceRange getLocalSourceRange() const {
+//     SourceLocation start = getNameLoc();
+//     SourceLocation end = getProtocolRAngleLoc();
+//     if (end.isInvalid()) return SourceRange(start, start);
+//     return SourceRange(start, end);
+//   }
+// };
 
 /// Wrapper for substituted template type parameters.
 class SubstTemplateTypeParmTypeLoc :

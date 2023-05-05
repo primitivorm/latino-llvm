@@ -168,7 +168,7 @@ void JSONNodeDumper::Visit(const CXXCtorInitializer *Init) {
     llvm_unreachable("Unknown initializer type");
 }
 
-void JSONNodeDumper::Visit(const OMPClause *C) {}
+// void JSONNodeDumper::Visit(const OMPClause *C) {}
 
 void JSONNodeDumper::Visit(const BlockDecl::Capture &C) {
   JOS.attribute("kind", "Capture");
@@ -907,18 +907,18 @@ void JSONNodeDumper::VisitFriendDecl(const FriendDecl *FD) {
     JOS.attribute("type", createQualType(T->getType()));
 }
 
-// void JSONNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-//   VisitNamedDecl(D);
-//   JOS.attribute("type", createQualType(D->getType()));
-//   attributeOnlyIfTrue("synthesized", D->getSynthesize());
-//   switch (D->getAccessControl()) {
-//   case ObjCIvarDecl::None: JOS.attribute("access", "none"); break;
-//   case ObjCIvarDecl::Private: JOS.attribute("access", "private"); break;
-//   case ObjCIvarDecl::Protected: JOS.attribute("access", "protected"); break;
-//   case ObjCIvarDecl::Public: JOS.attribute("access", "public"); break;
-//   case ObjCIvarDecl::Package: JOS.attribute("access", "package"); break;
-//   }
-// }
+void JSONNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+  VisitNamedDecl(D);
+  JOS.attribute("type", createQualType(D->getType()));
+  attributeOnlyIfTrue("synthesized", D->getSynthesize());
+  switch (D->getAccessControl()) {
+  case ObjCIvarDecl::None: JOS.attribute("access", "none"); break;
+  case ObjCIvarDecl::Private: JOS.attribute("access", "private"); break;
+  case ObjCIvarDecl::Protected: JOS.attribute("access", "protected"); break;
+  case ObjCIvarDecl::Public: JOS.attribute("access", "public"); break;
+  case ObjCIvarDecl::Package: JOS.attribute("access", "package"); break;
+  }
+}
 
 // void JSONNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
 //   VisitNamedDecl(D);
@@ -1454,12 +1454,12 @@ void JSONNodeDumper::VisitWhileStmt(const WhileStmt *WS) {
   attributeOnlyIfTrue("hasVar", WS->hasVarStorage());
 }
 
-void JSONNodeDumper::VisitObjCAtCatchStmt(const ObjCAtCatchStmt* OACS) {
-  // FIXME: it would be nice for the ASTNodeTraverser would handle the catch
-  // parameter the same way for C++ and ObjC rather. In this case, C++ gets a
-  // null child node and ObjC gets no child node.
-  attributeOnlyIfTrue("isCatchAll", OACS->getCatchParamDecl() == nullptr);
-}
+// void JSONNodeDumper::VisitObjCAtCatchStmt(const ObjCAtCatchStmt* OACS) {
+//   // FIXME: it would be nice for the ASTNodeTraverser would handle the catch
+//   // parameter the same way for C++ and ObjC rather. In this case, C++ gets a
+//   // null child node and ObjC gets no child node.
+//   attributeOnlyIfTrue("isCatchAll", OACS->getCatchParamDecl() == nullptr);
+// }
 
 void JSONNodeDumper::VisitNullTemplateArgument(const TemplateArgument &TA) {
   JOS.attribute("isNull", true);

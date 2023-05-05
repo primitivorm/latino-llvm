@@ -410,7 +410,7 @@ bool Sema::LookupTemplateName(LookupResult &Found,
     // vector component name, and look up a template name if not. And similarly
     // for lookups into Objective-C class and object types, where the same
     // problem can arise.
-    if (ObjectType->isObjCObjectOrInterfaceType() ||
+    if (/*ObjectType->isObjCObjectOrInterfaceType() ||*/
         ObjectType->isVectorType()) {
       Found.clear();
       return false;
@@ -4913,13 +4913,13 @@ bool Sema::CheckTemplateTypeArgument(TemplateTypeParmDecl *Param,
   // Objective-C ARC:
   //   If an explicitly-specified template argument type is a lifetime type
   //   with no lifetime qualifier, the __strong lifetime qualifier is inferred.
-  if (getLangOpts().ObjCAutoRefCount &&
-      ArgType->isObjCLifetimeType() &&
-      !ArgType.getObjCLifetime()) {
-    Qualifiers Qs;
-    Qs.setObjCLifetime(Qualifiers::OCL_Strong);
-    ArgType = Context.getQualifiedType(ArgType, Qs);
-  }
+  // if (getLangOpts().ObjCAutoRefCount &&
+  //     ArgType->isObjCLifetimeType() &&
+  //     !ArgType.getObjCLifetime()) {
+  //   Qualifiers Qs;
+  //   Qs.setObjCLifetime(Qualifiers::OCL_Strong);
+  //   ArgType = Context.getQualifiedType(ArgType, Qs);
+  // }
 
   Converted.push_back(TemplateArgument(ArgType));
   return false;

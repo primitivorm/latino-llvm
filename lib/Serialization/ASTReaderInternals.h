@@ -188,49 +188,49 @@ using ASTIdentifierLookupTable =
 
 /// Class that performs lookup for a selector's entries in the global
 /// method pool stored in an AST file.
-class ASTSelectorLookupTrait {
-  ASTReader &Reader;
-  ModuleFile &F;
+// class ASTSelectorLookupTrait {
+//   ASTReader &Reader;
+//   ModuleFile &F;
 
-public:
-  struct data_type {
-    SelectorID ID;
-    unsigned InstanceBits;
-    unsigned FactoryBits;
-    bool InstanceHasMoreThanOneDecl;
-    bool FactoryHasMoreThanOneDecl;
-    // SmallVector<ObjCMethodDecl *, 2> Instance;
-    // SmallVector<ObjCMethodDecl *, 2> Factory;
-  };
+// public:
+//   struct data_type {
+//     SelectorID ID;
+//     unsigned InstanceBits;
+//     unsigned FactoryBits;
+//     bool InstanceHasMoreThanOneDecl;
+//     bool FactoryHasMoreThanOneDecl;
+//     // SmallVector<ObjCMethodDecl *, 2> Instance;
+//     // SmallVector<ObjCMethodDecl *, 2> Factory;
+//   };
 
-  using external_key_type = Selector;
-  using internal_key_type = external_key_type;
-  using hash_value_type = unsigned;
-  using offset_type = unsigned;
+//   using external_key_type = Selector;
+//   using internal_key_type = external_key_type;
+//   using hash_value_type = unsigned;
+//   using offset_type = unsigned;
 
-  ASTSelectorLookupTrait(ASTReader &Reader, ModuleFile &F)
-      : Reader(Reader), F(F) {}
+//   ASTSelectorLookupTrait(ASTReader &Reader, ModuleFile &F)
+//       : Reader(Reader), F(F) {}
 
-  static bool EqualKey(const internal_key_type& a,
-                       const internal_key_type& b) {
-    return a == b;
-  }
+//   static bool EqualKey(const internal_key_type& a,
+//                        const internal_key_type& b) {
+//     return a == b;
+//   }
 
-  static hash_value_type ComputeHash(Selector Sel);
+//   static hash_value_type ComputeHash(Selector Sel);
 
-  static const internal_key_type&
-  GetInternalKey(const external_key_type& x) { return x; }
+//   static const internal_key_type&
+//   GetInternalKey(const external_key_type& x) { return x; }
 
-  static std::pair<unsigned, unsigned>
-  ReadKeyDataLength(const unsigned char*& d);
+//   static std::pair<unsigned, unsigned>
+//   ReadKeyDataLength(const unsigned char*& d);
 
-  internal_key_type ReadKey(const unsigned char* d, unsigned);
-  data_type ReadData(Selector, const unsigned char* d, unsigned DataLen);
-};
+//   internal_key_type ReadKey(const unsigned char* d, unsigned);
+//   data_type ReadData(Selector, const unsigned char* d, unsigned DataLen);
+// };
 
 /// The on-disk hash table used for the global method pool.
-using ASTSelectorLookupTable =
-    llvm::OnDiskChainedHashTable<ASTSelectorLookupTrait>;
+// using ASTSelectorLookupTable =
+//     llvm::OnDiskChainedHashTable<ASTSelectorLookupTrait>;
 
 /// Trait class used to search the on-disk hash table containing all of
 /// the header search information.

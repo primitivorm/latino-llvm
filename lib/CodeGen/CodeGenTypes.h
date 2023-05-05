@@ -17,6 +17,7 @@
 #include "latino/Basic/ABI.h"
 #include "latino/CodeGen/CGFunctionInfo.h"
 #include "llvm/ADT/DenseMap.h"
+#include "llvm/ADT/SmallSet.h"
 #include "llvm/IR/Module.h"
 
 namespace llvm {
@@ -37,7 +38,7 @@ class CodeGenOptions;
 class FieldDecl;
 class FunctionProtoType;
 // class ObjCInterfaceDecl;
-// class ObjCIvarDecl;
+class ObjCIvarDecl;
 class PointerType;
 class QualType;
 class RecordDecl;
@@ -72,7 +73,7 @@ class CodeGenTypes {
   /// manipulation is done by the runtime interfaces, which are
   /// responsible for coercing to the appropriate type; these opaque
   /// types are never refined.
-  llvm::DenseMap<const ObjCInterfaceType*, llvm::Type *> InterfaceTypes;
+  // llvm::DenseMap<const ObjCInterfaceType*, llvm::Type *> InterfaceTypes;
 
   /// Maps clang struct type with corresponding record layout info.
   llvm::DenseMap<const Type*, std::unique_ptr<CGRecordLayout>> CGRecordLayouts;

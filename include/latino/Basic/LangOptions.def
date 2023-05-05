@@ -278,8 +278,8 @@ BENIGN_ENUM_LANGOPT(FPExceptionMode, FPExceptionModeKind, 2, FPE_Ignore, "FP Exc
 LANGOPT(NoBitFieldTypeAlign , 1, 0, "bit-field type alignment")
 LANGOPT(HexagonQdsp6Compat , 1, 0, "hexagon-qdsp6 backward compatibility")
 LANGOPT(ObjCAutoRefCount , 1, 0, "Objective-C automated reference counting")
-LANGOPT(ObjCWeakRuntime     , 1, 0, "__weak support in the ARC runtime")
-LANGOPT(ObjCWeak            , 1, 0, "Objective-C __weak in ARC and MRC files")
+// LANGOPT(ObjCWeakRuntime     , 1, 0, "__weak support in the ARC runtime")
+// LANGOPT(ObjCWeak            , 1, 0, "Objective-C __weak in ARC and MRC files")
 LANGOPT(ObjCSubscriptingLegacyRuntime         , 1, 0, "Subscripting support in legacy ObjectiveC runtime")
 BENIGN_LANGOPT(CompatibilityQualifiedIdBlockParamTypeChecking, 1, 0,
                "compatibility mode for type checking block parameters "
@@ -288,7 +288,7 @@ LANGOPT(CFProtectionBranch , 1, 0, "Control-Flow Branch Protection enabled")
 LANGOPT(FakeAddressSpaceMap , 1, 0, "OpenCL fake address space map")
 ENUM_LANGOPT(AddressSpaceMapMangling , AddrSpaceMapMangling, 2, ASMM_Target, "OpenCL address space map mangling mode")
 LANGOPT(IncludeDefaultHeader, 1, 0, "Include default header file for OpenCL")
-LANGOPT(DeclareOpenCLBuiltins, 1, 0, "Declare OpenCL builtin functions")
+// LANGOPT(DeclareOpenCLBuiltins, 1, 0, "Declare OpenCL builtin functions")
 BENIGN_LANGOPT(DelayedTemplateParsing , 1, 0, "delayed template parsing")
 LANGOPT(BlocksRuntimeOptional , 1, 0, "optional blocks runtime")
 LANGOPT(

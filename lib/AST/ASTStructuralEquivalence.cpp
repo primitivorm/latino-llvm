@@ -65,7 +65,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/AST/NestedNameSpecifier.h"
@@ -139,10 +139,10 @@ static bool IsStructurallyEquivalent(StructuralEquivalenceContext &Context,
   case DeclarationName::CXXUsingDirective:
     return true; // FIXME When do we consider two using directives equal?
 
-  case DeclarationName::ObjCZeroArgSelector:
-  case DeclarationName::ObjCOneArgSelector:
-  case DeclarationName::ObjCMultiArgSelector:
-    return true; // FIXME
+  // case DeclarationName::ObjCZeroArgSelector:
+  // case DeclarationName::ObjCOneArgSelector:
+  // case DeclarationName::ObjCMultiArgSelector:
+  //   return true; // FIXME
   }
 
   llvm_unreachable("Unhandled kind of DeclarationName");

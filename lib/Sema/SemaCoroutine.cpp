@@ -386,20 +386,21 @@ static Expr *maybeTailCall(Sema &S, QualType RetType, Expr *E,
   // EvaluateBinaryTypeTrait(BTT_IsConvertible, ...) which is at the moment
   // a private function in SemaExprCXX.cpp
 
-  ExprResult AddressExpr = buildMemberCall(S, E, Loc, "address", None);
-  if (AddressExpr.isInvalid())
-    return nullptr;
+  // ExprResult AddressExpr = buildMemberCall(S, E, Loc, "address", None);
+  // if (AddressExpr.isInvalid())
+  //   return nullptr;
 
-  Expr *JustAddress = AddressExpr.get();
+  // Expr *JustAddress = AddressExpr.get();
 
   // Check that the type of AddressExpr is void*
-  if (!JustAddress->getType().getTypePtr()->isVoidPointerType())
-    S.Diag(cast<CallExpr>(JustAddress)->getCalleeDecl()->getLocation(),
-           diag::warn_coroutine_handle_address_invalid_return_type)
-        << JustAddress->getType();
+  // if (!JustAddress->getType().getTypePtr()->isVoidPointerType())
+  //   S.Diag(cast<CallExpr>(JustAddress)->getCalleeDecl()->getLocation(),
+  //          diag::warn_coroutine_handle_address_invalid_return_type)
+  //       << JustAddress->getType();
 
-  return buildBuiltinCall(S, Loc, Builtin::BI__builtin_coro_resume,
-                          JustAddress);
+  // return buildBuiltinCall(S, Loc, Builtin::BI__builtin_coro_resume,
+  //                         JustAddress);
+  return nullptr;
 }
 
 /// Build calls to await_ready, await_suspend, and await_resume for a co_await
@@ -419,12 +420,12 @@ static ReadySuspendResumeResult buildCoawaitCalls(Sema &S, VarDecl *CoroPromise,
 
   const StringRef Funcs[] = {"await_ready", "await_suspend", "await_resume"};
   MultiExprArg Args[] = {None, CoroHandle, None};
-  for (size_t I = 0, N = llvm::array_lengthof(Funcs); I != N; ++I) {
-    ExprResult Result = buildMemberCall(S, Operand, Loc, Funcs[I], Args[I]);
-    if (Result.isInvalid())
-      return Calls;
-    Calls.Results[I] = Result.get();
-  }
+  // for (size_t I = 0, N = llvm::array_lengthof(Funcs); I != N; ++I) {
+  //   ExprResult Result = buildMemberCall(S, Operand, Loc, Funcs[I], Args[I]);
+  //   if (Result.isInvalid())
+  //     return Calls;
+  //   Calls.Results[I] = Result.get();
+  // }
 
   // Assume the calls are valid; all further checking should make them invalid.
   Calls.IsInvalid = false;
@@ -482,7 +483,8 @@ static ExprResult buildPromiseCall(Sema &S, VarDecl *Promise,
   if (PromiseRef.isInvalid())
     return ExprError();
 
-  return buildMemberCall(S, PromiseRef.get(), Loc, Name, Args);
+  // return buildMemberCall(S, PromiseRef.get(), Loc, Name, Args);
+    return ExprError();
 }
 
 VarDecl *Sema::buildCoroutinePromise(SourceLocation Loc) {

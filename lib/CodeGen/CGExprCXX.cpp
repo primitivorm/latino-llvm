@@ -119,50 +119,50 @@ RValue CodeGenFunction::EmitCXXDestructorCall(
 RValue CodeGenFunction::EmitCXXPseudoDestructorExpr(
                                             const CXXPseudoDestructorExpr *E) {
   QualType DestroyedType = E->getDestroyedType();
-  if (DestroyedType.hasStrongOrWeakObjCLifetime()) {
-    // Automatic Reference Counting:
-    //   If the pseudo-expression names a retainable object with weak or
-    //   strong lifetime, the object shall be released.
-    Expr *BaseExpr = E->getBase();
-    Address BaseValue = Address::invalid();
-    Qualifiers BaseQuals;
+  // if (DestroyedType.hasStrongOrWeakObjCLifetime()) {
+  //   // Automatic Reference Counting:
+  //   //   If the pseudo-expression names a retainable object with weak or
+  //   //   strong lifetime, the object shall be released.
+  //   Expr *BaseExpr = E->getBase();
+  //   Address BaseValue = Address::invalid();
+  //   Qualifiers BaseQuals;
 
-    // If this is s.x, emit s as an lvalue. If it is s->x, emit s as a scalar.
-    if (E->isArrow()) {
-      BaseValue = EmitPointerWithAlignment(BaseExpr);
-      const auto *PTy = BaseExpr->getType()->castAs<PointerType>();
-      BaseQuals = PTy->getPointeeType().getQualifiers();
-    } else {
-      LValue BaseLV = EmitLValue(BaseExpr);
-      BaseValue = BaseLV.getAddress(*this);
-      QualType BaseTy = BaseExpr->getType();
-      BaseQuals = BaseTy.getQualifiers();
-    }
+  //   // If this is s.x, emit s as an lvalue. If it is s->x, emit s as a scalar.
+  //   if (E->isArrow()) {
+  //     BaseValue = EmitPointerWithAlignment(BaseExpr);
+  //     const auto *PTy = BaseExpr->getType()->castAs<PointerType>();
+  //     BaseQuals = PTy->getPointeeType().getQualifiers();
+  //   } else {
+  //     LValue BaseLV = EmitLValue(BaseExpr);
+  //     BaseValue = BaseLV.getAddress(*this);
+  //     QualType BaseTy = BaseExpr->getType();
+  //     BaseQuals = BaseTy.getQualifiers();
+  //   }
 
-    switch (DestroyedType.getObjCLifetime()) {
-    case Qualifiers::OCL_None:
-    case Qualifiers::OCL_ExplicitNone:
-    case Qualifiers::OCL_Autoreleasing:
-      break;
+  //   // switch (DestroyedType.getObjCLifetime()) {
+  //   // case Qualifiers::OCL_None:
+  //   // case Qualifiers::OCL_ExplicitNone:
+  //   // case Qualifiers::OCL_Autoreleasing:
+  //   //   break;
 
-    case Qualifiers::OCL_Strong:
-      EmitARCRelease(Builder.CreateLoad(BaseValue,
-                        DestroyedType.isVolatileQualified()),
-                     ARCPreciseLifetime);
-      break;
+  //   // case Qualifiers::OCL_Strong:
+  //   //   EmitARCRelease(Builder.CreateLoad(BaseValue,
+  //   //                     DestroyedType.isVolatileQualified()),
+  //   //                  ARCPreciseLifetime);
+  //   //   break;
 
-    case Qualifiers::OCL_Weak:
-      EmitARCDestroyWeak(BaseValue);
-      break;
-    }
-  } else {
+  //   // case Qualifiers::OCL_Weak:
+  //   //   EmitARCDestroyWeak(BaseValue);
+  //   //   break;
+  //   // }
+  // } else {
     // C++ [expr.pseudo]p1:
     //   The result shall only be used as the operand for the function call
     //   operator (), and the result of such a call has type void. The only
     //   effect is the evaluation of the postfix-expression before the dot or
     //   arrow.
     EmitIgnoredExpr(E->getBase());
-  }
+  // }
 
   return RValue::get(nullptr);
 }
@@ -1944,22 +1944,22 @@ static bool EmitObjectDelete(CodeGenFunction &CGF,
                               /*ForVirtualBase=*/false,
                               /*Delegating=*/false,
                               Ptr, ElementType);
-  else if (auto Lifetime = ElementType.getObjCLifetime()) {
-    switch (Lifetime) {
-    case Qualifiers::OCL_None:
-    case Qualifiers::OCL_ExplicitNone:
-    case Qualifiers::OCL_Autoreleasing:
-      break;
+  // else if (auto Lifetime = ElementType.getObjCLifetime()) {
+  //   switch (Lifetime) {
+  //   case Qualifiers::OCL_None:
+  //   case Qualifiers::OCL_ExplicitNone:
+  //   case Qualifiers::OCL_Autoreleasing:
+  //     break;
 
-    case Qualifiers::OCL_Strong:
-      CGF.EmitARCDestroyStrong(Ptr, ARCPreciseLifetime);
-      break;
+  //   case Qualifiers::OCL_Strong:
+  //     CGF.EmitARCDestroyStrong(Ptr, ARCPreciseLifetime);
+  //     break;
 
-    case Qualifiers::OCL_Weak:
-      CGF.EmitARCDestroyWeak(Ptr);
-      break;
-    }
-  }
+  //   case Qualifiers::OCL_Weak:
+  //     CGF.EmitARCDestroyWeak(Ptr);
+  //     break;
+  //   }
+  // }
 
   // When optimizing for size, call 'operator delete' unconditionally.
   if (CGF.CGM.getCodeGenOpts().OptimizeSize > 1) {

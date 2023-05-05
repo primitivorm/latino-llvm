@@ -21,7 +21,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclFriend.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/RecordLayout.h"
@@ -306,9 +306,9 @@ StringRef CGDebugInfo::getFunctionName(const FunctionDecl *FD) {
 //   return internString(OS.str());
 // }
 
-StringRef CGDebugInfo::getSelectorName(Selector S) {
-  return internString(S.getAsString());
-}
+// StringRef CGDebugInfo::getSelectorName(Selector S) {
+//   return internString(S.getAsString());
+// }
 
 StringRef CGDebugInfo::getClassName(const RecordDecl *RD) {
   if (isa<ClassTemplateSpecializationDecl>(RD)) {
@@ -588,8 +588,8 @@ void CGDebugInfo::CreateCompileUnit() {
 
   // Figure out which version of the ObjC runtime we have.
   unsigned RuntimeVers = 0;
-  if (LO.ObjC)
-    RuntimeVers = LO.ObjCRuntime.isNonFragile() ? 2 : 1;
+  // if (LO.ObjC)
+  //   RuntimeVers = LO.ObjCRuntime.isNonFragile() ? 2 : 1;
 
   llvm::DICompileUnit::DebugEmissionKind EmissionKind;
   switch (DebugKind) {
@@ -784,12 +784,12 @@ llvm::DIType *CGDebugInfo::CreateType(const BuiltinType *BT) {
   case BuiltinType::Bool:
     Encoding = llvm::dwarf::DW_ATE_boolean;
     break;
-  case BuiltinType::Half:
+  // case BuiltinType::Half:
   case BuiltinType::Float:
   case BuiltinType::LongDouble:
-  case BuiltinType::Float16:
+  // case BuiltinType::Float16:
   case BuiltinType::BFloat16:
-  case BuiltinType::Float128:
+  // case BuiltinType::Float128:
   case BuiltinType::Double:
     // FIXME: For targets where long double and __float128 have the same size,
     // they are currently indistinguishable in the debugger without some
@@ -881,9 +881,9 @@ llvm::DIType *CGDebugInfo::CreateQualifiedType(QualType Ty,
   const Type *T = Qc.strip(Ty);
 
   // Ignore these qualifiers for now.
-  Qc.removeObjCGCAttr();
+  // Qc.removeObjCGCAttr();
   Qc.removeAddressSpace();
-  Qc.removeObjCLifetime();
+  // Qc.removeObjCLifetime();
 
   // We will create one Derived type for one qualifier and recurse to handle any
   // additional ones.
@@ -2418,17 +2418,17 @@ llvm::DIType *CGDebugInfo::CreateTypeDefinition(const RecordType *Ty) {
 //   return getOrCreateType(Ty->getBaseType(), Unit);
 // }
 
-llvm::DIType *CGDebugInfo::CreateType(const ObjCTypeParamType *Ty,
-                                      llvm::DIFile *Unit) {
-  // Ignore protocols.
-  SourceLocation Loc = Ty->getDecl()->getLocation();
+// llvm::DIType *CGDebugInfo::CreateType(const ObjCTypeParamType *Ty,
+//                                       llvm::DIFile *Unit) {
+//   // Ignore protocols.
+//   SourceLocation Loc = Ty->getDecl()->getLocation();
 
-  // Use Typedefs to represent ObjCTypeParamType.
-  return DBuilder.createTypedef(
-      getOrCreateType(Ty->getDecl()->getUnderlyingType(), Unit),
-      Ty->getDecl()->getName(), getOrCreateFile(Loc), getLineNumber(Loc),
-      getDeclContextDescriptor(Ty->getDecl()));
-}
+//   // Use Typedefs to represent ObjCTypeParamType.
+//   return DBuilder.createTypedef(
+//       getOrCreateType(Ty->getDecl()->getUnderlyingType(), Unit),
+//       Ty->getDecl()->getName(), getOrCreateFile(Loc), getLineNumber(Loc),
+//       getDeclContextDescriptor(Ty->getDecl()));
+// }
 
 /// \return true if Getter has the default name for the property PD.
 // static bool hasDefaultGetterName(const ObjCPropertyDecl *PD,
@@ -4085,14 +4085,14 @@ CGDebugInfo::EmitTypeForVarWithBlocksAttr(const VarDecl *VD,
         CreateMemberType(Unit, FType, "__destroy_helper", &FieldOffset));
   }
   bool HasByrefExtendedLayout;
-  Qualifiers::ObjCLifetime Lifetime;
-  if (CGM.getContext().getByrefLifetime(Type, Lifetime,
-                                        HasByrefExtendedLayout) &&
-      HasByrefExtendedLayout) {
-    FType = CGM.getContext().getPointerType(CGM.getContext().VoidTy);
-    EltTys.push_back(
-        CreateMemberType(Unit, FType, "__byref_variable_layout", &FieldOffset));
-  }
+  // Qualifiers::ObjCLifetime Lifetime;
+  // if (CGM.getContext().getByrefLifetime(Type, Lifetime,
+  //                                       HasByrefExtendedLayout) &&
+  //     HasByrefExtendedLayout) {
+  //   FType = CGM.getContext().getPointerType(CGM.getContext().VoidTy);
+  //   EltTys.push_back(
+  //       CreateMemberType(Unit, FType, "__byref_variable_layout", &FieldOffset));
+  // }
 
   CharUnits Align = CGM.getContext().getDeclAlign(VD);
   if (Align > CGM.getContext().toCharUnitsFromBits(
@@ -4176,8 +4176,8 @@ llvm::DILocalVariable *CGDebugInfo::EmitDeclare(const VarDecl *VD,
   // If this is implicit parameter of CXXThis or ObjCSelf kind, then give it an
   // object pointer flag.
   if (const auto *IPD = dyn_cast<ImplicitParamDecl>(VD)) {
-    if (IPD->getParameterKind() == ImplicitParamDecl::CXXThis ||
-        IPD->getParameterKind() == ImplicitParamDecl::ObjCSelf)
+    if (IPD->getParameterKind() == ImplicitParamDecl::CXXThis /*||
+        IPD->getParameterKind() == ImplicitParamDecl::ObjCSelf*/)
       Flags |= llvm::DINode::FlagObjectPointer;
   }
 
@@ -4328,9 +4328,9 @@ void CGDebugInfo::EmitDeclareOfBlockDeclRefVariable(
 
   // Self is passed along as an implicit non-arg variable in a
   // block. Mark it as the object pointer.
-  if (const auto *IPD = dyn_cast<ImplicitParamDecl>(VD))
-    if (IPD->getParameterKind() == ImplicitParamDecl::ObjCSelf)
-      Ty = CreateSelfType(VD->getType(), Ty);
+  // if (const auto *IPD = dyn_cast<ImplicitParamDecl>(VD))
+  //   if (IPD->getParameterKind() == ImplicitParamDecl::ObjCSelf)
+  //     Ty = CreateSelfType(VD->getType(), Ty);
 
   // Get location information.
   unsigned Line = getLineNumber(VD->getLocation());
@@ -4897,37 +4897,37 @@ void CGDebugInfo::setDwoId(uint64_t Signature) {
 void CGDebugInfo::finalize() {
   // Creating types might create further types - invalidating the current
   // element and the size(), so don't cache/reference them.
-  for (size_t i = 0; i != ObjCInterfaceCache.size(); ++i) {
-    ObjCInterfaceCacheEntry E = ObjCInterfaceCache[i];
-    llvm::DIType *Ty = E.Type->getDecl()->getDefinition()
-                           ? CreateTypeDefinition(E.Type, E.Unit)
-                           : E.Decl;
-    DBuilder.replaceTemporary(llvm::TempDIType(E.Decl), Ty);
-  }
+  // for (size_t i = 0; i != ObjCInterfaceCache.size(); ++i) {
+  //   ObjCInterfaceCacheEntry E = ObjCInterfaceCache[i];
+  //   llvm::DIType *Ty = E.Type->getDecl()->getDefinition()
+  //                          ? CreateTypeDefinition(E.Type, E.Unit)
+  //                          : E.Decl;
+  //   DBuilder.replaceTemporary(llvm::TempDIType(E.Decl), Ty);
+  // }
 
   // Add methods to interface.
-  for (const auto &P : ObjCMethodCache) {
-    if (P.second.empty())
-      continue;
+  // for (const auto &P : ObjCMethodCache) {
+  //   if (P.second.empty())
+  //     continue;
 
-    QualType QTy(P.first->getTypeForDecl(), 0);
-    auto It = TypeCache.find(QTy.getAsOpaquePtr());
-    assert(It != TypeCache.end());
+  //   QualType QTy(P.first->getTypeForDecl(), 0);
+  //   auto It = TypeCache.find(QTy.getAsOpaquePtr());
+  //   assert(It != TypeCache.end());
 
-    llvm::DICompositeType *InterfaceDecl =
-        cast<llvm::DICompositeType>(It->second);
+  //   llvm::DICompositeType *InterfaceDecl =
+  //       cast<llvm::DICompositeType>(It->second);
 
-    auto CurElts = InterfaceDecl->getElements();
-    SmallVector<llvm::Metadata *, 16> EltTys(CurElts.begin(), CurElts.end());
+  //   auto CurElts = InterfaceDecl->getElements();
+  //   SmallVector<llvm::Metadata *, 16> EltTys(CurElts.begin(), CurElts.end());
 
-    // For DWARF v4 or earlier, only add objc_direct methods.
-    for (auto &SubprogramDirect : P.second)
-      if (CGM.getCodeGenOpts().DwarfVersion >= 5 || SubprogramDirect.getInt())
-        EltTys.push_back(SubprogramDirect.getPointer());
+  //   // For DWARF v4 or earlier, only add objc_direct methods.
+  //   for (auto &SubprogramDirect : P.second)
+  //     if (CGM.getCodeGenOpts().DwarfVersion >= 5 || SubprogramDirect.getInt())
+  //       EltTys.push_back(SubprogramDirect.getPointer());
 
-    llvm::DINodeArray Elements = DBuilder.getOrCreateArray(EltTys);
-    DBuilder.replaceArrays(InterfaceDecl, Elements);
-  }
+  //   llvm::DINodeArray Elements = DBuilder.getOrCreateArray(EltTys);
+  //   DBuilder.replaceArrays(InterfaceDecl, Elements);
+  // }
 
   for (const auto &P : ReplaceMap) {
     assert(P.second);

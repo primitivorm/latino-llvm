@@ -18,7 +18,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/Expr.h"
@@ -60,14 +60,15 @@ bool Qualifiers::isStrictSupersetOf(Qualifiers Other) const {
     // CVR qualifiers superset
     (((Mask & CVRMask) | (Other.Mask & CVRMask)) == (Mask & CVRMask)) &&
     // ObjC GC qualifiers superset
-    ((getObjCGCAttr() == Other.getObjCGCAttr()) ||
-     (hasObjCGCAttr() && !Other.hasObjCGCAttr())) &&
+    // ((getObjCGCAttr() == Other.getObjCGCAttr()) ||
+    //  (hasObjCGCAttr() && !Other.hasObjCGCAttr())) &&
     // Address space superset.
     ((getAddressSpace() == Other.getAddressSpace()) ||
-     (hasAddressSpace()&& !Other.hasAddressSpace())) &&
+     (hasAddressSpace()&& !Other.hasAddressSpace())) // &&
     // Lifetime qualifier superset.
-    ((getObjCLifetime() == Other.getObjCLifetime()) ||
-     (hasObjCLifetime() && !Other.hasObjCLifetime()));
+    // ((getObjCLifetime() == Other.getObjCLifetime()) ||
+    //  (hasObjCLifetime() && !Other.hasObjCLifetime()))
+     ;
 }
 
 const IdentifierInfo* QualType::getBaseTypeIdentifier() const {
@@ -568,11 +569,11 @@ bool Type::isStructureType() const {
   return false;
 }
 
-bool Type::isObjCBoxableRecordType() const {
-  if (const auto *RT = getAs<RecordType>())
-    return RT->getDecl()->hasAttr<ObjCBoxableAttr>();
-  return false;
-}
+// bool Type::isObjCBoxableRecordType() const {
+//   if (const auto *RT = getAs<RecordType>())
+//     return RT->getDecl()->hasAttr<ObjCBoxableAttr>();
+//   return false;
+// }
 
 bool Type::isInterfaceType() const {
   if (const auto *RT = getAs<RecordType>())
@@ -1092,7 +1093,7 @@ public:
   }
 
   SUGARED_TYPE_CLASS(Typedef)
-  SUGARED_TYPE_CLASS(ObjCTypeParam)
+  // SUGARED_TYPE_CLASS(ObjCTypeParam)
   SUGARED_TYPE_CLASS(MacroQualified)
 
   QualType VisitAdjustedType(const AdjustedType *T) {
@@ -1480,28 +1481,28 @@ public:
 
 /// Substitute the given type arguments for Objective-C type
 /// parameters within the given type, recursively.
-QualType QualType::substObjCTypeArgs(ASTContext &ctx,
-                                     ArrayRef<QualType> typeArgs,
-                                     ObjCSubstitutionContext context) const {
-  SubstObjCTypeArgsVisitor visitor(ctx, typeArgs, context);
-  return visitor.recurse(*this);
-}
+// QualType QualType::substObjCTypeArgs(ASTContext &ctx,
+//                                      ArrayRef<QualType> typeArgs,
+//                                      ObjCSubstitutionContext context) const {
+//   SubstObjCTypeArgsVisitor visitor(ctx, typeArgs, context);
+//   return visitor.recurse(*this);
+// }
 
-QualType QualType::substObjCMemberType(QualType objectType,
-                                       const DeclContext *dc,
-                                       ObjCSubstitutionContext context) const {
-  if (auto subs = objectType->getObjCSubstitutions(dc))
-    return substObjCTypeArgs(dc->getParentASTContext(), *subs, context);
+// QualType QualType::substObjCMemberType(QualType objectType,
+//                                        const DeclContext *dc,
+//                                        ObjCSubstitutionContext context) const {
+//   if (auto subs = objectType->getObjCSubstitutions(dc))
+//     return substObjCTypeArgs(dc->getParentASTContext(), *subs, context);
 
-  return *this;
-}
+//   return *this;
+// }
 
-QualType QualType::stripObjCKindOfType(const ASTContext &constCtx) const {
-  // FIXME: Because ASTContext::getAttributedType() is non-const.
-  auto &ctx = const_cast<ASTContext &>(constCtx);
-  StripObjCKindOfTypeVisitor visitor(ctx);
-  return visitor.recurse(*this);
-}
+// QualType QualType::stripObjCKindOfType(const ASTContext &constCtx) const {
+//   // FIXME: Because ASTContext::getAttributedType() is non-const.
+//   auto &ctx = const_cast<ASTContext &>(constCtx);
+//   StripObjCKindOfTypeVisitor visitor(ctx);
+//   return visitor.recurse(*this);
+// }
 
 QualType QualType::getAtomicUnqualifiedType() const {
   if (const auto AT = getTypePtr()->getAs<AtomicType>())
@@ -2096,9 +2097,9 @@ bool Type::hasUnsignedIntegerRepresentation() const {
 }
 
 bool Type::isFloatingType() const {
-  if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
-    return BT->getKind() >= BuiltinType::Half &&
-           BT->getKind() <= BuiltinType::Float128;
+  // if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
+  //   return BT->getKind() >= BuiltinType::Half &&
+  //          BT->getKind() <= BuiltinType::Float128;
   if (const auto *CT = dyn_cast<ComplexType>(CanonicalType))
     return CT->getElementType()->isFloatingType();
   return false;
@@ -2118,9 +2119,9 @@ bool Type::isRealFloatingType() const {
 }
 
 bool Type::isRealType() const {
-  if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
-    return BT->getKind() >= BuiltinType::Bool &&
-           BT->getKind() <= BuiltinType::Float128;
+  // if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
+  //   return BT->getKind() >= BuiltinType::Bool &&
+  //          BT->getKind() <= BuiltinType::Float128;
   if (const auto *ET = dyn_cast<EnumType>(CanonicalType))
       return ET->getDecl()->isComplete() && !ET->getDecl()->isScoped();
   return isExtIntType();
@@ -2129,7 +2130,7 @@ bool Type::isRealType() const {
 bool Type::isArithmeticType() const {
   if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
     return BT->getKind() >= BuiltinType::Bool &&
-           BT->getKind() <= BuiltinType::Float128 &&
+          //  BT->getKind() <= BuiltinType::Float128 &&
            BT->getKind() != BuiltinType::BFloat16;
   if (const auto *ET = dyn_cast<EnumType>(CanonicalType))
     // GCC allows forward declaration of enum types (forbid by C99 6.7.2.3p2).
@@ -2315,8 +2316,8 @@ bool QualType::isCXX98PODType(const ASTContext &Context) const {
   if ((*this)->isIncompleteType())
     return false;
 
-  if (hasNonTrivialObjCLifetime())
-    return false;
+  // if (hasNonTrivialObjCLifetime())
+  //   return false;
 
   QualType CanonicalType = getTypePtr()->CanonicalType;
   switch (CanonicalType->getTypeClass()) {
@@ -2369,8 +2370,8 @@ bool QualType::isTrivialType(const ASTContext &Context) const {
   if ((*this)->isIncompleteType())
     return false;
 
-  if (hasNonTrivialObjCLifetime())
-    return false;
+  // if (hasNonTrivialObjCLifetime())
+  //   return false;
 
   QualType CanonicalType = getTypePtr()->CanonicalType;
   if (CanonicalType->isDependentType())
@@ -2406,8 +2407,8 @@ bool QualType::isTriviallyCopyableType(const ASTContext &Context) const {
   if ((*this)->isArrayType())
     return Context.getBaseElementType(*this).isTriviallyCopyableType(Context);
 
-  if (hasNonTrivialObjCLifetime())
-    return false;
+  // if (hasNonTrivialObjCLifetime())
+  //   return false;
 
   // C++11 [basic.types]p9 - See Core 2094
   //   Scalar types, trivially copyable class types, arrays of such types, and
@@ -2442,11 +2443,11 @@ bool QualType::isTriviallyCopyableType(const ASTContext &Context) const {
   return false;
 }
 
-bool QualType::isNonWeakInMRRWithObjCWeak(const ASTContext &Context) const {
-  return !Context.getLangOpts().ObjCAutoRefCount &&
-         Context.getLangOpts().ObjCWeak &&
-         getObjCLifetime() != Qualifiers::OCL_Weak;
-}
+// bool QualType::isNonWeakInMRRWithObjCWeak(const ASTContext &Context) const {
+//   return !Context.getLangOpts().ObjCAutoRefCount &&
+//          Context.getLangOpts().ObjCWeak &&
+//          getObjCLifetime() != Qualifiers::OCL_Weak;
+// }
 
 bool QualType::hasNonTrivialToPrimitiveDefaultInitializeCUnion(const RecordDecl *RD) {
   return RD->hasNonTrivialToPrimitiveDefaultInitializeCUnion();
@@ -2467,14 +2468,14 @@ QualType::isNonTrivialToPrimitiveDefaultInitialize() const {
     if (RT->getDecl()->isNonTrivialToPrimitiveDefaultInitialize())
       return PDIK_Struct;
 
-  switch (getQualifiers().getObjCLifetime()) {
-  case Qualifiers::OCL_Strong:
-    return PDIK_ARCStrong;
-  case Qualifiers::OCL_Weak:
-    return PDIK_ARCWeak;
-  default:
-    return PDIK_Trivial;
-  }
+  // switch (getQualifiers().getObjCLifetime()) {
+  // case Qualifiers::OCL_Strong:
+  //   return PDIK_ARCStrong;
+  // case Qualifiers::OCL_Weak:
+  //   return PDIK_ARCWeak;
+  // default:
+  //   return PDIK_Trivial;
+  // }
 }
 
 QualType::PrimitiveCopyKind QualType::isNonTrivialToPrimitiveCopy() const {
@@ -2484,14 +2485,14 @@ QualType::PrimitiveCopyKind QualType::isNonTrivialToPrimitiveCopy() const {
       return PCK_Struct;
 
   Qualifiers Qs = getQualifiers();
-  switch (Qs.getObjCLifetime()) {
-  case Qualifiers::OCL_Strong:
-    return PCK_ARCStrong;
-  case Qualifiers::OCL_Weak:
-    return PCK_ARCWeak;
-  default:
-    return Qs.hasVolatile() ? PCK_VolatileTrivial : PCK_Trivial;
-  }
+  // switch (Qs.getObjCLifetime()) {
+  // case Qualifiers::OCL_Strong:
+  //   return PCK_ARCStrong;
+  // case Qualifiers::OCL_Weak:
+  //   return PCK_ARCWeak;
+  // default:
+  //   return Qs.hasVolatile() ? PCK_VolatileTrivial : PCK_Trivial;
+  // }
 }
 
 QualType::PrimitiveCopyKind
@@ -2605,8 +2606,8 @@ bool QualType::isCXX11PODType(const ASTContext &Context) const {
   if (ty->isDependentType())
     return false;
 
-  if (hasNonTrivialObjCLifetime())
-    return false;
+  // if (hasNonTrivialObjCLifetime())
+  //   return false;
 
   // C++11 [basic.types]p9:
   //   Scalar types, POD classes, arrays of such types, and cv-qualified
@@ -2728,9 +2729,9 @@ bool Type::isSpecifierType() const {
   case Elaborated:
   case DependentName:
   case DependentTemplateSpecialization:
-  case ObjCInterface:
-  case ObjCObject:
-  case ObjCObjectPointer: // FIXME: object pointers aren't really specifiers
+  // case ObjCInterface:
+  // case ObjCObject:
+  // case ObjCObjectPointer: // FIXME: object pointers aren't really specifiers
     return true;
   default:
     return false;
@@ -2990,8 +2991,8 @@ StringRef BuiltinType::getName(const PrintingPolicy &Policy) const {
     return "<overloaded function type>";
   case BoundMember:
     return "<bound member function type>";
-  // case PseudoObject:
-  //   return "<pseudo-object type>";
+  case PseudoObject:
+    return "<pseudo-object type>";
   case Dependent:
     return "<dependent type>";
   case UnknownAny:
@@ -3000,12 +3001,12 @@ StringRef BuiltinType::getName(const PrintingPolicy &Policy) const {
     return "<ARC unbridged cast type>";
   case BuiltinFn:
     return "<builtin fn type>";
-  case ObjCId:
-    return "id";
-  case ObjCClass:
-    return "Class";
-  case ObjCSel:
-    return "SEL";
+  // case ObjCId:
+  //   return "id";
+  // case ObjCClass:
+  //   return "Class";
+  // case ObjCSel:
+  //   return "SEL";
 // #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
 //   case Id: \
 //     return "__" #Access " " #ImgType "_t";
@@ -3449,9 +3450,9 @@ bool AttributedType::isQualifier() const {
   // These are type qualifiers in the traditional C sense: they annotate
   // something about a specific value/variable of a type.  (They aren't
   // always part of the canonical type, though.)
-  case attr::ObjCGC:
-  case attr::ObjCOwnership:
-  case attr::ObjCInertUnsafeUnretained:
+  // case attr::ObjCGC:
+  // case attr::ObjCOwnership:
+  // case attr::ObjCInertUnsafeUnretained:
   case attr::TypeNonNull:
   case attr::TypeNullable:
   case attr::TypeNullUnspecified:
@@ -4024,7 +4025,7 @@ bool Type::canHaveNullability(bool ResultIfUnknown) const {
     case BuiltinType::Dependent:
     case BuiltinType::Overload:
     case BuiltinType::BoundMember:
-    // case BuiltinType::PseudoObject:
+    case BuiltinType::PseudoObject:
     case BuiltinType::UnknownAny:
     case BuiltinType::ARCUnbridgedCast:
       return ResultIfUnknown;

@@ -112,13 +112,13 @@ struct MSGuidDeclParts;
 // class ObjCImplDecl;
 // class ObjCImplementationDecl;
 // class ObjCInterfaceDecl;
-// class ObjCIvarDecl;
+class ObjCIvarDecl;
 // class ObjCMethodDecl;
 // class ObjCPropertyDecl;
 // class ObjCPropertyImplDecl;
 // class ObjCProtocolDecl;
 // class ObjCTypeParamDecl;
-class OMPTraitInfo;
+// class OMPTraitInfo;
 struct ParsedTargetAttr;
 class Preprocessor;
 class Stmt;
@@ -203,7 +203,7 @@ class ASTContext : public RefCountedBase<ASTContext> {
   mutable llvm::FoldingSet<DependentTypeOfExprType> DependentTypeOfExprTypes;
   mutable llvm::FoldingSet<DependentDecltypeType> DependentDecltypeTypes;
   mutable llvm::FoldingSet<TemplateTypeParmType> TemplateTypeParmTypes;
-  mutable llvm::FoldingSet<ObjCTypeParamType> ObjCTypeParamTypes;
+  // mutable llvm::FoldingSet<ObjCTypeParamType> ObjCTypeParamTypes;
   mutable llvm::FoldingSet<SubstTemplateTypeParmType>
     SubstTemplateTypeParmTypes;
   mutable llvm::FoldingSet<SubstTemplateTypeParmPackType>
@@ -583,7 +583,7 @@ private:
 
 public:
   IdentifierTable &Idents;
-  SelectorTable &Selectors;
+  // SelectorTable &Selectors;
   Builtin::Context &BuiltinInfo;
   mutable DeclarationNameTable DeclarationNames;
   IntrusiveRefCntPtr<ExternalASTSource> ExternalSource;
@@ -1001,7 +1001,7 @@ public:
   mutable TagDecl *MSGuidTagDecl = nullptr;
 
   ASTContext(LangOptions &LOpts, SourceManager &SM, IdentifierTable &idents,
-             SelectorTable &sels, Builtin::Context &builtins);
+             /*SelectorTable &sels,*/ Builtin::Context &builtins);
   ASTContext(const ASTContext &) = delete;
   ASTContext &operator=(const ASTContext &) = delete;
   ~ASTContext();
@@ -2937,10 +2937,10 @@ private:
   //                                 QualType *NotEncodedT = nullptr) const;
 
   // Adds the encoding of the structure's members.
-  void getObjCEncodingForStructureImpl(RecordDecl *RD, std::string &S,
-                                       const FieldDecl *Field,
-                                       bool includeVBases = true,
-                                       QualType *NotEncodedT=nullptr) const;
+  // void getObjCEncodingForStructureImpl(RecordDecl *RD, std::string &S,
+  //                                      const FieldDecl *Field,
+  //                                      bool includeVBases = true,
+  //                                      QualType *NotEncodedT=nullptr) const;
 
 public:
   // Adds the encoding of a method parameter or return type.
@@ -3032,12 +3032,12 @@ public:
   llvm::StringMap<SectionInfo> SectionInfos;
 
   /// Return a new OMPTraitInfo object owned by this context.
-  OMPTraitInfo &getNewOMPTraitInfo();
+  // OMPTraitInfo &getNewOMPTraitInfo();
 
-private:
+// private:
   /// All OMPTraitInfo objects live in this collection, one per
   /// `pragma omp [begin] declare variant` directive.
-  SmallVector<std::unique_ptr<OMPTraitInfo>, 4> OMPTraitInfoVector;
+  // SmallVector<std::unique_ptr<OMPTraitInfo>, 4> OMPTraitInfoVector;
 };
 
 /// Insertion operator for diagnostics.
@@ -3045,16 +3045,16 @@ const DiagnosticBuilder &operator<<(const DiagnosticBuilder &DB,
                                     const ASTContext::SectionInfo &Section);
 
 /// Utility function for constructing a nullary selector.
-inline Selector GetNullarySelector(StringRef name, ASTContext &Ctx) {
-  IdentifierInfo* II = &Ctx.Idents.get(name);
-  return Ctx.Selectors.getSelector(0, &II);
-}
+// inline Selector GetNullarySelector(StringRef name, ASTContext &Ctx) {
+//   IdentifierInfo* II = &Ctx.Idents.get(name);
+//   return Ctx.Selectors.getSelector(0, &II);
+// }
 
 /// Utility function for constructing an unary selector.
-inline Selector GetUnarySelector(StringRef name, ASTContext &Ctx) {
-  IdentifierInfo* II = &Ctx.Idents.get(name);
-  return Ctx.Selectors.getSelector(1, &II);
-}
+// inline Selector GetUnarySelector(StringRef name, ASTContext &Ctx) {
+//   IdentifierInfo* II = &Ctx.Idents.get(name);
+//   return Ctx.Selectors.getSelector(1, &II);
+// }
 
 } // namespace latino
 

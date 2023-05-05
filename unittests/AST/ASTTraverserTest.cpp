@@ -64,7 +64,7 @@ public:
     OS << "Attr";
   }
 
-  void Visit(const OMPClause *C) { OS << "OMPClause"; }
+  // void Visit(const OMPClause *C) { OS << "OMPClause"; }
   void Visit(const TemplateArgument &A, SourceRange R = {},
              const Decl *From = nullptr, const char *Label = nullptr) {
     OS << "TemplateArgument";

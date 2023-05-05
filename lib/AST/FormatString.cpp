@@ -183,8 +183,8 @@ latino::analyze_format_string::ParseVectorModifier(FormatStringHandler &H,
                                                   const char *&I,
                                                   const char *E,
                                                   const LangOptions &LO) {
-  if (!LO.OpenCL)
-    return false;
+  // if (!LO.OpenCL)
+  //   return false;
 
   const char *Start = I;
   if (*I == 'v') {
@@ -223,10 +223,10 @@ latino::analyze_format_string::ParseLengthModifier(FormatSpecifier &FS,
       if (I != E && *I == 'h') {
         ++I;
         lmKind = LengthModifier::AsChar;
-      } else if (I != E && *I == 'l' && LO.OpenCL) {
+      } /*else if (I != E && *I == 'l' && LO.OpenCL) {
         ++I;
         lmKind = LengthModifier::AsShortLong;
-      } else {
+      }*/ else {
         lmKind = LengthModifier::AsShort;
       }
       break;
@@ -520,9 +520,9 @@ QualType ArgType::getRepresentativeType(ASTContext &C) const {
     case WCStrTy:
       Res = C.getPointerType(C.getWideCharType());
       break;
-    case ObjCPointerTy:
-      Res = C.ObjCBuiltinIdTy;
-      break;
+    // case ObjCPointerTy:
+    //   Res = C.ObjCBuiltinIdTy;
+    //   break;
     case CPointerTy:
       Res = C.VoidPtrTy;
       break;
@@ -725,8 +725,8 @@ bool FormatSpecifier::hasValidLengthModifier(const TargetInfo &Target,
     // Handle most integer flags
     case LengthModifier::AsShort:
       // Length modifier only applies to FP vectors.
-      if (LO.OpenCL && CS.isDoubleArg())
-        return !VectorNumElts.isInvalid();
+      // if (LO.OpenCL && CS.isDoubleArg())
+      //   return !VectorNumElts.isInvalid();
 
       if (Target.getTriple().isOSMSVCRT()) {
         switch (CS.getKind()) {
@@ -767,14 +767,14 @@ bool FormatSpecifier::hasValidLengthModifier(const TargetInfo &Target,
       }
 
     case LengthModifier::AsShortLong:
-      return LO.OpenCL && !VectorNumElts.isInvalid();
+      return /*LO.OpenCL &&*/ !VectorNumElts.isInvalid();
 
     // Handle 'l' flag
     case LengthModifier::AsLong: // or AsWideChar
       if (CS.isDoubleArg()) {
         // Invalid for OpenCL FP scalars.
-        if (LO.OpenCL && VectorNumElts.isInvalid())
-          return false;
+        // if (LO.OpenCL && VectorNumElts.isInvalid())
+        //   return false;
         return true;
       }
 

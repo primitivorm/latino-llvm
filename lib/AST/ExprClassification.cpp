@@ -13,7 +13,7 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -139,9 +139,9 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
   case Expr::FunctionParmPackExprClass:
   case Expr::MSPropertyRefExprClass:
   case Expr::MSPropertySubscriptExprClass:
-  case Expr::OMPArraySectionExprClass:
-  case Expr::OMPArrayShapingExprClass:
-  case Expr::OMPIteratorExprClass:
+  // case Expr::OMPArraySectionExprClass:
+  // case Expr::OMPArrayShapingExprClass:
+  // case Expr::OMPIteratorExprClass:
     return Cl::CL_LValue;
 
     // C99 6.5.2.5p5 says that compound literals are lvalues.
@@ -280,9 +280,9 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
     return ClassifyExprValueKind(Lang, E, E->getValueKind());
 
     // Pseudo-object expressions can produce l-values with reference magic.
-  // case Expr::PseudoObjectExprClass:
-  //   return ClassifyExprValueKind(Lang, E,
-  //                                cast<PseudoObjectExpr>(E)->getValueKind());
+  case Expr::PseudoObjectExprClass:
+    return ClassifyExprValueKind(Lang, E,
+                                 cast<PseudoObjectExpr>(E)->getValueKind());
 
     // Implicit casts are lvalues if they're lvalue casts. Other than that, we
     // only specifically record class temporaries.
@@ -357,7 +357,7 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
   case Expr::CXXReinterpretCastExprClass:
   case Expr::CXXConstCastExprClass:
   // case Expr::CXXAddrspaceCastExprClass:
-  case Expr::ObjCBridgedCastExprClass:
+  // case Expr::ObjCBridgedCastExprClass:
   case Expr::BuiltinBitCastExprClass:
     // Only in C++ can casts be interesting at all.
     if (!Lang.CPlusPlus) return Cl::CL_PRValue;
@@ -644,9 +644,9 @@ static Cl::ModifiableType IsModifiable(ASTContext &Ctx, const Expr *E,
   // Const stuff is obviously not modifiable.
   if (CT.isConstQualified())
     return Cl::CM_ConstQualified;
-  if (Ctx.getLangOpts().OpenCL &&
-      CT.getQualifiers().getAddressSpace() == LangAS::opencl_constant)
-    return Cl::CM_ConstAddrSpace;
+  // if (Ctx.getLangOpts().OpenCL &&
+  //     CT.getQualifiers().getAddressSpace() == LangAS::opencl_constant)
+  //   return Cl::CM_ConstAddrSpace;
 
   // Arrays are not modifiable, only their elements are.
   if (CT->isArrayType())

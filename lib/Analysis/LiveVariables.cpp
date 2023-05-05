@@ -255,17 +255,17 @@ void TransferFunctions::Visit(Stmt *S) {
       }
       break;
     }
-    // case Stmt::PseudoObjectExprClass: {
-    //   // A pseudo-object operation only directly consumes its result
-    //   // expression.
-    //   Expr *child = cast<PseudoObjectExpr>(S)->getResultExpr();
-    //   if (!child) return;
-    //   if (OpaqueValueExpr *OV = dyn_cast<OpaqueValueExpr>(child))
-    //     child = OV->getSourceExpr();
-    //   child = child->IgnoreParens();
-    //   val.liveStmts = LV.SSetFact.add(val.liveStmts, child);
-    //   return;
-    // }
+    case Stmt::PseudoObjectExprClass: {
+      // A pseudo-object operation only directly consumes its result
+      // expression.
+      Expr *child = cast<PseudoObjectExpr>(S)->getResultExpr();
+      if (!child) return;
+      if (OpaqueValueExpr *OV = dyn_cast<OpaqueValueExpr>(child))
+        child = OV->getSourceExpr();
+      child = child->IgnoreParens();
+      val.liveStmts = LV.SSetFact.add(val.liveStmts, child);
+      return;
+    }
 
     // FIXME: These cases eventually shouldn't be needed.
     case Stmt::ExprWithCleanupsClass: {

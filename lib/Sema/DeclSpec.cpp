@@ -353,13 +353,13 @@ bool Declarator::isDeclarationOfFunction() const {
     case TST_Accum:
     case TST_Fract:
     case TST_Float16:
-    case TST_float128:
+    // case TST_float128:
     case TST_enum:
     case TST_error:
     case TST_float:
     // case TST_half:
     case TST_int:
-    case TST_int128:
+    // case TST_int128:
     case TST_extint:
     case TST_struct:
     case TST_interface:
@@ -539,15 +539,15 @@ const char *DeclSpec::getSpecifierName(DeclSpec::TST T,
   case DeclSpec::TST_char16:      return "char16_t";
   case DeclSpec::TST_char32:      return "char32_t";
   case DeclSpec::TST_int:         return "int";
-  case DeclSpec::TST_int128:      return "__int128";
+  // case DeclSpec::TST_int128:      return "__int128";
   case DeclSpec::TST_extint:      return "_ExtInt";
   // case DeclSpec::TST_half:        return "half";
   case DeclSpec::TST_float:       return "float";
   case DeclSpec::TST_double:      return "double";
   case DeclSpec::TST_accum:       return "_Accum";
   case DeclSpec::TST_fract:       return "_Fract";
-  case DeclSpec::TST_float16:     return "_Float16";
-  case DeclSpec::TST_float128:    return "__float128";
+  // case DeclSpec::TST_float16:     return "_Float16";
+  // case DeclSpec::TST_float128:    return "__float128";
   case DeclSpec::TST_bool:        return Policy.Bool ? "bool" : "_Bool";
   case DeclSpec::TST_decimal32:   return "_Decimal32";
   case DeclSpec::TST_decimal64:   return "_Decimal64";
@@ -610,28 +610,28 @@ bool DeclSpec::SetStorageClassSpec(Sema &S, SCS SC, SourceLocation Loc,
   // these storage-class specifiers.
   // OpenCL v1.2 s6.8 changes this to "The auto and register storage-class
   // specifiers are not supported."
-  if (S.getLangOpts().OpenCL &&
-      !S.getOpenCLOptions().isEnabled("cl_clang_storage_class_specifiers")) {
-    switch (SC) {
-    case SCS_extern:
-    case SCS_private_extern:
-    case SCS_static:
-      if (S.getLangOpts().OpenCLVersion < 120 &&
-          !S.getLangOpts().OpenCLCPlusPlus) {
-        DiagID = diag::err_opencl_unknown_type_specifier;
-        PrevSpec = getSpecifierName(SC);
-        return true;
-      }
-      break;
-    case SCS_auto:
-    case SCS_register:
-      DiagID   = diag::err_opencl_unknown_type_specifier;
-      PrevSpec = getSpecifierName(SC);
-      return true;
-    default:
-      break;
-    }
-  }
+  // if (S.getLangOpts().OpenCL &&
+  //     !S.getOpenCLOptions().isEnabled("cl_clang_storage_class_specifiers")) {
+  //   switch (SC) {
+  //   case SCS_extern:
+  //   case SCS_private_extern:
+  //   case SCS_static:
+  //     if (S.getLangOpts().OpenCLVersion < 120 &&
+  //         !S.getLangOpts().OpenCLCPlusPlus) {
+  //       DiagID = diag::err_opencl_unknown_type_specifier;
+  //       PrevSpec = getSpecifierName(SC);
+  //       return true;
+  //     }
+  //     break;
+  //   case SCS_auto:
+  //   case SCS_register:
+  //     DiagID   = diag::err_opencl_unknown_type_specifier;
+  //     PrevSpec = getSpecifierName(SC);
+  //     return true;
+  //   default:
+  //     break;
+  //   }
+  // }
 
   if (StorageClassSpec != SCS_unspecified) {
     // Maybe this is an attempt to use C++11 'auto' outside of C++11 mode.
@@ -1154,16 +1154,16 @@ void DeclSpec::Finish(Sema &S, const PrintingPolicy &Policy) {
       // Power10 adds instructions that produce vector bool data
       // for quadwords as well so allow vector bool __int128.
       if (((TypeSpecType != TST_unspecified) && (TypeSpecType != TST_char) &&
-           (TypeSpecType != TST_int) && (TypeSpecType != TST_int128)) ||
-          TypeAltiVecPixel) {
+           (TypeSpecType != TST_int) /*&& (TypeSpecType != TST_int128)*/) /*||
+          TypeAltiVecPixel*/) {
         S.Diag(TSTLoc, diag::err_invalid_vector_bool_decl_spec)
           << (TypeAltiVecPixel ? "__pixel" :
                                  getSpecifierName((TST)TypeSpecType, Policy));
       }
       // vector bool __int128 requires Power10.
-      if ((TypeSpecType == TST_int128) &&
-          (!S.Context.getTargetInfo().hasFeature("power10-vector")))
-        S.Diag(TSTLoc, diag::err_invalid_vector_bool_int128_decl_spec);
+      // if ((TypeSpecType == TST_int128) &&
+      //     (!S.Context.getTargetInfo().hasFeature("power10-vector")))
+      //   S.Diag(TSTLoc, diag::err_invalid_vector_bool_int128_decl_spec);
 
       // Only 'short' and 'long long' are valid with vector bool. (PIM 2.1)
       if ((TypeSpecWidth != TSW_unspecified) && (TypeSpecWidth != TSW_short) &&
@@ -1180,7 +1180,7 @@ void DeclSpec::Finish(Sema &S, const PrintingPolicy &Policy) {
 
       // Elements of vector bool are interpreted as unsigned. (PIM 2.1)
       if ((TypeSpecType == TST_char) || (TypeSpecType == TST_int) ||
-          (TypeSpecType == TST_int128) || (TypeSpecWidth != TSW_unspecified))
+          /*(TypeSpecType == TST_int128) ||*/ (TypeSpecWidth != TSW_unspecified))
         TypeSpecSign = TSS_unsigned;
     } else if (TypeSpecType == TST_double) {
       // vector long double and vector long long double are never allowed.
@@ -1223,7 +1223,7 @@ void DeclSpec::Finish(Sema &S, const PrintingPolicy &Policy) {
   if (TypeSpecSign != TSS_unspecified) {
     if (TypeSpecType == TST_unspecified)
       TypeSpecType = TST_int; // unsigned -> unsigned int, signed -> signed int.
-    else if (TypeSpecType != TST_int && TypeSpecType != TST_int128 &&
+    else if (TypeSpecType != TST_int && /*TypeSpecType != TST_int128 &&*/
              TypeSpecType != TST_char && TypeSpecType != TST_wchar &&
              !IsFixedPointType && TypeSpecType != TST_extint) {
       S.Diag(TSSLoc, diag::err_invalid_sign_spec)
@@ -1277,8 +1277,8 @@ void DeclSpec::Finish(Sema &S, const PrintingPolicy &Policy) {
       // Note that this intentionally doesn't include _Complex _Bool.
       if (!S.getLangOpts().CPlusPlus)
         S.Diag(TSTLoc, diag::ext_integer_complex);
-    } else if (TypeSpecType != TST_float && TypeSpecType != TST_double &&
-               TypeSpecType != TST_float128) {
+    } else if (TypeSpecType != TST_float && TypeSpecType != TST_double /*&&
+               TypeSpecType != TST_float128*/) {
       S.Diag(TSCLoc, diag::err_invalid_complex_spec)
         << getSpecifierName((TST)TypeSpecType, Policy);
       TypeSpecComplex = TSC_unspecified;

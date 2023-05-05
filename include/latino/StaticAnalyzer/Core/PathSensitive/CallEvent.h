@@ -18,7 +18,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -1132,7 +1132,7 @@ enum ObjCMessageKind {
 // class ObjCMethodCall : public CallEvent {
 //   friend class CallEventManager;
 
-//   const PseudoObjectExpr *getContainingPseudoObjectExpr() const;
+  // const PseudoObjectExpr *getContainingPseudoObjectExpr() const;
 
 // protected:
 //   ObjCMethodCall(const ObjCMessageExpr *Msg, ProgramStateRef St,

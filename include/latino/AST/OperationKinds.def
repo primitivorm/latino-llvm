@@ -346,7 +346,7 @@ CAST_OPERATION(ZeroToOCLOpaqueType)
 CAST_OPERATION(AddressSpaceConversion)
 
 // Convert an integer initializer to an OpenCL sampler.
-CAST_OPERATION(IntToOCLSampler)
+// CAST_OPERATION(IntToOCLSampler)
 
 //===- Binary Operations  -------------------------------------------------===//
 // Operators listed in order of precedence.

@@ -108,12 +108,12 @@ void Sema::checkFunctionDeclVerbatimLine(const BlockCommandComment *Comment) {
     case CommandTraits::KCI_functiongroup:
       DiagSelect = (!isAnyFunctionDecl() && !isFunctionTemplateDecl())? 2 : 0;
       break;
-    case CommandTraits::KCI_method:
-      DiagSelect = !isObjCMethodDecl() ? 3 : 0;
-      break;
-    case CommandTraits::KCI_methodgroup:
-      DiagSelect = !isObjCMethodDecl() ? 4 : 0;
-      break;
+    // case CommandTraits::KCI_method:
+    //   DiagSelect = !isObjCMethodDecl() ? 3 : 0;
+    //   break;
+    // case CommandTraits::KCI_methodgroup:
+    //   DiagSelect = !isObjCMethodDecl() ? 4 : 0;
+    //   break;
     case CommandTraits::KCI_callback:
       DiagSelect = !isFunctionPointerVarDecl() ? 5 : 0;
       break;
@@ -141,15 +141,15 @@ void Sema::checkContainerDeclVerbatimLine(const BlockCommandComment *Comment) {
       // Allow @class command on @interface declarations.
       // FIXME. Currently, \class and @class are indistinguishable. So,
       // \class is also allowed on an @interface declaration
-      if (DiagSelect && Comment->getCommandMarker() && isObjCInterfaceDecl())
-        DiagSelect = 0;
+      // if (DiagSelect && Comment->getCommandMarker() && isObjCInterfaceDecl())
+      //   DiagSelect = 0;
       break;
-    case CommandTraits::KCI_interface:
-      DiagSelect = !isObjCInterfaceDecl() ? 2 : 0;
-      break;
-    case CommandTraits::KCI_protocol:
-      DiagSelect = !isObjCProtocolDecl() ? 3 : 0;
-      break;
+    // case CommandTraits::KCI_interface:
+    //   DiagSelect = /*!isObjCInterfaceDecl() ? 2 :*/ 0;
+    //   break;
+    // case CommandTraits::KCI_protocol:
+    //   DiagSelect = !isObjCProtocolDecl() ? 3 : 0;
+    //   break;
     case CommandTraits::KCI_struct:
       DiagSelect = !isClassOrStructOrTagTypedefDecl() ? 4 : 0;
       break;
@@ -588,8 +588,8 @@ void Sema::checkReturnsCommand(const BlockCommandComment *Command) {
 
   // We allow the return command for all @properties because it can be used
   // to document the value that the property getter returns.
-  if (isObjCPropertyDecl())
-    return;
+  // if (isObjCPropertyDecl())
+  //   return;
   if (isFunctionDecl() || isFunctionOrBlockPointerVarLikeDecl()) {
     assert(!ThisDeclInfo->ReturnType.isNull() &&
            "should have a valid return type");
@@ -884,9 +884,9 @@ bool Sema::isFunctionOrBlockPointerVarLikeDecl() {
   QualType QT;
   if (const auto *VD = dyn_cast<DeclaratorDecl>(ThisDeclInfo->CurrentDecl))
     QT = VD->getType();
-  else if (const auto *PD =
-               dyn_cast<ObjCPropertyDecl>(ThisDeclInfo->CurrentDecl))
-    QT = PD->getType();
+  // else if (const auto *PD =
+  //              dyn_cast<ObjCPropertyDecl>(ThisDeclInfo->CurrentDecl))
+  //   QT = PD->getType();
   else
     return false;
   // We would like to warn about the 'returns'/'param' commands for
@@ -903,13 +903,13 @@ bool Sema::isFunctionOrBlockPointerVarLikeDecl() {
   return QT->isFunctionPointerType() || QT->isBlockPointerType();
 }
 
-bool Sema::isObjCPropertyDecl() {
-  if (!ThisDeclInfo)
-    return false;
-  if (!ThisDeclInfo->IsFilled)
-    inspectThisDecl();
-  return ThisDeclInfo->CurrentDecl->getKind() == Decl::ObjCProperty;
-}
+// bool Sema::isObjCPropertyDecl() {
+//   if (!ThisDeclInfo)
+//     return false;
+//   if (!ThisDeclInfo->IsFilled)
+//     inspectThisDecl();
+//   return ThisDeclInfo->CurrentDecl->getKind() == Decl::ObjCProperty;
+// }
 
 bool Sema::isTemplateOrSpecialization() {
   if (!ThisDeclInfo)
@@ -924,8 +924,8 @@ bool Sema::isRecordLikeDecl() {
     return false;
   if (!ThisDeclInfo->IsFilled)
     inspectThisDecl();
-  return isUnionDecl() || isClassOrStructDecl() || isObjCInterfaceDecl() ||
-         isObjCProtocolDecl();
+  return isUnionDecl() || isClassOrStructDecl() /*|| isObjCInterfaceDecl() ||
+         isObjCProtocolDecl()*/;
 }
 
 bool Sema::isUnionDecl() {

@@ -549,49 +549,49 @@ void tools::addArchSpecificRPath(const ToolChain &TC, const ArgList &Args,
   }
 }
 
-bool tools::addOpenMPRuntime(ArgStringList &CmdArgs, const ToolChain &TC,
-                             const ArgList &Args, bool ForceStaticHostRuntime,
-                             bool IsOffloadingHost, bool GompNeedsRT) {
-  if (!Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-                    options::OPT_fno_openmp, false))
-    return false;
+// bool tools::addOpenMPRuntime(ArgStringList &CmdArgs, const ToolChain &TC,
+//                              const ArgList &Args, bool ForceStaticHostRuntime,
+//                              bool IsOffloadingHost, bool GompNeedsRT) {
+//   if (!Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+//                     options::OPT_fno_openmp, false))
+//     return false;
 
-  Driver::OpenMPRuntimeKind RTKind = TC.getDriver().getOpenMPRuntime(Args);
+//   Driver::OpenMPRuntimeKind RTKind = TC.getDriver().getOpenMPRuntime(Args);
 
-  if (RTKind == Driver::OMPRT_Unknown)
-    // Already diagnosed.
-    return false;
+//   if (RTKind == Driver::OMPRT_Unknown)
+//     // Already diagnosed.
+//     return false;
 
-  if (ForceStaticHostRuntime)
-    CmdArgs.push_back("-Bstatic");
+//   if (ForceStaticHostRuntime)
+//     CmdArgs.push_back("-Bstatic");
 
-  switch (RTKind) {
-  case Driver::OMPRT_OMP:
-    CmdArgs.push_back("-lomp");
-    break;
-  case Driver::OMPRT_GOMP:
-    CmdArgs.push_back("-lgomp");
-    break;
-  case Driver::OMPRT_IOMP5:
-    CmdArgs.push_back("-liomp5");
-    break;
-  case Driver::OMPRT_Unknown:
-    break;
-  }
+//   switch (RTKind) {
+//   case Driver::OMPRT_OMP:
+//     CmdArgs.push_back("-lomp");
+//     break;
+//   case Driver::OMPRT_GOMP:
+//     CmdArgs.push_back("-lgomp");
+//     break;
+//   case Driver::OMPRT_IOMP5:
+//     CmdArgs.push_back("-liomp5");
+//     break;
+//   case Driver::OMPRT_Unknown:
+//     break;
+//   }
 
-  if (ForceStaticHostRuntime)
-    CmdArgs.push_back("-Bdynamic");
+//   if (ForceStaticHostRuntime)
+//     CmdArgs.push_back("-Bdynamic");
 
-  if (RTKind == Driver::OMPRT_GOMP && GompNeedsRT)
-      CmdArgs.push_back("-lrt");
+//   if (RTKind == Driver::OMPRT_GOMP && GompNeedsRT)
+//       CmdArgs.push_back("-lrt");
 
-  if (IsOffloadingHost)
-    CmdArgs.push_back("-lomptarget");
+//   if (IsOffloadingHost)
+//     CmdArgs.push_back("-lomptarget");
 
-  addArchSpecificRPath(TC, Args, CmdArgs);
+//   addArchSpecificRPath(TC, Args, CmdArgs);
 
-  return true;
-}
+//   return true;
+// }
 
 static void addSanitizerRuntime(const ToolChain &TC, const ArgList &Args,
                                 ArgStringList &CmdArgs, StringRef Sanitizer,
@@ -1217,9 +1217,9 @@ void tools::AddAssemblerKPIC(const ToolChain &ToolChain, const ArgList &Args,
 
 /// Determine whether Objective-C automated reference counting is
 /// enabled.
-bool tools::isObjCAutoRefCount(const ArgList &Args) {
-  return Args.hasFlag(options::OPT_fobjc_arc, options::OPT_fno_objc_arc, false);
-}
+// bool tools::isObjCAutoRefCount(const ArgList &Args) {
+//   return Args.hasFlag(options::OPT_fobjc_arc, options::OPT_fno_objc_arc, false);
+// }
 
 enum class LibGccType { UnspecifiedLibGcc, StaticLibGcc, SharedLibGcc };
 

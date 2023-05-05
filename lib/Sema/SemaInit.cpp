@@ -11,10 +11,10 @@
 //===----------------------------------------------------------------------===//
 
 #include "latino/AST/ASTContext.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/TypeLoc.h"
 #include "latino/Basic/CharInfo.h"
 #include "latino/Basic/SourceManager.h"
@@ -1301,7 +1301,7 @@ void InitListChecker::CheckListElementTypes(const InitializedEntity &Entity,
     if (!VerifyOnly)
       SemaRef.Diag(IList->getBeginLoc(), diag::err_init_objc_class) << DeclType;
     hadError = true;
-  } */else if (DeclType->isOCLIntelSubgroupAVCType() ||
+  } */else if (/*DeclType->isOCLIntelSubgroupAVCType() ||*/
              DeclType->isSizelessBuiltinType()) {
     // Checks for scalar type are sufficient for these types too.
     CheckScalarType(Entity, IList, DeclType, Index, StructuredList,
@@ -1413,8 +1413,8 @@ void InitListChecker::CheckSubElementType(const InitializedEntity &Entity,
     // Fall through for subaggregate initialization.
 
   } else {
-    assert((ElemType->isRecordType() || ElemType->isVectorType() ||
-            ElemType->isOpenCLSpecificType()) && "Unexpected type");
+    assert((ElemType->isRecordType() || ElemType->isVectorType() /*||
+            ElemType->isOpenCLSpecificType()*/) && "Unexpected type");
 
     // C99 6.7.8p13:
     //
@@ -3455,7 +3455,7 @@ void InitializationSequence::Step::Destroy() {
   case SK_StdInitializerList:
   case SK_StdInitializerListConstructorCall:
   // case SK_OCLSamplerInit:
-  case SK_OCLZeroOpaqueType:
+  // case SK_OCLZeroOpaqueType:
     break;
 
   case SK_ConversionSequence:
@@ -3734,12 +3734,12 @@ void InitializationSequence::AddStdInitializerListConstructionStep(QualType T) {
 //   Steps.push_back(S);
 // }
 
-void InitializationSequence::AddOCLZeroOpaqueTypeStep(QualType T) {
-  Step S;
-  S.Kind = SK_OCLZeroOpaqueType;
-  S.Type = T;
-  Steps.push_back(S);
-}
+// void InitializationSequence::AddOCLZeroOpaqueTypeStep(QualType T) {
+//   Step S;
+//   S.Kind = SK_OCLZeroOpaqueType;
+//   S.Type = T;
+//   Steps.push_back(S);
+// }
 
 void InitializationSequence::RewrapReferenceInitList(QualType T,
                                                      InitListExpr *Syntactic) {
@@ -5137,10 +5137,10 @@ static void TryDefaultInitialization(Sema &S,
   }
 
   // If the destination type has a lifetime property, zero-initialize it.
-  if (DestType.getQualifiers().hasObjCLifetime()) {
-    Sequence.AddZeroInitializationStep(Entity.getType());
-    return;
-  }
+  // if (DestType.getQualifiers().hasObjCLifetime()) {
+  //   Sequence.AddZeroInitializationStep(Entity.getType());
+  //   return;
+  // }
 }
 
 /// Attempt a user-defined conversion between two types (C++ [dcl.init]),
@@ -5374,8 +5374,8 @@ static InvalidICRKind isInvalidICRSource(ASTContext &C, Expr *e,
   } else if (isa<DeclRefExpr>(e)) {
     // set isWeakAccess to true, to mean that there will be an implicit
     // load which requires a cleanup.
-    if (e->getType().getObjCLifetime() == Qualifiers::OCL_Weak)
-      isWeakAccess = true;
+    // if (e->getType().getObjCLifetime() == Qualifiers::OCL_Weak)
+    //   isWeakAccess = true;
 
     if (!isAddressOf) return IIK_nonlocal;
 
@@ -5413,8 +5413,8 @@ static void checkIndirectCopyRestoreSource(Sema &S, Expr *src) {
   InvalidICRKind iik = isInvalidICRSource(S.Context, src, false, isWeakAccess);
   // If isWeakAccess to true, there will be an implicit
   // load which requires a cleanup.
-  if (S.getLangOpts().ObjCAutoRefCount && isWeakAccess)
-    S.Cleanup.setExprNeedsCleanups(true);
+  // if (S.getLangOpts().ObjCAutoRefCount && isWeakAccess)
+  //   S.Cleanup.setExprNeedsCleanups(true);
 
   if (iik == IIK_okay) return;
 
@@ -5441,52 +5441,52 @@ static bool hasCompatibleArrayTypes(ASTContext &Context, const ArrayType *Dest,
   return Source->isConstantArrayType() && Dest->isIncompleteArrayType();
 }
 
-static bool tryObjCWritebackConversion(Sema &S,
-                                       InitializationSequence &Sequence,
-                                       const InitializedEntity &Entity,
-                                       Expr *Initializer) {
-  bool ArrayDecay = false;
-  QualType ArgType = Initializer->getType();
-  QualType ArgPointee;
-  if (const ArrayType *ArgArrayType = S.Context.getAsArrayType(ArgType)) {
-    ArrayDecay = true;
-    ArgPointee = ArgArrayType->getElementType();
-    ArgType = S.Context.getPointerType(ArgPointee);
-  }
+// static bool tryObjCWritebackConversion(Sema &S,
+//                                        InitializationSequence &Sequence,
+//                                        const InitializedEntity &Entity,
+//                                        Expr *Initializer) {
+//   bool ArrayDecay = false;
+//   QualType ArgType = Initializer->getType();
+//   QualType ArgPointee;
+//   if (const ArrayType *ArgArrayType = S.Context.getAsArrayType(ArgType)) {
+//     ArrayDecay = true;
+//     ArgPointee = ArgArrayType->getElementType();
+//     ArgType = S.Context.getPointerType(ArgPointee);
+//   }
 
-  // Handle write-back conversion.
-  // QualType ConvertedArgType;
-  // if (!S.isObjCWritebackConversion(ArgType, Entity.getType(),
-  //                                  ConvertedArgType))
-  //   return false;
+//   // Handle write-back conversion.
+//   // QualType ConvertedArgType;
+//   // if (!S.isObjCWritebackConversion(ArgType, Entity.getType(),
+//   //                                  ConvertedArgType))
+//   //   return false;
 
-  // We should copy unless we're passing to an argument explicitly
-  // marked 'out'.
-  bool ShouldCopy = true;
-  if (ParmVarDecl *param = cast_or_null<ParmVarDecl>(Entity.getDecl()))
-    ShouldCopy = (param->getObjCDeclQualifier() != ParmVarDecl::OBJC_TQ_Out);
+//   // We should copy unless we're passing to an argument explicitly
+//   // marked 'out'.
+//   bool ShouldCopy = true;
+//   // if (ParmVarDecl *param = cast_or_null<ParmVarDecl>(Entity.getDecl()))
+//   //   ShouldCopy = (param->getObjCDeclQualifier() != ParmVarDecl::OBJC_TQ_Out);
 
-  // Do we need an lvalue conversion?
-  if (ArrayDecay || Initializer->isGLValue()) {
-    ImplicitConversionSequence ICS;
-    ICS.setStandard();
-    ICS.Standard.setAsIdentityConversion();
+//   // Do we need an lvalue conversion?
+//   if (ArrayDecay || Initializer->isGLValue()) {
+//     ImplicitConversionSequence ICS;
+//     ICS.setStandard();
+//     ICS.Standard.setAsIdentityConversion();
 
-    QualType ResultType;
-    if (ArrayDecay) {
-      ICS.Standard.First = ICK_Array_To_Pointer;
-      ResultType = S.Context.getPointerType(ArgPointee);
-    } else {
-      ICS.Standard.First = ICK_Lvalue_To_Rvalue;
-      ResultType = Initializer->getType().getNonLValueExprType(S.Context);
-    }
+//     QualType ResultType;
+//     if (ArrayDecay) {
+//       ICS.Standard.First = ICK_Array_To_Pointer;
+//       ResultType = S.Context.getPointerType(ArgPointee);
+//     } else {
+//       ICS.Standard.First = ICK_Lvalue_To_Rvalue;
+//       ResultType = Initializer->getType().getNonLValueExprType(S.Context);
+//     }
 
-    Sequence.AddConversionSequenceStep(ICS, ResultType);
-  }
+//     Sequence.AddConversionSequenceStep(ICS, ResultType);
+//   }
 
-  Sequence.AddPassByIndirectCopyRestoreStep(Entity.getType(), ShouldCopy);
-  return true;
-}
+//   Sequence.AddPassByIndirectCopyRestoreStep(Entity.getType(), ShouldCopy);
+//   return true;
+// }
 
 // static bool TryOCLSamplerInitialization(Sema &S,
 //                                         InitializationSequence &Sequence,
@@ -5506,47 +5506,47 @@ static bool IsZeroInitializer(Expr *Initializer, Sema &S) {
     (Initializer->EvaluateKnownConstInt(S.getASTContext()) == 0);
 }
 
-static bool TryOCLZeroOpaqueTypeInitialization(Sema &S,
-                                               InitializationSequence &Sequence,
-                                               QualType DestType,
-                                               Expr *Initializer) {
-  if (!S.getLangOpts().OpenCL)
-    return false;
+// static bool TryOCLZeroOpaqueTypeInitialization(Sema &S,
+//                                                InitializationSequence &Sequence,
+//                                                QualType DestType,
+//                                                Expr *Initializer) {
+//   if (!S.getLangOpts().OpenCL)
+//     return false;
 
-  //
-  // OpenCL 1.2 spec, s6.12.10
-  //
-  // The event argument can also be used to associate the
-  // async_work_group_copy with a previous async copy allowing
-  // an event to be shared by multiple async copies; otherwise
-  // event should be zero.
-  //
-  if (DestType->isEventT() || DestType->isQueueT()) {
-    if (!IsZeroInitializer(Initializer, S))
-      return false;
+//   //
+//   // OpenCL 1.2 spec, s6.12.10
+//   //
+//   // The event argument can also be used to associate the
+//   // async_work_group_copy with a previous async copy allowing
+//   // an event to be shared by multiple async copies; otherwise
+//   // event should be zero.
+//   //
+//   // if (DestType->isEventT() || DestType->isQueueT()) {
+//   //   if (!IsZeroInitializer(Initializer, S))
+//   //     return false;
 
-    Sequence.AddOCLZeroOpaqueTypeStep(DestType);
-    return true;
-  }
+//   //   Sequence.AddOCLZeroOpaqueTypeStep(DestType);
+//   //   return true;
+//   // }
 
-  // We should allow zero initialization for all types defined in the
-  // cl_intel_device_side_avc_motion_estimation extension, except
-  // intel_sub_group_avc_mce_payload_t and intel_sub_group_avc_mce_result_t.
-  if (S.getOpenCLOptions().isEnabled(
-          "cl_intel_device_side_avc_motion_estimation") &&
-      DestType->isOCLIntelSubgroupAVCType()) {
-    // if (DestType->isOCLIntelSubgroupAVCMcePayloadType() ||
-    //     DestType->isOCLIntelSubgroupAVCMceResultType())
-    //   return false;
-    if (!IsZeroInitializer(Initializer, S))
-      return false;
+//   // We should allow zero initialization for all types defined in the
+//   // cl_intel_device_side_avc_motion_estimation extension, except
+//   // intel_sub_group_avc_mce_payload_t and intel_sub_group_avc_mce_result_t.
+//   // if (S.getOpenCLOptions().isEnabled(
+//   //         "cl_intel_device_side_avc_motion_estimation") &&
+//   //     DestType->isOCLIntelSubgroupAVCType()) {
+//   //   // if (DestType->isOCLIntelSubgroupAVCMcePayloadType() ||
+//   //   //     DestType->isOCLIntelSubgroupAVCMceResultType())
+//   //   //   return false;
+//   //   if (!IsZeroInitializer(Initializer, S))
+//   //     return false;
 
-    Sequence.AddOCLZeroOpaqueTypeStep(DestType);
-    return true;
-  }
+//   //   Sequence.AddOCLZeroOpaqueTypeStep(DestType);
+//   //   return true;
+//   // }
 
-  return false;
-}
+//   return false;
+// }
 
 InitializationSequence::InitializationSequence(Sema &S,
                                                const InitializedEntity &Entity,
@@ -5804,8 +5804,8 @@ void InitializationSequence::InitializeFrom(Sema &S,
 
   // Determine whether we should consider writeback conversions for
   // Objective-C ARC.
-  bool allowObjCWritebackConversion = S.getLangOpts().ObjCAutoRefCount &&
-         Entity.isParameterKind();
+  // bool allowObjCWritebackConversion = S.getLangOpts().ObjCAutoRefCount &&
+  //        Entity.isParameterKind();
 
   // if (TryOCLSamplerInitialization(S, *this, DestType, Initializer))
   //   return;
@@ -5814,13 +5814,13 @@ void InitializationSequence::InitializeFrom(Sema &S,
   // or it's a C assignment. There's no need to check anything else.
   if (!S.getLangOpts().CPlusPlus) {
     // If allowed, check whether this is an Objective-C writeback conversion.
-    if (allowObjCWritebackConversion &&
-        tryObjCWritebackConversion(S, *this, Entity, Initializer)) {
-      return;
-    }
+    // if (allowObjCWritebackConversion &&
+    //     tryObjCWritebackConversion(S, *this, Entity, Initializer)) {
+    //   return;
+    // }
 
-    if (TryOCLZeroOpaqueTypeInitialization(S, *this, DestType, Initializer))
-      return;
+    // if (TryOCLZeroOpaqueTypeInitialization(S, *this, DestType, Initializer))
+    //   return;
 
     // Handle initialization in C
     AddCAssignmentStep(DestType);
@@ -5907,54 +5907,54 @@ void InitializationSequence::InitializeFrom(Sema &S,
   //      initializer expression to the cv-unqualified version of the
   //      destination type; no user-defined conversions are considered.
 
-  ImplicitConversionSequence ICS
-    = S.TryImplicitConversion(Initializer, DestType,
-                              /*SuppressUserConversions*/true,
-                              Sema::AllowedExplicit::None,
-                              /*InOverloadResolution*/ false,
-                              /*CStyle=*/Kind.isCStyleOrFunctionalCast(),
-                              allowObjCWritebackConversion);
+  // ImplicitConversionSequence ICS
+  //   = S.TryImplicitConversion(Initializer, DestType,
+  //                             /*SuppressUserConversions*/true,
+  //                             Sema::AllowedExplicit::None,
+  //                             /*InOverloadResolution*/ false,
+  //                             /*CStyle=*/Kind.isCStyleOrFunctionalCast(),
+  //                             allowObjCWritebackConversion);
 
-  if (ICS.isStandard() &&
-      ICS.Standard.Second == ICK_Writeback_Conversion) {
-    // Objective-C ARC writeback conversion.
+  // if (ICS.isStandard() &&
+  //     ICS.Standard.Second == ICK_Writeback_Conversion) {
+  //   // Objective-C ARC writeback conversion.
 
-    // We should copy unless we're passing to an argument explicitly
-    // marked 'out'.
-    bool ShouldCopy = true;
-    if (ParmVarDecl *Param = cast_or_null<ParmVarDecl>(Entity.getDecl()))
-      ShouldCopy = (Param->getObjCDeclQualifier() != ParmVarDecl::OBJC_TQ_Out);
+  //   // We should copy unless we're passing to an argument explicitly
+  //   // marked 'out'.
+  //   bool ShouldCopy = true;
+  //   // if (ParmVarDecl *Param = cast_or_null<ParmVarDecl>(Entity.getDecl()))
+  //   //   ShouldCopy = (Param->getObjCDeclQualifier() != ParmVarDecl::OBJC_TQ_Out);
 
-    // If there was an lvalue adjustment, add it as a separate conversion.
-    if (ICS.Standard.First == ICK_Array_To_Pointer ||
-        ICS.Standard.First == ICK_Lvalue_To_Rvalue) {
-      ImplicitConversionSequence LvalueICS;
-      LvalueICS.setStandard();
-      LvalueICS.Standard.setAsIdentityConversion();
-      LvalueICS.Standard.setAllToTypes(ICS.Standard.getToType(0));
-      LvalueICS.Standard.First = ICS.Standard.First;
-      AddConversionSequenceStep(LvalueICS, ICS.Standard.getToType(0));
-    }
+  //   // If there was an lvalue adjustment, add it as a separate conversion.
+  //   if (ICS.Standard.First == ICK_Array_To_Pointer ||
+  //       ICS.Standard.First == ICK_Lvalue_To_Rvalue) {
+  //     ImplicitConversionSequence LvalueICS;
+  //     LvalueICS.setStandard();
+  //     LvalueICS.Standard.setAsIdentityConversion();
+  //     LvalueICS.Standard.setAllToTypes(ICS.Standard.getToType(0));
+  //     LvalueICS.Standard.First = ICS.Standard.First;
+  //     AddConversionSequenceStep(LvalueICS, ICS.Standard.getToType(0));
+  //   }
 
-    AddPassByIndirectCopyRestoreStep(DestType, ShouldCopy);
-  } else if (ICS.isBad()) {
-    DeclAccessPair dap;
-    if (isLibstdcxxPointerReturnFalseHack(S, Entity, Initializer)) {
-      AddZeroInitializationStep(Entity.getType());
-    } else if (Initializer->getType() == Context.OverloadTy &&
-               !S.ResolveAddressOfOverloadedFunction(Initializer, DestType,
-                                                     false, dap))
-      SetFailed(InitializationSequence::FK_AddressOfOverloadFailed);
-    else if (Initializer->getType()->isFunctionType() &&
-             isExprAnUnaddressableFunction(S, Initializer))
-      SetFailed(InitializationSequence::FK_AddressOfUnaddressableFunction);
-    else
-      SetFailed(InitializationSequence::FK_ConversionFailed);
-  } else {
-    AddConversionSequenceStep(ICS, DestType, TopLevelOfInitList);
+  //   AddPassByIndirectCopyRestoreStep(DestType, ShouldCopy);
+  // } else if (ICS.isBad()) {
+  //   DeclAccessPair dap;
+  //   if (isLibstdcxxPointerReturnFalseHack(S, Entity, Initializer)) {
+  //     AddZeroInitializationStep(Entity.getType());
+  //   } else if (Initializer->getType() == Context.OverloadTy &&
+  //              !S.ResolveAddressOfOverloadedFunction(Initializer, DestType,
+  //                                                    false, dap))
+  //     SetFailed(InitializationSequence::FK_AddressOfOverloadFailed);
+  //   else if (Initializer->getType()->isFunctionType() &&
+  //            isExprAnUnaddressableFunction(S, Initializer))
+  //     SetFailed(InitializationSequence::FK_AddressOfUnaddressableFunction);
+  //   else
+  //     SetFailed(InitializationSequence::FK_ConversionFailed);
+  // } else {
+  //   AddConversionSequenceStep(ICS, DestType, TopLevelOfInitList);
 
-    // MaybeProduceObjCObject(S, *this, Entity);
-  }
+  //   // MaybeProduceObjCObject(S, *this, Entity);
+  // }
 }
 
 InitializationSequence::~InitializationSequence() {
@@ -6352,11 +6352,11 @@ void InitializationSequence::PrintInitLocationNote(Sema &S,
     else
       S.Diag(Entity.getDecl()->getLocation(), diag::note_parameter_here);
   }
-  else if (Entity.getKind() == InitializedEntity::EK_RelatedResult &&
-           Entity.getMethodDecl())
-    S.Diag(Entity.getMethodDecl()->getLocation(),
-           diag::note_method_return_type_change)
-      << Entity.getMethodDecl()->getDeclName();
+  // else if (Entity.getKind() == InitializedEntity::EK_RelatedResult &&
+  //          Entity.getMethodDecl())
+  //   S.Diag(Entity.getMethodDecl()->getLocation(),
+  //          diag::note_method_return_type_change)
+  //     << Entity.getMethodDecl()->getDeclName();
 }
 
 /// Returns true if the parameters describe a constructor initialization of
@@ -7044,12 +7044,12 @@ static void visitLocalsRetainedByReferenceBinding(IndirectLocalPath &Path,
     break;
   }
 
-  case Stmt::OMPArraySectionExprClass: {
-    visitLocalsRetainedByInitializer(Path,
-                                     cast<OMPArraySectionExpr>(Init)->getBase(),
-                                     Visit, true, EnableLifetimeWarnings);
-    break;
-  }
+  // case Stmt::OMPArraySectionExprClass: {
+  //   visitLocalsRetainedByInitializer(Path,
+  //                                    cast<OMPArraySectionExpr>(Init)->getBase(),
+  //                                    Visit, true, EnableLifetimeWarnings);
+  //   break;
+  // }
 
   case Stmt::ConditionalOperatorClass:
   case Stmt::BinaryConditionalOperatorClass: {
@@ -7948,7 +7948,8 @@ ExprResult InitializationSequence::Perform(Sema &S,
   // case SK_ProduceObjCObject:
   case SK_StdInitializerList:
   // case SK_OCLSamplerInit:
-  case SK_OCLZeroOpaqueType: {
+  // case SK_OCLZeroOpaqueType: 
+  {
     assert(Args.size() == 1);
     CurInit = Args[0];
     if (!CurInit.get()) return ExprError();
@@ -8615,16 +8616,16 @@ ExprResult InitializationSequence::Perform(Sema &S,
     //                                   CK_IntToOCLSampler);
     //   break;
     // }
-    case SK_OCLZeroOpaqueType: {
-      assert((Step->Type->isEventT() || Step->Type->isQueueT() ||
-              Step->Type->isOCLIntelSubgroupAVCType()) &&
-             "Wrong type for initialization of OpenCL opaque type.");
+    // case SK_OCLZeroOpaqueType: {
+    //   assert((Step->Type->isEventT() || Step->Type->isQueueT() ||
+    //           Step->Type->isOCLIntelSubgroupAVCType()) &&
+    //          "Wrong type for initialization of OpenCL opaque type.");
 
-      CurInit = S.ImpCastExprToType(CurInit.get(), Step->Type,
-                                    CK_ZeroToOCLOpaqueType,
-                                    CurInit.get()->getValueKind());
-      break;
-    }
+    //   CurInit = S.ImpCastExprToType(CurInit.get(), Step->Type,
+    //                                 CK_ZeroToOCLOpaqueType,
+    //                                 CurInit.get()->getValueKind());
+    //   break;
+    // }
     }
   }
 
@@ -9539,9 +9540,9 @@ void InitializationSequence::dump(raw_ostream &OS) const {
     //   OS << "OpenCL sampler_t from integer constant";
     //   break;
 
-    case SK_OCLZeroOpaqueType:
-      OS << "OpenCL opaque type from zero";
-      break;
+    // case SK_OCLZeroOpaqueType:
+    //   OS << "OpenCL opaque type from zero";
+    //   break;
     }
 
     OS << " [" << S->Type.getAsString() << ']';

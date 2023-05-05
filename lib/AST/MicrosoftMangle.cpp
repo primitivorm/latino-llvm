@@ -16,8 +16,8 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
-#include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -99,8 +99,8 @@ static const DeclContext *getEffectiveDeclContext(const Decl *D) {
   }
 
   const DeclContext *DC = D->getDeclContext();
-  if (isa<CapturedDecl>(DC) || isa<OMPDeclareReductionDecl>(DC) ||
-      isa<OMPDeclareMapperDecl>(DC)) {
+  if (isa<CapturedDecl>(DC) /*|| isa<OMPDeclareReductionDecl>(DC) ||
+      isa<OMPDeclareMapperDecl>(DC)*/) {
     return getEffectiveDeclContext(cast<Decl>(DC));
   }
 
@@ -991,16 +991,16 @@ void MicrosoftCXXNameMangler::mangleUnqualifiedName(const NamedDecl *ND,
       break;
     }
 
-    case DeclarationName::ObjCZeroArgSelector:
-    case DeclarationName::ObjCOneArgSelector:
-    case DeclarationName::ObjCMultiArgSelector: {
-      // This is reachable only when constructing an outlined SEH finally
-      // block.  Nothing depends on this mangling and it's used only with
-      // functinos with internal linkage.
-      llvm::SmallString<64> Name;
-      mangleSourceName(Name.str());
-      break;
-    }
+    // case DeclarationName::ObjCZeroArgSelector:
+    // case DeclarationName::ObjCOneArgSelector:
+    // case DeclarationName::ObjCMultiArgSelector: {
+    //   // This is reachable only when constructing an outlined SEH finally
+    //   // block.  Nothing depends on this mangling and it's used only with
+    //   // functinos with internal linkage.
+    //   llvm::SmallString<64> Name;
+    //   mangleSourceName(Name.str());
+    //   break;
+    // }
 
     case DeclarationName::CXXConstructorName:
       if (isStructorDecl(ND)) {
@@ -1533,34 +1533,34 @@ void MicrosoftCXXNameMangler::mangleTemplateArg(const TemplateDecl *TD,
 //   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
 // }
 
-void MicrosoftCXXNameMangler::mangleObjCLifetime(const QualType Type,
-                                                 Qualifiers Quals,
-                                                 SourceRange Range) {
-  llvm::SmallString<64> TemplateMangling;
-  llvm::raw_svector_ostream Stream(TemplateMangling);
-  MicrosoftCXXNameMangler Extra(Context, Stream);
+// void MicrosoftCXXNameMangler::mangleObjCLifetime(const QualType Type,
+//                                                  Qualifiers Quals,
+//                                                  SourceRange Range) {
+//   llvm::SmallString<64> TemplateMangling;
+//   llvm::raw_svector_ostream Stream(TemplateMangling);
+//   MicrosoftCXXNameMangler Extra(Context, Stream);
 
-  Stream << "?$";
-  switch (Quals.getObjCLifetime()) {
-  case Qualifiers::OCL_None:
-  case Qualifiers::OCL_ExplicitNone:
-    break;
-  case Qualifiers::OCL_Autoreleasing:
-    Extra.mangleSourceName("Autoreleasing");
-    break;
-  case Qualifiers::OCL_Strong:
-    Extra.mangleSourceName("Strong");
-    break;
-  case Qualifiers::OCL_Weak:
-    Extra.mangleSourceName("Weak");
-    break;
-  }
-  Extra.manglePointerCVQualifiers(Quals);
-  Extra.manglePointerExtQualifiers(Quals, Type);
-  Extra.mangleType(Type, Range);
+//   Stream << "?$";
+//   switch (Quals.getObjCLifetime()) {
+//   case Qualifiers::OCL_None:
+//   case Qualifiers::OCL_ExplicitNone:
+//     break;
+//   case Qualifiers::OCL_Autoreleasing:
+//     Extra.mangleSourceName("Autoreleasing");
+//     break;
+//   case Qualifiers::OCL_Strong:
+//     Extra.mangleSourceName("Strong");
+//     break;
+//   case Qualifiers::OCL_Weak:
+//     Extra.mangleSourceName("Weak");
+//     break;
+//   }
+//   Extra.manglePointerCVQualifiers(Quals);
+//   Extra.manglePointerExtQualifiers(Quals, Type);
+//   Extra.mangleType(Type, Range);
 
-  mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
-}
+//   mangleArtificialTagType(TTK_Struct, TemplateMangling, {"__ObjC"});
+// }
 
 // void MicrosoftCXXNameMangler::mangleObjCKindOfType(const ObjCObjectType *T,
 //                                                    Qualifiers Quals,
@@ -1878,10 +1878,10 @@ void MicrosoftCXXNameMangler::mangleType(QualType T, SourceRange Range,
                    T->isReferenceType() || T->isBlockPointerType();
 
   switch (QMM) {
-  case QMM_Drop:
-    if (Quals.hasObjCLifetime())
-      Quals = Quals.withoutObjCLifetime();
-    break;
+  // case QMM_Drop:
+  //   if (Quals.hasObjCLifetime())
+  //     Quals = Quals.withoutObjCLifetime();
+  //   break;
   case QMM_Mangle:
     if (const FunctionType *FT = dyn_cast<FunctionType>(T)) {
       Out << '6';
@@ -1899,8 +1899,8 @@ void MicrosoftCXXNameMangler::mangleType(QualType T, SourceRange Range,
   case QMM_Result:
     // Presence of __unaligned qualifier shouldn't affect mangling here.
     Quals.removeUnaligned();
-    if (Quals.hasObjCLifetime())
-      Quals = Quals.withoutObjCLifetime();
+    // if (Quals.hasObjCLifetime())
+    //   Quals = Quals.withoutObjCLifetime();
     if ((!IsPointer && Quals) || isa<TagType>(T) || isArtificialTagType(T)) {
       Out << '?';
       mangleQualifiers(Quals, false);
@@ -2079,13 +2079,13 @@ void MicrosoftCXXNameMangler::mangleType(const BuiltinType *T, Qualifiers,
     Out << "$$T";
     break;
 
-  case BuiltinType::Float16:
-    mangleArtificialTagType(TTK_Struct, "_Float16", {"__clang"});
-    break;
+  // case BuiltinType::Float16:
+  //   mangleArtificialTagType(TTK_Struct, "_Float16", {"__clang"});
+  //   break;
 
-  case BuiltinType::Half:
-    mangleArtificialTagType(TTK_Struct, "_Half", {"__clang"});
-    break;
+  // case BuiltinType::Half:
+  //   mangleArtificialTagType(TTK_Struct, "_Half", {"__clang"});
+  //   break;
 
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id:
@@ -2115,7 +2115,8 @@ void MicrosoftCXXNameMangler::mangleType(const BuiltinType *T, Qualifiers,
   case BuiltinType::SatUFract:
   case BuiltinType::SatULongFract:
   case BuiltinType::BFloat16:
-  case BuiltinType::Float128: {
+  // case BuiltinType::Float128: 
+  {
     DiagnosticsEngine &Diags = Context.getDiags();
     unsigned DiagID = Diags.getCustomDiagID(
         DiagnosticsEngine::Error, "cannot mangle this built-in %0 type yet");
@@ -2757,12 +2758,12 @@ void MicrosoftCXXNameMangler::mangleType(const DependentAddressSpaceType *T,
   Diags.Report(Range.getBegin(), DiagID) << Range;
 }
 
-void MicrosoftCXXNameMangler::mangleType(const ObjCInterfaceType *T, Qualifiers,
-                                         SourceRange) {
-  // ObjC interfaces have structs underlying them.
-  mangleTagTypeKind(TTK_Struct);
-  mangleName(T->getDecl());
-}
+// void MicrosoftCXXNameMangler::mangleType(const ObjCInterfaceType *T, Qualifiers,
+//                                          SourceRange) {
+//   // ObjC interfaces have structs underlying them.
+//   mangleTagTypeKind(TTK_Struct);
+//   mangleName(T->getDecl());
+// }
 
 // void MicrosoftCXXNameMangler::mangleType(const ObjCObjectType *T,
 //                                          Qualifiers Quals, SourceRange Range) {

@@ -44,7 +44,7 @@ namespace latino {
   class IdentifierInfo;
   class NamespaceAliasDecl;
   class NamespaceDecl;
-  class ObjCDeclSpec;
+  // class ObjCDeclSpec;
   class Sema;
   class Declarator;
   struct TemplateIdAnnotation;
@@ -278,16 +278,16 @@ public:
   static const TST TST_char16 = latino::TST_char16;
   static const TST TST_char32 = latino::TST_char32;
   static const TST TST_int = latino::TST_int;
-  static const TST TST_int128 = latino::TST_int128;
+  // static const TST TST_int128 = latino::TST_int128;
   static const TST TST_extint = latino::TST_extint;
   // static const TST TST_half = latino::TST_half;
   static const TST TST_BFloat16 = latino::TST_BFloat16;
   static const TST TST_float = latino::TST_float;
   static const TST TST_double = latino::TST_double;
-  static const TST TST_float16 = latino::TST_Float16;
+  // static const TST TST_float16 = latino::TST_Float16;
   static const TST TST_accum = latino::TST_Accum;
   static const TST TST_fract = latino::TST_Fract;
-  static const TST TST_float128 = latino::TST_float128;
+  // static const TST TST_float128 = latino::TST_float128;
   static const TST TST_bool = latino::TST_bool;
   static const TST TST_decimal32 = latino::TST_decimal32;
   static const TST TST_decimal64 = latino::TST_decimal64;
@@ -409,7 +409,7 @@ private:
   WrittenBuiltinSpecs writtenBS;
   void SaveWrittenBuiltinSpecs();
 
-  ObjCDeclSpec *ObjCQualifiers;
+  // ObjCDeclSpec *ObjCQualifiers;
 
   static bool isTypeRep(TST T) {
     return (T == TST_typename || T == TST_typeofType ||
@@ -443,8 +443,8 @@ public:
         FS_inline_specified(false), FS_forceinline_specified(false),
         FS_virtual_specified(false), FS_noreturn_specified(false),
         Friend_specified(false), ConstexprSpecifier(CSK_unspecified),
-        FS_explicit_specifier(), Attrs(attrFactory), writtenBS(),
-        ObjCQualifiers(nullptr) {}
+        FS_explicit_specifier(), Attrs(attrFactory), writtenBS()/*,
+        ObjCQualifiers(nullptr)*/ {}
 
   // storage-class-specifier
   SCS getStorageClassSpec() const { return (SCS)StorageClassSpec; }
@@ -813,8 +813,8 @@ public:
     return writtenBS;
   }
 
-  ObjCDeclSpec *getObjCQualifiers() const { return ObjCQualifiers; }
-  void setObjCQualifiers(ObjCDeclSpec *quals) { ObjCQualifiers = quals; }
+  // ObjCDeclSpec *getObjCQualifiers() const { return ObjCQualifiers; }
+  // void setObjCQualifiers(ObjCDeclSpec *quals) { ObjCQualifiers = quals; }
 
   /// Checks if this DeclSpec can stand alone, without a Declarator.
   ///
@@ -824,108 +824,108 @@ public:
 
 /// Captures information about "declaration specifiers" specific to
 /// Objective-C.
-class ObjCDeclSpec {
-public:
-  /// ObjCDeclQualifier - Qualifier used on types in method
-  /// declarations.  Not all combinations are sensible.  Parameters
-  /// can be one of { in, out, inout } with one of { bycopy, byref }.
-  /// Returns can either be { oneway } or not.
-  ///
-  /// This should be kept in sync with Decl::ObjCDeclQualifier.
-  enum ObjCDeclQualifier {
-    DQ_None = 0x0,
-    DQ_In = 0x1,
-    DQ_Inout = 0x2,
-    DQ_Out = 0x4,
-    DQ_Bycopy = 0x8,
-    DQ_Byref = 0x10,
-    DQ_Oneway = 0x20,
-    DQ_CSNullability = 0x40
-  };
+// class ObjCDeclSpec {
+// public:
+//   /// ObjCDeclQualifier - Qualifier used on types in method
+//   /// declarations.  Not all combinations are sensible.  Parameters
+//   /// can be one of { in, out, inout } with one of { bycopy, byref }.
+//   /// Returns can either be { oneway } or not.
+//   ///
+//   /// This should be kept in sync with Decl::ObjCDeclQualifier.
+//   enum ObjCDeclQualifier {
+//     DQ_None = 0x0,
+//     DQ_In = 0x1,
+//     DQ_Inout = 0x2,
+//     DQ_Out = 0x4,
+//     DQ_Bycopy = 0x8,
+//     DQ_Byref = 0x10,
+//     DQ_Oneway = 0x20,
+//     DQ_CSNullability = 0x40
+//   };
 
-  ObjCDeclSpec()
-      : objcDeclQualifier(DQ_None),
-        PropertyAttributes(ObjCPropertyAttribute::kind_noattr), Nullability(0),
-        GetterName(nullptr), SetterName(nullptr) {}
+//   ObjCDeclSpec()
+//       : objcDeclQualifier(DQ_None),
+//         PropertyAttributes(ObjCPropertyAttribute::kind_noattr), Nullability(0),
+//         GetterName(nullptr), SetterName(nullptr) {}
 
-  ObjCDeclQualifier getObjCDeclQualifier() const {
-    return (ObjCDeclQualifier)objcDeclQualifier;
-  }
-  void setObjCDeclQualifier(ObjCDeclQualifier DQVal) {
-    objcDeclQualifier = (ObjCDeclQualifier) (objcDeclQualifier | DQVal);
-  }
-  void clearObjCDeclQualifier(ObjCDeclQualifier DQVal) {
-    objcDeclQualifier = (ObjCDeclQualifier) (objcDeclQualifier & ~DQVal);
-  }
+//   ObjCDeclQualifier getObjCDeclQualifier() const {
+//     return (ObjCDeclQualifier)objcDeclQualifier;
+//   }
+//   void setObjCDeclQualifier(ObjCDeclQualifier DQVal) {
+//     objcDeclQualifier = (ObjCDeclQualifier) (objcDeclQualifier | DQVal);
+//   }
+//   void clearObjCDeclQualifier(ObjCDeclQualifier DQVal) {
+//     objcDeclQualifier = (ObjCDeclQualifier) (objcDeclQualifier & ~DQVal);
+//   }
 
-  ObjCPropertyAttribute::Kind getPropertyAttributes() const {
-    return ObjCPropertyAttribute::Kind(PropertyAttributes);
-  }
-  void setPropertyAttributes(ObjCPropertyAttribute::Kind PRVal) {
-    PropertyAttributes =
-        (ObjCPropertyAttribute::Kind)(PropertyAttributes | PRVal);
-  }
+//   ObjCPropertyAttribute::Kind getPropertyAttributes() const {
+//     return ObjCPropertyAttribute::Kind(PropertyAttributes);
+//   }
+//   void setPropertyAttributes(ObjCPropertyAttribute::Kind PRVal) {
+//     PropertyAttributes =
+//         (ObjCPropertyAttribute::Kind)(PropertyAttributes | PRVal);
+//   }
 
-  NullabilityKind getNullability() const {
-    assert(
-        ((getObjCDeclQualifier() & DQ_CSNullability) ||
-         (getPropertyAttributes() & ObjCPropertyAttribute::kind_nullability)) &&
-        "Objective-C declspec doesn't have nullability");
-    return static_cast<NullabilityKind>(Nullability);
-  }
+//   NullabilityKind getNullability() const {
+//     assert(
+//         ((getObjCDeclQualifier() & DQ_CSNullability) ||
+//          (getPropertyAttributes() & ObjCPropertyAttribute::kind_nullability)) &&
+//         "Objective-C declspec doesn't have nullability");
+//     return static_cast<NullabilityKind>(Nullability);
+//   }
 
-  SourceLocation getNullabilityLoc() const {
-    assert(
-        ((getObjCDeclQualifier() & DQ_CSNullability) ||
-         (getPropertyAttributes() & ObjCPropertyAttribute::kind_nullability)) &&
-        "Objective-C declspec doesn't have nullability");
-    return NullabilityLoc;
-  }
+//   SourceLocation getNullabilityLoc() const {
+//     assert(
+//         ((getObjCDeclQualifier() & DQ_CSNullability) ||
+//          (getPropertyAttributes() & ObjCPropertyAttribute::kind_nullability)) &&
+//         "Objective-C declspec doesn't have nullability");
+//     return NullabilityLoc;
+//   }
 
-  void setNullability(SourceLocation loc, NullabilityKind kind) {
-    assert(
-        ((getObjCDeclQualifier() & DQ_CSNullability) ||
-         (getPropertyAttributes() & ObjCPropertyAttribute::kind_nullability)) &&
-        "Set the nullability declspec or property attribute first");
-    Nullability = static_cast<unsigned>(kind);
-    NullabilityLoc = loc;
-  }
+//   void setNullability(SourceLocation loc, NullabilityKind kind) {
+//     assert(
+//         ((getObjCDeclQualifier() & DQ_CSNullability) ||
+//          (getPropertyAttributes() & ObjCPropertyAttribute::kind_nullability)) &&
+//         "Set the nullability declspec or property attribute first");
+//     Nullability = static_cast<unsigned>(kind);
+//     NullabilityLoc = loc;
+//   }
 
-  const IdentifierInfo *getGetterName() const { return GetterName; }
-  IdentifierInfo *getGetterName() { return GetterName; }
-  SourceLocation getGetterNameLoc() const { return GetterNameLoc; }
-  void setGetterName(IdentifierInfo *name, SourceLocation loc) {
-    GetterName = name;
-    GetterNameLoc = loc;
-  }
+//   const IdentifierInfo *getGetterName() const { return GetterName; }
+//   IdentifierInfo *getGetterName() { return GetterName; }
+//   SourceLocation getGetterNameLoc() const { return GetterNameLoc; }
+//   void setGetterName(IdentifierInfo *name, SourceLocation loc) {
+//     GetterName = name;
+//     GetterNameLoc = loc;
+//   }
 
-  const IdentifierInfo *getSetterName() const { return SetterName; }
-  IdentifierInfo *getSetterName() { return SetterName; }
-  SourceLocation getSetterNameLoc() const { return SetterNameLoc; }
-  void setSetterName(IdentifierInfo *name, SourceLocation loc) {
-    SetterName = name;
-    SetterNameLoc = loc;
-  }
+//   const IdentifierInfo *getSetterName() const { return SetterName; }
+//   IdentifierInfo *getSetterName() { return SetterName; }
+//   SourceLocation getSetterNameLoc() const { return SetterNameLoc; }
+//   void setSetterName(IdentifierInfo *name, SourceLocation loc) {
+//     SetterName = name;
+//     SetterNameLoc = loc;
+//   }
 
-private:
-  // FIXME: These two are unrelated and mutually exclusive. So perhaps
-  // we can put them in a union to reflect their mutual exclusivity
-  // (space saving is negligible).
-  unsigned objcDeclQualifier : 7;
+// private:
+//   // FIXME: These two are unrelated and mutually exclusive. So perhaps
+//   // we can put them in a union to reflect their mutual exclusivity
+//   // (space saving is negligible).
+//   unsigned objcDeclQualifier : 7;
 
-  // NOTE: VC++ treats enums as signed, avoid using ObjCPropertyAttribute::Kind
-  unsigned PropertyAttributes : NumObjCPropertyAttrsBits;
+//   // NOTE: VC++ treats enums as signed, avoid using ObjCPropertyAttribute::Kind
+//   unsigned PropertyAttributes : NumObjCPropertyAttrsBits;
 
-  unsigned Nullability : 2;
+//   unsigned Nullability : 2;
 
-  SourceLocation NullabilityLoc;
+//   SourceLocation NullabilityLoc;
 
-  IdentifierInfo *GetterName;    // getter name or NULL if no getter
-  IdentifierInfo *SetterName;    // setter name or NULL if no setter
-  SourceLocation GetterNameLoc; // location of the getter attribute's value
-  SourceLocation SetterNameLoc; // location of the setter attribute's value
+//   IdentifierInfo *GetterName;    // getter name or NULL if no getter
+//   IdentifierInfo *SetterName;    // setter name or NULL if no setter
+//   SourceLocation GetterNameLoc; // location of the getter attribute's value
+//   SourceLocation SetterNameLoc; // location of the setter attribute's value
 
-};
+// };
 
 /// Describes the kind of unqualified-id parsed.
 enum class UnqualifiedIdKind {
@@ -1830,7 +1830,7 @@ private:
   unsigned ObjCIvar : 1;
 
   /// Indicates whether this is an Objective-C 'weak' property.
-  unsigned ObjCWeakProperty : 1;
+  // unsigned ObjCWeakProperty : 1;
 
   /// Indicates whether the InlineParams / InlineBindings storage has been used.
   unsigned InlineStorageUsed : 1;
@@ -1881,7 +1881,7 @@ public:
         InvalidType(DS.getTypeSpecType() == DeclSpec::TST_error),
         GroupingParens(false), FunctionDefinition(FDK_Declaration),
         Redeclaration(false), Extension(false), ObjCIvar(false),
-        ObjCWeakProperty(false), InlineStorageUsed(false),
+        /*ObjCWeakProperty(false),*/ InlineStorageUsed(false),
         Attrs(ds.getAttributePool().getFactory()), AsmLabel(nullptr),
         TrailingRequiresClause(nullptr),
         InventedTemplateParameterList(nullptr) {}
@@ -1967,7 +1967,7 @@ public:
     AsmLabel = nullptr;
     InlineStorageUsed = false;
     ObjCIvar = false;
-    ObjCWeakProperty = false;
+    // ObjCWeakProperty = false;
     CommaLoc = SourceLocation();
     EllipsisLoc = SourceLocation();
   }
@@ -2522,8 +2522,8 @@ public:
   void setObjCIvar(bool Val = true) { ObjCIvar = Val; }
   bool isObjCIvar() const { return ObjCIvar; }
 
-  void setObjCWeakProperty(bool Val = true) { ObjCWeakProperty = Val; }
-  bool isObjCWeakProperty() const { return ObjCWeakProperty; }
+  // void setObjCWeakProperty(bool Val = true) { ObjCWeakProperty = Val; }
+  // bool isObjCWeakProperty() const { return ObjCWeakProperty; }
 
   void setInvalidType(bool Val = true) { InvalidType = Val; }
   bool isInvalidType() const {

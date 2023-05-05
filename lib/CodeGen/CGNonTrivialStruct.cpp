@@ -156,21 +156,21 @@ template <class Derived> struct GenFuncNameBase {
     return S;
   }
 
-  void visitARCStrong(QualType FT, const FieldDecl *FD,
-                      CharUnits CurStructOffset) {
-    appendStr("_s");
-    if (FT->isBlockPointerType())
-      appendStr("b");
-    CharUnits FieldOffset = CurStructOffset + asDerived().getFieldOffset(FD);
-    appendStr(getVolatileOffsetStr(FT.isVolatileQualified(), FieldOffset));
-  }
+  // void visitARCStrong(QualType FT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset) {
+  //   appendStr("_s");
+  //   if (FT->isBlockPointerType())
+  //     appendStr("b");
+  //   CharUnits FieldOffset = CurStructOffset + asDerived().getFieldOffset(FD);
+  //   appendStr(getVolatileOffsetStr(FT.isVolatileQualified(), FieldOffset));
+  // }
 
-  void visitARCWeak(QualType FT, const FieldDecl *FD,
-                    CharUnits CurStructOffset) {
-    appendStr("_w");
-    CharUnits FieldOffset = CurStructOffset + asDerived().getFieldOffset(FD);
-    appendStr(getVolatileOffsetStr(FT.isVolatileQualified(), FieldOffset));
-  }
+  // void visitARCWeak(QualType FT, const FieldDecl *FD,
+  //                   CharUnits CurStructOffset) {
+  //   appendStr("_w");
+  //   CharUnits FieldOffset = CurStructOffset + asDerived().getFieldOffset(FD);
+  //   appendStr(getVolatileOffsetStr(FT.isVolatileQualified(), FieldOffset));
+  // }
 
   void visitStruct(QualType QT, const FieldDecl *FD,
                    CharUnits CurStructOffset) {
@@ -597,17 +597,17 @@ struct GenDestructor : StructVisitor<GenDestructor>,
     Super::visitWithKind(DK, FT, FD, CurStructOffset, Addrs);
   }
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      CharUnits CurStructOffset, std::array<Address, 1> Addrs) {
-    CGF->destroyARCStrongImprecise(
-        *CGF, getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset, std::array<Address, 1> Addrs) {
+  //   CGF->destroyARCStrongImprecise(
+  //       *CGF, getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
-                    std::array<Address, 1> Addrs) {
-    CGF->destroyARCWeak(
-        *CGF, getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
+  //                   std::array<Address, 1> Addrs) {
+  //   CGF->destroyARCWeak(
+  //       *CGF, getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
+  // }
 
   void callSpecialFunction(QualType FT, CharUnits Offset,
                            std::array<Address, 1> Addrs) {
@@ -638,17 +638,17 @@ struct GenDefaultInitialize
     Super::visitWithKind(PDIK, FT, FD, CurStructOffset, Addrs);
   }
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      CharUnits CurStructOffset, std::array<Address, 1> Addrs) {
-    CGF->EmitNullInitialization(
-        getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset, std::array<Address, 1> Addrs) {
+  //   CGF->EmitNullInitialization(
+  //       getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
-                    std::array<Address, 1> Addrs) {
-    CGF->EmitNullInitialization(
-        getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
+  //                   std::array<Address, 1> Addrs) {
+  //   CGF->EmitNullInitialization(
+  //       getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD), QT);
+  // }
 
   template <class FieldKind, size_t... Is>
   void visitArray(FieldKind FK, const ArrayType *AT, bool IsVolatile,
@@ -684,22 +684,22 @@ struct GenCopyConstructor : GenBinaryFunc<GenCopyConstructor, false> {
   GenCopyConstructor(ASTContext &Ctx)
       : GenBinaryFunc<GenCopyConstructor, false>(Ctx) {}
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    llvm::Value *SrcVal = CGF->EmitLoadOfScalar(
-        Addrs[SrcIdx], QT.isVolatileQualified(), QT, SourceLocation());
-    llvm::Value *Val = CGF->EmitARCRetain(QT, SrcVal);
-    CGF->EmitStoreOfScalar(Val, CGF->MakeAddrLValue(Addrs[DstIdx], QT), true);
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   llvm::Value *SrcVal = CGF->EmitLoadOfScalar(
+  //       Addrs[SrcIdx], QT.isVolatileQualified(), QT, SourceLocation());
+  //   llvm::Value *Val = CGF->EmitARCRetain(QT, SrcVal);
+  //   CGF->EmitStoreOfScalar(Val, CGF->MakeAddrLValue(Addrs[DstIdx], QT), true);
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
-                    std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    CGF->EmitARCCopyWeak(Addrs[DstIdx], Addrs[SrcIdx]);
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
+  //                   std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   CGF->EmitARCCopyWeak(Addrs[DstIdx], Addrs[SrcIdx]);
+  // }
 
   void callSpecialFunction(QualType FT, CharUnits Offset,
                            std::array<Address, 2> Addrs) {
@@ -714,24 +714,24 @@ struct GenMoveConstructor : GenBinaryFunc<GenMoveConstructor, true> {
   GenMoveConstructor(ASTContext &Ctx)
       : GenBinaryFunc<GenMoveConstructor, true>(Ctx) {}
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    LValue SrcLV = CGF->MakeAddrLValue(Addrs[SrcIdx], QT);
-    llvm::Value *SrcVal =
-        CGF->EmitLoadOfLValue(SrcLV, SourceLocation()).getScalarVal();
-    CGF->EmitStoreOfScalar(getNullForVariable(SrcLV.getAddress(*CGF)), SrcLV);
-    CGF->EmitStoreOfScalar(SrcVal, CGF->MakeAddrLValue(Addrs[DstIdx], QT),
-                           /* isInitialization */ true);
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   LValue SrcLV = CGF->MakeAddrLValue(Addrs[SrcIdx], QT);
+  //   llvm::Value *SrcVal =
+  //       CGF->EmitLoadOfLValue(SrcLV, SourceLocation()).getScalarVal();
+  //   CGF->EmitStoreOfScalar(getNullForVariable(SrcLV.getAddress(*CGF)), SrcLV);
+  //   CGF->EmitStoreOfScalar(SrcVal, CGF->MakeAddrLValue(Addrs[DstIdx], QT),
+  //                          /* isInitialization */ true);
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
-                    std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    CGF->EmitARCMoveWeak(Addrs[DstIdx], Addrs[SrcIdx]);
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
+  //                   std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   CGF->EmitARCMoveWeak(Addrs[DstIdx], Addrs[SrcIdx]);
+  // }
 
   void callSpecialFunction(QualType FT, CharUnits Offset,
                            std::array<Address, 2> Addrs) {
@@ -746,22 +746,22 @@ struct GenCopyAssignment : GenBinaryFunc<GenCopyAssignment, false> {
   GenCopyAssignment(ASTContext &Ctx)
       : GenBinaryFunc<GenCopyAssignment, false>(Ctx) {}
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    llvm::Value *SrcVal = CGF->EmitLoadOfScalar(
-        Addrs[SrcIdx], QT.isVolatileQualified(), QT, SourceLocation());
-    CGF->EmitARCStoreStrong(CGF->MakeAddrLValue(Addrs[DstIdx], QT), SrcVal,
-                            false);
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   llvm::Value *SrcVal = CGF->EmitLoadOfScalar(
+  //       Addrs[SrcIdx], QT.isVolatileQualified(), QT, SourceLocation());
+  //   // CGF->EmitARCStoreStrong(CGF->MakeAddrLValue(Addrs[DstIdx], QT), SrcVal,
+  //   //                         false);
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
-                    std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    CGF->emitARCCopyAssignWeak(QT, Addrs[DstIdx], Addrs[SrcIdx]);
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
+  //                   std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   CGF->emitARCCopyAssignWeak(QT, Addrs[DstIdx], Addrs[SrcIdx]);
+  // }
 
   void callSpecialFunction(QualType FT, CharUnits Offset,
                            std::array<Address, 2> Addrs) {
@@ -777,27 +777,27 @@ struct GenMoveAssignment : GenBinaryFunc<GenMoveAssignment, true> {
   GenMoveAssignment(ASTContext &Ctx)
       : GenBinaryFunc<GenMoveAssignment, true>(Ctx) {}
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    LValue SrcLV = CGF->MakeAddrLValue(Addrs[SrcIdx], QT);
-    llvm::Value *SrcVal =
-        CGF->EmitLoadOfLValue(SrcLV, SourceLocation()).getScalarVal();
-    CGF->EmitStoreOfScalar(getNullForVariable(SrcLV.getAddress(*CGF)), SrcLV);
-    LValue DstLV = CGF->MakeAddrLValue(Addrs[DstIdx], QT);
-    llvm::Value *DstVal =
-        CGF->EmitLoadOfLValue(DstLV, SourceLocation()).getScalarVal();
-    CGF->EmitStoreOfScalar(SrcVal, DstLV);
-    CGF->EmitARCRelease(DstVal, ARCImpreciseLifetime);
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     CharUnits CurStructOffset, std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   LValue SrcLV = CGF->MakeAddrLValue(Addrs[SrcIdx], QT);
+  //   llvm::Value *SrcVal =
+  //       CGF->EmitLoadOfLValue(SrcLV, SourceLocation()).getScalarVal();
+  //   CGF->EmitStoreOfScalar(getNullForVariable(SrcLV.getAddress(*CGF)), SrcLV);
+  //   LValue DstLV = CGF->MakeAddrLValue(Addrs[DstIdx], QT);
+  //   llvm::Value *DstVal =
+  //       CGF->EmitLoadOfLValue(DstLV, SourceLocation()).getScalarVal();
+  //   CGF->EmitStoreOfScalar(SrcVal, DstLV);
+  //   // CGF->EmitARCRelease(DstVal, ARCImpreciseLifetime);
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
-                    std::array<Address, 2> Addrs) {
-    Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
-    Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
-    CGF->emitARCMoveAssignWeak(QT, Addrs[DstIdx], Addrs[SrcIdx]);
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, CharUnits CurStructOffset,
+  //                   std::array<Address, 2> Addrs) {
+  //   Addrs[DstIdx] = getAddrWithOffset(Addrs[DstIdx], CurStructOffset, FD);
+  //   Addrs[SrcIdx] = getAddrWithOffset(Addrs[SrcIdx], CurStructOffset, FD);
+  //   CGF->emitARCMoveAssignWeak(QT, Addrs[DstIdx], Addrs[SrcIdx]);
+  // }
 
   void callSpecialFunction(QualType FT, CharUnits Offset,
                            std::array<Address, 2> Addrs) {

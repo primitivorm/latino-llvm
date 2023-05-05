@@ -278,18 +278,18 @@ TEST(ParserTest, FullParserTest) {
             Error.toStringFull());
 }
 
-TEST(ParserTest, VariadicMatchTest) {
-  Diagnostics Error;
+// TEST(ParserTest, VariadicMatchTest) {
+//   Diagnostics Error;
 
-  StringRef Code =
-      "stmt(objcMessageExpr(hasAnySelector(\"methodA\", \"methodB:\")))";
-  llvm::Optional<DynTypedMatcher> OM(
-      Parser::parseMatcherExpression(Code, &Error));
-  EXPECT_EQ("", Error.toStringFull());
-  auto M = OM->unconditionalConvertTo<Stmt>();
-  EXPECT_TRUE(matchesObjC("@interface I @end "
-                          "void foo(I* i) { [i methodA]; }", M));
-}
+//   StringRef Code =
+//       "stmt(objcMessageExpr(hasAnySelector(\"methodA\", \"methodB:\")))";
+//   llvm::Optional<DynTypedMatcher> OM(
+//       Parser::parseMatcherExpression(Code, &Error));
+//   EXPECT_EQ("", Error.toStringFull());
+//   auto M = OM->unconditionalConvertTo<Stmt>();
+//   EXPECT_TRUE(matchesObjC("@interface I @end "
+//                           "void foo(I* i) { [i methodA]; }", M));
+// }
 
 std::string ParseWithError(StringRef Code) {
   Diagnostics Error;

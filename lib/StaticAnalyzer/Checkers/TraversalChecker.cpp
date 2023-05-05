@@ -12,7 +12,7 @@
 //===----------------------------------------------------------------------===//
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/ParentMap.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"
 #include "latino/StaticAnalyzer/Core/PathSensitive/CallEvent.h"

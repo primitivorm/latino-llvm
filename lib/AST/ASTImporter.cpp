@@ -23,7 +23,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
 #include "latino/AST/DeclGroup.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
 #include "latino/AST/DeclarationName.h"
@@ -3779,56 +3779,56 @@ ExpectedDecl ASTNodeImporter::VisitFriendDecl(FriendDecl *D) {
   return FrD;
 }
 
-// ExpectedDecl ASTNodeImporter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
-//   // Import the major distinguishing characteristics of an ivar.
-//   DeclContext *DC, *LexicalDC;
-//   DeclarationName Name;
-//   SourceLocation Loc;
-//   NamedDecl *ToD;
-//   if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
-//     return std::move(Err);
-//   if (ToD)
-//     return ToD;
-
-//   // Determine whether we've already imported this ivar
-//   auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
-//   for (auto *FoundDecl : FoundDecls) {
-//     if (ObjCIvarDecl *FoundIvar = dyn_cast<ObjCIvarDecl>(FoundDecl)) {
-//       if (Importer.IsStructurallyEquivalent(D->getType(),
-//                                             FoundIvar->getType())) {
-//         Importer.MapImported(D, FoundIvar);
-//         return FoundIvar;
-//       }
-
-//       Importer.ToDiag(Loc, diag::warn_odr_ivar_type_inconsistent)
-//         << Name << D->getType() << FoundIvar->getType();
-//       Importer.ToDiag(FoundIvar->getLocation(), diag::note_odr_value_here)
-//         << FoundIvar->getType();
-
-//       return make_error<ImportError>(ImportError::NameConflict);
-//     }
-//   }
-
-//   Error Err = Error::success();
-//   auto ToType = importChecked(Err, D->getType());
-//   auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
-//   auto ToBitWidth = importChecked(Err, D->getBitWidth());
-//   auto ToInnerLocStart = importChecked(Err, D->getInnerLocStart());
-//   if (Err)
-//     return std::move(Err);
-
-//   // ObjCIvarDecl *ToIvar;
-//   // if (GetImportedOrCreateDecl(
-//   //         ToIvar, D, Importer.getToContext(), cast<ObjCContainerDecl>(DC),
-//   //         ToInnerLocStart, Loc, Name.getAsIdentifierInfo(),
-//   //         ToType, ToTypeSourceInfo,
-//   //         D->getAccessControl(),ToBitWidth, D->getSynthesize()))
-//   //   return ToIvar;
-
-//   // ToIvar->setLexicalDeclContext(LexicalDC);
-//   // LexicalDC->addDeclInternal(ToIvar);
-//   // return ToIvar;
-// }
+//ExpectedDecl ASTNodeImporter::VisitObjCIvarDecl(ObjCIvarDecl *D) {
+//  // Import the major distinguishing characteristics of an ivar.
+//  DeclContext *DC, *LexicalDC;
+//  DeclarationName Name;
+//  SourceLocation Loc;
+//  NamedDecl *ToD;
+//  if (Error Err = ImportDeclParts(D, DC, LexicalDC, Name, ToD, Loc))
+//    return std::move(Err);
+//  if (ToD)
+//    return ToD;
+//
+//  // Determine whether we've already imported this ivar
+//  auto FoundDecls = Importer.findDeclsInToCtx(DC, Name);
+//  for (auto *FoundDecl : FoundDecls) {
+//    if (ObjCIvarDecl *FoundIvar = dyn_cast<ObjCIvarDecl>(FoundDecl)) {
+//      if (Importer.IsStructurallyEquivalent(D->getType(),
+//                                            FoundIvar->getType())) {
+//        Importer.MapImported(D, FoundIvar);
+//        return FoundIvar;
+//      }
+//
+//      Importer.ToDiag(Loc, diag::warn_odr_ivar_type_inconsistent)
+//        << Name << D->getType() << FoundIvar->getType();
+//      Importer.ToDiag(FoundIvar->getLocation(), diag::note_odr_value_here)
+//        << FoundIvar->getType();
+//
+//      return make_error<ImportError>(ImportError::NameConflict);
+//    }
+//  }
+//
+//  Error Err = Error::success();
+//  auto ToType = importChecked(Err, D->getType());
+//  auto ToTypeSourceInfo = importChecked(Err, D->getTypeSourceInfo());
+//  auto ToBitWidth = importChecked(Err, D->getBitWidth());
+//  auto ToInnerLocStart = importChecked(Err, D->getInnerLocStart());
+//  // if (Err)
+//    return std::move(Err);
+//
+//  // ObjCIvarDecl *ToIvar;
+//  // if (GetImportedOrCreateDecl(
+//  //         ToIvar, D, Importer.getToContext(), cast<DeclContext>(DC) /*cast<ObjCContainerDecl>(DC)*/,
+//  //         ToInnerLocStart, Loc, Name.getAsIdentifierInfo(),
+//  //         ToType, ToTypeSourceInfo,
+//  //         D->getAccessControl(),ToBitWidth, D->getSynthesize()))
+//  //   return ToIvar;
+//
+//  // ToIvar->setLexicalDeclContext(LexicalDC);
+//  // LexicalDC->addDeclInternal(ToIvar);
+//  // return ToIvar;
+//}
 
 ExpectedDecl ASTNodeImporter::VisitVarDecl(VarDecl *D) {
 
@@ -8891,16 +8891,16 @@ IdentifierInfo *ASTImporter::Import(const IdentifierInfo *FromId) {
   return ToId;
 }
 
-Expected<Selector> ASTImporter::Import(Selector FromSel) {
-  if (FromSel.isNull())
-    return Selector{};
+// Expected<Selector> ASTImporter::Import(Selector FromSel) {
+//   if (FromSel.isNull())
+//     return Selector{};
 
-  SmallVector<IdentifierInfo *, 4> Idents;
-  Idents.push_back(Import(FromSel.getIdentifierInfoForSlot(0)));
-  for (unsigned I = 1, N = FromSel.getNumArgs(); I < N; ++I)
-    Idents.push_back(Import(FromSel.getIdentifierInfoForSlot(I)));
-  return ToContext.Selectors.getSelector(FromSel.getNumArgs(), Idents.data());
-}
+//   SmallVector<IdentifierInfo *, 4> Idents;
+//   Idents.push_back(Import(FromSel.getIdentifierInfoForSlot(0)));
+//   for (unsigned I = 1, N = FromSel.getNumArgs(); I < N; ++I)
+//     Idents.push_back(Import(FromSel.getIdentifierInfoForSlot(I)));
+//   return ToContext.Selectors.getSelector(FromSel.getNumArgs(), Idents.data());
+// }
 
 Expected<DeclarationName> ASTImporter::HandleNameConflict(DeclarationName Name,
                                                           DeclContext *DC,

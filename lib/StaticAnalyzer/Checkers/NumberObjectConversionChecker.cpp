@@ -217,19 +217,19 @@ void NumberObjectConversionChecker::checkASTCodeBody(const Decl *D,
           .bind("cpp_object")));
 
   // Currently this matches NeXTSTEP number objects.
-  auto ObjCSuspiciousNumberObjectExprM =
-      expr(ignoringParenImpCasts(
-          expr(hasType(hasCanonicalType(
-              objcObjectPointerType(pointee(
-                  qualType(hasCanonicalType(
-                      qualType(hasDeclaration(
-                          objcInterfaceDecl(hasName("NSNumber")))))))))))
-          .bind("objc_object")));
+  // auto ObjCSuspiciousNumberObjectExprM =
+  //     expr(ignoringParenImpCasts(
+  //         expr(hasType(hasCanonicalType(
+  //             objcObjectPointerType(pointee(
+  //                 qualType(hasCanonicalType(
+  //                     qualType(hasDeclaration(
+  //                         objcInterfaceDecl(hasName("NSNumber")))))))))))
+  //         .bind("objc_object")));
 
   auto SuspiciousNumberObjectExprM = anyOf(
       CSuspiciousNumberObjectExprM,
-      CppSuspiciousNumberObjectExprM,
-      ObjCSuspiciousNumberObjectExprM);
+      CppSuspiciousNumberObjectExprM/*,
+      ObjCSuspiciousNumberObjectExprM*/);
 
   // Useful for predicates like "Unless we've seen the same object elsewhere".
   auto AnotherSuspiciousNumberObjectExprM =

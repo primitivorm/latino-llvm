@@ -91,9 +91,9 @@ def ImplicitIntFloatConversion : DiagGroup<"implicit-int-float-conversion",
  [ImplicitConstIntFloatConversion]>;
 // def ObjCSignedCharBoolImplicitFloatConversion :
 //   DiagGroup<"objc-signed-char-bool-implicit-float-conversion">;
-// def ImplicitFloatConversion : DiagGroup<"implicit-float-conversion",
-//   [ImplicitIntFloatConversion,
-//    ObjCSignedCharBoolImplicitFloatConversion]>;
+def ImplicitFloatConversion : DiagGroup<"implicit-float-conversion",
+  [ImplicitIntFloatConversion/*,
+   ObjCSignedCharBoolImplicitFloatConversion*/]>;
 def ImplicitFixedPointConversion : DiagGroup<"implicit-fixed-point-conversion">;
 
 def FloatOverflowConversion : DiagGroup<"float-overflow-conversion">;
@@ -610,7 +610,7 @@ def : DiagGroup<"strict-overflow">;
 
 def InvalidOffsetof : DiagGroup<"invalid-offsetof">;
 def : DiagGroup<"strict-prototypes">;
-def StrictSelector : DiagGroup<"strict-selector-match">;
+// def StrictSelector : DiagGroup<"strict-selector-match">;
 def MethodDuplicate : DiagGroup<"duplicate-method-match">;
 // def ObjCCStringFormat : DiagGroup<"cstring-format-directive">;
 def CoveredSwitchDefault : DiagGroup<"covered-switch-default">;
@@ -697,7 +697,7 @@ def UserDefinedWarnings : DiagGroup<"user-defined-warnings">;
 def ReorderCtor : DiagGroup<"reorder-ctor">;
 def ReorderInitList : DiagGroup<"reorder-init-list">;
 def Reorder : DiagGroup<"reorder", [ReorderCtor, ReorderInitList]>;
-def UndeclaredSelector : DiagGroup<"undeclared-selector">;
+// def UndeclaredSelector : DiagGroup<"undeclared-selector">;
 def ImplicitAtomic : DiagGroup<"implicit-atomic-properties">;
 def CustomAtomic : DiagGroup<"custom-atomic-properties">;
 def AtomicProperties : DiagGroup<"atomic-properties",
@@ -716,8 +716,8 @@ def BlockCaptureAutoReleasing : DiagGroup<"block-capture-autoreleasing">;
 // def ObjCBridge : DiagGroup<"bridge-cast">;
 
 def DeallocInCategory:DiagGroup<"dealloc-in-category">;
-def SelectorTypeMismatch : DiagGroup<"selector-type-mismatch">;
-def Selector : DiagGroup<"selector", [SelectorTypeMismatch]>;
+// def SelectorTypeMismatch : DiagGroup<"selector-type-mismatch">;
+// def Selector : DiagGroup<"selector", [SelectorTypeMismatch]>;
 def Protocol : DiagGroup<"protocol">;
 // No longer in use, preserve for backwards compatibility.
 def : DiagGroup<"at-protocol">;
@@ -1115,14 +1115,14 @@ def ASM : DiagGroup<"asm", [
   ]>;
 
 // OpenMP warnings.
-def SourceUsesOpenMP : DiagGroup<"source-uses-openmp">;
-def OpenMPClauses : DiagGroup<"openmp-clauses">;
-def OpenMPLoopForm : DiagGroup<"openmp-loop-form">;
-def OpenMPMapping : DiagGroup<"openmp-mapping">;
-def OpenMPTarget : DiagGroup<"openmp-target", [OpenMPMapping]>;
-def OpenMP : DiagGroup<"openmp", [
-    SourceUsesOpenMP, OpenMPClauses, OpenMPLoopForm, OpenMPTarget, OpenMPMapping
-  ]>;
+// def SourceUsesOpenMP : DiagGroup<"source-uses-openmp">;
+// def OpenMPClauses : DiagGroup<"openmp-clauses">;
+// def OpenMPLoopForm : DiagGroup<"openmp-loop-form">;
+// def OpenMPMapping : DiagGroup<"openmp-mapping">;
+// def OpenMPTarget : DiagGroup<"openmp-target", [OpenMPMapping]>;
+// def OpenMP : DiagGroup<"openmp", [
+//     SourceUsesOpenMP, OpenMPClauses, OpenMPLoopForm, OpenMPTarget, OpenMPMapping
+//   ]>;
 
 // Backend warnings.
 def BackendInlineAsm : DiagGroup<"inline-asm">;

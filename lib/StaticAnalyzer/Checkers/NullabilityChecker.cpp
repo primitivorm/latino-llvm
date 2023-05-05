@@ -425,8 +425,8 @@ static bool checkInvariantViolation(ProgramStateRef State, ExplodedNode *N,
   else
     return false;
 
-  if (checkParamsForPreconditionViolation(Params, State, LocCtxt) ||
-      checkSelfIvarsForInvariantViolation(State, LocCtxt)) {
+  if (checkParamsForPreconditionViolation(Params, State, LocCtxt) /*||
+      checkSelfIvarsForInvariantViolation(State, LocCtxt)*/) {
     if (!N->isSink())
       C.addTransition(State->set<InvariantViolated>(true), N);
     return true;
@@ -1065,8 +1065,8 @@ static bool isARCNilInitializedLocal(CheckerContext &C, const Stmt *S) {
 
   // Locals are only zero-initialized when automated reference counting
   // is turned on.
-  if (!C.getASTContext().getLangOpts().ObjCAutoRefCount)
-    return false;
+  // if (!C.getASTContext().getLangOpts().ObjCAutoRefCount)
+  //   return false;
 
   auto *DS = dyn_cast<DeclStmt>(S);
   if (!DS || !DS->isSingleDecl())
@@ -1077,8 +1077,8 @@ static bool isARCNilInitializedLocal(CheckerContext &C, const Stmt *S) {
     return false;
 
   // Sema only zero-initializes locals with ObjCLifetimes.
-  if(!VD->getType().getQualifiers().hasObjCLifetime())
-    return false;
+  // if(!VD->getType().getQualifiers().hasObjCLifetime())
+  //   return false;
 
   const Expr *Init = VD->getInit();
   assert(Init && "ObjC local under ARC without initializer");

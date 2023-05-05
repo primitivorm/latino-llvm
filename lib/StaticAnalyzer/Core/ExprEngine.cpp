@@ -18,7 +18,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -1238,60 +1238,60 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     case Stmt::SEHExceptStmtClass:
     case Stmt::SEHLeaveStmtClass:
     case Stmt::SEHFinallyStmtClass:
-    case Stmt::OMPParallelDirectiveClass:
-    case Stmt::OMPSimdDirectiveClass:
-    case Stmt::OMPForDirectiveClass:
-    case Stmt::OMPForSimdDirectiveClass:
-    case Stmt::OMPSectionsDirectiveClass:
-    case Stmt::OMPSectionDirectiveClass:
-    case Stmt::OMPSingleDirectiveClass:
-    case Stmt::OMPMasterDirectiveClass:
-    case Stmt::OMPCriticalDirectiveClass:
-    case Stmt::OMPParallelForDirectiveClass:
-    case Stmt::OMPParallelForSimdDirectiveClass:
-    case Stmt::OMPParallelSectionsDirectiveClass:
-    case Stmt::OMPParallelMasterDirectiveClass:
-    case Stmt::OMPTaskDirectiveClass:
-    case Stmt::OMPTaskyieldDirectiveClass:
-    case Stmt::OMPBarrierDirectiveClass:
-    case Stmt::OMPTaskwaitDirectiveClass:
-    case Stmt::OMPTaskgroupDirectiveClass:
-    case Stmt::OMPFlushDirectiveClass:
-    case Stmt::OMPDepobjDirectiveClass:
-    case Stmt::OMPScanDirectiveClass:
-    case Stmt::OMPOrderedDirectiveClass:
-    case Stmt::OMPAtomicDirectiveClass:
-    case Stmt::OMPTargetDirectiveClass:
-    case Stmt::OMPTargetDataDirectiveClass:
-    case Stmt::OMPTargetEnterDataDirectiveClass:
-    case Stmt::OMPTargetExitDataDirectiveClass:
-    case Stmt::OMPTargetParallelDirectiveClass:
-    case Stmt::OMPTargetParallelForDirectiveClass:
-    case Stmt::OMPTargetUpdateDirectiveClass:
-    case Stmt::OMPTeamsDirectiveClass:
-    case Stmt::OMPCancellationPointDirectiveClass:
-    case Stmt::OMPCancelDirectiveClass:
-    case Stmt::OMPTaskLoopDirectiveClass:
-    case Stmt::OMPTaskLoopSimdDirectiveClass:
-    case Stmt::OMPMasterTaskLoopDirectiveClass:
-    case Stmt::OMPMasterTaskLoopSimdDirectiveClass:
-    case Stmt::OMPParallelMasterTaskLoopDirectiveClass:
-    case Stmt::OMPParallelMasterTaskLoopSimdDirectiveClass:
-    case Stmt::OMPDistributeDirectiveClass:
-    case Stmt::OMPDistributeParallelForDirectiveClass:
-    case Stmt::OMPDistributeParallelForSimdDirectiveClass:
-    case Stmt::OMPDistributeSimdDirectiveClass:
-    case Stmt::OMPTargetParallelForSimdDirectiveClass:
-    case Stmt::OMPTargetSimdDirectiveClass:
-    case Stmt::OMPTeamsDistributeDirectiveClass:
-    case Stmt::OMPTeamsDistributeSimdDirectiveClass:
-    case Stmt::OMPTeamsDistributeParallelForSimdDirectiveClass:
-    case Stmt::OMPTeamsDistributeParallelForDirectiveClass:
-    case Stmt::OMPTargetTeamsDirectiveClass:
-    case Stmt::OMPTargetTeamsDistributeDirectiveClass:
-    case Stmt::OMPTargetTeamsDistributeParallelForDirectiveClass:
-    case Stmt::OMPTargetTeamsDistributeParallelForSimdDirectiveClass:
-    case Stmt::OMPTargetTeamsDistributeSimdDirectiveClass:
+    // case Stmt::OMPParallelDirectiveClass:
+    // case Stmt::OMPSimdDirectiveClass:
+    // case Stmt::OMPForDirectiveClass:
+    // case Stmt::OMPForSimdDirectiveClass:
+    // case Stmt::OMPSectionsDirectiveClass:
+    // case Stmt::OMPSectionDirectiveClass:
+    // case Stmt::OMPSingleDirectiveClass:
+    // case Stmt::OMPMasterDirectiveClass:
+    // case Stmt::OMPCriticalDirectiveClass:
+    // case Stmt::OMPParallelForDirectiveClass:
+    // case Stmt::OMPParallelForSimdDirectiveClass:
+    // case Stmt::OMPParallelSectionsDirectiveClass:
+    // case Stmt::OMPParallelMasterDirectiveClass:
+    // case Stmt::OMPTaskDirectiveClass:
+    // case Stmt::OMPTaskyieldDirectiveClass:
+    // case Stmt::OMPBarrierDirectiveClass:
+    // case Stmt::OMPTaskwaitDirectiveClass:
+    // case Stmt::OMPTaskgroupDirectiveClass:
+    // case Stmt::OMPFlushDirectiveClass:
+    // case Stmt::OMPDepobjDirectiveClass:
+    // case Stmt::OMPScanDirectiveClass:
+    // case Stmt::OMPOrderedDirectiveClass:
+    // case Stmt::OMPAtomicDirectiveClass:
+    // case Stmt::OMPTargetDirectiveClass:
+    // case Stmt::OMPTargetDataDirectiveClass:
+    // case Stmt::OMPTargetEnterDataDirectiveClass:
+    // case Stmt::OMPTargetExitDataDirectiveClass:
+    // case Stmt::OMPTargetParallelDirectiveClass:
+    // case Stmt::OMPTargetParallelForDirectiveClass:
+    // case Stmt::OMPTargetUpdateDirectiveClass:
+    // case Stmt::OMPTeamsDirectiveClass:
+    // case Stmt::OMPCancellationPointDirectiveClass:
+    // case Stmt::OMPCancelDirectiveClass:
+    // case Stmt::OMPTaskLoopDirectiveClass:
+    // case Stmt::OMPTaskLoopSimdDirectiveClass:
+    // case Stmt::OMPMasterTaskLoopDirectiveClass:
+    // case Stmt::OMPMasterTaskLoopSimdDirectiveClass:
+    // case Stmt::OMPParallelMasterTaskLoopDirectiveClass:
+    // case Stmt::OMPParallelMasterTaskLoopSimdDirectiveClass:
+    // case Stmt::OMPDistributeDirectiveClass:
+    // case Stmt::OMPDistributeParallelForDirectiveClass:
+    // case Stmt::OMPDistributeParallelForSimdDirectiveClass:
+    // case Stmt::OMPDistributeSimdDirectiveClass:
+    // case Stmt::OMPTargetParallelForSimdDirectiveClass:
+    // case Stmt::OMPTargetSimdDirectiveClass:
+    // case Stmt::OMPTeamsDistributeDirectiveClass:
+    // case Stmt::OMPTeamsDistributeSimdDirectiveClass:
+    // case Stmt::OMPTeamsDistributeParallelForSimdDirectiveClass:
+    // case Stmt::OMPTeamsDistributeParallelForDirectiveClass:
+    // case Stmt::OMPTargetTeamsDirectiveClass:
+    // case Stmt::OMPTargetTeamsDistributeDirectiveClass:
+    // case Stmt::OMPTargetTeamsDistributeParallelForDirectiveClass:
+    // case Stmt::OMPTargetTeamsDistributeParallelForSimdDirectiveClass:
+    // case Stmt::OMPTargetTeamsDistributeSimdDirectiveClass:
     case Stmt::CapturedStmtClass: {
       const ExplodedNode *node = Bldr.generateSink(S, Pred, Pred->getState());
       Engine.addAbortedBlock(node, currBldrCtx->getBlock());
@@ -1411,9 +1411,9 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     case Stmt::CXXPseudoDestructorExprClass:
     case Stmt::SubstNonTypeTemplateParmExprClass:
     case Stmt::CXXNullPtrLiteralExprClass:
-    case Stmt::OMPArraySectionExprClass:
-    case Stmt::OMPArrayShapingExprClass:
-    case Stmt::OMPIteratorExprClass:
+    // case Stmt::OMPArraySectionExprClass:
+    // case Stmt::OMPArrayShapingExprClass:
+    // case Stmt::OMPIteratorExprClass:
     case Stmt::TypeTraitExprClass: {
       Bldr.takeNodes(Pred);
       ExplodedNodeSet preVisit;
@@ -1722,7 +1722,7 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     case Stmt::CXXConstCastExprClass:
     case Stmt::CXXFunctionalCastExprClass:
     case Stmt::BuiltinBitCastExprClass:
-    case Stmt::ObjCBridgedCastExprClass:
+    // case Stmt::ObjCBridgedCastExprClass:
     // case Stmt::CXXAddrspaceCastExprClass: 
     {
       Bldr.takeNodes(Pred);
@@ -1854,23 +1854,23 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
       break;
     }
 
-    // case Stmt::PseudoObjectExprClass: {
-    //   Bldr.takeNodes(Pred);
-    //   ProgramStateRef state = Pred->getState();
-    //   const auto *PE = cast<PseudoObjectExpr>(S);
-    //   if (const Expr *Result = PE->getResultExpr()) {
-    //     SVal V = state->getSVal(Result, Pred->getLocationContext());
-    //     Bldr.generateNode(S, Pred,
-    //                       state->BindExpr(S, Pred->getLocationContext(), V));
-    //   }
-    //   else
-    //     Bldr.generateNode(S, Pred,
-    //                       state->BindExpr(S, Pred->getLocationContext(),
-    //                                                UnknownVal()));
+    case Stmt::PseudoObjectExprClass: {
+      Bldr.takeNodes(Pred);
+      ProgramStateRef state = Pred->getState();
+      const auto *PE = cast<PseudoObjectExpr>(S);
+      if (const Expr *Result = PE->getResultExpr()) {
+        SVal V = state->getSVal(Result, Pred->getLocationContext());
+        Bldr.generateNode(S, Pred,
+                          state->BindExpr(S, Pred->getLocationContext(), V));
+      }
+      else
+        Bldr.generateNode(S, Pred,
+                          state->BindExpr(S, Pred->getLocationContext(),
+                                                   UnknownVal()));
 
-    //   Bldr.addNodes(Dst);
-    //   break;
-    // }
+      Bldr.addNodes(Dst);
+      break;
+    }
 
     // case Expr::ObjCIndirectCopyRestoreExprClass: {
     //   // ObjCIndirectCopyRestoreExpr implies passing a temporary for

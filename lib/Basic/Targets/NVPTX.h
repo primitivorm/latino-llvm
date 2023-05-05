@@ -123,19 +123,19 @@ public:
     return GPU != CudaArch::UNKNOWN;
   }
 
-  void setSupportedOpenCLOpts() override {
-    auto &Opts = getSupportedOpenCLOpts();
-    Opts.support("cl_clang_storage_class_specifiers");
-    Opts.support("cl_khr_gl_sharing");
-    Opts.support("cl_khr_icd");
+  // void setSupportedOpenCLOpts() override {
+  //   auto &Opts = getSupportedOpenCLOpts();
+  //   Opts.support("cl_clang_storage_class_specifiers");
+  //   Opts.support("cl_khr_gl_sharing");
+  //   Opts.support("cl_khr_icd");
 
-    Opts.support("cl_khr_fp64");
-    Opts.support("cl_khr_byte_addressable_store");
-    Opts.support("cl_khr_global_int32_base_atomics");
-    Opts.support("cl_khr_global_int32_extended_atomics");
-    Opts.support("cl_khr_local_int32_base_atomics");
-    Opts.support("cl_khr_local_int32_extended_atomics");
-  }
+  //   Opts.support("cl_khr_fp64");
+  //   Opts.support("cl_khr_byte_addressable_store");
+  //   Opts.support("cl_khr_global_int32_base_atomics");
+  //   Opts.support("cl_khr_global_int32_extended_atomics");
+  //   Opts.support("cl_khr_local_int32_base_atomics");
+  //   Opts.support("cl_khr_local_int32_extended_atomics");
+  // }
 
   /// \returns If a target requires an address within a target specific address
   /// space \p AddressSpace to be converted in order to be used, then return the

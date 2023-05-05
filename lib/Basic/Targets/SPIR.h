@@ -95,11 +95,11 @@ public:
     return CC_SpirFunction;
   }
 
-  void setSupportedOpenCLOpts() override {
-    // Assume all OpenCL extensions and optional core features are supported
-    // for SPIR since it is a generic target.
-    getSupportedOpenCLOpts().supportAll();
-  }
+  // void setSupportedOpenCLOpts() override {
+  //   // Assume all OpenCL extensions and optional core features are supported
+  //   // for SPIR since it is a generic target.
+  //   getSupportedOpenCLOpts().supportAll();
+  // }
 
   bool hasExtIntType() const override { return true; }
 };

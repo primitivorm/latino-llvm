@@ -25,7 +25,7 @@ using namespace reader;
 ModuleFile::~ModuleFile() {
   delete static_cast<ASTIdentifierLookupTable *>(IdentifierLookupTable);
   delete static_cast<HeaderFileInfoLookupTable *>(HeaderFileInfoTable);
-  delete static_cast<ASTSelectorLookupTable *>(SelectorLookupTable);
+  // delete static_cast<ASTSelectorLookupTable *>(SelectorLookupTable);
 }
 
 template<typename Key, typename Offset, unsigned InitialCapacity>
@@ -73,9 +73,9 @@ LLVM_DUMP_METHOD void ModuleFile::dump() {
                << "  Number of submodules: " << LocalNumSubmodules << '\n';
   dumpLocalRemap("Submodule ID local -> global map", SubmoduleRemap);
 
-  llvm::errs() << "  Base selector ID: " << BaseSelectorID << '\n'
-               << "  Number of selectors: " << LocalNumSelectors << '\n';
-  dumpLocalRemap("Selector ID local -> global map", SelectorRemap);
+  // llvm::errs() << "  Base selector ID: " << BaseSelectorID << '\n'
+  //              << "  Number of selectors: " << LocalNumSelectors << '\n';
+  // dumpLocalRemap("Selector ID local -> global map", SelectorRemap);
 
   llvm::errs() << "  Base preprocessed entity ID: " << BasePreprocessedEntityID
                << '\n'

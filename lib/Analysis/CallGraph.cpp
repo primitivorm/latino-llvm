@@ -13,7 +13,7 @@
 #include "latino/Analysis/CallGraph.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 // #include "latino/AST/ExprObjC.h"
 #include "latino/AST/Stmt.h"

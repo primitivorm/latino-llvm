@@ -70,10 +70,10 @@ public:
     if (Previous)
       Previous->DeclRead(ID, D);
   }
-  void SelectorRead(serialization::SelectorID ID, Selector Sel) override {
-    if (Previous)
-      Previous->SelectorRead(ID, Sel);
-  }
+  // void SelectorRead(serialization::SelectorID ID, Selector Sel) override {
+  //   if (Previous)
+  //     Previous->SelectorRead(ID, Sel);
+  // }
   void MacroDefinitionRead(serialization::PreprocessedEntityID PPID,
                            MacroDefinitionRecord *MD) override {
     if (Previous)

@@ -29,7 +29,7 @@ protected:
       : FileMgr(FileMgrOpts), DiagID(new DiagnosticIDs()),
         Diags(DiagID, new DiagnosticOptions, new IgnoringDiagConsumer()),
         SourceMgr(Diags, FileMgr), Idents(LangOpts, nullptr),
-        Ctxt(LangOpts, SourceMgr, Idents, Sels, Builtins) {}
+        Ctxt(LangOpts, SourceMgr, Idents, /*Sels,*/ Builtins) {}
 
   FileSystemOptions FileMgrOpts;
   FileManager FileMgr;
@@ -38,7 +38,7 @@ protected:
   SourceManager SourceMgr;
   LangOptions LangOpts;
   IdentifierTable Idents;
-  SelectorTable Sels;
+  // SelectorTable Sels;
   Builtin::Context Builtins;
   ASTContext Ctxt;
 };

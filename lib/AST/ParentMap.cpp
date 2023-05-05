@@ -14,7 +14,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "llvm/ADT/DenseMap.h"
 
 using namespace latino;
@@ -32,26 +32,26 @@ static void BuildParentMap(MapTy& M, Stmt* S,
     return;
 
   switch (S->getStmtClass()) {
-  // case Stmt::PseudoObjectExprClass: {
-  //   assert(OVMode == OV_Transparent && "Should not appear alongside OVEs");
-  //   PseudoObjectExpr *POE = cast<PseudoObjectExpr>(S);
+  case Stmt::PseudoObjectExprClass: {
+    assert(OVMode == OV_Transparent && "Should not appear alongside OVEs");
+    PseudoObjectExpr *POE = cast<PseudoObjectExpr>(S);
 
-  //   // If we are rebuilding the map, clear out any existing state.
-  //   if (M[POE->getSyntacticForm()])
-  //     for (Stmt *SubStmt : S->children())
-  //       M[SubStmt] = nullptr;
+    // If we are rebuilding the map, clear out any existing state.
+    if (M[POE->getSyntacticForm()])
+      for (Stmt *SubStmt : S->children())
+        M[SubStmt] = nullptr;
 
-  //   M[POE->getSyntacticForm()] = S;
-  //   BuildParentMap(M, POE->getSyntacticForm(), OV_Transparent);
+    M[POE->getSyntacticForm()] = S;
+    BuildParentMap(M, POE->getSyntacticForm(), OV_Transparent);
 
-  //   for (PseudoObjectExpr::semantics_iterator I = POE->semantics_begin(),
-  //                                             E = POE->semantics_end();
-  //        I != E; ++I) {
-  //     M[*I] = S;
-  //     BuildParentMap(M, *I, OV_Opaque);
-  //   }
-  //   break;
-  // }
+    for (PseudoObjectExpr::semantics_iterator I = POE->semantics_begin(),
+                                              E = POE->semantics_end();
+         I != E; ++I) {
+      M[*I] = S;
+      BuildParentMap(M, *I, OV_Opaque);
+    }
+    break;
+  }
   case Stmt::BinaryConditionalOperatorClass: {
     assert(OVMode == OV_Transparent && "Should not appear alongside OVEs");
     BinaryConditionalOperator *BCO = cast<BinaryConditionalOperator>(S);

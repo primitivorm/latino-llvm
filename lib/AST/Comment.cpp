@@ -9,7 +9,7 @@
 #include "latino/AST/Comment.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/Decl.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/Basic/CharInfo.h"
 #include "llvm/Support/ErrorHandling.h"
@@ -302,8 +302,8 @@ void DeclInfo::fill() {
     const TypeSourceInfo *TSI;
     if (const auto *VD = dyn_cast<DeclaratorDecl>(CommentDecl))
       TSI = VD->getTypeSourceInfo();
-    else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(CommentDecl))
-      TSI = PD->getTypeSourceInfo();
+    // else if (const auto *PD = dyn_cast<ObjCPropertyDecl>(CommentDecl))
+    //   TSI = PD->getTypeSourceInfo();
     else
       TSI = nullptr;
     if (TSI) {

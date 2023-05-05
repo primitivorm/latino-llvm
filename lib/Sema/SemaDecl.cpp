@@ -18,7 +18,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/CommentDiagnostic.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/Expr.h"
@@ -1759,8 +1759,8 @@ static bool ShouldDiagnoseUnusedDecl(const NamedDecl *D) {
     Referenced = true;
   }
 
-  if (Referenced || D->hasAttr<UnusedAttr>() ||
-      D->hasAttr<ObjCPreciseLifetimeAttr>())
+  if (Referenced || D->hasAttr<UnusedAttr>() /*||
+      D->hasAttr<ObjCPreciseLifetimeAttr>()*/)
     return false;
 
   if (isa<LabelDecl>(D))
@@ -2023,19 +2023,19 @@ Scope *Sema::getNonFieldDeclScope(Scope *S) {
 /// saves it for later use in building builtin declaration of
 /// objc_msgSendSuper and objc_msgSendSuper_stret. If no such
 /// pre-existing declaration exists no action takes place.
-static void LookupPredefedObjCSuperType(Sema &ThisSema, Scope *S,
-                                        IdentifierInfo *II) {
-  if (!II->isStr("objc_msgSendSuper"))
-    return;
-  ASTContext &Context = ThisSema.Context;
+// static void LookupPredefedObjCSuperType(Sema &ThisSema, Scope *S,
+//                                         IdentifierInfo *II) {
+//   if (!II->isStr("objc_msgSendSuper"))
+//     return;
+//   ASTContext &Context = ThisSema.Context;
 
-  LookupResult Result(ThisSema, &Context.Idents.get("objc_super"),
-                      SourceLocation(), Sema::LookupTagName);
-  ThisSema.LookupName(Result, S);
-  if (Result.getResultKind() == LookupResult::Found)
-    if (const TagDecl *TD = Result.getAsSingle<TagDecl>())
-      Context.setObjCSuperType(Context.getTagDeclType(TD));
-}
+//   LookupResult Result(ThisSema, &Context.Idents.get("objc_super"),
+//                       SourceLocation(), Sema::LookupTagName);
+//   ThisSema.LookupName(Result, S);
+//   if (Result.getResultKind() == LookupResult::Found)
+//     if (const TagDecl *TD = Result.getAsSingle<TagDecl>())
+//       Context.setObjCSuperType(Context.getTagDeclType(TD));
+// }
 
 static StringRef getHeaderName(Builtin::Context &BuiltinInfo, unsigned ID,
                                ASTContext::GetBuiltinTypeError Error) {
@@ -2097,7 +2097,7 @@ FunctionDecl *Sema::CreateBuiltin(IdentifierInfo *II, QualType Type,
 NamedDecl *Sema::LazilyCreateBuiltin(IdentifierInfo *II, unsigned ID,
                                      Scope *S, bool ForRedeclaration,
                                      SourceLocation Loc) {
-  LookupPredefedObjCSuperType(*this, S, II);
+  // LookupPredefedObjCSuperType(*this, S, II);
 
   ASTContext::GetBuiltinTypeError Error;
   QualType R = Context.GetBuiltinType(ID, Error);
@@ -2244,44 +2244,44 @@ void Sema::MergeTypedefNameDecl(Scope *S, TypedefNameDecl *New,
 
   // Allow multiple definitions for ObjC built-in typedefs.
   // FIXME: Verify the underlying types are equivalent!
-  if (getLangOpts().ObjC) {
-    const IdentifierInfo *TypeID = New->getIdentifier();
-    switch (TypeID->getLength()) {
-    default: break;
-    case 2:
-      {
-        if (!TypeID->isStr("id"))
-          break;
-        QualType T = New->getUnderlyingType();
-        if (!T->isPointerType())
-          break;
-        if (!T->isVoidPointerType()) {
-          QualType PT = T->castAs<PointerType>()->getPointeeType();
-          if (!PT->isStructureType())
-            break;
-        }
-        Context.setObjCIdRedefinitionType(T);
-        // Install the built-in type for 'id', ignoring the current definition.
-        New->setTypeForDecl(Context.getObjCIdType().getTypePtr());
-        return;
-      }
-    case 5:
-      if (!TypeID->isStr("Class"))
-        break;
-      Context.setObjCClassRedefinitionType(New->getUnderlyingType());
-      // Install the built-in type for 'Class', ignoring the current definition.
-      New->setTypeForDecl(Context.getObjCClassType().getTypePtr());
-      return;
-    case 3:
-      if (!TypeID->isStr("SEL"))
-        break;
-      Context.setObjCSelRedefinitionType(New->getUnderlyingType());
-      // Install the built-in type for 'SEL', ignoring the current definition.
-      New->setTypeForDecl(Context.getObjCSelType().getTypePtr());
-      return;
-    }
-    // Fall through - the typedef name was not a builtin type.
-  }
+  // if (getLangOpts().ObjC) {
+  //   const IdentifierInfo *TypeID = New->getIdentifier();
+  //   switch (TypeID->getLength()) {
+  //   default: break;
+  //   case 2:
+  //     {
+  //       if (!TypeID->isStr("id"))
+  //         break;
+  //       QualType T = New->getUnderlyingType();
+  //       if (!T->isPointerType())
+  //         break;
+  //       if (!T->isVoidPointerType()) {
+  //         QualType PT = T->castAs<PointerType>()->getPointeeType();
+  //         if (!PT->isStructureType())
+  //           break;
+  //       }
+  //       // Context.setObjCIdRedefinitionType(T);
+  //       // Install the built-in type for 'id', ignoring the current definition.
+  //       // New->setTypeForDecl(Context.getObjCIdType().getTypePtr());
+  //       return;
+  //     }
+  //   case 5:
+  //     if (!TypeID->isStr("Class"))
+  //       break;
+  //     Context.setObjCClassRedefinitionType(New->getUnderlyingType());
+  //     // Install the built-in type for 'Class', ignoring the current definition.
+  //     New->setTypeForDecl(Context.getObjCClassType().getTypePtr());
+  //     return;
+  //   case 3:
+  //     if (!TypeID->isStr("SEL"))
+  //       break;
+  //     Context.setObjCSelRedefinitionType(New->getUnderlyingType());
+  //     // Install the built-in type for 'SEL', ignoring the current definition.
+  //     New->setTypeForDecl(Context.getObjCSelType().getTypePtr());
+  //     return;
+  //   }
+  //   // Fall through - the typedef name was not a builtin type.
+  // }
 
   // Verify the old decl was also a type.
   TypeDecl *Old = OldDecls.getAsSingle<TypeDecl>();
@@ -2754,12 +2754,12 @@ static void checkNewAttributesAfterDef(Sema &S, Decl *New, const Decl *Old) {
       // honored it.
       ++I;
       continue;
-    } else if (isa<OMPDeclareVariantAttr>(NewAttribute)) {
+    } /*else if (isa<OMPDeclareVariantAttr>(NewAttribute)) {
       // We allow to add OMP[Begin]DeclareVariantAttr to be added to
       // declarations after defintions.
       ++I;
       continue;
-    }
+    }*/
 
     S.Diag(NewAttribute->getLocation(),
            diag::warn_attribute_precede_definition);
@@ -3013,26 +3013,26 @@ static void mergeParamDeclTypes(ParmVarDecl *NewParam,
                                 const ParmVarDecl *OldParam,
                                 Sema &S) {
   if (auto Oldnullability = OldParam->getType()->getNullability(S.Context)) {
-    if (auto Newnullability = NewParam->getType()->getNullability(S.Context)) {
-      if (*Oldnullability != *Newnullability) {
-        S.Diag(NewParam->getLocation(), diag::warn_mismatched_nullability_attr)
-          << DiagNullabilityKind(
-               *Newnullability,
-               ((NewParam->getObjCDeclQualifier() & Decl::OBJC_TQ_CSNullability)
-                != 0))
-          << DiagNullabilityKind(
-               *Oldnullability,
-               ((OldParam->getObjCDeclQualifier() & Decl::OBJC_TQ_CSNullability)
-                != 0));
-        S.Diag(OldParam->getLocation(), diag::note_previous_declaration);
-      }
-    } else {
+    // if (auto Newnullability = NewParam->getType()->getNullability(S.Context)) {
+    //   if (*Oldnullability != *Newnullability) {
+    //     S.Diag(NewParam->getLocation(), diag::warn_mismatched_nullability_attr)
+    //       << DiagNullabilityKind(
+    //            *Newnullability,
+    //            ((NewParam->getObjCDeclQualifier() & Decl::OBJC_TQ_CSNullability)
+    //             != 0))
+    //       << DiagNullabilityKind(
+    //            *Oldnullability,
+    //            ((OldParam->getObjCDeclQualifier() & Decl::OBJC_TQ_CSNullability)
+    //             != 0));
+    //     S.Diag(OldParam->getLocation(), diag::note_previous_declaration);
+    //   }
+    // } else {
       QualType NewT = NewParam->getType();
       NewT = S.Context.getAttributedType(
                          AttributedType::getNullabilityAttrKind(*Oldnullability),
                          NewT, NewT);
       NewParam->setType(NewT);
-    }
+    // }
   }
 }
 
@@ -5547,8 +5547,8 @@ Decl *Sema::ActOnDeclarator(Scope *S, Declarator &D) {
   //     Dcl && Dcl->getDeclContext()->isFileContext())
   //   Dcl->setTopLevelDeclInObjCContainer();
 
-  if (getLangOpts().OpenCL)
-    setCurrentOpenCLExtensionForDecl(Dcl);
+  // if (getLangOpts().OpenCL)
+  //   setCurrentOpenCLExtensionForDecl(Dcl);
 
   return Dcl;
 }
@@ -5881,8 +5881,8 @@ NamedDecl *Sema::HandleDeclarator(Scope *S, Declarator &D,
   if (New->getDeclName() && AddToScope)
     PushOnScopeChains(New, S);
 
-  if (isInOpenMPDeclareTargetContext())
-    checkDeclIsAllowedInOpenMPTarget(nullptr, New);
+  // if (isInOpenMPDeclareTargetContext())
+  //   checkDeclIsAllowedInOpenMPTarget(nullptr, New);
 
   return New;
 }
@@ -6604,8 +6604,8 @@ static bool isIncompleteDeclExternC(Sema &S, const T *D) {
 
 static bool shouldConsiderLinkage(const VarDecl *VD) {
   const DeclContext *DC = VD->getDeclContext()->getRedeclContext();
-  if (DC->isFunctionOrMethod() || isa<OMPDeclareReductionDecl>(DC) ||
-      isa<OMPDeclareMapperDecl>(DC))
+  if (DC->isFunctionOrMethod() /*|| isa<OMPDeclareReductionDecl>(DC) ||
+      isa<OMPDeclareMapperDecl>(DC)*/)
     return VD->hasExternalStorage();
   if (DC->isFileContext())
     return true;
@@ -6618,8 +6618,8 @@ static bool shouldConsiderLinkage(const VarDecl *VD) {
 
 static bool shouldConsiderLinkage(const FunctionDecl *FD) {
   const DeclContext *DC = FD->getDeclContext()->getRedeclContext();
-  if (DC->isFileContext() || DC->isFunctionOrMethod() ||
-      isa<OMPDeclareReductionDecl>(DC) || isa<OMPDeclareMapperDecl>(DC))
+  if (DC->isFileContext() || DC->isFunctionOrMethod() /*||
+      isa<OMPDeclareReductionDecl>(DC) || isa<OMPDeclareMapperDecl>(DC)*/)
     return true;
   if (DC->isRecord())
     return false;
@@ -6677,104 +6677,104 @@ static bool isDeclExternC(const Decl *D) {
   llvm_unreachable("Unknown type of decl!");
 }
 /// Returns true if there hasn't been any invalid type diagnosed.
-static bool diagnoseOpenCLTypes(Scope *S, Sema &Se, Declarator &D,
-                                DeclContext *DC, QualType R) {
-  // OpenCL v2.0 s6.9.b - Image type can only be used as a function argument.
-  // OpenCL v2.0 s6.13.16.1 - Pipe type can only be used as a function
-  // argument.
-  if (R->isImageType() || R->isPipeType()) {
-    Se.Diag(D.getIdentifierLoc(),
-            diag::err_opencl_type_can_only_be_used_as_function_parameter)
-        << R;
-    D.setInvalidType();
-    return false;
-  }
+// static bool diagnoseOpenCLTypes(Scope *S, Sema &Se, Declarator &D,
+//                                 DeclContext *DC, QualType R) {
+//   // OpenCL v2.0 s6.9.b - Image type can only be used as a function argument.
+//   // OpenCL v2.0 s6.13.16.1 - Pipe type can only be used as a function
+//   // argument.
+//   if (R->isImageType() || R->isPipeType()) {
+//     Se.Diag(D.getIdentifierLoc(),
+//             diag::err_opencl_type_can_only_be_used_as_function_parameter)
+//         << R;
+//     D.setInvalidType();
+//     return false;
+//   }
 
-  // OpenCL v1.2 s6.9.r:
-  // The event type cannot be used to declare a program scope variable.
-  // OpenCL v2.0 s6.9.q:
-  // The clk_event_t and reserve_id_t types cannot be declared in program
-  // scope.
-  if (NULL == S->getParent()) {
-    if (R->isReserveIDT() || R->isClkEventT() || R->isEventT()) {
-      Se.Diag(D.getIdentifierLoc(),
-              diag::err_invalid_type_for_program_scope_var)
-          << R;
-      D.setInvalidType();
-      return false;
-    }
-  }
+//   // OpenCL v1.2 s6.9.r:
+//   // The event type cannot be used to declare a program scope variable.
+//   // OpenCL v2.0 s6.9.q:
+//   // The clk_event_t and reserve_id_t types cannot be declared in program
+//   // scope.
+//   // if (NULL == S->getParent()) {
+//   //   if (R->isReserveIDT() || R->isClkEventT() || R->isEventT()) {
+//   //     Se.Diag(D.getIdentifierLoc(),
+//   //             diag::err_invalid_type_for_program_scope_var)
+//   //         << R;
+//   //     D.setInvalidType();
+//   //     return false;
+//   //   }
+//   // }
 
-  // OpenCL v1.0 s6.8.a.3: Pointers to functions are not allowed.
-  QualType NR = R;
-  while (NR->isPointerType()) {
-    if (NR->isFunctionPointerType()) {
-      Se.Diag(D.getIdentifierLoc(), diag::err_opencl_function_pointer);
-      D.setInvalidType();
-      return false;
-    }
-    NR = NR->getPointeeType();
-  }
+//   // OpenCL v1.0 s6.8.a.3: Pointers to functions are not allowed.
+//   // QualType NR = R;
+//   // while (NR->isPointerType()) {
+//   //   if (NR->isFunctionPointerType()) {
+//   //     Se.Diag(D.getIdentifierLoc(), diag::err_opencl_function_pointer);
+//   //     D.setInvalidType();
+//   //     return false;
+//   //   }
+//   //   NR = NR->getPointeeType();
+//   // }
 
-  if (!Se.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
-    // OpenCL v1.2 s6.1.1.1: reject declaring variables of the half and
-    // half array type (unless the cl_khr_fp16 extension is enabled).
-    if (Se.Context.getBaseElementType(R)->isHalfType()) {
-      Se.Diag(D.getIdentifierLoc(), diag::err_opencl_half_declaration) << R;
-      D.setInvalidType();
-      return false;
-    }
-  }
+//   // if (!Se.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
+//   //   // OpenCL v1.2 s6.1.1.1: reject declaring variables of the half and
+//   //   // half array type (unless the cl_khr_fp16 extension is enabled).
+//   //   if (Se.Context.getBaseElementType(R)->isHalfType()) {
+//   //     Se.Diag(D.getIdentifierLoc(), diag::err_opencl_half_declaration) << R;
+//   //     D.setInvalidType();
+//   //     return false;
+//   //   }
+//   // }
 
-  // OpenCL v1.2 s6.9.r:
-  // The event type cannot be used with the __local, __constant and __global
-  // address space qualifiers.
-  if (R->isEventT()) {
-    if (R.getAddressSpace() != LangAS::opencl_private) {
-      Se.Diag(D.getBeginLoc(), diag::err_event_t_addr_space_qual);
-      D.setInvalidType();
-      return false;
-    }
-  }
+//   // OpenCL v1.2 s6.9.r:
+//   // The event type cannot be used with the __local, __constant and __global
+//   // address space qualifiers.
+//   // if (R->isEventT()) {
+//   //   if (R.getAddressSpace() != LangAS::opencl_private) {
+//   //     Se.Diag(D.getBeginLoc(), diag::err_event_t_addr_space_qual);
+//   //     D.setInvalidType();
+//   //     return false;
+//   //   }
+//   // }
 
-  // C++ for OpenCL does not allow the thread_local storage qualifier.
-  // OpenCL C does not support thread_local either, and
-  // also reject all other thread storage class specifiers.
-  DeclSpec::TSCS TSC = D.getDeclSpec().getThreadStorageClassSpec();
-  if (TSC != TSCS_unspecified) {
-    bool IsCXX = Se.getLangOpts().OpenCLCPlusPlus;
-    Se.Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
-            diag::err_opencl_unknown_type_specifier)
-        << IsCXX << Se.getLangOpts().getOpenCLVersionTuple().getAsString()
-        << DeclSpec::getSpecifierName(TSC) << 1;
-    D.setInvalidType();
-    return false;
-  }
+//   // C++ for OpenCL does not allow the thread_local storage qualifier.
+//   // OpenCL C does not support thread_local either, and
+//   // also reject all other thread storage class specifiers.
+//   DeclSpec::TSCS TSC = D.getDeclSpec().getThreadStorageClassSpec();
+//   if (TSC != TSCS_unspecified) {
+//     bool IsCXX = Se.getLangOpts().OpenCLCPlusPlus;
+//     Se.Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
+//             diag::err_opencl_unknown_type_specifier)
+//         << IsCXX << Se.getLangOpts().getOpenCLVersionTuple().getAsString()
+//         << DeclSpec::getSpecifierName(TSC) << 1;
+//     D.setInvalidType();
+//     return false;
+//   }
 
-  if (R->isSamplerT()) {
-    // OpenCL v1.2 s6.9.b p4:
-    // The sampler type cannot be used with the __local and __global address
-    // space qualifiers.
-    if (R.getAddressSpace() == LangAS::opencl_local ||
-        R.getAddressSpace() == LangAS::opencl_global) {
-      Se.Diag(D.getIdentifierLoc(), diag::err_wrong_sampler_addressspace);
-      D.setInvalidType();
-    }
+//   // if (R->isSamplerT()) {
+//   //   // OpenCL v1.2 s6.9.b p4:
+//   //   // The sampler type cannot be used with the __local and __global address
+//   //   // space qualifiers.
+//   //   if (R.getAddressSpace() == LangAS::opencl_local ||
+//   //       R.getAddressSpace() == LangAS::opencl_global) {
+//   //     Se.Diag(D.getIdentifierLoc(), diag::err_wrong_sampler_addressspace);
+//   //     D.setInvalidType();
+//   //   }
 
-    // OpenCL v1.2 s6.12.14.1:
-    // A global sampler must be declared with either the constant address
-    // space qualifier or with the const qualifier.
-    if (DC->isTranslationUnit() &&
-        !(R.getAddressSpace() == LangAS::opencl_constant ||
-          R.isConstQualified())) {
-      Se.Diag(D.getIdentifierLoc(), diag::err_opencl_nonconst_global_sampler);
-      D.setInvalidType();
-    }
-    if (D.isInvalidType())
-      return false;
-  }
-  return true;
-}
+//   //   // OpenCL v1.2 s6.12.14.1:
+//   //   // A global sampler must be declared with either the constant address
+//   //   // space qualifier or with the const qualifier.
+//   //   if (DC->isTranslationUnit() &&
+//   //       !(R.getAddressSpace() == LangAS::opencl_constant ||
+//   //         R.isConstQualified())) {
+//   //     Se.Diag(D.getIdentifierLoc(), diag::err_opencl_nonconst_global_sampler);
+//   //     D.setInvalidType();
+//   //   }
+//   //   if (D.isInvalidType())
+//   //     return false;
+//   // }
+//   return true;
+// }
 
 NamedDecl *Sema::ActOnVariableDeclarator(
     Scope *S, Declarator &D, DeclContext *DC, TypeSourceInfo *TInfo,
@@ -7085,17 +7085,17 @@ NamedDecl *Sema::ActOnVariableDeclarator(
            diag::err_thread_non_global)
         << DeclSpec::getSpecifierName(TSCS);
     else if (!Context.getTargetInfo().isTLSSupported()) {
-      if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
-          getLangOpts().SYCLIsDevice) {
-        // Postpone error emission until we've collected attributes required to
-        // figure out whether it's a host or device variable and whether the
-        // error should be ignored.
-        EmitTLSUnsupportedError = true;
-        // We still need to mark the variable as TLS so it shows up in AST with
-        // proper storage class for other tools to use even if we're not going
-        // to emit any code for it.
-        NewVD->setTSCSpec(TSCS);
-      } else
+      // if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
+      //     getLangOpts().SYCLIsDevice) {
+      //   // Postpone error emission until we've collected attributes required to
+      //   // figure out whether it's a host or device variable and whether the
+      //   // error should be ignored.
+      //   EmitTLSUnsupportedError = true;
+      //   // We still need to mark the variable as TLS so it shows up in AST with
+      //   // proper storage class for other tools to use even if we're not going
+      //   // to emit any code for it.
+      //   NewVD->setTSCSpec(TSCS);
+      // } else
         Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
              diag::err_thread_unsupported);
     } else
@@ -7188,26 +7188,26 @@ NamedDecl *Sema::ActOnVariableDeclarator(
   // Handle attributes prior to checking for duplicates in MergeVarDecl
   ProcessDeclAttributes(S, NewVD, D);
 
-  if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
-      getLangOpts().SYCLIsDevice) {
-    if (EmitTLSUnsupportedError &&
-        ((getLangOpts().CUDA && DeclAttrsMatchCUDAMode(getLangOpts(), NewVD)) ||
-         (getLangOpts().OpenMPIsDevice &&
-          OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(NewVD))))
-      Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
-           diag::err_thread_unsupported);
+  // if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
+  //     getLangOpts().SYCLIsDevice) {
+  //   if (EmitTLSUnsupportedError &&
+  //       ((getLangOpts().CUDA && DeclAttrsMatchCUDAMode(getLangOpts(), NewVD)) ||
+  //        (getLangOpts().OpenMPIsDevice &&
+  //         OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(NewVD))))
+  //     Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
+  //          diag::err_thread_unsupported);
 
-    if (EmitTLSUnsupportedError &&
-        (LangOpts.SYCLIsDevice || (LangOpts.OpenMP && LangOpts.OpenMPIsDevice)))
-      targetDiag(D.getIdentifierLoc(), diag::err_thread_unsupported);
-    // CUDA B.2.5: "__shared__ and __constant__ variables have implied static
-    // storage [duration]."
-    if (SC == SC_None && S->getFnParent() != nullptr &&
-        (NewVD->hasAttr<CUDASharedAttr>() ||
-         NewVD->hasAttr<CUDAConstantAttr>())) {
-      NewVD->setStorageClass(SC_Static);
-    }
-  }
+  //   if (EmitTLSUnsupportedError &&
+  //       (LangOpts.SYCLIsDevice || (LangOpts.OpenMP && LangOpts.OpenMPIsDevice)))
+  //     targetDiag(D.getIdentifierLoc(), diag::err_thread_unsupported);
+  //   // CUDA B.2.5: "__shared__ and __constant__ variables have implied static
+  //   // storage [duration]."
+  //   if (SC == SC_None && S->getFnParent() != nullptr &&
+  //       (NewVD->hasAttr<CUDASharedAttr>() ||
+  //        NewVD->hasAttr<CUDAConstantAttr>())) {
+  //     NewVD->setStorageClass(SC_Static);
+  //   }
+  // }
 
   // Ensure that dllimport globals without explicit storage class are treated as
   // extern. The storage class is set above using parsed attributes. Now we can
@@ -7814,118 +7814,118 @@ void Sema::CheckVariableDeclarationType(VarDecl *NewVD) {
 
   // OpenCL v1.2 s6.8 - The static qualifier is valid only in program
   // scope.
-  if (getLangOpts().OpenCLVersion == 120 &&
-      !getOpenCLOptions().isEnabled("cl_clang_storage_class_specifiers") &&
-      NewVD->isStaticLocal()) {
-    Diag(NewVD->getLocation(), diag::err_static_function_scope);
-    NewVD->setInvalidDecl();
-    return;
-  }
+  // if (getLangOpts().OpenCLVersion == 120 &&
+  //     !getOpenCLOptions().isEnabled("cl_clang_storage_class_specifiers") &&
+  //     NewVD->isStaticLocal()) {
+  //   Diag(NewVD->getLocation(), diag::err_static_function_scope);
+  //   NewVD->setInvalidDecl();
+  //   return;
+  // }
 
-  if (getLangOpts().OpenCL) {
-    // OpenCL v2.0 s6.12.5 - The __block storage type is not supported.
-    if (NewVD->hasAttr<BlocksAttr>()) {
-      Diag(NewVD->getLocation(), diag::err_opencl_block_storage_type);
-      return;
-    }
+  // if (getLangOpts().OpenCL) {
+  //   // OpenCL v2.0 s6.12.5 - The __block storage type is not supported.
+  //   if (NewVD->hasAttr<BlocksAttr>()) {
+  //     Diag(NewVD->getLocation(), diag::err_opencl_block_storage_type);
+  //     return;
+  //   }
 
-    if (T->isBlockPointerType()) {
-      // OpenCL v2.0 s6.12.5 - Any block declaration must be const qualified and
-      // can't use 'extern' storage class.
-      if (!T.isConstQualified()) {
-        Diag(NewVD->getLocation(), diag::err_opencl_invalid_block_declaration)
-            << 0 /*const*/;
-        NewVD->setInvalidDecl();
-        return;
-      }
-      if (NewVD->hasExternalStorage()) {
-        Diag(NewVD->getLocation(), diag::err_opencl_extern_block_declaration);
-        NewVD->setInvalidDecl();
-        return;
-      }
-    }
-    // OpenCL C v1.2 s6.5 - All program scope variables must be declared in the
-    // __constant address space.
-    // OpenCL C v2.0 s6.5.1 - Variables defined at program scope and static
-    // variables inside a function can also be declared in the global
-    // address space.
-    // C++ for OpenCL inherits rule from OpenCL C v2.0.
-    // FIXME: Adding local AS in C++ for OpenCL might make sense.
-    if (NewVD->isFileVarDecl() || NewVD->isStaticLocal() ||
-        NewVD->hasExternalStorage()) {
-      if (!T->isSamplerT() &&
-          !T->isDependentType() &&
-          !(T.getAddressSpace() == LangAS::opencl_constant ||
-            (T.getAddressSpace() == LangAS::opencl_global &&
-             (getLangOpts().OpenCLVersion == 200 ||
-              getLangOpts().OpenCLCPlusPlus)))) {
-        int Scope = NewVD->isStaticLocal() | NewVD->hasExternalStorage() << 1;
-        if (getLangOpts().OpenCLVersion == 200 || getLangOpts().OpenCLCPlusPlus)
-          Diag(NewVD->getLocation(), diag::err_opencl_global_invalid_addr_space)
-              << Scope << "global or constant";
-        else
-          Diag(NewVD->getLocation(), diag::err_opencl_global_invalid_addr_space)
-              << Scope << "constant";
-        NewVD->setInvalidDecl();
-        return;
-      }
-    } else {
-      if (T.getAddressSpace() == LangAS::opencl_global) {
-        Diag(NewVD->getLocation(), diag::err_opencl_function_variable)
-            << 1 /*is any function*/ << "global";
-        NewVD->setInvalidDecl();
-        return;
-      }
-      if (T.getAddressSpace() == LangAS::opencl_constant ||
-          T.getAddressSpace() == LangAS::opencl_local) {
-        FunctionDecl *FD = getCurFunctionDecl();
-        // OpenCL v1.1 s6.5.2 and s6.5.3: no local or constant variables
-        // in functions.
-        if (FD && !FD->hasAttr<OpenCLKernelAttr>()) {
-          if (T.getAddressSpace() == LangAS::opencl_constant)
-            Diag(NewVD->getLocation(), diag::err_opencl_function_variable)
-                << 0 /*non-kernel only*/ << "constant";
-          else
-            Diag(NewVD->getLocation(), diag::err_opencl_function_variable)
-                << 0 /*non-kernel only*/ << "local";
-          NewVD->setInvalidDecl();
-          return;
-        }
-        // OpenCL v2.0 s6.5.2 and s6.5.3: local and constant variables must be
-        // in the outermost scope of a kernel function.
-        if (FD && FD->hasAttr<OpenCLKernelAttr>()) {
-          if (!getCurScope()->isFunctionScope()) {
-            if (T.getAddressSpace() == LangAS::opencl_constant)
-              Diag(NewVD->getLocation(), diag::err_opencl_addrspace_scope)
-                  << "constant";
-            else
-              Diag(NewVD->getLocation(), diag::err_opencl_addrspace_scope)
-                  << "local";
-            NewVD->setInvalidDecl();
-            return;
-          }
-        }
-      } else if (T.getAddressSpace() != LangAS::opencl_private &&
-                 // If we are parsing a template we didn't deduce an addr
-                 // space yet.
-                 T.getAddressSpace() != LangAS::Default) {
-        // Do not allow other address spaces on automatic variable.
-        Diag(NewVD->getLocation(), diag::err_as_qualified_auto_decl) << 1;
-        NewVD->setInvalidDecl();
-        return;
-      }
-    }
-  }
+  //   if (T->isBlockPointerType()) {
+  //     // OpenCL v2.0 s6.12.5 - Any block declaration must be const qualified and
+  //     // can't use 'extern' storage class.
+  //     if (!T.isConstQualified()) {
+  //       Diag(NewVD->getLocation(), diag::err_opencl_invalid_block_declaration)
+  //           << 0 /*const*/;
+  //       NewVD->setInvalidDecl();
+  //       return;
+  //     }
+  //     if (NewVD->hasExternalStorage()) {
+  //       Diag(NewVD->getLocation(), diag::err_opencl_extern_block_declaration);
+  //       NewVD->setInvalidDecl();
+  //       return;
+  //     }
+  //   }
+  //   // OpenCL C v1.2 s6.5 - All program scope variables must be declared in the
+  //   // __constant address space.
+  //   // OpenCL C v2.0 s6.5.1 - Variables defined at program scope and static
+  //   // variables inside a function can also be declared in the global
+  //   // address space.
+  //   // C++ for OpenCL inherits rule from OpenCL C v2.0.
+  //   // FIXME: Adding local AS in C++ for OpenCL might make sense.
+  //   if (NewVD->isFileVarDecl() || NewVD->isStaticLocal() ||
+  //       NewVD->hasExternalStorage()) {
+  //     if (!T->isSamplerT() &&
+  //         !T->isDependentType() &&
+  //         !(T.getAddressSpace() == LangAS::opencl_constant ||
+  //           (T.getAddressSpace() == LangAS::opencl_global &&
+  //            (getLangOpts().OpenCLVersion == 200 ||
+  //             getLangOpts().OpenCLCPlusPlus)))) {
+  //       int Scope = NewVD->isStaticLocal() | NewVD->hasExternalStorage() << 1;
+  //       if (getLangOpts().OpenCLVersion == 200 || getLangOpts().OpenCLCPlusPlus)
+  //         Diag(NewVD->getLocation(), diag::err_opencl_global_invalid_addr_space)
+  //             << Scope << "global or constant";
+  //       else
+  //         Diag(NewVD->getLocation(), diag::err_opencl_global_invalid_addr_space)
+  //             << Scope << "constant";
+  //       NewVD->setInvalidDecl();
+  //       return;
+  //     }
+  //   } else {
+  //     if (T.getAddressSpace() == LangAS::opencl_global) {
+  //       Diag(NewVD->getLocation(), diag::err_opencl_function_variable)
+  //           << 1 /*is any function*/ << "global";
+  //       NewVD->setInvalidDecl();
+  //       return;
+  //     }
+  //     if (T.getAddressSpace() == LangAS::opencl_constant ||
+  //         T.getAddressSpace() == LangAS::opencl_local) {
+  //       FunctionDecl *FD = getCurFunctionDecl();
+  //       // OpenCL v1.1 s6.5.2 and s6.5.3: no local or constant variables
+  //       // in functions.
+  //       if (FD && !FD->hasAttr<OpenCLKernelAttr>()) {
+  //         if (T.getAddressSpace() == LangAS::opencl_constant)
+  //           Diag(NewVD->getLocation(), diag::err_opencl_function_variable)
+  //               << 0 /*non-kernel only*/ << "constant";
+  //         else
+  //           Diag(NewVD->getLocation(), diag::err_opencl_function_variable)
+  //               << 0 /*non-kernel only*/ << "local";
+  //         NewVD->setInvalidDecl();
+  //         return;
+  //       }
+  //       // OpenCL v2.0 s6.5.2 and s6.5.3: local and constant variables must be
+  //       // in the outermost scope of a kernel function.
+  //       if (FD && FD->hasAttr<OpenCLKernelAttr>()) {
+  //         if (!getCurScope()->isFunctionScope()) {
+  //           if (T.getAddressSpace() == LangAS::opencl_constant)
+  //             Diag(NewVD->getLocation(), diag::err_opencl_addrspace_scope)
+  //                 << "constant";
+  //           else
+  //             Diag(NewVD->getLocation(), diag::err_opencl_addrspace_scope)
+  //                 << "local";
+  //           NewVD->setInvalidDecl();
+  //           return;
+  //         }
+  //       }
+  //     } else if (T.getAddressSpace() != LangAS::opencl_private &&
+  //                // If we are parsing a template we didn't deduce an addr
+  //                // space yet.
+  //                T.getAddressSpace() != LangAS::Default) {
+  //       // Do not allow other address spaces on automatic variable.
+  //       Diag(NewVD->getLocation(), diag::err_as_qualified_auto_decl) << 1;
+  //       NewVD->setInvalidDecl();
+  //       return;
+  //     }
+  //   }
+  // }
 
-  if (NewVD->hasLocalStorage() && T.isObjCGCWeak()
-      && !NewVD->hasAttr<BlocksAttr>()) {
-    if (getLangOpts().getGC() != LangOptions::NonGC)
-      Diag(NewVD->getLocation(), diag::warn_gc_attribute_weak_on_local);
-    else {
-      assert(!getLangOpts().ObjCAutoRefCount);
-      Diag(NewVD->getLocation(), diag::warn_attribute_weak_on_local);
-    }
-  }
+  // if (NewVD->hasLocalStorage() && T.isObjCGCWeak()
+  //     && !NewVD->hasAttr<BlocksAttr>()) {
+  //   if (getLangOpts().getGC() != LangOptions::NonGC)
+  //     Diag(NewVD->getLocation(), diag::warn_gc_attribute_weak_on_local);
+  //   else {
+  //     assert(!getLangOpts().ObjCAutoRefCount);
+  //     Diag(NewVD->getLocation(), diag::warn_attribute_weak_on_local);
+  //   }
+  // }
 
   bool isVM = T->isVariablyModifiedType();
   if (isVM || NewVD->hasAttr<CleanupAttr>() ||
@@ -8580,17 +8580,17 @@ static OpenCLParamType getOpenCLKernelParameterType(Sema &S, QualType PT) {
   if (isOpenCLSizeDependentType(S.getASTContext(), PT))
     return InvalidKernelParam;
 
-  if (PT->isImageType())
-    return PtrKernelParam;
+  // if (PT->isImageType())
+  //   return PtrKernelParam;
 
-  if (PT->isBooleanType() || PT->isEventT() || PT->isReserveIDT())
+  if (PT->isBooleanType() /*|| PT->isEventT() || PT->isReserveIDT()*/)
     return InvalidKernelParam;
 
   // OpenCL extension spec v1.2 s9.5:
   // This extension adds support for half scalar and vector types as built-in
   // types that can be used for arithmetic operations, conversions etc.
-  if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16") && PT->isHalfType())
-    return InvalidKernelParam;
+  // if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16") && PT->isHalfType())
+  //   return InvalidKernelParam;
 
   if (PT->isRecordType())
     return RecordKernelParam;
@@ -9334,16 +9334,16 @@ Sema::ActOnFunctionDeclarator(Scope *S, Declarator &D, DeclContext *DC,
   // Handle attributes.
   ProcessDeclAttributes(S, NewFD, D);
 
-  if (getLangOpts().OpenCL) {
-    // OpenCL v1.1 s6.5: Using an address space qualifier in a function return
-    // type declaration will generate a compilation error.
-    LangAS AddressSpace = NewFD->getReturnType().getAddressSpace();
-    if (AddressSpace != LangAS::Default) {
-      Diag(NewFD->getLocation(),
-           diag::err_opencl_return_value_with_address_space);
-      NewFD->setInvalidDecl();
-    }
-  }
+  // if (getLangOpts().OpenCL) {
+  //   // OpenCL v1.1 s6.5: Using an address space qualifier in a function return
+  //   // type declaration will generate a compilation error.
+  //   LangAS AddressSpace = NewFD->getReturnType().getAddressSpace();
+  //   if (AddressSpace != LangAS::Default) {
+  //     Diag(NewFD->getLocation(),
+  //          diag::err_opencl_return_value_with_address_space);
+  //     NewFD->setInvalidDecl();
+  //   }
+  // }
 
   if (!getLangOpts().CPlusPlus) {
     // Perform semantic checking on the function declaration.
@@ -9640,7 +9640,7 @@ Sema::ActOnFunctionDeclarator(Scope *S, Declarator &D, DeclContext *DC,
           // matching regardless of its declared type.
           if (Context.BuiltinInfo.allowTypeMismatch(BuiltinID)) {
             NewFD->addAttr(BuiltinAttr::CreateImplicit(Context, BuiltinID));
-          } else {
+          } /*else {
             ASTContext::GetBuiltinTypeError Error;
             LookupPredefedObjCSuperType(*this, S, NewFD->getIdentifier());
             QualType BuiltinType = Context.GetBuiltinType(BuiltinID, Error);
@@ -9649,7 +9649,7 @@ Sema::ActOnFunctionDeclarator(Scope *S, Declarator &D, DeclContext *DC,
                 Context.hasSameFunctionTypeIgnoringExceptionSpec(
                     NewFD->getType(), BuiltinType))
               NewFD->addAttr(BuiltinAttr::CreateImplicit(Context, BuiltinID));
-          }
+          }*/
         } else if (BuiltinID == Builtin::BI__GetExceptionInfo &&
                    Context.getTargetInfo().getCXXABI().isMicrosoft()) {
           // FIXME: We should consider this a builtin only in the std namespace.
@@ -9739,38 +9739,38 @@ Sema::ActOnFunctionDeclarator(Scope *S, Declarator &D, DeclContext *DC,
 
 
 
-  if (getLangOpts().OpenCL && NewFD->hasAttr<OpenCLKernelAttr>()) {
-    // OpenCL v1.2 s6.8 static is invalid for kernel functions.
-    if ((getLangOpts().OpenCLVersion >= 120)
-        && (SC == SC_Static)) {
-      Diag(D.getIdentifierLoc(), diag::err_static_kernel);
-      D.setInvalidType();
-    }
+  // if (getLangOpts().OpenCL && NewFD->hasAttr<OpenCLKernelAttr>()) {
+  //   // OpenCL v1.2 s6.8 static is invalid for kernel functions.
+  //   if ((getLangOpts().OpenCLVersion >= 120)
+  //       && (SC == SC_Static)) {
+  //     Diag(D.getIdentifierLoc(), diag::err_static_kernel);
+  //     D.setInvalidType();
+  //   }
 
-    // OpenCL v1.2, s6.9 -- Kernels can only have return type void.
-    if (!NewFD->getReturnType()->isVoidType()) {
-      SourceRange RTRange = NewFD->getReturnTypeSourceRange();
-      Diag(D.getIdentifierLoc(), diag::err_expected_kernel_void_return_type)
-          << (RTRange.isValid() ? FixItHint::CreateReplacement(RTRange, "void")
-                                : FixItHint());
-      D.setInvalidType();
-    }
+  //   // OpenCL v1.2, s6.9 -- Kernels can only have return type void.
+  //   if (!NewFD->getReturnType()->isVoidType()) {
+  //     SourceRange RTRange = NewFD->getReturnTypeSourceRange();
+  //     Diag(D.getIdentifierLoc(), diag::err_expected_kernel_void_return_type)
+  //         << (RTRange.isValid() ? FixItHint::CreateReplacement(RTRange, "void")
+  //                               : FixItHint());
+  //     D.setInvalidType();
+  //   }
 
-    llvm::SmallPtrSet<const Type *, 16> ValidTypes;
-    for (auto Param : NewFD->parameters())
-      checkIsValidOpenCLKernelParameter(*this, D, Param, ValidTypes);
+  //   llvm::SmallPtrSet<const Type *, 16> ValidTypes;
+  //   for (auto Param : NewFD->parameters())
+  //     checkIsValidOpenCLKernelParameter(*this, D, Param, ValidTypes);
 
-    if (getLangOpts().OpenCLCPlusPlus) {
-      if (DC->isRecord()) {
-        Diag(D.getIdentifierLoc(), diag::err_method_kernel);
-        D.setInvalidType();
-      }
-      if (FunctionTemplate) {
-        Diag(D.getIdentifierLoc(), diag::err_template_kernel);
-        D.setInvalidType();
-      }
-    }
-  }
+  //   if (getLangOpts().OpenCLCPlusPlus) {
+  //     if (DC->isRecord()) {
+  //       Diag(D.getIdentifierLoc(), diag::err_method_kernel);
+  //       D.setInvalidType();
+  //     }
+  //     if (FunctionTemplate) {
+  //       Diag(D.getIdentifierLoc(), diag::err_template_kernel);
+  //       D.setInvalidType();
+  //     }
+  //   }
+  // }
 
   if (getLangOpts().CPlusPlus) {
     if (FunctionTemplate) {
@@ -10838,7 +10838,7 @@ bool Sema::CheckFunctionDeclaration(Scope *S, FunctionDecl *NewFD,
     // declaration against the expected type for the builtin.
     if (unsigned BuiltinID = NewFD->getBuiltinID()) {
       ASTContext::GetBuiltinTypeError Error;
-      LookupPredefedObjCSuperType(*this, S, NewFD->getIdentifier());
+      // LookupPredefedObjCSuperType(*this, S, NewFD->getIdentifier());
       QualType T = Context.GetBuiltinType(BuiltinID, Error);
       // If the type of the builtin differs only in its exception
       // specification, that's OK.
@@ -10937,12 +10937,12 @@ void Sema::CheckMain(FunctionDecl* FD, const DeclSpec& DS) {
     FD->setConstexprKind(CSK_unspecified);
   }
 
-  if (getLangOpts().OpenCL) {
-    Diag(FD->getLocation(), diag::err_opencl_no_main)
-        << FD->hasAttr<OpenCLKernelAttr>();
-    FD->setInvalidDecl();
-    return;
-  }
+  // if (getLangOpts().OpenCL) {
+  //   Diag(FD->getLocation(), diag::err_opencl_no_main)
+  //       << FD->hasAttr<OpenCLKernelAttr>();
+  //   FD->setInvalidDecl();
+  //   return;
+  // }
 
   QualType T = FD->getType();
   assert(T->isFunctionType() && "function decl is not of function type");
@@ -11525,15 +11525,15 @@ QualType Sema::deduceVarTypeFromInitializer(VarDecl *VDecl,
 
   // Expressions default to 'id' when we're in a debugger.
   bool DefaultedAnyToId = false;
-  if (getLangOpts().DebuggerCastResultToId &&
-      Init->getType() == Context.UnknownAnyTy && !IsInitCapture) {
-    ExprResult Result = forceUnknownAnyToType(Init, Context.getObjCIdType());
-    if (Result.isInvalid()) {
-      return QualType();
-    }
-    Init = Result.get();
-    DefaultedAnyToId = true;
-  }
+  // if (getLangOpts().DebuggerCastResultToId &&
+  //     Init->getType() == Context.UnknownAnyTy && !IsInitCapture) {
+  //   ExprResult Result = forceUnknownAnyToType(Init, Context.getObjCIdType());
+  //   if (Result.isInvalid()) {
+  //     return QualType();
+  //   }
+  //   Init = Result.get();
+  //   DefaultedAnyToId = true;
+  // }
 
   // C++ [dcl.decomp]p1:
   //   If the assignment-expression [...] has array type A and no ref-qualifier
@@ -11568,11 +11568,11 @@ QualType Sema::deduceVarTypeFromInitializer(VarDecl *VDecl,
   // checks.
   // We only want to warn outside of template instantiations, though:
   // inside a template, the 'id' could have come from a parameter.
-  if (!inTemplateInstantiation() && !DefaultedAnyToId && !IsInitCapture &&
-      !DeducedType.isNull() && DeducedType->isObjCIdType()) {
-    SourceLocation Loc = TSI->getTypeLoc().getBeginLoc();
-    Diag(Loc, diag::warn_auto_var_is_id) << VN << Range;
-  }
+  // if (!inTemplateInstantiation() && !DefaultedAnyToId && !IsInitCapture &&
+  //     !DeducedType.isNull() && DeducedType->isObjCIdType()) {
+  //   SourceLocation Loc = TSI->getTypeLoc().getBeginLoc();
+  //   Diag(Loc, diag::warn_auto_var_is_id) << VN << Range;
+  // }
 
   return DeducedType;
 }
@@ -11679,18 +11679,18 @@ struct DiagNonTrivalCUnionDefaultInitializeVisitor
     return Super::visitWithKind(PDIK, QT, FD, InNonTrivialUnion);
   }
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      bool InNonTrivialUnion) {
-    if (InNonTrivialUnion)
-      S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
-          << 1 << 0 << QT << FD->getName();
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     bool InNonTrivialUnion) {
+  //   if (InNonTrivialUnion)
+  //     S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
+  //         << 1 << 0 << QT << FD->getName();
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
-    if (InNonTrivialUnion)
-      S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
-          << 1 << 0 << QT << FD->getName();
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
+  //   if (InNonTrivialUnion)
+  //     S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
+  //         << 1 << 0 << QT << FD->getName();
+  // }
 
   void visitStruct(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
     const RecordDecl *RD = QT->castAs<RecordType>()->getDecl();
@@ -11744,18 +11744,18 @@ struct DiagNonTrivalCUnionDestructedTypeVisitor
     return Super::visitWithKind(DK, QT, FD, InNonTrivialUnion);
   }
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      bool InNonTrivialUnion) {
-    if (InNonTrivialUnion)
-      S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
-          << 1 << 1 << QT << FD->getName();
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     bool InNonTrivialUnion) {
+  //   if (InNonTrivialUnion)
+  //     S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
+  //         << 1 << 1 << QT << FD->getName();
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
-    if (InNonTrivialUnion)
-      S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
-          << 1 << 1 << QT << FD->getName();
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
+  //   if (InNonTrivialUnion)
+  //     S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
+  //         << 1 << 1 << QT << FD->getName();
+  // }
 
   void visitStruct(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
     const RecordDecl *RD = QT->castAs<RecordType>()->getDecl();
@@ -11810,18 +11810,18 @@ struct DiagNonTrivalCUnionCopyVisitor
     return Super::visitWithKind(PCK, QT, FD, InNonTrivialUnion);
   }
 
-  void visitARCStrong(QualType QT, const FieldDecl *FD,
-                      bool InNonTrivialUnion) {
-    if (InNonTrivialUnion)
-      S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
-          << 1 << 2 << QT << FD->getName();
-  }
+  // void visitARCStrong(QualType QT, const FieldDecl *FD,
+  //                     bool InNonTrivialUnion) {
+  //   if (InNonTrivialUnion)
+  //     S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
+  //         << 1 << 2 << QT << FD->getName();
+  // }
 
-  void visitARCWeak(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
-    if (InNonTrivialUnion)
-      S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
-          << 1 << 2 << QT << FD->getName();
-  }
+  // void visitARCWeak(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
+  //   if (InNonTrivialUnion)
+  //     S.Diag(FD->getLocation(), diag::note_non_trivial_c_union)
+  //         << 1 << 2 << QT << FD->getName();
+  // }
 
   void visitStruct(QualType QT, const FieldDecl *FD, bool InNonTrivialUnion) {
     const RecordDecl *RD = QT->castAs<RecordType>()->getDecl();
@@ -12031,15 +12031,15 @@ void Sema::AddInitializerToDecl(Decl *RealDecl, Expr *Init, bool DirectInit) {
 
   // Expressions default to 'id' when we're in a debugger
   // and we are assigning it to a variable of Objective-C pointer type.
-  if (getLangOpts().DebuggerCastResultToId && /*DclT->isObjCObjectPointerType() &&*/
-      Init->getType() == Context.UnknownAnyTy) {
-    ExprResult Result = forceUnknownAnyToType(Init, Context.getObjCIdType());
-    if (Result.isInvalid()) {
-      VDecl->setInvalidDecl();
-      return;
-    }
-    Init = Result.get();
-  }
+  // if (getLangOpts().DebuggerCastResultToId && /*DclT->isObjCObjectPointerType() &&*/
+  //     Init->getType() == Context.UnknownAnyTy) {
+  //   ExprResult Result = forceUnknownAnyToType(Init, Context.getObjCIdType());
+  //   if (Result.isInvalid()) {
+  //     VDecl->setInvalidDecl();
+  //     return;
+  //   }
+  //   Init = Result.get();
+  // }
 
   // Perform the initialization.
   ParenListExpr *CXXDirectInit = dyn_cast<ParenListExpr>(Init);
@@ -12341,8 +12341,8 @@ void Sema::AddInitializerToDecl(Decl *RealDecl, Expr *Init, bool DirectInit) {
     VDecl->setInitStyle(VarDecl::ListInit);
   }
 
-  if (LangOpts.OpenMP && VDecl->isFileVarDecl())
-    DeclsToCheckForDeferredDiags.push_back(VDecl);
+  // if (LangOpts.OpenMP && VDecl->isFileVarDecl())
+  //   DeclsToCheckForDeferredDiags.push_back(VDecl);
   CheckCompleteVariableDeclaration(VDecl);
 }
 
@@ -12614,9 +12614,9 @@ void Sema::ActOnUninitializedDecl(Decl *RealDecl) {
     }
     // In OpenCL, we can't initialize objects in the __local address space,
     // even implicitly, so don't synthesize an implicit initializer.
-    if (getLangOpts().OpenCL &&
-        Var->getType().getAddressSpace() == LangAS::opencl_local)
-      return;
+    // if (getLangOpts().OpenCL &&
+    //     Var->getType().getAddressSpace() == LangAS::opencl_local)
+    //   return;
     // C++03 [dcl.init]p9:
     //   If no initializer is specified for an object, and the
     //   object is of (possibly cv-qualified) non-POD class type (or
@@ -12730,34 +12730,34 @@ Sema::ActOnCXXForRangeIdentifier(Scope *S, SourceLocation IdentLoc,
 void Sema::CheckCompleteVariableDeclaration(VarDecl *var) {
   if (var->isInvalidDecl()) return;
 
-  if (getLangOpts().OpenCL) {
-    // OpenCL v2.0 s6.12.5 - Every block variable declaration must have an
-    // initialiser
-    if (var->getTypeSourceInfo()->getType()->isBlockPointerType() &&
-        !var->hasInit()) {
-      Diag(var->getLocation(), diag::err_opencl_invalid_block_declaration)
-          << 1 /*Init*/;
-      var->setInvalidDecl();
-      return;
-    }
-  }
+  // if (getLangOpts().OpenCL) {
+  //   // OpenCL v2.0 s6.12.5 - Every block variable declaration must have an
+  //   // initialiser
+  //   if (var->getTypeSourceInfo()->getType()->isBlockPointerType() &&
+  //       !var->hasInit()) {
+  //     Diag(var->getLocation(), diag::err_opencl_invalid_block_declaration)
+  //         << 1 /*Init*/;
+  //     var->setInvalidDecl();
+  //     return;
+  //   }
+  // }
 
   // In Objective-C, don't allow jumps past the implicit initialization of a
   // local retaining variable.
-  if (getLangOpts().ObjC &&
-      var->hasLocalStorage()) {
-    switch (var->getType().getObjCLifetime()) {
-    case Qualifiers::OCL_None:
-    case Qualifiers::OCL_ExplicitNone:
-    case Qualifiers::OCL_Autoreleasing:
-      break;
+  // if (getLangOpts().ObjC &&
+  //     var->hasLocalStorage()) {
+  //   switch (var->getType().getObjCLifetime()) {
+  //   case Qualifiers::OCL_None:
+  //   case Qualifiers::OCL_ExplicitNone:
+  //   case Qualifiers::OCL_Autoreleasing:
+  //     break;
 
-    case Qualifiers::OCL_Weak:
-    case Qualifiers::OCL_Strong:
-      setFunctionHasBranchProtectedScope();
-      break;
-    }
-  }
+  //   case Qualifiers::OCL_Weak:
+  //   case Qualifiers::OCL_Strong:
+  //     setFunctionHasBranchProtectedScope();
+  //     break;
+  //   }
+  // }
 
   if (var->hasLocalStorage() &&
       var->getType().isDestructedType() == QualType::DK_nontrivial_c_struct)
@@ -13549,31 +13549,31 @@ ParmVarDecl *Sema::CheckParameter(DeclContext *DC, SourceLocation StartLoc,
                                   QualType T, TypeSourceInfo *TSInfo,
                                   StorageClass SC) {
   // In ARC, infer a lifetime qualifier for appropriate parameter types.
-  if (getLangOpts().ObjCAutoRefCount &&
-      T.getObjCLifetime() == Qualifiers::OCL_None &&
-      T->isObjCLifetimeType()) {
+  // if (getLangOpts().ObjCAutoRefCount &&
+  //     T.getObjCLifetime() == Qualifiers::OCL_None &&
+  //     T->isObjCLifetimeType()) {
 
-    Qualifiers::ObjCLifetime lifetime;
+  //   Qualifiers::ObjCLifetime lifetime;
 
-    // Special cases for arrays:
-    //   - if it's const, use __unsafe_unretained
-    //   - otherwise, it's an error
-    if (T->isArrayType()) {
-      if (!T.isConstQualified()) {
-        if (DelayedDiagnostics.shouldDelayDiagnostics())
-          DelayedDiagnostics.add(
-              sema::DelayedDiagnostic::makeForbiddenType(
-              NameLoc, diag::err_arc_array_param_no_ownership, T, false));
-        else
-          Diag(NameLoc, diag::err_arc_array_param_no_ownership)
-              << TSInfo->getTypeLoc().getSourceRange();
-      }
-      lifetime = Qualifiers::OCL_ExplicitNone;
-    } else {
-      lifetime = T->getObjCARCImplicitLifetime();
-    }
-    T = Context.getLifetimeQualifiedType(T, lifetime);
-  }
+  //   // Special cases for arrays:
+  //   //   - if it's const, use __unsafe_unretained
+  //   //   - otherwise, it's an error
+  //   if (T->isArrayType()) {
+  //     if (!T.isConstQualified()) {
+  //       if (DelayedDiagnostics.shouldDelayDiagnostics())
+  //         DelayedDiagnostics.add(
+  //             sema::DelayedDiagnostic::makeForbiddenType(
+  //             NameLoc, diag::err_arc_array_param_no_ownership, T, false));
+  //       else
+  //         Diag(NameLoc, diag::err_arc_array_param_no_ownership)
+  //             << TSInfo->getTypeLoc().getSourceRange();
+  //     }
+  //     lifetime = Qualifiers::OCL_ExplicitNone;
+  //   } else {
+  //     lifetime = T->getObjCARCImplicitLifetime();
+  //   }
+  //   T = Context.getLifetimeQualifiedType(T, lifetime);
+  // }
 
   ParmVarDecl *New = ParmVarDecl::Create(Context, DC, StartLoc, NameLoc, Name,
                                          Context.getAdjustedParameterType(T),
@@ -13679,18 +13679,18 @@ Sema::ActOnStartOfFunctionDef(Scope *FnBodyScope, Declarator &D,
   // specialization function under the OpenMP context defined as part of the
   // `omp begin declare variant`.
   FunctionDecl *BaseFD = nullptr;
-  if (LangOpts.OpenMP && isInOpenMPDeclareVariantScope() &&
-      TemplateParameterLists.empty())
-    BaseFD = ActOnStartOfFunctionDefinitionInOpenMPDeclareVariantScope(
-        ParentScope, D);
+  // if (LangOpts.OpenMP && isInOpenMPDeclareVariantScope() &&
+  //     TemplateParameterLists.empty())
+  //   BaseFD = ActOnStartOfFunctionDefinitionInOpenMPDeclareVariantScope(
+  //       ParentScope, D);
 
   D.setFunctionDefinitionKind(FDK_Definition);
   Decl *DP = HandleDeclarator(ParentScope, D, TemplateParameterLists);
   Decl *Dcl = ActOnStartOfFunctionDef(FnBodyScope, DP, SkipBody);
 
-  if (BaseFD)
-    ActOnFinishedFunctionDefinitionInOpenMPDeclareVariantScope(
-        cast<FunctionDecl>(Dcl), BaseFD);
+  // if (BaseFD)
+  //   ActOnFinishedFunctionDefinitionInOpenMPDeclareVariantScope(
+  //       cast<FunctionDecl>(Dcl), BaseFD);
 
   return Dcl;
 }
@@ -13733,8 +13733,8 @@ ShouldWarnAboutMissingPrototype(const FunctionDecl *FD,
     return false;
 
   // Don't warn for OpenCL kernels.
-  if (FD->hasAttr<OpenCLKernelAttr>())
-    return false;
+  // if (FD->hasAttr<OpenCLKernelAttr>())
+  //   return false;
 
   // Don't warn on explicitly deleted functions.
   if (FD->isDeleted())
@@ -14440,9 +14440,9 @@ Decl *Sema::ActOnFinishFunctionBody(Decl *dcl, Stmt *Body,
   if (Body && getCurFunction()->HasPotentialAvailabilityViolations)
     DiagnoseUnguardedAvailabilityViolations(dcl);
 
-  assert(!getCurFunction()->ObjCShouldCallSuper &&
-         "This should only be set for ObjC methods, which should have been "
-         "handled in the block above.");
+  // assert(!getCurFunction()->ObjCShouldCallSuper &&
+  //        "This should only be set for ObjC methods, which should have been "
+  //        "handled in the block above.");
 
   // Verify and clean out per-function state.
   if (Body && (!FD || !FD->isDefaulted())) {
@@ -14528,12 +14528,12 @@ Decl *Sema::ActOnFinishFunctionBody(Decl *dcl, Stmt *Body,
     DiscardCleanupsInEvaluationContext();
   }
 
-  if (LangOpts.OpenMP || LangOpts.CUDA || LangOpts.SYCLIsDevice) {
-    auto ES = getEmissionStatus(FD);
-    if (ES == Sema::FunctionEmissionStatus::Emitted ||
-        ES == Sema::FunctionEmissionStatus::Unknown)
-      DeclsToCheckForDeferredDiags.push_back(FD);
-  }
+  // if (LangOpts.OpenMP || LangOpts.CUDA || LangOpts.SYCLIsDevice) {
+  //   auto ES = getEmissionStatus(FD);
+  //   if (ES == Sema::FunctionEmissionStatus::Emitted ||
+  //       ES == Sema::FunctionEmissionStatus::Unknown)
+  //     DeclsToCheckForDeferredDiags.push_back(FD);
+  // }
 
   return dcl;
 }
@@ -14599,8 +14599,8 @@ NamedDecl *Sema::ImplicitlyDefineFunction(SourceLocation Loc,
   if (II.getName().startswith("__builtin_"))
     diag_id = diag::warn_builtin_unknown;
   // OpenCL v2.0 s6.9.u - Implicit function declaration is not supported.
-  else if (getLangOpts().OpenCL)
-    diag_id = diag::err_opencl_implicit_function_decl;
+  // else if (getLangOpts().OpenCL)
+  //   diag_id = diag::err_opencl_implicit_function_decl;
   else if (getLangOpts().C99)
     diag_id = diag::ext_implicit_function_decl;
   else
@@ -16555,21 +16555,21 @@ FieldDecl *Sema::CheckFieldDecl(DeclarationName Name, QualType T,
     InvalidDecl = true;
   }
 
-  if (LangOpts.OpenCL) {
-    // OpenCL v1.2 s6.9b,r & OpenCL v2.0 s6.12.5 - The following types cannot be
-    // used as structure or union field: image, sampler, event or block types.
-    if (T->isEventT() || T->isImageType() || T->isSamplerT() ||
-        T->isBlockPointerType()) {
-      Diag(Loc, diag::err_opencl_type_struct_or_union_field) << T;
-      Record->setInvalidDecl();
-      InvalidDecl = true;
-    }
-    // OpenCL v1.2 s6.9.c: bitfields are not supported.
-    if (BitWidth) {
-      Diag(Loc, diag::err_opencl_bitfields);
-      InvalidDecl = true;
-    }
-  }
+  // if (LangOpts.OpenCL) {
+  //   // OpenCL v1.2 s6.9b,r & OpenCL v2.0 s6.12.5 - The following types cannot be
+  //   // used as structure or union field: image, sampler, event or block types.
+  //   if (T->isEventT() || T->isImageType() || T->isSamplerT() ||
+  //       T->isBlockPointerType()) {
+  //     Diag(Loc, diag::err_opencl_type_struct_or_union_field) << T;
+  //     Record->setInvalidDecl();
+  //     InvalidDecl = true;
+  //   }
+  //   // OpenCL v1.2 s6.9.c: bitfields are not supported.
+  //   if (BitWidth) {
+  //     Diag(Loc, diag::err_opencl_bitfields);
+  //     InvalidDecl = true;
+  //   }
+  // }
 
   // Anonymous bit-fields cannot be cv-qualified (CWG 2229).
   if (!InvalidDecl && getLangOpts().CPlusPlus && !II && BitWidth &&
@@ -16714,8 +16714,8 @@ FieldDecl *Sema::CheckFieldDecl(DeclarationName Name, QualType T,
   // if (getLangOpts().ObjCAutoRefCount && inferObjCARCLifetime(NewFD))
   //   NewFD->setInvalidDecl();
 
-  if (T.isObjCGCWeak())
-    Diag(Loc, diag::warn_attribute_weak_on_field);
+  // if (T.isObjCGCWeak())
+  //   Diag(Loc, diag::warn_attribute_weak_on_field);
 
   NewFD->setAccess(AS);
   return NewFD;
@@ -16752,21 +16752,21 @@ bool Sema::CheckNontrivialField(FieldDecl *FD) {
         member = CXXDestructor;
 
       if (member != CXXInvalid) {
-        if (!getLangOpts().CPlusPlus11 &&
-            getLangOpts().ObjCAutoRefCount && RDecl->hasObjectMember()) {
-          // Objective-C++ ARC: it is an error to have a non-trivial field of
-          // a union. However, system headers in Objective-C programs
-          // occasionally have Objective-C lifetime objects within unions,
-          // and rather than cause the program to fail, we make those
-          // members unavailable.
-          SourceLocation Loc = FD->getLocation();
-          if (getSourceManager().isInSystemHeader(Loc)) {
-            if (!FD->hasAttr<UnavailableAttr>())
-              FD->addAttr(UnavailableAttr::CreateImplicit(Context, "",
-                            UnavailableAttr::IR_ARCFieldWithOwnership, Loc));
-            return false;
-          }
-        }
+        // if (!getLangOpts().CPlusPlus11 &&
+        //     getLangOpts().ObjCAutoRefCount && RDecl->hasObjectMember()) {
+        //   // Objective-C++ ARC: it is an error to have a non-trivial field of
+        //   // a union. However, system headers in Objective-C programs
+        //   // occasionally have Objective-C lifetime objects within unions,
+        //   // and rather than cause the program to fail, we make those
+        //   // members unavailable.
+        //   SourceLocation Loc = FD->getLocation();
+        //   if (getSourceManager().isInSystemHeader(Loc)) {
+        //     if (!FD->hasAttr<UnavailableAttr>())
+        //       FD->addAttr(UnavailableAttr::CreateImplicit(Context, "",
+        //                     UnavailableAttr::IR_ARCFieldWithOwnership, Loc));
+        //     return false;
+        //   }
+        // }
 
         Diag(FD->getLocation(), getLangOpts().CPlusPlus11 ?
                diag::warn_cxx98_compat_nontrivial_union_or_anon_struct_member :
@@ -18202,9 +18202,9 @@ void Sema::ActOnPragmaWeakAlias(IdentifierInfo* Name,
   }
 }
 
-Decl *Sema::getObjCDeclContext() const {
-  return (dyn_cast_or_null<ObjCContainerDecl>(CurContext));
-}
+// Decl *Sema::getObjCDeclContext() const {
+//   return (dyn_cast_or_null<ObjCContainerDecl>(CurContext));
+// }
 
 Sema::FunctionEmissionStatus Sema::getEmissionStatus(FunctionDecl *FD,
                                                      bool Final) {
@@ -18218,67 +18218,67 @@ Sema::FunctionEmissionStatus Sema::getEmissionStatus(FunctionDecl *FD,
     return FunctionEmissionStatus::TemplateDiscarded;
 
   FunctionEmissionStatus OMPES = FunctionEmissionStatus::Unknown;
-  if (LangOpts.OpenMPIsDevice) {
-    Optional<OMPDeclareTargetDeclAttr::DevTypeTy> DevTy =
-        OMPDeclareTargetDeclAttr::getDeviceType(FD->getCanonicalDecl());
-    if (DevTy.hasValue()) {
-      if (*DevTy == OMPDeclareTargetDeclAttr::DT_Host)
-        OMPES = FunctionEmissionStatus::OMPDiscarded;
-      else if (*DevTy == OMPDeclareTargetDeclAttr::DT_NoHost ||
-               *DevTy == OMPDeclareTargetDeclAttr::DT_Any) {
-        OMPES = FunctionEmissionStatus::Emitted;
-      }
-    }
-  } else if (LangOpts.OpenMP) {
-    // In OpenMP 4.5 all the functions are host functions.
-    if (LangOpts.OpenMP <= 45) {
-      OMPES = FunctionEmissionStatus::Emitted;
-    } else {
-      Optional<OMPDeclareTargetDeclAttr::DevTypeTy> DevTy =
-          OMPDeclareTargetDeclAttr::getDeviceType(FD->getCanonicalDecl());
-      // In OpenMP 5.0 or above, DevTy may be changed later by
-      // #pragma omp declare target to(*) device_type(*). Therefore DevTy
-      // having no value does not imply host. The emission status will be
-      // checked again at the end of compilation unit.
-      if (DevTy.hasValue()) {
-        if (*DevTy == OMPDeclareTargetDeclAttr::DT_NoHost) {
-          OMPES = FunctionEmissionStatus::OMPDiscarded;
-        } else if (*DevTy == OMPDeclareTargetDeclAttr::DT_Host ||
-                   *DevTy == OMPDeclareTargetDeclAttr::DT_Any)
-          OMPES = FunctionEmissionStatus::Emitted;
-      } else if (Final)
-        OMPES = FunctionEmissionStatus::Emitted;
-    }
-  }
+  // if (LangOpts.OpenMPIsDevice) {
+  //   Optional<OMPDeclareTargetDeclAttr::DevTypeTy> DevTy =
+  //       OMPDeclareTargetDeclAttr::getDeviceType(FD->getCanonicalDecl());
+  //   if (DevTy.hasValue()) {
+  //     if (*DevTy == OMPDeclareTargetDeclAttr::DT_Host)
+  //       OMPES = FunctionEmissionStatus::OMPDiscarded;
+  //     else if (*DevTy == OMPDeclareTargetDeclAttr::DT_NoHost ||
+  //              *DevTy == OMPDeclareTargetDeclAttr::DT_Any) {
+  //       OMPES = FunctionEmissionStatus::Emitted;
+  //     }
+  //   }
+  // } else if (LangOpts.OpenMP) {
+  //   // In OpenMP 4.5 all the functions are host functions.
+  //   if (LangOpts.OpenMP <= 45) {
+  //     OMPES = FunctionEmissionStatus::Emitted;
+  //   } else {
+  //     Optional<OMPDeclareTargetDeclAttr::DevTypeTy> DevTy =
+  //         OMPDeclareTargetDeclAttr::getDeviceType(FD->getCanonicalDecl());
+  //     // In OpenMP 5.0 or above, DevTy may be changed later by
+  //     // #pragma omp declare target to(*) device_type(*). Therefore DevTy
+  //     // having no value does not imply host. The emission status will be
+  //     // checked again at the end of compilation unit.
+  //     if (DevTy.hasValue()) {
+  //       if (*DevTy == OMPDeclareTargetDeclAttr::DT_NoHost) {
+  //         OMPES = FunctionEmissionStatus::OMPDiscarded;
+  //       } else if (*DevTy == OMPDeclareTargetDeclAttr::DT_Host ||
+  //                  *DevTy == OMPDeclareTargetDeclAttr::DT_Any)
+  //         OMPES = FunctionEmissionStatus::Emitted;
+  //     } else if (Final)
+  //       OMPES = FunctionEmissionStatus::Emitted;
+  //   }
+  // }
   if (OMPES == FunctionEmissionStatus::OMPDiscarded ||
       (OMPES == FunctionEmissionStatus::Emitted && !LangOpts.CUDA))
     return OMPES;
 
-  if (LangOpts.CUDA) {
-    // When compiling for device, host functions are never emitted.  Similarly,
-    // when compiling for host, device and global functions are never emitted.
-    // (Technically, we do emit a host-side stub for global functions, but this
-    // doesn't count for our purposes here.)
-    Sema::CUDAFunctionTarget T = IdentifyCUDATarget(FD);
-    if (LangOpts.CUDAIsDevice && T == Sema::CFT_Host)
-      return FunctionEmissionStatus::CUDADiscarded;
-    if (!LangOpts.CUDAIsDevice &&
-        (T == Sema::CFT_Device || T == Sema::CFT_Global))
-      return FunctionEmissionStatus::CUDADiscarded;
+  // if (LangOpts.CUDA) {
+  //   // When compiling for device, host functions are never emitted.  Similarly,
+  //   // when compiling for host, device and global functions are never emitted.
+  //   // (Technically, we do emit a host-side stub for global functions, but this
+  //   // doesn't count for our purposes here.)
+  //   Sema::CUDAFunctionTarget T = IdentifyCUDATarget(FD);
+  //   if (LangOpts.CUDAIsDevice && T == Sema::CFT_Host)
+  //     return FunctionEmissionStatus::CUDADiscarded;
+  //   if (!LangOpts.CUDAIsDevice &&
+  //       (T == Sema::CFT_Device || T == Sema::CFT_Global))
+  //     return FunctionEmissionStatus::CUDADiscarded;
 
-    // Check whether this function is externally visible -- if so, it's
-    // known-emitted.
-    //
-    // We have to check the GVA linkage of the function's *definition* -- if we
-    // only have a declaration, we don't know whether or not the function will
-    // be emitted, because (say) the definition could include "inline".
-    FunctionDecl *Def = FD->getDefinition();
+  //   // Check whether this function is externally visible -- if so, it's
+  //   // known-emitted.
+  //   //
+  //   // We have to check the GVA linkage of the function's *definition* -- if we
+  //   // only have a declaration, we don't know whether or not the function will
+  //   // be emitted, because (say) the definition could include "inline".
+  //   FunctionDecl *Def = FD->getDefinition();
 
-    if (Def &&
-        !isDiscardableGVALinkage(getASTContext().GetGVALinkageForFunction(Def))
-        && (!LangOpts.OpenMP || OMPES == FunctionEmissionStatus::Emitted))
-      return FunctionEmissionStatus::Emitted;
-  }
+  //   if (Def &&
+  //       !isDiscardableGVALinkage(getASTContext().GetGVALinkageForFunction(Def))
+  //       && (!LangOpts.OpenMP || OMPES == FunctionEmissionStatus::Emitted))
+  //     return FunctionEmissionStatus::Emitted;
+  // }
 
   // Otherwise, the function is known-emitted if it's in our set of
   // known-emitted functions.

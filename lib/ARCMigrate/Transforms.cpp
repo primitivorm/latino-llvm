@@ -37,8 +37,8 @@ bool MigrationPass::CFBridgingFunctionsDefined() {
 
 bool trans::canApplyWeak(ASTContext &Ctx, QualType type,
                          bool AllowOnUnknownClass) {
-  if (!Ctx.getLangOpts().ObjCWeakRuntime)
-    return false;
+  // if (!Ctx.getLangOpts().ObjCWeakRuntime)
+  //   return false;
 
   QualType T = type;
   if (T.isNull())

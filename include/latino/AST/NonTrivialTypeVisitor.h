@@ -28,16 +28,16 @@ template <class Derived, class RetTy = void> struct DestructedTypeVisitor {
   RetTy visitWithKind(QualType::DestructionKind DK, QualType FT,
                       Ts &&... Args) {
     switch (DK) {
-    case QualType::DK_objc_strong_lifetime:
-      return asDerived().visitARCStrong(FT, std::forward<Ts>(Args)...);
+    // case QualType::DK_objc_strong_lifetime:
+    //   return asDerived().visitARCStrong(FT, std::forward<Ts>(Args)...);
     case QualType::DK_nontrivial_c_struct:
       return asDerived().visitStruct(FT, std::forward<Ts>(Args)...);
     case QualType::DK_none:
       return asDerived().visitTrivial(FT, std::forward<Ts>(Args)...);
     case QualType::DK_cxx_destructor:
       return asDerived().visitCXXDestructor(FT, std::forward<Ts>(Args)...);
-    case QualType::DK_objc_weak_lifetime:
-      return asDerived().visitARCWeak(FT, std::forward<Ts>(Args)...);
+    // case QualType::DK_objc_weak_lifetime:
+    //   return asDerived().visitARCWeak(FT, std::forward<Ts>(Args)...);
     }
 
     llvm_unreachable("unknown destruction kind");
@@ -58,10 +58,10 @@ struct DefaultInitializedTypeVisitor {
   RetTy visitWithKind(QualType::PrimitiveDefaultInitializeKind PDIK,
                       QualType FT, Ts &&... Args) {
     switch (PDIK) {
-    case QualType::PDIK_ARCStrong:
-      return asDerived().visitARCStrong(FT, std::forward<Ts>(Args)...);
-    case QualType::PDIK_ARCWeak:
-      return asDerived().visitARCWeak(FT, std::forward<Ts>(Args)...);
+    // case QualType::PDIK_ARCStrong:
+    //   return asDerived().visitARCStrong(FT, std::forward<Ts>(Args)...);
+    // case QualType::PDIK_ARCWeak:
+    //   return asDerived().visitARCWeak(FT, std::forward<Ts>(Args)...);
     case QualType::PDIK_Struct:
       return asDerived().visitStruct(FT, std::forward<Ts>(Args)...);
     case QualType::PDIK_Trivial:
@@ -89,10 +89,10 @@ struct CopiedTypeVisitor {
     asDerived().preVisit(PCK, FT, std::forward<Ts>(Args)...);
 
     switch (PCK) {
-    case QualType::PCK_ARCStrong:
-      return asDerived().visitARCStrong(FT, std::forward<Ts>(Args)...);
-    case QualType::PCK_ARCWeak:
-      return asDerived().visitARCWeak(FT, std::forward<Ts>(Args)...);
+    // case QualType::PCK_ARCStrong:
+    //   return asDerived().visitARCStrong(FT, std::forward<Ts>(Args)...);
+    // case QualType::PCK_ARCWeak:
+    //   return asDerived().visitARCWeak(FT, std::forward<Ts>(Args)...);
     case QualType::PCK_Struct:
       return asDerived().visitStruct(FT, std::forward<Ts>(Args)...);
     case QualType::PCK_Trivial:

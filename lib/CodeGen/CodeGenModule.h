@@ -18,8 +18,8 @@
 #include "CodeGenTypes.h"
 #include "SanitizerMetadata.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
-#include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/GlobalDecl.h"
 #include "latino/AST/Mangle.h"
 #include "latino/Basic/ABI.h"
@@ -89,9 +89,9 @@ class CodeGenFunction;
 class CodeGenTBAA;
 class CGCXXABI;
 class CGDebugInfo;
-class CGObjCRuntime;
-class CGOpenCLRuntime;
-class CGOpenMPRuntime;
+// class CGObjCRuntime;
+// class CGOpenCLRuntime;
+// class CGOpenMPRuntime;
 class CGCUDARuntime;
 class BlockFieldFlags;
 class FunctionArgList;
@@ -321,9 +321,9 @@ private:
   /// Holds information about C++ vtables.
   CodeGenVTables VTables;
 
-  std::unique_ptr<CGObjCRuntime> ObjCRuntime;
-  std::unique_ptr<CGOpenCLRuntime> OpenCLRuntime;
-  std::unique_ptr<CGOpenMPRuntime> OpenMPRuntime;
+  // std::unique_ptr<CGObjCRuntime> ObjCRuntime;
+  // std::unique_ptr<CGOpenCLRuntime> OpenCLRuntime;
+  // std::unique_ptr<CGOpenMPRuntime> OpenMPRuntime;
   std::unique_ptr<CGCUDARuntime> CUDARuntime;
   std::unique_ptr<CGDebugInfo> DebugInfo;
   std::unique_ptr<ObjCEntrypoints> ObjCData;
@@ -501,9 +501,9 @@ private:
   /// @}
 
   /// Lazily create the Objective-C runtime
-  void createObjCRuntime();
+  // void createObjCRuntime();
 
-  void createOpenCLRuntime();
+  // void createOpenCLRuntime();
   void createOpenMPRuntime();
   void createCUDARuntime();
 
@@ -576,25 +576,25 @@ public:
   bool getExpressionLocationsEnabled() const;
 
   /// Return a reference to the configured Objective-C runtime.
-  CGObjCRuntime &getObjCRuntime() {
-    if (!ObjCRuntime) createObjCRuntime();
-    return *ObjCRuntime;
-  }
+  // CGObjCRuntime &getObjCRuntime() {
+  //   if (!ObjCRuntime) createObjCRuntime();
+  //   return *ObjCRuntime;
+  // }
 
   /// Return true iff an Objective-C runtime has been configured.
-  bool hasObjCRuntime() { return !!ObjCRuntime; }
+  // bool hasObjCRuntime() { return !!ObjCRuntime; }
 
   /// Return a reference to the configured OpenCL runtime.
-  CGOpenCLRuntime &getOpenCLRuntime() {
-    assert(OpenCLRuntime != nullptr);
-    return *OpenCLRuntime;
-  }
+  // CGOpenCLRuntime &getOpenCLRuntime() {
+  //   assert(OpenCLRuntime != nullptr);
+  //   return *OpenCLRuntime;
+  // }
 
   /// Return a reference to the configured OpenMP runtime.
-  CGOpenMPRuntime &getOpenMPRuntime() {
-    assert(OpenMPRuntime != nullptr);
-    return *OpenMPRuntime;
-  }
+  // CGOpenMPRuntime &getOpenMPRuntime() {
+  //   assert(OpenMPRuntime != nullptr);
+  //   return *OpenMPRuntime;
+  // }
 
   /// Return a reference to the configured CUDA runtime.
   CGCUDARuntime &getCUDARuntime() {
@@ -1298,19 +1298,19 @@ public:
 
   /// Emit a code for threadprivate directive.
   /// \param D Threadprivate declaration.
-  void EmitOMPThreadPrivateDecl(const OMPThreadPrivateDecl *D);
+  // void EmitOMPThreadPrivateDecl(const OMPThreadPrivateDecl *D);
 
   /// Emit a code for declare reduction construct.
-  void EmitOMPDeclareReduction(const OMPDeclareReductionDecl *D,
-                               CodeGenFunction *CGF = nullptr);
+  // void EmitOMPDeclareReduction(const OMPDeclareReductionDecl *D,
+  //                              CodeGenFunction *CGF = nullptr);
 
   /// Emit a code for declare mapper construct.
-  void EmitOMPDeclareMapper(const OMPDeclareMapperDecl *D,
-                            CodeGenFunction *CGF = nullptr);
+  // void EmitOMPDeclareMapper(const OMPDeclareMapperDecl *D,
+  //                           CodeGenFunction *CGF = nullptr);
 
   /// Emit a code for requires directive.
   /// \param D Requires declaration
-  void EmitOMPRequiresDecl(const OMPRequiresDecl *D);
+  // void EmitOMPRequiresDecl(const OMPRequiresDecl *D);
 
   /// Returns whether the given record has hidden LTO visibility and therefore
   /// may participate in (single-module) CFI and whole-program vtable
@@ -1375,8 +1375,8 @@ public:
 
   llvm::SanitizerStatReport &getSanStats();
 
-  llvm::Value *
-  createOpenCLIntToSamplerConversion(const Expr *E, CodeGenFunction &CGF);
+  // llvm::Value *
+  // createOpenCLIntToSamplerConversion(const Expr *E, CodeGenFunction &CGF);
 
   /// OpenCL v1.2 s5.6.4.6 allows the compiler to store kernel argument
   /// information in the program executable. The argument information stored
@@ -1388,9 +1388,9 @@ public:
   /// \param FN is a pointer to IR function being generated.
   /// \param FD is a pointer to function declaration if any.
   /// \param CGF is a pointer to CodeGenFunction that generates this function.
-  void GenOpenCLArgMetadata(llvm::Function *FN,
-                            const FunctionDecl *FD = nullptr,
-                            CodeGenFunction *CGF = nullptr);
+  // void GenOpenCLArgMetadata(llvm::Function *FN,
+  //                           const FunctionDecl *FD = nullptr,
+  //                           CodeGenFunction *CGF = nullptr);
 
   /// Get target specific null pointer.
   /// \param T is the LLVM type of the null pointer.
@@ -1508,7 +1508,7 @@ private:
 
   /// Emit a dummy function that reference a CoreFoundation symbol when
   /// @available is used on Darwin.
-  void emitAtAvailableLinkGuard();
+  // void emitAtAvailableLinkGuard();
 
   /// Emit the llvm.used and llvm.compiler.used metadata.
   void emitLLVMUsed();

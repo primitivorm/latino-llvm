@@ -997,7 +997,7 @@ void CXXRecordDecl::addedMember(Decl *D) {
     // Automatic Reference Counting: the presence of a member of Objective-C pointer type
     // that does not explicitly have no lifetime makes the class a non-POD.
     QualType T = Context.getBaseElementType(Field->getType());
-    if (T->isObjCRetainableType() || T.isObjCGCStrong()) {
+    /*if (T->isObjCRetainableType() || T.isObjCGCStrong()) {
       if (T.hasNonTrivialObjCLifetime()) {
         // Objective-C Automatic Reference Counting:
         //   If a class has a non-static data member of Objective-C pointer
@@ -1037,7 +1037,7 @@ void CXXRecordDecl::addedMember(Decl *D) {
       } else if (!Context.getLangOpts().ObjCAutoRefCount) {
         setHasObjectMember(true);
       }
-    } else if (!T.isCXX98PODType(Context))
+    } else*/ if (!T.isCXX98PODType(Context))
       data().PlainOldData = false;
 
     if (T->isReferenceType()) {

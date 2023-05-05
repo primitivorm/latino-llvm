@@ -365,10 +365,10 @@ void AggExprEmitter::EmitCopy(QualType type, const AggValueSlot &dest,
   if (dest.requiresGCollection()) {
     CharUnits sz = dest.getPreferredSize(CGF.getContext(), type);
     llvm::Value *size = llvm::ConstantInt::get(CGF.SizeTy, sz.getQuantity());
-    CGF.CGM.getObjCRuntime().EmitGCMemmoveCollectable(CGF,
-                                                      dest.getAddress(),
-                                                      src.getAddress(),
-                                                      size);
+    // CGF.CGM.getObjCRuntime().EmitGCMemmoveCollectable(CGF,
+    //                                                   dest.getAddress(),
+    //                                                   src.getAddress(),
+    //                                                   size);
     return;
   }
 
@@ -2015,25 +2015,25 @@ void CodeGenFunction::EmitAggregateCopy(LValue Dest, LValue Src, QualType Ty,
   SrcPtr = Builder.CreateElementBitCast(SrcPtr, Int8Ty);
 
   // Don't do any of the memmove_collectable tests if GC isn't set.
-  if (CGM.getLangOpts().getGC() == LangOptions::NonGC) {
-    // fall through
-  } else if (const RecordType *RecordTy = Ty->getAs<RecordType>()) {
-    RecordDecl *Record = RecordTy->getDecl();
-    if (Record->hasObjectMember()) {
-      CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
-                                                    SizeVal);
-      return;
-    }
-  } else if (Ty->isArrayType()) {
-    QualType BaseType = getContext().getBaseElementType(Ty);
-    if (const RecordType *RecordTy = BaseType->getAs<RecordType>()) {
-      if (RecordTy->getDecl()->hasObjectMember()) {
-        CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
-                                                      SizeVal);
-        return;
-      }
-    }
-  }
+  // if (CGM.getLangOpts().getGC() == LangOptions::NonGC) {
+  //   // fall through
+  // } else if (const RecordType *RecordTy = Ty->getAs<RecordType>()) {
+  //   RecordDecl *Record = RecordTy->getDecl();
+  //   // if (Record->hasObjectMember()) {
+  //   //   CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
+  //   //                                                 SizeVal);
+  //   //   return;
+  //   // }
+  // } else if (Ty->isArrayType()) {
+  //   QualType BaseType = getContext().getBaseElementType(Ty);
+  //   if (const RecordType *RecordTy = BaseType->getAs<RecordType>()) {
+  //     if (RecordTy->getDecl()->hasObjectMember()) {
+  //       CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
+  //                                                     SizeVal);
+  //       return;
+  //     }
+  //   }
+  // }
 
   auto Inst = Builder.CreateMemCpy(DestPtr, SrcPtr, SizeVal, isVolatile);
 

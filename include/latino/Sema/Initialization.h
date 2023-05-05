@@ -889,13 +889,13 @@ public:
 
     /// Perform initialization via a constructor taking a single
     /// std::initializer_list argument.
-    SK_StdInitializerListConstructorCall,
+    SK_StdInitializerListConstructorCall //,
 
     /// Initialize an OpenCL sampler from an integer.
-    SK_OCLSamplerInit,
+    // SK_OCLSamplerInit,
 
     /// Initialize an opaque OpenCL type (event_t, queue_t, etc.) with zero
-    SK_OCLZeroOpaqueType
+    // SK_OCLZeroOpaqueType
   };
 
   /// A single step in the initialization sequence.
@@ -1330,7 +1330,7 @@ public:
 
   /// Add a step to initialize an OpenCL sampler from an integer
   /// constant.
-  void AddOCLSamplerInitStep(QualType T);
+  // void AddOCLSamplerInitStep(QualType T);
 
   /// Add a step to initialzie an OpenCL opaque type (event_t, queue_t, etc.)
   /// from a zero constant.

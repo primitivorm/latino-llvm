@@ -418,13 +418,13 @@ void darwin::Linker::AddLinkArgs(Compilation &C, const ArgList &Args,
 }
 
 /// Determine whether we are linking the ObjC runtime.
-static bool isObjCRuntimeLinked(const ArgList &Args) {
-  if (isObjCAutoRefCount(Args)) {
-    Args.ClaimAllArgs(options::OPT_fobjc_link_runtime);
-    return true;
-  }
-  return Args.hasArg(options::OPT_fobjc_link_runtime);
-}
+// static bool isObjCRuntimeLinked(const ArgList &Args) {
+//   if (isObjCAutoRefCount(Args)) {
+//     Args.ClaimAllArgs(options::OPT_fobjc_link_runtime);
+//     return true;
+//   }
+//   return Args.hasArg(options::OPT_fobjc_link_runtime);
+// }
 
 static bool checkRemarksOptions(const Driver &D, const ArgList &Args,
                                 const llvm::Triple &Triple) {
@@ -609,19 +609,19 @@ void darwin::Linker::ConstructJob(Compilation &C, const JobAction &JA,
     InputFileList.push_back(II.getFilename());
   }
 
-  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs))
-    addOpenMPRuntime(CmdArgs, getToolChain(), Args);
+  // if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs))
+  //   addOpenMPRuntime(CmdArgs, getToolChain(), Args);
 
-  if (isObjCRuntimeLinked(Args) &&
-      !Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {
-    // We use arclite library for both ARC and subscripting support.
-    getMachOToolChain().AddLinkARCArgs(Args, CmdArgs);
+  // if (isObjCRuntimeLinked(Args) &&
+  //     !Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {
+  //   // We use arclite library for both ARC and subscripting support.
+  //   getMachOToolChain().AddLinkARCArgs(Args, CmdArgs);
 
-    CmdArgs.push_back("-framework");
-    CmdArgs.push_back("Foundation");
-    // Link libobj.
-    CmdArgs.push_back("-lobjc");
-  }
+  //   CmdArgs.push_back("-framework");
+  //   CmdArgs.push_back("Foundation");
+  //   // Link libobj.
+  //   CmdArgs.push_back("-lobjc");
+  // }
 
   if (LinkingOutput) {
     CmdArgs.push_back("-arch_multiple");
@@ -804,15 +804,15 @@ ToolChain::CXXStdlibType Darwin::GetDefaultCXXStdlibType() const {
 }
 
 /// Darwin provides an ARC runtime starting in MacOS X 10.7 and iOS 5.0.
-ObjCRuntime Darwin::getDefaultObjCRuntime(bool isNonFragile) const {
-  if (isTargetWatchOSBased())
-    return ObjCRuntime(ObjCRuntime::WatchOS, TargetVersion);
-  if (isTargetIOSBased())
-    return ObjCRuntime(ObjCRuntime::iOS, TargetVersion);
-  if (isNonFragile)
-    return ObjCRuntime(ObjCRuntime::MacOSX, TargetVersion);
-  return ObjCRuntime(ObjCRuntime::FragileMacOSX, TargetVersion);
-}
+// ObjCRuntime Darwin::getDefaultObjCRuntime(bool isNonFragile) const {
+//   if (isTargetWatchOSBased())
+//     return ObjCRuntime(ObjCRuntime::WatchOS, TargetVersion);
+//   if (isTargetIOSBased())
+//     return ObjCRuntime(ObjCRuntime::iOS, TargetVersion);
+//   if (isNonFragile)
+//     return ObjCRuntime(ObjCRuntime::MacOSX, TargetVersion);
+//   return ObjCRuntime(ObjCRuntime::FragileMacOSX, TargetVersion);
+// }
 
 /// Darwin provides a blocks runtime starting in MacOS X 10.6 and iOS 3.2.
 bool Darwin::hasBlocksRuntime() const {
@@ -997,11 +997,11 @@ void DarwinClang::AddLinkARCArgs(const ArgList &Args,
   if (isTargetAppleSiliconMac())
     return;
 
-  ObjCRuntime runtime = getDefaultObjCRuntime(/*nonfragile*/ true);
+  // ObjCRuntime runtime = getDefaultObjCRuntime(/*nonfragile*/ true);
 
-  if ((runtime.hasNativeARC() || !isObjCAutoRefCount(Args)) &&
-      runtime.hasSubscripting())
-    return;
+  // if ((runtime.hasNativeARC() /*|| !isObjCAutoRefCount(Args)*/) &&
+  //     runtime.hasSubscripting())
+  //   return;
 
   SmallString<128> P(getDriver().ClangExecutable);
   llvm::sys::path::remove_filename(P); // 'clang'

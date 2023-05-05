@@ -289,22 +289,22 @@ namespace latino {
 
   /// Activates OpenMP parsing mode to preseve OpenMP specific annotation
   /// tokens.
-  class ParsingOpenMPDirectiveRAII {
-    Parser &P;
-    bool OldVal;
+  // class ParsingOpenMPDirectiveRAII {
+  //   Parser &P;
+  //   bool OldVal;
 
-  public:
-    ParsingOpenMPDirectiveRAII(Parser &P, bool Value = true)
-        : P(P), OldVal(P.OpenMPDirectiveParsing) {
-      P.OpenMPDirectiveParsing = Value;
-    }
+  // public:
+  //   ParsingOpenMPDirectiveRAII(Parser &P, bool Value = true)
+  //       : P(P), OldVal(P.OpenMPDirectiveParsing) {
+  //     P.OpenMPDirectiveParsing = Value;
+  //   }
 
-    /// This can be used to restore the state early, before the dtor
-    /// is run.
-    void restore() { P.OpenMPDirectiveParsing = OldVal; }
+  //   /// This can be used to restore the state early, before the dtor
+  //   /// is run.
+  //   void restore() { P.OpenMPDirectiveParsing = OldVal; }
 
-    ~ParsingOpenMPDirectiveRAII() { restore(); }
-  };
+  //   ~ParsingOpenMPDirectiveRAII() { restore(); }
+  // };
 
   /// RAII object that makes '>' behave either as an operator
   /// or as the closing angle bracket for a template argument list.

@@ -51,20 +51,20 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
-#include "latino/AST/OpenMPClause.h"
+// #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/ParentMapContext.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
 // #include "latino/AST/StmtObjC.h"
-#include "latino/AST/StmtOpenMP.h"
+// #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/TemplateBase.h"
 #include "latino/AST/TemplateName.h"
 #include "latino/AST/Type.h"
@@ -3925,13 +3925,13 @@ AST_MATCHER(VarDecl, isExceptionVariable) {
 ///   void f(int x, int y);
 ///   f(0, 0);
 /// \endcode
-// AST_POLYMORPHIC_MATCHER_P(argumentCountIs,
-//                           AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
-//                                                           CXXConstructExpr,
-//                                                           ObjCMessageExpr),
-//                           unsigned, N) {
-//   return Node.getNumArgs() == N;
-// }
+AST_POLYMORPHIC_MATCHER_P(argumentCountIs,
+                          AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
+                                                          CXXConstructExpr/*,
+                                                          ObjCMessageExpr*/),
+                          unsigned, N) {
+  return Node.getNumArgs() == N;
+}
 
 /// Matches the n'th argument of a call expression or a constructor
 /// call expression.
@@ -3941,15 +3941,15 @@ AST_MATCHER(VarDecl, isExceptionVariable) {
 /// \code
 ///   void x(int) { int y; x(y); }
 /// \endcode
-// AST_POLYMORPHIC_MATCHER_P2(hasArgument,
-//                            AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
-//                                                            CXXConstructExpr,
-//                                                            ObjCMessageExpr),
-//                            unsigned, N, internal::Matcher<Expr>, InnerMatcher) {
-//   return (N < Node.getNumArgs() &&
-//           InnerMatcher.matches(
-//               *Node.getArg(N)->IgnoreParenImpCasts(), Finder, Builder));
-// }
+AST_POLYMORPHIC_MATCHER_P2(hasArgument,
+                           AST_POLYMORPHIC_SUPPORTED_TYPES(CallExpr,
+                                                           CXXConstructExpr/*,
+                                                           ObjCMessageExpr*/),
+                           unsigned, N, internal::Matcher<Expr>, InnerMatcher) {
+  return (N < Node.getNumArgs() &&
+          InnerMatcher.matches(
+              *Node.getArg(N)->IgnoreParenImpCasts(), Finder, Builder));
+}
 
 /// Matches the n'th item of an initializer list expression.
 ///
@@ -4160,20 +4160,20 @@ AST_MATCHER(CXXCtorInitializer, isMemberInitializer) {
 /// \endcode
 /// objcMessageExpr(hasAnyArgument(integerLiteral(equals(12))))
 ///   matches [i f:12]
-// AST_POLYMORPHIC_MATCHER_P(hasAnyArgument,
-//                           AST_POLYMORPHIC_SUPPORTED_TYPES(
-//                               CallExpr, CXXConstructExpr,
-//                               CXXUnresolvedConstructExpr, ObjCMessageExpr),
-//                           internal::Matcher<Expr>, InnerMatcher) {
-//   for (const Expr *Arg : Node.arguments()) {
-//     BoundNodesTreeBuilder Result(*Builder);
-//     if (InnerMatcher.matches(*Arg, Finder, &Result)) {
-//       *Builder = std::move(Result);
-//       return true;
-//     }
-//   }
-//   return false;
-// }
+AST_POLYMORPHIC_MATCHER_P(hasAnyArgument,
+                          AST_POLYMORPHIC_SUPPORTED_TYPES(
+                              CallExpr, CXXConstructExpr,
+                              CXXUnresolvedConstructExpr/*, ObjCMessageExpr*/),
+                          internal::Matcher<Expr>, InnerMatcher) {
+  for (const Expr *Arg : Node.arguments()) {
+    BoundNodesTreeBuilder Result(*Builder);
+    if (InnerMatcher.matches(*Arg, Finder, &Result)) {
+      *Builder = std::move(Result);
+      return true;
+    }
+  }
+  return false;
+}
 
 /// Matches any capture of a lambda expression.
 ///
@@ -7123,8 +7123,8 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 ///
 /// ``ompExecutableDirective()`` matches ``omp parallel``,
 /// ``omp parallel default(none)`` and ``omp taskyield``.
-extern const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
-    ompExecutableDirective;
+// extern const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
+//     ompExecutableDirective;
 
 /// Matches standalone OpenMP directives,
 /// i.e., directives that can't have a structured block.
@@ -7139,9 +7139,9 @@ extern const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
 ///
 /// ``ompExecutableDirective(isStandaloneDirective()))`` matches
 /// ``omp taskyield``.
-AST_MATCHER(OMPExecutableDirective, isStandaloneDirective) {
-  return Node.isStandaloneDirective();
-}
+// AST_MATCHER(OMPExecutableDirective, isStandaloneDirective) {
+//   return Node.isStandaloneDirective();
+// }
 
 /// Matches the structured-block of the OpenMP executable directive
 ///
@@ -7158,12 +7158,12 @@ AST_MATCHER(OMPExecutableDirective, isStandaloneDirective) {
 /// \endcode
 ///
 /// ``ompExecutableDirective(hasStructuredBlock(nullStmt()))`` will match ``;``
-AST_MATCHER_P(OMPExecutableDirective, hasStructuredBlock,
-              internal::Matcher<Stmt>, InnerMatcher) {
-  if (Node.isStandaloneDirective())
-    return false; // Standalone directives have no structured blocks.
-  return InnerMatcher.matches(*Node.getStructuredBlock(), Finder, Builder);
-}
+// AST_MATCHER_P(OMPExecutableDirective, hasStructuredBlock,
+//               internal::Matcher<Stmt>, InnerMatcher) {
+//   if (Node.isStandaloneDirective())
+//     return false; // Standalone directives have no structured blocks.
+//   return InnerMatcher.matches(*Node.getStructuredBlock(), Finder, Builder);
+// }
 
 /// Matches any clause in an OpenMP directive.
 ///
@@ -7176,12 +7176,12 @@ AST_MATCHER_P(OMPExecutableDirective, hasStructuredBlock,
 ///
 /// ``ompExecutableDirective(hasAnyClause(anything()))`` matches
 /// ``omp parallel default(none)``.
-AST_MATCHER_P(OMPExecutableDirective, hasAnyClause,
-              internal::Matcher<OMPClause>, InnerMatcher) {
-  ArrayRef<OMPClause *> Clauses = Node.clauses();
-  return matchesFirstInPointerRange(InnerMatcher, Clauses.begin(),
-                                    Clauses.end(), Finder, Builder);
-}
+// AST_MATCHER_P(OMPExecutableDirective, hasAnyClause,
+//               internal::Matcher<OMPClause>, InnerMatcher) {
+//   ArrayRef<OMPClause *> Clauses = Node.clauses();
+//   return matchesFirstInPointerRange(InnerMatcher, Clauses.begin(),
+//                                     Clauses.end(), Finder, Builder);
+// }
 
 /// Matches OpenMP ``default`` clause.
 ///
@@ -7196,8 +7196,8 @@ AST_MATCHER_P(OMPExecutableDirective, hasAnyClause,
 ///
 /// ``ompDefaultClause()`` matches ``default(none)``, ``default(shared)``, and
 /// ``default(firstprivate)``
-extern const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
-    ompDefaultClause;
+// extern const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
+//     ompDefaultClause;
 
 /// Matches if the OpenMP ``default`` clause has ``none`` kind specified.
 ///
@@ -7211,9 +7211,9 @@ extern const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
 /// \endcode
 ///
 /// ``ompDefaultClause(isNoneKind())`` matches only ``default(none)``.
-AST_MATCHER(OMPDefaultClause, isNoneKind) {
-  return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_none;
-}
+// AST_MATCHER(OMPDefaultClause, isNoneKind) {
+//   return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_none;
+// }
 
 /// Matches if the OpenMP ``default`` clause has ``shared`` kind specified.
 ///
@@ -7226,10 +7226,10 @@ AST_MATCHER(OMPDefaultClause, isNoneKind) {
 ///   #pragma omp parallel default(firstprivate)
 /// \endcode
 ///
-/// ``ompDefaultClause(isSharedKind())`` matches only ``default(shared)``.
-AST_MATCHER(OMPDefaultClause, isSharedKind) {
-  return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_shared;
-}
+// /// ``ompDefaultClause(isSharedKind())`` matches only ``default(shared)``.
+// AST_MATCHER(OMPDefaultClause, isSharedKind) {
+//   return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_shared;
+// }
 
 /// Matches if the OpenMP ``default`` clause has ``firstprivate`` kind
 /// specified.
@@ -7245,9 +7245,9 @@ AST_MATCHER(OMPDefaultClause, isSharedKind) {
 ///
 /// ``ompDefaultClause(isFirstPrivateKind())`` matches only
 /// ``default(firstprivate)``.
-AST_MATCHER(OMPDefaultClause, isFirstPrivateKind) {
-  return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_firstprivate;
-}
+// AST_MATCHER(OMPDefaultClause, isFirstPrivateKind) {
+//   return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_firstprivate;
+// }
 
 /// Matches if the OpenMP directive is allowed to contain the specified OpenMP
 /// clause kind.
@@ -7266,12 +7266,12 @@ AST_MATCHER(OMPDefaultClause, isFirstPrivateKind) {
 /// If the matcher is use from clang-query, ``OpenMPClauseKind`` parameter
 /// should be passed as a quoted string. e.g.,
 /// ``isAllowedToContainClauseKind("OMPC_default").``
-AST_MATCHER_P(OMPExecutableDirective, isAllowedToContainClauseKind,
-              OpenMPClauseKind, CKind) {
-  return llvm::omp::isAllowedClauseForDirective(
-      Node.getDirectiveKind(), CKind,
-      Finder->getASTContext().getLangOpts().OpenMP);
-}
+// AST_MATCHER_P(OMPExecutableDirective, isAllowedToContainClauseKind,
+//               OpenMPClauseKind, CKind) {
+//   return llvm::omp::isAllowedClauseForDirective(
+//       Node.getDirectiveKind(), CKind,
+//       Finder->getASTContext().getLangOpts().OpenMP);
+// }
 
 //----------------------------------------------------------------------------//
 // End OpenMP handling.

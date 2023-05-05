@@ -17,7 +17,7 @@
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/DiagnosticOptions.h"
 #include "latino/Basic/IdentifierTable.h"
-#include "latino/Basic/OpenCLOptions.h"
+// #include "latino/Basic/OpenCLOptions.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/Version.h"
 #include "latino/Lex/ExternalPreprocessorSource.h"
@@ -704,22 +704,22 @@ private:
   /// This vector is indexed by the Selector ID (-1). NULL selector
   /// entries indicate that the particular selector ID has not yet
   /// been loaded.
-  SmallVector<Selector, 16> SelectorsLoaded;
+  // SmallVector<Selector, 16> SelectorsLoaded;
 
-  using GlobalSelectorMapType =
-      ContinuousRangeMap<serialization::SelectorID, ModuleFile *, 4>;
+  // using GlobalSelectorMapType =
+  //     ContinuousRangeMap<serialization::SelectorID, ModuleFile *, 4>;
 
   /// Mapping from global selector IDs to the module in which the
   /// global selector ID to produce a local ID.
-  GlobalSelectorMapType GlobalSelectorMap;
+  // GlobalSelectorMapType GlobalSelectorMap;
 
   /// The generation number of the last time we loaded data from the
   /// global method pool for this selector.
-  llvm::DenseMap<Selector, unsigned> SelectorGeneration;
+  // llvm::DenseMap<Selector, unsigned> SelectorGeneration;
 
   /// Whether a selector is out of date. We mark a selector as out of date
   /// if we load another module after the method pool entry was pulled in.
-  llvm::DenseMap<Selector, bool> SelectorOutOfDate;
+  // llvm::DenseMap<Selector, bool> SelectorOutOfDate;
 
   struct PendingMacroInfo {
     ModuleFile *M;
@@ -802,7 +802,7 @@ private:
 
   /// Method selectors used in a @selector expression. Used for
   /// implementation of -Wselector.
-  SmallVector<uint64_t, 64> ReferencedSelectorsData;
+  // SmallVector<uint64_t, 64> ReferencedSelectorsData;
 
   /// A snapshot of Sema's weak undeclared identifier tracking, for
   /// generating warnings.
@@ -882,7 +882,7 @@ private:
   llvm::SmallVector<std::string, 2> PragmaPackStrings;
 
   /// The OpenCL extension settings.
-  OpenCLOptions OpenCLExtensions;
+  // OpenCLOptions OpenCLExtensions;
 
   /// Extensions required by an OpenCL type.
   llvm::DenseMap<const Type *, std::set<std::string>> OpenCLTypeExtMap;
@@ -992,7 +992,7 @@ private:
   unsigned NumIdentifierLookupHits = 0;
 
   /// The number of selectors that have been read.
-  unsigned NumSelectorsRead = 0;
+  // unsigned NumSelectorsRead = 0;
 
   /// The number of method pool entries that have been read.
   unsigned NumMethodPoolEntriesRead = 0;
@@ -1768,9 +1768,9 @@ public:
   }
 
   /// Returns the number of selectors found in the chain.
-  unsigned getTotalNumSelectors() const {
-    return static_cast<unsigned>(SelectorsLoaded.size());
-  }
+  // unsigned getTotalNumSelectors() const {
+  //   return static_cast<unsigned>(SelectorsLoaded.size());
+  // }
 
   /// Returns the number of preprocessed entities known to the AST
   /// reader.
@@ -1971,11 +1971,11 @@ public:
 
   /// Load the contents of the global method pool for a given
   /// selector.
-  void ReadMethodPool(Selector Sel) override;
+  // void ReadMethodPool(Selector Sel) override;
 
   /// Load the contents of the global method pool for a given
   /// selector if necessary.
-  void updateOutOfDateSelector(Selector Sel) override;
+  // void updateOutOfDateSelector(Selector Sel) override;
 
   /// Load the set of namespaces that are known to the external source,
   /// which will be used during typo correction.
@@ -2006,8 +2006,8 @@ public:
   void ReadDeclsToCheckForDeferredDiags(
       llvm::SmallVector<Decl *, 4> &Decls) override;
 
-  void ReadReferencedSelectors(
-           SmallVectorImpl<std::pair<Selector, SourceLocation>> &Sels) override;
+  // void ReadReferencedSelectors(
+  //          SmallVectorImpl<std::pair<Selector, SourceLocation>> &Sels) override;
 
   void ReadWeakUndeclaredIdentifiers(
            SmallVectorImpl<std::pair<IdentifierInfo *, WeakInfo>> &WI) override;
@@ -2023,7 +2023,7 @@ public:
           &LPTMap) override;
 
   /// Load a selector from disk, registering its ID if it exists.
-  void LoadSelector(Selector Sel);
+  // void LoadSelector(Selector Sel);
 
   void SetIdentifierInfo(unsigned ID, IdentifierInfo *II);
   void SetGloballyVisibleDecls(IdentifierInfo *II,
@@ -2101,21 +2101,21 @@ public:
 
   /// Retrieve a selector from the given module with its local ID
   /// number.
-  Selector getLocalSelector(ModuleFile &M, unsigned LocalID);
+  // Selector getLocalSelector(ModuleFile &M, unsigned LocalID);
 
-  Selector DecodeSelector(serialization::SelectorID Idx);
+  // Selector DecodeSelector(serialization::SelectorID Idx);
 
-  Selector GetExternalSelector(serialization::SelectorID ID) override;
-  uint32_t GetNumExternalSelectors() override;
+  // Selector GetExternalSelector(serialization::SelectorID ID) override;
+  // uint32_t GetNumExternalSelectors() override;
 
-  Selector ReadSelector(ModuleFile &M, const RecordData &Record, unsigned &Idx) {
-    return getLocalSelector(M, Record[Idx++]);
-  }
+  // Selector ReadSelector(ModuleFile &M, const RecordData &Record, unsigned &Idx) {
+  //   return getLocalSelector(M, Record[Idx++]);
+  // }
 
   /// Retrieve the global selector ID that corresponds to this
   /// the local selector ID in a given module.
-  serialization::SelectorID getGlobalSelectorID(ModuleFile &F,
-                                                unsigned LocalID) const;
+  // serialization::SelectorID getGlobalSelectorID(ModuleFile &F,
+  //                                               unsigned LocalID) const;
 
   /// Read the contents of a CXXCtorInitializer array.
   CXXCtorInitializer **GetExternalCXXCtorInitializers(uint64_t Offset) override;

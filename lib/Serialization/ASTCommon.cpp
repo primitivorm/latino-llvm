@@ -12,7 +12,7 @@
 
 #include "ASTCommon.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Serialization/ASTDeserializationListener.h"
 #include "llvm/Support/DJB.h"
@@ -78,9 +78,9 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::Int128:
     ID = PREDEF_TYPE_INT128_ID;
     break;
-  case BuiltinType::Half:
-    ID = PREDEF_TYPE_HALF_ID;
-    break;
+  // case BuiltinType::Half:
+  //   ID = PREDEF_TYPE_HALF_ID;
+  //   break;
   case BuiltinType::Float:
     ID = PREDEF_TYPE_FLOAT_ID;
     break;
@@ -162,12 +162,12 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::SatULongFract:
     ID = PREDEF_TYPE_SAT_ULONG_FRACT_ID;
     break;
-  case BuiltinType::Float16:
-    ID = PREDEF_TYPE_FLOAT16_ID;
-    break;
-  case BuiltinType::Float128:
-    ID = PREDEF_TYPE_FLOAT128_ID;
-    break;
+  // case BuiltinType::Float16:
+  //   ID = PREDEF_TYPE_FLOAT16_ID;
+  //   break;
+  // case BuiltinType::Float128:
+  //   ID = PREDEF_TYPE_FLOAT128_ID;
+  //   break;
   case BuiltinType::NullPtr:
     ID = PREDEF_TYPE_NULLPTR_ID;
     break;
@@ -186,9 +186,9 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::BoundMember:
     ID = PREDEF_TYPE_BOUND_MEMBER;
     break;
-  // case BuiltinType::PseudoObject:
-  //   ID = PREDEF_TYPE_PSEUDO_OBJECT;
-  //   break;
+  case BuiltinType::PseudoObject:
+    ID = PREDEF_TYPE_PSEUDO_OBJECT;
+    break;
   case BuiltinType::Dependent:
     ID = PREDEF_TYPE_DEPENDENT_ID;
     break;
@@ -260,16 +260,16 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   return TypeIdx(ID);
 }
 
-unsigned serialization::ComputeHash(Selector Sel) {
-  unsigned N = Sel.getNumArgs();
-  if (N == 0)
-    ++N;
-  unsigned R = 5381;
-  for (unsigned I = 0; I != N; ++I)
-    if (IdentifierInfo *II = Sel.getIdentifierInfoForSlot(I))
-      R = llvm::djbHash(II->getName(), R);
-  return R;
-}
+// unsigned serialization::ComputeHash(Selector Sel) {
+//   unsigned N = Sel.getNumArgs();
+//   if (N == 0)
+//     ++N;
+//   unsigned R = 5381;
+//   for (unsigned I = 0; I != N; ++I)
+//     if (IdentifierInfo *II = Sel.getIdentifierInfoForSlot(I))
+//       R = llvm::djbHash(II->getName(), R);
+//   return R;
+// }
 
 const DeclContext *
 serialization::getDefinitiveDeclContext(const DeclContext *DC) {
@@ -404,12 +404,12 @@ bool serialization::isRedeclarableDeclKind(unsigned Kind) {
   case Decl::Captured:
   case Decl::ClassScopeFunctionSpecialization:
   case Decl::Import:
-  case Decl::OMPThreadPrivate:
-  case Decl::OMPAllocate:
-  case Decl::OMPRequires:
-  case Decl::OMPCapturedExpr:
-  case Decl::OMPDeclareReduction:
-  case Decl::OMPDeclareMapper:
+  // case Decl::OMPThreadPrivate:
+  // case Decl::OMPAllocate:
+  // case Decl::OMPRequires:
+  // case Decl::OMPCapturedExpr:
+  // case Decl::OMPDeclareReduction:
+  // case Decl::OMPDeclareMapper:
   case Decl::BuiltinTemplate:
   case Decl::Decomposition:
   case Decl::Binding:

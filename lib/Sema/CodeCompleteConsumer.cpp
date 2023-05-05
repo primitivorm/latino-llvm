@@ -14,7 +14,7 @@
 #include "clang-c/Index.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Type.h"
@@ -73,7 +73,7 @@ bool CodeCompletionContext::wantConstructorResults() const {
   case CCC_PreprocessorExpression:
   case CCC_PreprocessorDirective:
   case CCC_NaturalLanguage:
-  case CCC_SelectorName:
+  // case CCC_SelectorName:
   case CCC_TypeQualifiers:
   case CCC_Other:
   case CCC_OtherWithMacros:
@@ -145,8 +145,8 @@ StringRef latino::getCompletionKindString(CodeCompletionContext::Kind Kind) {
     return "PreprocessorDirective";
   case CCKind::CCC_NaturalLanguage:
     return "NaturalLanguage";
-  case CCKind::CCC_SelectorName:
-    return "SelectorName";
+  // case CCKind::CCC_SelectorName:
+  //   return "SelectorName";
   case CCKind::CCC_TypeQualifiers:
     return "TypeQualifiers";
   case CCKind::CCC_ParenthesizedExpression:
@@ -744,9 +744,9 @@ StringRef CodeCompletionResult::getOrderedName(std::string &Saved) const {
   // zero-argument selector, just return a reference to that identifier.
   if (IdentifierInfo *Id = Name.getAsIdentifierInfo())
     return Id->getName();
-  if (Name.isObjCZeroArgSelector())
-    if (IdentifierInfo *Id = Name.getObjCSelector().getIdentifierInfoForSlot(0))
-      return Id->getName();
+  // if (Name.isObjCZeroArgSelector())
+  //   if (IdentifierInfo *Id = Name.getObjCSelector().getIdentifierInfoForSlot(0))
+  //     return Id->getName();
 
   Saved = Name.getAsString();
   return Saved;

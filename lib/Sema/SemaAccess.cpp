@@ -16,7 +16,7 @@
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DependentDiagnostic.h"
 #include "latino/AST/ExprCXX.h"
 #include "latino/Sema/DelayedDiagnostic.h"

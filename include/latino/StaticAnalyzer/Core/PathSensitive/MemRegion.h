@@ -18,7 +18,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
 // #include "latino/AST/ExprObjC.h"

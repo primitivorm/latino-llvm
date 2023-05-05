@@ -891,7 +891,7 @@ protected:
     DAK_Normal
   };
 
-  // enum { NumScopeDepthOrObjCQualsBits = 7 };
+  enum { NumScopeDepthOrObjCQualsBits = 7 };
 
   class ParmVarDeclBitfields {
     friend class ASTDeclReader;
@@ -919,7 +919,7 @@ protected:
     /// Otherwise, the number of function parameter scopes enclosing
     /// the function parameter scope in which this parameter was
     /// declared.
-    // unsigned ScopeDepthOrObjCQuals : NumScopeDepthOrObjCQualsBits;
+    unsigned ScopeDepthOrObjCQuals : NumScopeDepthOrObjCQualsBits;
 
     /// The number of parameters preceding this parameter in the
     /// function parameter scope in which it was declared.
@@ -1625,28 +1625,28 @@ public:
   //   setParameterIndex(parameterIndex);
   // }
 
-  // void setScopeInfo(unsigned scopeDepth, unsigned parameterIndex) {
-  //   assert(!ParmVarDeclBits.IsObjCMethodParam);
+  void setScopeInfo(unsigned scopeDepth, unsigned parameterIndex) {
+    assert(!ParmVarDeclBits.IsObjCMethodParam);
 
-  //   ParmVarDeclBits.ScopeDepthOrObjCQuals = scopeDepth;
-  //   assert(ParmVarDeclBits.ScopeDepthOrObjCQuals == scopeDepth
-  //          && "truncation!");
+    ParmVarDeclBits.ScopeDepthOrObjCQuals = scopeDepth;
+    assert(ParmVarDeclBits.ScopeDepthOrObjCQuals == scopeDepth
+           && "truncation!");
 
-  //   setParameterIndex(parameterIndex);
-  // }
+    setParameterIndex(parameterIndex);
+  }
 
   // bool isObjCMethodParameter() const {
   //   return ParmVarDeclBits.IsObjCMethodParam;
   // }
 
-  // unsigned getFunctionScopeDepth() const {
-  //   if (ParmVarDeclBits.IsObjCMethodParam) return 0;
-  //   return ParmVarDeclBits.ScopeDepthOrObjCQuals;
-  // }
+  unsigned getFunctionScopeDepth() const {
+    // if (ParmVarDeclBits.IsObjCMethodParam) return 0;
+    return ParmVarDeclBits.ScopeDepthOrObjCQuals;
+  }
 
-  // static constexpr unsigned getMaxFunctionScopeDepth() {
-  //   return (1u << NumScopeDepthOrObjCQualsBits) - 1;
-  // }
+  static constexpr unsigned getMaxFunctionScopeDepth() {
+    return (1u << NumScopeDepthOrObjCQualsBits) - 1;
+  }
 
   /// Returns the index of this parameter in its prototype or method scope.
   unsigned getFunctionScopeIndex() const {
@@ -4565,9 +4565,9 @@ inline bool IsEnumDeclScoped(EnumDecl *ED) {
 /// OpenMP variants are mangled early based on their OpenMP context selector.
 /// The new name looks likes this:
 ///  <name> + OpenMPVariantManglingSeparatorStr + <mangled OpenMP context>
-static constexpr StringRef getOpenMPVariantManglingSeparatorStr() {
-  return "$ompvariant";
-}
+// static constexpr StringRef getOpenMPVariantManglingSeparatorStr() {
+//   return "$ompvariant";
+// }
 
 } // namespace latino
 

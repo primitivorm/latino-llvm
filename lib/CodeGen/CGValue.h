@@ -265,15 +265,15 @@ public:
 
   QualType getType() const { return Type; }
 
-  Qualifiers::ObjCLifetime getObjCLifetime() const {
-    return Quals.getObjCLifetime();
-  }
+  // Qualifiers::ObjCLifetime getObjCLifetime() const {
+  //   return Quals.getObjCLifetime();
+  // }
 
-  bool isObjCIvar() const { return Ivar; }
-  void setObjCIvar(bool Value) { Ivar = Value; }
+  // bool isObjCIvar() const { return Ivar; }
+  // void setObjCIvar(bool Value) { Ivar = Value; }
 
-  bool isObjCArray() const { return ObjIsArray; }
-  void setObjCArray(bool Value) { ObjIsArray = Value; }
+  // bool isObjCArray() const { return ObjIsArray; }
+  // void setObjCArray(bool Value) { ObjIsArray = Value; }
 
   bool isNonGC () const { return NonGC; }
   void setNonGC(bool Value) { NonGC = Value; }
@@ -293,12 +293,12 @@ public:
   bool isNontemporal() const { return Nontemporal; }
   void setNontemporal(bool Value) { Nontemporal = Value; }
 
-  bool isObjCWeak() const {
-    return Quals.getObjCGCAttr() == Qualifiers::Weak;
-  }
-  bool isObjCStrong() const {
-    return Quals.getObjCGCAttr() == Qualifiers::Strong;
-  }
+  // bool isObjCWeak() const {
+  //   return Quals.getObjCGCAttr() == Qualifiers::Weak;
+  // }
+  // bool isObjCStrong() const {
+  //   return Quals.getObjCGCAttr() == Qualifiers::Strong;
+  // }
 
   bool isVolatile() const {
     return Quals.hasVolatile();
@@ -389,7 +389,7 @@ public:
   static LValue MakeAddr(Address address, QualType type, ASTContext &Context,
                          LValueBaseInfo BaseInfo, TBAAAccessInfo TBAAInfo) {
     Qualifiers qs = type.getQualifiers();
-    qs.setObjCGCAttr(Context.getObjCGCAttrKind(type));
+    // qs.setObjCGCAttr(Context.getObjCGCAttrKind(type));
 
     LValue R;
     R.LVType = Simple;
@@ -600,9 +600,9 @@ public:
       Quals.removeVolatile();
   }
 
-  Qualifiers::ObjCLifetime getObjCLifetime() const {
-    return Quals.getObjCLifetime();
-  }
+  // Qualifiers::ObjCLifetime getObjCLifetime() const {
+  //   return Quals.getObjCLifetime();
+  // }
 
   NeedsGCBarriers_t requiresGCollection() const {
     return NeedsGCBarriers_t(ObjCGCFlag);

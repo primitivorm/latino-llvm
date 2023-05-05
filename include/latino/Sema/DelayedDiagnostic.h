@@ -193,11 +193,11 @@ public:
     return StringRef(AvailabilityData.Message, AvailabilityData.MessageLen);
   }
 
-  ArrayRef<SourceLocation> getAvailabilitySelectorLocs() const {
-    assert(Kind == Availability && "Not an availability diagnostic.");
-    return llvm::makeArrayRef(AvailabilityData.SelectorLocs,
-                              AvailabilityData.NumSelectorLocs);
-  }
+  // ArrayRef<SourceLocation> getAvailabilitySelectorLocs() const {
+  //   assert(Kind == Availability && "Not an availability diagnostic.");
+  //   return llvm::makeArrayRef(AvailabilityData.SelectorLocs,
+  //                             AvailabilityData.NumSelectorLocs);
+  // }
 
   AvailabilityResult getAvailabilityResult() const {
     assert(Kind == Availability && "Not an availability diagnostic.");
@@ -243,8 +243,8 @@ private:
     // const ObjCPropertyDecl  *ObjCProperty;
     const char *Message;
     size_t MessageLen;
-    SourceLocation *SelectorLocs;
-    size_t NumSelectorLocs;
+    // SourceLocation *SelectorLocs;
+    // size_t NumSelectorLocs;
     AvailabilityResult AR;
     // bool ObjCPropertyAccess;
   };

@@ -272,36 +272,36 @@ public:
     return GPUKind != llvm::AMDGPU::GK_NONE;
   }
 
-  void setSupportedOpenCLOpts() override {
-    auto &Opts = getSupportedOpenCLOpts();
-    Opts.support("cl_clang_storage_class_specifiers");
-    Opts.support("cl_khr_icd");
+  // void setSupportedOpenCLOpts() override {
+  //   auto &Opts = getSupportedOpenCLOpts();
+  //   Opts.support("cl_clang_storage_class_specifiers");
+  //   Opts.support("cl_khr_icd");
 
-    bool IsAMDGCN = isAMDGCN(getTriple());
+  //   bool IsAMDGCN = isAMDGCN(getTriple());
 
-    if (hasFP64())
-      Opts.support("cl_khr_fp64");
+  //   if (hasFP64())
+  //     Opts.support("cl_khr_fp64");
 
-    if (IsAMDGCN || GPUKind >= llvm::AMDGPU::GK_CEDAR) {
-      Opts.support("cl_khr_byte_addressable_store");
-      Opts.support("cl_khr_global_int32_base_atomics");
-      Opts.support("cl_khr_global_int32_extended_atomics");
-      Opts.support("cl_khr_local_int32_base_atomics");
-      Opts.support("cl_khr_local_int32_extended_atomics");
-    }
+  //   if (IsAMDGCN || GPUKind >= llvm::AMDGPU::GK_CEDAR) {
+  //     Opts.support("cl_khr_byte_addressable_store");
+  //     Opts.support("cl_khr_global_int32_base_atomics");
+  //     Opts.support("cl_khr_global_int32_extended_atomics");
+  //     Opts.support("cl_khr_local_int32_base_atomics");
+  //     Opts.support("cl_khr_local_int32_extended_atomics");
+  //   }
 
-    if (IsAMDGCN) {
-      Opts.support("cl_khr_fp16");
-      Opts.support("cl_khr_int64_base_atomics");
-      Opts.support("cl_khr_int64_extended_atomics");
-      Opts.support("cl_khr_mipmap_image");
-      Opts.support("cl_khr_mipmap_image_writes");
-      Opts.support("cl_khr_subgroups");
-      Opts.support("cl_khr_3d_image_writes");
-      Opts.support("cl_amd_media_ops");
-      Opts.support("cl_amd_media_ops2");
-    }
-  }
+  //   if (IsAMDGCN) {
+  //     Opts.support("cl_khr_fp16");
+  //     Opts.support("cl_khr_int64_base_atomics");
+  //     Opts.support("cl_khr_int64_extended_atomics");
+  //     Opts.support("cl_khr_mipmap_image");
+  //     Opts.support("cl_khr_mipmap_image_writes");
+  //     Opts.support("cl_khr_subgroups");
+  //     Opts.support("cl_khr_3d_image_writes");
+  //     Opts.support("cl_amd_media_ops");
+  //     Opts.support("cl_amd_media_ops2");
+  //   }
+  // }
 
   // LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const override {
   //   switch (TK) {

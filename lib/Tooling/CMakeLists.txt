@@ -29,9 +29,9 @@ add_latino_library(latinoTooling
   StandaloneExecution.cpp
   Tooling.cpp
 
-  # DEPENDS
+  DEPENDS
   # ClangDriverOptions
-  # omp_gen
+  omp_gen
 
   LINK_LIBS
   latinoAST

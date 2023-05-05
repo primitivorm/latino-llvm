@@ -9,13 +9,13 @@ if (MSVC)
   set_source_files_properties(SemaExprCXX.cpp PROPERTIES COMPILE_FLAGS /bigobj)
   set_source_files_properties(SemaTemplate.cpp PROPERTIES COMPILE_FLAGS /bigobj)
   set_source_files_properties(SemaTemplateDeduction.cpp PROPERTIES COMPILE_FLAGS /bigobj)
-  set_source_files_properties(SemaOpenMP.cpp PROPERTIES COMPILE_FLAGS /bigobj)
+  # set_source_files_properties(SemaOpenMP.cpp PROPERTIES COMPILE_FLAGS /bigobj)
 endif()
 
-latino_tablegen(OpenCLBuiltins.inc -gen-clang-opencl-builtins
-  SOURCE OpenCLBuiltins.td
-  TARGET LatinoOpenCLBuiltinsImpl
-  )
+# latino_tablegen(OpenCLBuiltins.inc -gen-clang-opencl-builtins
+#   SOURCE OpenCLBuiltins.td
+#   TARGET LatinoOpenCLBuiltinsImpl
+#   )
 
 add_latino_library(latinoSema
   AnalysisBasedWarnings.cpp
@@ -55,7 +55,7 @@ add_latino_library(latinoSema
   SemaLookup.cpp
   SemaModule.cpp
   # SemaObjCProperty.cpp
-  SemaOpenMP.cpp
+  # SemaOpenMP.cpp
   SemaOverload.cpp
   SemaPseudoObject.cpp
   SemaStmt.cpp
@@ -71,7 +71,7 @@ add_latino_library(latinoSema
   TypeLocBuilder.cpp
 
   DEPENDS
-  LatinoOpenCLBuiltinsImpl
+  # LatinoOpenCLBuiltinsImpl
   omp_gen
 
   LINK_LIBS

@@ -16,7 +16,7 @@
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/NestedNameSpecifier.h"
-#include "latino/AST/OpenMPClause.h"
+// #include "latino/AST/OpenMPClause.h"
 
 using namespace latino;
 
@@ -39,9 +39,9 @@ const ASTNodeKind::KindInfo ASTNodeKind::AllKindInfo[] = {
   { NKI_None, "Type" },
 #define TYPE(DERIVED, BASE) { NKI_##BASE, #DERIVED "Type" },
 #include "latino/AST/TypeNodes.inc"
-  { NKI_None, "OMPClause" },
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) {NKI_OMPClause, #Class},
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
+  // { NKI_None, "OMPClause" },
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) {NKI_OMPClause, #Class},
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
 };
 
 bool ASTNodeKind::isBaseOf(ASTNodeKind Other, unsigned *Distance) const {
@@ -110,20 +110,20 @@ ASTNodeKind ASTNodeKind::getFromNode(const Type &T) {
   llvm_unreachable("invalid type kind");
  }
 
-ASTNodeKind ASTNodeKind::getFromNode(const OMPClause &C) {
-  switch (C.getClauseKind()) {
-#define OMP_CLAUSE_CLASS(Enum, Str, Class)                                     \
-  case llvm::omp::Clause::Enum:                                                \
-    return ASTNodeKind(NKI_##Class);
-#define OMP_CLAUSE_NO_CLASS(Enum, Str)                                         \
-  case llvm::omp::Clause::Enum:                                                \
-    llvm_unreachable("unexpected OpenMP clause kind");
-  default:
-    break;
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
-  }
-  llvm_unreachable("invalid stmt kind");
-}
+// ASTNodeKind ASTNodeKind::getFromNode(const OMPClause &C) {
+//   switch (C.getClauseKind()) {
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class)                                     \
+//   case llvm::omp::Clause::Enum:                                                \
+//     return ASTNodeKind(NKI_##Class);
+// #define OMP_CLAUSE_NO_CLASS(Enum, Str)                                         \
+//   case llvm::omp::Clause::Enum:                                                \
+//     llvm_unreachable("unexpected OpenMP clause kind");
+//   default:
+//     break;
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
+//   }
+//   llvm_unreachable("invalid stmt kind");
+// }
 
 void DynTypedNode::print(llvm::raw_ostream &OS,
                          const PrintingPolicy &PP) const {
@@ -175,7 +175,7 @@ SourceRange DynTypedNode::getSourceRange() const {
     return D->getSourceRange();
   if (const Stmt *S = get<Stmt>())
     return S->getSourceRange();
-  if (const auto *C = get<OMPClause>())
-    return SourceRange(C->getBeginLoc(), C->getEndLoc());
+  // if (const auto *C = get<OMPClause>())
+  //   return SourceRange(C->getBeginLoc(), C->getEndLoc());
   return SourceRange();
 }

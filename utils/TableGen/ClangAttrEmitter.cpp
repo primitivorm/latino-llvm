@@ -106,7 +106,7 @@ static std::string ReadPCHRecord(StringRef type) {
       .Case("IdentifierInfo *", "Record.readIdentifier()")
       .Case("StringRef", "Record.readString()")
       .Case("ParamIdx", "ParamIdx::deserialize(Record.readInt())")
-      .Case("OMPTraitInfo *", "Record.readOMPTraitInfo()")
+      // .Case("OMPTraitInfo *", "Record.readOMPTraitInfo()")
       .Default("Record.readInt()");
 }
 
@@ -130,8 +130,8 @@ static std::string WritePCHRecord(StringRef type, StringRef name) {
              .Case("StringRef", "AddString(" + std::string(name) + ");\n")
              .Case("ParamIdx",
                    "push_back(" + std::string(name) + ".serialize());\n")
-             .Case("OMPTraitInfo *",
-                   "writeOMPTraitInfo(" + std::string(name) + ");\n")
+            //  .Case("OMPTraitInfo *",
+            //        "writeOMPTraitInfo(" + std::string(name) + ");\n")
              .Default("push_back(" + std::string(name) + ");\n");
 }
 
@@ -362,9 +362,9 @@ namespace {
           OS << "    if (SA->get" << getUpperName() << "().isValid())\n  ";
         OS << "    OS << \" \" << SA->get" << getUpperName()
            << "().getSourceIndex();\n";
-      } else if (type == "OMPTraitInfo *") {
+      }/* else if (type == "OMPTraitInfo *") {
         OS << "    OS << \" \" << SA->get" << getUpperName() << "();\n";
-      } else {
+      }*/ else {
         llvm_unreachable("Unknown SimpleArgument type!");
       }
     }
@@ -1338,8 +1338,8 @@ createArgument(const Record &Arg, StringRef Attr,
     Ptr = std::make_unique<VariadicIdentifierArgument>(Arg, Attr);
   else if (ArgName == "VersionArgument")
     Ptr = std::make_unique<VersionArgument>(Arg, Attr);
-  else if (ArgName == "OMPTraitInfoArgument")
-    Ptr = std::make_unique<SimpleArgument>(Arg, Attr, "OMPTraitInfo *");
+  // else if (ArgName == "OMPTraitInfoArgument")
+  //   Ptr = std::make_unique<SimpleArgument>(Arg, Attr, "OMPTraitInfo *");
 
   if (!Ptr) {
     // Search in reverse order so that the most-derived type is handled first.
@@ -2607,12 +2607,12 @@ static void emitAttributes(RecordKeeper &Records, raw_ostream &OS,
 void latino::EmitClangAttrClass(RecordKeeper &Records, raw_ostream &OS) {
   emitSourceFileHeader("Attribute classes' definitions", OS);
 
-  OS << "#ifndef LLVM_CLANG_ATTR_CLASSES_INC\n";
-  OS << "#define LLVM_CLANG_ATTR_CLASSES_INC\n\n";
+  OS << "#ifndef LLVM_LATINO_ATTR_CLASSES_INC\n";
+  OS << "#define LLVM_LATINO_ATTR_CLASSES_INC\n\n";
 
   emitAttributes(Records, OS, true);
 
-  OS << "#endif // LLVM_CLANG_ATTR_CLASSES_INC\n";
+  OS << "#endif // LLVM_LATINO_ATTR_CLASSES_INC\n";
 }
 
 // Emits the class method definitions for attributes.

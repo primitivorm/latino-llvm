@@ -112,12 +112,12 @@ static auto findGCDAntiPatternWithSemaphore() -> decltype(compoundStmt()) {
 
   auto HasBlockAndCallsSignalM = allOf(HasBlockArgumentM, ArgCallsSignalM);
 
-  auto HasBlockCallingSignalM =
-    forEachDescendant(
-      stmt(anyOf(
-        callExpr(HasBlockAndCallsSignalM),
-        objcMessageExpr(HasBlockAndCallsSignalM)
-           )));
+  // auto HasBlockCallingSignalM =
+  //   forEachDescendant(
+  //     stmt(anyOf(
+  //       callExpr(HasBlockAndCallsSignalM),
+  //       objcMessageExpr(HasBlockAndCallsSignalM)
+  //          )));
 
   auto SemaphoreWaitM = forEachDescendant(
     callExpr(
@@ -128,7 +128,7 @@ static auto findGCDAntiPatternWithSemaphore() -> decltype(compoundStmt()) {
     ).bind(WarnAtNode));
 
   return compoundStmt(
-      SemaphoreBindingM, HasBlockCallingSignalM, SemaphoreWaitM);
+      SemaphoreBindingM, /*HasBlockCallingSignalM,*/ SemaphoreWaitM);
 }
 
 static auto findGCDAntiPatternWithGroup() -> decltype(compoundStmt()) {
@@ -158,12 +158,12 @@ static auto findGCDAntiPatternWithGroup() -> decltype(compoundStmt()) {
 
   auto HasBlockAndCallsLeaveM = allOf(HasBlockArgumentM, ArgCallsSignalM);
 
-  auto AcceptsBlockM =
-    forEachDescendant(
-      stmt(anyOf(
-        callExpr(HasBlockAndCallsLeaveM),
-        objcMessageExpr(HasBlockAndCallsLeaveM)
-           )));
+  // auto AcceptsBlockM =
+  //   forEachDescendant(
+  //     stmt(anyOf(
+  //       callExpr(HasBlockAndCallsLeaveM),
+  //       objcMessageExpr(HasBlockAndCallsLeaveM)
+  //          )));
 
   auto GroupWaitM = forEachDescendant(
     callExpr(
@@ -173,7 +173,7 @@ static auto findGCDAntiPatternWithGroup() -> decltype(compoundStmt()) {
       )
     ).bind(WarnAtNode));
 
-  return compoundStmt(GroupBindingM, GroupEnterM, AcceptsBlockM, GroupWaitM);
+  return compoundStmt(GroupBindingM, GroupEnterM, /*AcceptsBlockM,*/ GroupWaitM);
 }
 
 static void emitDiagnostics(const BoundNodes &Nodes,

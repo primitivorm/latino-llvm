@@ -1131,9 +1131,9 @@ static bool hasInconsistentOrSupersetQualifiersOf(QualType ParamType,
     return false;
 
   // Mismatched (but not missing) Objective-C GC attributes.
-  if (ParamQs.getObjCGCAttr() != ArgQs.getObjCGCAttr() &&
-      ParamQs.hasObjCGCAttr())
-    return true;
+  // if (ParamQs.getObjCGCAttr() != ArgQs.getObjCGCAttr() &&
+  //     ParamQs.hasObjCGCAttr())
+  //   return true;
 
   // Mismatched (but not missing) address spaces.
   if (ParamQs.getAddressSpace() != ArgQs.getAddressSpace() &&
@@ -1141,9 +1141,9 @@ static bool hasInconsistentOrSupersetQualifiersOf(QualType ParamType,
     return true;
 
   // Mismatched (but not missing) Objective-C lifetime qualifiers.
-  if (ParamQs.getObjCLifetime() != ArgQs.getObjCLifetime() &&
-      ParamQs.hasObjCLifetime())
-    return true;
+  // if (ParamQs.getObjCLifetime() != ArgQs.getObjCLifetime() &&
+  //     ParamQs.hasObjCLifetime())
+  //   return true;
 
   // CVR qualifiers inconsistent or a superset.
   return (ParamQs.getCVRQualifiers() & ~ArgQs.getCVRQualifiers()) != 0;
@@ -1283,11 +1283,11 @@ DeduceTemplateArgumentsByTypeMatch(Sema &S,
       Qualifiers ArgQuals = Arg.getQualifiers();
       if ((ParamRef->isLValueReferenceType() &&
            !ArgRef->isLValueReferenceType()) ||
-          ParamQuals.isStrictSupersetOf(ArgQuals) ||
+          ParamQuals.isStrictSupersetOf(ArgQuals) /*||
           (ParamQuals.hasNonTrivialObjCLifetime() &&
            ArgQuals.getObjCLifetime() == Qualifiers::OCL_ExplicitNone &&
            ParamQuals.withoutObjCLifetime() ==
-               ArgQuals.withoutObjCLifetime())) {
+               ArgQuals.withoutObjCLifetime())*/) {
         Info.FirstArg = TemplateArgument(ParamIn);
         Info.SecondArg = TemplateArgument(ArgIn);
         return Sema::TDK_NonDeducedMismatch;
@@ -1388,31 +1388,31 @@ DeduceTemplateArgumentsByTypeMatch(Sema &S,
     Qualifiers DeducedQs = DeducedType.getQualifiers();
     Qualifiers ParamQs = Param.getQualifiers();
     DeducedQs.removeCVRQualifiers(ParamQs.getCVRQualifiers());
-    if (ParamQs.hasObjCGCAttr())
-      DeducedQs.removeObjCGCAttr();
+    // if (ParamQs.hasObjCGCAttr())
+    //   DeducedQs.removeObjCGCAttr();
     if (ParamQs.hasAddressSpace())
       DeducedQs.removeAddressSpace();
-    if (ParamQs.hasObjCLifetime())
-      DeducedQs.removeObjCLifetime();
+    // if (ParamQs.hasObjCLifetime())
+    //   DeducedQs.removeObjCLifetime();
 
     // Objective-C ARC:
     //   If template deduction would produce a lifetime qualifier on a type
     //   that is not a lifetime type, template argument deduction fails.
-    if (ParamQs.hasObjCLifetime() && !DeducedType->isObjCLifetimeType() &&
-        !DeducedType->isDependentType()) {
-      Info.Param = cast<TemplateTypeParmDecl>(TemplateParams->getParam(Index));
-      Info.FirstArg = TemplateArgument(Param);
-      Info.SecondArg = TemplateArgument(Arg);
-      return Sema::TDK_Underqualified;
-    }
+    // if (ParamQs.hasObjCLifetime() && !DeducedType->isObjCLifetimeType() &&
+    //     !DeducedType->isDependentType()) {
+    //   Info.Param = cast<TemplateTypeParmDecl>(TemplateParams->getParam(Index));
+    //   Info.FirstArg = TemplateArgument(Param);
+    //   Info.SecondArg = TemplateArgument(Arg);
+    //   return Sema::TDK_Underqualified;
+    // }
 
     // Objective-C ARC:
     //   If template deduction would produce an argument type with lifetime type
     //   but no lifetime qualifier, the __strong lifetime qualifier is inferred.
-    if (S.getLangOpts().ObjCAutoRefCount &&
-        DeducedType->isObjCLifetimeType() &&
-        !DeducedQs.hasObjCLifetime())
-      DeducedQs.setObjCLifetime(Qualifiers::OCL_Strong);
+    // if (S.getLangOpts().ObjCAutoRefCount &&
+    //     DeducedType->isObjCLifetimeType() &&
+    //     !DeducedQs.hasObjCLifetime())
+    //   DeducedQs.setObjCLifetime(Qualifiers::OCL_Strong);
 
     DeducedType = S.Context.getQualifiedType(DeducedType.getUnqualifiedType(),
                                              DeducedQs);
@@ -3389,13 +3389,13 @@ CheckOriginalCallArgDeduction(Sema &S, TemplateDeductionInfo &Info,
     // been given strong or (when dealing with a const reference)
     // unsafe_unretained lifetime. If so, update the original
     // qualifiers to include this lifetime.
-    if (S.getLangOpts().ObjCAutoRefCount &&
-        ((DeducedAQuals.getObjCLifetime() == Qualifiers::OCL_Strong &&
-          AQuals.getObjCLifetime() == Qualifiers::OCL_None) ||
-         (DeducedAQuals.hasConst() &&
-          DeducedAQuals.getObjCLifetime() == Qualifiers::OCL_ExplicitNone))) {
-      AQuals.setObjCLifetime(DeducedAQuals.getObjCLifetime());
-    }
+    // if (S.getLangOpts().ObjCAutoRefCount &&
+    //     ((DeducedAQuals.getObjCLifetime() == Qualifiers::OCL_Strong &&
+    //       AQuals.getObjCLifetime() == Qualifiers::OCL_None) ||
+    //      (DeducedAQuals.hasConst() &&
+    //       DeducedAQuals.getObjCLifetime() == Qualifiers::OCL_ExplicitNone))) {
+    //   AQuals.setObjCLifetime(DeducedAQuals.getObjCLifetime());
+    // }
 
     if (AQuals == DeducedAQuals) {
       // Qualifiers match; there's nothing to do.

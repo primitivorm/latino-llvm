@@ -73,98 +73,98 @@ LoopHintAttr::getDiagnosticName(const PrintingPolicy &Policy) const {
   return getOptionName(option) + getValueString(Policy);
 }
 
-void OMPDeclareSimdDeclAttr::printPrettyPragma(
-    raw_ostream &OS, const PrintingPolicy &Policy) const {
-  if (getBranchState() != BS_Undefined)
-    OS << ' ' << ConvertBranchStateTyToStr(getBranchState());
-  if (auto *E = getSimdlen()) {
-    OS << " simdlen(";
-    E->printPretty(OS, nullptr, Policy);
-    OS << ")";
-  }
-  if (uniforms_size() > 0) {
-    OS << " uniform";
-    StringRef Sep = "(";
-    for (auto *E : uniforms()) {
-      OS << Sep;
-      E->printPretty(OS, nullptr, Policy);
-      Sep = ", ";
-    }
-    OS << ")";
-  }
-  alignments_iterator NI = alignments_begin();
-  for (auto *E : aligneds()) {
-    OS << " aligned(";
-    E->printPretty(OS, nullptr, Policy);
-    if (*NI) {
-      OS << ": ";
-      (*NI)->printPretty(OS, nullptr, Policy);
-    }
-    OS << ")";
-    ++NI;
-  }
-  steps_iterator I = steps_begin();
-  modifiers_iterator MI = modifiers_begin();
-  for (auto *E : linears()) {
-    OS << " linear(";
-    if (*MI != OMPC_LINEAR_unknown)
-      OS << getOpenMPSimpleClauseTypeName(llvm::omp::Clause::OMPC_linear, *MI)
-         << "(";
-    E->printPretty(OS, nullptr, Policy);
-    if (*MI != OMPC_LINEAR_unknown)
-      OS << ")";
-    if (*I) {
-      OS << ": ";
-      (*I)->printPretty(OS, nullptr, Policy);
-    }
-    OS << ")";
-    ++I;
-    ++MI;
-  }
-}
+// void OMPDeclareSimdDeclAttr::printPrettyPragma(
+//     raw_ostream &OS, const PrintingPolicy &Policy) const {
+//   if (getBranchState() != BS_Undefined)
+//     OS << ' ' << ConvertBranchStateTyToStr(getBranchState());
+//   if (auto *E = getSimdlen()) {
+//     OS << " simdlen(";
+//     E->printPretty(OS, nullptr, Policy);
+//     OS << ")";
+//   }
+//   if (uniforms_size() > 0) {
+//     OS << " uniform";
+//     StringRef Sep = "(";
+//     for (auto *E : uniforms()) {
+//       OS << Sep;
+//       E->printPretty(OS, nullptr, Policy);
+//       Sep = ", ";
+//     }
+//     OS << ")";
+//   }
+//   alignments_iterator NI = alignments_begin();
+//   for (auto *E : aligneds()) {
+//     OS << " aligned(";
+//     E->printPretty(OS, nullptr, Policy);
+//     if (*NI) {
+//       OS << ": ";
+//       (*NI)->printPretty(OS, nullptr, Policy);
+//     }
+//     OS << ")";
+//     ++NI;
+//   }
+//   steps_iterator I = steps_begin();
+//   modifiers_iterator MI = modifiers_begin();
+//   for (auto *E : linears()) {
+//     OS << " linear(";
+//     if (*MI != OMPC_LINEAR_unknown)
+//       OS << getOpenMPSimpleClauseTypeName(llvm::omp::Clause::OMPC_linear, *MI)
+//          << "(";
+//     E->printPretty(OS, nullptr, Policy);
+//     if (*MI != OMPC_LINEAR_unknown)
+//       OS << ")";
+//     if (*I) {
+//       OS << ": ";
+//       (*I)->printPretty(OS, nullptr, Policy);
+//     }
+//     OS << ")";
+//     ++I;
+//     ++MI;
+//   }
+// }
 
-void OMPDeclareTargetDeclAttr::printPrettyPragma(
-    raw_ostream &OS, const PrintingPolicy &Policy) const {
-  // Use fake syntax because it is for testing and debugging purpose only.
-  if (getDevType() != DT_Any)
-    OS << " device_type(" << ConvertDevTypeTyToStr(getDevType()) << ")";
-  if (getMapType() != MT_To)
-    OS << ' ' << ConvertMapTypeTyToStr(getMapType());
-}
+// void OMPDeclareTargetDeclAttr::printPrettyPragma(
+//     raw_ostream &OS, const PrintingPolicy &Policy) const {
+//   // Use fake syntax because it is for testing and debugging purpose only.
+//   if (getDevType() != DT_Any)
+//     OS << " device_type(" << ConvertDevTypeTyToStr(getDevType()) << ")";
+//   if (getMapType() != MT_To)
+//     OS << ' ' << ConvertMapTypeTyToStr(getMapType());
+// }
 
-llvm::Optional<OMPDeclareTargetDeclAttr::MapTypeTy>
-OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(const ValueDecl *VD) {
-  if (!VD->hasAttrs())
-    return llvm::None;
-  if (const auto *Attr = VD->getAttr<OMPDeclareTargetDeclAttr>())
-    return Attr->getMapType();
+// llvm::Optional<OMPDeclareTargetDeclAttr::MapTypeTy>
+// OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(const ValueDecl *VD) {
+//   if (!VD->hasAttrs())
+//     return llvm::None;
+//   if (const auto *Attr = VD->getAttr<OMPDeclareTargetDeclAttr>())
+//     return Attr->getMapType();
 
-  return llvm::None;
-}
+//   return llvm::None;
+// }
 
-llvm::Optional<OMPDeclareTargetDeclAttr::DevTypeTy>
-OMPDeclareTargetDeclAttr::getDeviceType(const ValueDecl *VD) {
-  if (!VD->hasAttrs())
-    return llvm::None;
-  if (const auto *Attr = VD->getAttr<OMPDeclareTargetDeclAttr>())
-    return Attr->getDevType();
+// llvm::Optional<OMPDeclareTargetDeclAttr::DevTypeTy>
+// OMPDeclareTargetDeclAttr::getDeviceType(const ValueDecl *VD) {
+//   if (!VD->hasAttrs())
+//     return llvm::None;
+//   if (const auto *Attr = VD->getAttr<OMPDeclareTargetDeclAttr>())
+//     return Attr->getDevType();
 
-  return llvm::None;
-}
+//   return llvm::None;
+// }
 
-namespace latino {
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo &TI);
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo *TI);
-}
+// namespace latino {
+// llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo &TI);
+// llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo *TI);
+// }
 
-void OMPDeclareVariantAttr::printPrettyPragma(
-    raw_ostream &OS, const PrintingPolicy &Policy) const {
-  if (const Expr *E = getVariantFuncRef()) {
-    OS << "(";
-    E->printPretty(OS, nullptr, Policy);
-    OS << ")";
-  }
-  OS << " match(" << traitInfos << ")";
-}
+// void OMPDeclareVariantAttr::printPrettyPragma(
+//     raw_ostream &OS, const PrintingPolicy &Policy) const {
+//   if (const Expr *E = getVariantFuncRef()) {
+//     OS << "(";
+//     E->printPretty(OS, nullptr, Policy);
+//     OS << ")";
+//   }
+//   OS << " match(" << traitInfos << ")";
+// }
 
 #include "latino/AST/AttrImpl.inc"

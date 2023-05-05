@@ -156,27 +156,27 @@ public:
     Strong
   };
 
-  // enum ObjCLifetime {
-  //   /// There is no lifetime qualification on this type.
-  //   OCL_None,
+  enum ObjCLifetime {
+    /// There is no lifetime qualification on this type.
+    OCL_None,
 
-  //   /// This object can be modified without requiring retains or
-  //   /// releases.
-  //   OCL_ExplicitNone,
+    /// This object can be modified without requiring retains or
+    /// releases.
+    OCL_ExplicitNone,
 
-  //   /// Assigning into this object requires the old value to be
-  //   /// released and the new value to be retained.  The timing of the
-  //   /// release of the old value is inexact: it may be moved to
-  //   /// immediately after the last known point where the value is
-  //   /// live.
-  //   OCL_Strong,
+    /// Assigning into this object requires the old value to be
+    /// released and the new value to be retained.  The timing of the
+    /// release of the old value is inexact: it may be moved to
+    /// immediately after the last known point where the value is
+    /// live.
+    OCL_Strong,
 
-  //   /// Reading or writing from this object requires a barrier call.
-  //   OCL_Weak,
+    /// Reading or writing from this object requires a barrier call.
+    OCL_Weak,
 
-  //   /// Assigning into this object requires a lifetime extension.
-  //   OCL_Autoreleasing
-  // };
+    /// Assigning into this object requires a lifetime extension.
+    OCL_Autoreleasing
+  };
 
   enum {
     /// The maximum supported address space number.
@@ -1184,8 +1184,8 @@ public:
   enum DestructionKind {
     DK_none,
     DK_cxx_destructor,
-    DK_objc_strong_lifetime,
-    DK_objc_weak_lifetime,
+    // DK_objc_strong_lifetime,
+    // DK_objc_weak_lifetime,
     DK_nontrivial_c_struct
   };
 
@@ -2123,24 +2123,24 @@ public:
 //   bool is##Id##Type() const;
 // #include "latino/Basic/OpenCLImageTypes.def"
 
-  bool isImageType() const;                     // Any OpenCL image type
+  // bool isImageType() const;                     // Any OpenCL image type
 
-  bool isSamplerT() const;                      // OpenCL sampler_t
-  bool isEventT() const;                        // OpenCL event_t
-  bool isClkEventT() const;                     // OpenCL clk_event_t
-  bool isQueueT() const;                        // OpenCL queue_t
-  bool isReserveIDT() const;                    // OpenCL reserve_id_t
+  // bool isSamplerT() const;                      // OpenCL sampler_t
+  // bool isEventT() const;                        // OpenCL event_t
+  // bool isClkEventT() const;                     // OpenCL clk_event_t
+  // bool isQueueT() const;                        // OpenCL queue_t
+  // bool isReserveIDT() const;                    // OpenCL reserve_id_t
 
 // #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
 //   bool is##Id##Type() const;
 // #include "latino/Basic/OpenCLExtensionTypes.def"
   // Type defined in cl_intel_device_side_avc_motion_estimation OpenCL extension
-  bool isOCLIntelSubgroupAVCType() const;
-  bool isOCLExtOpaqueType() const;              // Any OpenCL extension type
+  // bool isOCLIntelSubgroupAVCType() const;
+  // bool isOCLExtOpaqueType() const;              // Any OpenCL extension type
 
-  bool isPipeType() const;                      // OpenCL pipe type
+  // bool isPipeType() const;                      // OpenCL pipe type
   bool isExtIntType() const;                    // Extended Int Type
-  bool isOpenCLSpecificType() const;            // Any OpenCL specific type
+  // bool isOpenCLSpecificType() const;            // Any OpenCL specific type
 
   /// Determines if this type, which must satisfy
   /// isObjCLifetimeType(), is implicitly __unsafe_unretained rather
@@ -6834,17 +6834,17 @@ inline bool Type::isDecltypeType() const {
 //   }
 // #include "latino/Basic/OpenCLImageTypes.def"
 
-inline bool Type::isSamplerT() const {
-  return isSpecificBuiltinType(BuiltinType::OCLSampler);
-}
+// inline bool Type::isSamplerT() const {
+//   return isSpecificBuiltinType(BuiltinType::OCLSampler);
+// }
 
-inline bool Type::isEventT() const {
-  return isSpecificBuiltinType(BuiltinType::OCLEvent);
-}
+// inline bool Type::isEventT() const {
+//   return isSpecificBuiltinType(BuiltinType::OCLEvent);
+// }
 
-inline bool Type::isClkEventT() const {
-  return isSpecificBuiltinType(BuiltinType::OCLClkEvent);
-}
+// inline bool Type::isClkEventT() const {
+//   return isSpecificBuiltinType(BuiltinType::OCLClkEvent);
+// }
 
 // inline bool Type::isQueueT() const {
 //   return isSpecificBuiltinType(BuiltinType::OCLQueue);
@@ -6861,9 +6861,9 @@ inline bool Type::isClkEventT() const {
 //       false; // end boolean or operation
 // }
 
-inline bool Type::isPipeType() const {
-  return isa<PipeType>(CanonicalType);
-}
+// inline bool Type::isPipeType() const {
+//   return isa<PipeType>(CanonicalType);
+// }
 
 inline bool Type::isExtIntType() const {
   return isa<ExtIntType>(CanonicalType);
@@ -6890,10 +6890,10 @@ inline bool Type::isExtIntType() const {
 //     false; // end of boolean or operation
 // }
 
-inline bool Type::isOpenCLSpecificType() const {
-  return isSamplerT() || isEventT() || isImageType() || isClkEventT() ||
-         isQueueT() || isReserveIDT() || isPipeType() || isOCLExtOpaqueType();
-}
+// inline bool Type::isOpenCLSpecificType() const {
+//   return isSamplerT() || isEventT() || isImageType() || isClkEventT() ||
+//          isQueueT() || isReserveIDT() || isPipeType() || isOCLExtOpaqueType();
+// }
 
 inline bool Type::isTemplateTypeParmType() const {
   return isa<TemplateTypeParmType>(CanonicalType);

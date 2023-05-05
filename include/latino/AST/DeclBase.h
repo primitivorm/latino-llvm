@@ -60,6 +60,7 @@ class NamedDecl;
 // class ObjCInterfaceDecl;
 // class ObjCMethodDecl;
 // class ObjCProtocolDecl;
+class ObjCIvarDecl;
 struct PrintingPolicy;
 class RecordDecl;
 class SourceManager;
@@ -198,20 +199,20 @@ public:
   /// clang.
   ///
   /// This should be kept in sync with ObjCDeclSpec::ObjCDeclQualifier.
-  enum ObjCDeclQualifier {
-    OBJC_TQ_None = 0x0,
-    OBJC_TQ_In = 0x1,
-    OBJC_TQ_Inout = 0x2,
-    OBJC_TQ_Out = 0x4,
-    OBJC_TQ_Bycopy = 0x8,
-    OBJC_TQ_Byref = 0x10,
-    OBJC_TQ_Oneway = 0x20,
+  // enum ObjCDeclQualifier {
+  //   OBJC_TQ_None = 0x0,
+  //   OBJC_TQ_In = 0x1,
+  //   OBJC_TQ_Inout = 0x2,
+  //   OBJC_TQ_Out = 0x4,
+  //   OBJC_TQ_Bycopy = 0x8,
+  //   OBJC_TQ_Byref = 0x10,
+  //   OBJC_TQ_Oneway = 0x20,
 
-    /// The nullability qualifier is set when the nullability of the
-    /// result or parameter was expressed via a context-sensitive
-    /// keyword.
-    OBJC_TQ_CSNullability = 0x40
-  };
+  //   /// The nullability qualifier is set when the nullability of the
+  //   /// result or parameter was expressed via a context-sensitive
+  //   /// keyword.
+  //   OBJC_TQ_CSNullability = 0x40
+  // };
 
   /// The kind of ownership a declaration has, for visibility purposes.
   /// This enumeration is designed such that higher values represent higher
@@ -1492,18 +1493,18 @@ class DeclContext {
   /// Stores the bits used by OMPDeclareReductionDecl.
   /// If modified NumOMPDeclareReductionDeclBits and the accessor
   /// methods in OMPDeclareReductionDecl should be updated appropriately.
-  class OMPDeclareReductionDeclBitfields {
-    friend class OMPDeclareReductionDecl;
-    /// For the bits in DeclContextBitfields
-    uint64_t : NumDeclContextBits;
+  // class OMPDeclareReductionDeclBitfields {
+  //   friend class OMPDeclareReductionDecl;
+  //   /// For the bits in DeclContextBitfields
+  //   uint64_t : NumDeclContextBits;
 
-    /// Kind of initializer,
-    /// function call or omp_priv<init_expr> initializtion.
-    uint64_t InitializerKind : 2;
-  };
+  //   /// Kind of initializer,
+  //   /// function call or omp_priv<init_expr> initializtion.
+  //   uint64_t InitializerKind : 2;
+  // };
 
   /// Number of non-inherited bits in OMPDeclareReductionDeclBitfields.
-  enum { NumOMPDeclareReductionDeclBits = 2 };
+  // enum { NumOMPDeclareReductionDeclBits = 2 };
 
   /// Stores the bits used by FunctionDecl.
   /// If modified NumFunctionDeclBits and the accessor
@@ -1753,11 +1754,11 @@ protected:
     TagDeclBitfields TagDeclBits;
     EnumDeclBitfields EnumDeclBits;
     RecordDeclBitfields RecordDeclBits;
-    OMPDeclareReductionDeclBitfields OMPDeclareReductionDeclBits;
+    // OMPDeclareReductionDeclBitfields OMPDeclareReductionDeclBits;
     FunctionDeclBitfields FunctionDeclBits;
     CXXConstructorDeclBitfields CXXConstructorDeclBits;
-    ObjCMethodDeclBitfields ObjCMethodDeclBits;
-    ObjCContainerDeclBitfields ObjCContainerDeclBits;
+    // ObjCMethodDeclBitfields ObjCMethodDeclBits;
+    // ObjCContainerDeclBitfields ObjCContainerDeclBits;
     LinkageSpecDeclBitfields LinkageSpecDeclBits;
     BlockDeclBitfields BlockDeclBits;
 
@@ -1769,16 +1770,16 @@ protected:
                   "EnumDeclBitfields is larger than 8 bytes!");
     static_assert(sizeof(RecordDeclBitfields) <= 8,
                   "RecordDeclBitfields is larger than 8 bytes!");
-    static_assert(sizeof(OMPDeclareReductionDeclBitfields) <= 8,
-                  "OMPDeclareReductionDeclBitfields is larger than 8 bytes!");
+    // static_assert(sizeof(OMPDeclareReductionDeclBitfields) <= 8,
+    //               "OMPDeclareReductionDeclBitfields is larger than 8 bytes!");
     static_assert(sizeof(FunctionDeclBitfields) <= 8,
                   "FunctionDeclBitfields is larger than 8 bytes!");
     static_assert(sizeof(CXXConstructorDeclBitfields) <= 8,
                   "CXXConstructorDeclBitfields is larger than 8 bytes!");
-    static_assert(sizeof(ObjCMethodDeclBitfields) <= 8,
-                  "ObjCMethodDeclBitfields is larger than 8 bytes!");
-    static_assert(sizeof(ObjCContainerDeclBitfields) <= 8,
-                  "ObjCContainerDeclBitfields is larger than 8 bytes!");
+    // static_assert(sizeof(ObjCMethodDeclBitfields) <= 8,
+    //               "ObjCMethodDeclBitfields is larger than 8 bytes!");
+    // static_assert(sizeof(ObjCContainerDeclBitfields) <= 8,
+    //               "ObjCContainerDeclBitfields is larger than 8 bytes!");
     static_assert(sizeof(LinkageSpecDeclBitfields) <= 8,
                   "LinkageSpecDeclBitfields is larger than 8 bytes!");
     static_assert(sizeof(BlockDeclBitfields) <= 8,

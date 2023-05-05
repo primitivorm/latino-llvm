@@ -16,7 +16,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/ComputeDependence.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
@@ -1755,7 +1755,7 @@ bool CastExpr::CastConsistency() const {
   case CK_ARCReclaimReturnedObject:
   case CK_ARCExtendBlockObject:
   case CK_ZeroToOCLOpaqueType:
-  case CK_IntToOCLSampler:
+  // case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToIntegral:
   case CK_IntegralToFixedPoint:
@@ -2580,19 +2580,19 @@ bool Expr::isUnusedResultAWarning(const Expr *&WarnE, SourceLocation &Loc,
   //   R1 = getSourceRange();
   //   return true;
 
-  // case PseudoObjectExprClass: {
-  //   const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
+  case PseudoObjectExprClass: {
+    const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
 
-  //   // Only complain about things that have the form of a getter.
-  //   if (isa<UnaryOperator>(PO->getSyntacticForm()) ||
-  //       isa<BinaryOperator>(PO->getSyntacticForm()))
-  //     return false;
+    // Only complain about things that have the form of a getter.
+    if (isa<UnaryOperator>(PO->getSyntacticForm()) ||
+        isa<BinaryOperator>(PO->getSyntacticForm()))
+      return false;
 
-  //   WarnE = this;
-  //   Loc = getExprLoc();
-  //   R1 = getSourceRange();
-  //   return true;
-  // }
+    WarnE = this;
+    Loc = getExprLoc();
+    R1 = getSourceRange();
+    return true;
+  }
 
   case StmtExprClass: {
     // Statement exprs don't logically have side effects themselves, but are
@@ -3304,8 +3304,8 @@ bool Expr::isConstantInitializer(ASTContext &Ctx, bool IsForRef,
         CE->getCastKind() == CK_ToUnion ||
         CE->getCastKind() == CK_ConstructorConversion ||
         CE->getCastKind() == CK_NonAtomicToAtomic ||
-        CE->getCastKind() == CK_AtomicToNonAtomic ||
-        CE->getCastKind() == CK_IntToOCLSampler)
+        CE->getCastKind() == CK_AtomicToNonAtomic /*||
+        CE->getCastKind() == CK_IntToOCLSampler*/)
       return CE->getSubExpr()->isConstantInitializer(Ctx, false, Culprit);
 
     break;
@@ -3514,9 +3514,9 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
   case ParenExprClass:
   case ArraySubscriptExprClass:
   case MatrixSubscriptExprClass:
-  case OMPArraySectionExprClass:
-  case OMPArrayShapingExprClass:
-  case OMPIteratorExprClass:
+  // case OMPArraySectionExprClass:
+  // case OMPArrayShapingExprClass:
+  // case OMPIteratorExprClass:
   case MemberExprClass:
   case ConditionalOperatorClass:
   case BinaryConditionalOperatorClass:
@@ -3634,21 +3634,21 @@ bool Expr::HasSideEffects(const ASTContext &Ctx,
     return false;
   }
 
-  // case PseudoObjectExprClass: {
-  //   // Only look for side-effects in the semantic form, and look past
-  //   // OpaqueValueExpr bindings in that form.
-  //   const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
-  //   for (PseudoObjectExpr::const_semantics_iterator I = PO->semantics_begin(),
-  //                                                   E = PO->semantics_end();
-  //        I != E; ++I) {
-  //     const Expr *Subexpr = *I;
-  //     if (const OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Subexpr))
-  //       Subexpr = OVE->getSourceExpr();
-  //     if (Subexpr->HasSideEffects(Ctx, IncludePossibleEffects))
-  //       return true;
-  //   }
-  //   return false;
-  // }
+  case PseudoObjectExprClass: {
+    // Only look for side-effects in the semantic form, and look past
+    // OpaqueValueExpr bindings in that form.
+    const PseudoObjectExpr *PO = cast<PseudoObjectExpr>(this);
+    for (PseudoObjectExpr::const_semantics_iterator I = PO->semantics_begin(),
+                                                    E = PO->semantics_end();
+         I != E; ++I) {
+      const Expr *Subexpr = *I;
+      if (const OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Subexpr))
+        Subexpr = OVE->getSourceExpr();
+      if (Subexpr->HasSideEffects(Ctx, IncludePossibleEffects))
+        return true;
+    }
+    return false;
+  }
 
   // case ObjCBoxedExprClass:
   // case ObjCArrayLiteralClass:
@@ -3765,12 +3765,12 @@ Expr::isNullPointerConstant(ASTContext &Ctx,
         // has non-default address space it is not treated as nullptr.
         // (__generic void*)0 in OpenCL 2.0 should not be treated as nullptr
         // since it cannot be assigned to a pointer to constant address space.
-        if ((Ctx.getLangOpts().OpenCLVersion >= 200 &&
-             Pointee.getAddressSpace() == LangAS::opencl_generic) ||
-            (Ctx.getLangOpts().OpenCL &&
-             Ctx.getLangOpts().OpenCLVersion < 200 &&
-             Pointee.getAddressSpace() == LangAS::opencl_private))
-          Qs.removeAddressSpace();
+        // if ((Ctx.getLangOpts().OpenCLVersion >= 200 &&
+        //      Pointee.getAddressSpace() == LangAS::opencl_generic) ||
+        //     (Ctx.getLangOpts().OpenCL &&
+        //      Ctx.getLangOpts().OpenCLVersion < 200 &&
+        //      Pointee.getAddressSpace() == LangAS::opencl_private))
+        //   Qs.removeAddressSpace();
 
         if (Pointee->isVoidType() && Qs.empty() && // to void*
             CE->getSubExpr()->getType()->isIntegerType()) // from int
@@ -4594,10 +4594,10 @@ PseudoObjectExpr *PseudoObjectExpr::Create(const ASTContext &Context,
   return new(buffer) PseudoObjectExpr(sh, numSemanticExprs);
 }
 
-// PseudoObjectExpr::PseudoObjectExpr(EmptyShell shell, unsigned numSemanticExprs)
-//   : Expr(PseudoObjectExprClass, shell) {
-//   PseudoObjectExprBits.NumSubExprs = numSemanticExprs + 1;
-// }
+PseudoObjectExpr::PseudoObjectExpr(EmptyShell shell, unsigned numSemanticExprs)
+  : Expr(PseudoObjectExprClass, shell) {
+  PseudoObjectExprBits.NumSubExprs = numSemanticExprs + 1;
+}
 
 PseudoObjectExpr *PseudoObjectExpr::Create(const ASTContext &C, Expr *syntax,
                                            ArrayRef<Expr*> semantics,
@@ -4623,25 +4623,25 @@ PseudoObjectExpr *PseudoObjectExpr::Create(const ASTContext &C, Expr *syntax,
                                       resultIndex);
 }
 
-// PseudoObjectExpr::PseudoObjectExpr(QualType type, ExprValueKind VK,
-//                                    Expr *syntax, ArrayRef<Expr *> semantics,
-//                                    unsigned resultIndex)
-//     : Expr(PseudoObjectExprClass, type, VK, OK_Ordinary) {
-//   PseudoObjectExprBits.NumSubExprs = semantics.size() + 1;
-//   PseudoObjectExprBits.ResultIndex = resultIndex + 1;
+PseudoObjectExpr::PseudoObjectExpr(QualType type, ExprValueKind VK,
+                                   Expr *syntax, ArrayRef<Expr *> semantics,
+                                   unsigned resultIndex)
+    : Expr(PseudoObjectExprClass, type, VK, OK_Ordinary) {
+  PseudoObjectExprBits.NumSubExprs = semantics.size() + 1;
+  PseudoObjectExprBits.ResultIndex = resultIndex + 1;
 
-//   for (unsigned i = 0, e = semantics.size() + 1; i != e; ++i) {
-//     Expr *E = (i == 0 ? syntax : semantics[i-1]);
-//     getSubExprsBuffer()[i] = E;
+  for (unsigned i = 0, e = semantics.size() + 1; i != e; ++i) {
+    Expr *E = (i == 0 ? syntax : semantics[i-1]);
+    getSubExprsBuffer()[i] = E;
 
-//     if (isa<OpaqueValueExpr>(E))
-//       assert(cast<OpaqueValueExpr>(E)->getSourceExpr() != nullptr &&
-//              "opaque-value semantic expressions for pseudo-object "
-//              "operations must have sources");
-//   }
+    if (isa<OpaqueValueExpr>(E))
+      assert(cast<OpaqueValueExpr>(E)->getSourceExpr() != nullptr &&
+             "opaque-value semantic expressions for pseudo-object "
+             "operations must have sources");
+  }
 
-//   setDependence(computeDependence(this));
-// }
+  setDependence(computeDependence(this));
+}
 
 //===----------------------------------------------------------------------===//
 //  Child Iterators for iterating over subexpressions/substatements
@@ -4749,33 +4749,33 @@ QualType AtomicExpr::getValueType() const {
   return T;
 }
 
-QualType OMPArraySectionExpr::getBaseOriginalType(const Expr *Base) {
-  unsigned ArraySectionCount = 0;
-  while (auto *OASE = dyn_cast<OMPArraySectionExpr>(Base->IgnoreParens())) {
-    Base = OASE->getBase();
-    ++ArraySectionCount;
-  }
-  while (auto *ASE =
-             dyn_cast<ArraySubscriptExpr>(Base->IgnoreParenImpCasts())) {
-    Base = ASE->getBase();
-    ++ArraySectionCount;
-  }
-  Base = Base->IgnoreParenImpCasts();
-  auto OriginalTy = Base->getType();
-  if (auto *DRE = dyn_cast<DeclRefExpr>(Base))
-    if (auto *PVD = dyn_cast<ParmVarDecl>(DRE->getDecl()))
-      OriginalTy = PVD->getOriginalType().getNonReferenceType();
+// QualType OMPArraySectionExpr::getBaseOriginalType(const Expr *Base) {
+//   unsigned ArraySectionCount = 0;
+//   while (auto *OASE = dyn_cast<OMPArraySectionExpr>(Base->IgnoreParens())) {
+//     Base = OASE->getBase();
+//     ++ArraySectionCount;
+//   }
+//   while (auto *ASE =
+//              dyn_cast<ArraySubscriptExpr>(Base->IgnoreParenImpCasts())) {
+//     Base = ASE->getBase();
+//     ++ArraySectionCount;
+//   }
+//   Base = Base->IgnoreParenImpCasts();
+//   auto OriginalTy = Base->getType();
+//   if (auto *DRE = dyn_cast<DeclRefExpr>(Base))
+//     if (auto *PVD = dyn_cast<ParmVarDecl>(DRE->getDecl()))
+//       OriginalTy = PVD->getOriginalType().getNonReferenceType();
 
-  for (unsigned Cnt = 0; Cnt < ArraySectionCount; ++Cnt) {
-    if (OriginalTy->isAnyPointerType())
-      OriginalTy = OriginalTy->getPointeeType();
-    else {
-      assert (OriginalTy->isArrayType());
-      OriginalTy = OriginalTy->castAsArrayTypeUnsafe()->getElementType();
-    }
-  }
-  return OriginalTy;
-}
+//   for (unsigned Cnt = 0; Cnt < ArraySectionCount; ++Cnt) {
+//     if (OriginalTy->isAnyPointerType())
+//       OriginalTy = OriginalTy->getPointeeType();
+//     else {
+//       assert (OriginalTy->isArrayType());
+//       OriginalTy = OriginalTy->castAsArrayTypeUnsafe()->getElementType();
+//     }
+//   }
+//   return OriginalTy;
+// }
 
 RecoveryExpr::RecoveryExpr(ASTContext &Ctx, QualType T, SourceLocation BeginLoc,
                            SourceLocation EndLoc, ArrayRef<Expr *> SubExprs)
@@ -4805,182 +4805,182 @@ RecoveryExpr *RecoveryExpr::CreateEmpty(ASTContext &Ctx, unsigned NumSubExprs) {
   return new (Mem) RecoveryExpr(EmptyShell(), NumSubExprs);
 }
 
-void OMPArrayShapingExpr::setDimensions(ArrayRef<Expr *> Dims) {
-  assert(
-      NumDims == Dims.size() &&
-      "Preallocated number of dimensions is different from the provided one.");
-  llvm::copy(Dims, getTrailingObjects<Expr *>());
-}
+// void OMPArrayShapingExpr::setDimensions(ArrayRef<Expr *> Dims) {
+//   assert(
+//       NumDims == Dims.size() &&
+//       "Preallocated number of dimensions is different from the provided one.");
+//   llvm::copy(Dims, getTrailingObjects<Expr *>());
+// }
 
-void OMPArrayShapingExpr::setBracketsRanges(ArrayRef<SourceRange> BR) {
-  assert(
-      NumDims == BR.size() &&
-      "Preallocated number of dimensions is different from the provided one.");
-  llvm::copy(BR, getTrailingObjects<SourceRange>());
-}
+// void OMPArrayShapingExpr::setBracketsRanges(ArrayRef<SourceRange> BR) {
+//   assert(
+//       NumDims == BR.size() &&
+//       "Preallocated number of dimensions is different from the provided one.");
+//   llvm::copy(BR, getTrailingObjects<SourceRange>());
+// }
 
-OMPArrayShapingExpr::OMPArrayShapingExpr(QualType ExprTy, Expr *Op,
-                                         SourceLocation L, SourceLocation R,
-                                         ArrayRef<Expr *> Dims)
-    : Expr(OMPArrayShapingExprClass, ExprTy, VK_LValue, OK_Ordinary), LPLoc(L),
-      RPLoc(R), NumDims(Dims.size()) {
-  setBase(Op);
-  setDimensions(Dims);
-  setDependence(computeDependence(this));
-}
+// OMPArrayShapingExpr::OMPArrayShapingExpr(QualType ExprTy, Expr *Op,
+//                                          SourceLocation L, SourceLocation R,
+//                                          ArrayRef<Expr *> Dims)
+//     : Expr(OMPArrayShapingExprClass, ExprTy, VK_LValue, OK_Ordinary), LPLoc(L),
+//       RPLoc(R), NumDims(Dims.size()) {
+//   setBase(Op);
+//   setDimensions(Dims);
+//   setDependence(computeDependence(this));
+// }
 
-OMPArrayShapingExpr *
-OMPArrayShapingExpr::Create(const ASTContext &Context, QualType T, Expr *Op,
-                            SourceLocation L, SourceLocation R,
-                            ArrayRef<Expr *> Dims,
-                            ArrayRef<SourceRange> BracketRanges) {
-  assert(Dims.size() == BracketRanges.size() &&
-         "Different number of dimensions and brackets ranges.");
-  void *Mem = Context.Allocate(
-      totalSizeToAlloc<Expr *, SourceRange>(Dims.size() + 1, Dims.size()),
-      alignof(OMPArrayShapingExpr));
-  auto *E = new (Mem) OMPArrayShapingExpr(T, Op, L, R, Dims);
-  E->setBracketsRanges(BracketRanges);
-  return E;
-}
+// OMPArrayShapingExpr *
+// OMPArrayShapingExpr::Create(const ASTContext &Context, QualType T, Expr *Op,
+//                             SourceLocation L, SourceLocation R,
+//                             ArrayRef<Expr *> Dims,
+//                             ArrayRef<SourceRange> BracketRanges) {
+//   assert(Dims.size() == BracketRanges.size() &&
+//          "Different number of dimensions and brackets ranges.");
+//   void *Mem = Context.Allocate(
+//       totalSizeToAlloc<Expr *, SourceRange>(Dims.size() + 1, Dims.size()),
+//       alignof(OMPArrayShapingExpr));
+//   auto *E = new (Mem) OMPArrayShapingExpr(T, Op, L, R, Dims);
+//   E->setBracketsRanges(BracketRanges);
+//   return E;
+// }
 
-OMPArrayShapingExpr *OMPArrayShapingExpr::CreateEmpty(const ASTContext &Context,
-                                                      unsigned NumDims) {
-  void *Mem = Context.Allocate(
-      totalSizeToAlloc<Expr *, SourceRange>(NumDims + 1, NumDims),
-      alignof(OMPArrayShapingExpr));
-  return new (Mem) OMPArrayShapingExpr(EmptyShell(), NumDims);
-}
+// OMPArrayShapingExpr *OMPArrayShapingExpr::CreateEmpty(const ASTContext &Context,
+//                                                       unsigned NumDims) {
+//   void *Mem = Context.Allocate(
+//       totalSizeToAlloc<Expr *, SourceRange>(NumDims + 1, NumDims),
+//       alignof(OMPArrayShapingExpr));
+//   return new (Mem) OMPArrayShapingExpr(EmptyShell(), NumDims);
+// }
 
-void OMPIteratorExpr::setIteratorDeclaration(unsigned I, Decl *D) {
-  assert(I < NumIterators &&
-         "Idx is greater or equal the number of iterators definitions.");
-  getTrailingObjects<Decl *>()[I] = D;
-}
+// void OMPIteratorExpr::setIteratorDeclaration(unsigned I, Decl *D) {
+//   assert(I < NumIterators &&
+//          "Idx is greater or equal the number of iterators definitions.");
+//   getTrailingObjects<Decl *>()[I] = D;
+// }
 
-void OMPIteratorExpr::setAssignmentLoc(unsigned I, SourceLocation Loc) {
-  assert(I < NumIterators &&
-         "Idx is greater or equal the number of iterators definitions.");
-  getTrailingObjects<
-      SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
-                        static_cast<int>(RangeLocOffset::AssignLoc)] = Loc;
-}
+// void OMPIteratorExpr::setAssignmentLoc(unsigned I, SourceLocation Loc) {
+//   assert(I < NumIterators &&
+//          "Idx is greater or equal the number of iterators definitions.");
+//   getTrailingObjects<
+//       SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
+//                         static_cast<int>(RangeLocOffset::AssignLoc)] = Loc;
+// }
 
-void OMPIteratorExpr::setIteratorRange(unsigned I, Expr *Begin,
-                                       SourceLocation ColonLoc, Expr *End,
-                                       SourceLocation SecondColonLoc,
-                                       Expr *Step) {
-  assert(I < NumIterators &&
-         "Idx is greater or equal the number of iterators definitions.");
-  getTrailingObjects<Expr *>()[I * static_cast<int>(RangeExprOffset::Total) +
-                               static_cast<int>(RangeExprOffset::Begin)] =
-      Begin;
-  getTrailingObjects<Expr *>()[I * static_cast<int>(RangeExprOffset::Total) +
-                               static_cast<int>(RangeExprOffset::End)] = End;
-  getTrailingObjects<Expr *>()[I * static_cast<int>(RangeExprOffset::Total) +
-                               static_cast<int>(RangeExprOffset::Step)] = Step;
-  getTrailingObjects<
-      SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
-                        static_cast<int>(RangeLocOffset::FirstColonLoc)] =
-      ColonLoc;
-  getTrailingObjects<
-      SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
-                        static_cast<int>(RangeLocOffset::SecondColonLoc)] =
-      SecondColonLoc;
-}
+// void OMPIteratorExpr::setIteratorRange(unsigned I, Expr *Begin,
+//                                        SourceLocation ColonLoc, Expr *End,
+//                                        SourceLocation SecondColonLoc,
+//                                        Expr *Step) {
+//   assert(I < NumIterators &&
+//          "Idx is greater or equal the number of iterators definitions.");
+//   getTrailingObjects<Expr *>()[I * static_cast<int>(RangeExprOffset::Total) +
+//                                static_cast<int>(RangeExprOffset::Begin)] =
+//       Begin;
+//   getTrailingObjects<Expr *>()[I * static_cast<int>(RangeExprOffset::Total) +
+//                                static_cast<int>(RangeExprOffset::End)] = End;
+//   getTrailingObjects<Expr *>()[I * static_cast<int>(RangeExprOffset::Total) +
+//                                static_cast<int>(RangeExprOffset::Step)] = Step;
+//   getTrailingObjects<
+//       SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
+//                         static_cast<int>(RangeLocOffset::FirstColonLoc)] =
+//       ColonLoc;
+//   getTrailingObjects<
+//       SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
+//                         static_cast<int>(RangeLocOffset::SecondColonLoc)] =
+//       SecondColonLoc;
+// }
 
-Decl *OMPIteratorExpr::getIteratorDecl(unsigned I) {
-  return getTrailingObjects<Decl *>()[I];
-}
+// Decl *OMPIteratorExpr::getIteratorDecl(unsigned I) {
+//   return getTrailingObjects<Decl *>()[I];
+// }
 
-OMPIteratorExpr::IteratorRange OMPIteratorExpr::getIteratorRange(unsigned I) {
-  IteratorRange Res;
-  Res.Begin =
-      getTrailingObjects<Expr *>()[I * static_cast<int>(
-                                           RangeExprOffset::Total) +
-                                   static_cast<int>(RangeExprOffset::Begin)];
-  Res.End =
-      getTrailingObjects<Expr *>()[I * static_cast<int>(
-                                           RangeExprOffset::Total) +
-                                   static_cast<int>(RangeExprOffset::End)];
-  Res.Step =
-      getTrailingObjects<Expr *>()[I * static_cast<int>(
-                                           RangeExprOffset::Total) +
-                                   static_cast<int>(RangeExprOffset::Step)];
-  return Res;
-}
+// OMPIteratorExpr::IteratorRange OMPIteratorExpr::getIteratorRange(unsigned I) {
+//   IteratorRange Res;
+//   Res.Begin =
+//       getTrailingObjects<Expr *>()[I * static_cast<int>(
+//                                            RangeExprOffset::Total) +
+//                                    static_cast<int>(RangeExprOffset::Begin)];
+//   Res.End =
+//       getTrailingObjects<Expr *>()[I * static_cast<int>(
+//                                            RangeExprOffset::Total) +
+//                                    static_cast<int>(RangeExprOffset::End)];
+//   Res.Step =
+//       getTrailingObjects<Expr *>()[I * static_cast<int>(
+//                                            RangeExprOffset::Total) +
+//                                    static_cast<int>(RangeExprOffset::Step)];
+//   return Res;
+// }
 
-SourceLocation OMPIteratorExpr::getAssignLoc(unsigned I) const {
-  return getTrailingObjects<
-      SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
-                        static_cast<int>(RangeLocOffset::AssignLoc)];
-}
+// SourceLocation OMPIteratorExpr::getAssignLoc(unsigned I) const {
+//   return getTrailingObjects<
+//       SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
+//                         static_cast<int>(RangeLocOffset::AssignLoc)];
+// }
 
-SourceLocation OMPIteratorExpr::getColonLoc(unsigned I) const {
-  return getTrailingObjects<
-      SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
-                        static_cast<int>(RangeLocOffset::FirstColonLoc)];
-}
+// SourceLocation OMPIteratorExpr::getColonLoc(unsigned I) const {
+//   return getTrailingObjects<
+//       SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
+//                         static_cast<int>(RangeLocOffset::FirstColonLoc)];
+// }
 
-SourceLocation OMPIteratorExpr::getSecondColonLoc(unsigned I) const {
-  return getTrailingObjects<
-      SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
-                        static_cast<int>(RangeLocOffset::SecondColonLoc)];
-}
+// SourceLocation OMPIteratorExpr::getSecondColonLoc(unsigned I) const {
+//   return getTrailingObjects<
+//       SourceLocation>()[I * static_cast<int>(RangeLocOffset::Total) +
+//                         static_cast<int>(RangeLocOffset::SecondColonLoc)];
+// }
 
-void OMPIteratorExpr::setHelper(unsigned I, const OMPIteratorHelperData &D) {
-  getTrailingObjects<OMPIteratorHelperData>()[I] = D;
-}
+// void OMPIteratorExpr::setHelper(unsigned I, const OMPIteratorHelperData &D) {
+//   getTrailingObjects<OMPIteratorHelperData>()[I] = D;
+// }
 
-OMPIteratorHelperData &OMPIteratorExpr::getHelper(unsigned I) {
-  return getTrailingObjects<OMPIteratorHelperData>()[I];
-}
+// OMPIteratorHelperData &OMPIteratorExpr::getHelper(unsigned I) {
+//   return getTrailingObjects<OMPIteratorHelperData>()[I];
+// }
 
-const OMPIteratorHelperData &OMPIteratorExpr::getHelper(unsigned I) const {
-  return getTrailingObjects<OMPIteratorHelperData>()[I];
-}
+// const OMPIteratorHelperData &OMPIteratorExpr::getHelper(unsigned I) const {
+//   return getTrailingObjects<OMPIteratorHelperData>()[I];
+// }
 
-OMPIteratorExpr::OMPIteratorExpr(
-    QualType ExprTy, SourceLocation IteratorKwLoc, SourceLocation L,
-    SourceLocation R, ArrayRef<OMPIteratorExpr::IteratorDefinition> Data,
-    ArrayRef<OMPIteratorHelperData> Helpers)
-    : Expr(OMPIteratorExprClass, ExprTy, VK_LValue, OK_Ordinary),
-      IteratorKwLoc(IteratorKwLoc), LPLoc(L), RPLoc(R),
-      NumIterators(Data.size()) {
-  for (unsigned I = 0, E = Data.size(); I < E; ++I) {
-    const IteratorDefinition &D = Data[I];
-    setIteratorDeclaration(I, D.IteratorDecl);
-    setAssignmentLoc(I, D.AssignmentLoc);
-    setIteratorRange(I, D.Range.Begin, D.ColonLoc, D.Range.End,
-                     D.SecondColonLoc, D.Range.Step);
-    setHelper(I, Helpers[I]);
-  }
-  setDependence(computeDependence(this));
-}
+// OMPIteratorExpr::OMPIteratorExpr(
+//     QualType ExprTy, SourceLocation IteratorKwLoc, SourceLocation L,
+//     SourceLocation R, ArrayRef<OMPIteratorExpr::IteratorDefinition> Data,
+//     ArrayRef<OMPIteratorHelperData> Helpers)
+//     : Expr(OMPIteratorExprClass, ExprTy, VK_LValue, OK_Ordinary),
+//       IteratorKwLoc(IteratorKwLoc), LPLoc(L), RPLoc(R),
+//       NumIterators(Data.size()) {
+//   for (unsigned I = 0, E = Data.size(); I < E; ++I) {
+//     const IteratorDefinition &D = Data[I];
+//     setIteratorDeclaration(I, D.IteratorDecl);
+//     setAssignmentLoc(I, D.AssignmentLoc);
+//     setIteratorRange(I, D.Range.Begin, D.ColonLoc, D.Range.End,
+//                      D.SecondColonLoc, D.Range.Step);
+//     setHelper(I, Helpers[I]);
+//   }
+//   setDependence(computeDependence(this));
+// }
 
-OMPIteratorExpr *
-OMPIteratorExpr::Create(const ASTContext &Context, QualType T,
-                        SourceLocation IteratorKwLoc, SourceLocation L,
-                        SourceLocation R,
-                        ArrayRef<OMPIteratorExpr::IteratorDefinition> Data,
-                        ArrayRef<OMPIteratorHelperData> Helpers) {
-  assert(Data.size() == Helpers.size() &&
-         "Data and helpers must have the same size.");
-  void *Mem = Context.Allocate(
-      totalSizeToAlloc<Decl *, Expr *, SourceLocation, OMPIteratorHelperData>(
-          Data.size(), Data.size() * static_cast<int>(RangeExprOffset::Total),
-          Data.size() * static_cast<int>(RangeLocOffset::Total),
-          Helpers.size()),
-      alignof(OMPIteratorExpr));
-  return new (Mem) OMPIteratorExpr(T, IteratorKwLoc, L, R, Data, Helpers);
-}
+// OMPIteratorExpr *
+// OMPIteratorExpr::Create(const ASTContext &Context, QualType T,
+//                         SourceLocation IteratorKwLoc, SourceLocation L,
+//                         SourceLocation R,
+//                         ArrayRef<OMPIteratorExpr::IteratorDefinition> Data,
+//                         ArrayRef<OMPIteratorHelperData> Helpers) {
+//   assert(Data.size() == Helpers.size() &&
+//          "Data and helpers must have the same size.");
+//   void *Mem = Context.Allocate(
+//       totalSizeToAlloc<Decl *, Expr *, SourceLocation, OMPIteratorHelperData>(
+//           Data.size(), Data.size() * static_cast<int>(RangeExprOffset::Total),
+//           Data.size() * static_cast<int>(RangeLocOffset::Total),
+//           Helpers.size()),
+//       alignof(OMPIteratorExpr));
+//   return new (Mem) OMPIteratorExpr(T, IteratorKwLoc, L, R, Data, Helpers);
+// }
 
-OMPIteratorExpr *OMPIteratorExpr::CreateEmpty(const ASTContext &Context,
-                                              unsigned NumIterators) {
-  void *Mem = Context.Allocate(
-      totalSizeToAlloc<Decl *, Expr *, SourceLocation, OMPIteratorHelperData>(
-          NumIterators, NumIterators * static_cast<int>(RangeExprOffset::Total),
-          NumIterators * static_cast<int>(RangeLocOffset::Total), NumIterators),
-      alignof(OMPIteratorExpr));
-  return new (Mem) OMPIteratorExpr(EmptyShell(), NumIterators);
-}
+// OMPIteratorExpr *OMPIteratorExpr::CreateEmpty(const ASTContext &Context,
+//                                               unsigned NumIterators) {
+//   void *Mem = Context.Allocate(
+//       totalSizeToAlloc<Decl *, Expr *, SourceLocation, OMPIteratorHelperData>(
+//           NumIterators, NumIterators * static_cast<int>(RangeExprOffset::Total),
+//           NumIterators * static_cast<int>(RangeLocOffset::Total), NumIterators),
+//       alignof(OMPIteratorExpr));
+//   return new (Mem) OMPIteratorExpr(EmptyShell(), NumIterators);
+// }

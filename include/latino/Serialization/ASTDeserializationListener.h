@@ -46,7 +46,7 @@ public:
   /// A decl was deserialized from the AST file.
   virtual void DeclRead(serialization::DeclID ID, const Decl *D) { }
   /// A selector was read from the AST file.
-  virtual void SelectorRead(serialization::SelectorID iD, Selector Sel) {}
+  // virtual void SelectorRead(serialization::SelectorID iD, Selector Sel) {}
   /// A macro definition was read from the AST file.
   virtual void MacroDefinitionRead(serialization::PreprocessedEntityID,
                                    MacroDefinitionRecord *MD) {}

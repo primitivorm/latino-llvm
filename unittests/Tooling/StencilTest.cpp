@@ -483,11 +483,11 @@ TEST(StencilToStringTest, AccessOpText) {
   EXPECT_EQ(S->toString(), Expected);
 }
 
-TEST(StencilToStringTest, AccessOpSelector) {
-  auto S = access("Id", cat(name("otherId")));
-  StringRef Expected = R"repr(access("Id", selection(...)))repr";
-  EXPECT_EQ(S->toString(), Expected);
-}
+// TEST(StencilToStringTest, AccessOpSelector) {
+//   auto S = access("Id", cat(name("otherId")));
+//   StringRef Expected = R"repr(access("Id", selection(...)))repr";
+//   EXPECT_EQ(S->toString(), Expected);
+// }
 
 TEST(StencilToStringTest, AccessOpStencil) {
   auto S = access("Id", cat("foo_", "bar"));

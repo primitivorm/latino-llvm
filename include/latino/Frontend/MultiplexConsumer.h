@@ -36,7 +36,7 @@ public:
   void MacroRead(serialization::MacroID ID, MacroInfo *MI) override;
   void TypeRead(serialization::TypeIdx Idx, QualType T) override;
   void DeclRead(serialization::DeclID ID, const Decl *D) override;
-  void SelectorRead(serialization::SelectorID iD, Selector Sel) override;
+  // void SelectorRead(serialization::SelectorID iD, Selector Sel) override;
   void MacroDefinitionRead(serialization::PreprocessedEntityID,
                            MacroDefinitionRecord *MD) override;
   void ModuleRead(serialization::SubmoduleID ID, Module *Mod) override;

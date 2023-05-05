@@ -19,7 +19,7 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/CharUnits.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
 #include "latino/AST/RecursiveASTVisitor.h"
@@ -838,8 +838,8 @@ ExprResult Sema::BuildCXXThrow(SourceLocation OpLoc, Expr *Ex,
     CUDADiagIfDeviceCode(OpLoc, diag::err_cuda_device_exceptions)
         << "throw" << CurrentCUDATarget();
 
-  if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
-    Diag(OpLoc, diag::err_omp_simd_region_cannot_use_stmt) << "throw";
+  // if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
+  //   Diag(OpLoc, diag::err_omp_simd_region_cannot_use_stmt) << "throw";
 
   if (Ex && !Ex->isTypeDependent()) {
     QualType ExceptionObjectTy = Context.getExceptionObjectType(Ex->getType());
@@ -1962,12 +1962,12 @@ Sema::BuildCXXNew(SourceRange Range, bool UseGlobal,
     return ExprError();
 
   // In ARC, infer 'retaining' for the allocated
-  if (getLangOpts().ObjCAutoRefCount &&
-      AllocType.getObjCLifetime() == Qualifiers::OCL_None &&
-      AllocType->isObjCLifetimeType()) {
-    AllocType = Context.getLifetimeQualifiedType(AllocType,
-                                    AllocType->getObjCARCImplicitLifetime());
-  }
+  // if (getLangOpts().ObjCAutoRefCount &&
+  //     AllocType.getObjCLifetime() == Qualifiers::OCL_None &&
+  //     AllocType->isObjCLifetimeType()) {
+  //   AllocType = Context.getLifetimeQualifiedType(AllocType,
+  //                                   AllocType->getObjCARCImplicitLifetime());
+  // }
 
   QualType ResultType = Context.getPointerType(AllocType);
 
@@ -2344,15 +2344,15 @@ bool Sema::CheckAllocatedType(QualType AllocType, SourceLocation Loc,
     return Diag(Loc, diag::err_address_space_qualified_new)
       << AllocType.getUnqualifiedType()
       << AllocType.getQualifiers().getAddressSpaceAttributePrintValue();
-  else if (getLangOpts().ObjCAutoRefCount) {
-    if (const ArrayType *AT = Context.getAsArrayType(AllocType)) {
-      QualType BaseAllocType = Context.getBaseElementType(AT);
-      if (BaseAllocType.getObjCLifetime() == Qualifiers::OCL_None &&
-          BaseAllocType->isObjCLifetimeType())
-        return Diag(Loc, diag::err_arc_new_array_without_ownership)
-          << BaseAllocType;
-    }
-  }
+  // else if (getLangOpts().ObjCAutoRefCount) {
+  //   if (const ArrayType *AT = Context.getAsArrayType(AllocType)) {
+  //     QualType BaseAllocType = Context.getBaseElementType(AT);
+  //     if (BaseAllocType.getObjCLifetime() == Qualifiers::OCL_None &&
+  //         BaseAllocType->isObjCLifetimeType())
+  //       return Diag(Loc, diag::err_arc_new_array_without_ownership)
+  //         << BaseAllocType;
+  //   }
+  // }
 
   return false;
 }
@@ -2562,9 +2562,9 @@ bool Sema::FindAllocationFunctions(SourceLocation StartLoc, SourceRange Range,
     if (getLangOpts().OpenCLCPlusPlus && R.empty()) {
       if (PlaceArgs.empty()) {
         Diag(StartLoc, diag::err_openclcxx_not_supported) << "default new";
-      } else {
+      } /*else {
         Diag(StartLoc, diag::err_openclcxx_placement_new);
-      }
+      }*/
       return true;
     }
 
@@ -4265,8 +4265,8 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
     //   (void) PrepareCastToObjCObjectPointer(E);
     //   From = E.get();
     // }
-    if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers())
-      CheckObjCConversion(SourceRange(), NewToType, From, CCK);
+    // if (getLangOpts().allowsNonTrivialObjCLifetimeQualifiers())
+    //   CheckObjCConversion(SourceRange(), NewToType, From, CCK);
     From = ImpCastExprToType(From, NewToType, Kind, VK_RValue, &BasePath, CCK)
              .get();
     break;
@@ -4711,18 +4711,18 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
     // considered scalar types. However, such types do not actually behave
     // like scalar types at run time (since they may require retain/release
     // operations), so we report them as non-scalar.
-    if (T->isObjCLifetimeType()) {
-      switch (T.getObjCLifetime()) {
-      case Qualifiers::OCL_None:
-      case Qualifiers::OCL_ExplicitNone:
-        return true;
+    // if (T->isObjCLifetimeType()) {
+    //   switch (T.getObjCLifetime()) {
+    //   case Qualifiers::OCL_None:
+    //   case Qualifiers::OCL_ExplicitNone:
+    //     return true;
 
-      case Qualifiers::OCL_Strong:
-      case Qualifiers::OCL_Weak:
-      case Qualifiers::OCL_Autoreleasing:
-        return false;
-      }
-    }
+    //   case Qualifiers::OCL_Strong:
+    //   case Qualifiers::OCL_Weak:
+    //   case Qualifiers::OCL_Autoreleasing:
+    //     return false;
+    //   }
+    // }
 
     return T->isScalarType();
   case UTT_IsCompound:
@@ -4867,9 +4867,9 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
       return true;
 
     // Objective-C++ ARC: autorelease types don't require destruction.
-    if (T->isObjCLifetimeType() &&
-        T.getObjCLifetime() == Qualifiers::OCL_Autoreleasing)
-      return true;
+    // if (T->isObjCLifetimeType() &&
+    //     T.getObjCLifetime() == Qualifiers::OCL_Autoreleasing)
+    //   return true;
 
     // C++14 [meta.unary.prop]:
     //   For incomplete types and function types, is_destructible<T>::value is
@@ -4917,9 +4917,9 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
       return true;
 
     // Objective-C++ ARC: autorelease types don't require destruction.
-    if (T->isObjCLifetimeType() &&
-        T.getObjCLifetime() == Qualifiers::OCL_Autoreleasing)
-      return true;
+    // if (T->isObjCLifetimeType() &&
+    //     T.getObjCLifetime() == Qualifiers::OCL_Autoreleasing)
+    //   return true;
 
     if (CXXRecordDecl *RD = C.getBaseElementType(T)->getAsCXXRecordDecl())
       return RD->hasTrivialDestructor();
@@ -4937,7 +4937,7 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
       return false;
     if (T->isReferenceType())
       return false;
-    if (T.isPODType(C) || T->isObjCLifetimeType())
+    if (T.isPODType(C) /*|| T->isObjCLifetimeType()*/)
       return true;
 
     if (const RecordType *RT = T->getAs<RecordType>())
@@ -4965,7 +4965,7 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
     //   if type is a cv class or union type with copy constructors that are
     //   known not to throw an exception then the trait is true, else it is
     //   false.
-    if (T.isPODType(C) || T->isReferenceType() || T->isObjCLifetimeType())
+    if (T.isPODType(C) || T->isReferenceType() /*|| T->isObjCLifetimeType()*/)
       return true;
     if (CXXRecordDecl *RD = T->getAsCXXRecordDecl()) {
       if (RD->hasTrivialCopyConstructor() &&
@@ -5006,7 +5006,7 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
     //   true, else if type is a cv class or union type (or array
     //   thereof) with a default constructor that is known not to
     //   throw an exception then the trait is true, else it is false.
-    if (T.isPODType(C) || T->isObjCLifetimeType())
+    if (T.isPODType(C) /*|| T->isObjCLifetimeType()*/)
       return true;
     if (CXXRecordDecl *RD = C.getBaseElementType(T)->getAsCXXRecordDecl()) {
       if (RD->hasTrivialDefaultConstructor() &&
@@ -5164,8 +5164,8 @@ static bool evaluateTypeTrait(Sema &S, TypeTrait Kind, SourceLocation KWLoc,
     if (Kind == latino::TT_IsTriviallyConstructible) {
       // Under Objective-C ARC and Weak, if the destination has non-trivial
       // Objective-C lifetime, this is a non-trivial construction.
-      if (T.getNonReferenceType().hasNonTrivialObjCLifetime())
-        return false;
+      // if (T.getNonReferenceType().hasNonTrivialObjCLifetime())
+      //   return false;
 
       // The initialization succeeded; now make sure there are no non-trivial
       // calls.
@@ -5253,7 +5253,7 @@ static bool EvaluateBinaryTypeTrait(Sema &Self, TypeTrait BTT, QualType LhsT,
               KeyLoc, RhsT, diag::err_incomplete_type_used_in_type_trait_expr))
         return false;
 
-      return BaseInterface->isSuperClassOf(DerivedInterface);
+      // return BaseInterface->isSuperClassOf(DerivedInterface);
     }
 
     assert(Self.Context.hasSameUnqualifiedType(LhsT, RhsT)
@@ -5418,8 +5418,8 @@ static bool EvaluateBinaryTypeTrait(Sema &Self, TypeTrait BTT, QualType LhsT,
     if (BTT == BTT_IsTriviallyAssignable) {
       // Under Objective-C ARC and Weak, if the destination has non-trivial
       // Objective-C lifetime, this is a non-trivial assignment.
-      if (LhsT.getNonReferenceType().hasNonTrivialObjCLifetime())
-        return false;
+      // if (LhsT.getNonReferenceType().hasNonTrivialObjCLifetime())
+      //   return false;
 
       return !Result.get()->hasNonTrivialCall(Self.Context);
     }
@@ -6465,8 +6465,8 @@ QualType Sema::FindCompositePointerType(SourceLocation Loc,
         return Ctx.getPointerType(T);
       case MemberPointer:
         return Ctx.getMemberPointerType(T, ClassOrBound);
-      case ObjCPointer:
-        return Ctx.getObjCObjectPointerType(T);
+      // case ObjCPointer:
+      //   return Ctx.getObjCObjectPointerType(T);
       case Array:
         if (auto *CAT = cast_or_null<ConstantArrayType>(ClassOrBound))
           return Ctx.getConstantArrayType(T, CAT->getSize(), nullptr,
@@ -6527,15 +6527,15 @@ QualType Sema::FindCompositePointerType(SourceLocation Loc,
       }
 
       // FIXME: In C, we merge __strong and none to __strong at the top level.
-      if (Q1.getObjCGCAttr() == Q2.getObjCGCAttr())
-        Quals.setObjCGCAttr(Q1.getObjCGCAttr());
-      else
+      // if (Q1.getObjCGCAttr() == Q2.getObjCGCAttr())
+      //   Quals.setObjCGCAttr(Q1.getObjCGCAttr());
+      // else
         return QualType();
 
       // Mismatched lifetime qualifiers never compatibly include each other.
-      if (Q1.getObjCLifetime() == Q2.getObjCLifetime())
-        Quals.setObjCLifetime(Q1.getObjCLifetime());
-      else
+      // if (Q1.getObjCLifetime() == Q2.getObjCLifetime())
+      //   Quals.setObjCLifetime(Q1.getObjCLifetime());
+      // else
         return QualType();
 
       Steps.back().Quals = Quals;
@@ -6746,96 +6746,96 @@ ExprResult Sema::MaybeBindToTemporary(Expr *E) {
 
   // In ARC, calls that return a retainable type can return retained,
   // in which case we have to insert a consuming cast.
-  if (getLangOpts().ObjCAutoRefCount &&
-      E->getType()->isObjCRetainableType()) {
+  // if (getLangOpts().ObjCAutoRefCount &&
+  //     E->getType()->isObjCRetainableType()) {
 
-    bool ReturnsRetained;
+  //   bool ReturnsRetained;
 
-    // For actual calls, we compute this by examining the type of the
-    // called value.
-    if (CallExpr *Call = dyn_cast<CallExpr>(E)) {
-      Expr *Callee = Call->getCallee()->IgnoreParens();
-      QualType T = Callee->getType();
+  //   // For actual calls, we compute this by examining the type of the
+  //   // called value.
+  //   if (CallExpr *Call = dyn_cast<CallExpr>(E)) {
+  //     Expr *Callee = Call->getCallee()->IgnoreParens();
+  //     QualType T = Callee->getType();
 
-      if (T == Context.BoundMemberTy) {
-        // Handle pointer-to-members.
-        if (BinaryOperator *BinOp = dyn_cast<BinaryOperator>(Callee))
-          T = BinOp->getRHS()->getType();
-        else if (MemberExpr *Mem = dyn_cast<MemberExpr>(Callee))
-          T = Mem->getMemberDecl()->getType();
-      }
+  //     if (T == Context.BoundMemberTy) {
+  //       // Handle pointer-to-members.
+  //       if (BinaryOperator *BinOp = dyn_cast<BinaryOperator>(Callee))
+  //         T = BinOp->getRHS()->getType();
+  //       else if (MemberExpr *Mem = dyn_cast<MemberExpr>(Callee))
+  //         T = Mem->getMemberDecl()->getType();
+  //     }
 
-      if (const PointerType *Ptr = T->getAs<PointerType>())
-        T = Ptr->getPointeeType();
-      else if (const BlockPointerType *Ptr = T->getAs<BlockPointerType>())
-        T = Ptr->getPointeeType();
-      else if (const MemberPointerType *MemPtr = T->getAs<MemberPointerType>())
-        T = MemPtr->getPointeeType();
+  //     if (const PointerType *Ptr = T->getAs<PointerType>())
+  //       T = Ptr->getPointeeType();
+  //     else if (const BlockPointerType *Ptr = T->getAs<BlockPointerType>())
+  //       T = Ptr->getPointeeType();
+  //     else if (const MemberPointerType *MemPtr = T->getAs<MemberPointerType>())
+  //       T = MemPtr->getPointeeType();
 
-      auto *FTy = T->castAs<FunctionType>();
-      ReturnsRetained = FTy->getExtInfo().getProducesResult();
+  //     auto *FTy = T->castAs<FunctionType>();
+  //     ReturnsRetained = FTy->getExtInfo().getProducesResult();
 
-    // ActOnStmtExpr arranges things so that StmtExprs of retainable
-    // type always produce a +1 object.
-    } else if (isa<StmtExpr>(E)) {
-      ReturnsRetained = true;
+  //   // ActOnStmtExpr arranges things so that StmtExprs of retainable
+  //   // type always produce a +1 object.
+  //   } else if (isa<StmtExpr>(E)) {
+  //     ReturnsRetained = true;
 
-    // We hit this case with the lambda conversion-to-block optimization;
-    // we don't want any extra casts here.
-    } else if (isa<CastExpr>(E) &&
-               isa<BlockExpr>(cast<CastExpr>(E)->getSubExpr())) {
-      return E;
+  //   // We hit this case with the lambda conversion-to-block optimization;
+  //   // we don't want any extra casts here.
+  //   } else if (isa<CastExpr>(E) &&
+  //              isa<BlockExpr>(cast<CastExpr>(E)->getSubExpr())) {
+  //     return E;
 
-    // For message sends and property references, we try to find an
-    // actual method.  FIXME: we should infer retention by selector in
-    // cases where we don't have an actual method.
-    } 
-    // else {
-    //   ObjCMethodDecl *D = nullptr;
-    //   if (ObjCMessageExpr *Send = dyn_cast<ObjCMessageExpr>(E)) {
-    //     D = Send->getMethodDecl();
-    //   } else if (ObjCBoxedExpr *BoxedExpr = dyn_cast<ObjCBoxedExpr>(E)) {
-    //     D = BoxedExpr->getBoxingMethod();
-    //   } else if (ObjCArrayLiteral *ArrayLit = dyn_cast<ObjCArrayLiteral>(E)) {
-    //     // Don't do reclaims if we're using the zero-element array
-    //     // constant.
-    //     if (ArrayLit->getNumElements() == 0 &&
-    //         Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
-    //       return E;
+  //   // For message sends and property references, we try to find an
+  //   // actual method.  FIXME: we should infer retention by selector in
+  //   // cases where we don't have an actual method.
+  //   } 
+  //   // else {
+  //   //   ObjCMethodDecl *D = nullptr;
+  //   //   if (ObjCMessageExpr *Send = dyn_cast<ObjCMessageExpr>(E)) {
+  //   //     D = Send->getMethodDecl();
+  //   //   } else if (ObjCBoxedExpr *BoxedExpr = dyn_cast<ObjCBoxedExpr>(E)) {
+  //   //     D = BoxedExpr->getBoxingMethod();
+  //   //   } else if (ObjCArrayLiteral *ArrayLit = dyn_cast<ObjCArrayLiteral>(E)) {
+  //   //     // Don't do reclaims if we're using the zero-element array
+  //   //     // constant.
+  //   //     if (ArrayLit->getNumElements() == 0 &&
+  //   //         Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
+  //   //       return E;
 
-    //     D = ArrayLit->getArrayWithObjectsMethod();
-    //   } else if (ObjCDictionaryLiteral *DictLit
-    //                                     = dyn_cast<ObjCDictionaryLiteral>(E)) {
-    //     // Don't do reclaims if we're using the zero-element dictionary
-    //     // constant.
-    //     if (DictLit->getNumElements() == 0 &&
-    //         Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
-    //       return E;
+  //   //     D = ArrayLit->getArrayWithObjectsMethod();
+  //   //   } else if (ObjCDictionaryLiteral *DictLit
+  //   //                                     = dyn_cast<ObjCDictionaryLiteral>(E)) {
+  //   //     // Don't do reclaims if we're using the zero-element dictionary
+  //   //     // constant.
+  //   //     if (DictLit->getNumElements() == 0 &&
+  //   //         Context.getLangOpts().ObjCRuntime.hasEmptyCollections())
+  //   //       return E;
 
-    //     D = DictLit->getDictWithObjectsMethod();
-    //   }
+  //   //     D = DictLit->getDictWithObjectsMethod();
+  //   //   }
 
-    //   ReturnsRetained = (D && D->hasAttr<NSReturnsRetainedAttr>());
+  //   //   ReturnsRetained = (D && D->hasAttr<NSReturnsRetainedAttr>());
 
-    //   // Don't do reclaims on performSelector calls; despite their
-    //   // return type, the invoked method doesn't necessarily actually
-    //   // return an object.
-    //   if (!ReturnsRetained &&
-    //       D && D->getMethodFamily() == OMF_performSelector)
-    //     return E;
-    // }
+  //   //   // Don't do reclaims on performSelector calls; despite their
+  //   //   // return type, the invoked method doesn't necessarily actually
+  //   //   // return an object.
+  //   //   if (!ReturnsRetained &&
+  //   //       D && D->getMethodFamily() == OMF_performSelector)
+  //   //     return E;
+  //   // }
 
-    // Don't reclaim an object of Class type.
-    if (!ReturnsRetained && E->getType()->isObjCARCImplicitlyUnretainedType())
-      return E;
+  //   // Don't reclaim an object of Class type.
+  //   if (!ReturnsRetained && E->getType()->isObjCARCImplicitlyUnretainedType())
+  //     return E;
 
-    Cleanup.setExprNeedsCleanups(true);
+  //   Cleanup.setExprNeedsCleanups(true);
 
-    CastKind ck = (ReturnsRetained ? CK_ARCConsumeObject
-                                   : CK_ARCReclaimReturnedObject);
-    return ImplicitCastExpr::Create(Context, E->getType(), ck, E, nullptr,
-                                    VK_RValue);
-  }
+  //   CastKind ck = (ReturnsRetained ? CK_ARCConsumeObject
+  //                                  : CK_ARCReclaimReturnedObject);
+  //   return ImplicitCastExpr::Create(Context, E->getType(), ck, E, nullptr,
+  //                                   VK_RValue);
+  // }
 
   if (E->getType().isDestructedType() == QualType::DK_nontrivial_c_struct)
     Cleanup.setExprNeedsCleanups(true);
@@ -7342,24 +7342,25 @@ ExprResult Sema::BuildPseudoDestructorExpr(Expr *Base,
               Context.getTrivialTypeSourceInfo(ObjectType, DestructedTypeStart);
           Destructed = PseudoDestructorTypeStorage(DestructedTypeInfo);
         }
-      } else if (DestructedType.getObjCLifetime() !=
-                                                ObjectType.getObjCLifetime()) {
+      } 
+      // else if (DestructedType.getObjCLifetime() !=
+      //                                           ObjectType.getObjCLifetime()) {
 
-        if (DestructedType.getObjCLifetime() == Qualifiers::OCL_None) {
-          // Okay: just pretend that the user provided the correctly-qualified
-          // type.
-        } else {
-          Diag(DestructedTypeStart, diag::err_arc_pseudo_dtor_inconstant_quals)
-            << ObjectType << DestructedType << Base->getSourceRange()
-            << DestructedTypeInfo->getTypeLoc().getLocalSourceRange();
-        }
+      //   if (DestructedType.getObjCLifetime() == Qualifiers::OCL_None) {
+      //     // Okay: just pretend that the user provided the correctly-qualified
+      //     // type.
+      //   } else {
+      //     Diag(DestructedTypeStart, diag::err_arc_pseudo_dtor_inconstant_quals)
+      //       << ObjectType << DestructedType << Base->getSourceRange()
+      //       << DestructedTypeInfo->getTypeLoc().getLocalSourceRange();
+      //   }
 
-        // Recover by setting the destructed type to the object type.
-        DestructedType = ObjectType;
-        DestructedTypeInfo = Context.getTrivialTypeSourceInfo(ObjectType,
-                                                           DestructedTypeStart);
-        Destructed = PseudoDestructorTypeStorage(DestructedTypeInfo);
-      }
+      //   // Recover by setting the destructed type to the object type.
+      //   DestructedType = ObjectType;
+      //   DestructedTypeInfo = Context.getTrivialTypeSourceInfo(ObjectType,
+      //                                                      DestructedTypeStart);
+      //   Destructed = PseudoDestructorTypeStorage(DestructedTypeInfo);
+      // }
     }
   }
 
@@ -8300,12 +8301,12 @@ ExprResult Sema::ActOnFinishFullExpr(Expr *FE, SourceLocation CC,
 
   if (DiscardedValue) {
     // Top-level expressions default to 'id' when we're in a debugger.
-    if (getLangOpts().DebuggerCastResultToId &&
-        FullExpr.get()->getType() == Context.UnknownAnyTy) {
-      FullExpr = forceUnknownAnyToType(FullExpr.get(), Context.getObjCIdType());
-      if (FullExpr.isInvalid())
-        return ExprError();
-    }
+    // if (getLangOpts().DebuggerCastResultToId &&
+    //     FullExpr.get()->getType() == Context.UnknownAnyTy) {
+    //   FullExpr = forceUnknownAnyToType(FullExpr.get(), Context.getObjCIdType());
+    //   if (FullExpr.isInvalid())
+    //     return ExprError();
+    // }
 
     FullExpr = CheckPlaceholderExpr(FullExpr.get());
     if (FullExpr.isInvalid())

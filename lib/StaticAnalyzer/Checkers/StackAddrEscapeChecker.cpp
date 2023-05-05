@@ -61,7 +61,7 @@ private:
                              ASTContext &Ctx);
   static SmallVector<const MemRegion *, 4>
   getCapturedStackRegions(const BlockDataRegion &B, CheckerContext &C);
-  static bool isArcManagedBlock(const MemRegion *R, CheckerContext &C);
+  // static bool isArcManagedBlock(const MemRegion *R, CheckerContext &C);
   static bool isNotInCurrentFrame(const MemRegion *R, CheckerContext &C);
 };
 } // namespace
@@ -110,12 +110,12 @@ SourceRange StackAddrEscapeChecker::genName(raw_ostream &os, const MemRegion *R,
   return range;
 }
 
-bool StackAddrEscapeChecker::isArcManagedBlock(const MemRegion *R,
-                                               CheckerContext &C) {
-  assert(R && "MemRegion should not be null");
-  return C.getASTContext().getLangOpts().ObjCAutoRefCount &&
-         isa<BlockDataRegion>(R);
-}
+// bool StackAddrEscapeChecker::isArcManagedBlock(const MemRegion *R,
+//                                                CheckerContext &C) {
+//   assert(R && "MemRegion should not be null");
+//   return C.getASTContext().getLangOpts().ObjCAutoRefCount &&
+//          isa<BlockDataRegion>(R);
+// }
 
 bool StackAddrEscapeChecker::isNotInCurrentFrame(const MemRegion *R,
                                                  CheckerContext &C) {
@@ -214,7 +214,7 @@ void StackAddrEscapeChecker::checkAsyncExecutedBlockCaptures(
 void StackAddrEscapeChecker::checkReturnedBlockCaptures(
     const BlockDataRegion &B, CheckerContext &C) const {
   for (const MemRegion *Region : getCapturedStackRegions(B, C)) {
-    if (isArcManagedBlock(Region, C) || isNotInCurrentFrame(Region, C))
+    if (/*isArcManagedBlock(Region, C) ||*/ isNotInCurrentFrame(Region, C))
       continue;
     ExplodedNode *N = C.generateNonFatalErrorNode();
     if (!N)
@@ -268,7 +268,7 @@ void StackAddrEscapeChecker::checkPreStmt(const ReturnStmt *RS,
     checkReturnedBlockCaptures(*B, C);
 
   if (!isa<StackSpaceRegion>(R->getMemorySpace()) ||
-      isNotInCurrentFrame(R, C) || isArcManagedBlock(R, C))
+      isNotInCurrentFrame(R, C) /*|| isArcManagedBlock(R, C)*/)
     return;
 
   // Returning a record by value is fine. (In this case, the returned
@@ -317,7 +317,7 @@ void StackAddrEscapeChecker::checkEndFunction(const ReturnStmt *RS,
         return true;
       const MemRegion *VR = Val.getAsRegion();
       if (VR && isa<StackSpaceRegion>(VR->getMemorySpace()) &&
-          !isArcManagedBlock(VR, Ctx) && !isNotInCurrentFrame(VR, Ctx))
+          /*!isArcManagedBlock(VR, Ctx) &&*/ !isNotInCurrentFrame(VR, Ctx))
         V.emplace_back(Region, VR);
       return true;
     }

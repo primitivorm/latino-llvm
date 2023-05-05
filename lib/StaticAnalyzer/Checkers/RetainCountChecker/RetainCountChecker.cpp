@@ -679,9 +679,9 @@ void RetainCountChecker::checkSummary(const RetainSummary &Summ,
   RetEffect RE = Summ.getRetEffect();
 
   if (RE.getKind() == RetEffect::OwnedWhenTrackedReceiver) {
-    if (ReceiverIsTracked)
-      RE = getSummaryManager(C).getObjAllocRetEffect();
-    else
+    // if (ReceiverIsTracked)
+    //   RE = getSummaryManager(C).getObjAllocRetEffect();
+    // else
       RE = RetEffect::MakeNoRet();
   }
 
@@ -713,22 +713,22 @@ ProgramStateRef RetainCountChecker::updateSymbol(ProgramStateRef state,
                                                  ArgEffect AE,
                                                  RefVal::Kind &hasErr,
                                                  CheckerContext &C) const {
-  bool IgnoreRetainMsg = (bool)C.getASTContext().getLangOpts().ObjCAutoRefCount;
-  if (AE.getObjKind() == ObjKind::ObjC && IgnoreRetainMsg) {
-    switch (AE.getKind()) {
-    default:
-      break;
-    case IncRef:
-      AE = AE.withKind(DoNothing);
-      break;
-    case DecRef:
-      AE = AE.withKind(DoNothing);
-      break;
-    case DecRefAndStopTrackingHard:
-      AE = AE.withKind(StopTracking);
-      break;
-    }
-  }
+  // bool IgnoreRetainMsg = (bool)C.getASTContext().getLangOpts().ObjCAutoRefCount;
+  // if (AE.getObjKind() == ObjKind::ObjC && IgnoreRetainMsg) {
+  //   switch (AE.getKind()) {
+  //   default:
+  //     break;
+  //   case IncRef:
+  //     AE = AE.withKind(DoNothing);
+  //     break;
+  //   case DecRef:
+  //     AE = AE.withKind(DoNothing);
+  //     break;
+  //   case DecRefAndStopTrackingHard:
+  //     AE = AE.withKind(StopTracking);
+  //     break;
+  //   }
+  // }
 
   // Handle all use-after-releases.
   if (V.getKind() == RefVal::Released) {

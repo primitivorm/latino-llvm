@@ -14,7 +14,7 @@
 #include "latino/Sema/ScopeInfo.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -30,11 +30,11 @@ void FunctionScopeInfo::Clear() {
   HasOMPDeclareReductionCombiner = false;
   HasFallthroughStmt = false;
   HasPotentialAvailabilityViolations = false;
-  ObjCShouldCallSuper = false;
-  ObjCIsDesignatedInit = false;
-  ObjCWarnForNoDesignatedInitChain = false;
-  ObjCIsSecondaryInit = false;
-  ObjCWarnForNoInitDelegation = false;
+  // ObjCShouldCallSuper = false;
+  // ObjCIsDesignatedInit = false;
+  // ObjCWarnForNoDesignatedInitChain = false;
+  // ObjCIsSecondaryInit = false;
+  // ObjCWarnForNoInitDelegation = false;
   FirstReturnLoc = SourceLocation();
   FirstCXXTryLoc = SourceLocation();
   FirstSEHTryLoc = SourceLocation();
@@ -51,7 +51,7 @@ void FunctionScopeInfo::Clear() {
   Returns.clear();
   ErrorTrap.reset();
   PossiblyUnreachableDiags.clear();
-  WeakObjectUses.clear();
+  // WeakObjectUses.clear();
   ModifiedNonNullParams.clear();
   Blocks.clear();
   ByrefBlockVars.clear();

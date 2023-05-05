@@ -184,10 +184,10 @@ static void errorForGCAttrsOnNonObjC(MigrationContext &MigrateCtx) {
     if (Attr.FullyMigratable && Attr.Dcl) {
       if (Attr.ModifiedType.isNull())
         continue;
-      if (!Attr.ModifiedType->isObjCRetainableType()) {
-        TA.reportError("GC managed memory will become unmanaged in ARC",
-                       Attr.Loc);
-      }
+      // if (!Attr.ModifiedType->isObjCRetainableType()) {
+      //   TA.reportError("GC managed memory will become unmanaged in ARC",
+      //                  Attr.Loc);
+      // }
     }
   }
 }
@@ -198,8 +198,8 @@ static void checkWeakGCAttrs(MigrationContext &MigrateCtx) {
   for (unsigned i = 0, e = MigrateCtx.GCAttrs.size(); i != e; ++i) {
     MigrationContext::GCAttrOccurrence &Attr = MigrateCtx.GCAttrs[i];
     if (Attr.Kind == MigrationContext::GCAttrOccurrence::Weak) {
-      if (Attr.ModifiedType.isNull() ||
-          !Attr.ModifiedType->isObjCRetainableType())
+      if (Attr.ModifiedType.isNull() /*||
+          !Attr.ModifiedType->isObjCRetainableType()*/)
         continue;
       if (!canApplyWeak(MigrateCtx.Pass.Ctx, Attr.ModifiedType,
                         /*AllowOnUnknownClass=*/true)) {
@@ -214,120 +214,120 @@ static void checkWeakGCAttrs(MigrationContext &MigrateCtx) {
   }
 }
 
-typedef llvm::TinyPtrVector<ObjCPropertyDecl *> IndivPropsTy;
+// typedef llvm::TinyPtrVector<ObjCPropertyDecl *> IndivPropsTy;
 
-static void checkAllAtProps(MigrationContext &MigrateCtx,
-                            SourceLocation AtLoc,
-                            IndivPropsTy &IndProps) {
-  if (IndProps.empty())
-    return;
+// static void checkAllAtProps(MigrationContext &MigrateCtx,
+//                             SourceLocation AtLoc,
+//                             IndivPropsTy &IndProps) {
+//   if (IndProps.empty())
+//     return;
 
-  for (IndivPropsTy::iterator
-         PI = IndProps.begin(), PE = IndProps.end(); PI != PE; ++PI) {
-    QualType T = (*PI)->getType();
-    if (T.isNull() || !T->isObjCRetainableType())
-      return;
-  }
+//   for (IndivPropsTy::iterator
+//          PI = IndProps.begin(), PE = IndProps.end(); PI != PE; ++PI) {
+//     QualType T = (*PI)->getType();
+//     if (T.isNull() /*|| !T->isObjCRetainableType()*/)
+//       return;
+//   }
 
-  SmallVector<std::pair<AttributedTypeLoc, ObjCPropertyDecl *>, 4> ATLs;
-  bool hasWeak = false, hasStrong = false;
-  ObjCPropertyAttribute::Kind Attrs = ObjCPropertyAttribute::kind_noattr;
-  for (IndivPropsTy::iterator
-         PI = IndProps.begin(), PE = IndProps.end(); PI != PE; ++PI) {
-    ObjCPropertyDecl *PD = *PI;
-    Attrs = PD->getPropertyAttributesAsWritten();
-    TypeSourceInfo *TInfo = PD->getTypeSourceInfo();
-    if (!TInfo)
-      return;
-    TypeLoc TL = TInfo->getTypeLoc();
-    if (AttributedTypeLoc ATL =
-            TL.getAs<AttributedTypeLoc>()) {
-      ATLs.push_back(std::make_pair(ATL, PD));
-      if (TInfo->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
-        hasWeak = true;
-      } else if (TInfo->getType().getObjCLifetime() == Qualifiers::OCL_Strong)
-        hasStrong = true;
-      else
-        return;
-    }
-  }
-  if (ATLs.empty())
-    return;
-  if (hasWeak && hasStrong)
-    return;
+//   // SmallVector<std::pair<AttributedTypeLoc, ObjCPropertyDecl *>, 4> ATLs;
+//   // bool hasWeak = false, hasStrong = false;
+//   // ObjCPropertyAttribute::Kind Attrs = ObjCPropertyAttribute::kind_noattr;
+//   // for (IndivPropsTy::iterator
+//   //        PI = IndProps.begin(), PE = IndProps.end(); PI != PE; ++PI) {
+//   //   ObjCPropertyDecl *PD = *PI;
+//   //   Attrs = PD->getPropertyAttributesAsWritten();
+//   //   TypeSourceInfo *TInfo = PD->getTypeSourceInfo();
+//   //   if (!TInfo)
+//   //     return;
+//   //   TypeLoc TL = TInfo->getTypeLoc();
+//   //   if (AttributedTypeLoc ATL =
+//   //           TL.getAs<AttributedTypeLoc>()) {
+//   //     ATLs.push_back(std::make_pair(ATL, PD));
+//   //     // if (TInfo->getType().getObjCLifetime() == Qualifiers::OCL_Weak) {
+//   //     //   hasWeak = true;
+//   //     // } else if (TInfo->getType().getObjCLifetime() == Qualifiers::OCL_Strong)
+//   //     //   hasStrong = true;
+//   //     // else
+//   //       return;
+//   //   }
+//   // }
+//   // if (ATLs.empty())
+//   //   return;
+//   if (hasWeak && hasStrong)
+//     return;
 
-  TransformActions &TA = MigrateCtx.Pass.TA;
-  Transaction Trans(TA);
+//   TransformActions &TA = MigrateCtx.Pass.TA;
+//   Transaction Trans(TA);
 
-  if (GCAttrsCollector::hasObjCImpl(
-                              cast<Decl>(IndProps.front()->getDeclContext()))) {
-    if (hasWeak)
-      MigrateCtx.AtPropsWeak.insert(AtLoc.getRawEncoding());
+//   if (GCAttrsCollector::hasObjCImpl(
+//                               cast<Decl>(IndProps.front()->getDeclContext()))) {
+//     if (hasWeak)
+//       MigrateCtx.AtPropsWeak.insert(AtLoc.getRawEncoding());
 
-  } else {
-    StringRef toAttr = "strong";
-    if (hasWeak) {
-      if (canApplyWeak(MigrateCtx.Pass.Ctx, IndProps.front()->getType(),
-                       /*AllowOnUnknownClass=*/true))
-        toAttr = "weak";
-      else
-        toAttr = "unsafe_unretained";
-    }
-    if (Attrs & ObjCPropertyAttribute::kind_assign)
-      MigrateCtx.rewritePropertyAttribute("assign", toAttr, AtLoc);
-    else
-      MigrateCtx.addPropertyAttribute(toAttr, AtLoc);
-  }
+//   } else {
+//     StringRef toAttr = "strong";
+//     if (hasWeak) {
+//       if (canApplyWeak(MigrateCtx.Pass.Ctx, IndProps.front()->getType(),
+//                        /*AllowOnUnknownClass=*/true))
+//         toAttr = "weak";
+//       else
+//         toAttr = "unsafe_unretained";
+//     }
+//     if (Attrs & ObjCPropertyAttribute::kind_assign)
+//       MigrateCtx.rewritePropertyAttribute("assign", toAttr, AtLoc);
+//     else
+//       MigrateCtx.addPropertyAttribute(toAttr, AtLoc);
+//   }
 
-  for (unsigned i = 0, e = ATLs.size(); i != e; ++i) {
-    SourceLocation Loc = ATLs[i].first.getAttr()->getLocation();
-    if (Loc.isMacroID())
-      Loc = MigrateCtx.Pass.Ctx.getSourceManager()
-                .getImmediateExpansionRange(Loc)
-                .getBegin();
-    TA.remove(Loc);
-    TA.clearDiagnostic(diag::err_objc_property_attr_mutually_exclusive, AtLoc);
-    TA.clearDiagnostic(diag::err_arc_inconsistent_property_ownership,
-                       ATLs[i].second->getLocation());
-    MigrateCtx.RemovedAttrSet.insert(Loc.getRawEncoding());
-  }
-}
+//   for (unsigned i = 0, e = ATLs.size(); i != e; ++i) {
+//     SourceLocation Loc = ATLs[i].first.getAttr()->getLocation();
+//     if (Loc.isMacroID())
+//       Loc = MigrateCtx.Pass.Ctx.getSourceManager()
+//                 .getImmediateExpansionRange(Loc)
+//                 .getBegin();
+//     TA.remove(Loc);
+//     TA.clearDiagnostic(diag::err_objc_property_attr_mutually_exclusive, AtLoc);
+//     TA.clearDiagnostic(diag::err_arc_inconsistent_property_ownership,
+//                        ATLs[i].second->getLocation());
+//     MigrateCtx.RemovedAttrSet.insert(Loc.getRawEncoding());
+//   }
+// }
 
-static void checkAllProps(MigrationContext &MigrateCtx,
-                          std::vector<ObjCPropertyDecl *> &AllProps) {
-  typedef llvm::TinyPtrVector<ObjCPropertyDecl *> IndivPropsTy;
-  llvm::DenseMap<unsigned, IndivPropsTy> AtProps;
+// static void checkAllProps(MigrationContext &MigrateCtx,
+//                           std::vector<ObjCPropertyDecl *> &AllProps) {
+//   typedef llvm::TinyPtrVector<ObjCPropertyDecl *> IndivPropsTy;
+//   llvm::DenseMap<unsigned, IndivPropsTy> AtProps;
 
-  for (unsigned i = 0, e = AllProps.size(); i != e; ++i) {
-    ObjCPropertyDecl *PD = AllProps[i];
-    if (PD->getPropertyAttributesAsWritten() &
-        (ObjCPropertyAttribute::kind_assign |
-         ObjCPropertyAttribute::kind_readonly)) {
-      SourceLocation AtLoc = PD->getAtLoc();
-      if (AtLoc.isInvalid())
-        continue;
-      unsigned RawAt = AtLoc.getRawEncoding();
-      AtProps[RawAt].push_back(PD);
-    }
-  }
+//   for (unsigned i = 0, e = AllProps.size(); i != e; ++i) {
+//     ObjCPropertyDecl *PD = AllProps[i];
+//     if (PD->getPropertyAttributesAsWritten() &
+//         (ObjCPropertyAttribute::kind_assign |
+//          ObjCPropertyAttribute::kind_readonly)) {
+//       SourceLocation AtLoc = PD->getAtLoc();
+//       if (AtLoc.isInvalid())
+//         continue;
+//       unsigned RawAt = AtLoc.getRawEncoding();
+//       AtProps[RawAt].push_back(PD);
+//     }
+//   }
 
-  for (llvm::DenseMap<unsigned, IndivPropsTy>::iterator
-         I = AtProps.begin(), E = AtProps.end(); I != E; ++I) {
-    SourceLocation AtLoc = SourceLocation::getFromRawEncoding(I->first);
-    IndivPropsTy &IndProps = I->second;
-    checkAllAtProps(MigrateCtx, AtLoc, IndProps);
-  }
-}
+//   for (llvm::DenseMap<unsigned, IndivPropsTy>::iterator
+//          I = AtProps.begin(), E = AtProps.end(); I != E; ++I) {
+//     SourceLocation AtLoc = SourceLocation::getFromRawEncoding(I->first);
+//     IndivPropsTy &IndProps = I->second;
+//     checkAllAtProps(MigrateCtx, AtLoc, IndProps);
+//   }
+// }
 
-void GCAttrsTraverser::traverseTU(MigrationContext &MigrateCtx) {
-  std::vector<ObjCPropertyDecl *> AllProps;
-  GCAttrsCollector(MigrateCtx, AllProps).TraverseDecl(
-                                  MigrateCtx.Pass.Ctx.getTranslationUnitDecl());
+// void GCAttrsTraverser::traverseTU(MigrationContext &MigrateCtx) {
+//   std::vector<ObjCPropertyDecl *> AllProps;
+//   GCAttrsCollector(MigrateCtx, AllProps).TraverseDecl(
+//                                   MigrateCtx.Pass.Ctx.getTranslationUnitDecl());
 
-  errorForGCAttrsOnNonObjC(MigrateCtx);
-  checkAllProps(MigrateCtx, AllProps);
-  checkWeakGCAttrs(MigrateCtx);
-}
+//   errorForGCAttrsOnNonObjC(MigrateCtx);
+//   checkAllProps(MigrateCtx, AllProps);
+//   checkWeakGCAttrs(MigrateCtx);
+// }
 
 void MigrationContext::dumpGCAttrs() {
   llvm::errs() << "\n################\n";

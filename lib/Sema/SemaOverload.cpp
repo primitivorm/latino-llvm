@@ -12,7 +12,7 @@
 
 #include "latino/AST/ASTContext.h"
 #include "latino/AST/CXXInheritance.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DependenceFlags.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -932,7 +932,7 @@ namespace {
       assert(E->hasPlaceholderType(BuiltinType::ARCUnbridgedCast));
       Entry entry = { &E, E };
       Entries.push_back(entry);
-      E = S.stripARCUnbridgedCast(E);
+      // E = S.stripARCUnbridgedCast(E);
     }
 
     void restore() {
@@ -1506,9 +1506,9 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
     return ExprError();
 
   // Objective-C ARC: Determine whether we will allow the writeback conversion.
-  bool AllowObjCWritebackConversion
-    = getLangOpts().ObjCAutoRefCount &&
-      (Action == AA_Passing || Action == AA_Sending);
+  // bool AllowObjCWritebackConversion
+  //   = getLangOpts().ObjCAutoRefCount &&
+  //     (Action == AA_Passing || Action == AA_Sending);
   // if (getLangOpts().ObjC)
   //   CheckObjCBridgeRelatedConversions(From->getBeginLoc(), ToType,
   //                                     From->getType(), From);
@@ -1517,7 +1517,7 @@ Sema::PerformImplicitConversion(Expr *From, QualType ToType,
                                 AllowExplicit ? AllowedExplicit::All
                                               : AllowedExplicit::None,
                                 /*InOverloadResolution=*/false,
-                                /*CStyle=*/false, AllowObjCWritebackConversion,
+                                /*CStyle=*/false, /*AllowObjCWritebackConversion*/ false,
                                 /*AllowObjCConversionOnExplicit=*/false);
   return PerformImplicitConversion(From, ToType, ICS, Action);
 }
@@ -1932,7 +1932,7 @@ static bool IsStandardConversion(Sema &S, Expr* From, QualType ToType,
     // tryAtomicConversion has updated the standard conversion sequence
     // appropriately.
     return true;
-  } else if (ToType->isEventT() &&
+  } /*else if (ToType->isEventT() &&
              From->isIntegerConstantExpr(S.getASTContext()) &&
              From->EvaluateKnownConstInt(S.getASTContext()) == 0) {
     SCS.Second = ICK_Zero_Event_Conversion;
@@ -1946,7 +1946,7 @@ static bool IsStandardConversion(Sema &S, Expr* From, QualType ToType,
              From->isIntegerConstantExpr(S.getASTContext())) {
     SCS.Second = ICK_Compatible_Conversion;
     FromType = ToType;
-  } else {
+  }*/ else {
     // No second conversion required.
     SCS.Second = ICK_Identity;
   }
@@ -2233,13 +2233,13 @@ bool Sema::IsFloatingPointPromotion(QualType FromType, QualType ToType) {
       if (!getLangOpts().CPlusPlus &&
           (FromBuiltin->getKind() == BuiltinType::Float ||
            FromBuiltin->getKind() == BuiltinType::Double) &&
-          (ToBuiltin->getKind() == BuiltinType::LongDouble ||
-           ToBuiltin->getKind() == BuiltinType::Float128))
+          (ToBuiltin->getKind() == BuiltinType::LongDouble /*||
+           ToBuiltin->getKind() == BuiltinType::Float128*/))
         return true;
 
       // Half can be promoted to float.
       if (!getLangOpts().NativeHalfType &&
-           FromBuiltin->getKind() == BuiltinType::Half &&
+          //  FromBuiltin->getKind() == BuiltinType::Half &&
           ToBuiltin->getKind() == BuiltinType::Float)
         return true;
     }
@@ -2283,16 +2283,16 @@ BuildSimilarlyQualifiedPointerType(const Type *FromPtr,
          "Invalid similarly-qualified pointer type");
 
   /// Conversions to 'id' subsume cv-qualifier conversions.
-  if (ToType->isObjCIdType() || ToType->isObjCQualifiedIdType())
-    return ToType.getUnqualifiedType();
+  // if (ToType->isObjCIdType() || ToType->isObjCQualifiedIdType())
+  //   return ToType.getUnqualifiedType();
 
   QualType CanonFromPointee
     = Context.getCanonicalType(FromPtr->getPointeeType());
   QualType CanonToPointee = Context.getCanonicalType(ToPointee);
   Qualifiers Quals = CanonFromPointee.getQualifiers();
 
-  if (StripObjCLifetime)
-    Quals.removeObjCLifetime();
+  // if (StripObjCLifetime)
+  //   Quals.removeObjCLifetime();
 
   // Exact qualifier match -> return the pointer type we're converting to.
   if (CanonToPointee.getLocalQualifiers() == Quals) {
@@ -3170,15 +3170,15 @@ bool Sema::CheckMemberPointerConversion(Expr *From, QualType ToType,
 
 /// Determine whether the lifetime conversion between the two given
 /// qualifiers sets is nontrivial.
-static bool isNonTrivialObjCLifetimeConversion(Qualifiers FromQuals,
-                                               Qualifiers ToQuals) {
-  // Converting anything to const __unsafe_unretained is trivial.
-  if (ToQuals.hasConst() &&
-      ToQuals.getObjCLifetime() == Qualifiers::OCL_ExplicitNone)
-    return false;
+// static bool isNonTrivialObjCLifetimeConversion(Qualifiers FromQuals,
+//                                                Qualifiers ToQuals) {
+//   // Converting anything to const __unsafe_unretained is trivial.
+//   if (ToQuals.hasConst() &&
+//       ToQuals.getObjCLifetime() == Qualifiers::OCL_ExplicitNone)
+//     return false;
 
-  return true;
-}
+//   return true;
+// }
 
 /// Perform a single iteration of the loop for checking if a qualification
 /// conversion is valid.
@@ -3199,25 +3199,25 @@ static bool isQualificationConversionStep(QualType FromType, QualType ToType,
 
   // Objective-C ARC:
   //   Check Objective-C lifetime conversions.
-  if (FromQuals.getObjCLifetime() != ToQuals.getObjCLifetime()) {
-    if (ToQuals.compatiblyIncludesObjCLifetime(FromQuals)) {
-      if (isNonTrivialObjCLifetimeConversion(FromQuals, ToQuals))
-        ObjCLifetimeConversion = true;
-      FromQuals.removeObjCLifetime();
-      ToQuals.removeObjCLifetime();
-    } else {
-      // Qualification conversions cannot cast between different
-      // Objective-C lifetime qualifiers.
-      return false;
-    }
-  }
+  // if (FromQuals.getObjCLifetime() != ToQuals.getObjCLifetime()) {
+  //   if (ToQuals.compatiblyIncludesObjCLifetime(FromQuals)) {
+  //     if (isNonTrivialObjCLifetimeConversion(FromQuals, ToQuals))
+  //       ObjCLifetimeConversion = true;
+  //     FromQuals.removeObjCLifetime();
+  //     ToQuals.removeObjCLifetime();
+  //   } else {
+  //     // Qualification conversions cannot cast between different
+  //     // Objective-C lifetime qualifiers.
+  //     return false;
+  //   }
+  // }
 
   // Allow addition/removal of GC attributes but not changing GC attributes.
-  if (FromQuals.getObjCGCAttr() != ToQuals.getObjCGCAttr() &&
-      (!FromQuals.hasObjCGCAttr() || !ToQuals.hasObjCGCAttr())) {
-    FromQuals.removeObjCGCAttr();
-    ToQuals.removeObjCGCAttr();
-  }
+  // if (FromQuals.getObjCGCAttr() != ToQuals.getObjCGCAttr() &&
+  //     (!FromQuals.hasObjCGCAttr() || !ToQuals.hasObjCGCAttr())) {
+  //   FromQuals.removeObjCGCAttr();
+  //   ToQuals.removeObjCGCAttr();
+  // }
 
   //   -- for every j > 0, if const is in cv 1,j then const is in cv
   //      2,j, and similarly for volatile.
@@ -4160,14 +4160,15 @@ CompareQualificationConversions(Sema &S,
     // to unwrap. This essentially mimics what
     // IsQualificationConversion does, but here we're checking for a
     // strict subset of qualifiers.
-    if (T1.getQualifiers().withoutObjCLifetime() ==
-        T2.getQualifiers().withoutObjCLifetime())
+    // if (T1.getQualifiers().withoutObjCLifetime() ==
+    //     T2.getQualifiers().withoutObjCLifetime())
       // The qualifiers are the same, so this doesn't tell us anything
       // about how the sequences rank.
       // ObjC ownership quals are omitted above as they interfere with
       // the ARC overload rule.
-      ;
-    else if (T2.isMoreQualifiedThan(T1)) {
+    //   ;
+    // else 
+    if (T2.isMoreQualifiedThan(T1)) {
       // T1 has fewer qualifiers, so it could be the better sequence.
       if (Result == ImplicitConversionSequence::Worse)
         // Neither has qualifiers that are a subset of the other's
@@ -4842,10 +4843,10 @@ TryReferenceInit(Sema &S, Expr *Init, QualType DeclType,
     // ObjC GC, lifetime and unaligned qualifiers aren't important.
     Qualifiers T1Quals = T1.getQualifiers();
     Qualifiers T2Quals = T2.getQualifiers();
-    T1Quals.removeObjCGCAttr();
-    T1Quals.removeObjCLifetime();
-    T2Quals.removeObjCGCAttr();
-    T2Quals.removeObjCLifetime();
+    // T1Quals.removeObjCGCAttr();
+    // T1Quals.removeObjCLifetime();
+    // T2Quals.removeObjCGCAttr();
+    // T2Quals.removeObjCLifetime();
     // MS compiler ignores __unaligned qualifier for references; do the same.
     T1Quals.removeUnaligned();
     T2Quals.removeUnaligned();
@@ -5723,53 +5724,53 @@ static void dropPointerConversion(StandardConversionSequence &SCS) {
 
 /// TryContextuallyConvertToObjCPointer - Attempt to contextually
 /// convert the expression From to an Objective-C pointer type.
-static ImplicitConversionSequence
-TryContextuallyConvertToObjCPointer(Sema &S, Expr *From) {
-  // Do an implicit conversion to 'id'.
-  QualType Ty = S.Context.getObjCIdType();
-  ImplicitConversionSequence ICS
-    = TryImplicitConversion(S, From, Ty,
-                            // FIXME: Are these flags correct?
-                            /*SuppressUserConversions=*/false,
-                            AllowedExplicit::Conversions,
-                            /*InOverloadResolution=*/false,
-                            /*CStyle=*/false,
-                            /*AllowObjCWritebackConversion=*/false,
-                            /*AllowObjCConversionOnExplicit=*/true);
+// static ImplicitConversionSequence
+// TryContextuallyConvertToObjCPointer(Sema &S, Expr *From) {
+//   // Do an implicit conversion to 'id'.
+//   QualType Ty = S.Context.getObjCIdType();
+//   ImplicitConversionSequence ICS
+//     = TryImplicitConversion(S, From, Ty,
+//                             // FIXME: Are these flags correct?
+//                             /*SuppressUserConversions=*/false,
+//                             AllowedExplicit::Conversions,
+//                             /*InOverloadResolution=*/false,
+//                             /*CStyle=*/false,
+//                             /*AllowObjCWritebackConversion=*/false,
+//                             /*AllowObjCConversionOnExplicit=*/true);
 
-  // Strip off any final conversions to 'id'.
-  switch (ICS.getKind()) {
-  case ImplicitConversionSequence::BadConversion:
-  case ImplicitConversionSequence::AmbiguousConversion:
-  case ImplicitConversionSequence::EllipsisConversion:
-    break;
+//   // Strip off any final conversions to 'id'.
+//   switch (ICS.getKind()) {
+//   case ImplicitConversionSequence::BadConversion:
+//   case ImplicitConversionSequence::AmbiguousConversion:
+//   case ImplicitConversionSequence::EllipsisConversion:
+//     break;
 
-  case ImplicitConversionSequence::UserDefinedConversion:
-    dropPointerConversion(ICS.UserDefined.After);
-    break;
+//   case ImplicitConversionSequence::UserDefinedConversion:
+//     dropPointerConversion(ICS.UserDefined.After);
+//     break;
 
-  case ImplicitConversionSequence::StandardConversion:
-    dropPointerConversion(ICS.Standard);
-    break;
-  }
+//   case ImplicitConversionSequence::StandardConversion:
+//     dropPointerConversion(ICS.Standard);
+//     break;
+//   }
 
-  return ICS;
-}
+//   return ICS;
+// }
 
 /// PerformContextuallyConvertToObjCPointer - Perform a contextual
 /// conversion of the expression From to an Objective-C pointer type.
 /// Returns a valid but null ExprResult if no conversion sequence exists.
-ExprResult Sema::PerformContextuallyConvertToObjCPointer(Expr *From) {
-  if (checkPlaceholderForOverload(*this, From))
-    return ExprError();
+// ExprResult Sema::PerformContextuallyConvertToObjCPointer(Expr *From) {
+//   if (checkPlaceholderForOverload(*this, From))
+//     return ExprError();
 
-  QualType Ty = Context.getObjCIdType();
-  ImplicitConversionSequence ICS =
-    TryContextuallyConvertToObjCPointer(*this, From);
-  if (!ICS.isBad())
-    return PerformImplicitConversion(From, Ty, ICS, AA_Converting);
-  return ExprResult();
-}
+//   QualType Ty = Context.getObjCIdType();
+//   ImplicitConversionSequence ICS =
+//     TryContextuallyConvertToObjCPointer(*this, From);
+//   if (!ICS.isBad())
+//     return PerformImplicitConversion(From, Ty, ICS, AA_Converting);
+//   return ExprResult();
+// }
 
 /// Determine whether the provided type is an integral type, or an enumeration
 /// type of a permitted flavor.
@@ -6351,7 +6352,7 @@ void Sema::AddOverloadCandidate(
           *this, Args[ArgIdx], ParamType, SuppressUserConversions,
           /*InOverloadResolution=*/true,
           /*AllowObjCWritebackConversion=*/
-          getLangOpts().ObjCAutoRefCount, AllowExplicitConversions);
+          /*getLangOpts().ObjCAutoRefCount*/ false, AllowExplicitConversions);
       if (Candidate.Conversions[ConvIdx].isBad()) {
         Candidate.Viable = false;
         Candidate.FailureKind = ovl_fail_bad_conversion;
@@ -6373,11 +6374,11 @@ void Sema::AddOverloadCandidate(
     return;
   }
 
-  if (LangOpts.OpenCL && isOpenCLDisabledDecl(Function)) {
-    Candidate.Viable = false;
-    Candidate.FailureKind = ovl_fail_ext_disabled;
-    return;
-  }
+  // if (LangOpts.OpenCL && isOpenCLDisabledDecl(Function)) {
+  //   Candidate.Viable = false;
+  //   Candidate.FailureKind = ovl_fail_ext_disabled;
+  //   return;
+  // }
 }
 
 // ObjCMethodDecl *
@@ -6863,7 +6864,7 @@ Sema::AddMethodCandidate(CXXMethodDecl *Method, DeclAccessPair FoundDecl,
                                 SuppressUserConversions,
                                 /*InOverloadResolution=*/true,
                                 /*AllowObjCWritebackConversion=*/
-                                  getLangOpts().ObjCAutoRefCount);
+                                  /*getLangOpts().ObjCAutoRefCount*/ false);
       if (Candidate.Conversions[ConvIdx].isBad()) {
         Candidate.Viable = false;
         Candidate.FailureKind = ovl_fail_bad_conversion;
@@ -7092,7 +7093,7 @@ bool Sema::CheckNonDependentConversions(
                                 SuppressUserConversions,
                                 /*InOverloadResolution=*/true,
                                 /*AllowObjCWritebackConversion=*/
-                                  getLangOpts().ObjCAutoRefCount,
+                                  /*getLangOpts().ObjCAutoRefCount*/ false,
                                 AllowExplicit);
       if (Conversions[ConvIdx].isBad())
         return true;
@@ -7489,7 +7490,7 @@ void Sema::AddSurrogateCandidate(CXXConversionDecl *Conversion,
                                 /*SuppressUserConversions=*/false,
                                 /*InOverloadResolution=*/false,
                                 /*AllowObjCWritebackConversion=*/
-                                  getLangOpts().ObjCAutoRefCount);
+                                  /*getLangOpts().ObjCAutoRefCount*/ false);
       if (Candidate.Conversions[ArgIdx + 1].isBad()) {
         Candidate.Viable = false;
         Candidate.FailureKind = ovl_fail_bad_conversion;
@@ -7657,7 +7658,7 @@ void Sema::AddBuiltinCandidate(QualType *ParamTys, ArrayRef<Expr *> Args,
                                 ArgIdx == 0 && IsAssignmentOperator,
                                 /*InOverloadResolution=*/false,
                                 /*AllowObjCWritebackConversion=*/
-                                  getLangOpts().ObjCAutoRefCount);
+                                  /*getLangOpts().ObjCAutoRefCount*/ false);
     }
     if (Candidate.Conversions[ArgIdx].isBad()) {
       Candidate.Viable = false;
@@ -7826,8 +7827,8 @@ BuiltinCandidateTypeSet::AddPointerWithMoreQualifiedTypeVariants(QualType Ty,
     QualType QPointerTy;
     if (!buildObjCPtr)
       QPointerTy = Context.getPointerType(QPointeeTy);
-    else
-      QPointerTy = Context.getObjCObjectPointerType(QPointeeTy);
+    // else
+    //   QPointerTy = Context.getObjCObjectPointerType(QPointeeTy);
 
     // Insert qualified pointer type.
     PointerTypes.insert(QPointerTy);
@@ -7915,14 +7916,14 @@ BuiltinCandidateTypeSet::AddTypesConvertedFrom(QualType Ty,
   HasArithmeticOrEnumeralTypes =
     HasArithmeticOrEnumeralTypes || Ty->isArithmeticType();
 
-  if (Ty->isObjCIdType() || Ty->isObjCClassType())
+  /*if (Ty->isObjCIdType() || Ty->isObjCClassType())
     PointerTypes.insert(Ty);
-  /*else if (Ty->getAs<PointerType>() || Ty->getAs<ObjCObjectPointerType>()) {
+  else if (Ty->getAs<PointerType>() || Ty->getAs<ObjCObjectPointerType>()) {
     // Insert our type, and its more-qualified variants, into the set
     // of types.
     if (!AddPointerWithMoreQualifiedTypeVariants(Ty, VisibleQuals))
       return;
-  } */else if (Ty->isMemberPointerType()) {
+  } else*/ if (Ty->isMemberPointerType()) {
     // Member pointers are far easier, since the pointee can't be converted.
     if (!AddMemberPointerWithMoreQualifiedTypeVariants(Ty))
       return;
@@ -10309,25 +10310,25 @@ static void DiagnoseBadConversion(Sema &S, OverloadCandidate *Cand,
       return;
     }
 
-    if (FromQs.getObjCLifetime() != ToQs.getObjCLifetime()) {
-      S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_ownership)
-          << (unsigned)FnKindPair.first << (unsigned)FnKindPair.second << FnDesc
-          << (FromExpr ? FromExpr->getSourceRange() : SourceRange()) << FromTy
-          << FromQs.getObjCLifetime() << ToQs.getObjCLifetime()
-          << (unsigned)isObjectArgument << I + 1;
-      MaybeEmitInheritedConstructorNote(S, Cand->FoundDecl);
-      return;
-    }
+    // if (FromQs.getObjCLifetime() != ToQs.getObjCLifetime()) {
+    //   S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_ownership)
+    //       << (unsigned)FnKindPair.first << (unsigned)FnKindPair.second << FnDesc
+    //       << (FromExpr ? FromExpr->getSourceRange() : SourceRange()) << FromTy
+    //       << FromQs.getObjCLifetime() << ToQs.getObjCLifetime()
+    //       << (unsigned)isObjectArgument << I + 1;
+    //   MaybeEmitInheritedConstructorNote(S, Cand->FoundDecl);
+    //   return;
+    // }
 
-    if (FromQs.getObjCGCAttr() != ToQs.getObjCGCAttr()) {
-      S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_gc)
-          << (unsigned)FnKindPair.first << (unsigned)FnKindPair.second << FnDesc
-          << (FromExpr ? FromExpr->getSourceRange() : SourceRange()) << FromTy
-          << FromQs.getObjCGCAttr() << ToQs.getObjCGCAttr()
-          << (unsigned)isObjectArgument << I + 1;
-      MaybeEmitInheritedConstructorNote(S, Cand->FoundDecl);
-      return;
-    }
+    // if (FromQs.getObjCGCAttr() != ToQs.getObjCGCAttr()) {
+    //   S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_gc)
+    //       << (unsigned)FnKindPair.first << (unsigned)FnKindPair.second << FnDesc
+    //       << (FromExpr ? FromExpr->getSourceRange() : SourceRange()) << FromTy
+    //       << FromQs.getObjCGCAttr() << ToQs.getObjCGCAttr()
+    //       << (unsigned)isObjectArgument << I + 1;
+    //   MaybeEmitInheritedConstructorNote(S, Cand->FoundDecl);
+    //   return;
+    // }
 
     if (FromQs.hasUnaligned() != ToQs.hasUnaligned()) {
       S.Diag(Fn->getLocation(), diag::note_ovl_candidate_bad_unaligned)
@@ -10950,13 +10951,13 @@ static void DiagnoseFailedExplicitSpec(Sema &S, OverloadCandidate *Cand) {
       << (ES.getExpr() ? ES.getExpr()->getSourceRange() : SourceRange());
 }
 
-static void DiagnoseOpenCLExtensionDisabled(Sema &S, OverloadCandidate *Cand) {
-  FunctionDecl *Callee = Cand->Function;
+// static void DiagnoseOpenCLExtensionDisabled(Sema &S, OverloadCandidate *Cand) {
+//   FunctionDecl *Callee = Cand->Function;
 
-  S.Diag(Callee->getLocation(),
-         diag::note_ovl_candidate_disabled_by_extension)
-    << S.getOpenCLExtensionsFromDeclExtMap(Callee);
-}
+//   S.Diag(Callee->getLocation(),
+//          diag::note_ovl_candidate_disabled_by_extension)
+//     << S.getOpenCLExtensionsFromDeclExtMap(Callee);
+// }
 
 /// Generates a 'note' diagnostic for an overload candidate.  We've
 /// already generated a primary error at the call site.
@@ -11051,8 +11052,8 @@ static void NoteFunctionCandidate(Sema &S, OverloadCandidate *Cand,
   case ovl_fail_explicit:
     return DiagnoseFailedExplicitSpec(S, Cand);
 
-  case ovl_fail_ext_disabled:
-    return DiagnoseOpenCLExtensionDisabled(S, Cand);
+  // case ovl_fail_ext_disabled:
+  //   return DiagnoseOpenCLExtensionDisabled(S, Cand);
 
   case ovl_fail_inhctor_slice:
     // It's generally not interesting to note copy/move constructors here.
@@ -11431,7 +11432,7 @@ CompleteNonViableCandidate(Sema &S, OverloadCandidate *Cand,
                                   SuppressUserConversions,
                                   /*InOverloadResolution=*/true,
                                   /*AllowObjCWritebackConversion=*/
-                                  S.getLangOpts().ObjCAutoRefCount);
+                                  /*S.getLangOpts().ObjCAutoRefCount*/ false);
         // Store the FixIt in the candidate if it exists.
         if (!Unfixable && Cand->Conversions[ConvIdx].isBad())
           Unfixable = !Cand->TryToFixBadConversion(ConvIdx, S);
@@ -13968,7 +13969,7 @@ Sema::BuildCallToMemberFunction(Scope *S, Expr *MemExprE,
     Qualifiers objectQuals = objectType.getQualifiers();
 
     Qualifiers difference = objectQuals - funcQuals;
-    difference.removeObjCGCAttr();
+    // difference.removeObjCGCAttr();
     difference.removeAddressSpace();
     if (difference) {
       std::string qualsString = difference.getAsString();

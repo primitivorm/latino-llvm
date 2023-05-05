@@ -17,7 +17,7 @@
 #include "latino/AST/ASTLambda.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/CXXInheritance.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/EvaluatedExprVisitor.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
@@ -106,18 +106,18 @@ void Sema::ActOnForEachDeclStmt(DeclGroupPtrTy dg) {
   // In ARC, we don't need to retain the iteration variable of a fast
   // enumeration loop.  Rather than actually trying to catch that
   // during declaration processing, we remove the consequences here.
-  if (getLangOpts().ObjCAutoRefCount) {
-    QualType type = var->getType();
+  // if (getLangOpts().ObjCAutoRefCount) {
+  //   QualType type = var->getType();
 
-    // Only do this if we inferred the lifetime.  Inferred lifetime
-    // will show up as a local qualifier because explicit lifetime
-    // should have shown up as an AttributedType instead.
-    if (type.getLocalQualifiers().getObjCLifetime() == Qualifiers::OCL_Strong) {
-      // Add 'const' and mark the variable as pseudo-strong.
-      var->setType(type.withConst());
-      var->setARCPseudoStrong(true);
-    }
-  }
+  //   // Only do this if we inferred the lifetime.  Inferred lifetime
+  //   // will show up as a local qualifier because explicit lifetime
+  //   // should have shown up as an AttributedType instead.
+  //   if (type.getLocalQualifiers().getObjCLifetime() == Qualifiers::OCL_Strong) {
+  //     // Add 'const' and mark the variable as pseudo-strong.
+  //     var->setType(type.withConst());
+  //     var->setARCPseudoStrong(true);
+  //   }
+  // }
 }
 
 /// Diagnose unused comparisons, both builtin and overloaded operators.
@@ -336,10 +336,10 @@ void Sema::DiagnoseUnusedExprResult(const Stmt *S) {
   if (const PseudoObjectExpr *POE = dyn_cast<PseudoObjectExpr>(E)) {
     const Expr *Source = POE->getSyntacticForm();
     // Handle the actually selected call of an OpenMP specialized call.
-    if (LangOpts.OpenMP && isa<CallExpr>(Source) &&
-        POE->getNumSemanticExprs() == 1 &&
-        isa<CallExpr>(POE->getSemanticExpr(0)))
-      return DiagnoseUnusedExprResult(POE->getSemanticExpr(0));
+    // if (LangOpts.OpenMP && isa<CallExpr>(Source) &&
+    //     POE->getNumSemanticExprs() == 1 &&
+    //     isa<CallExpr>(POE->getSemanticExpr(0)))
+    //   return DiagnoseUnusedExprResult(POE->getSemanticExpr(0));
     // if (isa<ObjCSubscriptRefExpr>(Source))
     //   DiagID = diag::warn_unused_container_subscript_expr;
     // else
@@ -609,7 +609,7 @@ StmtResult Sema::BuildIfStmt(SourceLocation IfLoc, bool IsConstexpr,
   if (Cond.isInvalid())
     return StmtError();
 
-  if (IsConstexpr || isa<ObjCAvailabilityCheckExpr>(Cond.get().second))
+  if (IsConstexpr /*|| isa<ObjCAvailabilityCheckExpr>(Cond.get().second)*/)
     setFunctionHasBranchProtectedScope();
 
   return IfStmt::Create(Context, IfLoc, IsConstexpr, InitStmt, Cond.get().first,
@@ -2682,8 +2682,8 @@ StmtResult Sema::BuildCXXForRangeStmt(SourceLocation ForLoc,
 
   // In OpenMP loop region loop control variable must be private. Perform
   // analysis of first part (if any).
-  if (getLangOpts().OpenMP >= 50 && BeginDeclStmt.isUsable())
-    ActOnOpenMPLoopInitialization(ForLoc, BeginDeclStmt.get());
+  // if (getLangOpts().OpenMP >= 50 && BeginDeclStmt.isUsable())
+  //   ActOnOpenMPLoopInitialization(ForLoc, BeginDeclStmt.get());
 
   return new (Context) CXXForRangeStmt(
       InitStmt, RangeDS, cast_or_null<DeclStmt>(BeginDeclStmt.get()),
@@ -2967,9 +2967,9 @@ Sema::ActOnBreakStmt(SourceLocation BreakLoc, Scope *CurScope) {
     // C99 6.8.6.3p1: A break shall appear only in or as a switch/loop body.
     return StmtError(Diag(BreakLoc, diag::err_break_not_in_loop_or_switch));
   }
-  if (S->isOpenMPLoopScope())
-    return StmtError(Diag(BreakLoc, diag::err_omp_loop_cannot_use_stmt)
-                     << "break");
+  // if (S->isOpenMPLoopScope())
+  //   return StmtError(Diag(BreakLoc, diag::err_omp_loop_cannot_use_stmt)
+  //                    << "break");
   CheckJumpOutOfSEHFinally(*this, BreakLoc, *S);
 
   return new (Context) BreakStmt(BreakLoc);
@@ -3783,8 +3783,8 @@ StmtResult Sema::BuildReturnStmt(SourceLocation ReturnLoc, Expr *RetValExp) {
     if (FD)
       Diag(ReturnLoc, DiagID)
           << FD->getIdentifier() << 0 /*fn*/ << FD->isConsteval();
-    else
-      Diag(ReturnLoc, DiagID) << getCurMethodDecl()->getDeclName() << 1/*meth*/;
+    // else
+    //   Diag(ReturnLoc, DiagID) << getCurMethodDecl()->getDeclName() << 1/*meth*/;
 
     Result = ReturnStmt::Create(Context, ReturnLoc, /* RetExpr=*/nullptr,
                                 /* NRVOCandidate=*/nullptr);
@@ -3819,16 +3819,16 @@ StmtResult Sema::BuildReturnStmt(SourceLocation ReturnLoc, Expr *RetValExp) {
       // convert back to the formal result type.  We can't pretend to
       // initialize the result again --- we might end double-retaining
       // --- so instead we initialize a notional temporary.
-      if (!RelatedRetType.isNull()) {
-        Entity = InitializedEntity::InitializeRelatedResult(getCurMethodDecl(),
-                                                            FnRetType);
-        Res = PerformCopyInitialization(Entity, ReturnLoc, RetValExp);
-        if (Res.isInvalid()) {
-          // FIXME: Clean up temporaries here anyway?
-          return StmtError();
-        }
-        RetValExp = Res.getAs<Expr>();
-      }
+      // if (!RelatedRetType.isNull()) {
+      //   Entity = InitializedEntity::InitializeRelatedResult(getCurMethodDecl(),
+      //                                                       FnRetType);
+      //   Res = PerformCopyInitialization(Entity, ReturnLoc, RetValExp);
+      //   if (Res.isInvalid()) {
+      //     // FIXME: Clean up temporaries here anyway?
+      //     return StmtError();
+      //   }
+      //   RetValExp = Res.getAs<Expr>();
+      // }
 
       CheckReturnValExpr(RetValExp, FnRetType, ReturnLoc, isObjCMethod, Attrs,
                          getCurFunctionDecl());
@@ -3982,11 +3982,11 @@ Sema::ActOnCXXCatchBlock(SourceLocation CatchLoc, Decl *ExDecl,
       CXXCatchStmt(CatchLoc, cast_or_null<VarDecl>(ExDecl), HandlerBlock);
 }
 
-StmtResult
-Sema::ActOnObjCAutoreleasePoolStmt(SourceLocation AtLoc, Stmt *Body) {
-  setFunctionHasBranchProtectedScope();
-  return new (Context) ObjCAutoreleasePoolStmt(AtLoc, Body);
-}
+// StmtResult
+// Sema::ActOnObjCAutoreleasePoolStmt(SourceLocation AtLoc, Stmt *Body) {
+//   setFunctionHasBranchProtectedScope();
+//   return new (Context) ObjCAutoreleasePoolStmt(AtLoc, Body);
+// }
 
 namespace {
 class CatchHandlerType {
@@ -4106,8 +4106,8 @@ StmtResult Sema::ActOnCXXTryBlock(SourceLocation TryLoc, Stmt *TryBlock,
     CUDADiagIfDeviceCode(TryLoc, diag::err_cuda_device_exceptions)
         << "try" << CurrentCUDATarget();
 
-  if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
-    Diag(TryLoc, diag::err_omp_simd_region_cannot_use_stmt) << "try";
+  // if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
+  //   Diag(TryLoc, diag::err_omp_simd_region_cannot_use_stmt) << "try";
 
   sema::FunctionScopeInfo *FSI = getCurFunction();
 
@@ -4337,8 +4337,8 @@ buildCapturedStmtCaptureList(Sema &S, CapturedRegionScopeInfo *RSI,
     } else {
       assert(Cap.isVariableCapture() && "unknown kind of capture");
 
-      if (S.getLangOpts().OpenMP && RSI->CapRegionKind == CR_OpenMP)
-        S.setOpenMPCaptureKind(Field, Cap.getVariable(), RSI->OpenMPLevel);
+      // if (S.getLangOpts().OpenMP && RSI->CapRegionKind == CR_OpenMP)
+      //   S.setOpenMPCaptureKind(Field, Cap.getVariable(), RSI->OpenMPLevel);
 
       Captures.push_back(CapturedStmt::Capture(Cap.getLocation(),
                                                Cap.isReferenceCapture()

@@ -18,7 +18,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/RecordLayout.h"
@@ -164,9 +164,9 @@ const StackFrameContext *VarRegion::getStackFrame() const {
 
 // const ObjCIvarDecl *ObjCIvarRegion::getDecl() const { return IVD; }
 
-QualType ObjCIvarRegion::getValueType() const {
-  return getDecl()->getType();
-}
+// QualType ObjCIvarRegion::getValueType() const {
+//   return getDecl()->getType();
+// }
 
 QualType CXXBaseObjectRegion::getValueType() const {
   return QualType(getDecl()->getTypeForDecl(), 0);
@@ -286,9 +286,9 @@ void FieldRegion::Profile(llvm::FoldingSetNodeID &ID) const {
 //   ID.AddPointer(superRegion);
 // }
 
-void ObjCIvarRegion::Profile(llvm::FoldingSetNodeID &ID) const {
-  ProfileRegion(ID, getDecl(), superRegion);
-}
+// void ObjCIvarRegion::Profile(llvm::FoldingSetNodeID &ID) const {
+//   ProfileRegion(ID, getDecl(), superRegion);
+// }
 
 void NonParamVarRegion::ProfileRegion(llvm::FoldingSetNodeID &ID,
                                       const VarDecl *VD,
@@ -503,9 +503,9 @@ void FieldRegion::dumpToStream(raw_ostream &os) const {
   os << superRegion << "." << *getDecl();
 }
 
-void ObjCIvarRegion::dumpToStream(raw_ostream &os) const {
-  os << "Ivar{" << superRegion << ',' << *getDecl() << '}';
-}
+// void ObjCIvarRegion::dumpToStream(raw_ostream &os) const {
+//   os << "Ivar{" << superRegion << ',' << *getDecl() << '}';
+// }
 
 void StringRegion::dumpToStream(raw_ostream &os) const {
   assert(Str != nullptr && "Expecting non-null StringLiteral");
@@ -620,13 +620,13 @@ void ParamVarRegion::printPrettyAsExpr(raw_ostream &os) const {
   os << getDecl()->getName();
 }
 
-bool ObjCIvarRegion::canPrintPrettyAsExpr() const {
-  return true;
-}
+// bool ObjCIvarRegion::canPrintPrettyAsExpr() const {
+//   return true;
+// }
 
-void ObjCIvarRegion::printPrettyAsExpr(raw_ostream &os) const {
-  os << getDecl()->getName();
-}
+// void ObjCIvarRegion::printPrettyAsExpr(raw_ostream &os) const {
+//   os << getDecl()->getName();
+// }
 
 bool FieldRegion::canPrintPretty() const {
   return true;

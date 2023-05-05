@@ -25,19 +25,19 @@
 #include "latino/AST/CurrentSourceLocExprScope.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
-#include "latino/AST/StmtOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/ABI.h"
 #include "latino/Basic/CapturedStmt.h"
 #include "latino/Basic/CodeGenOptions.h"
-#include "latino/Basic/OpenMPKinds.h"
+// #include "latino/Basic/OpenMPKinds.h"
 #include "latino/Basic/TargetInfo.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/MapVector.h"
 #include "llvm/ADT/SmallVector.h"
-#include "llvm/Frontend/OpenMP/OMPIRBuilder.h"
+// #include "llvm/Frontend/OpenMP/OMPIRBuilder.h"
 #include "llvm/IR/ValueHandle.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Transforms/Utils/SanitizerStats.h"
@@ -66,7 +66,7 @@ class FunctionProtoType;
 class LabelStmt;
 // class ObjCContainerDecl;
 // class ObjCInterfaceDecl;
-// class ObjCIvarDecl;
+class ObjCIvarDecl;
 // class ObjCMethodDecl;
 // class ObjCImplementationDecl;
 // class ObjCPropertyImplDecl;
@@ -77,11 +77,11 @@ class VarDecl;
 // class ObjCAtThrowStmt;
 // class ObjCAtSynchronizedStmt;
 // class ObjCAutoreleasePoolStmt;
-class OMPUseDevicePtrClause;
-class OMPUseDeviceAddrClause;
+// class OMPUseDevicePtrClause;
+// class OMPUseDeviceAddrClause;
 class ReturnsNonNullAttr;
 class SVETypeFlags;
-class OMPExecutableDirective;
+// class OMPExecutableDirective;
 
 namespace analyze_os_log {
 class OSLogBufferLayout;
@@ -100,7 +100,7 @@ class BlockFlags;
 class BlockFieldFlags;
 class RegionCodeGenTy;
 class TargetCodeGenInfo;
-struct OMPTaskDataTy;
+// struct OMPTaskDataTy;
 struct CGCoroData;
 
 /// The kind of evaluation to perform on values of a particular
@@ -276,24 +276,24 @@ public:
   // because of jumps.
   VarBypassDetector Bypasses;
 
-  // CodeGen lambda for loops and support for ordered clause
-  typedef llvm::function_ref<void(CodeGenFunction &, const OMPLoopDirective &,
-                                  JumpDest)>
-      CodeGenLoopTy;
-  typedef llvm::function_ref<void(CodeGenFunction &, SourceLocation,
-                                  const unsigned, const bool)>
-      CodeGenOrderedTy;
+  // // CodeGen lambda for loops and support for ordered clause
+  // typedef llvm::function_ref<void(CodeGenFunction &, const OMPLoopDirective &,
+  //                                 JumpDest)>
+  //     CodeGenLoopTy;
+  // typedef llvm::function_ref<void(CodeGenFunction &, SourceLocation,
+  //                                 const unsigned, const bool)>
+  //     CodeGenOrderedTy;
 
-  // Codegen lambda for loop bounds in worksharing loop constructs
-  typedef llvm::function_ref<std::pair<LValue, LValue>(
-      CodeGenFunction &, const OMPExecutableDirective &S)>
-      CodeGenLoopBoundsTy;
+  // // Codegen lambda for loop bounds in worksharing loop constructs
+  // typedef llvm::function_ref<std::pair<LValue, LValue>(
+  //     CodeGenFunction &, const OMPExecutableDirective &S)>
+  //     CodeGenLoopBoundsTy;
 
-  // Codegen lambda for loop bounds in dispatch-based loop implementation
-  typedef llvm::function_ref<std::pair<llvm::Value *, llvm::Value *>(
-      CodeGenFunction &, const OMPExecutableDirective &S, Address LB,
-      Address UB)>
-      CodeGenDispatchBoundsTy;
+  // // Codegen lambda for loop bounds in dispatch-based loop implementation
+  // typedef llvm::function_ref<std::pair<llvm::Value *, llvm::Value *>(
+  //     CodeGenFunction &, const OMPExecutableDirective &S, Address LB,
+  //     Address UB)>
+  //     CodeGenDispatchBoundsTy;
 
   /// CGBuilder insert helper. This function is called after an
   /// instruction is created using Builder.
@@ -559,7 +559,7 @@ public:
 
   /// The selector slot.  Under the MandatoryCleanup model, all landing pads
   /// write the current selector value into this alloca.
-  llvm::AllocaInst *EHSelectorSlot = nullptr;
+  // llvm::AllocaInst *EHSelectorSlot = nullptr;
 
   /// A stack of exception code slots. Entering an __except block pushes a slot
   /// on the stack and leaving pops one. The __exception_code() intrinsic loads
@@ -575,30 +575,30 @@ public:
   llvm::BasicBlock *getInvokeDestImpl();
 
   /// Parent loop-based directive for scan directive.
-  const OMPExecutableDirective *OMPParentLoopDirectiveForScan = nullptr;
-  llvm::BasicBlock *OMPBeforeScanBlock = nullptr;
-  llvm::BasicBlock *OMPAfterScanBlock = nullptr;
-  llvm::BasicBlock *OMPScanExitBlock = nullptr;
-  llvm::BasicBlock *OMPScanDispatch = nullptr;
-  bool OMPFirstScanLoop = false;
+  // const OMPExecutableDirective *OMPParentLoopDirectiveForScan = nullptr;
+  // llvm::BasicBlock *OMPBeforeScanBlock = nullptr;
+  // llvm::BasicBlock *OMPAfterScanBlock = nullptr;
+  // llvm::BasicBlock *OMPScanExitBlock = nullptr;
+  // llvm::BasicBlock *OMPScanDispatch = nullptr;
+  // bool OMPFirstScanLoop = false;
 
   /// Manages parent directive for scan directives.
-  class ParentLoopDirectiveForScanRegion {
-    CodeGenFunction &CGF;
-    const OMPExecutableDirective *ParentLoopDirectiveForScan;
+  // class ParentLoopDirectiveForScanRegion {
+  //   CodeGenFunction &CGF;
+  //   const OMPExecutableDirective *ParentLoopDirectiveForScan;
 
-  public:
-    ParentLoopDirectiveForScanRegion(
-        CodeGenFunction &CGF,
-        const OMPExecutableDirective &ParentLoopDirectiveForScan)
-        : CGF(CGF),
-          ParentLoopDirectiveForScan(CGF.OMPParentLoopDirectiveForScan) {
-      CGF.OMPParentLoopDirectiveForScan = &ParentLoopDirectiveForScan;
-    }
-    ~ParentLoopDirectiveForScanRegion() {
-      CGF.OMPParentLoopDirectiveForScan = ParentLoopDirectiveForScan;
-    }
-  };
+  // public:
+  //   ParentLoopDirectiveForScanRegion(
+  //       CodeGenFunction &CGF,
+  //       const OMPExecutableDirective &ParentLoopDirectiveForScan)
+  //       : CGF(CGF),
+  //         ParentLoopDirectiveForScan(CGF.OMPParentLoopDirectiveForScan) {
+  //     CGF.OMPParentLoopDirectiveForScan = &ParentLoopDirectiveForScan;
+  //   }
+  //   ~ParentLoopDirectiveForScanRegion() {
+  //     CGF.OMPParentLoopDirectiveForScan = ParentLoopDirectiveForScan;
+  //   }
+  // };
 
   template <class T>
   typename DominatingValue<T>::saved_type saveValueInCond(T value) {
@@ -873,145 +873,145 @@ public:
   typedef llvm::DenseMap<const Decl *, Address> DeclMapTy;
 
   /// The class used to assign some variables some temporarily addresses.
-  class OMPMapVars {
-    DeclMapTy SavedLocals;
-    DeclMapTy SavedTempAddresses;
-    OMPMapVars(const OMPMapVars &) = delete;
-    void operator=(const OMPMapVars &) = delete;
+  // class OMPMapVars {
+  //   DeclMapTy SavedLocals;
+  //   DeclMapTy SavedTempAddresses;
+  //   OMPMapVars(const OMPMapVars &) = delete;
+  //   void operator=(const OMPMapVars &) = delete;
 
-  public:
-    explicit OMPMapVars() = default;
-    ~OMPMapVars() {
-      assert(SavedLocals.empty() && "Did not restored original addresses.");
-    };
+  // public:
+  //   explicit OMPMapVars() = default;
+  //   ~OMPMapVars() {
+  //     assert(SavedLocals.empty() && "Did not restored original addresses.");
+  //   };
 
-    /// Sets the address of the variable \p LocalVD to be \p TempAddr in
-    /// function \p CGF.
-    /// \return true if at least one variable was set already, false otherwise.
-    bool setVarAddr(CodeGenFunction &CGF, const VarDecl *LocalVD,
-                    Address TempAddr) {
-      LocalVD = LocalVD->getCanonicalDecl();
-      // Only save it once.
-      if (SavedLocals.count(LocalVD)) return false;
+  //   /// Sets the address of the variable \p LocalVD to be \p TempAddr in
+  //   /// function \p CGF.
+  //   /// \return true if at least one variable was set already, false otherwise.
+  //   bool setVarAddr(CodeGenFunction &CGF, const VarDecl *LocalVD,
+  //                   Address TempAddr) {
+  //     LocalVD = LocalVD->getCanonicalDecl();
+  //     // Only save it once.
+  //     if (SavedLocals.count(LocalVD)) return false;
 
-      // Copy the existing local entry to SavedLocals.
-      auto it = CGF.LocalDeclMap.find(LocalVD);
-      if (it != CGF.LocalDeclMap.end())
-        SavedLocals.try_emplace(LocalVD, it->second);
-      else
-        SavedLocals.try_emplace(LocalVD, Address::invalid());
+  //     // Copy the existing local entry to SavedLocals.
+  //     auto it = CGF.LocalDeclMap.find(LocalVD);
+  //     if (it != CGF.LocalDeclMap.end())
+  //       SavedLocals.try_emplace(LocalVD, it->second);
+  //     else
+  //       SavedLocals.try_emplace(LocalVD, Address::invalid());
 
-      // Generate the private entry.
-      QualType VarTy = LocalVD->getType();
-      if (VarTy->isReferenceType()) {
-        Address Temp = CGF.CreateMemTemp(VarTy);
-        CGF.Builder.CreateStore(TempAddr.getPointer(), Temp);
-        TempAddr = Temp;
-      }
-      SavedTempAddresses.try_emplace(LocalVD, TempAddr);
+  //     // Generate the private entry.
+  //     QualType VarTy = LocalVD->getType();
+  //     if (VarTy->isReferenceType()) {
+  //       Address Temp = CGF.CreateMemTemp(VarTy);
+  //       CGF.Builder.CreateStore(TempAddr.getPointer(), Temp);
+  //       TempAddr = Temp;
+  //     }
+  //     SavedTempAddresses.try_emplace(LocalVD, TempAddr);
 
-      return true;
-    }
+  //     return true;
+  //   }
 
-    /// Applies new addresses to the list of the variables.
-    /// \return true if at least one variable is using new address, false
-    /// otherwise.
-    bool apply(CodeGenFunction &CGF) {
-      copyInto(SavedTempAddresses, CGF.LocalDeclMap);
-      SavedTempAddresses.clear();
-      return !SavedLocals.empty();
-    }
+  //   /// Applies new addresses to the list of the variables.
+  //   /// \return true if at least one variable is using new address, false
+  //   /// otherwise.
+  //   bool apply(CodeGenFunction &CGF) {
+  //     copyInto(SavedTempAddresses, CGF.LocalDeclMap);
+  //     SavedTempAddresses.clear();
+  //     return !SavedLocals.empty();
+  //   }
 
-    /// Restores original addresses of the variables.
-    void restore(CodeGenFunction &CGF) {
-      if (!SavedLocals.empty()) {
-        copyInto(SavedLocals, CGF.LocalDeclMap);
-        SavedLocals.clear();
-      }
-    }
+  //   /// Restores original addresses of the variables.
+  //   void restore(CodeGenFunction &CGF) {
+  //     if (!SavedLocals.empty()) {
+  //       copyInto(SavedLocals, CGF.LocalDeclMap);
+  //       SavedLocals.clear();
+  //     }
+  //   }
 
-  private:
-    /// Copy all the entries in the source map over the corresponding
-    /// entries in the destination, which must exist.
-    static void copyInto(const DeclMapTy &Src, DeclMapTy &Dest) {
-      for (auto &Pair : Src) {
-        if (!Pair.second.isValid()) {
-          Dest.erase(Pair.first);
-          continue;
-        }
+  // private:
+  //   /// Copy all the entries in the source map over the corresponding
+  //   /// entries in the destination, which must exist.
+  //   static void copyInto(const DeclMapTy &Src, DeclMapTy &Dest) {
+  //     for (auto &Pair : Src) {
+  //       if (!Pair.second.isValid()) {
+  //         Dest.erase(Pair.first);
+  //         continue;
+  //       }
 
-        auto I = Dest.find(Pair.first);
-        if (I != Dest.end())
-          I->second = Pair.second;
-        else
-          Dest.insert(Pair);
-      }
-    }
-  };
+  //       auto I = Dest.find(Pair.first);
+  //       if (I != Dest.end())
+  //         I->second = Pair.second;
+  //       else
+  //         Dest.insert(Pair);
+  //     }
+  //   }
+  // };
 
   /// The scope used to remap some variables as private in the OpenMP loop body
   /// (or other captured region emitted without outlining), and to restore old
   /// vars back on exit.
-  class OMPPrivateScope : public RunCleanupsScope {
-    OMPMapVars MappedVars;
-    OMPPrivateScope(const OMPPrivateScope &) = delete;
-    void operator=(const OMPPrivateScope &) = delete;
+  // class OMPPrivateScope : public RunCleanupsScope {
+  //   OMPMapVars MappedVars;
+  //   OMPPrivateScope(const OMPPrivateScope &) = delete;
+  //   void operator=(const OMPPrivateScope &) = delete;
 
-  public:
-    /// Enter a new OpenMP private scope.
-    explicit OMPPrivateScope(CodeGenFunction &CGF) : RunCleanupsScope(CGF) {}
+  // public:
+  //   /// Enter a new OpenMP private scope.
+  //   explicit OMPPrivateScope(CodeGenFunction &CGF) : RunCleanupsScope(CGF) {}
 
-    /// Registers \p LocalVD variable as a private and apply \p PrivateGen
-    /// function for it to generate corresponding private variable. \p
-    /// PrivateGen returns an address of the generated private variable.
-    /// \return true if the variable is registered as private, false if it has
-    /// been privatized already.
-    bool addPrivate(const VarDecl *LocalVD,
-                    const llvm::function_ref<Address()> PrivateGen) {
-      assert(PerformCleanup && "adding private to dead scope");
-      return MappedVars.setVarAddr(CGF, LocalVD, PrivateGen());
-    }
+  //   /// Registers \p LocalVD variable as a private and apply \p PrivateGen
+  //   /// function for it to generate corresponding private variable. \p
+  //   /// PrivateGen returns an address of the generated private variable.
+  //   /// \return true if the variable is registered as private, false if it has
+  //   /// been privatized already.
+  //   bool addPrivate(const VarDecl *LocalVD,
+  //                   const llvm::function_ref<Address()> PrivateGen) {
+  //     assert(PerformCleanup && "adding private to dead scope");
+  //     return MappedVars.setVarAddr(CGF, LocalVD, PrivateGen());
+  //   }
 
-    /// Privatizes local variables previously registered as private.
-    /// Registration is separate from the actual privatization to allow
-    /// initializers use values of the original variables, not the private one.
-    /// This is important, for example, if the private variable is a class
-    /// variable initialized by a constructor that references other private
-    /// variables. But at initialization original variables must be used, not
-    /// private copies.
-    /// \return true if at least one variable was privatized, false otherwise.
-    bool Privatize() { return MappedVars.apply(CGF); }
+  //   /// Privatizes local variables previously registered as private.
+  //   /// Registration is separate from the actual privatization to allow
+  //   /// initializers use values of the original variables, not the private one.
+  //   /// This is important, for example, if the private variable is a class
+  //   /// variable initialized by a constructor that references other private
+  //   /// variables. But at initialization original variables must be used, not
+  //   /// private copies.
+  //   /// \return true if at least one variable was privatized, false otherwise.
+  //   bool Privatize() { return MappedVars.apply(CGF); }
 
-    void ForceCleanup() {
-      RunCleanupsScope::ForceCleanup();
-      MappedVars.restore(CGF);
-    }
+  //   void ForceCleanup() {
+  //     RunCleanupsScope::ForceCleanup();
+  //     MappedVars.restore(CGF);
+  //   }
 
-    /// Exit scope - all the mapped variables are restored.
-    ~OMPPrivateScope() {
-      if (PerformCleanup)
-        ForceCleanup();
-    }
+  //   /// Exit scope - all the mapped variables are restored.
+  //   ~OMPPrivateScope() {
+  //     if (PerformCleanup)
+  //       ForceCleanup();
+  //   }
 
-    /// Checks if the global variable is captured in current function.
-    bool isGlobalVarCaptured(const VarDecl *VD) const {
-      VD = VD->getCanonicalDecl();
-      return !VD->isLocalVarDeclOrParm() && CGF.LocalDeclMap.count(VD) > 0;
-    }
-  };
+  //   /// Checks if the global variable is captured in current function.
+  //   bool isGlobalVarCaptured(const VarDecl *VD) const {
+  //     VD = VD->getCanonicalDecl();
+  //     return !VD->isLocalVarDeclOrParm() && CGF.LocalDeclMap.count(VD) > 0;
+  //   }
+  // };
 
   /// Save/restore original map of previously emitted local vars in case when we
   /// need to duplicate emission of the same code several times in the same
   /// function for OpenMP code.
-  class OMPLocalDeclMapRAII {
-    CodeGenFunction &CGF;
-    DeclMapTy SavedMap;
+  // class OMPLocalDeclMapRAII {
+  //   CodeGenFunction &CGF;
+  //   DeclMapTy SavedMap;
 
-  public:
-    OMPLocalDeclMapRAII(CodeGenFunction &CGF)
-        : CGF(CGF), SavedMap(CGF.LocalDeclMap) {}
-    ~OMPLocalDeclMapRAII() { SavedMap.swap(CGF.LocalDeclMap); }
-  };
+  // public:
+  //   OMPLocalDeclMapRAII(CodeGenFunction &CGF)
+  //       : CGF(CGF), SavedMap(CGF.LocalDeclMap) {}
+  //   ~OMPLocalDeclMapRAII() { SavedMap.swap(CGF.LocalDeclMap); }
+  // };
 
   /// Takes the old cleanup stack size and emits the cleanup blocks
   /// that have been added.
@@ -1320,79 +1320,79 @@ private:
   SmallVector<BreakContinue, 8> BreakContinueStack;
 
   /// Handles cancellation exit points in OpenMP-related constructs.
-  class OpenMPCancelExitStack {
-    /// Tracks cancellation exit point and join point for cancel-related exit
-    /// and normal exit.
-    struct CancelExit {
-      CancelExit() = default;
-      CancelExit(OpenMPDirectiveKind Kind, JumpDest ExitBlock,
-                 JumpDest ContBlock)
-          : Kind(Kind), ExitBlock(ExitBlock), ContBlock(ContBlock) {}
-      OpenMPDirectiveKind Kind = llvm::omp::OMPD_unknown;
-      /// true if the exit block has been emitted already by the special
-      /// emitExit() call, false if the default codegen is used.
-      bool HasBeenEmitted = false;
-      JumpDest ExitBlock;
-      JumpDest ContBlock;
-    };
+  // class OpenMPCancelExitStack {
+  //   /// Tracks cancellation exit point and join point for cancel-related exit
+  //   /// and normal exit.
+  //   struct CancelExit {
+  //     CancelExit() = default;
+  //     CancelExit(OpenMPDirectiveKind Kind, JumpDest ExitBlock,
+  //                JumpDest ContBlock)
+  //         : Kind(Kind), ExitBlock(ExitBlock), ContBlock(ContBlock) {}
+  //     OpenMPDirectiveKind Kind = llvm::omp::OMPD_unknown;
+  //     /// true if the exit block has been emitted already by the special
+  //     /// emitExit() call, false if the default codegen is used.
+  //     bool HasBeenEmitted = false;
+  //     JumpDest ExitBlock;
+  //     JumpDest ContBlock;
+  //   };
 
-    SmallVector<CancelExit, 8> Stack;
+  //   SmallVector<CancelExit, 8> Stack;
 
-  public:
-    OpenMPCancelExitStack() : Stack(1) {}
-    ~OpenMPCancelExitStack() = default;
-    /// Fetches the exit block for the current OpenMP construct.
-    JumpDest getExitBlock() const { return Stack.back().ExitBlock; }
-    /// Emits exit block with special codegen procedure specific for the related
-    /// OpenMP construct + emits code for normal construct cleanup.
-    void emitExit(CodeGenFunction &CGF, OpenMPDirectiveKind Kind,
-                  const llvm::function_ref<void(CodeGenFunction &)> CodeGen) {
-      if (Stack.back().Kind == Kind && getExitBlock().isValid()) {
-        assert(CGF.getOMPCancelDestination(Kind).isValid());
-        assert(CGF.HaveInsertPoint());
-        assert(!Stack.back().HasBeenEmitted);
-        auto IP = CGF.Builder.saveAndClearIP();
-        CGF.EmitBlock(Stack.back().ExitBlock.getBlock());
-        CodeGen(CGF);
-        CGF.EmitBranch(Stack.back().ContBlock.getBlock());
-        CGF.Builder.restoreIP(IP);
-        Stack.back().HasBeenEmitted = true;
-      }
-      CodeGen(CGF);
-    }
-    /// Enter the cancel supporting \a Kind construct.
-    /// \param Kind OpenMP directive that supports cancel constructs.
-    /// \param HasCancel true, if the construct has inner cancel directive,
-    /// false otherwise.
-    void enter(CodeGenFunction &CGF, OpenMPDirectiveKind Kind, bool HasCancel) {
-      Stack.push_back({Kind,
-                       HasCancel ? CGF.getJumpDestInCurrentScope("cancel.exit")
-                                 : JumpDest(),
-                       HasCancel ? CGF.getJumpDestInCurrentScope("cancel.cont")
-                                 : JumpDest()});
-    }
-    /// Emits default exit point for the cancel construct (if the special one
-    /// has not be used) + join point for cancel/normal exits.
-    void exit(CodeGenFunction &CGF) {
-      if (getExitBlock().isValid()) {
-        assert(CGF.getOMPCancelDestination(Stack.back().Kind).isValid());
-        bool HaveIP = CGF.HaveInsertPoint();
-        if (!Stack.back().HasBeenEmitted) {
-          if (HaveIP)
-            CGF.EmitBranchThroughCleanup(Stack.back().ContBlock);
-          CGF.EmitBlock(Stack.back().ExitBlock.getBlock());
-          CGF.EmitBranchThroughCleanup(Stack.back().ContBlock);
-        }
-        CGF.EmitBlock(Stack.back().ContBlock.getBlock());
-        if (!HaveIP) {
-          CGF.Builder.CreateUnreachable();
-          CGF.Builder.ClearInsertionPoint();
-        }
-      }
-      Stack.pop_back();
-    }
-  };
-  OpenMPCancelExitStack OMPCancelStack;
+  // public:
+  //   OpenMPCancelExitStack() : Stack(1) {}
+  //   ~OpenMPCancelExitStack() = default;
+  //   /// Fetches the exit block for the current OpenMP construct.
+  //   JumpDest getExitBlock() const { return Stack.back().ExitBlock; }
+  //   /// Emits exit block with special codegen procedure specific for the related
+  //   /// OpenMP construct + emits code for normal construct cleanup.
+  //   void emitExit(CodeGenFunction &CGF, OpenMPDirectiveKind Kind,
+  //                 const llvm::function_ref<void(CodeGenFunction &)> CodeGen) {
+  //     if (Stack.back().Kind == Kind && getExitBlock().isValid()) {
+  //       assert(CGF.getOMPCancelDestination(Kind).isValid());
+  //       assert(CGF.HaveInsertPoint());
+  //       assert(!Stack.back().HasBeenEmitted);
+  //       auto IP = CGF.Builder.saveAndClearIP();
+  //       CGF.EmitBlock(Stack.back().ExitBlock.getBlock());
+  //       CodeGen(CGF);
+  //       CGF.EmitBranch(Stack.back().ContBlock.getBlock());
+  //       CGF.Builder.restoreIP(IP);
+  //       Stack.back().HasBeenEmitted = true;
+  //     }
+  //     CodeGen(CGF);
+  //   }
+  //   /// Enter the cancel supporting \a Kind construct.
+  //   /// \param Kind OpenMP directive that supports cancel constructs.
+  //   /// \param HasCancel true, if the construct has inner cancel directive,
+  //   /// false otherwise.
+  //   void enter(CodeGenFunction &CGF, OpenMPDirectiveKind Kind, bool HasCancel) {
+  //     Stack.push_back({Kind,
+  //                      HasCancel ? CGF.getJumpDestInCurrentScope("cancel.exit")
+  //                                : JumpDest(),
+  //                      HasCancel ? CGF.getJumpDestInCurrentScope("cancel.cont")
+  //                                : JumpDest()});
+  //   }
+  //   /// Emits default exit point for the cancel construct (if the special one
+  //   /// has not be used) + join point for cancel/normal exits.
+  //   void exit(CodeGenFunction &CGF) {
+  //     if (getExitBlock().isValid()) {
+  //       assert(CGF.getOMPCancelDestination(Stack.back().Kind).isValid());
+  //       bool HaveIP = CGF.HaveInsertPoint();
+  //       if (!Stack.back().HasBeenEmitted) {
+  //         if (HaveIP)
+  //           CGF.EmitBranchThroughCleanup(Stack.back().ContBlock);
+  //         CGF.EmitBlock(Stack.back().ExitBlock.getBlock());
+  //         CGF.EmitBranchThroughCleanup(Stack.back().ContBlock);
+  //       }
+  //       CGF.EmitBlock(Stack.back().ContBlock.getBlock());
+  //       if (!HaveIP) {
+  //         CGF.Builder.CreateUnreachable();
+  //         CGF.Builder.ClearInsertionPoint();
+  //       }
+  //     }
+  //     Stack.pop_back();
+  //   }
+  // };
+  // OpenMPCancelExitStack OMPCancelStack;
 
   CodeGenPGO PGO;
 
@@ -1604,157 +1604,157 @@ public:
   // directly, or a new helper class that will contain functions used by both
   // this and the OMPBuilder
 
-  struct OMPBuilderCBHelpers {
+  // struct OMPBuilderCBHelpers {
 
-    OMPBuilderCBHelpers() = delete;
-    OMPBuilderCBHelpers(const OMPBuilderCBHelpers &) = delete;
-    OMPBuilderCBHelpers &operator=(const OMPBuilderCBHelpers &) = delete;
+  //   OMPBuilderCBHelpers() = delete;
+  //   OMPBuilderCBHelpers(const OMPBuilderCBHelpers &) = delete;
+  //   OMPBuilderCBHelpers &operator=(const OMPBuilderCBHelpers &) = delete;
 
-    using InsertPointTy = llvm::OpenMPIRBuilder::InsertPointTy;
+  //   using InsertPointTy = llvm::OpenMPIRBuilder::InsertPointTy;
 
-    /// Cleanup action for allocate support.
-    class OMPAllocateCleanupTy final : public EHScopeStack::Cleanup {
+  //   /// Cleanup action for allocate support.
+  //   class OMPAllocateCleanupTy final : public EHScopeStack::Cleanup {
 
-    private:
-      llvm::CallInst *RTLFnCI;
+  //   private:
+  //     llvm::CallInst *RTLFnCI;
 
-    public:
-      OMPAllocateCleanupTy(llvm::CallInst *RLFnCI) : RTLFnCI(RLFnCI) {
-        RLFnCI->removeFromParent();
-      }
+  //   public:
+  //     OMPAllocateCleanupTy(llvm::CallInst *RLFnCI) : RTLFnCI(RLFnCI) {
+  //       RLFnCI->removeFromParent();
+  //     }
 
-      void Emit(CodeGenFunction &CGF, Flags /*flags*/) override {
-        if (!CGF.HaveInsertPoint())
-          return;
-        CGF.Builder.Insert(RTLFnCI);
-      }
-    };
+  //     void Emit(CodeGenFunction &CGF, Flags /*flags*/) override {
+  //       if (!CGF.HaveInsertPoint())
+  //         return;
+  //       CGF.Builder.Insert(RTLFnCI);
+  //     }
+  //   };
 
-    /// Returns address of the threadprivate variable for the current
-    /// thread. This Also create any necessary OMP runtime calls.
-    ///
-    /// \param VD VarDecl for Threadprivate variable.
-    /// \param VDAddr Address of the Vardecl
-    /// \param Loc  The location where the barrier directive was encountered
-    static Address getAddrOfThreadPrivate(CodeGenFunction &CGF,
-                                          const VarDecl *VD, Address VDAddr,
-                                          SourceLocation Loc);
+  //   /// Returns address of the threadprivate variable for the current
+  //   /// thread. This Also create any necessary OMP runtime calls.
+  //   ///
+  //   /// \param VD VarDecl for Threadprivate variable.
+  //   /// \param VDAddr Address of the Vardecl
+  //   /// \param Loc  The location where the barrier directive was encountered
+  //   static Address getAddrOfThreadPrivate(CodeGenFunction &CGF,
+  //                                         const VarDecl *VD, Address VDAddr,
+  //                                         SourceLocation Loc);
 
-    /// Gets the OpenMP-specific address of the local variable /p VD.
-    static Address getAddressOfLocalVariable(CodeGenFunction &CGF,
-                                             const VarDecl *VD);
-    /// Get the platform-specific name separator.
-    /// \param Parts different parts of the final name that needs separation
-    /// \param FirstSeparator First separator used between the initial two
-    ///        parts of the name.
-    /// \param Separator separator used between all of the rest consecutinve
-    ///        parts of the name
-    static std::string getNameWithSeparators(ArrayRef<StringRef> Parts,
-                                             StringRef FirstSeparator = ".",
-                                             StringRef Separator = ".");
-    /// Emit the Finalization for an OMP region
-    /// \param CGF	The Codegen function this belongs to
-    /// \param IP	Insertion point for generating the finalization code.
-    static void FinalizeOMPRegion(CodeGenFunction &CGF, InsertPointTy IP) {
-      CGBuilderTy::InsertPointGuard IPG(CGF.Builder);
-      assert(IP.getBlock()->end() != IP.getPoint() &&
-             "OpenMP IR Builder should cause terminated block!");
+  //   /// Gets the OpenMP-specific address of the local variable /p VD.
+  //   static Address getAddressOfLocalVariable(CodeGenFunction &CGF,
+  //                                            const VarDecl *VD);
+  //   /// Get the platform-specific name separator.
+  //   /// \param Parts different parts of the final name that needs separation
+  //   /// \param FirstSeparator First separator used between the initial two
+  //   ///        parts of the name.
+  //   /// \param Separator separator used between all of the rest consecutinve
+  //   ///        parts of the name
+  //   static std::string getNameWithSeparators(ArrayRef<StringRef> Parts,
+  //                                            StringRef FirstSeparator = ".",
+  //                                            StringRef Separator = ".");
+  //   /// Emit the Finalization for an OMP region
+  //   /// \param CGF	The Codegen function this belongs to
+  //   /// \param IP	Insertion point for generating the finalization code.
+  //   static void FinalizeOMPRegion(CodeGenFunction &CGF, InsertPointTy IP) {
+  //     CGBuilderTy::InsertPointGuard IPG(CGF.Builder);
+  //     assert(IP.getBlock()->end() != IP.getPoint() &&
+  //            "OpenMP IR Builder should cause terminated block!");
 
-      llvm::BasicBlock *IPBB = IP.getBlock();
-      llvm::BasicBlock *DestBB = IPBB->getUniqueSuccessor();
-      assert(DestBB && "Finalization block should have one successor!");
+  //     llvm::BasicBlock *IPBB = IP.getBlock();
+  //     llvm::BasicBlock *DestBB = IPBB->getUniqueSuccessor();
+  //     assert(DestBB && "Finalization block should have one successor!");
 
-      // erase and replace with cleanup branch.
-      IPBB->getTerminator()->eraseFromParent();
-      CGF.Builder.SetInsertPoint(IPBB);
-      CodeGenFunction::JumpDest Dest = CGF.getJumpDestInCurrentScope(DestBB);
-      CGF.EmitBranchThroughCleanup(Dest);
-    }
+  //     // erase and replace with cleanup branch.
+  //     IPBB->getTerminator()->eraseFromParent();
+  //     CGF.Builder.SetInsertPoint(IPBB);
+  //     CodeGenFunction::JumpDest Dest = CGF.getJumpDestInCurrentScope(DestBB);
+  //     CGF.EmitBranchThroughCleanup(Dest);
+  //   }
 
-    /// Emit the body of an OMP region
-    /// \param CGF	The Codegen function this belongs to
-    /// \param RegionBodyStmt	The body statement for the OpenMP region being
-    /// 			 generated
-    /// \param CodeGenIP	Insertion point for generating the body code.
-    /// \param FiniBB	The finalization basic block
-    static void EmitOMPRegionBody(CodeGenFunction &CGF,
-                                  const Stmt *RegionBodyStmt,
-                                  InsertPointTy CodeGenIP,
-                                  llvm::BasicBlock &FiniBB) {
-      llvm::BasicBlock *CodeGenIPBB = CodeGenIP.getBlock();
-      if (llvm::Instruction *CodeGenIPBBTI = CodeGenIPBB->getTerminator())
-        CodeGenIPBBTI->eraseFromParent();
+  //   /// Emit the body of an OMP region
+  //   /// \param CGF	The Codegen function this belongs to
+  //   /// \param RegionBodyStmt	The body statement for the OpenMP region being
+  //   /// 			 generated
+  //   /// \param CodeGenIP	Insertion point for generating the body code.
+  //   /// \param FiniBB	The finalization basic block
+  //   static void EmitOMPRegionBody(CodeGenFunction &CGF,
+  //                                 const Stmt *RegionBodyStmt,
+  //                                 InsertPointTy CodeGenIP,
+  //                                 llvm::BasicBlock &FiniBB) {
+  //     llvm::BasicBlock *CodeGenIPBB = CodeGenIP.getBlock();
+  //     if (llvm::Instruction *CodeGenIPBBTI = CodeGenIPBB->getTerminator())
+  //       CodeGenIPBBTI->eraseFromParent();
 
-      CGF.Builder.SetInsertPoint(CodeGenIPBB);
+  //     CGF.Builder.SetInsertPoint(CodeGenIPBB);
 
-      CGF.EmitStmt(RegionBodyStmt);
+  //     CGF.EmitStmt(RegionBodyStmt);
 
-      if (CGF.Builder.saveIP().isSet())
-        CGF.Builder.CreateBr(&FiniBB);
-    }
+  //     if (CGF.Builder.saveIP().isSet())
+  //       CGF.Builder.CreateBr(&FiniBB);
+  //   }
 
-    /// RAII for preserving necessary info during Outlined region body codegen.
-    class OutlinedRegionBodyRAII {
+  //   /// RAII for preserving necessary info during Outlined region body codegen.
+  //   class OutlinedRegionBodyRAII {
 
-      llvm::AssertingVH<llvm::Instruction> OldAllocaIP;
-      CodeGenFunction::JumpDest OldReturnBlock;
-      CGBuilderTy::InsertPoint IP;
-      CodeGenFunction &CGF;
+  //     llvm::AssertingVH<llvm::Instruction> OldAllocaIP;
+  //     CodeGenFunction::JumpDest OldReturnBlock;
+  //     CGBuilderTy::InsertPoint IP;
+  //     CodeGenFunction &CGF;
 
-    public:
-      OutlinedRegionBodyRAII(CodeGenFunction &cgf, InsertPointTy &AllocaIP,
-                             llvm::BasicBlock &RetBB)
-          : CGF(cgf) {
-        assert(AllocaIP.isSet() &&
-               "Must specify Insertion point for allocas of outlined function");
-        OldAllocaIP = CGF.AllocaInsertPt;
-        CGF.AllocaInsertPt = &*AllocaIP.getPoint();
-        IP = CGF.Builder.saveIP();
+  //   public:
+  //     OutlinedRegionBodyRAII(CodeGenFunction &cgf, InsertPointTy &AllocaIP,
+  //                            llvm::BasicBlock &RetBB)
+  //         : CGF(cgf) {
+  //       assert(AllocaIP.isSet() &&
+  //              "Must specify Insertion point for allocas of outlined function");
+  //       OldAllocaIP = CGF.AllocaInsertPt;
+  //       CGF.AllocaInsertPt = &*AllocaIP.getPoint();
+  //       IP = CGF.Builder.saveIP();
 
-        OldReturnBlock = CGF.ReturnBlock;
-        CGF.ReturnBlock = CGF.getJumpDestInCurrentScope(&RetBB);
-      }
+  //       OldReturnBlock = CGF.ReturnBlock;
+  //       CGF.ReturnBlock = CGF.getJumpDestInCurrentScope(&RetBB);
+  //     }
 
-      ~OutlinedRegionBodyRAII() {
-        CGF.AllocaInsertPt = OldAllocaIP;
-        CGF.ReturnBlock = OldReturnBlock;
-        CGF.Builder.restoreIP(IP);
-      }
-    };
+  //     ~OutlinedRegionBodyRAII() {
+  //       CGF.AllocaInsertPt = OldAllocaIP;
+  //       CGF.ReturnBlock = OldReturnBlock;
+  //       CGF.Builder.restoreIP(IP);
+  //     }
+  //   };
 
-    /// RAII for preserving necessary info during inlined region body codegen.
-    class InlinedRegionBodyRAII {
+  //   /// RAII for preserving necessary info during inlined region body codegen.
+  //   class InlinedRegionBodyRAII {
 
-      llvm::AssertingVH<llvm::Instruction> OldAllocaIP;
-      CodeGenFunction &CGF;
+  //     llvm::AssertingVH<llvm::Instruction> OldAllocaIP;
+  //     CodeGenFunction &CGF;
 
-    public:
-      InlinedRegionBodyRAII(CodeGenFunction &cgf, InsertPointTy &AllocaIP,
-                            llvm::BasicBlock &FiniBB)
-          : CGF(cgf) {
-        // Alloca insertion block should be in the entry block of the containing
-        // function so it expects an empty AllocaIP in which case will reuse the
-        // old alloca insertion point, or a new AllocaIP in the same block as
-        // the old one
-        assert((!AllocaIP.isSet() ||
-                CGF.AllocaInsertPt->getParent() == AllocaIP.getBlock()) &&
-               "Insertion point should be in the entry block of containing "
-               "function!");
-        OldAllocaIP = CGF.AllocaInsertPt;
-        if (AllocaIP.isSet())
-          CGF.AllocaInsertPt = &*AllocaIP.getPoint();
+  //   public:
+  //     InlinedRegionBodyRAII(CodeGenFunction &cgf, InsertPointTy &AllocaIP,
+  //                           llvm::BasicBlock &FiniBB)
+  //         : CGF(cgf) {
+  //       // Alloca insertion block should be in the entry block of the containing
+  //       // function so it expects an empty AllocaIP in which case will reuse the
+  //       // old alloca insertion point, or a new AllocaIP in the same block as
+  //       // the old one
+  //       assert((!AllocaIP.isSet() ||
+  //               CGF.AllocaInsertPt->getParent() == AllocaIP.getBlock()) &&
+  //              "Insertion point should be in the entry block of containing "
+  //              "function!");
+  //       OldAllocaIP = CGF.AllocaInsertPt;
+  //       if (AllocaIP.isSet())
+  //         CGF.AllocaInsertPt = &*AllocaIP.getPoint();
 
-        // TODO: Remove the call, after making sure the counter is not used by
-        //       the EHStack.
-        // Since this is an inlined region, it should not modify the
-        // ReturnBlock, and should reuse the one for the enclosing outlined
-        // region. So, the JumpDest being return by the function is discarded
-        (void)CGF.getJumpDestInCurrentScope(&FiniBB);
-      }
+  //       // TODO: Remove the call, after making sure the counter is not used by
+  //       //       the EHStack.
+  //       // Since this is an inlined region, it should not modify the
+  //       // ReturnBlock, and should reuse the one for the enclosing outlined
+  //       // region. So, the JumpDest being return by the function is discarded
+  //       (void)CGF.getJumpDestInCurrentScope(&FiniBB);
+  //     }
 
-      ~InlinedRegionBodyRAII() { CGF.AllocaInsertPt = OldAllocaIP; }
-    };
-  };
+  //     ~InlinedRegionBodyRAII() { CGF.AllocaInsertPt = OldAllocaIP; }
+  //   };
+  // };
 
 private:
   /// CXXThisDecl - When generating code for a C++ member function,
@@ -1831,8 +1831,8 @@ private:
 
   /// Add OpenCL kernel arg metadata and the kernel attribute metadata to
   /// the function metadata.
-  void EmitOpenCLKernelMetadata(const FunctionDecl *FD,
-                                llvm::Function *Fn);
+  // void EmitOpenCLKernelMetadata(const FunctionDecl *FD,
+  //                               llvm::Function *Fn);
 
 public:
   CodeGenFunction(CodeGenModule &cgm, bool suppressNewContext=false);
@@ -1857,12 +1857,12 @@ public:
   /// Returns a pointer to the function's exception object and selector slot,
   /// which is assigned in every landing pad.
   Address getExceptionSlot();
-  Address getEHSelectorSlot();
+  // Address getEHSelectorSlot();
 
   /// Returns the contents of the function's exception object and selector
   /// slots.
   llvm::Value *getExceptionFromSlot();
-  llvm::Value *getSelectorFromSlot();
+  // llvm::Value *getSelectorFromSlot();
 
   Address getNormalCleanupDestSlot();
 
@@ -1937,12 +1937,12 @@ public:
     case QualType::DK_none:
       return false;
     case QualType::DK_cxx_destructor:
-    case QualType::DK_objc_weak_lifetime:
+    // case QualType::DK_objc_weak_lifetime:
     case QualType::DK_nontrivial_c_struct:
       return getLangOpts().Exceptions;
-    case QualType::DK_objc_strong_lifetime:
-      return getLangOpts().Exceptions &&
-             CGM.getCodeGenOpts().ObjCAutoRefCountExceptions;
+    // case QualType::DK_objc_strong_lifetime:
+    //   return getLangOpts().Exceptions &&
+    //          CGM.getCodeGenOpts().ObjCAutoRefCountExceptions;
     }
     llvm_unreachable("bad destruction kind");
   }
@@ -2003,7 +2003,7 @@ public:
   //                                            const ObjCPropertyImplDecl *PID);
   // llvm::Constant *GenerateObjCAtomicGetterCopyHelperFunction(
   //                                            const ObjCPropertyImplDecl *PID);
-  llvm::Value *EmitBlockCopyAndAutorelease(llvm::Value *Block, QualType Ty);
+  // llvm::Value *EmitBlockCopyAndAutorelease(llvm::Value *Block, QualType Ty);
 
   void BuildBlockRelease(llvm::Value *DeclPtr, BlockFieldFlags flags,
                          bool CanThrow);
@@ -3154,7 +3154,7 @@ public:
   llvm::Value *EmitSEHAbnormalTermination();
 
   /// Emit simple code for OpenMP directives in Simd-only mode.
-  void EmitSimpleOMPExecutableDirective(const OMPExecutableDirective &D);
+  // void EmitSimpleOMPExecutableDirective(const OMPExecutableDirective &D);
 
   /// Scan the outlined statement for captures from the parent function. For
   /// each capture, mark the capture as escaped and emit a call to
@@ -3175,17 +3175,17 @@ public:
                            ArrayRef<const Attr *> Attrs = None);
 
   /// Controls insertion of cancellation exit blocks in worksharing constructs.
-  class OMPCancelStackRAII {
-    CodeGenFunction &CGF;
+  // class OMPCancelStackRAII {
+  //   CodeGenFunction &CGF;
 
-  public:
-    OMPCancelStackRAII(CodeGenFunction &CGF, OpenMPDirectiveKind Kind,
-                       bool HasCancel)
-        : CGF(CGF) {
-      CGF.OMPCancelStack.enter(CGF, Kind, HasCancel);
-    }
-    ~OMPCancelStackRAII() { CGF.OMPCancelStack.exit(CGF); }
-  };
+  // public:
+  //   OMPCancelStackRAII(CodeGenFunction &CGF, OpenMPDirectiveKind Kind,
+  //                      bool HasCancel)
+  //       : CGF(CGF) {
+  //     CGF.OMPCancelStack.enter(CGF, Kind, HasCancel);
+  //   }
+  //   ~OMPCancelStackRAII() { CGF.OMPCancelStack.exit(CGF); }
+  // };
 
   /// Returns calculated size of the specified type.
   llvm::Value *getTypeSize(QualType Ty);
@@ -3197,8 +3197,8 @@ public:
                                                      SourceLocation Loc);
   void GenerateOpenMPCapturedVars(const CapturedStmt &S,
                                   SmallVectorImpl<llvm::Value *> &CapturedVars);
-  void emitOMPSimpleStore(LValue LVal, RValue RVal, QualType RValTy,
-                          SourceLocation Loc);
+  // void emitOMPSimpleStore(LValue LVal, RValue RVal, QualType RValTy,
+  //                         SourceLocation Loc);
   /// Perform element by element copying of arrays with type \a
   /// OriginalType from \a SrcAddr to \a DestAddr using copying procedure
   /// generated by \a CopyGen.
@@ -3208,9 +3208,9 @@ public:
   /// \param OriginalType Type of destination and source arrays.
   /// \param CopyGen Copying procedure that copies value of single array element
   /// to another single array element.
-  void EmitOMPAggregateAssign(
-      Address DestAddr, Address SrcAddr, QualType OriginalType,
-      const llvm::function_ref<void(Address, Address)> CopyGen);
+  // void EmitOMPAggregateAssign(
+  //     Address DestAddr, Address SrcAddr, QualType OriginalType,
+  //     const llvm::function_ref<void(Address, Address)> CopyGen);
   /// Emit proper copying of data from one variable to another.
   ///
   /// \param OriginalType Original type of the copied variables.
@@ -3222,10 +3222,10 @@ public:
   /// the base array element).
   /// \param Copy Actual copygin expression for copying data from \a SrcVD to \a
   /// DestVD.
-  void EmitOMPCopy(QualType OriginalType,
-                   Address DestAddr, Address SrcAddr,
-                   const VarDecl *DestVD, const VarDecl *SrcVD,
-                   const Expr *Copy);
+  // void EmitOMPCopy(QualType OriginalType,
+  //                  Address DestAddr, Address SrcAddr,
+  //                  const VarDecl *DestVD, const VarDecl *SrcVD,
+  //                  const Expr *Copy);
   /// Emit atomic update code for constructs: \a X = \a X \a BO \a E or
   /// \a X = \a E \a BO \a E.
   ///
@@ -3239,20 +3239,20 @@ public:
   /// expressed through atomicrmw instruction.
   /// \returns <true, OldAtomicValue> if simple 'atomicrmw' instruction was
   /// generated, <false, RValue::get(nullptr)> otherwise.
-  std::pair<bool, RValue> EmitOMPAtomicSimpleUpdateExpr(
-      LValue X, RValue E, BinaryOperatorKind BO, bool IsXLHSInRHSPart,
-      llvm::AtomicOrdering AO, SourceLocation Loc,
-      const llvm::function_ref<RValue(RValue)> CommonGen);
-  bool EmitOMPFirstprivateClause(const OMPExecutableDirective &D,
-                                 OMPPrivateScope &PrivateScope);
-  void EmitOMPPrivateClause(const OMPExecutableDirective &D,
-                            OMPPrivateScope &PrivateScope);
-  void EmitOMPUseDevicePtrClause(
-      const OMPUseDevicePtrClause &C, OMPPrivateScope &PrivateScope,
-      const llvm::DenseMap<const ValueDecl *, Address> &CaptureDeviceAddrMap);
-  void EmitOMPUseDeviceAddrClause(
-      const OMPUseDeviceAddrClause &C, OMPPrivateScope &PrivateScope,
-      const llvm::DenseMap<const ValueDecl *, Address> &CaptureDeviceAddrMap);
+  // std::pair<bool, RValue> EmitOMPAtomicSimpleUpdateExpr(
+  //     LValue X, RValue E, BinaryOperatorKind BO, bool IsXLHSInRHSPart,
+  //     llvm::AtomicOrdering AO, SourceLocation Loc,
+  //     const llvm::function_ref<RValue(RValue)> CommonGen);
+  // bool EmitOMPFirstprivateClause(const OMPExecutableDirective &D,
+  //                                OMPPrivateScope &PrivateScope);
+  // void EmitOMPPrivateClause(const OMPExecutableDirective &D,
+  //                           OMPPrivateScope &PrivateScope);
+  // void EmitOMPUseDevicePtrClause(
+  //     const OMPUseDevicePtrClause &C, OMPPrivateScope &PrivateScope,
+  //     const llvm::DenseMap<const ValueDecl *, Address> &CaptureDeviceAddrMap);
+  // void EmitOMPUseDeviceAddrClause(
+  //     const OMPUseDeviceAddrClause &C, OMPPrivateScope &PrivateScope,
+  //     const llvm::DenseMap<const ValueDecl *, Address> &CaptureDeviceAddrMap);
   /// Emit code for copyin clause in \a D directive. The next code is
   /// generated at the start of outlined functions for directives:
   /// \code
@@ -3264,7 +3264,7 @@ public:
   ///
   /// \param D OpenMP directive possibly with 'copyin' clause(s).
   /// \returns true if at least one copyin variable is found, false otherwise.
-  bool EmitOMPCopyinClause(const OMPExecutableDirective &D);
+  // bool EmitOMPCopyinClause(const OMPExecutableDirective &D);
   /// Emit initial code for lastprivate variables. If some variable is
   /// not also firstprivate, then the default initialization is used. Otherwise
   /// initialization of this variable is performed by EmitOMPFirstprivateClause
@@ -3276,8 +3276,8 @@ public:
   ///
   /// \returns true if there is at least one lastprivate variable, false
   /// otherwise.
-  bool EmitOMPLastprivateClauseInit(const OMPExecutableDirective &D,
-                                    OMPPrivateScope &PrivateScope);
+  // bool EmitOMPLastprivateClauseInit(const OMPExecutableDirective &D,
+  //                                   OMPPrivateScope &PrivateScope);
   /// Emit final copying of lastprivate values to original variables at
   /// the end of the worksharing or simd directive.
   ///
@@ -3285,18 +3285,18 @@ public:
   /// \param IsLastIterCond Boolean condition that must be set to 'i1 true' if
   /// it is the last iteration of the loop code in associated directive, or to
   /// 'i1 false' otherwise. If this item is nullptr, no final check is required.
-  void EmitOMPLastprivateClauseFinal(const OMPExecutableDirective &D,
-                                     bool NoFinals,
-                                     llvm::Value *IsLastIterCond = nullptr);
+  // void EmitOMPLastprivateClauseFinal(const OMPExecutableDirective &D,
+  //                                    bool NoFinals,
+  //                                    llvm::Value *IsLastIterCond = nullptr);
   /// Emit initial code for linear clauses.
-  void EmitOMPLinearClause(const OMPLoopDirective &D,
-                           CodeGenFunction::OMPPrivateScope &PrivateScope);
+  // void EmitOMPLinearClause(const OMPLoopDirective &D,
+  //                          CodeGenFunction::OMPPrivateScope &PrivateScope);
   /// Emit final code for linear clauses.
   /// \param CondGen Optional conditional code for final part of codegen for
   /// linear clause.
-  void EmitOMPLinearClauseFinal(
-      const OMPLoopDirective &D,
-      const llvm::function_ref<llvm::Value *(CodeGenFunction &)> CondGen);
+  // void EmitOMPLinearClauseFinal(
+  //     const OMPLoopDirective &D,
+  //     const llvm::function_ref<llvm::Value *(CodeGenFunction &)> CondGen);
   /// Emit initial code for reduction variables. Creates reduction copies
   /// and initializes them with the values according to OpenMP standard.
   ///
@@ -3304,158 +3304,158 @@ public:
   /// \param PrivateScope Private scope for capturing reduction variables for
   /// proper codegen in internal captured statement.
   ///
-  void EmitOMPReductionClauseInit(const OMPExecutableDirective &D,
-                                  OMPPrivateScope &PrivateScope,
-                                  bool ForInscan = false);
+  // void EmitOMPReductionClauseInit(const OMPExecutableDirective &D,
+  //                                 OMPPrivateScope &PrivateScope,
+  //                                 bool ForInscan = false);
   /// Emit final update of reduction values to original variables at
   /// the end of the directive.
   ///
   /// \param D Directive that has at least one 'reduction' directives.
   /// \param ReductionKind The kind of reduction to perform.
-  void EmitOMPReductionClauseFinal(const OMPExecutableDirective &D,
-                                   const OpenMPDirectiveKind ReductionKind);
+  // void EmitOMPReductionClauseFinal(const OMPExecutableDirective &D,
+  //                                  const OpenMPDirectiveKind ReductionKind);
   /// Emit initial code for linear variables. Creates private copies
   /// and initializes them with the values according to OpenMP standard.
   ///
   /// \param D Directive (possibly) with the 'linear' clause.
   /// \return true if at least one linear variable is found that should be
   /// initialized with the value of the original variable, false otherwise.
-  bool EmitOMPLinearClauseInit(const OMPLoopDirective &D);
+  // bool EmitOMPLinearClauseInit(const OMPLoopDirective &D);
 
-  typedef const llvm::function_ref<void(CodeGenFunction & /*CGF*/,
-                                        llvm::Function * /*OutlinedFn*/,
-                                        const OMPTaskDataTy & /*Data*/)>
-      TaskGenTy;
-  void EmitOMPTaskBasedDirective(const OMPExecutableDirective &S,
-                                 const OpenMPDirectiveKind CapturedRegion,
-                                 const RegionCodeGenTy &BodyGen,
-                                 const TaskGenTy &TaskGen, OMPTaskDataTy &Data);
-  struct OMPTargetDataInfo {
-    Address BasePointersArray = Address::invalid();
-    Address PointersArray = Address::invalid();
-    Address SizesArray = Address::invalid();
-    unsigned NumberOfTargetItems = 0;
-    explicit OMPTargetDataInfo() = default;
-    OMPTargetDataInfo(Address BasePointersArray, Address PointersArray,
-                      Address SizesArray, unsigned NumberOfTargetItems)
-        : BasePointersArray(BasePointersArray), PointersArray(PointersArray),
-          SizesArray(SizesArray), NumberOfTargetItems(NumberOfTargetItems) {}
-  };
-  void EmitOMPTargetTaskBasedDirective(const OMPExecutableDirective &S,
-                                       const RegionCodeGenTy &BodyGen,
-                                       OMPTargetDataInfo &InputInfo);
+  // typedef const llvm::function_ref<void(CodeGenFunction & /*CGF*/,
+  //                                       llvm::Function * /*OutlinedFn*/,
+  //                                       const OMPTaskDataTy & /*Data*/)>
+  //     TaskGenTy;
+  // void EmitOMPTaskBasedDirective(const OMPExecutableDirective &S,
+  //                                const OpenMPDirectiveKind CapturedRegion,
+  //                                const RegionCodeGenTy &BodyGen,
+  //                                const TaskGenTy &TaskGen, OMPTaskDataTy &Data);
+  // struct OMPTargetDataInfo {
+  //   Address BasePointersArray = Address::invalid();
+  //   Address PointersArray = Address::invalid();
+  //   Address SizesArray = Address::invalid();
+  //   unsigned NumberOfTargetItems = 0;
+  //   explicit OMPTargetDataInfo() = default;
+  //   OMPTargetDataInfo(Address BasePointersArray, Address PointersArray,
+  //                     Address SizesArray, unsigned NumberOfTargetItems)
+  //       : BasePointersArray(BasePointersArray), PointersArray(PointersArray),
+  //         SizesArray(SizesArray), NumberOfTargetItems(NumberOfTargetItems) {}
+  // };
+  // void EmitOMPTargetTaskBasedDirective(const OMPExecutableDirective &S,
+  //                                      const RegionCodeGenTy &BodyGen,
+  //                                      OMPTargetDataInfo &InputInfo);
 
-  void EmitOMPParallelDirective(const OMPParallelDirective &S);
-  void EmitOMPSimdDirective(const OMPSimdDirective &S);
-  void EmitOMPForDirective(const OMPForDirective &S);
-  void EmitOMPForSimdDirective(const OMPForSimdDirective &S);
-  void EmitOMPSectionsDirective(const OMPSectionsDirective &S);
-  void EmitOMPSectionDirective(const OMPSectionDirective &S);
-  void EmitOMPSingleDirective(const OMPSingleDirective &S);
-  void EmitOMPMasterDirective(const OMPMasterDirective &S);
-  void EmitOMPCriticalDirective(const OMPCriticalDirective &S);
-  void EmitOMPParallelForDirective(const OMPParallelForDirective &S);
-  void EmitOMPParallelForSimdDirective(const OMPParallelForSimdDirective &S);
-  void EmitOMPParallelSectionsDirective(const OMPParallelSectionsDirective &S);
-  void EmitOMPParallelMasterDirective(const OMPParallelMasterDirective &S);
-  void EmitOMPTaskDirective(const OMPTaskDirective &S);
-  void EmitOMPTaskyieldDirective(const OMPTaskyieldDirective &S);
-  void EmitOMPBarrierDirective(const OMPBarrierDirective &S);
-  void EmitOMPTaskwaitDirective(const OMPTaskwaitDirective &S);
-  void EmitOMPTaskgroupDirective(const OMPTaskgroupDirective &S);
-  void EmitOMPFlushDirective(const OMPFlushDirective &S);
-  void EmitOMPDepobjDirective(const OMPDepobjDirective &S);
-  void EmitOMPScanDirective(const OMPScanDirective &S);
-  void EmitOMPOrderedDirective(const OMPOrderedDirective &S);
-  void EmitOMPAtomicDirective(const OMPAtomicDirective &S);
-  void EmitOMPTargetDirective(const OMPTargetDirective &S);
-  void EmitOMPTargetDataDirective(const OMPTargetDataDirective &S);
-  void EmitOMPTargetEnterDataDirective(const OMPTargetEnterDataDirective &S);
-  void EmitOMPTargetExitDataDirective(const OMPTargetExitDataDirective &S);
-  void EmitOMPTargetUpdateDirective(const OMPTargetUpdateDirective &S);
-  void EmitOMPTargetParallelDirective(const OMPTargetParallelDirective &S);
-  void
-  EmitOMPTargetParallelForDirective(const OMPTargetParallelForDirective &S);
-  void EmitOMPTeamsDirective(const OMPTeamsDirective &S);
-  void
-  EmitOMPCancellationPointDirective(const OMPCancellationPointDirective &S);
-  void EmitOMPCancelDirective(const OMPCancelDirective &S);
-  void EmitOMPTaskLoopBasedDirective(const OMPLoopDirective &S);
-  void EmitOMPTaskLoopDirective(const OMPTaskLoopDirective &S);
-  void EmitOMPTaskLoopSimdDirective(const OMPTaskLoopSimdDirective &S);
-  void EmitOMPMasterTaskLoopDirective(const OMPMasterTaskLoopDirective &S);
-  void
-  EmitOMPMasterTaskLoopSimdDirective(const OMPMasterTaskLoopSimdDirective &S);
-  void EmitOMPParallelMasterTaskLoopDirective(
-      const OMPParallelMasterTaskLoopDirective &S);
-  void EmitOMPParallelMasterTaskLoopSimdDirective(
-      const OMPParallelMasterTaskLoopSimdDirective &S);
-  void EmitOMPDistributeDirective(const OMPDistributeDirective &S);
-  void EmitOMPDistributeParallelForDirective(
-      const OMPDistributeParallelForDirective &S);
-  void EmitOMPDistributeParallelForSimdDirective(
-      const OMPDistributeParallelForSimdDirective &S);
-  void EmitOMPDistributeSimdDirective(const OMPDistributeSimdDirective &S);
-  void EmitOMPTargetParallelForSimdDirective(
-      const OMPTargetParallelForSimdDirective &S);
-  void EmitOMPTargetSimdDirective(const OMPTargetSimdDirective &S);
-  void EmitOMPTeamsDistributeDirective(const OMPTeamsDistributeDirective &S);
-  void
-  EmitOMPTeamsDistributeSimdDirective(const OMPTeamsDistributeSimdDirective &S);
-  void EmitOMPTeamsDistributeParallelForSimdDirective(
-      const OMPTeamsDistributeParallelForSimdDirective &S);
-  void EmitOMPTeamsDistributeParallelForDirective(
-      const OMPTeamsDistributeParallelForDirective &S);
-  void EmitOMPTargetTeamsDirective(const OMPTargetTeamsDirective &S);
-  void EmitOMPTargetTeamsDistributeDirective(
-      const OMPTargetTeamsDistributeDirective &S);
-  void EmitOMPTargetTeamsDistributeParallelForDirective(
-      const OMPTargetTeamsDistributeParallelForDirective &S);
-  void EmitOMPTargetTeamsDistributeParallelForSimdDirective(
-      const OMPTargetTeamsDistributeParallelForSimdDirective &S);
-  void EmitOMPTargetTeamsDistributeSimdDirective(
-      const OMPTargetTeamsDistributeSimdDirective &S);
+  // void EmitOMPParallelDirective(const OMPParallelDirective &S);
+  // void EmitOMPSimdDirective(const OMPSimdDirective &S);
+  // void EmitOMPForDirective(const OMPForDirective &S);
+  // void EmitOMPForSimdDirective(const OMPForSimdDirective &S);
+  // void EmitOMPSectionsDirective(const OMPSectionsDirective &S);
+  // void EmitOMPSectionDirective(const OMPSectionDirective &S);
+  // void EmitOMPSingleDirective(const OMPSingleDirective &S);
+  // void EmitOMPMasterDirective(const OMPMasterDirective &S);
+  // void EmitOMPCriticalDirective(const OMPCriticalDirective &S);
+  // void EmitOMPParallelForDirective(const OMPParallelForDirective &S);
+  // void EmitOMPParallelForSimdDirective(const OMPParallelForSimdDirective &S);
+  // void EmitOMPParallelSectionsDirective(const OMPParallelSectionsDirective &S);
+  // void EmitOMPParallelMasterDirective(const OMPParallelMasterDirective &S);
+  // void EmitOMPTaskDirective(const OMPTaskDirective &S);
+  // void EmitOMPTaskyieldDirective(const OMPTaskyieldDirective &S);
+  // void EmitOMPBarrierDirective(const OMPBarrierDirective &S);
+  // void EmitOMPTaskwaitDirective(const OMPTaskwaitDirective &S);
+  // void EmitOMPTaskgroupDirective(const OMPTaskgroupDirective &S);
+  // void EmitOMPFlushDirective(const OMPFlushDirective &S);
+  // void EmitOMPDepobjDirective(const OMPDepobjDirective &S);
+  // void EmitOMPScanDirective(const OMPScanDirective &S);
+  // void EmitOMPOrderedDirective(const OMPOrderedDirective &S);
+  // void EmitOMPAtomicDirective(const OMPAtomicDirective &S);
+  // void EmitOMPTargetDirective(const OMPTargetDirective &S);
+  // void EmitOMPTargetDataDirective(const OMPTargetDataDirective &S);
+  // void EmitOMPTargetEnterDataDirective(const OMPTargetEnterDataDirective &S);
+  // void EmitOMPTargetExitDataDirective(const OMPTargetExitDataDirective &S);
+  // void EmitOMPTargetUpdateDirective(const OMPTargetUpdateDirective &S);
+  // void EmitOMPTargetParallelDirective(const OMPTargetParallelDirective &S);
+  // void
+  // EmitOMPTargetParallelForDirective(const OMPTargetParallelForDirective &S);
+  // void EmitOMPTeamsDirective(const OMPTeamsDirective &S);
+  // void
+  // EmitOMPCancellationPointDirective(const OMPCancellationPointDirective &S);
+  // void EmitOMPCancelDirective(const OMPCancelDirective &S);
+  // void EmitOMPTaskLoopBasedDirective(const OMPLoopDirective &S);
+  // void EmitOMPTaskLoopDirective(const OMPTaskLoopDirective &S);
+  // void EmitOMPTaskLoopSimdDirective(const OMPTaskLoopSimdDirective &S);
+  // void EmitOMPMasterTaskLoopDirective(const OMPMasterTaskLoopDirective &S);
+  // void
+  // EmitOMPMasterTaskLoopSimdDirective(const OMPMasterTaskLoopSimdDirective &S);
+  // void EmitOMPParallelMasterTaskLoopDirective(
+  //     const OMPParallelMasterTaskLoopDirective &S);
+  // void EmitOMPParallelMasterTaskLoopSimdDirective(
+  //     const OMPParallelMasterTaskLoopSimdDirective &S);
+  // void EmitOMPDistributeDirective(const OMPDistributeDirective &S);
+  // void EmitOMPDistributeParallelForDirective(
+  //     const OMPDistributeParallelForDirective &S);
+  // void EmitOMPDistributeParallelForSimdDirective(
+  //     const OMPDistributeParallelForSimdDirective &S);
+  // void EmitOMPDistributeSimdDirective(const OMPDistributeSimdDirective &S);
+  // void EmitOMPTargetParallelForSimdDirective(
+  //     const OMPTargetParallelForSimdDirective &S);
+  // void EmitOMPTargetSimdDirective(const OMPTargetSimdDirective &S);
+  // void EmitOMPTeamsDistributeDirective(const OMPTeamsDistributeDirective &S);
+  // void
+  // EmitOMPTeamsDistributeSimdDirective(const OMPTeamsDistributeSimdDirective &S);
+  // void EmitOMPTeamsDistributeParallelForSimdDirective(
+  //     const OMPTeamsDistributeParallelForSimdDirective &S);
+  // void EmitOMPTeamsDistributeParallelForDirective(
+  //     const OMPTeamsDistributeParallelForDirective &S);
+  // void EmitOMPTargetTeamsDirective(const OMPTargetTeamsDirective &S);
+  // void EmitOMPTargetTeamsDistributeDirective(
+  //     const OMPTargetTeamsDistributeDirective &S);
+  // void EmitOMPTargetTeamsDistributeParallelForDirective(
+  //     const OMPTargetTeamsDistributeParallelForDirective &S);
+  // void EmitOMPTargetTeamsDistributeParallelForSimdDirective(
+  //     const OMPTargetTeamsDistributeParallelForSimdDirective &S);
+  // void EmitOMPTargetTeamsDistributeSimdDirective(
+  //     const OMPTargetTeamsDistributeSimdDirective &S);
 
   /// Emit device code for the target directive.
-  static void EmitOMPTargetDeviceFunction(CodeGenModule &CGM,
-                                          StringRef ParentName,
-                                          const OMPTargetDirective &S);
-  static void
-  EmitOMPTargetParallelDeviceFunction(CodeGenModule &CGM, StringRef ParentName,
-                                      const OMPTargetParallelDirective &S);
+  // static void EmitOMPTargetDeviceFunction(CodeGenModule &CGM,
+  //                                         StringRef ParentName,
+  //                                         const OMPTargetDirective &S);
+  // static void
+  // EmitOMPTargetParallelDeviceFunction(CodeGenModule &CGM, StringRef ParentName,
+  //                                     const OMPTargetParallelDirective &S);
   /// Emit device code for the target parallel for directive.
-  static void EmitOMPTargetParallelForDeviceFunction(
-      CodeGenModule &CGM, StringRef ParentName,
-      const OMPTargetParallelForDirective &S);
+  // static void EmitOMPTargetParallelForDeviceFunction(
+  //     CodeGenModule &CGM, StringRef ParentName,
+  //     const OMPTargetParallelForDirective &S);
   /// Emit device code for the target parallel for simd directive.
-  static void EmitOMPTargetParallelForSimdDeviceFunction(
-      CodeGenModule &CGM, StringRef ParentName,
-      const OMPTargetParallelForSimdDirective &S);
-  /// Emit device code for the target teams directive.
-  static void
-  EmitOMPTargetTeamsDeviceFunction(CodeGenModule &CGM, StringRef ParentName,
-                                   const OMPTargetTeamsDirective &S);
+  // static void EmitOMPTargetParallelForSimdDeviceFunction(
+  //     CodeGenModule &CGM, StringRef ParentName,
+  //     const OMPTargetParallelForSimdDirective &S);
+  // /// Emit device code for the target teams directive.
+  // static void
+  // EmitOMPTargetTeamsDeviceFunction(CodeGenModule &CGM, StringRef ParentName,
+  //                                  const OMPTargetTeamsDirective &S);
   /// Emit device code for the target teams distribute directive.
-  static void EmitOMPTargetTeamsDistributeDeviceFunction(
-      CodeGenModule &CGM, StringRef ParentName,
-      const OMPTargetTeamsDistributeDirective &S);
-  /// Emit device code for the target teams distribute simd directive.
-  static void EmitOMPTargetTeamsDistributeSimdDeviceFunction(
-      CodeGenModule &CGM, StringRef ParentName,
-      const OMPTargetTeamsDistributeSimdDirective &S);
+  // static void EmitOMPTargetTeamsDistributeDeviceFunction(
+  //     CodeGenModule &CGM, StringRef ParentName,
+  //     const OMPTargetTeamsDistributeDirective &S);
+  // /// Emit device code for the target teams distribute simd directive.
+  // static void EmitOMPTargetTeamsDistributeSimdDeviceFunction(
+  //     CodeGenModule &CGM, StringRef ParentName,
+  //     const OMPTargetTeamsDistributeSimdDirective &S);
   /// Emit device code for the target simd directive.
-  static void EmitOMPTargetSimdDeviceFunction(CodeGenModule &CGM,
-                                              StringRef ParentName,
-                                              const OMPTargetSimdDirective &S);
+  // static void EmitOMPTargetSimdDeviceFunction(CodeGenModule &CGM,
+  //                                             StringRef ParentName,
+  //                                             const OMPTargetSimdDirective &S);
   /// Emit device code for the target teams distribute parallel for simd
   /// directive.
-  static void EmitOMPTargetTeamsDistributeParallelForSimdDeviceFunction(
-      CodeGenModule &CGM, StringRef ParentName,
-      const OMPTargetTeamsDistributeParallelForSimdDirective &S);
+  // static void EmitOMPTargetTeamsDistributeParallelForSimdDeviceFunction(
+  //     CodeGenModule &CGM, StringRef ParentName,
+  //     const OMPTargetTeamsDistributeParallelForSimdDirective &S);
 
-  static void EmitOMPTargetTeamsDistributeParallelForDeviceFunction(
-      CodeGenModule &CGM, StringRef ParentName,
-      const OMPTargetTeamsDistributeParallelForDirective &S);
+  // static void EmitOMPTargetTeamsDistributeParallelForDeviceFunction(
+  //     CodeGenModule &CGM, StringRef ParentName,
+  //     const OMPTargetTeamsDistributeParallelForDirective &S);
   /// Emit inner loop of the worksharing/simd construct.
   ///
   /// \param S Directive, for which the inner loop must be emitted.
@@ -3466,95 +3466,95 @@ public:
   /// \param BodyGen Generator for the inner body of the inner loop.
   /// \param PostIncGen Genrator for post-increment code (required for ordered
   /// loop directvies).
-  void EmitOMPInnerLoop(
-      const OMPExecutableDirective &S, bool RequiresCleanup,
-      const Expr *LoopCond, const Expr *IncExpr,
-      const llvm::function_ref<void(CodeGenFunction &)> BodyGen,
-      const llvm::function_ref<void(CodeGenFunction &)> PostIncGen);
+  // void EmitOMPInnerLoop(
+  //     const OMPExecutableDirective &S, bool RequiresCleanup,
+  //     const Expr *LoopCond, const Expr *IncExpr,
+  //     const llvm::function_ref<void(CodeGenFunction &)> BodyGen,
+  //     const llvm::function_ref<void(CodeGenFunction &)> PostIncGen);
 
-  JumpDest getOMPCancelDestination(OpenMPDirectiveKind Kind);
-  /// Emit initial code for loop counters of loop-based directives.
-  void EmitOMPPrivateLoopCounters(const OMPLoopDirective &S,
-                                  OMPPrivateScope &LoopScope);
+  // JumpDest getOMPCancelDestination(OpenMPDirectiveKind Kind);
+  // /// Emit initial code for loop counters of loop-based directives.
+  // void EmitOMPPrivateLoopCounters(const OMPLoopDirective &S,
+  //                                 OMPPrivateScope &LoopScope);
 
   /// Helper for the OpenMP loop directives.
-  void EmitOMPLoopBody(const OMPLoopDirective &D, JumpDest LoopExit);
+  // void EmitOMPLoopBody(const OMPLoopDirective &D, JumpDest LoopExit);
 
   /// Emit code for the worksharing loop-based directive.
   /// \return true, if this construct has any lastprivate clause, false -
   /// otherwise.
-  bool EmitOMPWorksharingLoop(const OMPLoopDirective &S, Expr *EUB,
-                              const CodeGenLoopBoundsTy &CodeGenLoopBounds,
-                              const CodeGenDispatchBoundsTy &CGDispatchBounds);
+  // bool EmitOMPWorksharingLoop(const OMPLoopDirective &S, Expr *EUB,
+  //                             const CodeGenLoopBoundsTy &CodeGenLoopBounds,
+  //                             const CodeGenDispatchBoundsTy &CGDispatchBounds);
 
   /// Emit code for the distribute loop-based directive.
-  void EmitOMPDistributeLoop(const OMPLoopDirective &S,
-                             const CodeGenLoopTy &CodeGenLoop, Expr *IncExpr);
+  // void EmitOMPDistributeLoop(const OMPLoopDirective &S,
+  //                            const CodeGenLoopTy &CodeGenLoop, Expr *IncExpr);
 
   /// Helpers for the OpenMP loop directives.
-  void EmitOMPSimdInit(const OMPLoopDirective &D, bool IsMonotonic = false);
-  void EmitOMPSimdFinal(
-      const OMPLoopDirective &D,
-      const llvm::function_ref<llvm::Value *(CodeGenFunction &)> CondGen);
+  // void EmitOMPSimdInit(const OMPLoopDirective &D, bool IsMonotonic = false);
+  // void EmitOMPSimdFinal(
+  //     const OMPLoopDirective &D,
+  //     const llvm::function_ref<llvm::Value *(CodeGenFunction &)> CondGen);
 
   /// Emits the lvalue for the expression with possibly captured variable.
-  LValue EmitOMPSharedLValue(const Expr *E);
+  // LValue EmitOMPSharedLValue(const Expr *E);
 
 private:
   /// Helpers for blocks.
   llvm::Value *EmitBlockLiteral(const CGBlockInfo &Info);
 
   /// struct with the values to be passed to the OpenMP loop-related functions
-  struct OMPLoopArguments {
-    /// loop lower bound
-    Address LB = Address::invalid();
-    /// loop upper bound
-    Address UB = Address::invalid();
-    /// loop stride
-    Address ST = Address::invalid();
-    /// isLastIteration argument for runtime functions
-    Address IL = Address::invalid();
-    /// Chunk value generated by sema
-    llvm::Value *Chunk = nullptr;
-    /// EnsureUpperBound
-    Expr *EUB = nullptr;
-    /// IncrementExpression
-    Expr *IncExpr = nullptr;
-    /// Loop initialization
-    Expr *Init = nullptr;
-    /// Loop exit condition
-    Expr *Cond = nullptr;
-    /// Update of LB after a whole chunk has been executed
-    Expr *NextLB = nullptr;
-    /// Update of UB after a whole chunk has been executed
-    Expr *NextUB = nullptr;
-    OMPLoopArguments() = default;
-    OMPLoopArguments(Address LB, Address UB, Address ST, Address IL,
-                     llvm::Value *Chunk = nullptr, Expr *EUB = nullptr,
-                     Expr *IncExpr = nullptr, Expr *Init = nullptr,
-                     Expr *Cond = nullptr, Expr *NextLB = nullptr,
-                     Expr *NextUB = nullptr)
-        : LB(LB), UB(UB), ST(ST), IL(IL), Chunk(Chunk), EUB(EUB),
-          IncExpr(IncExpr), Init(Init), Cond(Cond), NextLB(NextLB),
-          NextUB(NextUB) {}
-  };
-  void EmitOMPOuterLoop(bool DynamicOrOrdered, bool IsMonotonic,
-                        const OMPLoopDirective &S, OMPPrivateScope &LoopScope,
-                        const OMPLoopArguments &LoopArgs,
-                        const CodeGenLoopTy &CodeGenLoop,
-                        const CodeGenOrderedTy &CodeGenOrdered);
-  void EmitOMPForOuterLoop(const OpenMPScheduleTy &ScheduleKind,
-                           bool IsMonotonic, const OMPLoopDirective &S,
-                           OMPPrivateScope &LoopScope, bool Ordered,
-                           const OMPLoopArguments &LoopArgs,
-                           const CodeGenDispatchBoundsTy &CGDispatchBounds);
-  void EmitOMPDistributeOuterLoop(OpenMPDistScheduleClauseKind ScheduleKind,
-                                  const OMPLoopDirective &S,
-                                  OMPPrivateScope &LoopScope,
-                                  const OMPLoopArguments &LoopArgs,
-                                  const CodeGenLoopTy &CodeGenLoopContent);
-  /// Emit code for sections directive.
-  void EmitSections(const OMPExecutableDirective &S);
+  // struct OMPLoopArguments {
+  //   /// loop lower bound
+  //   Address LB = Address::invalid();
+  //   /// loop upper bound
+  //   Address UB = Address::invalid();
+  //   /// loop stride
+  //   Address ST = Address::invalid();
+  //   /// isLastIteration argument for runtime functions
+  //   Address IL = Address::invalid();
+  //   /// Chunk value generated by sema
+  //   llvm::Value *Chunk = nullptr;
+  //   /// EnsureUpperBound
+  //   Expr *EUB = nullptr;
+  //   /// IncrementExpression
+  //   Expr *IncExpr = nullptr;
+  //   /// Loop initialization
+  //   Expr *Init = nullptr;
+  //   /// Loop exit condition
+  //   Expr *Cond = nullptr;
+  //   /// Update of LB after a whole chunk has been executed
+  //   Expr *NextLB = nullptr;
+  //   /// Update of UB after a whole chunk has been executed
+  //   Expr *NextUB = nullptr;
+  //   OMPLoopArguments() = default;
+  //   OMPLoopArguments(Address LB, Address UB, Address ST, Address IL,
+  //                    llvm::Value *Chunk = nullptr, Expr *EUB = nullptr,
+  //                    Expr *IncExpr = nullptr, Expr *Init = nullptr,
+  //                    Expr *Cond = nullptr, Expr *NextLB = nullptr,
+  //                    Expr *NextUB = nullptr)
+  //       : LB(LB), UB(UB), ST(ST), IL(IL), Chunk(Chunk), EUB(EUB),
+  //         IncExpr(IncExpr), Init(Init), Cond(Cond), NextLB(NextLB),
+  //         NextUB(NextUB) {}
+  // };
+  // void EmitOMPOuterLoop(bool DynamicOrOrdered, bool IsMonotonic,
+  //                       const OMPLoopDirective &S, OMPPrivateScope &LoopScope,
+  //                       const OMPLoopArguments &LoopArgs,
+  //                       const CodeGenLoopTy &CodeGenLoop,
+  //                       const CodeGenOrderedTy &CodeGenOrdered);
+  // void EmitOMPForOuterLoop(const OpenMPScheduleTy &ScheduleKind,
+  //                          bool IsMonotonic, const OMPLoopDirective &S,
+  //                          OMPPrivateScope &LoopScope, bool Ordered,
+  //                          const OMPLoopArguments &LoopArgs,
+  //                          const CodeGenDispatchBoundsTy &CGDispatchBounds);
+  // void EmitOMPDistributeOuterLoop(OpenMPDistScheduleClauseKind ScheduleKind,
+  //                                 const OMPLoopDirective &S,
+  //                                 OMPPrivateScope &LoopScope,
+  //                                 const OMPLoopArguments &LoopArgs,
+  //                                 const CodeGenLoopTy &CodeGenLoopContent);
+  // /// Emit code for sections directive.
+  // void EmitSections(const OMPExecutableDirective &S);
 
 public:
 
@@ -3735,8 +3735,8 @@ public:
   LValue EmitArraySubscriptExpr(const ArraySubscriptExpr *E,
                                 bool Accessed = false);
   LValue EmitMatrixSubscriptExpr(const MatrixSubscriptExpr *E);
-  LValue EmitOMPArraySectionExpr(const OMPArraySectionExpr *E,
-                                 bool IsLowerBound = true);
+  // LValue EmitOMPArraySectionExpr(const OMPArraySectionExpr *E,
+  //                                bool IsLowerBound = true);
   LValue EmitExtVectorElementExpr(const ExtVectorElementExpr *E);
   LValue EmitMemberExpr(const MemberExpr *E);
   // LValue EmitObjCIsaExpr(const ObjCIsaExpr *E);
@@ -4097,34 +4097,34 @@ public:
   /// Retrieves the default cleanup kind for an ARC cleanup.
   /// Except under -fobjc-arc-eh, ARC cleanups are normal-only.
   CleanupKind getARCCleanupKind() {
-    return CGM.getCodeGenOpts().ObjCAutoRefCountExceptions
-             ? NormalAndEHCleanup : NormalCleanup;
+    return /*CGM.getCodeGenOpts().ObjCAutoRefCountExceptions
+             ? NormalAndEHCleanup :*/ NormalCleanup;
   }
 
   // ARC primitives.
-  void EmitARCInitWeak(Address addr, llvm::Value *value);
-  void EmitARCDestroyWeak(Address addr);
-  llvm::Value *EmitARCLoadWeak(Address addr);
-  llvm::Value *EmitARCLoadWeakRetained(Address addr);
-  llvm::Value *EmitARCStoreWeak(Address addr, llvm::Value *value, bool ignored);
-  void emitARCCopyAssignWeak(QualType Ty, Address DstAddr, Address SrcAddr);
-  void emitARCMoveAssignWeak(QualType Ty, Address DstAddr, Address SrcAddr);
-  void EmitARCCopyWeak(Address dst, Address src);
-  void EmitARCMoveWeak(Address dst, Address src);
-  llvm::Value *EmitARCRetainAutorelease(QualType type, llvm::Value *value);
-  llvm::Value *EmitARCRetainAutoreleaseNonBlock(llvm::Value *value);
-  llvm::Value *EmitARCStoreStrong(LValue lvalue, llvm::Value *value,
-                                  bool resultIgnored);
-  llvm::Value *EmitARCStoreStrongCall(Address addr, llvm::Value *value,
-                                      bool resultIgnored);
-  llvm::Value *EmitARCRetain(QualType type, llvm::Value *value);
-  llvm::Value *EmitARCRetainNonBlock(llvm::Value *value);
+  // void EmitARCInitWeak(Address addr, llvm::Value *value);
+  // void EmitARCDestroyWeak(Address addr);
+  // llvm::Value *EmitARCLoadWeak(Address addr);
+  // llvm::Value *EmitARCLoadWeakRetained(Address addr);
+  // llvm::Value *EmitARCStoreWeak(Address addr, llvm::Value *value, bool ignored);
+  // void emitARCCopyAssignWeak(QualType Ty, Address DstAddr, Address SrcAddr);
+  // void emitARCMoveAssignWeak(QualType Ty, Address DstAddr, Address SrcAddr);
+  // void EmitARCCopyWeak(Address dst, Address src);
+  // void EmitARCMoveWeak(Address dst, Address src);
+  // llvm::Value *EmitARCRetainAutorelease(QualType type, llvm::Value *value);
+  // llvm::Value *EmitARCRetainAutoreleaseNonBlock(llvm::Value *value);
+  // llvm::Value *EmitARCStoreStrong(LValue lvalue, llvm::Value *value,
+  //                                 bool resultIgnored);
+  // llvm::Value *EmitARCStoreStrongCall(Address addr, llvm::Value *value,
+  //                                     bool resultIgnored);
+  // llvm::Value *EmitARCRetain(QualType type, llvm::Value *value);
+  // llvm::Value *EmitARCRetainNonBlock(llvm::Value *value);
   llvm::Value *EmitARCRetainBlock(llvm::Value *value, bool mandatory);
   void EmitARCDestroyStrong(Address addr, ARCPreciseLifetime_t precise);
-  void EmitARCRelease(llvm::Value *value, ARCPreciseLifetime_t precise);
+  // void EmitARCRelease(llvm::Value *value, ARCPreciseLifetime_t precise);
   llvm::Value *EmitARCAutorelease(llvm::Value *value);
-  llvm::Value *EmitARCAutoreleaseReturnValue(llvm::Value *value);
-  llvm::Value *EmitARCRetainAutoreleaseReturnValue(llvm::Value *value);
+  // llvm::Value *EmitARCAutoreleaseReturnValue(llvm::Value *value);
+  // llvm::Value *EmitARCRetainAutoreleaseReturnValue(llvm::Value *value);
   llvm::Value *EmitARCRetainAutoreleasedReturnValue(llvm::Value *value);
   llvm::Value *EmitARCUnsafeClaimAutoreleasedReturnValue(llvm::Value *value);
 
@@ -4135,31 +4135,31 @@ public:
 
   std::pair<LValue,llvm::Value*>
   EmitARCStoreAutoreleasing(const BinaryOperator *e);
-  std::pair<LValue,llvm::Value*>
-  EmitARCStoreStrong(const BinaryOperator *e, bool ignored);
+  // std::pair<LValue,llvm::Value*>
+  // EmitARCStoreStrong(const BinaryOperator *e, bool ignored);
   std::pair<LValue,llvm::Value*>
   EmitARCStoreUnsafeUnretained(const BinaryOperator *e, bool ignored);
 
-  llvm::Value *EmitObjCAlloc(llvm::Value *value,
-                             llvm::Type *returnType);
-  llvm::Value *EmitObjCAllocWithZone(llvm::Value *value,
-                                     llvm::Type *returnType);
-  llvm::Value *EmitObjCAllocInit(llvm::Value *value, llvm::Type *resultType);
+  // llvm::Value *EmitObjCAlloc(llvm::Value *value,
+  //                            llvm::Type *returnType);
+  // llvm::Value *EmitObjCAllocWithZone(llvm::Value *value,
+  //                                    llvm::Type *returnType);
+  // llvm::Value *EmitObjCAllocInit(llvm::Value *value, llvm::Type *resultType);
 
-  llvm::Value *EmitObjCThrowOperand(const Expr *expr);
-  llvm::Value *EmitObjCConsumeObject(QualType T, llvm::Value *Ptr);
-  llvm::Value *EmitObjCExtendObjectLifetime(QualType T, llvm::Value *Ptr);
+  // llvm::Value *EmitObjCThrowOperand(const Expr *expr);
+  // llvm::Value *EmitObjCConsumeObject(QualType T, llvm::Value *Ptr);
+  // llvm::Value *EmitObjCExtendObjectLifetime(QualType T, llvm::Value *Ptr);
 
-  llvm::Value *EmitARCExtendBlockObject(const Expr *expr);
-  llvm::Value *EmitARCReclaimReturnedObject(const Expr *e,
-                                            bool allowUnsafeClaim);
-  llvm::Value *EmitARCRetainScalarExpr(const Expr *expr);
-  llvm::Value *EmitARCRetainAutoreleaseScalarExpr(const Expr *expr);
-  llvm::Value *EmitARCUnsafeUnretainedScalarExpr(const Expr *expr);
+  // llvm::Value *EmitARCExtendBlockObject(const Expr *expr);
+  // llvm::Value *EmitARCReclaimReturnedObject(const Expr *e,
+  //                                           bool allowUnsafeClaim);
+  // llvm::Value *EmitARCRetainScalarExpr(const Expr *expr);
+  // llvm::Value *EmitARCRetainAutoreleaseScalarExpr(const Expr *expr);
+  // llvm::Value *EmitARCUnsafeUnretainedScalarExpr(const Expr *expr);
 
-  void EmitARCIntrinsicUse(ArrayRef<llvm::Value*> values);
+  // void EmitARCIntrinsicUse(ArrayRef<llvm::Value*> values);
 
-  static Destroyer destroyARCStrongImprecise;
+  // static Destroyer destroyARCStrongImprecise;
   static Destroyer destroyARCStrongPrecise;
   static Destroyer destroyARCWeak;
   static Destroyer emitARCIntrinsicUse;
@@ -4660,7 +4660,7 @@ private:
   BlockByrefHelpers *buildByrefHelpers(llvm::StructType &byrefType,
                                   const AutoVarEmission &emission);
 
-  void AddObjCARCExceptionMetadata(llvm::Instruction *Inst);
+  // void AddObjCARCExceptionMetadata(llvm::Instruction *Inst);
 
   llvm::Value *GetValueForARMHint(unsigned BuiltinID);
   llvm::Value *EmitX86CpuIs(const CallExpr *E);

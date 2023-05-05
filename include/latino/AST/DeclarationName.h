@@ -34,7 +34,7 @@ class ASTContext;
 template <typename> class CanQual;
 class DeclarationName;
 class DeclarationNameTable;
-class MultiKeywordSelector;
+// class MultiKeywordSelector;
 struct PrintingPolicy;
 class TemplateDecl;
 class TypeSourceInfo;
@@ -174,13 +174,13 @@ class DeclarationName {
   /// * PtrMask must mask the low 3 bits of Ptr.
   enum StoredNameKind {
     StoredIdentifier = 0,
-    StoredObjCZeroArgSelector = Selector::ZeroArg,
-    StoredObjCOneArgSelector = Selector::OneArg,
+    // StoredObjCZeroArgSelector = Selector::ZeroArg,
+    // StoredObjCOneArgSelector = Selector::OneArg,
     StoredCXXConstructorName = 3,
     StoredCXXDestructorName = 4,
     StoredCXXConversionFunctionName = 5,
     StoredCXXOperatorName = 6,
-    StoredDeclarationNameExtra = Selector::MultiArg,
+    // StoredDeclarationNameExtra = Selector::MultiArg,
     PtrMask = 7,
     UncommonNameKindOffset = 8
   };
@@ -201,8 +201,8 @@ public:
   /// and correspond to infrequently used kinds.
   enum NameKind {
     Identifier = StoredIdentifier,
-    ObjCZeroArgSelector = StoredObjCZeroArgSelector,
-    ObjCOneArgSelector = StoredObjCOneArgSelector,
+    // ObjCZeroArgSelector = StoredObjCZeroArgSelector,
+    // ObjCOneArgSelector = StoredObjCOneArgSelector,
     CXXConstructorName = StoredCXXConstructorName,
     CXXDestructorName = StoredCXXDestructorName,
     CXXConversionFunctionName = StoredCXXConversionFunctionName,
@@ -213,9 +213,9 @@ public:
         UncommonNameKindOffset +
         detail::DeclarationNameExtra::CXXLiteralOperatorName,
     CXXUsingDirective = UncommonNameKindOffset +
-                        detail::DeclarationNameExtra::CXXUsingDirective,
-    ObjCMultiArgSelector = UncommonNameKindOffset +
-                           detail::DeclarationNameExtra::ObjCMultiArgSelector
+                        detail::DeclarationNameExtra::CXXUsingDirective //,
+    // ObjCMultiArgSelector = UncommonNameKindOffset +
+    //                        detail::DeclarationNameExtra::ObjCMultiArgSelector
   };
 
 private:
@@ -269,9 +269,9 @@ private:
   }
 
   /// Construct a declaration name from a DeclarationNameExtra.
-  DeclarationName(detail::DeclarationNameExtra *Name) {
-    setPtrAndKind(Name, StoredDeclarationNameExtra);
-  }
+   DeclarationName(detail::DeclarationNameExtra *Name) {
+    setPtrAndKind(Name, /*StoredDeclarationNameExtra*/ UncommonNameKindOffset);
+   }
 
   /// Construct a declaration name from a CXXSpecialNameExtra.
   DeclarationName(detail::CXXSpecialNameExtra *Name,
@@ -298,11 +298,11 @@ private:
 
   /// Assert that the stored pointer points to a DeclarationNameExtra
   /// and return it.
-  detail::DeclarationNameExtra *castAsExtra() const {
-    assert((getStoredNameKind() == StoredDeclarationNameExtra) &&
-           "DeclarationName does not store an Extra structure!");
-    return static_cast<detail::DeclarationNameExtra *>(getPtr());
-  }
+  // detail::DeclarationNameExtra *castAsExtra() const {
+  //   assert((getStoredNameKind() == StoredDeclarationNameExtra) &&
+  //          "DeclarationName does not store an Extra structure!");
+  //   return static_cast<detail::DeclarationNameExtra *>(getPtr());
+  // }
 
   /// Assert that the stored pointer points to a CXXSpecialNameExtra
   /// and return it.
@@ -353,7 +353,7 @@ public:
   }
 
   /// Construct a declaration name from an Objective-C selector.
-  DeclarationName(Selector Sel) : Ptr(Sel.InfoPtr) {}
+  // DeclarationName(Selector Sel) : Ptr(Sel.InfoPtr) {}
 
   /// Returns the name for all C++ using-directives.
   static DeclarationName getUsingDirectiveName() {
@@ -373,25 +373,25 @@ public:
 
   /// Predicate functions for querying what type of name this is.
   bool isIdentifier() const { return getStoredNameKind() == StoredIdentifier; }
-  bool isObjCZeroArgSelector() const {
-    return getStoredNameKind() == StoredObjCZeroArgSelector;
-  }
-  bool isObjCOneArgSelector() const {
-    return getStoredNameKind() == StoredObjCOneArgSelector;
-  }
+  // bool isObjCZeroArgSelector() const {
+  //   return getStoredNameKind() == StoredObjCZeroArgSelector;
+  // }
+  // bool isObjCOneArgSelector() const {
+  //   return getStoredNameKind() == StoredObjCOneArgSelector;
+  // }
 
   /// Determine what kind of name this is.
   NameKind getNameKind() const {
     // We rely on the fact that the first 7 NameKind and StoredNameKind
     // have the same numerical value. This makes the usual case efficient.
     StoredNameKind StoredKind = getStoredNameKind();
-    if (StoredKind != StoredDeclarationNameExtra)
-      return static_cast<NameKind>(StoredKind);
+    // if (StoredKind != StoredDeclarationNameExtra)
+    //   return static_cast<NameKind>(StoredKind);
     // We have to consult DeclarationNameExtra. We rely on the fact that the
     // enumeration values of ExtraKind correspond to the enumeration values of
     // NameKind minus an offset of UncommonNameKindOffset.
-    unsigned ExtraKind = castAsExtra()->getKind();
-    return static_cast<NameKind>(UncommonNameKindOffset + ExtraKind);
+    // unsigned ExtraKind = castAsExtra()->getKind();
+    return static_cast<NameKind>(UncommonNameKindOffset /*+ ExtraKind*/);
   }
 
   /// Determines whether the name itself is dependent, e.g., because it
@@ -478,13 +478,13 @@ public:
   }
 
   /// Get the Objective-C selector stored in this declaration name.
-  Selector getObjCSelector() const {
-    assert((getNameKind() == ObjCZeroArgSelector ||
-            getNameKind() == ObjCOneArgSelector ||
-            getNameKind() == ObjCMultiArgSelector || !getPtr()) &&
-           "Not a selector!");
-    return Selector(Ptr);
-  }
+  // Selector getObjCSelector() const {
+  //   assert((getNameKind() == ObjCZeroArgSelector ||
+  //           getNameKind() == ObjCOneArgSelector ||
+  //           getNameKind() == ObjCMultiArgSelector || !getPtr()) &&
+  //          "Not a selector!");
+  //   return Selector(Ptr);
+  // }
 
   /// Get and set FETokenInfo. The language front-end is allowed to associate
   /// arbitrary metadata with some kinds of declaration names, including normal

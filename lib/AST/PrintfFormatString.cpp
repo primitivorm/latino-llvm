@@ -50,23 +50,23 @@ static bool ParsePrecision(FormatStringHandler &H, PrintfSpecifier &FS,
   return false;
 }
 
-static bool ParseObjCFlags(FormatStringHandler &H, PrintfSpecifier &FS,
-                           const char *FlagBeg, const char *E, bool Warn) {
-   StringRef Flag(FlagBeg, E - FlagBeg);
-   // Currently there is only one flag.
-   if (Flag == "tt") {
-     FS.setHasObjCTechnicalTerm(FlagBeg);
-     return false;
-   }
-   // Handle either the case of no flag or an invalid flag.
-   if (Warn) {
-     if (Flag == "")
-       H.HandleEmptyObjCModifierFlag(FlagBeg, E  - FlagBeg);
-     else
-       H.HandleInvalidObjCModifierFlag(FlagBeg, E  - FlagBeg);
-   }
-   return true;
-}
+// static bool ParseObjCFlags(FormatStringHandler &H, PrintfSpecifier &FS,
+//                            const char *FlagBeg, const char *E, bool Warn) {
+//    StringRef Flag(FlagBeg, E - FlagBeg);
+//    // Currently there is only one flag.
+//    if (Flag == "tt") {
+//      FS.setHasObjCTechnicalTerm(FlagBeg);
+//      return false;
+//    }
+//    // Handle either the case of no flag or an invalid flag.
+//    if (Warn) {
+//      if (Flag == "")
+//        H.HandleEmptyObjCModifierFlag(FlagBeg, E  - FlagBeg);
+//      else
+//        H.HandleInvalidObjCModifierFlag(FlagBeg, E  - FlagBeg);
+//    }
+//    return true;
+// }
 
 static PrintfSpecifierResult ParsePrintfSpecifier(FormatStringHandler &H,
                                                   const char *&Beg,
@@ -279,8 +279,8 @@ static PrintfSpecifierResult ParsePrintfSpecifier(FormatStringHandler &H,
       }
       // Did we find the closing ']'?
       if (*I == ']') {
-        if (ParseObjCFlags(H, FS, flagStart, I, Warn))
-          return true;
+        // if (ParseObjCFlags(H, FS, flagStart, I, Warn))
+        //   return true;
         ++I;
         break;
       }
@@ -374,14 +374,14 @@ static PrintfSpecifierResult ParsePrintfSpecifier(FormatStringHandler &H,
 
   // Check to see if we used the Objective-C modifier flags with
   // a conversion specifier other than '@'.
-  if (k != ConversionSpecifier::ObjCObjArg &&
-      k != ConversionSpecifier::InvalidSpecifier &&
-      ObjCModifierFlagsStart) {
-    H.HandleObjCFlagsWithNonObjCConversion(ObjCModifierFlagsStart,
-                                           ObjCModifierFlagsEnd + 1,
-                                           conversionPosition);
-    return true;
-  }
+  // if (k != ConversionSpecifier::ObjCObjArg &&
+  //     k != ConversionSpecifier::InvalidSpecifier &&
+  //     ObjCModifierFlagsStart) {
+  //   H.HandleObjCFlagsWithNonObjCConversion(ObjCModifierFlagsStart,
+  //                                          ObjCModifierFlagsEnd + 1,
+  //                                          conversionPosition);
+  //   return true;
+  // }
 
   PrintfConversionSpecifier CS(conversionPosition, k);
   FS.setConversionSpecifier(CS);
@@ -688,23 +688,23 @@ bool PrintfSpecifier::fixType(QualType QT, const LangOptions &LangOpt,
   // not warn for structure pointer or void pointer arguments (because that's
   // how CoreFoundation objects are implemented), we only show a fixit for '%@'
   // if we know it's an object (block, id, class, or __attribute__((NSObject))).
-  if (QT->isObjCRetainableType()) {
-    if (!IsObjCLiteral)
-      return false;
+  // if (QT->isObjCRetainableType()) {
+  //   if (!IsObjCLiteral)
+  //     return false;
 
-    CS.setKind(ConversionSpecifier::ObjCObjArg);
+  //   CS.setKind(ConversionSpecifier::ObjCObjArg);
 
-    // Disable irrelevant flags
-    HasThousandsGrouping = false;
-    HasPlusPrefix = false;
-    HasSpacePrefix = false;
-    HasAlternativeForm = false;
-    HasLeadingZeroes = false;
-    Precision.setHowSpecified(OptionalAmount::NotSpecified);
-    LM.setKind(LengthModifier::None);
+  //   // Disable irrelevant flags
+  //   HasThousandsGrouping = false;
+  //   HasPlusPrefix = false;
+  //   HasSpacePrefix = false;
+  //   HasAlternativeForm = false;
+  //   HasLeadingZeroes = false;
+  //   Precision.setHowSpecified(OptionalAmount::NotSpecified);
+  //   LM.setKind(LengthModifier::None);
 
-    return true;
-  }
+  //   return true;
+  // }
 
   // Handle strings next (char *, wchar_t *)
   if (QT->isPointerType() && (QT->getPointeeType()->isAnyCharacterType())) {
@@ -751,10 +751,10 @@ bool PrintfSpecifier::fixType(QualType QT, const LangOptions &LangOpt,
   case BuiltinType::Char32:
   case BuiltinType::UInt128:
   case BuiltinType::Int128:
-  case BuiltinType::Half:
+  // case BuiltinType::Half:
   case BuiltinType::BFloat16:
-  case BuiltinType::Float16:
-  case BuiltinType::Float128:
+  // case BuiltinType::Float16:
+  // case BuiltinType::Float128:
   case BuiltinType::ShortAccum:
   case BuiltinType::Accum:
   case BuiltinType::LongAccum:

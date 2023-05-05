@@ -16,7 +16,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclLookups.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -47,7 +47,7 @@
 #include <utility>
 #include <vector>
 
-#include "OpenCLBuiltins.inc"
+// #include "OpenCLBuiltins.inc"
 
 using namespace latino;
 using namespace sema;
@@ -211,7 +211,7 @@ static inline unsigned getIDNS(Sema::LookupNameKind NameKind,
                                bool Redeclaration) {
   unsigned IDNS = 0;
   switch (NameKind) {
-  case Sema::LookupObjCImplicitSelfParam:
+  // case Sema::LookupObjCImplicitSelfParam:
   case Sema::LookupOrdinaryName:
   case Sema::LookupRedeclarationWithLinkage:
   case Sema::LookupLocalFriendName:
@@ -274,9 +274,9 @@ static inline unsigned getIDNS(Sema::LookupNameKind NameKind,
            Decl::IDNS_LocalExtern;
     break;
 
-  case Sema::LookupObjCProtocolName:
-    IDNS = Decl::IDNS_ObjCProtocol;
-    break;
+  // case Sema::LookupObjCProtocolName:
+  //   IDNS = Decl::IDNS_ObjCProtocol;
+  //   break;
 
   case Sema::LookupOMPReductionName:
     IDNS = Decl::IDNS_OMPReduction;
@@ -688,25 +688,25 @@ LLVM_DUMP_METHOD void LookupResult::dump() {
 /// \param ArgTypes (out) List of the possible argument types.  For each
 ///        argument, ArgTypes contains QualTypes for the Cartesian product
 ///        of (vector sizes) x (types) .
-static void GetQualTypesForOpenCLBuiltin(
-    ASTContext &Context, const OpenCLBuiltinStruct &OpenCLBuiltin,
-    unsigned &GenTypeMaxCnt, SmallVector<QualType, 1> &RetTypes,
-    SmallVector<SmallVector<QualType, 1>, 5> &ArgTypes) {
-  // Get the QualType instances of the return types.
-  unsigned Sig = SignatureTable[OpenCLBuiltin.SigTableIndex];
-  OCL2Qual(Context, TypeTable[Sig], RetTypes);
-  GenTypeMaxCnt = RetTypes.size();
+// static void GetQualTypesForOpenCLBuiltin(
+//     ASTContext &Context, const OpenCLBuiltinStruct &OpenCLBuiltin,
+//     unsigned &GenTypeMaxCnt, SmallVector<QualType, 1> &RetTypes,
+//     SmallVector<SmallVector<QualType, 1>, 5> &ArgTypes) {
+//   // Get the QualType instances of the return types.
+//   unsigned Sig = SignatureTable[OpenCLBuiltin.SigTableIndex];
+//   OCL2Qual(Context, TypeTable[Sig], RetTypes);
+//   GenTypeMaxCnt = RetTypes.size();
 
-  // Get the QualType instances of the arguments.
-  // First type is the return type, skip it.
-  for (unsigned Index = 1; Index < OpenCLBuiltin.NumTypes; Index++) {
-    SmallVector<QualType, 1> Ty;
-    OCL2Qual(Context,
-        TypeTable[SignatureTable[OpenCLBuiltin.SigTableIndex + Index]], Ty);
-    GenTypeMaxCnt = (Ty.size() > GenTypeMaxCnt) ? Ty.size() : GenTypeMaxCnt;
-    ArgTypes.push_back(std::move(Ty));
-  }
-}
+//   // Get the QualType instances of the arguments.
+//   // First type is the return type, skip it.
+//   for (unsigned Index = 1; Index < OpenCLBuiltin.NumTypes; Index++) {
+//     SmallVector<QualType, 1> Ty;
+//     OCL2Qual(Context,
+//         TypeTable[SignatureTable[OpenCLBuiltin.SigTableIndex + Index]], Ty);
+//     GenTypeMaxCnt = (Ty.size() > GenTypeMaxCnt) ? Ty.size() : GenTypeMaxCnt;
+//     ArgTypes.push_back(std::move(Ty));
+//   }
+// }
 
 /// Create a list of the candidate function overloads for an OpenCL builtin
 /// function.
@@ -747,13 +747,13 @@ static void GetOpenCLBuiltinFctOverloads(
 /// \param S (in/out) The Sema instance.
 /// \param BIDecl (in) Description of the builtin.
 /// \param FDecl (in/out) FunctionDecl instance.
-static void AddOpenCLExtensions(Sema &S, const OpenCLBuiltinStruct &BIDecl,
-                                FunctionDecl *FDecl) {
-  // Fetch extension associated with a function prototype.
-  StringRef E = FunctionExtensionTable[BIDecl.Extension];
-  if (E != "")
-    S.setOpenCLExtensionForDecl(FDecl, E);
-}
+// static void AddOpenCLExtensions(Sema &S, const OpenCLBuiltinStruct &BIDecl,
+//                                 FunctionDecl *FDecl) {
+//   // Fetch extension associated with a function prototype.
+//   StringRef E = FunctionExtensionTable[BIDecl.Extension];
+//   if (E != "")
+//     S.setOpenCLExtensionForDecl(FDecl, E);
+// }
 
 /// When trying to resolve a function name, if isOpenCLBuiltin() returns a
 /// non-null <Index, Len> pair, then the name is referencing an OpenCL
@@ -764,95 +764,95 @@ static void AddOpenCLExtensions(Sema &S, const OpenCLBuiltinStruct &BIDecl,
 /// \param II (in) The identifier being resolved.
 /// \param FctIndex (in) Starting index in the BuiltinTable.
 /// \param Len (in) The signature list has Len elements.
-static void InsertOCLBuiltinDeclarationsFromTable(Sema &S, LookupResult &LR,
-                                                  IdentifierInfo *II,
-                                                  const unsigned FctIndex,
-                                                  const unsigned Len) {
-  // The builtin function declaration uses generic types (gentype).
-  bool HasGenType = false;
+// static void InsertOCLBuiltinDeclarationsFromTable(Sema &S, LookupResult &LR,
+//                                                   IdentifierInfo *II,
+//                                                   const unsigned FctIndex,
+//                                                   const unsigned Len) {
+//   // The builtin function declaration uses generic types (gentype).
+//   bool HasGenType = false;
 
-  // Maximum number of types contained in a generic type used as return type or
-  // as argument.  Only meaningful for generic types, otherwise equals 1.
-  unsigned GenTypeMaxCnt;
+//   // Maximum number of types contained in a generic type used as return type or
+//   // as argument.  Only meaningful for generic types, otherwise equals 1.
+//   unsigned GenTypeMaxCnt;
 
-  for (unsigned SignatureIndex = 0; SignatureIndex < Len; SignatureIndex++) {
-    const OpenCLBuiltinStruct &OpenCLBuiltin =
-        BuiltinTable[FctIndex + SignatureIndex];
-    ASTContext &Context = S.Context;
+//   for (unsigned SignatureIndex = 0; SignatureIndex < Len; SignatureIndex++) {
+//     const OpenCLBuiltinStruct &OpenCLBuiltin =
+//         BuiltinTable[FctIndex + SignatureIndex];
+//     ASTContext &Context = S.Context;
 
-    // Ignore this BIF if its version does not match the language options.
-    unsigned OpenCLVersion = Context.getLangOpts().OpenCLVersion;
-    if (Context.getLangOpts().OpenCLCPlusPlus)
-      OpenCLVersion = 200;
-    if (OpenCLVersion < OpenCLBuiltin.MinVersion)
-      continue;
-    if ((OpenCLBuiltin.MaxVersion != 0) &&
-        (OpenCLVersion >= OpenCLBuiltin.MaxVersion))
-      continue;
+//     // Ignore this BIF if its version does not match the language options.
+//     unsigned OpenCLVersion = Context.getLangOpts().OpenCLVersion;
+//     if (Context.getLangOpts().OpenCLCPlusPlus)
+//       OpenCLVersion = 200;
+//     if (OpenCLVersion < OpenCLBuiltin.MinVersion)
+//       continue;
+//     if ((OpenCLBuiltin.MaxVersion != 0) &&
+//         (OpenCLVersion >= OpenCLBuiltin.MaxVersion))
+//       continue;
 
-    SmallVector<QualType, 1> RetTypes;
-    SmallVector<SmallVector<QualType, 1>, 5> ArgTypes;
+//     SmallVector<QualType, 1> RetTypes;
+//     SmallVector<SmallVector<QualType, 1>, 5> ArgTypes;
 
-    // Obtain QualType lists for the function signature.
-    GetQualTypesForOpenCLBuiltin(Context, OpenCLBuiltin, GenTypeMaxCnt,
-                                 RetTypes, ArgTypes);
-    if (GenTypeMaxCnt > 1) {
-      HasGenType = true;
-    }
+//     // Obtain QualType lists for the function signature.
+//     GetQualTypesForOpenCLBuiltin(Context, OpenCLBuiltin, GenTypeMaxCnt,
+//                                  RetTypes, ArgTypes);
+//     if (GenTypeMaxCnt > 1) {
+//       HasGenType = true;
+//     }
 
-    // Create function overload for each type combination.
-    std::vector<QualType> FunctionList;
-    GetOpenCLBuiltinFctOverloads(Context, GenTypeMaxCnt, FunctionList, RetTypes,
-                                 ArgTypes);
+//     // Create function overload for each type combination.
+//     std::vector<QualType> FunctionList;
+//     GetOpenCLBuiltinFctOverloads(Context, GenTypeMaxCnt, FunctionList, RetTypes,
+//                                  ArgTypes);
 
-    SourceLocation Loc = LR.getNameLoc();
-    DeclContext *Parent = Context.getTranslationUnitDecl();
-    FunctionDecl *NewOpenCLBuiltin;
+//     SourceLocation Loc = LR.getNameLoc();
+//     DeclContext *Parent = Context.getTranslationUnitDecl();
+//     FunctionDecl *NewOpenCLBuiltin;
 
-    for (unsigned Index = 0; Index < GenTypeMaxCnt; Index++) {
-      NewOpenCLBuiltin = FunctionDecl::Create(
-          Context, Parent, Loc, Loc, II, FunctionList[Index],
-          /*TInfo=*/nullptr, SC_Extern, false,
-          FunctionList[Index]->isFunctionProtoType());
-      NewOpenCLBuiltin->setImplicit();
+//     for (unsigned Index = 0; Index < GenTypeMaxCnt; Index++) {
+//       NewOpenCLBuiltin = FunctionDecl::Create(
+//           Context, Parent, Loc, Loc, II, FunctionList[Index],
+//           /*TInfo=*/nullptr, SC_Extern, false,
+//           FunctionList[Index]->isFunctionProtoType());
+//       NewOpenCLBuiltin->setImplicit();
 
-      // Create Decl objects for each parameter, adding them to the
-      // FunctionDecl.
-      if (const FunctionProtoType *FP =
-              dyn_cast<FunctionProtoType>(FunctionList[Index])) {
-        SmallVector<ParmVarDecl *, 16> ParmList;
-        for (unsigned IParm = 0, e = FP->getNumParams(); IParm != e; ++IParm) {
-          ParmVarDecl *Parm = ParmVarDecl::Create(
-              Context, NewOpenCLBuiltin, SourceLocation(), SourceLocation(),
-              nullptr, FP->getParamType(IParm),
-              /*TInfo=*/nullptr, SC_None, nullptr);
-          Parm->setScopeInfo(0, IParm);
-          ParmList.push_back(Parm);
-        }
-        NewOpenCLBuiltin->setParams(ParmList);
-      }
+//       // Create Decl objects for each parameter, adding them to the
+//       // FunctionDecl.
+//       if (const FunctionProtoType *FP =
+//               dyn_cast<FunctionProtoType>(FunctionList[Index])) {
+//         SmallVector<ParmVarDecl *, 16> ParmList;
+//         for (unsigned IParm = 0, e = FP->getNumParams(); IParm != e; ++IParm) {
+//           ParmVarDecl *Parm = ParmVarDecl::Create(
+//               Context, NewOpenCLBuiltin, SourceLocation(), SourceLocation(),
+//               nullptr, FP->getParamType(IParm),
+//               /*TInfo=*/nullptr, SC_None, nullptr);
+//           Parm->setScopeInfo(0, IParm);
+//           ParmList.push_back(Parm);
+//         }
+//         NewOpenCLBuiltin->setParams(ParmList);
+//       }
 
-      // Add function attributes.
-      if (OpenCLBuiltin.IsPure)
-        NewOpenCLBuiltin->addAttr(PureAttr::CreateImplicit(Context));
-      if (OpenCLBuiltin.IsConst)
-        NewOpenCLBuiltin->addAttr(ConstAttr::CreateImplicit(Context));
-      if (OpenCLBuiltin.IsConv)
-        NewOpenCLBuiltin->addAttr(ConvergentAttr::CreateImplicit(Context));
+//       // Add function attributes.
+//       if (OpenCLBuiltin.IsPure)
+//         NewOpenCLBuiltin->addAttr(PureAttr::CreateImplicit(Context));
+//       if (OpenCLBuiltin.IsConst)
+//         NewOpenCLBuiltin->addAttr(ConstAttr::CreateImplicit(Context));
+//       if (OpenCLBuiltin.IsConv)
+//         NewOpenCLBuiltin->addAttr(ConvergentAttr::CreateImplicit(Context));
 
-      if (!S.getLangOpts().OpenCLCPlusPlus)
-        NewOpenCLBuiltin->addAttr(OverloadableAttr::CreateImplicit(Context));
+//       if (!S.getLangOpts().OpenCLCPlusPlus)
+//         NewOpenCLBuiltin->addAttr(OverloadableAttr::CreateImplicit(Context));
 
-      AddOpenCLExtensions(S, OpenCLBuiltin, NewOpenCLBuiltin);
+//       AddOpenCLExtensions(S, OpenCLBuiltin, NewOpenCLBuiltin);
 
-      LR.addDecl(NewOpenCLBuiltin);
-    }
-  }
+//       LR.addDecl(NewOpenCLBuiltin);
+//     }
+//   }
 
-  // If we added overloads, need to resolve the lookup result.
-  if (Len > 1 || HasGenType)
-    LR.resolveKind();
-}
+//   // If we added overloads, need to resolve the lookup result.
+//   if (Len > 1 || HasGenType)
+//     LR.resolveKind();
+// }
 
 /// Lookup a builtin function, when name lookup would otherwise
 /// fail.
@@ -877,20 +877,20 @@ bool Sema::LookupBuiltin(LookupResult &R) {
       }
 
       // Check if this is an OpenCL Builtin, and if so, insert its overloads.
-      if (getLangOpts().OpenCL && getLangOpts().DeclareOpenCLBuiltins) {
-        auto Index = isOpenCLBuiltin(II->getName());
-        if (Index.first) {
-          InsertOCLBuiltinDeclarationsFromTable(*this, R, II, Index.first - 1,
-                                                Index.second);
-          return true;
-        }
-      }
+      // if (getLangOpts().OpenCL && getLangOpts().DeclareOpenCLBuiltins) {
+      //   auto Index = isOpenCLBuiltin(II->getName());
+      //   if (Index.first) {
+      //     InsertOCLBuiltinDeclarationsFromTable(*this, R, II, Index.first - 1,
+      //                                           Index.second);
+      //     return true;
+      //   }
+      // }
 
       // If this is a builtin on this (or all) targets, create the decl.
       if (unsigned BuiltinID = II->getBuiltinID()) {
         // In C++ and OpenCL (spec v1.2 s6.9.f), we don't have any predefined
         // library functions like 'malloc'. Instead, we'll just error.
-        if ((getLangOpts().CPlusPlus || getLangOpts().OpenCL) &&
+        if ((getLangOpts().CPlusPlus /*|| getLangOpts().OpenCL*/) &&
             Context.BuiltinInfo.isPredefinedLibFunction(BuiltinID))
           return false;
 
@@ -1893,9 +1893,9 @@ bool Sema::LookupName(LookupResult &R, Scope *S, bool AllowBuiltinCreation) {
             continue;
           }
         }
-        else if (NameKind == LookupObjCImplicitSelfParam &&
-                 !isa<ImplicitParamDecl>(*I))
-          continue;
+        // else if (NameKind == LookupObjCImplicitSelfParam &&
+        //          !isa<ImplicitParamDecl>(*I))
+        //   continue;
 
         R.addDecl(D);
 
@@ -2204,7 +2204,7 @@ bool Sema::LookupQualifiedName(LookupResult &R, DeclContext *LookupCtx,
   bool (*BaseCallback)(const CXXBaseSpecifier *Specifier, CXXBasePath &Path,
                        DeclarationName Name) = nullptr;
   switch (R.getLookupKind()) {
-    case LookupObjCImplicitSelfParam:
+    // case LookupObjCImplicitSelfParam:
     case LookupOrdinaryName:
     case LookupMemberName:
     case LookupRedeclarationWithLinkage:
@@ -2234,7 +2234,7 @@ bool Sema::LookupQualifiedName(LookupResult &R, DeclContext *LookupCtx,
 
     case LookupOperatorName:
     case LookupNamespaceName:
-    case LookupObjCProtocolName:
+    // case LookupObjCProtocolName:
     case LookupLabel:
       // These lookups will never find a member in a C++ class (or base class).
       return false;
@@ -4739,7 +4739,7 @@ std::unique_ptr<TypoCorrectionConsumer> Sema::makeTypoCorrectionConsumer(
     const DeclarationNameInfo &TypoName, Sema::LookupNameKind LookupKind,
     Scope *S, CXXScopeSpec *SS, CorrectionCandidateCallback &CCC,
     DeclContext *MemberContext, bool EnteringContext,
-    const ObjCObjectPointerType *OPT, bool ErrorRecovery) {
+    /*const ObjCObjectPointerType *OPT,*/ bool ErrorRecovery) {
 
   if (Diags.hasFatalErrorOccurred() || !getLangOpts().SpellChecking ||
       DisableTypoCorrection)
@@ -4815,10 +4815,10 @@ std::unique_ptr<TypoCorrectionConsumer> Sema::makeTypoCorrectionConsumer(
     LookupVisibleDecls(MemberContext, LookupKind, *Consumer);
 
     // Look in qualified interfaces.
-    if (OPT) {
-      for (auto *I : OPT->quals())
-        LookupVisibleDecls(I, LookupKind, *Consumer);
-    }
+    // if (OPT) {
+    //   for (auto *I : OPT->quals())
+    //     LookupVisibleDecls(I, LookupKind, *Consumer);
+    // }
   } else if (SS && SS->isSet()) {
     QualifiedDC = computeDeclContext(*SS, EnteringContext);
     if (!QualifiedDC)
@@ -4917,14 +4917,14 @@ TypoCorrection Sema::CorrectTypo(const DeclarationNameInfo &TypoName,
                                  CorrectTypoKind Mode,
                                  DeclContext *MemberContext,
                                  bool EnteringContext,
-                                 const ObjCObjectPointerType *OPT,
+                                //  const ObjCObjectPointerType *OPT,
                                  bool RecordFailure) {
   // Always let the ExternalSource have the first chance at correction, even
   // if we would otherwise have given up.
   if (ExternalSource) {
     if (TypoCorrection Correction =
             ExternalSource->CorrectTypo(TypoName, LookupKind, S, SS, CCC,
-                                        MemberContext, EnteringContext, OPT))
+                                        MemberContext, EnteringContext/*, OPT*/))
       return Correction;
   }
 
@@ -4937,7 +4937,7 @@ TypoCorrection Sema::CorrectTypo(const DeclarationNameInfo &TypoName,
   IdentifierInfo *Typo = TypoName.getName().getAsIdentifierInfo();
   auto Consumer = makeTypoCorrectionConsumer(TypoName, LookupKind, S, SS, CCC,
                                              MemberContext, EnteringContext,
-                                             OPT, Mode == CTK_ErrorRecovery);
+                                             /*OPT,*/ Mode == CTK_ErrorRecovery);
 
   if (!Consumer)
     return TypoCorrection();
@@ -5049,18 +5049,18 @@ TypoExpr *Sema::CorrectTypoDelayed(
     const DeclarationNameInfo &TypoName, Sema::LookupNameKind LookupKind,
     Scope *S, CXXScopeSpec *SS, CorrectionCandidateCallback &CCC,
     TypoDiagnosticGenerator TDG, TypoRecoveryCallback TRC, CorrectTypoKind Mode,
-    DeclContext *MemberContext, bool EnteringContext,
-    const ObjCObjectPointerType *OPT) {
+    DeclContext *MemberContext, bool EnteringContext/*,
+    const ObjCObjectPointerType *OPT*/) {
   auto Consumer = makeTypoCorrectionConsumer(TypoName, LookupKind, S, SS, CCC,
                                              MemberContext, EnteringContext,
-                                             OPT, Mode == CTK_ErrorRecovery);
+                                             /*OPT,*/ Mode == CTK_ErrorRecovery);
 
   // Give the external sema source a chance to correct the typo.
   TypoCorrection ExternalTypo;
   if (ExternalSource && Consumer) {
     ExternalTypo = ExternalSource->CorrectTypo(
         TypoName, LookupKind, S, SS, *Consumer->getCorrectionValidator(),
-        MemberContext, EnteringContext, OPT);
+        MemberContext, EnteringContext/*, OPT*/);
     if (ExternalTypo)
       Consumer->addCorrection(ExternalTypo);
   }

@@ -113,7 +113,7 @@ enum {
   /// The selector of the given message exactly matches the selector
   /// of the current method, which might imply that some kind of delegation
   /// is occurring.
-  CCD_SelectorMatch = -3,
+  // CCD_SelectorMatch = -3,
 
   /// Adjustment to the "bool" type in Objective-C, where the typedef
   /// "BOOL" is preferred.
@@ -303,7 +303,7 @@ public:
     CCC_NaturalLanguage,
 
     /// Code completion for a selector, as in an \@selector expression.
-    CCC_SelectorName,
+    // CCC_SelectorName,
 
     /// Code completion within a type-qualifier list.
     CCC_TypeQualifiers,

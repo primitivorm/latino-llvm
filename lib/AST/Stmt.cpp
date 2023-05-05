@@ -19,10 +19,10 @@
 #include "latino/AST/ExprConcepts.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/StmtCXX.h"
 // #include "latino/AST/StmtObjC.h"
-#include "latino/AST/StmtOpenMP.h"
+// #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/CharInfo.h"
 #include "latino/Basic/LLVM.h"
@@ -904,9 +904,9 @@ void IfStmt::setConditionVariable(const ASTContext &Ctx, VarDecl *V) {
       DeclStmt(DeclGroupRef(V), VarRange.getBegin(), VarRange.getEnd());
 }
 
-bool IfStmt::isObjCAvailabilityCheck() const {
-  return isa<ObjCAvailabilityCheckExpr>(getCond());
-}
+// bool IfStmt::isObjCAvailabilityCheck() const {
+//   return isa<ObjCAvailabilityCheckExpr>(getCond());
+// }
 
 Optional<const Stmt*> IfStmt::getNondiscardedCase(const ASTContext &Ctx) const {
   if (!isConstexpr() || getCond()->isValueDependent())

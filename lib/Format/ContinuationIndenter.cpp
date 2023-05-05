@@ -27,10 +27,10 @@ namespace format {
 
 // Returns true if a TT_SelectorName should be indented when wrapped,
 // false otherwise.
-static bool shouldIndentWrappedSelectorName(const FormatStyle &Style,
-                                            LineType LineType) {
-  return Style.IndentWrappedFunctionNames || LineType == LT_ObjCMethodDecl;
-}
+// static bool shouldIndentWrappedSelectorName(const FormatStyle &Style,
+//                                             LineType LineType) {
+//   return Style.IndentWrappedFunctionNames || LineType == LT_ObjCMethodDecl;
+// }
 
 // Returns the length of everything up to the first possible line break after
 // the ), ], } or > matching \c Tok.
@@ -123,8 +123,8 @@ static bool startsNextParameter(const FormatToken &Current,
   if (Current.is(TT_CtorInitializerComma) &&
       Style.BreakConstructorInitializers == FormatStyle::BCIS_BeforeComma)
     return true;
-  if (Style.Language == FormatStyle::LK_Proto && Current.is(TT_SelectorName))
-    return true;
+  // if (Style.Language == FormatStyle::LK_Proto && Current.is(TT_SelectorName))
+  //   return true;
   return Previous.is(tok::comma) && !Current.isTrailingComment() &&
          ((Previous.isNot(TT_CtorInitializerComma) ||
            Style.BreakConstructorInitializers !=
@@ -320,8 +320,8 @@ bool ContinuationIndenter::canBreak(const LineState &State) {
       State.Stack.back().NoLineBreakInOperand)
     return false;
 
-  if (Previous.is(tok::l_square) && Previous.is(TT_ObjCMethodExpr))
-    return false;
+  // if (Previous.is(tok::l_square) && Previous.is(TT_ObjCMethodExpr))
+  //   return false;
 
   return !State.Stack.back().NoLineBreak;
 }
@@ -341,12 +341,12 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
     return true;
   if (Previous.is(tok::semi) && State.LineContainsContinuedForLoopSection)
     return true;
-  if (Style.Language == FormatStyle::LK_ObjC &&
-      Style.ObjCBreakBeforeNestedBlockParam &&
-      Current.ObjCSelectorNameParts > 1 &&
-      Current.startsSequence(TT_SelectorName, tok::colon, tok::caret)) {
-    return true;
-  }
+  // if (Style.Language == FormatStyle::LK_ObjC &&
+  //     Style.ObjCBreakBeforeNestedBlockParam &&
+  //     Current.ObjCSelectorNameParts > 1 &&
+  //     Current.startsSequence(TT_SelectorName, tok::colon, tok::caret)) {
+  //   return true;
+  // }
   // Avoid producing inconsistent states by requiring breaks where they are not
   // permitted for C# generic type constraints.
   if (State.Stack.back().IsCSharpGenericTypeConstraint &&
@@ -395,13 +395,13 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
        Style.ColumnLimit != 0))
     return true;
 
-  if (Current.is(TT_ObjCMethodExpr) && !Previous.is(TT_SelectorName) &&
-      State.Line->startsWith(TT_ObjCMethodSpecifier))
-    return true;
-  if (Current.is(TT_SelectorName) && !Previous.is(tok::at) &&
-      State.Stack.back().ObjCSelectorNameFound &&
-      State.Stack.back().BreakBeforeParameter)
-    return true;
+  // if (Current.is(TT_ObjCMethodExpr) && !Previous.is(TT_SelectorName) &&
+  //     State.Line->startsWith(TT_ObjCMethodSpecifier))
+  //   return true;
+  // if (Current.is(TT_SelectorName) && !Previous.is(tok::at) &&
+  //     State.Stack.back().ObjCSelectorNameFound &&
+  //     State.Stack.back().BreakBeforeParameter)
+  //   return true;
 
   unsigned NewLineColumn = getNewLineColumn(State);
   if (Current.isMemberAccess() && Style.ColumnLimit != 0 &&
@@ -608,19 +608,19 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
       Previous.is(TT_InheritanceColon))
     State.Stack.back().NoLineBreak = true;
 
-  if (Current.is(TT_SelectorName) &&
-      !State.Stack.back().ObjCSelectorNameFound) {
-    unsigned MinIndent =
-        std::max(State.FirstIndent + Style.ContinuationIndentWidth,
-                 State.Stack.back().Indent);
-    unsigned FirstColonPos = State.Column + Spaces + Current.ColumnWidth;
-    if (Current.LongestObjCSelectorName == 0)
-      State.Stack.back().AlignColons = false;
-    else if (MinIndent + Current.LongestObjCSelectorName > FirstColonPos)
-      State.Stack.back().ColonPos = MinIndent + Current.LongestObjCSelectorName;
-    else
-      State.Stack.back().ColonPos = FirstColonPos;
-  }
+  // if (Current.is(TT_SelectorName) &&
+  //     !State.Stack.back().ObjCSelectorNameFound) {
+  //   unsigned MinIndent =
+  //       std::max(State.FirstIndent + Style.ContinuationIndentWidth,
+  //                State.Stack.back().Indent);
+  //   unsigned FirstColonPos = State.Column + Spaces + Current.ColumnWidth;
+  //   if (Current.LongestObjCSelectorName == 0)
+  //     State.Stack.back().AlignColons = false;
+  //   else if (MinIndent + Current.LongestObjCSelectorName > FirstColonPos)
+  //     State.Stack.back().ColonPos = MinIndent + Current.LongestObjCSelectorName;
+  //   else
+  //     State.Stack.back().ColonPos = FirstColonPos;
+  // }
 
   // In "AlwaysBreak" mode, enforce wrapping directly after the parenthesis by
   // disallowing any further line breaks if there is no line break after the
@@ -803,7 +803,7 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
   if (NextNonComment->isMemberAccess()) {
     if (State.Stack.back().CallContinuation == 0)
       State.Stack.back().CallContinuation = State.Column;
-  } else if (NextNonComment->is(TT_SelectorName)) {
+  } /*else if (NextNonComment->is(TT_SelectorName)) {
     if (!State.Stack.back().ObjCSelectorNameFound) {
       if (NextNonComment->LongestObjCSelectorName == 0) {
         State.Stack.back().AlignColons = false;
@@ -820,7 +820,7 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
                State.Stack.back().ColonPos <= NextNonComment->ColumnWidth) {
       State.Stack.back().ColonPos = State.Column + NextNonComment->ColumnWidth;
     }
-  } else if (PreviousNonComment && PreviousNonComment->is(tok::colon) &&
+  }*/ else if (PreviousNonComment && PreviousNonComment->is(tok::colon) &&
              PreviousNonComment->isOneOf(TT_ObjCMethodExpr, TT_DictLiteral)) {
     // FIXME: This is hacky, find a better way. The problem is that in an ObjC
     // method expression, the block should be aligned to the line starting it,
@@ -1062,32 +1062,32 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
       (!Style.IndentWrappedFunctionNames &&
        NextNonComment->isOneOf(tok::kw_operador, TT_FunctionDeclarationName)))
     return std::max(State.Stack.back().LastSpace, State.Stack.back().Indent);
-  if (NextNonComment->is(TT_SelectorName)) {
-    if (!State.Stack.back().ObjCSelectorNameFound) {
-      unsigned MinIndent = State.Stack.back().Indent;
-      if (shouldIndentWrappedSelectorName(Style, State.Line->Type))
-        MinIndent = std::max(MinIndent,
-                             State.FirstIndent + Style.ContinuationIndentWidth);
-      // If LongestObjCSelectorName is 0, we are indenting the first
-      // part of an ObjC selector (or a selector component which is
-      // not colon-aligned due to block formatting).
-      //
-      // Otherwise, we are indenting a subsequent part of an ObjC
-      // selector which should be colon-aligned to the longest
-      // component of the ObjC selector.
-      //
-      // In either case, we want to respect Style.IndentWrappedFunctionNames.
-      return MinIndent +
-             std::max(NextNonComment->LongestObjCSelectorName,
-                      NextNonComment->ColumnWidth) -
-             NextNonComment->ColumnWidth;
-    }
-    if (!State.Stack.back().AlignColons)
-      return State.Stack.back().Indent;
-    if (State.Stack.back().ColonPos > NextNonComment->ColumnWidth)
-      return State.Stack.back().ColonPos - NextNonComment->ColumnWidth;
-    return State.Stack.back().Indent;
-  }
+  // if (NextNonComment->is(TT_SelectorName)) {
+  //   if (!State.Stack.back().ObjCSelectorNameFound) {
+  //     unsigned MinIndent = State.Stack.back().Indent;
+  //     if (shouldIndentWrappedSelectorName(Style, State.Line->Type))
+  //       MinIndent = std::max(MinIndent,
+  //                            State.FirstIndent + Style.ContinuationIndentWidth);
+  //     // If LongestObjCSelectorName is 0, we are indenting the first
+  //     // part of an ObjC selector (or a selector component which is
+  //     // not colon-aligned due to block formatting).
+  //     //
+  //     // Otherwise, we are indenting a subsequent part of an ObjC
+  //     // selector which should be colon-aligned to the longest
+  //     // component of the ObjC selector.
+  //     //
+  //     // In either case, we want to respect Style.IndentWrappedFunctionNames.
+  //     return MinIndent +
+  //            std::max(NextNonComment->LongestObjCSelectorName,
+  //                     NextNonComment->ColumnWidth) -
+  //            NextNonComment->ColumnWidth;
+  //   }
+  //   if (!State.Stack.back().AlignColons)
+  //     return State.Stack.back().Indent;
+  //   if (State.Stack.back().ColonPos > NextNonComment->ColumnWidth)
+  //     return State.Stack.back().ColonPos - NextNonComment->ColumnWidth;
+  //   return State.Stack.back().Indent;
+  // }
   if (NextNonComment->is(tok::colon) && NextNonComment->is(TT_ObjCMethodExpr))
     return State.Stack.back().ColonPos;
   if (NextNonComment->is(TT_ArraySubscriptLSquare)) {
@@ -1200,8 +1200,8 @@ unsigned ContinuationIndenter::moveStateToNextToken(LineState &State,
   if (Current.isMemberAccess())
     State.Stack.back().StartOfFunctionCall =
         !Current.NextOperator ? 0 : State.Column;
-  if (Current.is(TT_SelectorName))
-    State.Stack.back().ObjCSelectorNameFound = true;
+  // if (Current.is(TT_SelectorName))
+  //   State.Stack.back().ObjCSelectorNameFound = true;
   if (Current.is(TT_CtorInitializerColon) &&
       Style.BreakConstructorInitializers != FormatStyle::BCIS_AfterColon) {
     // Indent 2 from the column, so:

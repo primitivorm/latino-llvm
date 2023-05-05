@@ -13,7 +13,7 @@
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"
@@ -142,14 +142,14 @@ void DereferenceChecker::reportBug(ProgramStateRef State, const Stmt *S,
     os << " results in a null pointer dereference";
     break;
   }
-  case Stmt::OMPArraySectionExprClass: {
-    os << "Array access";
-    const OMPArraySectionExpr *AE = cast<OMPArraySectionExpr>(S);
-    AddDerefSource(os, Ranges, AE->getBase()->IgnoreParenCasts(),
-                   State.get(), N->getLocationContext());
-    os << " results in a null pointer dereference";
-    break;
-  }
+  // case Stmt::OMPArraySectionExprClass: {
+  //   os << "Array access";
+  //   const OMPArraySectionExpr *AE = cast<OMPArraySectionExpr>(S);
+  //   AddDerefSource(os, Ranges, AE->getBase()->IgnoreParenCasts(),
+  //                  State.get(), N->getLocationContext());
+  //   os << " results in a null pointer dereference";
+  //   break;
+  // }
   case Stmt::UnaryOperatorClass: {
     os << "Dereference of null pointer";
     const UnaryOperator *U = cast<UnaryOperator>(S);

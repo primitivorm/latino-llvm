@@ -2772,8 +2772,8 @@ FormatStyle::LanguageKind guessLanguage(StringRef FileName, StringRef Code) {
     if (Extension.empty() || Extension == ".h") {
       auto NonEmptyFileName = FileName.empty() ? "guess.h" : FileName;
       Environment Env(Code, NonEmptyFileName, /*Ranges=*/{});
-      ObjCHeaderStyleGuesser Guesser(Env, getLLVMStyle());
-      Guesser.process();
+      // ObjCHeaderStyleGuesser Guesser(Env, getLLVMStyle());
+      // Guesser.process();
       // if (Guesser.isObjC())
       //   return FormatStyle::LK_ObjC;
     }

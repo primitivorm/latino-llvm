@@ -403,7 +403,7 @@ static void getTargetFeatures(const Driver &D, const llvm::Triple &Triple,
 /// disable C++ exceptions but enable Objective-C exceptions.
 static void addExceptionArgs(const ArgList &Args, types::ID InputType,
                              const ToolChain &TC, bool KernelOrKext,
-                             const ObjCRuntime &objcRuntime,
+                            //  const ObjCRuntime &objcRuntime,
                              ArgStringList &CmdArgs) {
   const llvm::Triple &Triple = TC.getTriple();
 
@@ -3068,7 +3068,7 @@ static void RenderOpenCLOptions(const ArgList &Args, ArgStringList &CmdArgs) {
 static void RenderARCMigrateToolOptions(const Driver &D, const ArgList &Args,
                                         ArgStringList &CmdArgs) {
   bool ARCMTEnabled = false;
-  if (!Args.hasArg(options::OPT_fno_objc_arc, options::OPT_fobjc_arc)) {
+  // if (!Args.hasArg(options::OPT_fno_objc_arc, options::OPT_fobjc_arc)) {
     if (const Arg *A = Args.getLastArg(options::OPT_ccc_arcmt_check,
                                        options::OPT_ccc_arcmt_modify,
                                        options::OPT_ccc_arcmt_migrate)) {
@@ -3091,11 +3091,11 @@ static void RenderARCMigrateToolOptions(const Driver &D, const ArgList &Args,
         break;
       }
     }
-  } else {
-    Args.ClaimAllArgs(options::OPT_ccc_arcmt_check);
-    Args.ClaimAllArgs(options::OPT_ccc_arcmt_modify);
-    Args.ClaimAllArgs(options::OPT_ccc_arcmt_migrate);
-  }
+  // } else {
+  //   Args.ClaimAllArgs(options::OPT_ccc_arcmt_check);
+  //   Args.ClaimAllArgs(options::OPT_ccc_arcmt_modify);
+  //   Args.ClaimAllArgs(options::OPT_ccc_arcmt_migrate);
+  // }
 
   if (const Arg *A = Args.getLastArg(options::OPT_ccc_objcmt_migrate)) {
     if (ARCMTEnabled)
@@ -3389,95 +3389,95 @@ static void RenderCharacterOptions(const ArgList &Args, const llvm::Triple &T,
   }
 }
 
-static void RenderObjCOptions(const ToolChain &TC, const Driver &D,
-                              const llvm::Triple &T, const ArgList &Args,
-                              ObjCRuntime &Runtime, bool InferCovariantReturns,
-                              const InputInfo &Input, ArgStringList &CmdArgs) {
-  const llvm::Triple::ArchType Arch = TC.getArch();
+// static void RenderObjCOptions(const ToolChain &TC, const Driver &D,
+//                               const llvm::Triple &T, const ArgList &Args,
+//                               ObjCRuntime &Runtime, bool InferCovariantReturns,
+//                               const InputInfo &Input, ArgStringList &CmdArgs) {
+//   const llvm::Triple::ArchType Arch = TC.getArch();
 
-  // -fobjc-dispatch-method is only relevant with the nonfragile-abi, and legacy
-  // is the default. Except for deployment target of 10.5, next runtime is
-  // always legacy dispatch and -fno-objc-legacy-dispatch gets ignored silently.
-  if (Runtime.isNonFragile()) {
-    if (!Args.hasFlag(options::OPT_fobjc_legacy_dispatch,
-                      options::OPT_fno_objc_legacy_dispatch,
-                      Runtime.isLegacyDispatchDefaultForArch(Arch))) {
-      if (TC.UseObjCMixedDispatch())
-        CmdArgs.push_back("-fobjc-dispatch-method=mixed");
-      else
-        CmdArgs.push_back("-fobjc-dispatch-method=non-legacy");
-    }
-  }
+//   // -fobjc-dispatch-method is only relevant with the nonfragile-abi, and legacy
+//   // is the default. Except for deployment target of 10.5, next runtime is
+//   // always legacy dispatch and -fno-objc-legacy-dispatch gets ignored silently.
+//   if (Runtime.isNonFragile()) {
+//     if (!Args.hasFlag(options::OPT_fobjc_legacy_dispatch,
+//                       options::OPT_fno_objc_legacy_dispatch,
+//                       Runtime.isLegacyDispatchDefaultForArch(Arch))) {
+//       if (TC.UseObjCMixedDispatch())
+//         CmdArgs.push_back("-fobjc-dispatch-method=mixed");
+//       else
+//         CmdArgs.push_back("-fobjc-dispatch-method=non-legacy");
+//     }
+//   }
 
-  // When ObjectiveC legacy runtime is in effect on MacOSX, turn on the option
-  // to do Array/Dictionary subscripting by default.
-  if (Arch == llvm::Triple::x86 && T.isMacOSX() &&
-      Runtime.getKind() == ObjCRuntime::FragileMacOSX && Runtime.isNeXTFamily())
-    CmdArgs.push_back("-fobjc-subscripting-legacy-runtime");
+//   // When ObjectiveC legacy runtime is in effect on MacOSX, turn on the option
+//   // to do Array/Dictionary subscripting by default.
+//   if (Arch == llvm::Triple::x86 && T.isMacOSX() &&
+//       Runtime.getKind() == ObjCRuntime::FragileMacOSX && Runtime.isNeXTFamily())
+//     CmdArgs.push_back("-fobjc-subscripting-legacy-runtime");
 
-  // Allow -fno-objc-arr to trump -fobjc-arr/-fobjc-arc.
-  // NOTE: This logic is duplicated in ToolChains.cpp.
-  if (isObjCAutoRefCount(Args)) {
-    TC.CheckObjCARC();
+//   // Allow -fno-objc-arr to trump -fobjc-arr/-fobjc-arc.
+//   // NOTE: This logic is duplicated in ToolChains.cpp.
+//   if (isObjCAutoRefCount(Args)) {
+//     TC.CheckObjCARC();
 
-    CmdArgs.push_back("-fobjc-arc");
+//     CmdArgs.push_back("-fobjc-arc");
 
-    // FIXME: It seems like this entire block, and several around it should be
-    // wrapped in isObjC, but for now we just use it here as this is where it
-    // was being used previously.
-    // if (types::isCXX(Input.getType()) && types::isObjC(Input.getType())) {
-    //   if (TC.GetCXXStdlibType(Args) == ToolChain::CST_Libcxx)
-    //     CmdArgs.push_back("-fobjc-arc-cxxlib=libc++");
-    //   else
-    //     CmdArgs.push_back("-fobjc-arc-cxxlib=libstdc++");
-    // }
+//     // FIXME: It seems like this entire block, and several around it should be
+//     // wrapped in isObjC, but for now we just use it here as this is where it
+//     // was being used previously.
+//     // if (types::isCXX(Input.getType()) && types::isObjC(Input.getType())) {
+//     //   if (TC.GetCXXStdlibType(Args) == ToolChain::CST_Libcxx)
+//     //     CmdArgs.push_back("-fobjc-arc-cxxlib=libc++");
+//     //   else
+//     //     CmdArgs.push_back("-fobjc-arc-cxxlib=libstdc++");
+//     // }
 
-    // Allow the user to enable full exceptions code emission.
-    // We default off for Objective-C, on for Objective-C++.
-    if (Args.hasFlag(options::OPT_fobjc_arc_exceptions,
-                     options::OPT_fno_objc_arc_exceptions,
-                     /*Default=*/types::isCXX(Input.getType())))
-      CmdArgs.push_back("-fobjc-arc-exceptions");
-  }
+//     // Allow the user to enable full exceptions code emission.
+//     // We default off for Objective-C, on for Objective-C++.
+//     // if (Args.hasFlag(options::OPT_fobjc_arc_exceptions,
+//     //                  options::OPT_fno_objc_arc_exceptions,
+//     //                  /*Default=*/types::isCXX(Input.getType())))
+//     //   CmdArgs.push_back("-fobjc-arc-exceptions");
+//   }
 
-  // Silence warning for full exception code emission options when explicitly
-  // set to use no ARC.
-  if (Args.hasArg(options::OPT_fno_objc_arc)) {
-    Args.ClaimAllArgs(options::OPT_fobjc_arc_exceptions);
-    Args.ClaimAllArgs(options::OPT_fno_objc_arc_exceptions);
-  }
+//   // Silence warning for full exception code emission options when explicitly
+//   // set to use no ARC.
+//   // if (Args.hasArg(options::OPT_fno_objc_arc)) {
+//   //   Args.ClaimAllArgs(options::OPT_fobjc_arc_exceptions);
+//   //   Args.ClaimAllArgs(options::OPT_fno_objc_arc_exceptions);
+//   // }
 
-  // Allow the user to control whether messages can be converted to runtime
-  // functions.
-  // if (types::isObjC(Input.getType())) {
-  //   auto *Arg = Args.getLastArg(
-  //       options::OPT_fobjc_convert_messages_to_runtime_calls,
-  //       options::OPT_fno_objc_convert_messages_to_runtime_calls);
-  //   if (Arg &&
-  //       Arg->getOption().matches(
-  //           options::OPT_fno_objc_convert_messages_to_runtime_calls))
-  //     CmdArgs.push_back("-fno-objc-convert-messages-to-runtime-calls");
-  // }
+//   // Allow the user to control whether messages can be converted to runtime
+//   // functions.
+//   // if (types::isObjC(Input.getType())) {
+//   //   auto *Arg = Args.getLastArg(
+//   //       options::OPT_fobjc_convert_messages_to_runtime_calls,
+//   //       options::OPT_fno_objc_convert_messages_to_runtime_calls);
+//   //   if (Arg &&
+//   //       Arg->getOption().matches(
+//   //           options::OPT_fno_objc_convert_messages_to_runtime_calls))
+//   //     CmdArgs.push_back("-fno-objc-convert-messages-to-runtime-calls");
+//   // }
 
-  // -fobjc-infer-related-result-type is the default, except in the Objective-C
-  // rewriter.
-  if (InferCovariantReturns)
-    CmdArgs.push_back("-fno-objc-infer-related-result-type");
+//   // -fobjc-infer-related-result-type is the default, except in the Objective-C
+//   // rewriter.
+//   if (InferCovariantReturns)
+//     CmdArgs.push_back("-fno-objc-infer-related-result-type");
 
-  // Pass down -fobjc-weak or -fno-objc-weak if present.
-  // if (types::isObjC(Input.getType())) {
-  //   auto WeakArg =
-  //       Args.getLastArg(options::OPT_fobjc_weak, options::OPT_fno_objc_weak);
-  //   if (!WeakArg) {
-  //     // nothing to do
-  //   } else if (!Runtime.allowsWeak()) {
-  //     if (WeakArg->getOption().matches(options::OPT_fobjc_weak))
-  //       D.Diag(diag::err_objc_weak_unsupported);
-  //   } else {
-  //     WeakArg->render(Args, CmdArgs);
-  //   }
-  // }
-}
+//   // Pass down -fobjc-weak or -fno-objc-weak if present.
+//   // if (types::isObjC(Input.getType())) {
+//   //   auto WeakArg =
+//   //       Args.getLastArg(options::OPT_fobjc_weak, options::OPT_fno_objc_weak);
+//   //   if (!WeakArg) {
+//   //     // nothing to do
+//   //   } else if (!Runtime.allowsWeak()) {
+//   //     if (WeakArg->getOption().matches(options::OPT_fobjc_weak))
+//   //       D.Diag(diag::err_objc_weak_unsupported);
+//   //   } else {
+//   //     WeakArg->render(Args, CmdArgs);
+//   //   }
+//   // }
+// }
 
 static void RenderDiagnosticsOptions(const Driver &D, const ArgList &Args,
                                      ArgStringList &CmdArgs) {
@@ -5193,69 +5193,69 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
 
   // Forward flags for OpenMP. We don't do this if the current action is an
   // device offloading action other than OpenMP.
-  if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-                   options::OPT_fno_openmp, false) &&
-      (JA.isDeviceOffloading(Action::OFK_None) ||
-       JA.isDeviceOffloading(Action::OFK_OpenMP))) {
-    switch (D.getOpenMPRuntime(Args)) {
-    case Driver::OMPRT_OMP:
-    case Driver::OMPRT_IOMP5:
-      // Clang can generate useful OpenMP code for these two runtime libraries.
-      CmdArgs.push_back("-fopenmp");
+  // if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+  //                  options::OPT_fno_openmp, false) &&
+  //     (JA.isDeviceOffloading(Action::OFK_None) ||
+  //      JA.isDeviceOffloading(Action::OFK_OpenMP))) {
+  //   switch (D.getOpenMPRuntime(Args)) {
+  //   case Driver::OMPRT_OMP:
+  //   case Driver::OMPRT_IOMP5:
+  //     // Clang can generate useful OpenMP code for these two runtime libraries.
+  //     CmdArgs.push_back("-fopenmp");
 
-      // If no option regarding the use of TLS in OpenMP codegeneration is
-      // given, decide a default based on the target. Otherwise rely on the
-      // options and pass the right information to the frontend.
-      if (!Args.hasFlag(options::OPT_fopenmp_use_tls,
-                        options::OPT_fnoopenmp_use_tls, /*Default=*/true))
-        CmdArgs.push_back("-fnoopenmp-use-tls");
-      Args.AddLastArg(CmdArgs, options::OPT_fopenmp_simd,
-                      options::OPT_fno_openmp_simd);
-      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_enable_irbuilder);
-      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_version_EQ);
-      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_number_of_sm_EQ);
-      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_blocks_per_sm_EQ);
-      Args.AddAllArgs(CmdArgs,
-                      options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ);
-      if (Args.hasFlag(options::OPT_fopenmp_optimistic_collapse,
-                       options::OPT_fno_openmp_optimistic_collapse,
-                       /*Default=*/false))
-        CmdArgs.push_back("-fopenmp-optimistic-collapse");
+  //     // If no option regarding the use of TLS in OpenMP codegeneration is
+  //     // given, decide a default based on the target. Otherwise rely on the
+  //     // options and pass the right information to the frontend.
+  //     if (!Args.hasFlag(options::OPT_fopenmp_use_tls,
+  //                       options::OPT_fnoopenmp_use_tls, /*Default=*/true))
+  //       CmdArgs.push_back("-fnoopenmp-use-tls");
+  //     Args.AddLastArg(CmdArgs, options::OPT_fopenmp_simd,
+  //                     options::OPT_fno_openmp_simd);
+  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_enable_irbuilder);
+  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_version_EQ);
+  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_number_of_sm_EQ);
+  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_blocks_per_sm_EQ);
+  //     Args.AddAllArgs(CmdArgs,
+  //                     options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ);
+  //     if (Args.hasFlag(options::OPT_fopenmp_optimistic_collapse,
+  //                      options::OPT_fno_openmp_optimistic_collapse,
+  //                      /*Default=*/false))
+  //       CmdArgs.push_back("-fopenmp-optimistic-collapse");
 
-      // When in OpenMP offloading mode with NVPTX target, forward
-      // cuda-mode flag
-      if (Args.hasFlag(options::OPT_fopenmp_cuda_mode,
-                       options::OPT_fno_openmp_cuda_mode, /*Default=*/false))
-        CmdArgs.push_back("-fopenmp-cuda-mode");
+  //     // When in OpenMP offloading mode with NVPTX target, forward
+  //     // cuda-mode flag
+  //     if (Args.hasFlag(options::OPT_fopenmp_cuda_mode,
+  //                      options::OPT_fno_openmp_cuda_mode, /*Default=*/false))
+  //       CmdArgs.push_back("-fopenmp-cuda-mode");
 
-      // When in OpenMP offloading mode with NVPTX target, forward
-      // cuda-parallel-target-regions flag
-      if (Args.hasFlag(options::OPT_fopenmp_cuda_parallel_target_regions,
-                       options::OPT_fno_openmp_cuda_parallel_target_regions,
-                       /*Default=*/true))
-        CmdArgs.push_back("-fopenmp-cuda-parallel-target-regions");
+  //     // When in OpenMP offloading mode with NVPTX target, forward
+  //     // cuda-parallel-target-regions flag
+  //     if (Args.hasFlag(options::OPT_fopenmp_cuda_parallel_target_regions,
+  //                      options::OPT_fno_openmp_cuda_parallel_target_regions,
+  //                      /*Default=*/true))
+  //       CmdArgs.push_back("-fopenmp-cuda-parallel-target-regions");
 
-      // When in OpenMP offloading mode with NVPTX target, check if full runtime
-      // is required.
-      if (Args.hasFlag(options::OPT_fopenmp_cuda_force_full_runtime,
-                       options::OPT_fno_openmp_cuda_force_full_runtime,
-                       /*Default=*/false))
-        CmdArgs.push_back("-fopenmp-cuda-force-full-runtime");
-      break;
-    default:
-      // By default, if Clang doesn't know how to generate useful OpenMP code
-      // for a specific runtime library, we just don't pass the '-fopenmp' flag
-      // down to the actual compilation.
-      // FIXME: It would be better to have a mode which *only* omits IR
-      // generation based on the OpenMP support so that we get consistent
-      // semantic analysis, etc.
-      break;
-    }
-  } else {
+  //     // When in OpenMP offloading mode with NVPTX target, check if full runtime
+  //     // is required.
+  //     if (Args.hasFlag(options::OPT_fopenmp_cuda_force_full_runtime,
+  //                      options::OPT_fno_openmp_cuda_force_full_runtime,
+  //                      /*Default=*/false))
+  //       CmdArgs.push_back("-fopenmp-cuda-force-full-runtime");
+  //     break;
+  //   default:
+  //     // By default, if Clang doesn't know how to generate useful OpenMP code
+  //     // for a specific runtime library, we just don't pass the '-fopenmp' flag
+  //     // down to the actual compilation.
+  //     // FIXME: It would be better to have a mode which *only* omits IR
+  //     // generation based on the OpenMP support so that we get consistent
+  //     // semantic analysis, etc.
+  //     break;
+  //   }
+  // } else {
     Args.AddLastArg(CmdArgs, options::OPT_fopenmp_simd,
                     options::OPT_fno_openmp_simd);
     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_version_EQ);
-  }
+  // }
 
   const SanitizerArgs &Sanitize = TC.getSanitizerArgs();
   Sanitize.addArgs(TC, Args, CmdArgs, InputType);
@@ -5639,9 +5639,9 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
   Args.AddLastArg(CmdArgs, options::OPT_fexperimental_new_pass_manager,
                   options::OPT_fno_experimental_new_pass_manager);
 
-  ObjCRuntime Runtime = AddObjCRuntimeArgs(Args, Inputs, CmdArgs, rewriteKind);
-  RenderObjCOptions(TC, D, RawTriple, Args, Runtime, rewriteKind != RK_None,
-                    Input, CmdArgs);
+  // ObjCRuntime Runtime = AddObjCRuntimeArgs(Args, Inputs, CmdArgs, rewriteKind);
+  // RenderObjCOptions(TC, D, RawTriple, Args, Runtime, rewriteKind != RK_None,
+  //                   Input, CmdArgs);
 
   if (Args.hasFlag(options::OPT_fapplication_extension,
                    options::OPT_fno_application_extension, false))
@@ -5649,7 +5649,7 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
 
   // Handle GCC-style exception args.
   if (!C.getDriver().IsCLMode())
-    addExceptionArgs(Args, InputType, TC, KernelOrKext, Runtime, CmdArgs);
+    addExceptionArgs(Args, InputType, TC, KernelOrKext, /*Runtime,*/ CmdArgs);
 
   // Handle exception personalities
   Arg *A = Args.getLastArg(
@@ -6289,138 +6289,138 @@ Clang::~Clang() {}
 /// Add options related to the Objective-C runtime/ABI.
 ///
 /// Returns true if the runtime is non-fragile.
-ObjCRuntime Clang::AddObjCRuntimeArgs(const ArgList &args,
-                                      const InputInfoList &inputs,
-                                      ArgStringList &cmdArgs,
-                                      RewriteKind rewriteKind) const {
-  // Look for the controlling runtime option.
-  Arg *runtimeArg =
-      args.getLastArg(options::OPT_fnext_runtime, options::OPT_fgnu_runtime,
-                      options::OPT_fobjc_runtime_EQ);
+// ObjCRuntime Clang::AddObjCRuntimeArgs(const ArgList &args,
+//                                       const InputInfoList &inputs,
+//                                       ArgStringList &cmdArgs,
+//                                       RewriteKind rewriteKind) const {
+//   // Look for the controlling runtime option.
+//   Arg *runtimeArg =
+//       args.getLastArg(options::OPT_fnext_runtime, options::OPT_fgnu_runtime,
+//                       options::OPT_fobjc_runtime_EQ);
 
-  // Just forward -fobjc-runtime= to the frontend.  This supercedes
-  // options about fragility.
-  if (runtimeArg &&
-      runtimeArg->getOption().matches(options::OPT_fobjc_runtime_EQ)) {
-    ObjCRuntime runtime;
-    StringRef value = runtimeArg->getValue();
-    if (runtime.tryParse(value)) {
-      getToolChain().getDriver().Diag(diag::err_drv_unknown_objc_runtime)
-          << value;
-    }
-    if ((runtime.getKind() == ObjCRuntime::GNUstep) &&
-        (runtime.getVersion() >= VersionTuple(2, 0)))
-      if (!getToolChain().getTriple().isOSBinFormatELF() &&
-          !getToolChain().getTriple().isOSBinFormatCOFF()) {
-        getToolChain().getDriver().Diag(
-            diag::err_drv_gnustep_objc_runtime_incompatible_binary)
-          << runtime.getVersion().getMajor();
-      }
+//   // Just forward -fobjc-runtime= to the frontend.  This supercedes
+//   // options about fragility.
+//   if (runtimeArg &&
+//       runtimeArg->getOption().matches(options::OPT_fobjc_runtime_EQ)) {
+//     ObjCRuntime runtime;
+//     StringRef value = runtimeArg->getValue();
+//     if (runtime.tryParse(value)) {
+//       getToolChain().getDriver().Diag(diag::err_drv_unknown_objc_runtime)
+//           << value;
+//     }
+//     if ((runtime.getKind() == ObjCRuntime::GNUstep) &&
+//         (runtime.getVersion() >= VersionTuple(2, 0)))
+//       if (!getToolChain().getTriple().isOSBinFormatELF() &&
+//           !getToolChain().getTriple().isOSBinFormatCOFF()) {
+//         getToolChain().getDriver().Diag(
+//             diag::err_drv_gnustep_objc_runtime_incompatible_binary)
+//           << runtime.getVersion().getMajor();
+//       }
 
-    runtimeArg->render(args, cmdArgs);
-    return runtime;
-  }
+//     runtimeArg->render(args, cmdArgs);
+//     return runtime;
+//   }
 
-  // Otherwise, we'll need the ABI "version".  Version numbers are
-  // slightly confusing for historical reasons:
-  //   1 - Traditional "fragile" ABI
-  //   2 - Non-fragile ABI, version 1
-  //   3 - Non-fragile ABI, version 2
-  unsigned objcABIVersion = 1;
-  // If -fobjc-abi-version= is present, use that to set the version.
-  if (Arg *abiArg = args.getLastArg(options::OPT_fobjc_abi_version_EQ)) {
-    StringRef value = abiArg->getValue();
-    if (value == "1")
-      objcABIVersion = 1;
-    else if (value == "2")
-      objcABIVersion = 2;
-    else if (value == "3")
-      objcABIVersion = 3;
-    else
-      getToolChain().getDriver().Diag(diag::err_drv_clang_unsupported) << value;
-  } else {
-    // Otherwise, determine if we are using the non-fragile ABI.
-    bool nonFragileABIIsDefault =
-        (rewriteKind == RK_NonFragile ||
-         (rewriteKind == RK_None &&
-          getToolChain().IsObjCNonFragileABIDefault()));
-    if (args.hasFlag(options::OPT_fobjc_nonfragile_abi,
-                     options::OPT_fno_objc_nonfragile_abi,
-                     nonFragileABIIsDefault)) {
-// Determine the non-fragile ABI version to use.
-#ifdef DISABLE_DEFAULT_NONFRAGILEABI_TWO
-      unsigned nonFragileABIVersion = 1;
-#else
-      unsigned nonFragileABIVersion = 2;
-#endif
+//   // Otherwise, we'll need the ABI "version".  Version numbers are
+//   // slightly confusing for historical reasons:
+//   //   1 - Traditional "fragile" ABI
+//   //   2 - Non-fragile ABI, version 1
+//   //   3 - Non-fragile ABI, version 2
+//   unsigned objcABIVersion = 1;
+//   // If -fobjc-abi-version= is present, use that to set the version.
+//   if (Arg *abiArg = args.getLastArg(options::OPT_fobjc_abi_version_EQ)) {
+//     StringRef value = abiArg->getValue();
+//     if (value == "1")
+//       objcABIVersion = 1;
+//     else if (value == "2")
+//       objcABIVersion = 2;
+//     else if (value == "3")
+//       objcABIVersion = 3;
+//     else
+//       getToolChain().getDriver().Diag(diag::err_drv_clang_unsupported) << value;
+//   } else {
+//     // Otherwise, determine if we are using the non-fragile ABI.
+//     bool nonFragileABIIsDefault =
+//         (rewriteKind == RK_NonFragile ||
+//          (rewriteKind == RK_None &&
+//           getToolChain().IsObjCNonFragileABIDefault()));
+//     if (args.hasFlag(options::OPT_fobjc_nonfragile_abi,
+//                      options::OPT_fno_objc_nonfragile_abi,
+//                      nonFragileABIIsDefault)) {
+// // Determine the non-fragile ABI version to use.
+// #ifdef DISABLE_DEFAULT_NONFRAGILEABI_TWO
+//       unsigned nonFragileABIVersion = 1;
+// #else
+//       unsigned nonFragileABIVersion = 2;
+// #endif
 
-      if (Arg *abiArg =
-              args.getLastArg(options::OPT_fobjc_nonfragile_abi_version_EQ)) {
-        StringRef value = abiArg->getValue();
-        if (value == "1")
-          nonFragileABIVersion = 1;
-        else if (value == "2")
-          nonFragileABIVersion = 2;
-        else
-          getToolChain().getDriver().Diag(diag::err_drv_clang_unsupported)
-              << value;
-      }
+//       if (Arg *abiArg =
+//               args.getLastArg(options::OPT_fobjc_nonfragile_abi_version_EQ)) {
+//         StringRef value = abiArg->getValue();
+//         if (value == "1")
+//           nonFragileABIVersion = 1;
+//         else if (value == "2")
+//           nonFragileABIVersion = 2;
+//         else
+//           getToolChain().getDriver().Diag(diag::err_drv_clang_unsupported)
+//               << value;
+//       }
 
-      objcABIVersion = 1 + nonFragileABIVersion;
-    } else {
-      objcABIVersion = 1;
-    }
-  }
+//       objcABIVersion = 1 + nonFragileABIVersion;
+//     } else {
+//       objcABIVersion = 1;
+//     }
+//   }
 
-  // We don't actually care about the ABI version other than whether
-  // it's non-fragile.
-  bool isNonFragile = objcABIVersion != 1;
+//   // We don't actually care about the ABI version other than whether
+//   // it's non-fragile.
+//   bool isNonFragile = objcABIVersion != 1;
 
-  // If we have no runtime argument, ask the toolchain for its default runtime.
-  // However, the rewriter only really supports the Mac runtime, so assume that.
-  ObjCRuntime runtime;
-  if (!runtimeArg) {
-    switch (rewriteKind) {
-    case RK_None:
-      runtime = getToolChain().getDefaultObjCRuntime(isNonFragile);
-      break;
-    case RK_Fragile:
-      runtime = ObjCRuntime(ObjCRuntime::FragileMacOSX, VersionTuple());
-      break;
-    case RK_NonFragile:
-      runtime = ObjCRuntime(ObjCRuntime::MacOSX, VersionTuple());
-      break;
-    }
+//   // If we have no runtime argument, ask the toolchain for its default runtime.
+//   // However, the rewriter only really supports the Mac runtime, so assume that.
+//   ObjCRuntime runtime;
+//   if (!runtimeArg) {
+//     switch (rewriteKind) {
+//     case RK_None:
+//       runtime = getToolChain().getDefaultObjCRuntime(isNonFragile);
+//       break;
+//     case RK_Fragile:
+//       runtime = ObjCRuntime(ObjCRuntime::FragileMacOSX, VersionTuple());
+//       break;
+//     case RK_NonFragile:
+//       runtime = ObjCRuntime(ObjCRuntime::MacOSX, VersionTuple());
+//       break;
+//     }
 
-    // -fnext-runtime
-  } else if (runtimeArg->getOption().matches(options::OPT_fnext_runtime)) {
-    // On Darwin, make this use the default behavior for the toolchain.
-    if (getToolChain().getTriple().isOSDarwin()) {
-      runtime = getToolChain().getDefaultObjCRuntime(isNonFragile);
+//     // -fnext-runtime
+//   } else if (runtimeArg->getOption().matches(options::OPT_fnext_runtime)) {
+//     // On Darwin, make this use the default behavior for the toolchain.
+//     if (getToolChain().getTriple().isOSDarwin()) {
+//       runtime = getToolChain().getDefaultObjCRuntime(isNonFragile);
 
-      // Otherwise, build for a generic macosx port.
-    } else {
-      runtime = ObjCRuntime(ObjCRuntime::MacOSX, VersionTuple());
-    }
+//       // Otherwise, build for a generic macosx port.
+//     } else {
+//       runtime = ObjCRuntime(ObjCRuntime::MacOSX, VersionTuple());
+//     }
 
-    // -fgnu-runtime
-  } else {
-    assert(runtimeArg->getOption().matches(options::OPT_fgnu_runtime));
-    // Legacy behaviour is to target the gnustep runtime if we are in
-    // non-fragile mode or the GCC runtime in fragile mode.
-    if (isNonFragile)
-      runtime = ObjCRuntime(ObjCRuntime::GNUstep, VersionTuple(2, 0));
-    else
-      runtime = ObjCRuntime(ObjCRuntime::GCC, VersionTuple());
-  }
+//     // -fgnu-runtime
+//   } else {
+//     assert(runtimeArg->getOption().matches(options::OPT_fgnu_runtime));
+//     // Legacy behaviour is to target the gnustep runtime if we are in
+//     // non-fragile mode or the GCC runtime in fragile mode.
+//     if (isNonFragile)
+//       runtime = ObjCRuntime(ObjCRuntime::GNUstep, VersionTuple(2, 0));
+//     else
+//       runtime = ObjCRuntime(ObjCRuntime::GCC, VersionTuple());
+//   }
 
-  // if (llvm::any_of(inputs, [](const InputInfo &input) {
-  //       return types::isObjC(input.getType());
-  //     }))
-  //   cmdArgs.push_back(
-  //       args.MakeArgString("-fobjc-runtime=" + runtime.getAsString()));
-  return runtime;
-}
+//   // if (llvm::any_of(inputs, [](const InputInfo &input) {
+//   //       return types::isObjC(input.getType());
+//   //     }))
+//   //   cmdArgs.push_back(
+//   //       args.MakeArgString("-fobjc-runtime=" + runtime.getAsString()));
+//   return runtime;
+// }
 
 static bool maybeConsumeDash(const std::string &EH, size_t &I) {
   bool HaveDash = (I + 1 < EH.size() && EH[I + 1] == '-');

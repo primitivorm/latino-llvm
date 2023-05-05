@@ -332,9 +332,9 @@ public:
 
   bool hasSjLjLowering() const override { return true; }
 
-  void setSupportedOpenCLOpts() override {
-    getSupportedOpenCLOpts().supportAll();
-  }
+  // void setSupportedOpenCLOpts() override {
+  //   getSupportedOpenCLOpts().supportAll();
+  // }
 
   uint64_t getPointerWidthV(unsigned AddrSpace) const override {
     if (AddrSpace == ptr32_sptr || AddrSpace == ptr32_uptr)

@@ -29,7 +29,7 @@
 
 #include "latino/StaticAnalyzer/Checkers/BuiltinCheckerRegistration.h"
 #include "latino/AST/Attr.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/StmtVisitor.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporter.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"

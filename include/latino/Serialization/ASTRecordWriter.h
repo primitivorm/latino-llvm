@@ -15,7 +15,7 @@
 #define LLVM_LATINO_SERIALIZATION_ASTRECORDWRITER_H
 
 #include "latino/AST/AbstractBasicWriter.h"
-#include "latino/AST/OpenMPClause.h"
+// #include "latino/AST/OpenMPClause.h"
 #include "latino/Serialization/ASTWriter.h"
 
 namespace latino {
@@ -176,10 +176,10 @@ public:
   }
 
   /// Emit a Selector (which is a smart pointer reference).
-  void AddSelectorRef(Selector S);
-  void writeSelector(Selector sel) {
-    AddSelectorRef(sel);
-  }
+  // void AddSelectorRef(Selector S);
+  // void writeSelector(Selector sel) {
+  //   AddSelectorRef(sel);
+  // }
 
   /// Emit a CXXTemporary.
   void AddCXXTemporary(const CXXTemporary *Temp);
@@ -267,9 +267,9 @@ public:
   void AddCXXDefinitionData(const CXXRecordDecl *D);
 
   /// Write an OMPTraitInfo object.
-  void writeOMPTraitInfo(const OMPTraitInfo *TI);
+  // void writeOMPTraitInfo(const OMPTraitInfo *TI);
 
-  void writeOMPClause(OMPClause *C);
+  // void writeOMPClause(OMPClause *C);
 
   /// Emit a string.
   void AddString(StringRef Str) {

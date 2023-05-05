@@ -582,13 +582,13 @@ void LoopInfoStack::push(BasicBlock *Header, latino::ASTContext &Ctx,
   // Identify loop hint attributes from Attrs.
   for (const auto *Attr : Attrs) {
     const LoopHintAttr *LH = dyn_cast<LoopHintAttr>(Attr);
-    const OpenCLUnrollHintAttr *OpenCLHint =
-        dyn_cast<OpenCLUnrollHintAttr>(Attr);
+    // const OpenCLUnrollHintAttr *OpenCLHint =
+    //     dyn_cast<OpenCLUnrollHintAttr>(Attr);
 
     // Skip non loop hint attributes
-    if (!LH && !OpenCLHint) {
-      continue;
-    }
+    // if (!LH && !OpenCLHint) {
+    //   continue;
+    // }
 
     LoopHintAttr::OptionType Option = LoopHintAttr::Unroll;
     LoopHintAttr::LoopHintState State = LoopHintAttr::Disable;
@@ -599,7 +599,7 @@ void LoopInfoStack::push(BasicBlock *Header, latino::ASTContext &Ctx,
     // 0 - enable unroll (no argument).
     // 1 - disable unroll.
     // other positive integer n - unroll by n.
-    if (OpenCLHint) {
+    /*if (OpenCLHint) {
       ValueInt = OpenCLHint->getUnrollHint();
       if (ValueInt == 0) {
         State = LoopHintAttr::Enable;
@@ -607,7 +607,7 @@ void LoopInfoStack::push(BasicBlock *Header, latino::ASTContext &Ctx,
         Option = LoopHintAttr::UnrollCount;
         State = LoopHintAttr::Numeric;
       }
-    } else if (LH) {
+    } else*/ if (LH) {
       auto *ValueExpr = LH->getValue();
       if (ValueExpr) {
         llvm::APSInt ValueAPS = ValueExpr->EvaluateKnownConstInt(Ctx);

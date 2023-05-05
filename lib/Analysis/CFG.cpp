@@ -613,8 +613,8 @@ private:
   CFGBlock *VisitStmt(Stmt *S, AddStmtChoice asc);
   CFGBlock *VisitChildren(Stmt *S);
   CFGBlock *VisitNoRecurse(Expr *E, AddStmtChoice asc);
-  CFGBlock *VisitOMPExecutableDirective(OMPExecutableDirective *D,
-                                        AddStmtChoice asc);
+  // CFGBlock *VisitOMPExecutableDirective(OMPExecutableDirective *D,
+  //                                       AddStmtChoice asc);
 
   void maybeAddScopeBeginForVarDecl(CFGBlock *B, const VarDecl *VD,
                                     const Stmt *S) {
@@ -2127,9 +2127,9 @@ CFGBlock *CFGBuilder::Visit(Stmt * S, AddStmtChoice asc,
   if (Expr *E = dyn_cast<Expr>(S))
     S = E->IgnoreParens();
 
-  if (Context->getLangOpts().OpenMP)
-    if (auto *D = dyn_cast<OMPExecutableDirective>(S))
-      return VisitOMPExecutableDirective(D, asc);
+  // if (Context->getLangOpts().OpenMP)
+  //   if (auto *D = dyn_cast<OMPExecutableDirective>(S))
+  //     return VisitOMPExecutableDirective(D, asc);
 
   switch (S->getStmtClass()) {
     default:
@@ -2296,8 +2296,8 @@ CFGBlock *CFGBuilder::Visit(Stmt * S, AddStmtChoice asc,
     case Stmt::OpaqueValueExprClass:
       return Block;
 
-    // case Stmt::PseudoObjectExprClass:
-    //   return VisitPseudoObjectExpr(cast<PseudoObjectExpr>(S));
+    case Stmt::PseudoObjectExprClass:
+      return VisitPseudoObjectExpr(cast<PseudoObjectExpr>(S));
 
     case Stmt::ReturnStmtClass:
     case Stmt::CoreturnStmtClass:
@@ -3669,30 +3669,30 @@ CFGBlock *CFGBuilder::VisitMemberExpr(MemberExpr *M, AddStmtChoice asc) {
 //   return NYS();
 // }
 
-// CFGBlock *CFGBuilder::VisitPseudoObjectExpr(PseudoObjectExpr *E) {
-//   autoCreateBlock();
+CFGBlock *CFGBuilder::VisitPseudoObjectExpr(PseudoObjectExpr *E) {
+  autoCreateBlock();
 
-//   // Add the PseudoObject as the last thing.
-//   appendStmt(Block, E);
+  // Add the PseudoObject as the last thing.
+  appendStmt(Block, E);
 
-//   CFGBlock *lastBlock = Block;
+  CFGBlock *lastBlock = Block;
 
-//   // Before that, evaluate all of the semantics in order.  In
-//   // CFG-land, that means appending them in reverse order.
-//   for (unsigned i = E->getNumSemanticExprs(); i != 0; ) {
-//     Expr *Semantic = E->getSemanticExpr(--i);
+  // Before that, evaluate all of the semantics in order.  In
+  // CFG-land, that means appending them in reverse order.
+  for (unsigned i = E->getNumSemanticExprs(); i != 0; ) {
+    Expr *Semantic = E->getSemanticExpr(--i);
 
-//     // If the semantic is an opaque value, we're being asked to bind
-//     // it to its source expression.
-//     if (OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Semantic))
-//       Semantic = OVE->getSourceExpr();
+    // If the semantic is an opaque value, we're being asked to bind
+    // it to its source expression.
+    if (OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(Semantic))
+      Semantic = OVE->getSourceExpr();
 
-//     if (CFGBlock *B = Visit(Semantic))
-//       lastBlock = B;
-//   }
+    if (CFGBlock *B = Visit(Semantic))
+      lastBlock = B;
+  }
 
-//   return lastBlock;
-// }
+  return lastBlock;
+}
 
 CFGBlock *CFGBuilder::VisitWhileStmt(WhileStmt *W) {
   CFGBlock *LoopSuccessor = nullptr;
@@ -4898,37 +4898,37 @@ CFGBlock *CFGBuilder::VisitConditionalOperatorForTemporaryDtors(
   return Block;
 }
 
-CFGBlock *CFGBuilder::VisitOMPExecutableDirective(OMPExecutableDirective *D,
-                                                  AddStmtChoice asc) {
-  if (asc.alwaysAdd(*this, D)) {
-    autoCreateBlock();
-    appendStmt(Block, D);
-  }
+// CFGBlock *CFGBuilder::VisitOMPExecutableDirective(OMPExecutableDirective *D,
+//                                                   AddStmtChoice asc) {
+//   if (asc.alwaysAdd(*this, D)) {
+//     autoCreateBlock();
+//     appendStmt(Block, D);
+//   }
 
-  // Iterate over all used expression in clauses.
-  CFGBlock *B = Block;
+//   // Iterate over all used expression in clauses.
+//   CFGBlock *B = Block;
 
-  // Reverse the elements to process them in natural order. Iterators are not
-  // bidirectional, so we need to create temp vector.
-  SmallVector<Stmt *, 8> Used(
-      OMPExecutableDirective::used_clauses_children(D->clauses()));
-  for (Stmt *S : llvm::reverse(Used)) {
-    assert(S && "Expected non-null used-in-clause child.");
-    if (CFGBlock *R = Visit(S))
-      B = R;
-  }
-  // Visit associated structured block if any.
-  if (!D->isStandaloneDirective())
-    if (CapturedStmt *CS = D->getInnermostCapturedStmt()) {
-      Stmt *S = CS->getCapturedStmt();
-      if (!isa<CompoundStmt>(S))
-        addLocalScopeAndDtors(S);
-      if (CFGBlock *R = addStmt(S))
-        B = R;
-    }
+//   // Reverse the elements to process them in natural order. Iterators are not
+//   // bidirectional, so we need to create temp vector.
+//   SmallVector<Stmt *, 8> Used(
+//       OMPExecutableDirective::used_clauses_children(D->clauses()));
+//   for (Stmt *S : llvm::reverse(Used)) {
+//     assert(S && "Expected non-null used-in-clause child.");
+//     if (CFGBlock *R = Visit(S))
+//       B = R;
+//   }
+//   // Visit associated structured block if any.
+//   if (!D->isStandaloneDirective())
+//     if (CapturedStmt *CS = D->getInnermostCapturedStmt()) {
+//       Stmt *S = CS->getCapturedStmt();
+//       if (!isa<CompoundStmt>(S))
+//         addLocalScopeAndDtors(S);
+//       if (CFGBlock *R = addStmt(S))
+//         B = R;
+//     }
 
-  return B;
-}
+//   return B;
+// }
 
 /// createBlock - Constructs and adds a new CFGBlock to the CFG.  The block has
 ///  no successors or predecessors.  If this is the first block created in the
@@ -5949,7 +5949,7 @@ const Expr *CFGBlock::getLastCondition() const {
 
   // Only ObjCForCollectionStmt is known not to be a non-Expr terminator, hence
   // the cast<>.
-  return cast<Expr>(Cond)->IgnoreParens();
+  // return cast<Expr>(Cond)->IgnoreParens();
 }
 
 Stmt *CFGBlock::getTerminatorCondition(bool StripParens) {

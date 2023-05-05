@@ -2560,12 +2560,12 @@ static bool handleIntIntBinOp(EvalInfo &Info, const Expr *E, const APSInt &LHS,
                             E->getType());
     return true;
   case BO_Shl: {
-    if (Info.getLangOpts().OpenCL)
+    /*if (Info.getLangOpts().OpenCL)
       // OpenCL 6.3j: shift values are effectively % word size of LHS.
       RHS &= APSInt(llvm::APInt(RHS.getBitWidth(),
                     static_cast<uint64_t>(LHS.getBitWidth() - 1)),
                     RHS.isUnsigned());
-    else if (RHS.isSigned() && RHS.isNegative()) {
+    else*/ if (RHS.isSigned() && RHS.isNegative()) {
       // During constant-folding, a negative shift is an opposite shift. Such
       // a shift is not a constant expression.
       Info.CCEDiag(E, diag::note_constexpr_negative_shift) << RHS;
@@ -2593,12 +2593,12 @@ static bool handleIntIntBinOp(EvalInfo &Info, const Expr *E, const APSInt &LHS,
     return true;
   }
   case BO_Shr: {
-    if (Info.getLangOpts().OpenCL)
+    /*if (Info.getLangOpts().OpenCL)
       // OpenCL 6.3j: shift values are effectively % word size of LHS.
       RHS &= APSInt(llvm::APInt(RHS.getBitWidth(),
                     static_cast<uint64_t>(LHS.getBitWidth() - 1)),
                     RHS.isUnsigned());
-    else if (RHS.isSigned() && RHS.isNegative()) {
+    else*/ if (RHS.isSigned() && RHS.isNegative()) {
       // During constant-folding, a negative shift is an opposite shift. Such a
       // shift is not a constant expression.
       Info.CCEDiag(E, diag::note_constexpr_negative_shift) << RHS;
@@ -3824,9 +3824,9 @@ static CompleteObject findCompleteObject(EvalInfo &Info, const Expr *E,
     }
 
     // In OpenCL if a variable is in constant address space it is a const value.
-    bool IsConstant = BaseType.isConstQualified() ||
+    bool IsConstant = BaseType.isConstQualified() /*||
                       (Info.getLangOpts().OpenCL &&
-                       BaseType.getAddressSpace() == LangAS::opencl_constant);
+                       BaseType.getAddressSpace() == LangAS::opencl_constant)*/;
 
     // Unless we're looking at a local variable or argument in a constexpr call,
     // the variable we're reading must be const.
@@ -7751,7 +7751,7 @@ public:
 static bool EvaluateLValue(const Expr *E, LValue &Result, EvalInfo &Info,
                            bool InvalidBaseOK) {
   assert(E->isGLValue() || E->getType()->isFunctionType() ||
-         E->getType()->isVoidType() || isa<ObjCSelectorExpr>(E));
+         E->getType()->isVoidType() /*|| isa<ObjCSelectorExpr>(E)*/);
   return LValueExprEvaluator(Info, Result, InvalidBaseOK).Visit(E);
 }
 
@@ -11542,9 +11542,9 @@ bool IntExprEvaluator::VisitBuiltinCallExpr(const CallExpr *E,
     return BuiltinOp == Builtin::BI__atomic_always_lock_free ?
         Success(0, E) : Error(E);
   }
-  case Builtin::BIomp_is_initial_device:
-    // We can decide statically which value the runtime would return if called.
-    return Success(Info.getLangOpts().OpenMPIsDevice ? 0 : 1, E);
+  // case Builtin::BIomp_is_initial_device:
+  //   // We can decide statically which value the runtime would return if called.
+  //   return Success(Info.getLangOpts().OpenMPIsDevice ? 0 : 1, E);
   case Builtin::BI__builtin_add_overflow:
   case Builtin::BI__builtin_sub_overflow:
   case Builtin::BI__builtin_mul_overflow:
@@ -14476,9 +14476,9 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::StringLiteralClass:
   case Expr::ArraySubscriptExprClass:
   case Expr::MatrixSubscriptExprClass:
-  case Expr::OMPArraySectionExprClass:
-  case Expr::OMPArrayShapingExprClass:
-  case Expr::OMPIteratorExprClass:
+  // case Expr::OMPArraySectionExprClass:
+  // case Expr::OMPArrayShapingExprClass:
+  // case Expr::OMPIteratorExprClass:
   case Expr::MemberExprClass:
   case Expr::CompoundAssignOperatorClass:
   case Expr::CompoundLiteralExprClass:
@@ -14545,7 +14545,7 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::AsTypeExprClass:
   // case Expr::ObjCIndirectCopyRestoreExprClass:
   case Expr::MaterializeTemporaryExprClass:
-  // case Expr::PseudoObjectExprClass:
+  case Expr::PseudoObjectExprClass:
   case Expr::AtomicExprClass:
   case Expr::LambdaExprClass:
   case Expr::CXXFoldExprClass:
@@ -14772,7 +14772,8 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::CXXStaticCastExprClass:
   case Expr::CXXReinterpretCastExprClass:
   case Expr::CXXConstCastExprClass:
-  case Expr::ObjCBridgedCastExprClass: {
+  // case Expr::ObjCBridgedCastExprClass: 
+  {
     const Expr *SubExpr = cast<CastExpr>(E)->getSubExpr();
     if (isa<ExplicitCastExpr>(E)) {
       if (const FloatingLiteral *FL

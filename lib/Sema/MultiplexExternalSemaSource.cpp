@@ -53,22 +53,22 @@ void MultiplexExternalSemaSource::CompleteRedeclChain(const Decl *D) {
     Sources[i]->CompleteRedeclChain(D);
 }
 
-Selector MultiplexExternalSemaSource::GetExternalSelector(uint32_t ID) {
-  Selector Sel;
-  for(size_t i = 0; i < Sources.size(); ++i) {
-    Sel = Sources[i]->GetExternalSelector(ID);
-    if (!Sel.isNull())
-      return Sel;
-  }
-  return Sel;
-}
+// Selector MultiplexExternalSemaSource::GetExternalSelector(uint32_t ID) {
+//   Selector Sel;
+//   for(size_t i = 0; i < Sources.size(); ++i) {
+//     Sel = Sources[i]->GetExternalSelector(ID);
+//     if (!Sel.isNull())
+//       return Sel;
+//   }
+//   return Sel;
+// }
 
-uint32_t MultiplexExternalSemaSource::GetNumExternalSelectors() {
-  uint32_t total = 0;
-  for(size_t i = 0; i < Sources.size(); ++i)
-    total += Sources[i]->GetNumExternalSelectors();
-  return total;
-}
+// uint32_t MultiplexExternalSemaSource::GetNumExternalSelectors() {
+//   uint32_t total = 0;
+//   for(size_t i = 0; i < Sources.size(); ++i)
+//     total += Sources[i]->GetNumExternalSelectors();
+//   return total;
+// }
 
 Stmt *MultiplexExternalSemaSource::GetExternalDeclStmt(uint64_t Offset) {
   for(size_t i = 0; i < Sources.size(); ++i)
@@ -214,15 +214,15 @@ void MultiplexExternalSemaSource::ForgetSema() {
     Sources[i]->ForgetSema();
 }
 
-void MultiplexExternalSemaSource::ReadMethodPool(Selector Sel) {
-  for(size_t i = 0; i < Sources.size(); ++i)
-    Sources[i]->ReadMethodPool(Sel);
-}
+// void MultiplexExternalSemaSource::ReadMethodPool(Selector Sel) {
+//   for(size_t i = 0; i < Sources.size(); ++i)
+//     Sources[i]->ReadMethodPool(Sel);
+// }
 
-void MultiplexExternalSemaSource::updateOutOfDateSelector(Selector Sel) {
-  for(size_t i = 0; i < Sources.size(); ++i)
-    Sources[i]->updateOutOfDateSelector(Sel);
-}
+// void MultiplexExternalSemaSource::updateOutOfDateSelector(Selector Sel) {
+//   for(size_t i = 0; i < Sources.size(); ++i)
+//     Sources[i]->updateOutOfDateSelector(Sel);
+// }
 
 void MultiplexExternalSemaSource::ReadKnownNamespaces(
                                    SmallVectorImpl<NamespaceDecl*> &Namespaces){
@@ -287,11 +287,11 @@ void MultiplexExternalSemaSource::ReadUnusedLocalTypedefNameCandidates(
     Sources[i]->ReadUnusedLocalTypedefNameCandidates(Decls);
 }
 
-void MultiplexExternalSemaSource::ReadReferencedSelectors(
-                  SmallVectorImpl<std::pair<Selector, SourceLocation> > &Sels) {
-  for(size_t i = 0; i < Sources.size(); ++i)
-    Sources[i]->ReadReferencedSelectors(Sels);
-}
+// void MultiplexExternalSemaSource::ReadReferencedSelectors(
+//                   SmallVectorImpl<std::pair<Selector, SourceLocation> > &Sels) {
+//   for(size_t i = 0; i < Sources.size(); ++i)
+//     Sources[i]->ReadReferencedSelectors(Sels);
+// }
 
 void MultiplexExternalSemaSource::ReadWeakUndeclaredIdentifiers(
                    SmallVectorImpl<std::pair<IdentifierInfo*, WeakInfo> > &WI) {
@@ -324,12 +324,12 @@ TypoCorrection MultiplexExternalSemaSource::CorrectTypo(
                                      int LookupKind, Scope *S, CXXScopeSpec *SS,
                                      CorrectionCandidateCallback &CCC,
                                      DeclContext *MemberContext,
-                                     bool EnteringContext,
-                                     const ObjCObjectPointerType *OPT) {
+                                     bool EnteringContext/*,
+                                     const ObjCObjectPointerType *OPT*/) {
   for (size_t I = 0, E = Sources.size(); I < E; ++I) {
     if (TypoCorrection C = Sources[I]->CorrectTypo(Typo, LookupKind, S, SS, CCC,
                                                    MemberContext,
-                                                   EnteringContext, OPT))
+                                                   EnteringContext/*, OPT*/))
       return C;
   }
   return TypoCorrection();

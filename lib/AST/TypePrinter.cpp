@@ -15,7 +15,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/NestedNameSpecifier.h"
@@ -1475,12 +1475,12 @@ void TypePrinter::printAttributedBefore(const AttributedType *T,
   // FIXME: Generate this with TableGen.
 
   // Prefer the macro forms of the GC and ownership qualifiers.
-  if (T->getAttrKind() == attr::ObjCGC ||
-      T->getAttrKind() == attr::ObjCOwnership)
-    return printBefore(T->getEquivalentType(), OS);
+  // if (T->getAttrKind() == attr::ObjCGC ||
+  //     T->getAttrKind() == attr::ObjCOwnership)
+  //   return printBefore(T->getEquivalentType(), OS);
 
-  if (T->getAttrKind() == attr::ObjCKindOf)
-    OS << "__kindof ";
+  // if (T->getAttrKind() == attr::ObjCKindOf)
+  //   OS << "__kindof ";
 
   if (T->getAttrKind() == attr::AddressSpace)
     printBefore(T->getEquivalentType(), OS);
@@ -1517,9 +1517,9 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
   // FIXME: Generate this with TableGen.
 
   // Prefer the macro forms of the GC and ownership qualifiers.
-  if (T->getAttrKind() == attr::ObjCGC ||
-      T->getAttrKind() == attr::ObjCOwnership)
-    return printAfter(T->getEquivalentType(), OS);
+  // if (T->getAttrKind() == attr::ObjCGC ||
+  //     T->getAttrKind() == attr::ObjCOwnership)
+  //   return printAfter(T->getEquivalentType(), OS);
 
   // If this is a calling convention attribute, don't print the implicit CC from
   // the modified type.
@@ -1529,13 +1529,13 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
 
   // Some attributes are printed as qualifiers before the type, so we have
   // nothing left to do.
-  if (T->getAttrKind() == attr::ObjCKindOf ||
-      T->isMSTypeSpec() || T->getImmediateNullability())
-    return;
+  // if (T->getAttrKind() == attr::ObjCKindOf ||
+  //     T->isMSTypeSpec() || T->getImmediateNullability())
+  //   return;
 
   // Don't print the inert __unsafe_unretained attribute at all.
-  if (T->getAttrKind() == attr::ObjCInertUnsafeUnretained)
-    return;
+  // if (T->getAttrKind() == attr::ObjCInertUnsafeUnretained)
+  //   return;
 
   // Don't print ns_returns_retained unless it had an effect.
   if (T->getAttrKind() == attr::NSReturnsRetained &&
@@ -1562,23 +1562,23 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
 #include "latino/Basic/AttrList.inc"
     llvm_unreachable("non-type attribute attached to type");
 
-  case attr::OpenCLPrivateAddressSpace:
-  case attr::OpenCLGlobalAddressSpace:
-  case attr::OpenCLLocalAddressSpace:
-  case attr::OpenCLConstantAddressSpace:
-  case attr::OpenCLGenericAddressSpace:
-    // FIXME: Update printAttributedBefore to print these once we generate
-    // AttributedType nodes for them.
-    break;
+  // case attr::OpenCLPrivateAddressSpace:
+  // case attr::OpenCLGlobalAddressSpace:
+  // case attr::OpenCLLocalAddressSpace:
+  // case attr::OpenCLConstantAddressSpace:
+  // case attr::OpenCLGenericAddressSpace:
+  //   // FIXME: Update printAttributedBefore to print these once we generate
+  //   // AttributedType nodes for them.
+  //   break;
 
   case attr::LifetimeBound:
   case attr::TypeNonNull:
   case attr::TypeNullable:
   case attr::TypeNullUnspecified:
-  case attr::ObjCGC:
-  case attr::ObjCInertUnsafeUnretained:
-  case attr::ObjCKindOf:
-  case attr::ObjCOwnership:
+  // case attr::ObjCGC:
+  // case attr::ObjCInertUnsafeUnretained:
+  // case attr::ObjCKindOf:
+  // case attr::ObjCOwnership:
   case attr::Ptr32:
   case attr::Ptr64:
   case attr::SPtr:
@@ -1636,33 +1636,33 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
   OS << "))";
 }
 
-void TypePrinter::printObjCInterfaceBefore(const ObjCInterfaceType *T,
-                                           raw_ostream &OS) {
-  OS << T->getDecl()->getName();
-  spaceBeforePlaceHolder(OS);
-}
+// void TypePrinter::printObjCInterfaceBefore(const ObjCInterfaceType *T,
+//                                            raw_ostream &OS) {
+//   OS << T->getDecl()->getName();
+//   spaceBeforePlaceHolder(OS);
+// }
 
-void TypePrinter::printObjCInterfaceAfter(const ObjCInterfaceType *T,
-                                          raw_ostream &OS) {}
+// void TypePrinter::printObjCInterfaceAfter(const ObjCInterfaceType *T,
+//                                           raw_ostream &OS) {}
 
-void TypePrinter::printObjCTypeParamBefore(const ObjCTypeParamType *T,
-                                          raw_ostream &OS) {
-  OS << T->getDecl()->getName();
-  if (!T->qual_empty()) {
-    bool isFirst = true;
-    OS << '<';
-    for (const auto *I : T->quals()) {
-      if (isFirst)
-        isFirst = false;
-      else
-        OS << ',';
-      OS << I->getName();
-    }
-    OS << '>';
-  }
+// void TypePrinter::printObjCTypeParamBefore(const ObjCTypeParamType *T,
+//                                           raw_ostream &OS) {
+//   OS << T->getDecl()->getName();
+//   if (!T->qual_empty()) {
+//     bool isFirst = true;
+//     OS << '<';
+//     for (const auto *I : T->quals()) {
+//       if (isFirst)
+//         isFirst = false;
+//       else
+//         OS << ',';
+//       OS << I->getName();
+//     }
+//     OS << '>';
+//   }
 
-  spaceBeforePlaceHolder(OS);
-}
+//   spaceBeforePlaceHolder(OS);
+// }
 
 // void TypePrinter::printObjCTypeParamAfter(const ObjCTypeParamType *T,
 //                                           raw_ostream &OS) {}
@@ -1839,12 +1839,12 @@ bool Qualifiers::isEmptyWhenPrinted(const PrintingPolicy &Policy) const {
   if (getAddressSpace() != LangAS::Default)
     return false;
 
-  if (getObjCGCAttr())
-    return false;
+  // if (getObjCGCAttr())
+  //   return false;
 
-  if (Qualifiers::ObjCLifetime lifetime = getObjCLifetime())
-    if (!(lifetime == Qualifiers::OCL_Strong && Policy.SuppressStrongLifetime))
-      return false;
+  // if (Qualifiers::ObjCLifetime lifetime = getObjCLifetime())
+  //   if (!(lifetime == Qualifiers::OCL_Strong && Policy.SuppressStrongLifetime))
+  //     return false;
 
   return true;
 }
@@ -1910,34 +1910,34 @@ void Qualifiers::print(raw_ostream &OS, const PrintingPolicy& Policy,
       OS << ASStr;
   }
 
-  if (Qualifiers::GC gc = getObjCGCAttr()) {
-    if (addSpace)
-      OS << ' ';
-    addSpace = true;
-    if (gc == Qualifiers::Weak)
-      OS << "__weak";
-    else
-      OS << "__strong";
-  }
-  if (Qualifiers::ObjCLifetime lifetime = getObjCLifetime()) {
-    if (!(lifetime == Qualifiers::OCL_Strong && Policy.SuppressStrongLifetime)){
-      if (addSpace)
-        OS << ' ';
-      addSpace = true;
-    }
+  // if (Qualifiers::GC gc = getObjCGCAttr()) {
+  //   if (addSpace)
+  //     OS << ' ';
+  //   addSpace = true;
+  //   if (gc == Qualifiers::Weak)
+  //     OS << "__weak";
+  //   else
+  //     OS << "__strong";
+  // }
+  // if (Qualifiers::ObjCLifetime lifetime = getObjCLifetime()) {
+  //   if (!(lifetime == Qualifiers::OCL_Strong && Policy.SuppressStrongLifetime)){
+  //     if (addSpace)
+  //       OS << ' ';
+  //     addSpace = true;
+  //   }
 
-    switch (lifetime) {
-    case Qualifiers::OCL_None: llvm_unreachable("none but true");
-    case Qualifiers::OCL_ExplicitNone: OS << "__unsafe_unretained"; break;
-    case Qualifiers::OCL_Strong:
-      if (!Policy.SuppressStrongLifetime)
-        OS << "__strong";
-      break;
+  //   switch (lifetime) {
+  //   case Qualifiers::OCL_None: llvm_unreachable("none but true");
+  //   case Qualifiers::OCL_ExplicitNone: OS << "__unsafe_unretained"; break;
+  //   case Qualifiers::OCL_Strong:
+  //     if (!Policy.SuppressStrongLifetime)
+  //       OS << "__strong";
+  //     break;
 
-    case Qualifiers::OCL_Weak: OS << "__weak"; break;
-    case Qualifiers::OCL_Autoreleasing: OS << "__autoreleasing"; break;
-    }
-  }
+  //   case Qualifiers::OCL_Weak: OS << "__weak"; break;
+  //   case Qualifiers::OCL_Autoreleasing: OS << "__autoreleasing"; break;
+  //   }
+  // }
 
   if (appendSpaceIfNonEmpty && addSpace)
     OS << ' ';

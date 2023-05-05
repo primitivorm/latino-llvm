@@ -9,7 +9,7 @@
 #include "latino/Tooling/Refactoring/Extract/SourceExtraction.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
-#include "latino/AST/StmtObjC.h"
+// #include "latino/AST/StmtObjC.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/Lex/Lexer.h"
 

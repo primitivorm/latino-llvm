@@ -1981,12 +1981,12 @@ ConstantLValueEmitter::VisitCallExpr(const CallExpr *E) {
     return nullptr;
 
   auto literal = cast<StringLiteral>(E->getArg(0)->IgnoreParenCasts());
-  if (builtin == Builtin::BI__builtin___NSStringMakeConstantString) {
-    return CGM.getObjCRuntime().GenerateConstantString(literal);
-  } else {
+  // if (builtin == Builtin::BI__builtin___NSStringMakeConstantString) {
+  //   return CGM.getObjCRuntime().GenerateConstantString(literal);
+  // } else {
     // FIXME: need to deal with UCN conversion issues.
     return CGM.GetAddrOfConstantCFString(literal);
-  }
+  // }
 }
 
 ConstantLValue

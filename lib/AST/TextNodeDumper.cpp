@@ -13,7 +13,7 @@
 #include "latino/AST/TextNodeDumper.h"
 #include "latino/AST/APValue.h"
 #include "latino/AST/DeclFriend.h"
-#include "latino/AST/DeclOpenMP.h"
+// #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/LocInfoType.h"
 #include "latino/AST/Type.h"
@@ -324,23 +324,23 @@ void TextNodeDumper::Visit(const BlockDecl::Capture &C) {
   }
 }
 
-void TextNodeDumper::Visit(const OMPClause *C) {
-  if (!C) {
-    ColorScope Color(OS, ShowColors, NullColor);
-    OS << "<<<NULL>>> OMPClause";
-    return;
-  }
-  {
-    ColorScope Color(OS, ShowColors, AttrColor);
-    StringRef ClauseName(llvm::omp::getOpenMPClauseName(C->getClauseKind()));
-    OS << "OMP" << ClauseName.substr(/*Start=*/0, /*N=*/1).upper()
-       << ClauseName.drop_front() << "Clause";
-  }
-  dumpPointer(C);
-  dumpSourceRange(SourceRange(C->getBeginLoc(), C->getEndLoc()));
-  if (C->isImplicit())
-    OS << " <implicit>";
-}
+// void TextNodeDumper::Visit(const OMPClause *C) {
+//   if (!C) {
+//     ColorScope Color(OS, ShowColors, NullColor);
+//     OS << "<<<NULL>>> OMPClause";
+//     return;
+//   }
+//   {
+//     ColorScope Color(OS, ShowColors, AttrColor);
+//     StringRef ClauseName(llvm::omp::getOpenMPClauseName(C->getClauseKind()));
+//     OS << "OMP" << ClauseName.substr(/*Start=*/0, /*N=*/1).upper()
+//        << ClauseName.drop_front() << "Clause";
+//   }
+//   dumpPointer(C);
+//   dumpSourceRange(SourceRange(C->getBeginLoc(), C->getEndLoc()));
+//   if (C->isImplicit())
+//     OS << " <implicit>";
+// }
 
 void TextNodeDumper::Visit(const GenericSelectionExpr::ConstAssociation &A) {
   const TypeSourceInfo *TSI = A.getTypeSourceInfo();
@@ -1236,10 +1236,10 @@ void TextNodeDumper::VisitCXXDependentScopeMemberExpr(
 //   }
 // }
 
-void TextNodeDumper::VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node) {
-  if (!Node->getCatchParamDecl())
-    OS << " catch all";
-}
+// void TextNodeDumper::VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node) {
+//   if (!Node->getCatchParamDecl())
+//     OS << " catch all";
+// }
 
 // void TextNodeDumper::VisitObjCEncodeExpr(const ObjCEncodeExpr *Node) {
 //   dumpType(Node->getEncodedType());
@@ -1310,22 +1310,22 @@ void TextNodeDumper::VisitObjCAtCatchStmt(const ObjCAtCatchStmt *Node) {
 //   OS << " " << (Node->getValue() ? "__objc_yes" : "__objc_no");
 // }
 
-void TextNodeDumper::VisitOMPIteratorExpr(const OMPIteratorExpr *Node) {
-  OS << " ";
-  for (unsigned I = 0, E = Node->numOfIterators(); I < E; ++I) {
-    Visit(Node->getIteratorDecl(I));
-    OS << " = ";
-    const OMPIteratorExpr::IteratorRange Range = Node->getIteratorRange(I);
-    OS << " begin ";
-    Visit(Range.Begin);
-    OS << " end ";
-    Visit(Range.End);
-    if (Range.Step) {
-      OS << " step ";
-      Visit(Range.Step);
-    }
-  }
-}
+// void TextNodeDumper::VisitOMPIteratorExpr(const OMPIteratorExpr *Node) {
+//   OS << " ";
+//   for (unsigned I = 0, E = Node->numOfIterators(); I < E; ++I) {
+//     Visit(Node->getIteratorDecl(I));
+//     OS << " = ";
+//     const OMPIteratorExpr::IteratorRange Range = Node->getIteratorRange(I);
+//     OS << " begin ";
+//     Visit(Range.Begin);
+//     OS << " end ";
+//     Visit(Range.End);
+//     if (Range.Step) {
+//       OS << " step ";
+//       Visit(Range.Step);
+//     }
+//   }
+// }
 
 void TextNodeDumper::VisitRValueReferenceType(const ReferenceType *T) {
   if (T->isSpelledAsLValue())
@@ -1730,59 +1730,59 @@ void TextNodeDumper::VisitPragmaDetectMismatchDecl(
   OS << " \"" << D->getName() << "\" \"" << D->getValue() << "\"";
 }
 
-void TextNodeDumper::VisitOMPExecutableDirective(
-    const OMPExecutableDirective *D) {
-  if (D->isStandaloneDirective())
-    OS << " openmp_standalone_directive";
-}
+// void TextNodeDumper::VisitOMPExecutableDirective(
+//     const OMPExecutableDirective *D) {
+//   if (D->isStandaloneDirective())
+//     OS << " openmp_standalone_directive";
+// }
 
-void TextNodeDumper::VisitOMPDeclareReductionDecl(
-    const OMPDeclareReductionDecl *D) {
-  dumpName(D);
-  dumpType(D->getType());
-  OS << " combiner";
-  dumpPointer(D->getCombiner());
-  if (const auto *Initializer = D->getInitializer()) {
-    OS << " initializer";
-    dumpPointer(Initializer);
-    switch (D->getInitializerKind()) {
-    case OMPDeclareReductionDecl::DirectInit:
-      OS << " omp_priv = ";
-      break;
-    case OMPDeclareReductionDecl::CopyInit:
-      OS << " omp_priv ()";
-      break;
-    case OMPDeclareReductionDecl::CallInit:
-      break;
-    }
-  }
-}
+// void TextNodeDumper::VisitOMPDeclareReductionDecl(
+//     const OMPDeclareReductionDecl *D) {
+//   dumpName(D);
+//   dumpType(D->getType());
+//   OS << " combiner";
+//   dumpPointer(D->getCombiner());
+//   if (const auto *Initializer = D->getInitializer()) {
+//     OS << " initializer";
+//     dumpPointer(Initializer);
+//     switch (D->getInitializerKind()) {
+//     case OMPDeclareReductionDecl::DirectInit:
+//       OS << " omp_priv = ";
+//       break;
+//     case OMPDeclareReductionDecl::CopyInit:
+//       OS << " omp_priv ()";
+//       break;
+//     case OMPDeclareReductionDecl::CallInit:
+//       break;
+//     }
+//   }
+// }
 
-void TextNodeDumper::VisitOMPRequiresDecl(const OMPRequiresDecl *D) {
-  for (const auto *C : D->clauselists()) {
-    AddChild([=] {
-      if (!C) {
-        ColorScope Color(OS, ShowColors, NullColor);
-        OS << "<<<NULL>>> OMPClause";
-        return;
-      }
-      {
-        ColorScope Color(OS, ShowColors, AttrColor);
-        StringRef ClauseName(
-            llvm::omp::getOpenMPClauseName(C->getClauseKind()));
-        OS << "OMP" << ClauseName.substr(/*Start=*/0, /*N=*/1).upper()
-           << ClauseName.drop_front() << "Clause";
-      }
-      dumpPointer(C);
-      dumpSourceRange(SourceRange(C->getBeginLoc(), C->getEndLoc()));
-    });
-  }
-}
+// void TextNodeDumper::VisitOMPRequiresDecl(const OMPRequiresDecl *D) {
+//   for (const auto *C : D->clauselists()) {
+//     AddChild([=] {
+//       if (!C) {
+//         ColorScope Color(OS, ShowColors, NullColor);
+//         OS << "<<<NULL>>> OMPClause";
+//         return;
+//       }
+//       {
+//         ColorScope Color(OS, ShowColors, AttrColor);
+//         StringRef ClauseName(
+//             llvm::omp::getOpenMPClauseName(C->getClauseKind()));
+//         OS << "OMP" << ClauseName.substr(/*Start=*/0, /*N=*/1).upper()
+//            << ClauseName.drop_front() << "Clause";
+//       }
+//       dumpPointer(C);
+//       dumpSourceRange(SourceRange(C->getBeginLoc(), C->getEndLoc()));
+//     });
+//   }
+// }
 
-void TextNodeDumper::VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D) {
-  dumpName(D);
-  dumpType(D->getType());
-}
+// void TextNodeDumper::VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D) {
+//   dumpName(D);
+//   dumpType(D->getType());
+// }
 
 void TextNodeDumper::VisitNamespaceDecl(const NamespaceDecl *D) {
   dumpName(D);
@@ -2084,30 +2084,30 @@ void TextNodeDumper::VisitFriendDecl(const FriendDecl *D) {
     dumpType(T->getType());
 }
 
-// void TextNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
-//   dumpName(D);
-//   dumpType(D->getType());
-//   if (D->getSynthesize())
-//     OS << " synthesize";
+void TextNodeDumper::VisitObjCIvarDecl(const ObjCIvarDecl *D) {
+  dumpName(D);
+  dumpType(D->getType());
+  if (D->getSynthesize())
+    OS << " synthesize";
 
-//   switch (D->getAccessControl()) {
-//   case ObjCIvarDecl::None:
-//     OS << " none";
-//     break;
-//   case ObjCIvarDecl::Private:
-//     OS << " private";
-//     break;
-//   case ObjCIvarDecl::Protected:
-//     OS << " protected";
-//     break;
-//   case ObjCIvarDecl::Public:
-//     OS << " public";
-//     break;
-//   case ObjCIvarDecl::Package:
-//     OS << " package";
-//     break;
-//   }
-// }
+  switch (D->getAccessControl()) {
+  case ObjCIvarDecl::None:
+    OS << " none";
+    break;
+  case ObjCIvarDecl::Private:
+    OS << " private";
+    break;
+  case ObjCIvarDecl::Protected:
+    OS << " protected";
+    break;
+  case ObjCIvarDecl::Public:
+    OS << " public";
+    break;
+  case ObjCIvarDecl::Package:
+    OS << " package";
+    break;
+  }
+}
 
 // void TextNodeDumper::VisitObjCMethodDecl(const ObjCMethodDecl *D) {
 //   if (D->isInstanceMethod())

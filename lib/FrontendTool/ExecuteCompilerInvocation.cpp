@@ -103,11 +103,11 @@ CreateFrontendBaseAction(CompilerInstance &CI) {
 
   case RewriteMacros:          return std::make_unique<RewriteMacrosAction>();
   case RewriteTest:            return std::make_unique<RewriteTestAction>();
-#if CLANG_ENABLE_OBJC_REWRITER
-  case RewriteObjC:            return std::make_unique<RewriteObjCAction>();
-#else
-  case RewriteObjC:            Action = "RewriteObjC"; break;
-#endif
+// #if CLANG_ENABLE_OBJC_REWRITER
+//   case RewriteObjC:            return std::make_unique<RewriteObjCAction>();
+// #else
+//   case RewriteObjC:            Action = "RewriteObjC"; break;
+// #endif
 #if CLANG_ENABLE_ARCMT
   case MigrateSource:
     return std::make_unique<arcmt::MigrateSourceAction>();
@@ -124,8 +124,8 @@ CreateFrontendBaseAction(CompilerInstance &CI) {
     return std::make_unique<PrintDependencyDirectivesSourceMinimizerAction>();
   }
 
-#if !CLANG_ENABLE_ARCMT || !CLANG_ENABLE_STATIC_ANALYZER \
-  || !CLANG_ENABLE_OBJC_REWRITER
+#if !CLANG_ENABLE_ARCMT || !CLANG_ENABLE_STATIC_ANALYZER /*\
+    || !CLANG_ENABLE_OBJC_REWRITER*/
   CI.getDiagnostics().Report(diag::err_fe_action_not_available) << Action;
   return 0;
 #else

@@ -85,18 +85,18 @@ latino::ast_matchers::dynamic::internal::ArgTypeTraits<
   return llvm::None;
 }
 
-llvm::Optional<std::string>
-latino::ast_matchers::dynamic::internal::ArgTypeTraits<
-    latino::OpenMPClauseKind>::getBestGuess(const VariantValue &Value) {
-  static constexpr llvm::StringRef Allowed[] = {
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) #Enum,
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
-  };
-  if (Value.isString())
-    return ::getBestGuess(Value.getString(), llvm::makeArrayRef(Allowed),
-                          "OMPC_");
-  return llvm::None;
-}
+// llvm::Optional<std::string>
+// latino::ast_matchers::dynamic::internal::ArgTypeTraits<
+//     latino::OpenMPClauseKind>::getBestGuess(const VariantValue &Value) {
+//   static constexpr llvm::StringRef Allowed[] = {
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) #Enum,
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
+//   };
+//   if (Value.isString())
+//     return ::getBestGuess(Value.getString(), llvm::makeArrayRef(Allowed),
+//                           "OMPC_");
+//   return llvm::None;
+// }
 
 llvm::Optional<std::string>
 latino::ast_matchers::dynamic::internal::ArgTypeTraits<

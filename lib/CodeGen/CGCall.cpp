@@ -23,7 +23,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/TargetBuiltins.h"
 #include "latino/Basic/TargetInfo.h"
@@ -1985,20 +1985,20 @@ void CodeGenModule::ConstructAttributeList(
                                  NumElemsParam);
     }
 
-    if (TargetDecl->hasAttr<OpenCLKernelAttr>()) {
-      if (getLangOpts().OpenCLVersion <= 120) {
-        // OpenCL v1.2 Work groups are always uniform
-        FuncAttrs.addAttribute("uniform-work-group-size", "true");
-      } else {
-        // OpenCL v2.0 Work groups may be whether uniform or not.
-        // '-cl-uniform-work-group-size' compile option gets a hint
-        // to the compiler that the global work-size be a multiple of
-        // the work-group size specified to clEnqueueNDRangeKernel
-        // (i.e. work groups are uniform).
-        FuncAttrs.addAttribute("uniform-work-group-size",
-                               llvm::toStringRef(CodeGenOpts.UniformWGSize));
-      }
-    }
+    // if (TargetDecl->hasAttr<OpenCLKernelAttr>()) {
+    //   if (getLangOpts().OpenCLVersion <= 120) {
+    //     // OpenCL v1.2 Work groups are always uniform
+    //     FuncAttrs.addAttribute("uniform-work-group-size", "true");
+    //   } else {
+    //     // OpenCL v2.0 Work groups may be whether uniform or not.
+    //     // '-cl-uniform-work-group-size' compile option gets a hint
+    //     // to the compiler that the global work-size be a multiple of
+    //     // the work-group size specified to clEnqueueNDRangeKernel
+    //     // (i.e. work groups are uniform).
+    //     FuncAttrs.addAttribute("uniform-work-group-size",
+    //                            llvm::toStringRef(CodeGenOpts.UniformWGSize));
+    //   }
+    // }
   }
 
   // Attach "no-builtins" attributes to:
@@ -2761,13 +2761,13 @@ static llvm::Value *tryEmitFusedAutoreleaseOfResult(CodeGenFunction &CGF,
   llvm::CallInst *call = dyn_cast<llvm::CallInst>(generator);
   if (!call) return nullptr;
 
-  bool doRetainAutorelease;
+  // bool doRetainAutorelease;
 
-  if (call->getCalledOperand() == CGF.CGM.getObjCEntrypoints().objc_retain) {
-    doRetainAutorelease = true;
-  } else if (call->getCalledOperand() ==
-             CGF.CGM.getObjCEntrypoints().objc_retainAutoreleasedReturnValue) {
-    doRetainAutorelease = false;
+  // if (call->getCalledOperand() == CGF.CGM.getObjCEntrypoints().objc_retain) {
+  //   doRetainAutorelease = true;
+  // } else if (call->getCalledOperand() ==
+  //            CGF.CGM.getObjCEntrypoints().objc_retainAutoreleasedReturnValue) {
+  //   doRetainAutorelease = false;
 
     // If we emitted an assembly marker for this call (and the
     // ARCEntrypoints field should have been set if so), go looking
@@ -2786,9 +2786,9 @@ static llvm::Value *tryEmitFusedAutoreleaseOfResult(CodeGenFunction &CGF,
              CGF.CGM.getObjCEntrypoints().retainAutoreleasedReturnValueMarker);
       InstsToKill.push_back(prev);
     }
-  } else {
-    return nullptr;
-  }
+  // } else {
+  //   return nullptr;
+  // }
 
   result = call->getArgOperand(0);
   InstsToKill.push_back(call);
@@ -2806,8 +2806,8 @@ static llvm::Value *tryEmitFusedAutoreleaseOfResult(CodeGenFunction &CGF,
     I->eraseFromParent();
 
   // Do the fused retain/autorelease if we were asked to.
-  if (doRetainAutorelease)
-    result = CGF.EmitARCRetainAutoreleaseReturnValue(result);
+  // if (doRetainAutorelease)
+  //   result = CGF.EmitARCRetainAutoreleaseReturnValue(result);
 
   // Cast back to the result type.
   return CGF.Builder.CreateBitCast(result, resultType);
@@ -2859,15 +2859,15 @@ static llvm::Value *emitAutoreleaseOfResult(CodeGenFunction &CGF,
   // heuristic attempt to "encourage correctness" in the really unfortunate
   // case where we have a return of self during a dealloc and we desperately
   // need to avoid the possible autorelease.
-  if (llvm::Value *self = tryRemoveRetainOfSelf(CGF, result))
-    return self;
+  // if (llvm::Value *self = tryRemoveRetainOfSelf(CGF, result))
+  //   return self;
 
   // At -O0, try to emit a fused retain/autorelease.
   if (CGF.shouldUseFusedARCCalls())
     if (llvm::Value *fused = tryEmitFusedAutoreleaseOfResult(CGF, result))
       return fused;
 
-  return CGF.EmitARCAutoreleaseReturnValue(result);
+  // return CGF.EmitARCAutoreleaseReturnValue(result);
 }
 
 /// Heuristically search for a dominating store to the return-value slot.
@@ -3241,9 +3241,9 @@ void CodeGenFunction::EmitFunctionEpilog(const CGFunctionInfo &FI,
       else
         llvm_unreachable("Unexpected function/method type");
 
-      assert(getLangOpts().ObjCAutoRefCount &&
-             !FI.isReturnsRetained() &&
-             RT->isObjCRetainableType());
+      // assert(getLangOpts().ObjCAutoRefCount &&
+      //        !FI.isReturnsRetained() &&
+      //        RT->isObjCRetainableType());
 #endif
       RV = emitAutoreleaseOfResult(*this, RV);
     }
@@ -3424,7 +3424,7 @@ void CodeGenFunction::EmitDelegateCallArg(CallArgList &args,
   // optimal -O0 code generation, but it should get cleaned up when
   // optimization is enabled.  This also assumes that delegate calls are
   // performed exactly once for a set of arguments, but that should be safe.
-  } else if (getLangOpts().ObjCAutoRefCount &&
+  } /*else if (getLangOpts().ObjCAutoRefCount &&
              param->hasAttr<NSConsumedAttr>() &&
              type->isObjCRetainableType()) {
     llvm::Value *ptr = Builder.CreateLoad(local);
@@ -3435,7 +3435,7 @@ void CodeGenFunction::EmitDelegateCallArg(CallArgList &args,
 
   // For the most part, we just need to load the alloca, except that
   // aggregate r-values are actually pointers to temporaries.
-  } else {
+  }*/ else {
     args.add(convertTempToRValue(local, type, loc), type);
   }
 
@@ -3495,29 +3495,29 @@ static void emitWriteback(CodeGenFunction &CGF,
   // release it's potentially undefined behavior (and the optimizer
   // will ignore it), and if it happens before the retain then the
   // optimizer could move the release there.
-  if (writeback.ToUse) {
-    assert(srcLV.getObjCLifetime() == Qualifiers::OCL_Strong);
+  // if (writeback.ToUse) {
+  //   assert(srcLV.getObjCLifetime() == Qualifiers::OCL_Strong);
 
-    // Retain the new value.  No need to block-copy here:  the block's
-    // being passed up the stack.
-    value = CGF.EmitARCRetainNonBlock(value);
+  //   // Retain the new value.  No need to block-copy here:  the block's
+  //   // being passed up the stack.
+  //   value = CGF.EmitARCRetainNonBlock(value);
 
-    // Emit the intrinsic use here.
-    CGF.EmitARCIntrinsicUse(writeback.ToUse);
+  //   // Emit the intrinsic use here.
+  //   CGF.EmitARCIntrinsicUse(writeback.ToUse);
 
-    // Load the old value (primitively).
-    llvm::Value *oldValue = CGF.EmitLoadOfScalar(srcLV, SourceLocation());
+  //   // Load the old value (primitively).
+  //   llvm::Value *oldValue = CGF.EmitLoadOfScalar(srcLV, SourceLocation());
 
-    // Put the new value in place (primitively).
-    CGF.EmitStoreOfScalar(value, srcLV, /*init*/ false);
+  //   // Put the new value in place (primitively).
+  //   CGF.EmitStoreOfScalar(value, srcLV, /*init*/ false);
 
-    // Release the old value.
-    CGF.EmitARCRelease(oldValue, srcLV.isARCPreciseLifetime());
+  //   // Release the old value.
+  //   CGF.EmitARCRelease(oldValue, srcLV.isARCPreciseLifetime());
 
-  // Otherwise, we can just do a normal lvalue store.
-  } else {
+  // // Otherwise, we can just do a normal lvalue store.
+  // } else {
     CGF.EmitStoreThroughLValue(RValue::get(value), srcLV);
-  }
+  // }
 
   // Jump to the continuation block.
   if (!provablyNonNull)
@@ -3992,13 +3992,13 @@ QualType CodeGenFunction::getVarArgType(const Expr *Arg) {
 
 // In ObjC ARC mode with no ObjC ARC exception safety, tell the ARC
 // optimizer it can aggressively ignore unwind edges.
-void
-CodeGenFunction::AddObjCARCExceptionMetadata(llvm::Instruction *Inst) {
-  if (CGM.getCodeGenOpts().OptimizationLevel != 0 &&
-      !CGM.getCodeGenOpts().ObjCAutoRefCountExceptions)
-    Inst->setMetadata("clang.arc.no_objc_arc_exceptions",
-                      CGM.getNoObjCARCExceptionsMetadata());
-}
+// void
+// CodeGenFunction::AddObjCARCExceptionMetadata(llvm::Instruction *Inst) {
+//   if (CGM.getCodeGenOpts().OptimizationLevel != 0 &&
+//       !CGM.getCodeGenOpts().ObjCAutoRefCountExceptions)
+//     Inst->setMetadata("clang.arc.no_objc_arc_exceptions",
+//                       CGM.getNoObjCARCExceptionsMetadata());
+// }
 
 /// Emits a call to the given no-arguments nounwind runtime function.
 llvm::CallInst *
@@ -4114,8 +4114,8 @@ llvm::CallBase *CodeGenFunction::EmitCallOrInvoke(llvm::FunctionCallee Callee,
 
   // In ObjC ARC mode with no ObjC ARC exception safety, tell the ARC
   // optimizer it can aggressively ignore unwind edges.
-  if (CGM.getLangOpts().ObjCAutoRefCount)
-    AddObjCARCExceptionMetadata(Inst);
+  // if (CGM.getLangOpts().ObjCAutoRefCount)
+  //   AddObjCARCExceptionMetadata(Inst);
 
   return Inst;
 }
@@ -4457,20 +4457,20 @@ RValue CodeGenFunction::EmitCall(const CGFunctionInfo &CallInfo,
               (LV.getAlignment() < getContext().getTypeAlignInChars(I->Ty))) {
             NeedCopy = true;
           }
-          if (!getLangOpts().OpenCL) {
+          // if (!getLangOpts().OpenCL) {
             if ((ArgInfo.getIndirectByVal() &&
                 (AS != LangAS::Default &&
                  AS != CGM.getASTAllocaAddressSpace()))) {
               NeedCopy = true;
             }
-          }
+          // }
           // For OpenCL even if RV is located in default or alloca address space
           // we don't want to perform address space cast for it.
-          else if ((ArgInfo.getIndirectByVal() &&
-                    Addr.getType()->getAddressSpace() != IRFuncTy->
-                      getParamType(FirstIRArg)->getPointerAddressSpace())) {
-            NeedCopy = true;
-          }
+          // else if ((ArgInfo.getIndirectByVal() &&
+          //           Addr.getType()->getAddressSpace() != IRFuncTy->
+          //             getParamType(FirstIRArg)->getPointerAddressSpace())) {
+          //   NeedCopy = true;
+          // }
         }
 
         if (NeedCopy) {
@@ -4917,8 +4917,8 @@ RValue CodeGenFunction::EmitCall(const CGFunctionInfo &CallInfo,
 
   // In ObjC ARC mode with no ObjC ARC exception safety, tell the ARC
   // optimizer it can aggressively ignore unwind edges.
-  if (CGM.getLangOpts().ObjCAutoRefCount)
-    AddObjCARCExceptionMetadata(CI);
+  // if (CGM.getLangOpts().ObjCAutoRefCount)
+  //   AddObjCARCExceptionMetadata(CI);
 
   // Suppress tail calls if requested.
   if (llvm::CallInst *Call = dyn_cast<llvm::CallInst>(CI)) {

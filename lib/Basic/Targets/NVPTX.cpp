@@ -16,7 +16,7 @@
 #include "latino/Basic/MacroBuilder.h"
 #include "latino/Basic/TargetBuiltins.h"
 #include "llvm/ADT/StringSwitch.h"
-#include "llvm/Frontend/OpenMP/OMPGridValues.h"
+// #include "llvm/Frontend/OpenMP/OMPGridValues.h"
 
 using namespace latino;
 using namespace latino::targets;
@@ -63,7 +63,7 @@ NVPTXTargetInfo::NVPTXTargetInfo(const llvm::Triple &Triple,
   TLSSupported = false;
   VLASupported = false;
   AddrSpaceMap = &NVPTXAddrSpaceMap;
-  GridValues = llvm::omp::NVPTXGpuGridValues;
+  // GridValues = llvm::omp::NVPTXGpuGridValues;
   UseAddrSpaceMapMangling = true;
 
   // Define available target features

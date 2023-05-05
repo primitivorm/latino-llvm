@@ -472,7 +472,7 @@ public:
                 Action::OffloadKind DeviceOffloadKind) const override;
 
   CXXStdlibType GetDefaultCXXStdlibType() const override;
-  ObjCRuntime getDefaultObjCRuntime(bool isNonFragile) const override;
+  // ObjCRuntime getDefaultObjCRuntime(bool isNonFragile) const override;
   bool hasBlocksRuntime() const override;
 
   void AddCudaIncludeArgs(const llvm::opt::ArgList &DriverArgs,

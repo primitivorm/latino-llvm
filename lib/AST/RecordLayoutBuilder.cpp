@@ -13,7 +13,7 @@
 #include "latino/AST/CXXInheritance.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/VTableBuilder.h"
 #include "latino/Basic/TargetInfo.h"
@@ -2035,8 +2035,8 @@ void ItaniumRecordLayoutBuilder::CheckFieldPadding(
     unsigned UnpackedAlign, bool isPacked, const FieldDecl *D) {
   // We let objc ivars without warning, objc interfaces generally are not used
   // for padding tricks.
-  // if (isa<ObjCIvarDecl>(D))
-  //   return;
+  if (isa<ObjCIvarDecl>(D))
+    return;
 
   // Don't warn about structs created without a SourceLocation.  This can
   // be done by clients of the AST, such as codegen.

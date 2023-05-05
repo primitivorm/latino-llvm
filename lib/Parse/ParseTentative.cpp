@@ -297,7 +297,7 @@ Parser::TPResult Parser::TryParseInitDeclaratorList() {
       // A left-brace here is sufficient to disambiguate the parse; an
       // expression can never be followed directly by a braced-init-list.
       return TPResult::True;
-    } else if (Tok.is(tok::equal) || isTokIdentifier_in()) {
+    } else if (Tok.is(tok::equal) /*|| isTokIdentifier_in()*/) {
       // MSVC and g++ won't examine the rest of declarators if '=' is
       // encountered; they just conclude that we have a declaration.
       // EDG parses the initializer completely, which is the proper behavior
@@ -1660,8 +1660,8 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     if (getLangOpts().CPlusPlus11 && NextToken().is(tok::l_brace))
       return BracedCastResult;
 
-    if (isStartOfObjCClassMessageMissingOpenBracket())
-      return TPResult::False;
+    // if (isStartOfObjCClassMessageMissingOpenBracket())
+    //   return TPResult::False;
 
     return TPResult::True;
 

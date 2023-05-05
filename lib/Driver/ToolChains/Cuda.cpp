@@ -794,9 +794,9 @@ void CudaToolChain::addClangTargetOptions(
         break;
       }
     }
-    if (!FoundBCLibrary)
-      getDriver().Diag(diag::warn_drv_omp_offload_target_missingbcruntime)
-          << LibOmpTargetName;
+    // if (!FoundBCLibrary)
+    //   getDriver().Diag(diag::warn_drv_omp_offload_target_missingbcruntime)
+    //       << LibOmpTargetName;
   }
 }
 

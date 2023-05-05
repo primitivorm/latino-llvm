@@ -15,7 +15,7 @@
 #define LLVM_LATINO_LIB_STATICANALYZER_CHECKERS_RETAINCOUNTCHECKER_DIAGNOSTICS_H
 
 #include "latino/Analysis/PathDiagnostic.h"
-#include "latino/Analysis/RetainSummaryManager.h"
+// #include "latino/Analysis/RetainSummaryManager.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugReporterVisitors.h"
 #include "latino/StaticAnalyzer/Core/PathSensitive/CallEvent.h"

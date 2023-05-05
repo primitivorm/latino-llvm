@@ -19,27 +19,27 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
-// #include "latino/AST/DeclObjC.h"
-#include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprConcepts.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-#include "latino/AST/ExprOpenMP.h"
+// #include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
-#include "latino/AST/OpenMPClause.h"
+// #include "latino/AST/OpenMPClause.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
 // #include "latino/AST/StmtObjC.h"
-#include "latino/AST/StmtOpenMP.h"
+// #include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/TemplateBase.h"
 #include "latino/AST/TemplateName.h"
 #include "latino/AST/Type.h"
 #include "latino/AST/TypeLoc.h"
 #include "latino/Basic/LLVM.h"
-#include "latino/Basic/OpenMPKinds.h"
+// #include "latino/Basic/OpenMPKinds.h"
 #include "latino/Basic/Specifiers.h"
 #include "llvm/ADT/PointerIntPair.h"
 #include "llvm/ADT/SmallVector.h"
@@ -484,16 +484,16 @@ private:
   bool TraverseDeclContextHelper(DeclContext *DC);
   bool TraverseFunctionHelper(FunctionDecl *D);
   bool TraverseVarHelper(VarDecl *D);
-  bool TraverseOMPExecutableDirective(OMPExecutableDirective *S);
-  bool TraverseOMPLoopDirective(OMPLoopDirective *S);
-  bool TraverseOMPClause(OMPClause *C);
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) bool Visit##Class(Class *C);
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
-  /// Process clauses with list of variables.
-  template <typename T> bool VisitOMPClauseList(T *Node);
-  /// Process clauses with pre-initis.
-  bool VisitOMPClauseWithPreInit(OMPClauseWithPreInit *Node);
-  bool VisitOMPClauseWithPostUpdate(OMPClauseWithPostUpdate *Node);
+//   bool TraverseOMPExecutableDirective(OMPExecutableDirective *S);
+//   bool TraverseOMPLoopDirective(OMPLoopDirective *S);
+//   bool TraverseOMPClause(OMPClause *C);
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) bool Visit##Class(Class *C);
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
+//   /// Process clauses with list of variables.
+//   template <typename T> bool VisitOMPClauseList(T *Node);
+//   /// Process clauses with pre-initis.
+//   bool VisitOMPClauseWithPreInit(OMPClauseWithPreInit *Node);
+//   bool VisitOMPClauseWithPostUpdate(OMPClauseWithPostUpdate *Node);
 
   bool dataTraverseNode(Stmt *S, DataRecursionQueue *Queue);
   bool PostVisitStmt(Stmt *S);
@@ -1589,41 +1589,41 @@ DEF_TRAVERSE_DECL(UsingShadowDecl, {})
 
 DEF_TRAVERSE_DECL(ConstructorUsingShadowDecl, {})
 
-DEF_TRAVERSE_DECL(OMPThreadPrivateDecl, {
-  for (auto *I : D->varlists()) {
-    TRY_TO(TraverseStmt(I));
-  }
- })
+// DEF_TRAVERSE_DECL(OMPThreadPrivateDecl, {
+//   for (auto *I : D->varlists()) {
+//     TRY_TO(TraverseStmt(I));
+//   }
+//  })
 
-DEF_TRAVERSE_DECL(OMPRequiresDecl, {
-  for (auto *C : D->clauselists()) {
-    TRY_TO(TraverseOMPClause(C));
-  }
-})
+// DEF_TRAVERSE_DECL(OMPRequiresDecl, {
+//   for (auto *C : D->clauselists()) {
+//     TRY_TO(TraverseOMPClause(C));
+//   }
+// })
 
-DEF_TRAVERSE_DECL(OMPDeclareReductionDecl, {
-  TRY_TO(TraverseStmt(D->getCombiner()));
-  if (auto *Initializer = D->getInitializer())
-    TRY_TO(TraverseStmt(Initializer));
-  TRY_TO(TraverseType(D->getType()));
-  return true;
-})
+// DEF_TRAVERSE_DECL(OMPDeclareReductionDecl, {
+//   TRY_TO(TraverseStmt(D->getCombiner()));
+//   if (auto *Initializer = D->getInitializer())
+//     TRY_TO(TraverseStmt(Initializer));
+//   TRY_TO(TraverseType(D->getType()));
+//   return true;
+// })
 
-DEF_TRAVERSE_DECL(OMPDeclareMapperDecl, {
-  for (auto *C : D->clauselists())
-    TRY_TO(TraverseOMPClause(C));
-  TRY_TO(TraverseType(D->getType()));
-  return true;
-})
+// DEF_TRAVERSE_DECL(OMPDeclareMapperDecl, {
+//   for (auto *C : D->clauselists())
+//     TRY_TO(TraverseOMPClause(C));
+//   TRY_TO(TraverseType(D->getType()));
+//   return true;
+// })
 
-DEF_TRAVERSE_DECL(OMPCapturedExprDecl, { TRY_TO(TraverseVarHelper(D)); })
+// DEF_TRAVERSE_DECL(OMPCapturedExprDecl, { TRY_TO(TraverseVarHelper(D)); })
 
-DEF_TRAVERSE_DECL(OMPAllocateDecl, {
-  for (auto *I : D->varlists())
-    TRY_TO(TraverseStmt(I));
-  for (auto *C : D->clauselists())
-    TRY_TO(TraverseOMPClause(C));
-})
+// DEF_TRAVERSE_DECL(OMPAllocateDecl, {
+//   for (auto *I : D->varlists())
+//     TRY_TO(TraverseStmt(I));
+//   for (auto *C : D->clauselists())
+//     TRY_TO(TraverseOMPClause(C));
+// })
 
 // A helper method for TemplateDecl's children.
 template <typename Derived>
@@ -1976,12 +1976,12 @@ DEF_TRAVERSE_DECL(FieldDecl, {
 //   // FIXME: implement the rest.
 // })
 
-// DEF_TRAVERSE_DECL(ObjCIvarDecl, {
-//   TRY_TO(TraverseDeclaratorHelper(D));
-//   if (D->isBitField())
-//     TRY_TO(TraverseStmt(D->getBitWidth()));
-//   // FIXME: implement the rest.
-// })
+DEF_TRAVERSE_DECL(ObjCIvarDecl, {
+  TRY_TO(TraverseDeclaratorHelper(D));
+  if (D->isBitField())
+    TRY_TO(TraverseStmt(D->getBitWidth()));
+  // FIXME: implement the rest.
+})
 
 template <typename Derived>
 bool RecursiveASTVisitor<Derived>::TraverseFunctionHelper(FunctionDecl *D) {
@@ -2531,9 +2531,9 @@ DEF_TRAVERSE_STMT(CXXMemberCallExpr, {})
 DEF_TRAVERSE_STMT(AddrLabelExpr, {})
 DEF_TRAVERSE_STMT(ArraySubscriptExpr, {})
 DEF_TRAVERSE_STMT(MatrixSubscriptExpr, {})
-DEF_TRAVERSE_STMT(OMPArraySectionExpr, {})
-DEF_TRAVERSE_STMT(OMPArrayShapingExpr, {})
-DEF_TRAVERSE_STMT(OMPIteratorExpr, {})
+// DEF_TRAVERSE_STMT(OMPArraySectionExpr, {})
+// DEF_TRAVERSE_STMT(OMPArrayShapingExpr, {})
+// DEF_TRAVERSE_STMT(OMPIteratorExpr, {})
 
 DEF_TRAVERSE_STMT(BlockExpr, {
   TRY_TO(TraverseDecl(S->getBlockDecl()));
@@ -2753,625 +2753,625 @@ DEF_TRAVERSE_STMT(StringLiteral, {})
 DEF_TRAVERSE_STMT(AsTypeExpr, {})
 
 // OpenMP directives.
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::TraverseOMPExecutableDirective(
-    OMPExecutableDirective *S) {
-  for (auto *C : S->clauses()) {
-    TRY_TO(TraverseOMPClause(C));
-  }
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::TraverseOMPExecutableDirective(
+//     OMPExecutableDirective *S) {
+//   for (auto *C : S->clauses()) {
+//     TRY_TO(TraverseOMPClause(C));
+//   }
+//   return true;
+// }
 
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::TraverseOMPLoopDirective(OMPLoopDirective *S) {
-  return TraverseOMPExecutableDirective(S);
-}
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::TraverseOMPLoopDirective(OMPLoopDirective *S) {
+//   return TraverseOMPExecutableDirective(S);
+// }
 
-DEF_TRAVERSE_STMT(OMPParallelDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPParallelDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPForDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPForDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPForSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPForSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPSectionsDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPSectionsDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPSectionDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPSectionDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPSingleDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPSingleDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPMasterDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPMasterDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPCriticalDirective, {
-  TRY_TO(TraverseDeclarationNameInfo(S->getDirectiveName()));
-  TRY_TO(TraverseOMPExecutableDirective(S));
-})
+// DEF_TRAVERSE_STMT(OMPCriticalDirective, {
+//   TRY_TO(TraverseDeclarationNameInfo(S->getDirectiveName()));
+//   TRY_TO(TraverseOMPExecutableDirective(S));
+// })
 
-DEF_TRAVERSE_STMT(OMPParallelForDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPParallelForDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPParallelForSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPParallelForSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPParallelMasterDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPParallelMasterDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPParallelSectionsDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPParallelSectionsDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTaskDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTaskDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTaskyieldDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTaskyieldDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPBarrierDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPBarrierDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTaskwaitDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTaskwaitDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTaskgroupDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTaskgroupDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPCancellationPointDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPCancellationPointDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPCancelDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPCancelDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPFlushDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPFlushDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPDepobjDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPDepobjDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPScanDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPScanDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPOrderedDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPOrderedDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPAtomicDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPAtomicDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetDataDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetDataDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetEnterDataDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetEnterDataDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetExitDataDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetExitDataDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetParallelDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetParallelDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetParallelForDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetParallelForDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTeamsDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTeamsDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTargetUpdateDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTargetUpdateDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTaskLoopDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTaskLoopDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPTaskLoopSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPTaskLoopSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPMasterTaskLoopDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
+// DEF_TRAVERSE_STMT(OMPMasterTaskLoopDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
 
-DEF_TRAVERSE_STMT(OMPMasterTaskLoopSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPParallelMasterTaskLoopDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPParallelMasterTaskLoopSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPDistributeDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPDistributeParallelForDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPDistributeParallelForSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPDistributeSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetParallelForSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTeamsDistributeDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTeamsDistributeSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTeamsDistributeParallelForSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTeamsDistributeParallelForDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetTeamsDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeParallelForDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeParallelForSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeSimdDirective,
-                  { TRY_TO(TraverseOMPExecutableDirective(S)); })
-
-// OpenMP clauses.
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::TraverseOMPClause(OMPClause *C) {
-  if (!C)
-    return true;
-  switch (C->getClauseKind()) {
-#define OMP_CLAUSE_CLASS(Enum, Str, Class)                                     \
-  case llvm::omp::Clause::Enum:                                                \
-    TRY_TO(Visit##Class(static_cast<Class *>(C)));                             \
-    break;
-#define OMP_CLAUSE_NO_CLASS(Enum, Str)                                         \
-  case llvm::omp::Clause::Enum:                                                \
-    break;
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
-  default:
-    break;
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPClauseWithPreInit(
-    OMPClauseWithPreInit *Node) {
-  TRY_TO(TraverseStmt(Node->getPreInitStmt()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPClauseWithPostUpdate(
-    OMPClauseWithPostUpdate *Node) {
-  TRY_TO(VisitOMPClauseWithPreInit(Node));
-  TRY_TO(TraverseStmt(Node->getPostUpdateExpr()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAllocatorClause(
-    OMPAllocatorClause *C) {
-  TRY_TO(TraverseStmt(C->getAllocator()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAllocateClause(OMPAllocateClause *C) {
-  TRY_TO(TraverseStmt(C->getAllocator()));
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPIfClause(OMPIfClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getCondition()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPFinalClause(OMPFinalClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getCondition()));
-  return true;
-}
-
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::VisitOMPNumThreadsClause(OMPNumThreadsClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getNumThreads()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPSafelenClause(OMPSafelenClause *C) {
-  TRY_TO(TraverseStmt(C->getSafelen()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPSimdlenClause(OMPSimdlenClause *C) {
-  TRY_TO(TraverseStmt(C->getSimdlen()));
-  return true;
-}
-
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::VisitOMPCollapseClause(OMPCollapseClause *C) {
-  TRY_TO(TraverseStmt(C->getNumForLoops()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDefaultClause(OMPDefaultClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPProcBindClause(OMPProcBindClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUnifiedAddressClause(
-    OMPUnifiedAddressClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUnifiedSharedMemoryClause(
-    OMPUnifiedSharedMemoryClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPReverseOffloadClause(
-    OMPReverseOffloadClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDynamicAllocatorsClause(
-    OMPDynamicAllocatorsClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAtomicDefaultMemOrderClause(
-    OMPAtomicDefaultMemOrderClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::VisitOMPScheduleClause(OMPScheduleClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getChunkSize()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPOrderedClause(OMPOrderedClause *C) {
-  TRY_TO(TraverseStmt(C->getNumForLoops()));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPNowaitClause(OMPNowaitClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUntiedClause(OMPUntiedClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::VisitOMPMergeableClause(OMPMergeableClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPReadClause(OMPReadClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPWriteClause(OMPWriteClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUpdateClause(OMPUpdateClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPCaptureClause(OMPCaptureClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPSeqCstClause(OMPSeqCstClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAcqRelClause(OMPAcqRelClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAcquireClause(OMPAcquireClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPReleaseClause(OMPReleaseClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPRelaxedClause(OMPRelaxedClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPThreadsClause(OMPThreadsClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPSIMDClause(OMPSIMDClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPNogroupClause(OMPNogroupClause *) {
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDestroyClause(OMPDestroyClause *) {
-  return true;
-}
-
-template <typename Derived>
-template <typename T>
-bool RecursiveASTVisitor<Derived>::VisitOMPClauseList(T *Node) {
-  for (auto *E : Node->varlists()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPInclusiveClause(
-    OMPInclusiveClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPExclusiveClause(
-    OMPExclusiveClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPPrivateClause(OMPPrivateClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  for (auto *E : C->private_copies()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPFirstprivateClause(
-    OMPFirstprivateClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  for (auto *E : C->private_copies()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->inits()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPLastprivateClause(
-    OMPLastprivateClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  TRY_TO(VisitOMPClauseWithPostUpdate(C));
-  for (auto *E : C->private_copies()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->source_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->destination_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->assignment_ops()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPSharedClause(OMPSharedClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPLinearClause(OMPLinearClause *C) {
-  TRY_TO(TraverseStmt(C->getStep()));
-  TRY_TO(TraverseStmt(C->getCalcStep()));
-  TRY_TO(VisitOMPClauseList(C));
-  TRY_TO(VisitOMPClauseWithPostUpdate(C));
-  for (auto *E : C->privates()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->inits()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->updates()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->finals()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAlignedClause(OMPAlignedClause *C) {
-  TRY_TO(TraverseStmt(C->getAlignment()));
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPCopyinClause(OMPCopyinClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  for (auto *E : C->source_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->destination_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->assignment_ops()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPCopyprivateClause(
-    OMPCopyprivateClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  for (auto *E : C->source_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->destination_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->assignment_ops()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::VisitOMPReductionClause(OMPReductionClause *C) {
-  TRY_TO(TraverseNestedNameSpecifierLoc(C->getQualifierLoc()));
-  TRY_TO(TraverseDeclarationNameInfo(C->getNameInfo()));
-  TRY_TO(VisitOMPClauseList(C));
-  TRY_TO(VisitOMPClauseWithPostUpdate(C));
-  for (auto *E : C->privates()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->lhs_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->rhs_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->reduction_ops()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  if (C->getModifier() == OMPC_REDUCTION_inscan) {
-    for (auto *E : C->copy_ops()) {
-      TRY_TO(TraverseStmt(E));
-    }
-    for (auto *E : C->copy_array_temps()) {
-      TRY_TO(TraverseStmt(E));
-    }
-    for (auto *E : C->copy_array_elems()) {
-      TRY_TO(TraverseStmt(E));
-    }
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPTaskReductionClause(
-    OMPTaskReductionClause *C) {
-  TRY_TO(TraverseNestedNameSpecifierLoc(C->getQualifierLoc()));
-  TRY_TO(TraverseDeclarationNameInfo(C->getNameInfo()));
-  TRY_TO(VisitOMPClauseList(C));
-  TRY_TO(VisitOMPClauseWithPostUpdate(C));
-  for (auto *E : C->privates()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->lhs_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->rhs_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->reduction_ops()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPInReductionClause(
-    OMPInReductionClause *C) {
-  TRY_TO(TraverseNestedNameSpecifierLoc(C->getQualifierLoc()));
-  TRY_TO(TraverseDeclarationNameInfo(C->getNameInfo()));
-  TRY_TO(VisitOMPClauseList(C));
-  TRY_TO(VisitOMPClauseWithPostUpdate(C));
-  for (auto *E : C->privates()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->lhs_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->rhs_exprs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->reduction_ops()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  for (auto *E : C->taskgroup_descriptors())
-    TRY_TO(TraverseStmt(E));
-  return true;
-}
-
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPFlushClause(OMPFlushClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// DEF_TRAVERSE_STMT(OMPMasterTaskLoopSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPParallelMasterTaskLoopDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPParallelMasterTaskLoopSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPDistributeDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPDistributeParallelForDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPDistributeParallelForSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPDistributeSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetParallelForSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTeamsDistributeDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTeamsDistributeSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTeamsDistributeParallelForSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTeamsDistributeParallelForDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetTeamsDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeParallelForDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeParallelForSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// DEF_TRAVERSE_STMT(OMPTargetTeamsDistributeSimdDirective,
+//                   { TRY_TO(TraverseOMPExecutableDirective(S)); })
+
+// // OpenMP clauses.
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::TraverseOMPClause(OMPClause *C) {
+//   if (!C)
+//     return true;
+//   switch (C->getClauseKind()) {
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class)                                     \
+//   case llvm::omp::Clause::Enum:                                                \
+//     TRY_TO(Visit##Class(static_cast<Class *>(C)));                             \
+//     break;
+// #define OMP_CLAUSE_NO_CLASS(Enum, Str)                                         \
+//   case llvm::omp::Clause::Enum:                                                \
+//     break;
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
+//   default:
+//     break;
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPClauseWithPreInit(
+//     OMPClauseWithPreInit *Node) {
+//   TRY_TO(TraverseStmt(Node->getPreInitStmt()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPClauseWithPostUpdate(
+//     OMPClauseWithPostUpdate *Node) {
+//   TRY_TO(VisitOMPClauseWithPreInit(Node));
+//   TRY_TO(TraverseStmt(Node->getPostUpdateExpr()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAllocatorClause(
+//     OMPAllocatorClause *C) {
+//   TRY_TO(TraverseStmt(C->getAllocator()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAllocateClause(OMPAllocateClause *C) {
+//   TRY_TO(TraverseStmt(C->getAllocator()));
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPIfClause(OMPIfClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getCondition()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPFinalClause(OMPFinalClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getCondition()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::VisitOMPNumThreadsClause(OMPNumThreadsClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getNumThreads()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPSafelenClause(OMPSafelenClause *C) {
+//   TRY_TO(TraverseStmt(C->getSafelen()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPSimdlenClause(OMPSimdlenClause *C) {
+//   TRY_TO(TraverseStmt(C->getSimdlen()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::VisitOMPCollapseClause(OMPCollapseClause *C) {
+//   TRY_TO(TraverseStmt(C->getNumForLoops()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDefaultClause(OMPDefaultClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPProcBindClause(OMPProcBindClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUnifiedAddressClause(
+//     OMPUnifiedAddressClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUnifiedSharedMemoryClause(
+//     OMPUnifiedSharedMemoryClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPReverseOffloadClause(
+//     OMPReverseOffloadClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDynamicAllocatorsClause(
+//     OMPDynamicAllocatorsClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAtomicDefaultMemOrderClause(
+//     OMPAtomicDefaultMemOrderClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::VisitOMPScheduleClause(OMPScheduleClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getChunkSize()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPOrderedClause(OMPOrderedClause *C) {
+//   TRY_TO(TraverseStmt(C->getNumForLoops()));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPNowaitClause(OMPNowaitClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUntiedClause(OMPUntiedClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::VisitOMPMergeableClause(OMPMergeableClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPReadClause(OMPReadClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPWriteClause(OMPWriteClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUpdateClause(OMPUpdateClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPCaptureClause(OMPCaptureClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPSeqCstClause(OMPSeqCstClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAcqRelClause(OMPAcqRelClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAcquireClause(OMPAcquireClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPReleaseClause(OMPReleaseClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPRelaxedClause(OMPRelaxedClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPThreadsClause(OMPThreadsClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPSIMDClause(OMPSIMDClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPNogroupClause(OMPNogroupClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDestroyClause(OMPDestroyClause *) {
+//   return true;
+// }
+
+// template <typename Derived>
+// template <typename T>
+// bool RecursiveASTVisitor<Derived>::VisitOMPClauseList(T *Node) {
+//   for (auto *E : Node->varlists()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPInclusiveClause(
+//     OMPInclusiveClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPExclusiveClause(
+//     OMPExclusiveClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPPrivateClause(OMPPrivateClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   for (auto *E : C->private_copies()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPFirstprivateClause(
+//     OMPFirstprivateClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   for (auto *E : C->private_copies()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->inits()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPLastprivateClause(
+//     OMPLastprivateClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   TRY_TO(VisitOMPClauseWithPostUpdate(C));
+//   for (auto *E : C->private_copies()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->source_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->destination_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->assignment_ops()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPSharedClause(OMPSharedClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPLinearClause(OMPLinearClause *C) {
+//   TRY_TO(TraverseStmt(C->getStep()));
+//   TRY_TO(TraverseStmt(C->getCalcStep()));
+//   TRY_TO(VisitOMPClauseList(C));
+//   TRY_TO(VisitOMPClauseWithPostUpdate(C));
+//   for (auto *E : C->privates()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->inits()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->updates()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->finals()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAlignedClause(OMPAlignedClause *C) {
+//   TRY_TO(TraverseStmt(C->getAlignment()));
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPCopyinClause(OMPCopyinClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   for (auto *E : C->source_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->destination_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->assignment_ops()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPCopyprivateClause(
+//     OMPCopyprivateClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   for (auto *E : C->source_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->destination_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->assignment_ops()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::VisitOMPReductionClause(OMPReductionClause *C) {
+//   TRY_TO(TraverseNestedNameSpecifierLoc(C->getQualifierLoc()));
+//   TRY_TO(TraverseDeclarationNameInfo(C->getNameInfo()));
+//   TRY_TO(VisitOMPClauseList(C));
+//   TRY_TO(VisitOMPClauseWithPostUpdate(C));
+//   for (auto *E : C->privates()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->lhs_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->rhs_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->reduction_ops()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   if (C->getModifier() == OMPC_REDUCTION_inscan) {
+//     for (auto *E : C->copy_ops()) {
+//       TRY_TO(TraverseStmt(E));
+//     }
+//     for (auto *E : C->copy_array_temps()) {
+//       TRY_TO(TraverseStmt(E));
+//     }
+//     for (auto *E : C->copy_array_elems()) {
+//       TRY_TO(TraverseStmt(E));
+//     }
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPTaskReductionClause(
+//     OMPTaskReductionClause *C) {
+//   TRY_TO(TraverseNestedNameSpecifierLoc(C->getQualifierLoc()));
+//   TRY_TO(TraverseDeclarationNameInfo(C->getNameInfo()));
+//   TRY_TO(VisitOMPClauseList(C));
+//   TRY_TO(VisitOMPClauseWithPostUpdate(C));
+//   for (auto *E : C->privates()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->lhs_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->rhs_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->reduction_ops()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPInReductionClause(
+//     OMPInReductionClause *C) {
+//   TRY_TO(TraverseNestedNameSpecifierLoc(C->getQualifierLoc()));
+//   TRY_TO(TraverseDeclarationNameInfo(C->getNameInfo()));
+//   TRY_TO(VisitOMPClauseList(C));
+//   TRY_TO(VisitOMPClauseWithPostUpdate(C));
+//   for (auto *E : C->privates()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->lhs_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->rhs_exprs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->reduction_ops()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   for (auto *E : C->taskgroup_descriptors())
+//     TRY_TO(TraverseStmt(E));
+//   return true;
+// }
+
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPFlushClause(OMPFlushClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
 // template <typename Derived>
 // bool RecursiveASTVisitor<Derived>::VisitOMPDepobjClause(OMPDepobjClause *C) {
@@ -3379,158 +3379,158 @@ bool RecursiveASTVisitor<Derived>::VisitOMPFlushClause(OMPFlushClause *C) {
 //   return true;
 // }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDependClause(OMPDependClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDependClause(OMPDependClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDeviceClause(OMPDeviceClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getDevice()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDeviceClause(OMPDeviceClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getDevice()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPMapClause(OMPMapClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPMapClause(OMPMapClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPNumTeamsClause(
-    OMPNumTeamsClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getNumTeams()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPNumTeamsClause(
+//     OMPNumTeamsClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getNumTeams()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPThreadLimitClause(
-    OMPThreadLimitClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getThreadLimit()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPThreadLimitClause(
+//     OMPThreadLimitClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getThreadLimit()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPPriorityClause(
-    OMPPriorityClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getPriority()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPPriorityClause(
+//     OMPPriorityClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getPriority()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPGrainsizeClause(
-    OMPGrainsizeClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getGrainsize()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPGrainsizeClause(
+//     OMPGrainsizeClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getGrainsize()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPNumTasksClause(
-    OMPNumTasksClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getNumTasks()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPNumTasksClause(
+//     OMPNumTasksClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getNumTasks()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPHintClause(OMPHintClause *C) {
-  TRY_TO(TraverseStmt(C->getHint()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPHintClause(OMPHintClause *C) {
+//   TRY_TO(TraverseStmt(C->getHint()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDistScheduleClause(
-    OMPDistScheduleClause *C) {
-  TRY_TO(VisitOMPClauseWithPreInit(C));
-  TRY_TO(TraverseStmt(C->getChunkSize()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDistScheduleClause(
+//     OMPDistScheduleClause *C) {
+//   TRY_TO(VisitOMPClauseWithPreInit(C));
+//   TRY_TO(TraverseStmt(C->getChunkSize()));
+//   return true;
+// }
 
-template <typename Derived>
-bool
-RecursiveASTVisitor<Derived>::VisitOMPDefaultmapClause(OMPDefaultmapClause *C) {
-  return true;
-}
+// template <typename Derived>
+// bool
+// RecursiveASTVisitor<Derived>::VisitOMPDefaultmapClause(OMPDefaultmapClause *C) {
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPToClause(OMPToClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPToClause(OMPToClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPFromClause(OMPFromClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPFromClause(OMPFromClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUseDevicePtrClause(
-    OMPUseDevicePtrClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUseDevicePtrClause(
+//     OMPUseDevicePtrClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUseDeviceAddrClause(
-    OMPUseDeviceAddrClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUseDeviceAddrClause(
+//     OMPUseDeviceAddrClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPIsDevicePtrClause(
-    OMPIsDevicePtrClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPIsDevicePtrClause(
+//     OMPIsDevicePtrClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPNontemporalClause(
-    OMPNontemporalClause *C) {
-  TRY_TO(VisitOMPClauseList(C));
-  for (auto *E : C->private_refs()) {
-    TRY_TO(TraverseStmt(E));
-  }
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPNontemporalClause(
+//     OMPNontemporalClause *C) {
+//   TRY_TO(VisitOMPClauseList(C));
+//   for (auto *E : C->private_refs()) {
+//     TRY_TO(TraverseStmt(E));
+//   }
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPOrderClause(OMPOrderClause *) {
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPOrderClause(OMPOrderClause *) {
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPDetachClause(OMPDetachClause *C) {
-  TRY_TO(TraverseStmt(C->getEventHandler()));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPDetachClause(OMPDetachClause *C) {
+//   TRY_TO(TraverseStmt(C->getEventHandler()));
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPUsesAllocatorsClause(
-    OMPUsesAllocatorsClause *C) {
-  for (unsigned I = 0, E = C->getNumberOfAllocators(); I < E; ++I) {
-    const OMPUsesAllocatorsClause::Data Data = C->getAllocatorData(I);
-    TRY_TO(TraverseStmt(Data.Allocator));
-    TRY_TO(TraverseStmt(Data.AllocatorTraits));
-  }
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPUsesAllocatorsClause(
+//     OMPUsesAllocatorsClause *C) {
+//   for (unsigned I = 0, E = C->getNumberOfAllocators(); I < E; ++I) {
+//     const OMPUsesAllocatorsClause::Data Data = C->getAllocatorData(I);
+//     TRY_TO(TraverseStmt(Data.Allocator));
+//     TRY_TO(TraverseStmt(Data.AllocatorTraits));
+//   }
+//   return true;
+// }
 
-template <typename Derived>
-bool RecursiveASTVisitor<Derived>::VisitOMPAffinityClause(
-    OMPAffinityClause *C) {
-  TRY_TO(TraverseStmt(C->getModifier()));
-  for (Expr *E : C->varlists())
-    TRY_TO(TraverseStmt(E));
-  return true;
-}
+// template <typename Derived>
+// bool RecursiveASTVisitor<Derived>::VisitOMPAffinityClause(
+//     OMPAffinityClause *C) {
+//   TRY_TO(TraverseStmt(C->getModifier()));
+//   for (Expr *E : C->varlists())
+//     TRY_TO(TraverseStmt(E));
+//   return true;
+// }
 
 // FIXME: look at the following tricky-seeming exprs to see if we
 // need to recurse on anything.  These are ones that have methods

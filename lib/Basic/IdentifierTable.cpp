@@ -141,8 +141,8 @@ static KeywordStatus getKeywordStatus(const LangOptions &LangOpts,
   if (LangOpts.Char8 && (Flags & CHAR8SUPPORT)) return KS_Enabled;
   if (LangOpts.AltiVec && (Flags & KEYALTIVEC)) return KS_Enabled;
   if (LangOpts.ZVector && (Flags & KEYZVECTOR)) return KS_Enabled;
-  if (LangOpts.OpenCL && !LangOpts.OpenCLCPlusPlus && (Flags & KEYOPENCLC))
-    return KS_Enabled;
+  // if (LangOpts.OpenCL && !LangOpts.OpenCLCPlusPlus && (Flags & KEYOPENCLC))
+  //   return KS_Enabled;
   if (LangOpts.OpenCLCPlusPlus && (Flags & KEYOPENCLCXX)) return KS_Enabled;
   if (!LangOpts.CPlusPlus && (Flags & KEYNOCXX)) return KS_Enabled;
   if (LangOpts.C11 && (Flags & KEYC11)) return KS_Enabled;
@@ -172,8 +172,8 @@ static void AddKeyword(StringRef Keyword,
     return;
 
   // Don't add this keyword under OpenCL.
-  if (LangOpts.OpenCL && (Flags & KEYNOOPENCL))
-    return;
+  // if (LangOpts.OpenCL && (Flags & KEYNOOPENCL))
+  //   return;
 
   // Don't add this keyword if disabled in this language.
   if (AddResult == KS_Disabled) return;
@@ -195,11 +195,11 @@ static void AddKeyword(StringRef Keyword,
 
 /// AddObjCKeyword - Register an Objective-C \@keyword like "class" "selector"
 /// or "property".
-static void AddObjCKeyword(StringRef Name,
-                           tok::ObjCKeywordKind ObjCID,
-                           IdentifierTable &Table) {
-  Table.get(Name).setObjCKeywordID(ObjCID);
-}
+// static void AddObjCKeyword(StringRef Name,
+//                            tok::ObjCKeywordKind ObjCID,
+//                            IdentifierTable &Table) {
+//   Table.get(Name).setObjCKeywordID(ObjCID);
+// }
 
 /// AddKeywords - Add all keywords to the symbol table.
 ///
@@ -360,149 +360,149 @@ void IdentifierTable::PrintStats() const {
 // SelectorTable Implementation
 //===----------------------------------------------------------------------===//
 
-unsigned llvm::DenseMapInfo<latino::Selector>::getHashValue(latino::Selector S) {
-  return DenseMapInfo<void*>::getHashValue(S.getAsOpaquePtr());
-}
+// unsigned llvm::DenseMapInfo<latino::Selector>::getHashValue(latino::Selector S) {
+//   return DenseMapInfo<void*>::getHashValue(S.getAsOpaquePtr());
+// }
 
-namespace latino {
+// namespace latino {
 
-/// One of these variable length records is kept for each
-/// selector containing more than one keyword. We use a folding set
-/// to unique aggregate names (keyword selectors in ObjC parlance). Access to
-/// this class is provided strictly through Selector.
-class alignas(IdentifierInfoAlignment) MultiKeywordSelector
-    : public detail::DeclarationNameExtra,
-      public llvm::FoldingSetNode {
-  MultiKeywordSelector(unsigned nKeys) : DeclarationNameExtra(nKeys) {}
+// /// One of these variable length records is kept for each
+// /// selector containing more than one keyword. We use a folding set
+// /// to unique aggregate names (keyword selectors in ObjC parlance). Access to
+// /// this class is provided strictly through Selector.
+// class alignas(IdentifierInfoAlignment) MultiKeywordSelector
+//     : public detail::DeclarationNameExtra,
+//       public llvm::FoldingSetNode {
+//   MultiKeywordSelector(unsigned nKeys) : DeclarationNameExtra(nKeys) {}
 
-public:
-  // Constructor for keyword selectors.
-  MultiKeywordSelector(unsigned nKeys, IdentifierInfo **IIV)
-      : DeclarationNameExtra(nKeys) {
-    assert((nKeys > 1) && "not a multi-keyword selector");
+// public:
+//   // Constructor for keyword selectors.
+//   MultiKeywordSelector(unsigned nKeys, IdentifierInfo **IIV)
+//       : DeclarationNameExtra(nKeys) {
+//     assert((nKeys > 1) && "not a multi-keyword selector");
 
-    // Fill in the trailing keyword array.
-    IdentifierInfo **KeyInfo = reinterpret_cast<IdentifierInfo **>(this + 1);
-    for (unsigned i = 0; i != nKeys; ++i)
-      KeyInfo[i] = IIV[i];
-  }
+//     // Fill in the trailing keyword array.
+//     IdentifierInfo **KeyInfo = reinterpret_cast<IdentifierInfo **>(this + 1);
+//     for (unsigned i = 0; i != nKeys; ++i)
+//       KeyInfo[i] = IIV[i];
+//   }
 
-  // getName - Derive the full selector name and return it.
-  std::string getName() const;
+//   // getName - Derive the full selector name and return it.
+//   std::string getName() const;
 
-  using DeclarationNameExtra::getNumArgs;
+//   using DeclarationNameExtra::getNumArgs;
 
-  using keyword_iterator = IdentifierInfo *const *;
+//   using keyword_iterator = IdentifierInfo *const *;
 
-  keyword_iterator keyword_begin() const {
-    return reinterpret_cast<keyword_iterator>(this + 1);
-  }
+//   keyword_iterator keyword_begin() const {
+//     return reinterpret_cast<keyword_iterator>(this + 1);
+//   }
 
-  keyword_iterator keyword_end() const {
-    return keyword_begin() + getNumArgs();
-  }
+//   keyword_iterator keyword_end() const {
+//     return keyword_begin() + getNumArgs();
+//   }
 
-  IdentifierInfo *getIdentifierInfoForSlot(unsigned i) const {
-    assert(i < getNumArgs() && "getIdentifierInfoForSlot(): illegal index");
-    return keyword_begin()[i];
-  }
+//   IdentifierInfo *getIdentifierInfoForSlot(unsigned i) const {
+//     assert(i < getNumArgs() && "getIdentifierInfoForSlot(): illegal index");
+//     return keyword_begin()[i];
+//   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, keyword_iterator ArgTys,
-                      unsigned NumArgs) {
-    ID.AddInteger(NumArgs);
-    for (unsigned i = 0; i != NumArgs; ++i)
-      ID.AddPointer(ArgTys[i]);
-  }
+//   static void Profile(llvm::FoldingSetNodeID &ID, keyword_iterator ArgTys,
+//                       unsigned NumArgs) {
+//     ID.AddInteger(NumArgs);
+//     for (unsigned i = 0; i != NumArgs; ++i)
+//       ID.AddPointer(ArgTys[i]);
+//   }
 
-  void Profile(llvm::FoldingSetNodeID &ID) {
-    Profile(ID, keyword_begin(), getNumArgs());
-  }
-};
+//   void Profile(llvm::FoldingSetNodeID &ID) {
+//     Profile(ID, keyword_begin(), getNumArgs());
+//   }
+// };
 
-} // namespace latino.
+// } // namespace latino.
 
-bool Selector::isKeywordSelector(ArrayRef<StringRef> Names) const {
-  assert(!Names.empty() && "must have >= 1 selector slots");
-  if (getNumArgs() != Names.size())
-    return false;
-  for (unsigned I = 0, E = Names.size(); I != E; ++I) {
-    if (getNameForSlot(I) != Names[I])
-      return false;
-  }
-  return true;
-}
+// bool Selector::isKeywordSelector(ArrayRef<StringRef> Names) const {
+//   assert(!Names.empty() && "must have >= 1 selector slots");
+//   if (getNumArgs() != Names.size())
+//     return false;
+//   for (unsigned I = 0, E = Names.size(); I != E; ++I) {
+//     if (getNameForSlot(I) != Names[I])
+//       return false;
+//   }
+//   return true;
+// }
 
-bool Selector::isUnarySelector(StringRef Name) const {
-  return isUnarySelector() && getNameForSlot(0) == Name;
-}
+// bool Selector::isUnarySelector(StringRef Name) const {
+//   return isUnarySelector() && getNameForSlot(0) == Name;
+// }
 
-unsigned Selector::getNumArgs() const {
-  unsigned IIF = getIdentifierInfoFlag();
-  if (IIF <= ZeroArg)
-    return 0;
-  if (IIF == OneArg)
-    return 1;
-  // We point to a MultiKeywordSelector.
-  MultiKeywordSelector *SI = getMultiKeywordSelector();
-  return SI->getNumArgs();
-}
+// unsigned Selector::getNumArgs() const {
+//   unsigned IIF = getIdentifierInfoFlag();
+//   if (IIF <= ZeroArg)
+//     return 0;
+//   if (IIF == OneArg)
+//     return 1;
+//   // We point to a MultiKeywordSelector.
+//   MultiKeywordSelector *SI = getMultiKeywordSelector();
+//   return SI->getNumArgs();
+// }
 
-IdentifierInfo *Selector::getIdentifierInfoForSlot(unsigned argIndex) const {
-  if (getIdentifierInfoFlag() < MultiArg) {
-    assert(argIndex == 0 && "illegal keyword index");
-    return getAsIdentifierInfo();
-  }
+// IdentifierInfo *Selector::getIdentifierInfoForSlot(unsigned argIndex) const {
+//   if (getIdentifierInfoFlag() < MultiArg) {
+//     assert(argIndex == 0 && "illegal keyword index");
+//     return getAsIdentifierInfo();
+//   }
 
-  // We point to a MultiKeywordSelector.
-  MultiKeywordSelector *SI = getMultiKeywordSelector();
-  return SI->getIdentifierInfoForSlot(argIndex);
-}
+//   // We point to a MultiKeywordSelector.
+//   MultiKeywordSelector *SI = getMultiKeywordSelector();
+//   return SI->getIdentifierInfoForSlot(argIndex);
+// }
 
-StringRef Selector::getNameForSlot(unsigned int argIndex) const {
-  IdentifierInfo *II = getIdentifierInfoForSlot(argIndex);
-  return II ? II->getName() : StringRef();
-}
+// StringRef Selector::getNameForSlot(unsigned int argIndex) const {
+//   IdentifierInfo *II = getIdentifierInfoForSlot(argIndex);
+//   return II ? II->getName() : StringRef();
+// }
 
-std::string MultiKeywordSelector::getName() const {
-  SmallString<256> Str;
-  llvm::raw_svector_ostream OS(Str);
-  for (keyword_iterator I = keyword_begin(), E = keyword_end(); I != E; ++I) {
-    if (*I)
-      OS << (*I)->getName();
-    OS << ':';
-  }
+// std::string MultiKeywordSelector::getName() const {
+//   SmallString<256> Str;
+//   llvm::raw_svector_ostream OS(Str);
+//   for (keyword_iterator I = keyword_begin(), E = keyword_end(); I != E; ++I) {
+//     if (*I)
+//       OS << (*I)->getName();
+//     OS << ':';
+//   }
 
-  return std::string(OS.str());
-}
+//   return std::string(OS.str());
+// }
 
-std::string Selector::getAsString() const {
-  if (InfoPtr == 0)
-    return "<null selector>";
+// std::string Selector::getAsString() const {
+//   if (InfoPtr == 0)
+//     return "<null selector>";
 
-  if (getIdentifierInfoFlag() < MultiArg) {
-    IdentifierInfo *II = getAsIdentifierInfo();
+//   if (getIdentifierInfoFlag() < MultiArg) {
+//     IdentifierInfo *II = getAsIdentifierInfo();
 
-    if (getNumArgs() == 0) {
-      assert(II && "If the number of arguments is 0 then II is guaranteed to "
-                   "not be null.");
-      return std::string(II->getName());
-    }
+//     if (getNumArgs() == 0) {
+//       assert(II && "If the number of arguments is 0 then II is guaranteed to "
+//                    "not be null.");
+//       return std::string(II->getName());
+//     }
 
-    if (!II)
-      return ":";
+//     if (!II)
+//       return ":";
 
-    return II->getName().str() + ":";
-  }
+//     return II->getName().str() + ":";
+//   }
 
-  // We have a multiple keyword selector.
-  return getMultiKeywordSelector()->getName();
-}
+//   // We have a multiple keyword selector.
+//   return getMultiKeywordSelector()->getName();
+// }
 
-void Selector::print(llvm::raw_ostream &OS) const {
-  OS << getAsString();
-}
+// void Selector::print(llvm::raw_ostream &OS) const {
+//   OS << getAsString();
+// }
 
-LLVM_DUMP_METHOD void Selector::dump() const { print(llvm::errs()); }
+// LLVM_DUMP_METHOD void Selector::dump() const { print(llvm::errs()); }
 
 /// Interpreting the given string using the normal CamelCase
 /// conventions, determine whether the given string starts with the
@@ -513,183 +513,183 @@ static bool startsWithWord(StringRef name, StringRef word) {
           name.startswith(word));
 }
 
-ObjCMethodFamily Selector::getMethodFamilyImpl(Selector sel) {
-  IdentifierInfo *first = sel.getIdentifierInfoForSlot(0);
-  if (!first) return OMF_None;
+// ObjCMethodFamily Selector::getMethodFamilyImpl(Selector sel) {
+//   IdentifierInfo *first = sel.getIdentifierInfoForSlot(0);
+//   if (!first) return OMF_None;
 
-  StringRef name = first->getName();
-  if (sel.isUnarySelector()) {
-    if (name == "autorelease") return OMF_autorelease;
-    if (name == "dealloc") return OMF_dealloc;
-    if (name == "finalize") return OMF_finalize;
-    if (name == "release") return OMF_release;
-    if (name == "retain") return OMF_retain;
-    if (name == "retainCount") return OMF_retainCount;
-    if (name == "self") return OMF_self;
-    if (name == "initialize") return OMF_initialize;
-  }
+//   StringRef name = first->getName();
+//   if (sel.isUnarySelector()) {
+//     if (name == "autorelease") return OMF_autorelease;
+//     if (name == "dealloc") return OMF_dealloc;
+//     if (name == "finalize") return OMF_finalize;
+//     if (name == "release") return OMF_release;
+//     if (name == "retain") return OMF_retain;
+//     if (name == "retainCount") return OMF_retainCount;
+//     if (name == "self") return OMF_self;
+//     if (name == "initialize") return OMF_initialize;
+//   }
 
-  if (name == "performSelector" || name == "performSelectorInBackground" ||
-      name == "performSelectorOnMainThread")
-    return OMF_performSelector;
+//   if (name == "performSelector" || name == "performSelectorInBackground" ||
+//       name == "performSelectorOnMainThread")
+//     return OMF_performSelector;
 
-  // The other method families may begin with a prefix of underscores.
-  while (!name.empty() && name.front() == '_')
-    name = name.substr(1);
+//   // The other method families may begin with a prefix of underscores.
+//   while (!name.empty() && name.front() == '_')
+//     name = name.substr(1);
 
-  if (name.empty()) return OMF_None;
-  switch (name.front()) {
-  case 'a':
-    if (startsWithWord(name, "alloc")) return OMF_alloc;
-    break;
-  case 'c':
-    if (startsWithWord(name, "copy")) return OMF_copy;
-    break;
-  case 'i':
-    if (startsWithWord(name, "init")) return OMF_init;
-    break;
-  case 'm':
-    if (startsWithWord(name, "mutableCopy")) return OMF_mutableCopy;
-    break;
-  case 'n':
-    if (startsWithWord(name, "new")) return OMF_new;
-    break;
-  default:
-    break;
-  }
+//   if (name.empty()) return OMF_None;
+//   switch (name.front()) {
+//   case 'a':
+//     if (startsWithWord(name, "alloc")) return OMF_alloc;
+//     break;
+//   case 'c':
+//     if (startsWithWord(name, "copy")) return OMF_copy;
+//     break;
+//   case 'i':
+//     if (startsWithWord(name, "init")) return OMF_init;
+//     break;
+//   case 'm':
+//     if (startsWithWord(name, "mutableCopy")) return OMF_mutableCopy;
+//     break;
+//   case 'n':
+//     if (startsWithWord(name, "new")) return OMF_new;
+//     break;
+//   default:
+//     break;
+//   }
 
-  return OMF_None;
-}
+//   return OMF_None;
+// }
 
-ObjCInstanceTypeFamily Selector::getInstTypeMethodFamily(Selector sel) {
-  IdentifierInfo *first = sel.getIdentifierInfoForSlot(0);
-  if (!first) return OIT_None;
+// ObjCInstanceTypeFamily Selector::getInstTypeMethodFamily(Selector sel) {
+//   IdentifierInfo *first = sel.getIdentifierInfoForSlot(0);
+//   if (!first) return OIT_None;
 
-  StringRef name = first->getName();
+//   StringRef name = first->getName();
 
-  if (name.empty()) return OIT_None;
-  switch (name.front()) {
-    case 'a':
-      if (startsWithWord(name, "array")) return OIT_Array;
-      break;
-    case 'd':
-      if (startsWithWord(name, "default")) return OIT_ReturnsSelf;
-      if (startsWithWord(name, "dictionary")) return OIT_Dictionary;
-      break;
-    case 's':
-      if (startsWithWord(name, "shared")) return OIT_ReturnsSelf;
-      if (startsWithWord(name, "standard")) return OIT_Singleton;
-      break;
-    case 'i':
-      if (startsWithWord(name, "init")) return OIT_Init;
-      break;
-    default:
-      break;
-  }
-  return OIT_None;
-}
+//   if (name.empty()) return OIT_None;
+//   switch (name.front()) {
+//     case 'a':
+//       if (startsWithWord(name, "array")) return OIT_Array;
+//       break;
+//     case 'd':
+//       if (startsWithWord(name, "default")) return OIT_ReturnsSelf;
+//       if (startsWithWord(name, "dictionary")) return OIT_Dictionary;
+//       break;
+//     case 's':
+//       if (startsWithWord(name, "shared")) return OIT_ReturnsSelf;
+//       if (startsWithWord(name, "standard")) return OIT_Singleton;
+//       break;
+//     case 'i':
+//       if (startsWithWord(name, "init")) return OIT_Init;
+//       break;
+//     default:
+//       break;
+//   }
+//   return OIT_None;
+// }
 
-ObjCStringFormatFamily Selector::getStringFormatFamilyImpl(Selector sel) {
-  IdentifierInfo *first = sel.getIdentifierInfoForSlot(0);
-  if (!first) return SFF_None;
+// ObjCStringFormatFamily Selector::getStringFormatFamilyImpl(Selector sel) {
+//   IdentifierInfo *first = sel.getIdentifierInfoForSlot(0);
+//   if (!first) return SFF_None;
 
-  StringRef name = first->getName();
+//   StringRef name = first->getName();
 
-  switch (name.front()) {
-    case 'a':
-      if (name == "appendFormat") return SFF_NSString;
-      break;
+//   switch (name.front()) {
+//     case 'a':
+//       if (name == "appendFormat") return SFF_NSString;
+//       break;
 
-    case 'i':
-      if (name == "initWithFormat") return SFF_NSString;
-      break;
+//     case 'i':
+//       if (name == "initWithFormat") return SFF_NSString;
+//       break;
 
-    case 'l':
-      if (name == "localizedStringWithFormat") return SFF_NSString;
-      break;
+//     case 'l':
+//       if (name == "localizedStringWithFormat") return SFF_NSString;
+//       break;
 
-    case 's':
-      if (name == "stringByAppendingFormat" ||
-          name == "stringWithFormat") return SFF_NSString;
-      break;
-  }
-  return SFF_None;
-}
+//     case 's':
+//       if (name == "stringByAppendingFormat" ||
+//           name == "stringWithFormat") return SFF_NSString;
+//       break;
+//   }
+//   return SFF_None;
+// }
 
-namespace {
+// namespace {
 
-struct SelectorTableImpl {
-  llvm::FoldingSet<MultiKeywordSelector> Table;
-  llvm::BumpPtrAllocator Allocator;
-};
+// struct SelectorTableImpl {
+//   llvm::FoldingSet<MultiKeywordSelector> Table;
+//   llvm::BumpPtrAllocator Allocator;
+// };
 
-} // namespace
+// } // namespace
 
-static SelectorTableImpl &getSelectorTableImpl(void *P) {
-  return *static_cast<SelectorTableImpl*>(P);
-}
+// static SelectorTableImpl &getSelectorTableImpl(void *P) {
+//   return *static_cast<SelectorTableImpl*>(P);
+// }
 
-SmallString<64>
-SelectorTable::constructSetterName(StringRef Name) {
-  SmallString<64> SetterName("set");
-  SetterName += Name;
-  SetterName[3] = toUppercase(SetterName[3]);
-  return SetterName;
-}
+// SmallString<64>
+// SelectorTable::constructSetterName(StringRef Name) {
+//   SmallString<64> SetterName("set");
+//   SetterName += Name;
+//   SetterName[3] = toUppercase(SetterName[3]);
+//   return SetterName;
+// }
 
-Selector
-SelectorTable::constructSetterSelector(IdentifierTable &Idents,
-                                       SelectorTable &SelTable,
-                                       const IdentifierInfo *Name) {
-  IdentifierInfo *SetterName =
-    &Idents.get(constructSetterName(Name->getName()));
-  return SelTable.getUnarySelector(SetterName);
-}
+// Selector
+// SelectorTable::constructSetterSelector(IdentifierTable &Idents,
+//                                        SelectorTable &SelTable,
+//                                        const IdentifierInfo *Name) {
+//   IdentifierInfo *SetterName =
+//     &Idents.get(constructSetterName(Name->getName()));
+//   return SelTable.getUnarySelector(SetterName);
+// }
 
-std::string SelectorTable::getPropertyNameFromSetterSelector(Selector Sel) {
-  StringRef Name = Sel.getNameForSlot(0);
-  assert(Name.startswith("set") && "invalid setter name");
-  return (Twine(toLowercase(Name[3])) + Name.drop_front(4)).str();
-}
+// std::string SelectorTable::getPropertyNameFromSetterSelector(Selector Sel) {
+//   StringRef Name = Sel.getNameForSlot(0);
+//   assert(Name.startswith("set") && "invalid setter name");
+//   return (Twine(toLowercase(Name[3])) + Name.drop_front(4)).str();
+// }
 
-size_t SelectorTable::getTotalMemory() const {
-  SelectorTableImpl &SelTabImpl = getSelectorTableImpl(Impl);
-  return SelTabImpl.Allocator.getTotalMemory();
-}
+// size_t SelectorTable::getTotalMemory() const {
+//   SelectorTableImpl &SelTabImpl = getSelectorTableImpl(Impl);
+//   return SelTabImpl.Allocator.getTotalMemory();
+// }
 
-Selector SelectorTable::getSelector(unsigned nKeys, IdentifierInfo **IIV) {
-  if (nKeys < 2)
-    return Selector(IIV[0], nKeys);
+// Selector SelectorTable::getSelector(unsigned nKeys, IdentifierInfo **IIV) {
+//   if (nKeys < 2)
+//     return Selector(IIV[0], nKeys);
 
-  SelectorTableImpl &SelTabImpl = getSelectorTableImpl(Impl);
+//   SelectorTableImpl &SelTabImpl = getSelectorTableImpl(Impl);
 
-  // Unique selector, to guarantee there is one per name.
-  llvm::FoldingSetNodeID ID;
-  MultiKeywordSelector::Profile(ID, IIV, nKeys);
+//   // Unique selector, to guarantee there is one per name.
+//   llvm::FoldingSetNodeID ID;
+//   MultiKeywordSelector::Profile(ID, IIV, nKeys);
 
-  void *InsertPos = nullptr;
-  if (MultiKeywordSelector *SI =
-        SelTabImpl.Table.FindNodeOrInsertPos(ID, InsertPos))
-    return Selector(SI);
+//   void *InsertPos = nullptr;
+//   if (MultiKeywordSelector *SI =
+//         SelTabImpl.Table.FindNodeOrInsertPos(ID, InsertPos))
+//     return Selector(SI);
 
-  // MultiKeywordSelector objects are not allocated with new because they have a
-  // variable size array (for parameter types) at the end of them.
-  unsigned Size = sizeof(MultiKeywordSelector) + nKeys*sizeof(IdentifierInfo *);
-  MultiKeywordSelector *SI =
-      (MultiKeywordSelector *)SelTabImpl.Allocator.Allocate(
-          Size, alignof(MultiKeywordSelector));
-  new (SI) MultiKeywordSelector(nKeys, IIV);
-  SelTabImpl.Table.InsertNode(SI, InsertPos);
-  return Selector(SI);
-}
+//   // MultiKeywordSelector objects are not allocated with new because they have a
+//   // variable size array (for parameter types) at the end of them.
+//   unsigned Size = sizeof(MultiKeywordSelector) + nKeys*sizeof(IdentifierInfo *);
+//   MultiKeywordSelector *SI =
+//       (MultiKeywordSelector *)SelTabImpl.Allocator.Allocate(
+//           Size, alignof(MultiKeywordSelector));
+//   new (SI) MultiKeywordSelector(nKeys, IIV);
+//   SelTabImpl.Table.InsertNode(SI, InsertPos);
+//   return Selector(SI);
+// }
 
-SelectorTable::SelectorTable() {
-  Impl = new SelectorTableImpl();
-}
+// SelectorTable::SelectorTable() {
+//   Impl = new SelectorTableImpl();
+// }
 
-SelectorTable::~SelectorTable() {
-  delete &getSelectorTableImpl(Impl);
-}
+// SelectorTable::~SelectorTable() {
+//   delete &getSelectorTableImpl(Impl);
+// }
 
 const char *latino::getOperatorSpelling(OverloadedOperatorKind Operator) {
   switch (Operator) {

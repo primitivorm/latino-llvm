@@ -644,14 +644,14 @@ void EmitAssemblyHelper::CreatePasses(legacy::PassManager &MPM,
                            addAddDiscriminatorsPass);
 
   // In ObjC ARC mode, add the main ARC optimization passes.
-  if (LangOpts.ObjCAutoRefCount) {
-    PMBuilder.addExtension(PassManagerBuilder::EP_EarlyAsPossible,
-                           addObjCARCExpandPass);
-    PMBuilder.addExtension(PassManagerBuilder::EP_ModuleOptimizerEarly,
-                           addObjCARCAPElimPass);
-    PMBuilder.addExtension(PassManagerBuilder::EP_ScalarOptimizerLate,
-                           addObjCARCOptPass);
-  }
+  // if (LangOpts.ObjCAutoRefCount) {
+  //   PMBuilder.addExtension(PassManagerBuilder::EP_EarlyAsPossible,
+  //                          addObjCARCExpandPass);
+  //   PMBuilder.addExtension(PassManagerBuilder::EP_ModuleOptimizerEarly,
+  //                          addObjCARCAPElimPass);
+  //   PMBuilder.addExtension(PassManagerBuilder::EP_ScalarOptimizerLate,
+  //                          addObjCARCOptPass);
+  // }
 
   if (LangOpts.Coroutines)
     addCoroutinePassesToExtensionPoints(PMBuilder);

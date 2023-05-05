@@ -117,20 +117,20 @@ public:
   /// previously marked as threadprivate.
   ///
   /// \param D the declaration marked OpenMP threadprivate.
-  virtual void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) {}
+  // virtual void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) {}
 
   /// A declaration is marked as OpenMP declaretarget which was not
   /// previously marked as declaretarget.
   ///
   /// \param D the declaration marked OpenMP declaretarget.
   /// \param Attr the added attribute.
-  virtual void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
-                                                    const Attr *Attr) {}
+  // virtual void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
+                                                    // const Attr *Attr) {}
 
   /// A declaration is marked as a variable with OpenMP allocator.
   ///
   /// \param D the declaration marked as a variable with OpenMP allocator.
-  virtual void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) {}
+  // virtual void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) {}
 
   /// A definition has been made visible by being redefined locally.
   ///

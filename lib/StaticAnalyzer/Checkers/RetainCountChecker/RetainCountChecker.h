@@ -18,14 +18,14 @@
 #include "RetainCountDiagnostics.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/ParentMap.h"
 // #include "latino/Analysis/DomainSpecific/CocoaConventions.h"
 #include "latino/Analysis/PathDiagnostic.h"
-#include "latino/Analysis/RetainSummaryManager.h"
+// #include "latino/Analysis/RetainSummaryManager.h"
 #include "latino/Basic/LangOptions.h"
 #include "latino/Basic/SourceManager.h"
-#include "latino/Analysis/SelectorExtras.h"
+// #include "latino/Analysis/SelectorExtras.h"
 #include "latino/StaticAnalyzer/Core/BugReporter/BugType.h"
 #include "latino/StaticAnalyzer/Core/Checker.h"
 #include "latino/StaticAnalyzer/Core/CheckerManager.h"
@@ -267,7 +267,7 @@ public:
 //   static std::unique_ptr<CheckerProgramPointTag> CastFailTag;
 
 //   /// Track Objective-C and CoreFoundation objects.
-//   bool TrackObjCAndCFObjects = false;
+  bool TrackObjCAndCFObjects = false;
 
 //   /// Track sublcasses of OSObject.
 //   bool TrackOSObjects = false;

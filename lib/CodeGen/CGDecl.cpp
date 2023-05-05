@@ -14,8 +14,8 @@
 #include "CGCXXABI.h"
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
-#include "CGOpenCLRuntime.h"
-#include "CGOpenMPRuntime.h"
+// #include "CGOpenCLRuntime.h"
+// #include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
@@ -25,8 +25,8 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
-// #include "latino/AST/DeclObjC.h"
-#include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclObjC.h"
+// #include "latino/AST/DeclOpenMP.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/Basic/TargetInfo.h"
@@ -109,10 +109,10 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
   case Decl::Label:        // __label__ x;
   case Decl::Import:
   case Decl::MSGuid:    // __declspec(uuid("..."))
-  case Decl::OMPThreadPrivate:
-  case Decl::OMPAllocate:
-  case Decl::OMPCapturedExpr:
-  case Decl::OMPRequires:
+  // case Decl::OMPThreadPrivate:
+  // case Decl::OMPAllocate:
+  // case Decl::OMPCapturedExpr:
+  // case Decl::OMPRequires:
   case Decl::Empty:
   case Decl::Concept:
   case Decl::LifetimeExtendedTemporary:
@@ -149,11 +149,11 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
     return;
   }
 
-  case Decl::OMPDeclareReduction:
-    return CGM.EmitOMPDeclareReduction(cast<OMPDeclareReductionDecl>(&D), this);
+  // case Decl::OMPDeclareReduction:
+  //   return CGM.EmitOMPDeclareReduction(cast<OMPDeclareReductionDecl>(&D), this);
 
-  case Decl::OMPDeclareMapper:
-    return CGM.EmitOMPDeclareMapper(cast<OMPDeclareMapperDecl>(&D), this);
+  // case Decl::OMPDeclareMapper:
+  //   return CGM.EmitOMPDeclareMapper(cast<OMPDeclareMapperDecl>(&D), this);
 
   case Decl::Typedef:      // typedef int X;
   case Decl::TypeAlias: {  // using X = int; [C++0x]
@@ -180,8 +180,8 @@ void CodeGenFunction::EmitVarDecl(const VarDecl &D) {
   // variable in constant address space in OpenCL.
   if (D.getStorageDuration() != SD_Automatic) {
     // Static sampler variables translated to function calls.
-    if (D.getType()->isSamplerT())
-      return;
+    // if (D.getType()->isSamplerT())
+    //   return;
 
     llvm::GlobalValue::LinkageTypes Linkage =
         CGM.getLLVMLinkageVarDefinition(&D, /*IsConstant=*/false);
@@ -193,8 +193,8 @@ void CodeGenFunction::EmitVarDecl(const VarDecl &D) {
     return EmitStaticVarDecl(D, Linkage);
   }
 
-  if (D.getType().getAddressSpace() == LangAS::opencl_local)
-    return CGM.getOpenCLRuntime().EmitWorkGroupLocalVarDecl(*this, D);
+  // if (D.getType().getAddressSpace() == LangAS::opencl_local)
+  //   return CGM.getOpenCLRuntime().EmitWorkGroupLocalVarDecl(*this, D);
 
   assert(D.hasLocalStorage());
   return EmitAutoVarDecl(D);
@@ -306,7 +306,7 @@ llvm::Constant *CodeGenModule::getOrCreateStaticVarDecl(
   // }
   if (GD.getDecl()) {
     // Disable emission of the parent function for the OpenMP device codegen.
-    CGOpenMPRuntime::DisableAutoDeclareTargetRAII NoDeclTarget(*this);
+    // CGOpenMPRuntime::DisableAutoDeclareTargetRAII NoDeclTarget(*this);
     (void)GetAddrOfGlobal(GD);
   }
 
@@ -600,41 +600,41 @@ namespace {
 
 /// EmitAutoVarWithLifetime - Does the setup required for an automatic
 /// variable with lifetime.
-static void EmitAutoVarWithLifetime(CodeGenFunction &CGF, const VarDecl &var,
-                                    Address addr,
-                                    Qualifiers::ObjCLifetime lifetime) {
-  switch (lifetime) {
-  case Qualifiers::OCL_None:
-    llvm_unreachable("present but none");
+// static void EmitAutoVarWithLifetime(CodeGenFunction &CGF, const VarDecl &var,
+//                                     Address addr,
+//                                     Qualifiers::ObjCLifetime lifetime) {
+//   switch (lifetime) {
+//   case Qualifiers::OCL_None:
+//     llvm_unreachable("present but none");
 
-  case Qualifiers::OCL_ExplicitNone:
-    // nothing to do
-    break;
+//   case Qualifiers::OCL_ExplicitNone:
+//     // nothing to do
+//     break;
 
-  case Qualifiers::OCL_Strong: {
-    CodeGenFunction::Destroyer *destroyer =
-      (var.hasAttr<ObjCPreciseLifetimeAttr>()
-       ? CodeGenFunction::destroyARCStrongPrecise
-       : CodeGenFunction::destroyARCStrongImprecise);
+//   case Qualifiers::OCL_Strong: {
+//     CodeGenFunction::Destroyer *destroyer =
+//       (var.hasAttr<ObjCPreciseLifetimeAttr>()
+//        ? CodeGenFunction::destroyARCStrongPrecise
+//        : CodeGenFunction::destroyARCStrongImprecise);
 
-    CleanupKind cleanupKind = CGF.getARCCleanupKind();
-    CGF.pushDestroy(cleanupKind, addr, var.getType(), destroyer,
-                    cleanupKind & EHCleanup);
-    break;
-  }
-  case Qualifiers::OCL_Autoreleasing:
-    // nothing to do
-    break;
+//     CleanupKind cleanupKind = CGF.getARCCleanupKind();
+//     CGF.pushDestroy(cleanupKind, addr, var.getType(), destroyer,
+//                     cleanupKind & EHCleanup);
+//     break;
+//   }
+//   case Qualifiers::OCL_Autoreleasing:
+//     // nothing to do
+//     break;
 
-  case Qualifiers::OCL_Weak:
-    // __weak objects always get EH cleanups; otherwise, exceptions
-    // could cause really nasty crashes instead of mere leaks.
-    CGF.pushDestroy(NormalAndEHCleanup, addr, var.getType(),
-                    CodeGenFunction::destroyARCWeak,
-                    /*useEHCleanup*/ true);
-    break;
-  }
-}
+//   case Qualifiers::OCL_Weak:
+//     // __weak objects always get EH cleanups; otherwise, exceptions
+//     // could cause really nasty crashes instead of mere leaks.
+//     CGF.pushDestroy(NormalAndEHCleanup, addr, var.getType(),
+//                     CodeGenFunction::destroyARCWeak,
+//                     /*useEHCleanup*/ true);
+//     break;
+//   }
+// }
 
 static bool isAccessedBy(const VarDecl &var, const Stmt *s) {
   if (const Expr *e = dyn_cast<Expr>(s)) {
@@ -677,7 +677,7 @@ static bool tryEmitARCCopyWeakInit(CodeGenFunction &CGF,
     // Look through casts that don't require representation changes.
     case CK_NoOp:
     case CK_BitCast:
-    case CK_BlockPointerToObjCPointerCast:
+    // case CK_BlockPointerToObjCPointerCast:
       needsCast = true;
       break;
 
@@ -685,8 +685,8 @@ static bool tryEmitARCCopyWeakInit(CodeGenFunction &CGF,
     // emit this operation as a copy or move.
     case CK_LValueToRValue: {
       const Expr *srcExpr = castExpr->getSubExpr();
-      if (srcExpr->getType().getObjCLifetime() != Qualifiers::OCL_Weak)
-        return false;
+      // if (srcExpr->getType().getObjCLifetime() != Qualifiers::OCL_Weak)
+      //   return false;
 
       // Emit the source l-value.
       LValue srcLV = CGF.EmitLValue(srcExpr);
@@ -699,12 +699,12 @@ static bool tryEmitARCCopyWeakInit(CodeGenFunction &CGF,
       }
 
       // If it was an l-value, use objc_copyWeak.
-      if (srcExpr->getValueKind() == VK_LValue) {
-        CGF.EmitARCCopyWeak(destLV.getAddress(CGF), srcAddr);
-      } else {
-        assert(srcExpr->getValueKind() == VK_XValue);
-        CGF.EmitARCMoveWeak(destLV.getAddress(CGF), srcAddr);
-      }
+      // if (srcExpr->getValueKind() == VK_LValue) {
+      //   CGF.EmitARCCopyWeak(destLV.getAddress(CGF), srcAddr);
+      // } else {
+        // assert(srcExpr->getValueKind() == VK_XValue);
+        // CGF.EmitARCMoveWeak(destLV.getAddress(CGF), srcAddr);
+      // }
       return true;
     }
 
@@ -747,15 +747,15 @@ void CodeGenFunction::EmitNullabilityCheck(LValue LHS, llvm::Value *RHS,
 
 void CodeGenFunction::EmitScalarInit(const Expr *init, const ValueDecl *D,
                                      LValue lvalue, bool capturedByInit) {
-  Qualifiers::ObjCLifetime lifetime = lvalue.getObjCLifetime();
-  if (!lifetime) {
-    llvm::Value *value = EmitScalarExpr(init);
-    if (capturedByInit)
-      drillIntoBlockVariable(*this, lvalue, cast<VarDecl>(D));
-    EmitNullabilityCheck(lvalue, value, init->getExprLoc());
-    EmitStoreThroughLValue(RValue::get(value), lvalue, true);
-    return;
-  }
+  // Qualifiers::ObjCLifetime lifetime = lvalue.getObjCLifetime();
+  // if (!lifetime) {
+  //   llvm::Value *value = EmitScalarExpr(init);
+  //   if (capturedByInit)
+  //     drillIntoBlockVariable(*this, lvalue, cast<VarDecl>(D));
+  //   EmitNullabilityCheck(lvalue, value, init->getExprLoc());
+  //   EmitStoreThroughLValue(RValue::get(value), lvalue, true);
+  //   return;
+  // }
 
   if (const CXXDefaultInitExpr *DIE = dyn_cast<CXXDefaultInitExpr>(init))
     init = DIE->getExpr();
@@ -771,8 +771,8 @@ void CodeGenFunction::EmitScalarInit(const Expr *init, const ValueDecl *D,
   // initializer, zero-initialize before running the initializer, then
   // actually perform the initialization with an assign.
   bool accessedByInit = false;
-  if (lifetime != Qualifiers::OCL_ExplicitNone)
-    accessedByInit = (capturedByInit || isAccessedBy(D, init));
+  // if (lifetime != Qualifiers::OCL_ExplicitNone)
+  //   accessedByInit = (capturedByInit || isAccessedBy(D, init));
   if (accessedByInit) {
     LValue tempLV = lvalue;
     // Drill down to the __block object if necessary.
@@ -789,60 +789,60 @@ void CodeGenFunction::EmitScalarInit(const Expr *init, const ValueDecl *D,
     llvm::Value *zero = CGM.getNullPointer(ty, tempLV.getType());
 
     // If __weak, we want to use a barrier under certain conditions.
-    if (lifetime == Qualifiers::OCL_Weak)
-      EmitARCInitWeak(tempLV.getAddress(*this), zero);
+    // if (lifetime == Qualifiers::OCL_Weak)
+    //   EmitARCInitWeak(tempLV.getAddress(*this), zero);
 
     // Otherwise just do a simple store.
-    else
+    // else
       EmitStoreOfScalar(zero, tempLV, /* isInitialization */ true);
   }
 
   // Emit the initializer.
   llvm::Value *value = nullptr;
 
-  switch (lifetime) {
-  case Qualifiers::OCL_None:
-    llvm_unreachable("present but none");
+  // switch (lifetime) {
+  // case Qualifiers::OCL_None:
+  //   llvm_unreachable("present but none");
 
-  case Qualifiers::OCL_Strong: {
-    if (!D || !isa<VarDecl>(D) || !cast<VarDecl>(D)->isARCPseudoStrong()) {
-      value = EmitARCRetainScalarExpr(init);
-      break;
-    }
-    // If D is pseudo-strong, treat it like __unsafe_unretained here. This means
-    // that we omit the retain, and causes non-autoreleased return values to be
-    // immediately released.
-    LLVM_FALLTHROUGH;
-  }
+  // case Qualifiers::OCL_Strong: {
+  //   if (!D || !isa<VarDecl>(D) || !cast<VarDecl>(D)->isARCPseudoStrong()) {
+  //     value = EmitARCRetainScalarExpr(init);
+  //     break;
+  //   }
+  //   // If D is pseudo-strong, treat it like __unsafe_unretained here. This means
+  //   // that we omit the retain, and causes non-autoreleased return values to be
+  //   // immediately released.
+  //   LLVM_FALLTHROUGH;
+  // }
 
-  case Qualifiers::OCL_ExplicitNone:
-    value = EmitARCUnsafeUnretainedScalarExpr(init);
-    break;
+  // case Qualifiers::OCL_ExplicitNone:
+  //   value = EmitARCUnsafeUnretainedScalarExpr(init);
+  //   break;
 
-  case Qualifiers::OCL_Weak: {
-    // If it's not accessed by the initializer, try to emit the
-    // initialization with a copy or move.
-    if (!accessedByInit && tryEmitARCCopyWeakInit(*this, lvalue, init)) {
-      return;
-    }
+  // case Qualifiers::OCL_Weak: {
+  //   // If it's not accessed by the initializer, try to emit the
+  //   // initialization with a copy or move.
+  //   if (!accessedByInit && tryEmitARCCopyWeakInit(*this, lvalue, init)) {
+  //     return;
+  //   }
 
-    // No way to optimize a producing initializer into this.  It's not
-    // worth optimizing for, because the value will immediately
-    // disappear in the common case.
-    value = EmitScalarExpr(init);
+  //   // No way to optimize a producing initializer into this.  It's not
+  //   // worth optimizing for, because the value will immediately
+  //   // disappear in the common case.
+  //   value = EmitScalarExpr(init);
 
-    if (capturedByInit) drillIntoBlockVariable(*this, lvalue, cast<VarDecl>(D));
-    if (accessedByInit)
-      EmitARCStoreWeak(lvalue.getAddress(*this), value, /*ignored*/ true);
-    else
-      EmitARCInitWeak(lvalue.getAddress(*this), value);
-    return;
-  }
+  //   if (capturedByInit) drillIntoBlockVariable(*this, lvalue, cast<VarDecl>(D));
+  //   if (accessedByInit)
+  //     EmitARCStoreWeak(lvalue.getAddress(*this), value, /*ignored*/ true);
+  //   else
+  //     EmitARCInitWeak(lvalue.getAddress(*this), value);
+  //   return;
+  // }
 
-  case Qualifiers::OCL_Autoreleasing:
-    value = EmitARCRetainAutoreleaseScalarExpr(init);
-    break;
-  }
+  // case Qualifiers::OCL_Autoreleasing:
+  //   value = EmitARCRetainAutoreleaseScalarExpr(init);
+  //   break;
+  // }
 
   if (capturedByInit) drillIntoBlockVariable(*this, lvalue, cast<VarDecl>(D));
 
@@ -851,12 +851,12 @@ void CodeGenFunction::EmitScalarInit(const Expr *init, const ValueDecl *D,
   // If the variable might have been accessed by its initializer, we
   // might have to initialize with a barrier.  We have to do this for
   // both __weak and __strong, but __weak got filtered out above.
-  if (accessedByInit && lifetime == Qualifiers::OCL_Strong) {
-    llvm::Value *oldValue = EmitLoadOfScalar(lvalue, init->getExprLoc());
-    EmitStoreOfScalar(value, lvalue, /* isInitialization */ true);
-    EmitARCRelease(oldValue, ARCImpreciseLifetime);
-    return;
-  }
+  // if (accessedByInit && lifetime == Qualifiers::OCL_Strong) {
+  //   llvm::Value *oldValue = EmitLoadOfScalar(lvalue, init->getExprLoc());
+  //   EmitStoreOfScalar(value, lvalue, /* isInitialization */ true);
+  //   EmitARCRelease(oldValue, ARCImpreciseLifetime);
+  //   return;
+  // }
 
   EmitStoreOfScalar(value, lvalue, /* isInitialization */ true);
 }
@@ -1381,8 +1381,8 @@ CodeGenFunction::AutoVarEmission
 CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
   QualType Ty = D.getType();
   assert(
-      Ty.getAddressSpace() == LangAS::Default ||
-      (Ty.getAddressSpace() == LangAS::opencl_private && getLangOpts().OpenCL));
+      Ty.getAddressSpace() == LangAS::Default /*||
+      (Ty.getAddressSpace() == LangAS::opencl_private && getLangOpts().OpenCL)*/);
 
   AutoVarEmission emission(D);
 
@@ -1401,19 +1401,19 @@ CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
   Address address = Address::invalid();
   Address AllocaAddr = Address::invalid();
   Address OpenMPLocalAddr = Address::invalid();
-  if (CGM.getLangOpts().OpenMPIRBuilder)
-    OpenMPLocalAddr = OMPBuilderCBHelpers::getAddressOfLocalVariable(*this, &D);
-  else
+  // if (CGM.getLangOpts().OpenMPIRBuilder)
+  //   OpenMPLocalAddr = OMPBuilderCBHelpers::getAddressOfLocalVariable(*this, &D);
+  // else
     OpenMPLocalAddr =
-        getLangOpts().OpenMP
+        /*getLangOpts().OpenMP
             ? CGM.getOpenMPRuntime().getAddressOfLocalVariable(*this, &D)
-            : Address::invalid();
+            :*/ Address::invalid();
 
   bool NRVO = getLangOpts().ElideConstructors && D.isNRVOVariable();
 
-  if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
+  /*if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
     address = OpenMPLocalAddr;
-  } else if (Ty->isConstantSizeType()) {
+  } else*/ if (Ty->isConstantSizeType()) {
     // If this value is an array or struct with a statically determinable
     // constant initializer, there are optimizations we can do.
     //
@@ -1433,7 +1433,7 @@ CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
       // emit it as a global instead.
       // Exception is if a variable is located in non-constant address space
       // in OpenCL.
-      if ((!getLangOpts().OpenCL ||
+      if ((/*!getLangOpts().OpenCL ||*/
            Ty.getAddressSpace() == LangAS::opencl_constant) &&
           (CGM.getCodeGenOpts().MergeAllConstants && !NRVO &&
            !isEscapingByRef && CGM.isTypeConstant(Ty, true))) {
@@ -1957,20 +1957,20 @@ void CodeGenFunction::emitAutoVarTypeCleanup(
     }
     break;
 
-  case QualType::DK_objc_strong_lifetime:
-    // Suppress cleanups for pseudo-strong variables.
-    if (var->isARCPseudoStrong()) return;
+  // case QualType::DK_objc_strong_lifetime:
+  //   // Suppress cleanups for pseudo-strong variables.
+  //   if (var->isARCPseudoStrong()) return;
 
-    // Otherwise, consider whether to use an EH cleanup or not.
-    cleanupKind = getARCCleanupKind();
+  //   // Otherwise, consider whether to use an EH cleanup or not.
+  //   cleanupKind = getARCCleanupKind();
 
-    // Use the imprecise destroyer by default.
-    if (!var->hasAttr<ObjCPreciseLifetimeAttr>())
-      destroyer = CodeGenFunction::destroyARCStrongImprecise;
-    break;
+  //   // Use the imprecise destroyer by default.
+  //   if (!var->hasAttr<ObjCPreciseLifetimeAttr>())
+  //     destroyer = CodeGenFunction::destroyARCStrongImprecise;
+  //   break;
 
-  case QualType::DK_objc_weak_lifetime:
-    break;
+  // case QualType::DK_objc_weak_lifetime:
+  //   break;
 
   case QualType::DK_nontrivial_c_struct:
     destroyer = CodeGenFunction::destroyNonTrivialCStruct;
@@ -2010,10 +2010,10 @@ void CodeGenFunction::EmitAutoVarCleanups(const AutoVarEmission &emission) {
     emitAutoVarTypeCleanup(emission, dtorKind);
 
   // In GC mode, honor objc_precise_lifetime.
-  if (getLangOpts().getGC() != LangOptions::NonGC &&
-      D.hasAttr<ObjCPreciseLifetimeAttr>()) {
-    EHStack.pushCleanup<ExtendGCLifetime>(NormalCleanup, &D);
-  }
+  // if (getLangOpts().getGC() != LangOptions::NonGC &&
+  //     D.hasAttr<ObjCPreciseLifetimeAttr>()) {
+  //   EHStack.pushCleanup<ExtendGCLifetime>(NormalCleanup, &D);
+  // }
 
   // Handle the cleanup attribute.
   if (const CleanupAttr *CA = D.getAttr<CleanupAttr>()) {
@@ -2032,8 +2032,8 @@ void CodeGenFunction::EmitAutoVarCleanups(const AutoVarEmission &emission) {
   if (emission.IsEscapingByRef &&
       CGM.getLangOpts().getGC() != LangOptions::GCOnly) {
     BlockFieldFlags Flags = BLOCK_FIELD_IS_BYREF;
-    if (emission.Variable->getType().isObjCGCWeak())
-      Flags |= BLOCK_FIELD_IS_WEAK;
+    // if (emission.Variable->getType().isObjCGCWeak())
+    //   Flags |= BLOCK_FIELD_IS_WEAK;
     enterByrefCleanup(NormalAndEHCleanup, emission.Addr, Flags,
                       /*LoadBlockVarAddr*/ false,
                       cxxDestructorCanThrow(emission.Variable->getType()));
@@ -2046,10 +2046,10 @@ CodeGenFunction::getDestroyer(QualType::DestructionKind kind) {
   case QualType::DK_none: llvm_unreachable("no destroyer for trivial dtor");
   case QualType::DK_cxx_destructor:
     return destroyCXXObject;
-  case QualType::DK_objc_strong_lifetime:
-    return destroyARCStrongPrecise;
-  case QualType::DK_objc_weak_lifetime:
-    return destroyARCWeak;
+  // case QualType::DK_objc_strong_lifetime:
+  //   return destroyARCStrongPrecise;
+  // case QualType::DK_objc_weak_lifetime:
+  //   return destroyARCWeak;
   case QualType::DK_nontrivial_c_struct:
     return destroyNonTrivialCStruct;
   }
@@ -2339,24 +2339,24 @@ llvm::Function *CodeGenModule::getLLVMLifetimeEndFn() {
   return LifetimeEndFn;
 }
 
-namespace {
-  /// A cleanup to perform a release of an object at the end of a
-  /// function.  This is used to balance out the incoming +1 of a
-  /// ns_consumed argument when we can't reasonably do that just by
-  /// not doing the initial retain for a __block argument.
-  struct ConsumeARCParameter final : EHScopeStack::Cleanup {
-    ConsumeARCParameter(llvm::Value *param,
-                        ARCPreciseLifetime_t precise)
-      : Param(param), Precise(precise) {}
+// namespace {
+//   /// A cleanup to perform a release of an object at the end of a
+//   /// function.  This is used to balance out the incoming +1 of a
+//   /// ns_consumed argument when we can't reasonably do that just by
+//   /// not doing the initial retain for a __block argument.
+//   struct ConsumeARCParameter final : EHScopeStack::Cleanup {
+//     ConsumeARCParameter(llvm::Value *param,
+//                         ARCPreciseLifetime_t precise)
+//       : Param(param), Precise(precise) {}
 
-    llvm::Value *Param;
-    ARCPreciseLifetime_t Precise;
+//     llvm::Value *Param;
+//     ARCPreciseLifetime_t Precise;
 
-    void Emit(CodeGenFunction &CGF, Flags flags) override {
-      CGF.EmitARCRelease(Param, Precise);
-    }
-  };
-} // end anonymous namespace
+//     void Emit(CodeGenFunction &CGF, Flags flags) override {
+//       CGF.EmitARCRelease(Param, Precise);
+//     }
+//   };
+// } // end anonymous namespace
 
 /// Emit an alloca (or GlobalValue depending on target)
 /// for the specified parameter and set up LocalDeclMap.
@@ -2398,9 +2398,9 @@ void CodeGenFunction::EmitParmDecl(const VarDecl &D, ParamValue Arg,
     // from the default address space.
     auto AllocaAS = CGM.getASTAllocaAddressSpace();
     auto *V = DeclPtr.getPointer();
-    auto SrcLangAS = getLangOpts().OpenCL ? LangAS::opencl_private : AllocaAS;
+    auto SrcLangAS = /*getLangOpts().OpenCL ? LangAS::opencl_private :*/ AllocaAS;
     auto DestLangAS =
-        getLangOpts().OpenCL ? LangAS::opencl_private : LangAS::Default;
+        /*getLangOpts().OpenCL ? LangAS::opencl_private :*/ LangAS::Default;
     if (SrcLangAS != DestLangAS) {
       assert(getContext().getTargetAddressSpace(SrcLangAS) ==
              CGM.getDataLayout().getAllocaAddrSpace());
@@ -2426,81 +2426,82 @@ void CodeGenFunction::EmitParmDecl(const VarDecl &D, ParamValue Arg,
             EHStack.stable_begin();
       }
     }
-  } else {
-    // Check if the parameter address is controlled by OpenMP runtime.
-    Address OpenMPLocalAddr =
-        getLangOpts().OpenMP
-            ? CGM.getOpenMPRuntime().getAddressOfLocalVariable(*this, &D)
-            : Address::invalid();
-    if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
-      DeclPtr = OpenMPLocalAddr;
-    } else {
-      // Otherwise, create a temporary to hold the value.
-      DeclPtr = CreateMemTemp(Ty, getContext().getDeclAlign(&D),
-                              D.getName() + ".addr");
-    }
-    DoStore = true;
-  }
+  } 
+  // else {
+  //   // Check if the parameter address is controlled by OpenMP runtime.
+  //   Address OpenMPLocalAddr =
+  //       getLangOpts().OpenMP
+  //           ? CGM.getOpenMPRuntime().getAddressOfLocalVariable(*this, &D)
+  //           : Address::invalid();
+  //   if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
+  //     DeclPtr = OpenMPLocalAddr;
+  //   } else {
+  //     // Otherwise, create a temporary to hold the value.
+  //     DeclPtr = CreateMemTemp(Ty, getContext().getDeclAlign(&D),
+  //                             D.getName() + ".addr");
+  //   }
+  //   DoStore = true;
+  // }
 
   llvm::Value *ArgVal = (DoStore ? Arg.getDirectValue() : nullptr);
 
   LValue lv = MakeAddrLValue(DeclPtr, Ty);
   if (IsScalar) {
     Qualifiers qs = Ty.getQualifiers();
-    if (Qualifiers::ObjCLifetime lt = qs.getObjCLifetime()) {
-      // We honor __attribute__((ns_consumed)) for types with lifetime.
-      // For __strong, it's handled by just skipping the initial retain;
-      // otherwise we have to balance out the initial +1 with an extra
-      // cleanup to do the release at the end of the function.
-      bool isConsumed = D.hasAttr<NSConsumedAttr>();
+    // if (Qualifiers::ObjCLifetime lt = qs.getObjCLifetime()) {
+    //   // We honor __attribute__((ns_consumed)) for types with lifetime.
+    //   // For __strong, it's handled by just skipping the initial retain;
+    //   // otherwise we have to balance out the initial +1 with an extra
+    //   // cleanup to do the release at the end of the function.
+    //   bool isConsumed = D.hasAttr<NSConsumedAttr>();
 
-      // If a parameter is pseudo-strong then we can omit the implicit retain.
-      if (D.isARCPseudoStrong()) {
-        assert(lt == Qualifiers::OCL_Strong &&
-               "pseudo-strong variable isn't strong?");
-        assert(qs.hasConst() && "pseudo-strong variable should be const!");
-        lt = Qualifiers::OCL_ExplicitNone;
-      }
+    //   // If a parameter is pseudo-strong then we can omit the implicit retain.
+    //   if (D.isARCPseudoStrong()) {
+    //     assert(lt == Qualifiers::OCL_Strong &&
+    //            "pseudo-strong variable isn't strong?");
+    //     assert(qs.hasConst() && "pseudo-strong variable should be const!");
+    //     lt = Qualifiers::OCL_ExplicitNone;
+    //   }
 
-      // Load objects passed indirectly.
-      if (Arg.isIndirect() && !ArgVal)
-        ArgVal = Builder.CreateLoad(DeclPtr);
+    //   // Load objects passed indirectly.
+    //   if (Arg.isIndirect() && !ArgVal)
+    //     ArgVal = Builder.CreateLoad(DeclPtr);
 
-      if (lt == Qualifiers::OCL_Strong) {
-        if (!isConsumed) {
-          if (CGM.getCodeGenOpts().OptimizationLevel == 0) {
-            // use objc_storeStrong(&dest, value) for retaining the
-            // object. But first, store a null into 'dest' because
-            // objc_storeStrong attempts to release its old value.
-            llvm::Value *Null = CGM.EmitNullConstant(D.getType());
-            EmitStoreOfScalar(Null, lv, /* isInitialization */ true);
-            EmitARCStoreStrongCall(lv.getAddress(*this), ArgVal, true);
-            DoStore = false;
-          }
-          else
-          // Don't use objc_retainBlock for block pointers, because we
-          // don't want to Block_copy something just because we got it
-          // as a parameter.
-            ArgVal = EmitARCRetainNonBlock(ArgVal);
-        }
-      } else {
-        // Push the cleanup for a consumed parameter.
-        if (isConsumed) {
-          ARCPreciseLifetime_t precise = (D.hasAttr<ObjCPreciseLifetimeAttr>()
-                                ? ARCPreciseLifetime : ARCImpreciseLifetime);
-          EHStack.pushCleanup<ConsumeARCParameter>(getARCCleanupKind(), ArgVal,
-                                                   precise);
-        }
+    //   if (lt == Qualifiers::OCL_Strong) {
+    //     if (!isConsumed) {
+    //       if (CGM.getCodeGenOpts().OptimizationLevel == 0) {
+    //         // use objc_storeStrong(&dest, value) for retaining the
+    //         // object. But first, store a null into 'dest' because
+    //         // objc_storeStrong attempts to release its old value.
+    //         llvm::Value *Null = CGM.EmitNullConstant(D.getType());
+    //         EmitStoreOfScalar(Null, lv, /* isInitialization */ true);
+    //         EmitARCStoreStrongCall(lv.getAddress(*this), ArgVal, true);
+    //         DoStore = false;
+    //       }
+    //       else
+    //       // Don't use objc_retainBlock for block pointers, because we
+    //       // don't want to Block_copy something just because we got it
+    //       // as a parameter.
+    //         ArgVal = EmitARCRetainNonBlock(ArgVal);
+    //     }
+    //   } else {
+    //     // Push the cleanup for a consumed parameter.
+    //     if (isConsumed) {
+    //       ARCPreciseLifetime_t precise = (D.hasAttr<ObjCPreciseLifetimeAttr>()
+    //                             ? ARCPreciseLifetime : ARCImpreciseLifetime);
+    //       EHStack.pushCleanup<ConsumeARCParameter>(getARCCleanupKind(), ArgVal,
+    //                                                precise);
+    //     }
 
-        if (lt == Qualifiers::OCL_Weak) {
-          EmitARCInitWeak(DeclPtr, ArgVal);
-          DoStore = false; // The weak init is a store, no need to do two.
-        }
-      }
+    //     if (lt == Qualifiers::OCL_Weak) {
+    //       EmitARCInitWeak(DeclPtr, ArgVal);
+    //       DoStore = false; // The weak init is a store, no need to do two.
+    //     }
+    //   }
 
-      // Enter the cleanup scope.
-      EmitAutoVarWithLifetime(*this, D, DeclPtr, lt);
-    }
+    //   // Enter the cleanup scope.
+    //   EmitAutoVarWithLifetime(*this, D, DeclPtr, lt);
+    // }
   }
 
   // Store the initial value into the alloca.
@@ -2533,21 +2534,21 @@ void CodeGenFunction::EmitParmDecl(const VarDecl &D, ParamValue Arg,
   }
 }
 
-void CodeGenModule::EmitOMPDeclareReduction(const OMPDeclareReductionDecl *D,
-                                            CodeGenFunction *CGF) {
-  if (!LangOpts.OpenMP || (!LangOpts.EmitAllDecls && !D->isUsed()))
-    return;
-  getOpenMPRuntime().emitUserDefinedReduction(CGF, D);
-}
+// void CodeGenModule::EmitOMPDeclareReduction(const OMPDeclareReductionDecl *D,
+//                                             CodeGenFunction *CGF) {
+//   if (!LangOpts.OpenMP || (!LangOpts.EmitAllDecls && !D->isUsed()))
+//     return;
+//   getOpenMPRuntime().emitUserDefinedReduction(CGF, D);
+// }
 
-void CodeGenModule::EmitOMPDeclareMapper(const OMPDeclareMapperDecl *D,
-                                         CodeGenFunction *CGF) {
-  if (!LangOpts.OpenMP || LangOpts.OpenMPSimd ||
-      (!LangOpts.EmitAllDecls && !D->isUsed()))
-    return;
-  getOpenMPRuntime().emitUserDefinedMapper(D, CGF);
-}
+// void CodeGenModule::EmitOMPDeclareMapper(const OMPDeclareMapperDecl *D,
+//                                          CodeGenFunction *CGF) {
+//   if (!LangOpts.OpenMP || LangOpts.OpenMPSimd ||
+//       (!LangOpts.EmitAllDecls && !D->isUsed()))
+//     return;
+//   getOpenMPRuntime().emitUserDefinedMapper(D, CGF);
+// }
 
-void CodeGenModule::EmitOMPRequiresDecl(const OMPRequiresDecl *D) {
-  getOpenMPRuntime().processRequiresDirective(D);
-}
+// void CodeGenModule::EmitOMPRequiresDecl(const OMPRequiresDecl *D) {
+//   getOpenMPRuntime().processRequiresDirective(D);
+// }

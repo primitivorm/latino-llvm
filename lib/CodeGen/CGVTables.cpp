@@ -841,9 +841,9 @@ void CodeGenVTables::addVTableComponent(ConstantArrayBuilder &builder,
 
       // For NVPTX devices in OpenMP emit special functon as null pointers,
       // otherwise linking ends up with unresolved references.
-      if (CGM.getLangOpts().OpenMP && CGM.getLangOpts().OpenMPIsDevice &&
-          CGM.getTriple().isNVPTX())
-        return llvm::ConstantPointerNull::get(CGM.Int8PtrTy);
+      // if (CGM.getLangOpts().OpenMP && CGM.getLangOpts().OpenMPIsDevice &&
+      //     CGM.getTriple().isNVPTX())
+      //   return llvm::ConstantPointerNull::get(CGM.Int8PtrTy);
       llvm::FunctionType *fnTy =
           llvm::FunctionType::get(CGM.VoidTy, /*isVarArg=*/false);
       llvm::Constant *fn = cast<llvm::Constant>(

@@ -69,7 +69,7 @@ public:
   static ASTNodeKind getFromNode(const Decl &D);
   static ASTNodeKind getFromNode(const Stmt &S);
   static ASTNodeKind getFromNode(const Type &T);
-  static ASTNodeKind getFromNode(const OMPClause &C);
+  // static ASTNodeKind getFromNode(const OMPClause &C);
   /// \}
 
   /// Returns \c true if \c this and \c Other represent the same kind.
@@ -149,9 +149,9 @@ private:
     NKI_Type,
 #define TYPE(DERIVED, BASE) NKI_##DERIVED##Type,
 #include "latino/AST/TypeNodes.inc"
-    NKI_OMPClause,
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) NKI_##Class,
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
+//     NKI_OMPClause,
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) NKI_##Class,
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
     NKI_NumberOfKinds
   };
 
@@ -199,7 +199,7 @@ KIND_TO_KIND_ID(TypeLoc)
 KIND_TO_KIND_ID(Decl)
 KIND_TO_KIND_ID(Stmt)
 KIND_TO_KIND_ID(Type)
-KIND_TO_KIND_ID(OMPClause)
+// KIND_TO_KIND_ID(OMPClause)
 KIND_TO_KIND_ID(CXXBaseSpecifier)
 #define DECL(DERIVED, BASE) KIND_TO_KIND_ID(DERIVED##Decl)
 #include "latino/AST/DeclNodes.inc"
@@ -207,8 +207,8 @@ KIND_TO_KIND_ID(CXXBaseSpecifier)
 #include "latino/AST/StmtNodes.inc"
 #define TYPE(DERIVED, BASE) KIND_TO_KIND_ID(DERIVED##Type)
 #include "latino/AST/TypeNodes.inc"
-#define OMP_CLAUSE_CLASS(Enum, Str, Class) KIND_TO_KIND_ID(Class)
-#include "llvm/Frontend/OpenMP/OMPKinds.def"
+// #define OMP_CLAUSE_CLASS(Enum, Str, Class) KIND_TO_KIND_ID(Class)
+// #include "llvm/Frontend/OpenMP/OMPKinds.def"
 #undef KIND_TO_KIND_ID
 
 inline raw_ostream &operator<<(raw_ostream &OS, ASTNodeKind K) {
@@ -479,10 +479,10 @@ struct DynTypedNode::BaseConverter<
     T, std::enable_if_t<std::is_base_of<Type, T>::value>>
     : public DynCastPtrConverter<T, Type> {};
 
-template <typename T>
-struct DynTypedNode::BaseConverter<
-    T, std::enable_if_t<std::is_base_of<OMPClause, T>::value>>
-    : public DynCastPtrConverter<T, OMPClause> {};
+// template <typename T>
+// struct DynTypedNode::BaseConverter<
+//     T, std::enable_if_t<std::is_base_of<OMPClause, T>::value>>
+//     : public DynCastPtrConverter<T, OMPClause> {};
 
 template <>
 struct DynTypedNode::BaseConverter<

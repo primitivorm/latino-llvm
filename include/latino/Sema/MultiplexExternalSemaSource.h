@@ -73,11 +73,11 @@ public:
   void CompleteRedeclChain(const Decl *D) override;
 
   /// Resolve a selector ID into a selector.
-  Selector GetExternalSelector(uint32_t ID) override;
+  // Selector GetExternalSelector(uint32_t ID) override;
 
   /// Returns the number of selectors known to the external AST
   /// source.
-  uint32_t GetNumExternalSelectors() override;
+  // uint32_t GetNumExternalSelectors() override;
 
   /// Resolve the offset of a statement in the decl stream into
   /// a statement.
@@ -208,11 +208,11 @@ public:
 
   /// Load the contents of the global method pool for a given
   /// selector.
-  void ReadMethodPool(Selector Sel) override;
+  // void ReadMethodPool(Selector Sel) override;
 
   /// Load the contents of the global method pool for a given
   /// selector if necessary.
-  void updateOutOfDateSelector(Selector Sel) override;
+  // void updateOutOfDateSelector(Selector Sel) override;
 
   /// Load the set of namespaces that are known to the external source,
   /// which will be used during typo correction.
@@ -292,8 +292,8 @@ public:
   /// given vector of selectors. Note that this routine
   /// may be invoked multiple times; the external source should take care not
   /// to introduce the same selectors repeatedly.
-  void ReadReferencedSelectors(SmallVectorImpl<std::pair<Selector,
-                                              SourceLocation> > &Sels) override;
+  // void ReadReferencedSelectors(SmallVectorImpl<std::pair<Selector,
+  //                                             SourceLocation> > &Sels) override;
 
   /// Read the set of weak, undeclared identifiers known to the
   /// external Sema source.
@@ -347,8 +347,8 @@ public:
                              int LookupKind, Scope *S, CXXScopeSpec *SS,
                              CorrectionCandidateCallback &CCC,
                              DeclContext *MemberContext,
-                             bool EnteringContext,
-                             const ObjCObjectPointerType *OPT) override;
+                             bool EnteringContext/*,
+                             const ObjCObjectPointerType *OPT*/) override;
 
   /// Produces a diagnostic note if one of the attached sources
   /// contains a complete definition for \p T. Queries the sources in list

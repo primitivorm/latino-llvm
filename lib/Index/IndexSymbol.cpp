@@ -9,7 +9,7 @@
 #include "latino/Index/IndexSymbol.h"
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
-// #include "latino/AST/DeclObjC.h"
+#include "latino/AST/DeclObjC.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/Lex/MacroInfo.h"
@@ -56,8 +56,8 @@ bool index::isFunctionLocalSymbol(const Decl *D) {
   if (isa<ParmVarDecl>(D))
     return true;
 
-  if (isa<ObjCTypeParamDecl>(D))
-    return true;
+  // if (isa<ObjCTypeParamDecl>(D))
+  //   return true;
 
   if (isa<UsingDirectiveDecl>(D))
     return false;

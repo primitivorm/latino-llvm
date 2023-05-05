@@ -12,7 +12,7 @@
 
 #include "CGCXXABI.h"
 // #include "CGObjCRuntime.h"
-#include "CGOpenCLRuntime.h"
+// #include "CGOpenCLRuntime.h"
 #include "CGRecordLayout.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
@@ -1174,17 +1174,17 @@ Value *CodeGenFunction::EmitMSVCBuiltinExpr(MSVCIntrin BuiltinID,
   llvm_unreachable("Incorrect MSVC intrinsic!");
 }
 
-namespace {
-// ARC cleanup for __builtin_os_log_format
-struct CallObjCArcUse final : EHScopeStack::Cleanup {
-  CallObjCArcUse(llvm::Value *object) : object(object) {}
-  llvm::Value *object;
+// namespace {
+// // ARC cleanup for __builtin_os_log_format
+// struct CallObjCArcUse final : EHScopeStack::Cleanup {
+//   CallObjCArcUse(llvm::Value *object) : object(object) {}
+//   llvm::Value *object;
 
-  void Emit(CodeGenFunction &CGF, Flags flags) override {
-    CGF.EmitARCIntrinsicUse(object);
-  }
-};
-}
+//   void Emit(CodeGenFunction &CGF, Flags flags) override {
+//     CGF.EmitARCIntrinsicUse(object);
+//   }
+// };
+// }
 
 Value *CodeGenFunction::EmitCheckedArgForBuiltin(const Expr *E,
                                                  BuiltinCheckKind Kind) {
@@ -1364,27 +1364,27 @@ RValue CodeGenFunction::emitBuiltinOSLogFormat(const CallExpr &E) {
         return false;
       };
 
-      if (TheExpr->getType()->isObjCRetainableType() &&
-          getLangOpts().ObjCAutoRefCount && LifetimeExtendObject(TheExpr)) {
-        assert(getEvaluationKind(TheExpr->getType()) == TEK_Scalar &&
-               "Only scalar can be a ObjC retainable type");
-        if (!isa<Constant>(ArgVal)) {
-          CleanupKind Cleanup = getARCCleanupKind();
-          QualType Ty = TheExpr->getType();
-          Address Alloca = Address::invalid();
-          Address Addr = CreateMemTemp(Ty, "os.log.arg", &Alloca);
-          ArgVal = EmitARCRetain(Ty, ArgVal);
-          Builder.CreateStore(ArgVal, Addr);
-          pushLifetimeExtendedDestroy(Cleanup, Alloca, Ty,
-                                      CodeGenFunction::destroyARCStrongPrecise,
-                                      Cleanup & EHCleanup);
+      // if (TheExpr->getType()->isObjCRetainableType() &&
+      //     getLangOpts().ObjCAutoRefCount && LifetimeExtendObject(TheExpr)) {
+      //   assert(getEvaluationKind(TheExpr->getType()) == TEK_Scalar &&
+      //          "Only scalar can be a ObjC retainable type");
+      //   if (!isa<Constant>(ArgVal)) {
+      //     CleanupKind Cleanup = getARCCleanupKind();
+      //     QualType Ty = TheExpr->getType();
+      //     Address Alloca = Address::invalid();
+      //     Address Addr = CreateMemTemp(Ty, "os.log.arg", &Alloca);
+      //     ArgVal = EmitARCRetain(Ty, ArgVal);
+      //     Builder.CreateStore(ArgVal, Addr);
+      //     pushLifetimeExtendedDestroy(Cleanup, Alloca, Ty,
+      //                                 CodeGenFunction::destroyARCStrongPrecise,
+      //                                 Cleanup & EHCleanup);
 
-          // Push a clang.arc.use call to ensure ARC optimizer knows that the
-          // argument has to be alive.
-          if (CGM.getCodeGenOpts().OptimizationLevel != 0)
-            pushCleanupAfterFullExpr<CallObjCArcUse>(Cleanup, ArgVal);
-        }
-      }
+      //     // Push a clang.arc.use call to ensure ARC optimizer knows that the
+      //     // argument has to be alive.
+      //     if (CGM.getCodeGenOpts().OptimizationLevel != 0)
+      //       pushCleanupAfterFullExpr<CallObjCArcUse>(Cleanup, ArgVal);
+      //   }
+      // }
     } else {
       ArgVal = Builder.getInt32(Item.getConstValue().getQuantity());
     }
@@ -2289,7 +2289,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     // FIXME: The allowance for Obj-C pointers and block pointers is historical
     // and likely a mistake.
     if (!ArgType->isIntegralOrEnumerationType() && !ArgType->isFloatingType() &&
-        /*!ArgType->isObjCObjectPointerType()*/ && !ArgType->isBlockPointerType())
+        /*!ArgType->isObjCObjectPointerType() &&*/ !ArgType->isBlockPointerType())
       // Per the GCC documentation, only numeric constants are recognized after
       // inlining.
       return RValue::get(ConstantInt::get(ResultType, 0));
@@ -2669,14 +2669,14 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     return RValue::get(Dest.getPointer());
   }
 
-  case Builtin::BI__builtin_objc_memmove_collectable: {
-    Address DestAddr = EmitPointerWithAlignment(E->getArg(0));
-    Address SrcAddr = EmitPointerWithAlignment(E->getArg(1));
-    Value *SizeVal = EmitScalarExpr(E->getArg(2));
-    CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this,
-                                                  DestAddr, SrcAddr, SizeVal);
-    return RValue::get(DestAddr.getPointer());
-  }
+  // case Builtin::BI__builtin_objc_memmove_collectable: {
+  //   Address DestAddr = EmitPointerWithAlignment(E->getArg(0));
+  //   Address SrcAddr = EmitPointerWithAlignment(E->getArg(1));
+  //   Value *SizeVal = EmitScalarExpr(E->getArg(2));
+  //   CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this,
+  //                                                 DestAddr, SrcAddr, SizeVal);
+  //   return RValue::get(DestAddr.getPointer());
+  // }
 
   case Builtin::BI__builtin___memmove_chk: {
     // fold __builtin_memmove_chk(x, y, cst1, cst2) to memmove iff cst1<=cst2.
@@ -4190,60 +4190,60 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
   //           "__get_kernel_work_group_size_impl"),
   //       {Kernel, Arg}));
   // }
-  case Builtin::BIget_kernel_preferred_work_group_size_multiple: {
-    llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
-        getContext().getTargetAddressSpace(LangAS::opencl_generic));
-    auto Info =
-        CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(0));
-    Value *Kernel = Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
-    Value *Arg = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
-    return RValue::get(Builder.CreateCall(
-        CGM.CreateRuntimeFunction(
-            llvm::FunctionType::get(IntTy, {GenericVoidPtrTy, GenericVoidPtrTy},
-                                    false),
-            "__get_kernel_preferred_work_group_size_multiple_impl"),
-        {Kernel, Arg}));
-  }
-  case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
-  case Builtin::BIget_kernel_sub_group_count_for_ndrange: {
-    llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
-        getContext().getTargetAddressSpace(LangAS::opencl_generic));
-    LValue NDRangeL = EmitAggExprToLValue(E->getArg(0));
-    llvm::Value *NDRange = NDRangeL.getAddress(*this).getPointer();
-    auto Info =
-        CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(1));
-    Value *Kernel = Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
-    Value *Block = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
-    const char *Name =
-        BuiltinID == Builtin::BIget_kernel_max_sub_group_size_for_ndrange
-            ? "__get_kernel_max_sub_group_size_for_ndrange_impl"
-            : "__get_kernel_sub_group_count_for_ndrange_impl";
-    return RValue::get(Builder.CreateCall(
-        CGM.CreateRuntimeFunction(
-            llvm::FunctionType::get(
-                IntTy, {NDRange->getType(), GenericVoidPtrTy, GenericVoidPtrTy},
-                false),
-            Name),
-        {NDRange, Kernel, Block}));
-  }
+  // case Builtin::BIget_kernel_preferred_work_group_size_multiple: {
+  //   llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
+  //       getContext().getTargetAddressSpace(LangAS::opencl_generic));
+  //   auto Info =
+  //       CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(0));
+  //   Value *Kernel = Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
+  //   Value *Arg = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
+  //   return RValue::get(Builder.CreateCall(
+  //       CGM.CreateRuntimeFunction(
+  //           llvm::FunctionType::get(IntTy, {GenericVoidPtrTy, GenericVoidPtrTy},
+  //                                   false),
+  //           "__get_kernel_preferred_work_group_size_multiple_impl"),
+  //       {Kernel, Arg}));
+  // }
+  // case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
+  // case Builtin::BIget_kernel_sub_group_count_for_ndrange: {
+  //   llvm::Type *GenericVoidPtrTy = Builder.getInt8PtrTy(
+  //       getContext().getTargetAddressSpace(LangAS::opencl_generic));
+  //   LValue NDRangeL = EmitAggExprToLValue(E->getArg(0));
+  //   llvm::Value *NDRange = NDRangeL.getAddress(*this).getPointer();
+  //   auto Info =
+  //       CGM.getOpenCLRuntime().emitOpenCLEnqueuedBlock(*this, E->getArg(1));
+  //   Value *Kernel = Builder.CreatePointerCast(Info.Kernel, GenericVoidPtrTy);
+  //   Value *Block = Builder.CreatePointerCast(Info.BlockArg, GenericVoidPtrTy);
+  //   const char *Name =
+  //       BuiltinID == Builtin::BIget_kernel_max_sub_group_size_for_ndrange
+  //           ? "__get_kernel_max_sub_group_size_for_ndrange_impl"
+  //           : "__get_kernel_sub_group_count_for_ndrange_impl";
+  //   return RValue::get(Builder.CreateCall(
+  //       CGM.CreateRuntimeFunction(
+  //           llvm::FunctionType::get(
+  //               IntTy, {NDRange->getType(), GenericVoidPtrTy, GenericVoidPtrTy},
+  //               false),
+  //           Name),
+  //       {NDRange, Kernel, Block}));
+  // }
 
-  case Builtin::BI__builtin_store_half:
-  case Builtin::BI__builtin_store_halff: {
-    Value *Val = EmitScalarExpr(E->getArg(0));
-    Address Address = EmitPointerWithAlignment(E->getArg(1));
-    Value *HalfVal = Builder.CreateFPTrunc(Val, Builder.getHalfTy());
-    return RValue::get(Builder.CreateStore(HalfVal, Address));
-  }
-  case Builtin::BI__builtin_load_half: {
-    Address Address = EmitPointerWithAlignment(E->getArg(0));
-    Value *HalfVal = Builder.CreateLoad(Address);
-    return RValue::get(Builder.CreateFPExt(HalfVal, Builder.getDoubleTy()));
-  }
-  case Builtin::BI__builtin_load_halff: {
-    Address Address = EmitPointerWithAlignment(E->getArg(0));
-    Value *HalfVal = Builder.CreateLoad(Address);
-    return RValue::get(Builder.CreateFPExt(HalfVal, Builder.getFloatTy()));
-  }
+  // case Builtin::BI__builtin_store_half:
+  // case Builtin::BI__builtin_store_halff: {
+  //   Value *Val = EmitScalarExpr(E->getArg(0));
+  //   Address Address = EmitPointerWithAlignment(E->getArg(1));
+  //   Value *HalfVal = Builder.CreateFPTrunc(Val, Builder.getHalfTy());
+  //   return RValue::get(Builder.CreateStore(HalfVal, Address));
+  // }
+  // case Builtin::BI__builtin_load_half: {
+  //   Address Address = EmitPointerWithAlignment(E->getArg(0));
+  //   Value *HalfVal = Builder.CreateLoad(Address);
+  //   return RValue::get(Builder.CreateFPExt(HalfVal, Builder.getDoubleTy()));
+  // }
+  // case Builtin::BI__builtin_load_halff: {
+  //   Address Address = EmitPointerWithAlignment(E->getArg(0));
+  //   Value *HalfVal = Builder.CreateLoad(Address);
+  //   return RValue::get(Builder.CreateFPExt(HalfVal, Builder.getFloatTy()));
+  // }
   case Builtin::BIprintf:
     if (getTarget().getTriple().isNVPTX())
       return EmitNVPTXDevicePrintfCallExpr(E, ReturnValue);
