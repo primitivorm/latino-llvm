@@ -80,10 +80,10 @@ void OSObjectCStyleCastChecker::checkASTCodeBody(const Decl *D, AnalysisManager 
 }
 }
 
-void ento::registerOSObjectCStyleCast(CheckerManager &Mgr) {
-  Mgr.registerChecker<OSObjectCStyleCastChecker>();
-}
+// void ento::registerOSObjectCStyleCast(CheckerManager &Mgr) {
+//   Mgr.registerChecker<OSObjectCStyleCastChecker>();
+// }
 
-bool ento::shouldRegisterOSObjectCStyleCast(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterOSObjectCStyleCast(const CheckerManager &mgr) {
+//   return true;
+// }

@@ -239,7 +239,7 @@ private:
 
 public:
   /// Force clang to emit reproducer for driver invocation. This is enabled
-  /// indirectly by setting FORCE_CLANG_DIAGNOSTICS_CRASH environment variable
+  /// indirectly by setting FORCE_LATINO_DIAGNOSTICS_CRASH environment variable
   /// or when using the -gen-reproducer driver flag.
   unsigned GenReproducer : 1;
 

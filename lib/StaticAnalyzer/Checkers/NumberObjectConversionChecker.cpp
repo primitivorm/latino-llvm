@@ -342,13 +342,13 @@ void NumberObjectConversionChecker::checkASTCodeBody(const Decl *D,
   F.match(*D->getBody(), AM.getASTContext());
 }
 
-void ento::registerNumberObjectConversionChecker(CheckerManager &Mgr) {
-  NumberObjectConversionChecker *Chk =
-      Mgr.registerChecker<NumberObjectConversionChecker>();
-  Chk->Pedantic =
-      Mgr.getAnalyzerOptions().getCheckerBooleanOption(Chk, "Pedantic");
-}
+// void ento::registerNumberObjectConversionChecker(CheckerManager &Mgr) {
+//   NumberObjectConversionChecker *Chk =
+//       Mgr.registerChecker<NumberObjectConversionChecker>();
+//   Chk->Pedantic =
+//       Mgr.getAnalyzerOptions().getCheckerBooleanOption(Chk, "Pedantic");
+// }
 
-bool ento::shouldRegisterNumberObjectConversionChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterNumberObjectConversionChecker(const CheckerManager &mgr) {
+//   return true;
+// }

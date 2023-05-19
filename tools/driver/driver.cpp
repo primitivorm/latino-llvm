@@ -50,6 +50,7 @@
 #include <memory>
 #include <set>
 #include <system_error>
+
 using namespace latino;
 using namespace latino::driver;
 using namespace llvm::opt;
@@ -286,7 +287,7 @@ CreateAndPopulateDiagOpts(ArrayRef<const char *> argv, bool &UseNewCC1Process) {
   UseNewCC1Process =
       Args.hasFlag(latino::driver::options::OPT_fno_integrated_cc1,
                    latino::driver::options::OPT_fintegrated_cc1,
-                   /*Default=*/LATINO_SPAWN_CC1);
+                   /*Default=*/CLANG_SPAWN_CC1);
 
   return DiagOpts;
 }
@@ -371,6 +372,7 @@ int main(int argc_, const char **argv_) {
       }) != argv.end()) {
     ClangCLMode = true;
   }
+  
   enum { Default, POSIX, Windows } RSPQuoting = Default;
   for (const char *F : argv) {
     if (strcmp(F, "--rsp-quoting=posix") == 0)
@@ -504,7 +506,7 @@ int main(int argc_, const char **argv_) {
     // Force a crash to test the diagnostics.
     if (TheDriver.GenReproducer) {
       Diags.Report(diag::err_drv_force_crash)
-        << !::getenv("LATINO_CLANG_DIAGNOSTICS_CRASH");
+        << !::getenv("FORCE_LATINO_DIAGNOSTICS_CRASH");
 
       // Pretend that every command failed.
       FailingCommands.clear();
@@ -513,8 +515,8 @@ int main(int argc_, const char **argv_) {
           FailingCommands.push_back(std::make_pair(-1, C));
 
       // Print the bug report message that would be printed if we did actually
-      // crash, but only if we're crashing due to LATINO_CLANG_DIAGNOSTICS_CRASH.
-      if (::getenv("LATINO_CLANG_DIAGNOSTICS_CRASH"))
+      // crash, but only if we're crashing due to FORCE_LATINO_DIAGNOSTICS_CRASH.
+      if (::getenv("FORCE_LATINO_DIAGNOSTICS_CRASH"))
         llvm::dbgs() << llvm::getBugReportMsg();
     }
 

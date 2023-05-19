@@ -132,7 +132,7 @@ const MemRegion *StoreManager::castRegion(const MemRegion *R, QualType CastToTy)
     case MemRegion::AllocaRegionKind:
     case MemRegion::CompoundLiteralRegionKind:
     case MemRegion::FieldRegionKind:
-    case MemRegion::ObjCIvarRegionKind:
+    // case MemRegion::ObjCIvarRegionKind:
     // case MemRegion::ObjCStringRegionKind:
     case MemRegion::NonParamVarRegionKind:
     case MemRegion::ParamVarRegionKind:

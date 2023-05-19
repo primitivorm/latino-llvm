@@ -84,7 +84,8 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "unordered_set": "cpp",
-        "xlocbuf": "cpp"
+        "xlocbuf": "cpp",
+        "__split_buffer": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "esbonio.server.enabled": true

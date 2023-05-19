@@ -281,9 +281,9 @@ public:
                      integer->getType()->isUnsignedIntegerOrEnumerationType()));
   }
 
-  nonloc::ConcreteInt makeBoolVal(const ObjCBoolLiteralExpr *boolean) {
-    return makeTruthVal(boolean->getValue(), boolean->getType());
-  }
+  // nonloc::ConcreteInt makeBoolVal(const ObjCBoolLiteralExpr *boolean) {
+  //   return makeTruthVal(boolean->getValue(), boolean->getType());
+  // }
 
   nonloc::ConcreteInt makeBoolVal(const CXXBoolLiteralExpr *boolean);
 

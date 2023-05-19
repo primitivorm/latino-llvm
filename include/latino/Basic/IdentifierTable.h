@@ -681,148 +681,148 @@ public:
 /// MultiKeywordSelector (which is private). This enables us to optimize
 /// selectors that take no arguments and selectors that take 1 argument, which
 /// accounts for 78% of all selectors in Cocoa.h.
-// class Selector {
-//   friend class Diagnostic;
-//   friend class SelectorTable; // only the SelectorTable can create these
-//   friend class DeclarationName; // and the AST's DeclarationName.
+class Selector {
+  friend class Diagnostic;
+  friend class SelectorTable; // only the SelectorTable can create these
+  friend class DeclarationName; // and the AST's DeclarationName.
 
-//   enum IdentifierInfoFlag {
-//     // Empty selector = 0. Note that these enumeration values must
-//     // correspond to the enumeration values of DeclarationName::StoredNameKind
-//     ZeroArg  = 0x01,
-//     OneArg   = 0x02,
-//     MultiArg = 0x07,
-//     ArgFlags = 0x07
-//   };
+  enum IdentifierInfoFlag {
+    // Empty selector = 0. Note that these enumeration values must
+    // correspond to the enumeration values of DeclarationName::StoredNameKind
+    ZeroArg  = 0x01,
+    OneArg   = 0x02,
+    MultiArg = 0x07,
+    ArgFlags = 0x07
+  };
 
-//   /// A pointer to the MultiKeywordSelector or IdentifierInfo. We use the low
-//   /// three bits of InfoPtr to store an IdentifierInfoFlag. Note that in any
-//   /// case IdentifierInfo and MultiKeywordSelector are already aligned to
-//   /// 8 bytes even on 32 bits archs because of DeclarationName.
-//   uintptr_t InfoPtr = 0;
+  /// A pointer to the MultiKeywordSelector or IdentifierInfo. We use the low
+  /// three bits of InfoPtr to store an IdentifierInfoFlag. Note that in any
+  /// case IdentifierInfo and MultiKeywordSelector are already aligned to
+  /// 8 bytes even on 32 bits archs because of DeclarationName.
+  uintptr_t InfoPtr = 0;
 
-//   Selector(IdentifierInfo *II, unsigned nArgs) {
-//     InfoPtr = reinterpret_cast<uintptr_t>(II);
-//     assert((InfoPtr & ArgFlags) == 0 &&"Insufficiently aligned IdentifierInfo");
-//     assert(nArgs < 2 && "nArgs not equal to 0/1");
-//     InfoPtr |= nArgs+1;
-//   }
+  Selector(IdentifierInfo *II, unsigned nArgs) {
+    InfoPtr = reinterpret_cast<uintptr_t>(II);
+    assert((InfoPtr & ArgFlags) == 0 &&"Insufficiently aligned IdentifierInfo");
+    assert(nArgs < 2 && "nArgs not equal to 0/1");
+    InfoPtr |= nArgs+1;
+  }
 
-//   Selector(MultiKeywordSelector *SI) {
-//     InfoPtr = reinterpret_cast<uintptr_t>(SI);
-//     assert((InfoPtr & ArgFlags) == 0 &&"Insufficiently aligned IdentifierInfo");
-//     InfoPtr |= MultiArg;
-//   }
+  // Selector(MultiKeywordSelector *SI) {
+  //   InfoPtr = reinterpret_cast<uintptr_t>(SI);
+  //   assert((InfoPtr & ArgFlags) == 0 &&"Insufficiently aligned IdentifierInfo");
+  //   InfoPtr |= MultiArg;
+  // }
 
-//   IdentifierInfo *getAsIdentifierInfo() const {
-//     if (getIdentifierInfoFlag() < MultiArg)
-//       return reinterpret_cast<IdentifierInfo *>(InfoPtr & ~ArgFlags);
-//     return nullptr;
-//   }
+  IdentifierInfo *getAsIdentifierInfo() const {
+    if (getIdentifierInfoFlag() < MultiArg)
+      return reinterpret_cast<IdentifierInfo *>(InfoPtr & ~ArgFlags);
+    return nullptr;
+  }
 
-//   MultiKeywordSelector *getMultiKeywordSelector() const {
-//     return reinterpret_cast<MultiKeywordSelector *>(InfoPtr & ~ArgFlags);
-//   }
+  // MultiKeywordSelector *getMultiKeywordSelector() const {
+  //   return reinterpret_cast<MultiKeywordSelector *>(InfoPtr & ~ArgFlags);
+  // }
 
-//   unsigned getIdentifierInfoFlag() const {
-//     return InfoPtr & ArgFlags;
-//   }
+  unsigned getIdentifierInfoFlag() const {
+    return InfoPtr & ArgFlags;
+  }
 
-//   // static ObjCMethodFamily getMethodFamilyImpl(Selector sel);
+  // static ObjCMethodFamily getMethodFamilyImpl(Selector sel);
 
-//   // static ObjCStringFormatFamily getStringFormatFamilyImpl(Selector sel);
+  // static ObjCStringFormatFamily getStringFormatFamilyImpl(Selector sel);
 
-// public:
-//   /// The default ctor should only be used when creating data structures that
-//   ///  will contain selectors.
-//   Selector() = default;
-//   explicit Selector(uintptr_t V) : InfoPtr(V) {}
+public:
+  /// The default ctor should only be used when creating data structures that
+  ///  will contain selectors.
+  Selector() = default;
+  explicit Selector(uintptr_t V) : InfoPtr(V) {}
 
-//   /// operator==/!= - Indicate whether the specified selectors are identical.
-//   bool operator==(Selector RHS) const {
-//     return InfoPtr == RHS.InfoPtr;
-//   }
-//   bool operator!=(Selector RHS) const {
-//     return InfoPtr != RHS.InfoPtr;
-//   }
+  /// operator==/!= - Indicate whether the specified selectors are identical.
+  bool operator==(Selector RHS) const {
+    return InfoPtr == RHS.InfoPtr;
+  }
+  bool operator!=(Selector RHS) const {
+    return InfoPtr != RHS.InfoPtr;
+  }
 
-//   void *getAsOpaquePtr() const {
-//     return reinterpret_cast<void*>(InfoPtr);
-//   }
+  void *getAsOpaquePtr() const {
+    return reinterpret_cast<void*>(InfoPtr);
+  }
 
-//   /// Determine whether this is the empty selector.
-//   bool isNull() const { return InfoPtr == 0; }
+  /// Determine whether this is the empty selector.
+  bool isNull() const { return InfoPtr == 0; }
 
-//   // Predicates to identify the selector type.
-//   bool isKeywordSelector() const {
-//     return getIdentifierInfoFlag() != ZeroArg;
-//   }
+  // Predicates to identify the selector type.
+  bool isKeywordSelector() const {
+    return getIdentifierInfoFlag() != ZeroArg;
+  }
 
-//   bool isUnarySelector() const {
-//     return getIdentifierInfoFlag() == ZeroArg;
-//   }
+  bool isUnarySelector() const {
+    return getIdentifierInfoFlag() == ZeroArg;
+  }
 
-//   /// If this selector is the specific keyword selector described by Names.
-//   bool isKeywordSelector(ArrayRef<StringRef> Names) const;
+  /// If this selector is the specific keyword selector described by Names.
+  bool isKeywordSelector(ArrayRef<StringRef> Names) const;
 
-//   /// If this selector is the specific unary selector described by Name.
-//   bool isUnarySelector(StringRef Name) const;
+  /// If this selector is the specific unary selector described by Name.
+  bool isUnarySelector(StringRef Name) const;
 
-//   unsigned getNumArgs() const;
+  unsigned getNumArgs() const;
 
-//   /// Retrieve the identifier at a given position in the selector.
-//   ///
-//   /// Note that the identifier pointer returned may be NULL. Clients that only
-//   /// care about the text of the identifier string, and not the specific,
-//   /// uniqued identifier pointer, should use \c getNameForSlot(), which returns
-//   /// an empty string when the identifier pointer would be NULL.
-//   ///
-//   /// \param argIndex The index for which we want to retrieve the identifier.
-//   /// This index shall be less than \c getNumArgs() unless this is a keyword
-//   /// selector, in which case 0 is the only permissible value.
-//   ///
-//   /// \returns the uniqued identifier for this slot, or NULL if this slot has
-//   /// no corresponding identifier.
-//   IdentifierInfo *getIdentifierInfoForSlot(unsigned argIndex) const;
+  /// Retrieve the identifier at a given position in the selector.
+  ///
+  /// Note that the identifier pointer returned may be NULL. Clients that only
+  /// care about the text of the identifier string, and not the specific,
+  /// uniqued identifier pointer, should use \c getNameForSlot(), which returns
+  /// an empty string when the identifier pointer would be NULL.
+  ///
+  /// \param argIndex The index for which we want to retrieve the identifier.
+  /// This index shall be less than \c getNumArgs() unless this is a keyword
+  /// selector, in which case 0 is the only permissible value.
+  ///
+  /// \returns the uniqued identifier for this slot, or NULL if this slot has
+  /// no corresponding identifier.
+  IdentifierInfo *getIdentifierInfoForSlot(unsigned argIndex) const;
 
-//   /// Retrieve the name at a given position in the selector.
-//   ///
-//   /// \param argIndex The index for which we want to retrieve the name.
-//   /// This index shall be less than \c getNumArgs() unless this is a keyword
-//   /// selector, in which case 0 is the only permissible value.
-//   ///
-//   /// \returns the name for this slot, which may be the empty string if no
-//   /// name was supplied.
-//   StringRef getNameForSlot(unsigned argIndex) const;
+  /// Retrieve the name at a given position in the selector.
+  ///
+  /// \param argIndex The index for which we want to retrieve the name.
+  /// This index shall be less than \c getNumArgs() unless this is a keyword
+  /// selector, in which case 0 is the only permissible value.
+  ///
+  /// \returns the name for this slot, which may be the empty string if no
+  /// name was supplied.
+  StringRef getNameForSlot(unsigned argIndex) const;
 
-//   /// Derive the full selector name (e.g. "foo:bar:") and return
-//   /// it as an std::string.
-//   std::string getAsString() const;
+  /// Derive the full selector name (e.g. "foo:bar:") and return
+  /// it as an std::string.
+  std::string getAsString() const;
 
-//   /// Prints the full selector name (e.g. "foo:bar:").
-//   void print(llvm::raw_ostream &OS) const;
+  /// Prints the full selector name (e.g. "foo:bar:").
+  void print(llvm::raw_ostream &OS) const;
 
-//   void dump() const;
+  void dump() const;
 
-//   /// Derive the conventional family of this method.
-//   // ObjCMethodFamily getMethodFamily() const {
-//   //   return getMethodFamilyImpl(*this);
-//   // }
+  /// Derive the conventional family of this method.
+  // ObjCMethodFamily getMethodFamily() const {
+  //   return getMethodFamilyImpl(*this);
+  // }
 
-//   // ObjCStringFormatFamily getStringFormatFamily() const {
-//   //   return getStringFormatFamilyImpl(*this);
-//   // }
+  // ObjCStringFormatFamily getStringFormatFamily() const {
+  //   return getStringFormatFamilyImpl(*this);
+  // }
 
-//   static Selector getEmptyMarker() {
-//     return Selector(uintptr_t(-1));
-//   }
+  static Selector getEmptyMarker() {
+    return Selector(uintptr_t(-1));
+  }
 
-//   static Selector getTombstoneMarker() {
-//     return Selector(uintptr_t(-2));
-//   }
+  static Selector getTombstoneMarker() {
+    return Selector(uintptr_t(-2));
+  }
 
-//   // static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
-// };
+  // static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
+};
 
 /// This table allows us to fully hide how we implement
 /// multi-keyword caching.
@@ -939,35 +939,35 @@ namespace llvm {
 
 /// Define DenseMapInfo so that Selectors can be used as keys in DenseMap and
 /// DenseSets.
-// template <>
-// struct DenseMapInfo<latino::Selector> {
-//   static latino::Selector getEmptyKey() {
-//     return latino::Selector::getEmptyMarker();
-//   }
+template <>
+struct DenseMapInfo<latino::Selector> {
+  static latino::Selector getEmptyKey() {
+    return latino::Selector::getEmptyMarker();
+  }
 
-//   static latino::Selector getTombstoneKey() {
-//     return latino::Selector::getTombstoneMarker();
-//   }
+  static latino::Selector getTombstoneKey() {
+    return latino::Selector::getTombstoneMarker();
+  }
 
-//   static unsigned getHashValue(latino::Selector S);
+  static unsigned getHashValue(latino::Selector S);
 
-//   static bool isEqual(latino::Selector LHS, latino::Selector RHS) {
-//     return LHS == RHS;
-//   }
-// };
+  static bool isEqual(latino::Selector LHS, latino::Selector RHS) {
+    return LHS == RHS;
+  }
+};
 
-// template<>
-// struct PointerLikeTypeTraits<latino::Selector> {
-//   static const void *getAsVoidPointer(latino::Selector P) {
-//     return P.getAsOpaquePtr();
-//   }
+template<>
+struct PointerLikeTypeTraits<latino::Selector> {
+  static const void *getAsVoidPointer(latino::Selector P) {
+    return P.getAsOpaquePtr();
+  }
 
-//   static latino::Selector getFromVoidPointer(const void *P) {
-//     return latino::Selector(reinterpret_cast<uintptr_t>(P));
-//   }
+  static latino::Selector getFromVoidPointer(const void *P) {
+    return latino::Selector(reinterpret_cast<uintptr_t>(P));
+  }
 
-//   static constexpr int NumLowBitsAvailable = 0;
-// };
+  static constexpr int NumLowBitsAvailable = 0;
+};
 
 // Provide PointerLikeTypeTraits for IdentifierInfo pointers, which
 // are not guaranteed to be 8-byte aligned.

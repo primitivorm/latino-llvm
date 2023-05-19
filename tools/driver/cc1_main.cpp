@@ -88,7 +88,7 @@ static size_t getCurrentStackAllocation() {
     // Disable silly GCC -Wformat warning that complains about length
     // modifiers on ignored format specifiers. We want to retain these
     // for documentation purposes even though they have no effect.
-#if defined(__GNUC__) && !defined(__latino__)
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat"
 #endif
@@ -98,7 +98,7 @@ static size_t getCurrentStackAllocation() {
                "%*lu %*lu %lu %*lu %*lu %*lu %*lu %*lu %*llu %*lu %*lu %*d %*d "
                "%*u %*u %*llu %*lu %*ld %*lu %*lu %*lu %*lu %*lu %*lu %lu %*d",
                &StackPtr, &EnvEnd) == 2) {
-#if defined(__GNUC__) && !defined(__latino__)
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
       Usage = StackPtr < EnvEnd ? EnvEnd - StackPtr : StackPtr - EnvEnd;

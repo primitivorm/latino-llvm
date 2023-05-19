@@ -66,16 +66,16 @@ namespace latino {
     TST_char16,       // C++11 char16_t
     TST_char32,       // C++11 char32_t
     TST_int,
-    // TST_int128,
+    TST_int128,
     TST_extint,       // Extended Int types.
-    // TST_half,         // OpenCL half, ARM NEON __fp16
+    TST_half,         // OpenCL half, ARM NEON __fp16
     TST_Float16,      // C11 extension ISO/IEC TS 18661-3
     TST_Accum,        // ISO/IEC JTC1 SC22 WG14 N1169 Extension
     TST_Fract,
     TST_BFloat16,
     TST_float,
     TST_double,
-    // TST_float128,
+    TST_float128,
     TST_bool,         // _Bool
     TST_decimal32,    // _Decimal32
     TST_decimal64,    // _Decimal64

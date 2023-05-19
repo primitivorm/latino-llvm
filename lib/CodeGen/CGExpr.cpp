@@ -2606,10 +2606,10 @@ static bool canEmitSpuriousReferenceToVariable(CodeGenFunction &CGF,
   // exists on a different device / target.
   // FIXME: This is unnecessarily broad. Check whether this would actually be a
   // cross-target reference.
-  // if (CGF.getLangOpts().OpenMP || CGF.getLangOpts().CUDA /*||
-  //     CGF.getLangOpts().OpenCL*/) {
-  //   return false;
-  // }
+  if (/*CGF.getLangOpts().OpenMP ||*/ CGF.getLangOpts().CUDA /*||
+      CGF.getLangOpts().OpenCL*/) {
+    return false;
+  }
 
   // We can emit a spurious reference only if the linkage implies that we'll
   // be emitting a non-interposable symbol that will be retained until link

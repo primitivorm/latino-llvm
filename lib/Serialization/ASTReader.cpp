@@ -3551,19 +3551,19 @@ ASTReader::ReadASTBlock(ModuleFile &F, unsigned ClientLoadCapabilities) {
       }
       break;
 
-    case OBJC_CATEGORIES_MAP:
-      if (F.LocalNumObjCCategoriesInMap != 0) {
-        Error("duplicate OBJC_CATEGORIES_MAP record in AST file");
-        return Failure;
-      }
+    // case OBJC_CATEGORIES_MAP:
+    //   if (F.LocalNumObjCCategoriesInMap != 0) {
+    //     Error("duplicate OBJC_CATEGORIES_MAP record in AST file");
+    //     return Failure;
+    //   }
 
-      F.LocalNumObjCCategoriesInMap = Record[0];
-      F.ObjCCategoriesMap = (const ObjCCategoriesInfo *)Blob.data();
-      break;
+    //   F.LocalNumObjCCategoriesInMap = Record[0];
+    //   F.ObjCCategoriesMap = (const ObjCCategoriesInfo *)Blob.data();
+    //   break;
 
-    case OBJC_CATEGORIES:
-      F.ObjCCategories.swap(Record);
-      break;
+    // case OBJC_CATEGORIES:
+    //   F.ObjCCategories.swap(Record);
+    //   break;
 
     case CUDA_SPECIAL_DECL_REFS:
       // Later tables overwrite earlier ones.

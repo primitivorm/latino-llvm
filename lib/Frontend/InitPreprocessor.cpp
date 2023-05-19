@@ -1087,23 +1087,23 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   // }
 
   // CUDA device path compilaton
-  // if (LangOpts.CUDAIsDevice && !LangOpts.HIP) {
-  //   // The CUDA_ARCH value is set for the GPU target specified in the NVPTX
-  //   // backend's target defines.
-  //   Builder.defineMacro("__CUDA_ARCH__");
-  // }
+  if (LangOpts.CUDAIsDevice && !LangOpts.HIP) {
+    // The CUDA_ARCH value is set for the GPU target specified in the NVPTX
+    // backend's target defines.
+    Builder.defineMacro("__CUDA_ARCH__");
+  }
 
   // We need to communicate this to our CUDA header wrapper, which in turn
   // informs the proper CUDA headers of this choice.
-  // if (LangOpts.CUDADeviceApproxTranscendentals || LangOpts.FastMath) {
-  //   Builder.defineMacro("__CLANG_CUDA_APPROX_TRANSCENDENTALS__");
-  // }
+  if (LangOpts.CUDADeviceApproxTranscendentals || LangOpts.FastMath) {
+    Builder.defineMacro("__CLANG_CUDA_APPROX_TRANSCENDENTALS__");
+  }
 
   // Define a macro indicating that the source file is being compiled with a
   // SYCL device compiler which doesn't produce host binary.
-  // if (LangOpts.SYCLIsDevice) {
-  //   Builder.defineMacro("__SYCL_DEVICE_ONLY__", "1");
-  // }
+  if (LangOpts.SYCLIsDevice) {
+    Builder.defineMacro("__SYCL_DEVICE_ONLY__", "1");
+  }
 
   // OpenCL definitions.
 //   if (LangOpts.OpenCL) {
@@ -1151,10 +1151,10 @@ void latino::InitializePreprocessor(
   if (InitOpts.UsePredefines) {
     // FIXME: This will create multiple definitions for most of the predefined
     // macros. This is not the right way to handle this.
-    // if ((LangOpts.CUDA || LangOpts.OpenMPIsDevice || LangOpts.SYCLIsDevice) &&
-    //     PP.getAuxTargetInfo())
-    //   InitializePredefinedMacros(*PP.getAuxTargetInfo(), LangOpts, FEOpts,
-    //                              PP.getPreprocessorOpts(), Builder);
+    if ((LangOpts.CUDA || LangOpts.OpenMPIsDevice || LangOpts.SYCLIsDevice) &&
+        PP.getAuxTargetInfo())
+      InitializePredefinedMacros(*PP.getAuxTargetInfo(), LangOpts, FEOpts,
+                                 PP.getPreprocessorOpts(), Builder);
 
     InitializePredefinedMacros(PP.getTargetInfo(), LangOpts, FEOpts,
                                PP.getPreprocessorOpts(), Builder);

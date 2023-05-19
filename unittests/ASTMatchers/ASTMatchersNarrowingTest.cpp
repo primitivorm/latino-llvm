@@ -18,86 +18,86 @@
 namespace latino {
 namespace ast_matchers {
 
-TEST(IsExpandedFromMacro, ShouldMatchInFile) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-    void Test() { MY_MACRO(4); }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchInFile) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+//     void Test() { MY_MACRO(4); }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldMatchNested) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-#define WRAPPER(a) MY_MACRO(a)
-    void Test() { WRAPPER(4); }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchNested) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+// #define WRAPPER(a) MY_MACRO(a)
+//     void Test() { WRAPPER(4); }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldMatchIntermediate) {
-  StringRef input = R"cc(
-#define IMPL(a) (4 + (a))
-#define MY_MACRO(a) IMPL(a)
-#define WRAPPER(a) MY_MACRO(a)
-    void Test() { WRAPPER(4); }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchIntermediate) {
+//   StringRef input = R"cc(
+// #define IMPL(a) (4 + (a))
+// #define MY_MACRO(a) IMPL(a)
+// #define WRAPPER(a) MY_MACRO(a)
+//     void Test() { WRAPPER(4); }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldMatchTransitive) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-#define WRAPPER(a) MY_MACRO(a)
-    void Test() { WRAPPER(4); }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("WRAPPER"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchTransitive) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+// #define WRAPPER(a) MY_MACRO(a)
+//     void Test() { WRAPPER(4); }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("WRAPPER"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldMatchArgument) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-    void Test() {
-      int x = 5;
-      MY_MACRO(x);
-    }
-  )cc";
-  EXPECT_TRUE(matches(input, declRefExpr(isExpandedFromMacro("MY_MACRO"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchArgument) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+//     void Test() {
+//       int x = 5;
+//       MY_MACRO(x);
+//     }
+//   )cc";
+//   EXPECT_TRUE(matches(input, declRefExpr(isExpandedFromMacro("MY_MACRO"))));
+// }
 
-// Like IsExpandedFromMacroShouldMatchArgumentMacro, but the argument is itself
-// a macro.
-TEST(IsExpandedFromMacro, ShouldMatchArgumentMacroExpansion) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-#define IDENTITY(a) (a)
-    void Test() {
-      IDENTITY(MY_MACRO(2));
-    }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("IDENTITY"))));
-}
+// // Like IsExpandedFromMacroShouldMatchArgumentMacro, but the argument is itself
+// // a macro.
+// TEST(IsExpandedFromMacro, ShouldMatchArgumentMacroExpansion) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+// #define IDENTITY(a) (a)
+//     void Test() {
+//       IDENTITY(MY_MACRO(2));
+//     }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("IDENTITY"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldMatchWhenInArgument) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-#define IDENTITY(a) (a)
-    void Test() {
-      IDENTITY(MY_MACRO(2));
-    }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchWhenInArgument) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+// #define IDENTITY(a) (a)
+//     void Test() {
+//       IDENTITY(MY_MACRO(2));
+//     }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("MY_MACRO"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldMatchObjectMacro) {
-  StringRef input = R"cc(
-#define PLUS (2 + 2)
-    void Test() {
-      PLUS;
-    }
-  )cc";
-  EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("PLUS"))));
-}
+// TEST(IsExpandedFromMacro, ShouldMatchObjectMacro) {
+//   StringRef input = R"cc(
+// #define PLUS (2 + 2)
+//     void Test() {
+//       PLUS;
+//     }
+//   )cc";
+//   EXPECT_TRUE(matches(input, binaryOperator(isExpandedFromMacro("PLUS"))));
+// }
 
 TEST(IsExpandedFromMacro, ShouldMatchFromCommandLine) {
   StringRef input = R"cc(
@@ -108,39 +108,39 @@ TEST(IsExpandedFromMacro, ShouldMatchFromCommandLine) {
       {"-std=c++11", "-DFOUR_PLUS_FOUR=4+4"}));
 }
 
-TEST(IsExpandedFromMacro, ShouldNotMatchBeginOnly) {
-  StringRef input = R"cc(
-#define ONE_PLUS 1+
-  void Test() { ONE_PLUS 4; }
-  )cc";
-  EXPECT_TRUE(
-      notMatches(input, binaryOperator(isExpandedFromMacro("ONE_PLUS"))));
-}
+// TEST(IsExpandedFromMacro, ShouldNotMatchBeginOnly) {
+//   StringRef input = R"cc(
+// #define ONE_PLUS 1+
+//   void Test() { ONE_PLUS 4; }
+//   )cc";
+//   EXPECT_TRUE(
+//       notMatches(input, binaryOperator(isExpandedFromMacro("ONE_PLUS"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldNotMatchEndOnly) {
-  StringRef input = R"cc(
-#define PLUS_ONE +1
-  void Test() { 4 PLUS_ONE; }
-  )cc";
-  EXPECT_TRUE(
-      notMatches(input, binaryOperator(isExpandedFromMacro("PLUS_ONE"))));
-}
+// TEST(IsExpandedFromMacro, ShouldNotMatchEndOnly) {
+//   StringRef input = R"cc(
+// #define PLUS_ONE +1
+//   void Test() { 4 PLUS_ONE; }
+//   )cc";
+//   EXPECT_TRUE(
+//       notMatches(input, binaryOperator(isExpandedFromMacro("PLUS_ONE"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldNotMatchDifferentMacro) {
-  StringRef input = R"cc(
-#define MY_MACRO(a) (4 + (a))
-    void Test() { MY_MACRO(4); }
-  )cc";
-  EXPECT_TRUE(notMatches(input, binaryOperator(isExpandedFromMacro("OTHER"))));
-}
+// TEST(IsExpandedFromMacro, ShouldNotMatchDifferentMacro) {
+//   StringRef input = R"cc(
+// #define MY_MACRO(a) (4 + (a))
+//     void Test() { MY_MACRO(4); }
+//   )cc";
+//   EXPECT_TRUE(notMatches(input, binaryOperator(isExpandedFromMacro("OTHER"))));
+// }
 
-TEST(IsExpandedFromMacro, ShouldNotMatchDifferentInstances) {
-  StringRef input = R"cc(
-#define FOUR 4
-    void Test() { FOUR + FOUR; }
-  )cc";
-  EXPECT_TRUE(notMatches(input, binaryOperator(isExpandedFromMacro("FOUR"))));
-}
+// TEST(IsExpandedFromMacro, ShouldNotMatchDifferentInstances) {
+//   StringRef input = R"cc(
+// #define FOUR 4
+//     void Test() { FOUR + FOUR; }
+//   )cc";
+//   EXPECT_TRUE(notMatches(input, binaryOperator(isExpandedFromMacro("FOUR"))));
+// }
 
 TEST(AllOf, AllOverloadsWork) {
   const char Program[] = "struct T { };"

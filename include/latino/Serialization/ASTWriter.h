@@ -511,7 +511,7 @@ private:
   // void WriteOpenCLExtensions(Sema &SemaRef);
   // void WriteOpenCLExtensionTypes(Sema &SemaRef);
   // void WriteOpenCLExtensionDecls(Sema &SemaRef);
-  // void WriteCUDAPragmas(Sema &SemaRef);
+  void WriteCUDAPragmas(Sema &SemaRef);
   // void WriteObjCCategories();
   void WriteLateParsedTemplates(Sema &SemaRef);
   void WriteOptimizePragmaOptions(Sema &SemaRef);

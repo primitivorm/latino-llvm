@@ -1500,27 +1500,27 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
 
     break;
   }
-  // case DeclSpec::TST_int128:
-  //   if (!S.Context.getTargetInfo().hasInt128Type() &&
-  //       !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
-  //     S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
-  //       << "__int128";
-  //   if (DS.getTypeSpecSign() == DeclSpec::TSS_unsigned)
-  //     Result = Context.UnsignedInt128Ty;
-  //   else
-  //     Result = Context.Int128Ty;
-  //   break;
-  // case DeclSpec::TST_float16:
-  //   // CUDA host and device may have different _Float16 support, therefore
-  //   // do not diagnose _Float16 usage to avoid false alarm.
-  //   // ToDo: more precise diagnostics for CUDA.
-  //   if (!S.Context.getTargetInfo().hasFloat16Type() && !S.getLangOpts().CUDA &&
-  //       !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
-  //     S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
-  //       << "_Float16";
-  //   Result = Context.Float16Ty;
-  //   break;
-  // case DeclSpec::TST_half:    Result = Context.HalfTy; break;
+  case DeclSpec::TST_int128:
+    if (!S.Context.getTargetInfo().hasInt128Type() &&
+        !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
+      S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
+        << "__int128";
+    if (DS.getTypeSpecSign() == DeclSpec::TSS_unsigned)
+      Result = Context.UnsignedInt128Ty;
+    else
+      Result = Context.Int128Ty;
+    break;
+  case DeclSpec::TST_float16:
+    // CUDA host and device may have different _Float16 support, therefore
+    // do not diagnose _Float16 usage to avoid false alarm.
+    // ToDo: more precise diagnostics for CUDA.
+    if (!S.Context.getTargetInfo().hasFloat16Type() && !S.getLangOpts().CUDA &&
+        !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
+      S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
+        << "_Float16";
+    Result = Context.Float16Ty;
+    break;
+  case DeclSpec::TST_half:    Result = Context.HalfTy; break;
   case DeclSpec::TST_BFloat16:
     if (!S.Context.getTargetInfo().hasBFloat16Type())
       S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
@@ -1534,14 +1534,14 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
     else
       Result = Context.DoubleTy;
     break;
-  // case DeclSpec::TST_float128:
-  //   if (!S.Context.getTargetInfo().hasFloat128Type() &&
-  //       !S.getLangOpts().SYCLIsDevice &&
-  //       !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
-  //     S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
-  //       << "__float128";
-  //   Result = Context.Float128Ty;
-  //   break;
+  case DeclSpec::TST_float128:
+    if (!S.Context.getTargetInfo().hasFloat128Type() &&
+        !S.getLangOpts().SYCLIsDevice &&
+        !(S.getLangOpts().OpenMP && S.getLangOpts().OpenMPIsDevice))
+      S.Diag(DS.getTypeSpecTypeLoc(), diag::err_type_unsupported)
+        << "__float128";
+    Result = Context.Float128Ty;
+    break;
   case DeclSpec::TST_bool: Result = Context.BoolTy; break; // _Bool or bool
     break;
   case DeclSpec::TST_decimal32:    // _Decimal32

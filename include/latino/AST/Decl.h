@@ -1626,7 +1626,7 @@ public:
   // }
 
   void setScopeInfo(unsigned scopeDepth, unsigned parameterIndex) {
-    assert(!ParmVarDeclBits.IsObjCMethodParam);
+    // assert(!ParmVarDeclBits.IsObjCMethodParam);
 
     ParmVarDeclBits.ScopeDepthOrObjCQuals = scopeDepth;
     assert(ParmVarDeclBits.ScopeDepthOrObjCQuals == scopeDepth

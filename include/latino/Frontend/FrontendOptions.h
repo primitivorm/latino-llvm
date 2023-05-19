@@ -167,9 +167,9 @@ public:
   bool isUnknown() const { return Lang == Language::Unknown && Fmt == Source; }
 
   /// Is the language of the input some dialect of Objective-C?
-  bool isObjectiveC() const {
-    return Lang == Language::ObjC || Lang == Language::ObjCXX;
-  }
+  // bool isObjectiveC() const {
+  //   return Lang == Language::ObjC || Lang == Language::ObjCXX;
+  // }
 
   InputKind getPreprocessed() const {
     return InputKind(getLanguage(), getFormat(), true);

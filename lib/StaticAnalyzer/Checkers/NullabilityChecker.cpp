@@ -80,7 +80,7 @@ enum class ErrorKind : int {
 class NullabilityChecker
     : public Checker<check::Bind, check::PreCall, check::PreStmt<ReturnStmt>,
                      check::PostCall, check::PostStmt<ExplicitCastExpr>,
-                     check::PostObjCMessage, check::DeadSymbols,
+                     /*check::PostObjCMessage,*/ check::DeadSymbols,
                      check::Location, check::Event<ImplicitNullDerefEvent>> {
 
 public:

@@ -15542,7 +15542,7 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
     *Complained = false;
 
   // Decode the result (notice that AST's are still created for extensions).
-  bool CheckInferredResultType = false;
+  // bool CheckInferredResultType = false;
   bool isInvalid = false;
   unsigned DiagKind = 0;
   FixItHint Hint;
@@ -15793,8 +15793,8 @@ bool Sema::DiagnoseAssignmentResult(AssignConvertType ConvTy,
     NoteAllOverloadCandidates(OverloadExpr::find(SrcExpr).Expression,
                               FirstType, /*TakingAddress=*/true);
 
-  if (CheckInferredResultType)
-    EmitRelatedResultTypeNote(SrcExpr);
+  // if (CheckInferredResultType)
+  //   EmitRelatedResultTypeNote(SrcExpr);
 
   // if (Action == AA_Returning && ConvTy == IncompatiblePointer)
   //   EmitRelatedResultTypeNoteForReturn(DstType);

@@ -36,15 +36,15 @@ public:
   bool inEH;
   llvm::DenseSet<const VarDecl *> &S;
 
-  bool TraverseObjCAtFinallyStmt(ObjCAtFinallyStmt *S) {
-    SaveAndRestore<bool> inFinally(inEH, true);
-    return ::RecursiveASTVisitor<EHCodeVisitor>::TraverseObjCAtFinallyStmt(S);
-  }
+  // bool TraverseObjCAtFinallyStmt(ObjCAtFinallyStmt *S) {
+  //   SaveAndRestore<bool> inFinally(inEH, true);
+  //   return ::RecursiveASTVisitor<EHCodeVisitor>::TraverseObjCAtFinallyStmt(S);
+  // }
 
-  bool TraverseObjCAtCatchStmt(ObjCAtCatchStmt *S) {
-    SaveAndRestore<bool> inCatch(inEH, true);
-    return ::RecursiveASTVisitor<EHCodeVisitor>::TraverseObjCAtCatchStmt(S);
-  }
+  // bool TraverseObjCAtCatchStmt(ObjCAtCatchStmt *S) {
+  //   SaveAndRestore<bool> inCatch(inEH, true);
+  //   return ::RecursiveASTVisitor<EHCodeVisitor>::TraverseObjCAtCatchStmt(S);
+  // }
 
   bool TraverseCXXCatchStmt(CXXCatchStmt *S) {
     SaveAndRestore<bool> inCatch(inEH, true);
@@ -276,8 +276,8 @@ public:
       return;
 
     if (!isLive(Live, VD) &&
-        !(VD->hasAttr<UnusedAttr>() || VD->hasAttr<BlocksAttr>() ||
-          VD->hasAttr<ObjCPreciseLifetimeAttr>())) {
+        !(VD->hasAttr<UnusedAttr>() || VD->hasAttr<BlocksAttr>() /*||
+          VD->hasAttr<ObjCPreciseLifetimeAttr>()*/)) {
 
       PathDiagnosticLocation ExLoc =
         PathDiagnosticLocation::createBegin(Ex, BR.getSourceManager(), AC);
@@ -403,8 +403,8 @@ public:
             // is initialized.  We don't flag warnings for those variables
             // marked 'unused' or 'objc_precise_lifetime'.
             if (!isLive(Live, V) &&
-                !V->hasAttr<UnusedAttr>() &&
-                !V->hasAttr<ObjCPreciseLifetimeAttr>()) {
+                !V->hasAttr<UnusedAttr>() /*&&
+                !V->hasAttr<ObjCPreciseLifetimeAttr>()*/) {
               // Special case: check for initializations with constants.
               //
               //  e.g. : int x = 0;

@@ -754,7 +754,7 @@ DefinedOrUnknownSVal MemRegionManager::getStaticSize(const MemRegion *MR,
   case MemRegion::CXXDerivedObjectRegionKind:
   case MemRegion::CXXTempObjectRegionKind:
   case MemRegion::CXXThisRegionKind:
-  case MemRegion::ObjCIvarRegionKind:
+  // case MemRegion::ObjCIvarRegionKind:
   case MemRegion::NonParamVarRegionKind:
   case MemRegion::ParamVarRegionKind:
   case MemRegion::ElementRegionKind:
@@ -1277,7 +1277,7 @@ const MemRegion *MemRegion::getBaseRegion() const {
     switch (R->getKind()) {
       case MemRegion::ElementRegionKind:
       case MemRegion::FieldRegionKind:
-      case MemRegion::ObjCIvarRegionKind:
+      // case MemRegion::ObjCIvarRegionKind:
       case MemRegion::CXXBaseObjectRegionKind:
       case MemRegion::CXXDerivedObjectRegionKind:
         R = cast<SubRegion>(R)->getSuperRegion();
@@ -1445,13 +1445,13 @@ static RegionOffset calculateOffset(const MemRegion *R) {
       // Usual base regions.
       goto Finish;
 
-    case MemRegion::ObjCIvarRegionKind:
+    // case MemRegion::ObjCIvarRegionKind:
       // This is a little strange, but it's a compromise between
       // ObjCIvarRegions having unknown compile-time offsets (when using the
       // non-fragile runtime) and yet still being distinct, non-overlapping
       // regions. Thus we treat them as "like" base regions for the purposes
       // of computing offsets.
-      goto Finish;
+      // goto Finish;
 
     case MemRegion::CXXBaseObjectRegionKind: {
       const auto *BOR = cast<CXXBaseObjectRegion>(R);

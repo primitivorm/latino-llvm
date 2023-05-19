@@ -239,8 +239,8 @@ PUNCTUATOR(coloncolon,          "::")
 PUNCTUATOR(at,                  "@")
 
 // CUDA support.
-// PUNCTUATOR(lesslessless,          "<<<")
-// PUNCTUATOR(greatergreatergreater, ">>>")
+PUNCTUATOR(lesslessless,          "<<<")
+PUNCTUATOR(greatergreatergreater, ">>>")
 
 // CL support
 // PUNCTUATOR(caretcaret,            "^^")
@@ -435,9 +435,9 @@ KEYWORD(__attribute                 , KEYALL)
 TYPE_TRAIT_2(__builtin_types_compatible_p, TypeCompatible, KEYNOCXX)
 // KEYWORD(__builtin_va_arg            , KEYALL)
 // KEYWORD(__extension__               , KEYALL)
-// KEYWORD(__float128                  , KEYALL)
+KEYWORD(__float128                  , KEYALL)
 // KEYWORD(__imag                      , KEYALL)
-// KEYWORD(__int128                    , KEYALL)
+KEYWORD(__int128                    , KEYALL)
 // KEYWORD(__label__                   , KEYALL)
 // KEYWORD(__real                      , KEYALL)
 KEYWORD(__thread                    , KEYALL)

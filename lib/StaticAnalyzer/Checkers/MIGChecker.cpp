@@ -289,10 +289,10 @@ void MIGChecker::checkReturnAux(const ReturnStmt *RS, CheckerContext &C) const {
   C.emitReport(std::move(R));
 }
 
-void ento::registerMIGChecker(CheckerManager &Mgr) {
-  Mgr.registerChecker<MIGChecker>();
-}
+// void ento::registerMIGChecker(CheckerManager &Mgr) {
+//   Mgr.registerChecker<MIGChecker>();
+// }
 
-bool ento::shouldRegisterMIGChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterMIGChecker(const CheckerManager &mgr) {
+//   return true;
+// }

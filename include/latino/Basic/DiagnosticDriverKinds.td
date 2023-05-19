@@ -145,7 +145,7 @@ def err_drv_compilationdatabase : Error<
 def err_drv_command_signalled : Error<
   "%0 command failed due to signal (use -v to see invocation)">;
 def err_drv_force_crash : Error<
-  "failing because %select{environment variable 'FORCE_CLANG_DIAGNOSTICS_CRASH' is set|'-gen-reproducer' is used}0">;
+  "failing because %select{environment variable 'FORCE_LATINO_DIAGNOSTICS_CRASH' is set|'-gen-reproducer' is used}0">;
 def err_drv_invalid_mfloat_abi : Error<
   "invalid float ABI '%0'">;
 def err_drv_invalid_mtp : Error<

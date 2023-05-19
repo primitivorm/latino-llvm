@@ -2033,8 +2033,8 @@ static InputKind ParseFrontendArgs(FrontendOptions &Opts, ArgList &Args,
                 .Case("cuda", Language::CUDA)
                 .Case("hip", Language::HIP)
                 .Case("c++", Language::CXX)
-                .Case("objective-c", Language::ObjC)
-                .Case("objective-c++", Language::ObjCXX)
+                // .Case("objective-c", Language::ObjC)
+                // .Case("objective-c++", Language::ObjCXX)
                 .Case("renderscript", Language::RenderScript)
                 .Default(Language::Unknown);
 
@@ -2042,8 +2042,8 @@ static InputKind ParseFrontendArgs(FrontendOptions &Opts, ArgList &Args,
     // "objective-c[++]-cpp-output".
     if (DashX.isUnknown() && Preprocessed && !IsHeaderFile && !ModuleMap)
       DashX = llvm::StringSwitch<InputKind>(XValue)
-                  .Case("objc", Language::ObjC)
-                  .Case("objc++", Language::ObjCXX)
+                  // .Case("objc", Language::ObjC)
+                  // .Case("objc++", Language::ObjCXX)
                   .Default(Language::Unknown);
 
     // Some special cases cannot be combined with suffixes.
@@ -2103,7 +2103,7 @@ std::string CompilerInvocation::GetResourcesPath(const char *Argv0,
                                                  void *MainAddr) {
   std::string ClangExecutable =
       llvm::sys::fs::getMainExecutable(Argv0, MainAddr);
-  return Driver::GetResourcesPath(ClangExecutable, LATINO_RESOURCE_DIR);
+  return Driver::GetResourcesPath(ClangExecutable, CLANG_RESOURCE_DIR);
 }
 
 static void ParseHeaderSearchArgs(HeaderSearchOptions &Opts, ArgList &Args,
@@ -2264,9 +2264,9 @@ void CompilerInvocation::setLangDefaults(LangOptions &Opts, InputKind IK,
   // simultaneously active?
   if (IK.getLanguage() == Language::Asm) {
     Opts.AsmPreprocessor = 1;
-  } else if (IK.isObjectiveC()) {
+  } /* else if (IK.isObjectiveC()) {
     Opts.ObjC = 1;
-  }
+  }*/
 
   if (LangStd == LangStandard::lang_unspecified) {
     // Based on the base language, pick one.
@@ -2292,15 +2292,15 @@ void CompilerInvocation::setLangDefaults(LangOptions &Opts, InputKind IK,
         LangStd = LangStandard::lang_gnu17;
 #endif
       break;
-    case Language::ObjC:
-#if defined(CLANG_DEFAULT_STD_C)
-      LangStd = CLANG_DEFAULT_STD_C;
-#else
-      LangStd = LangStandard::lang_gnu11;
-#endif
-      break;
+//     case Language::ObjC:
+// #if defined(CLANG_DEFAULT_STD_C)
+//       LangStd = CLANG_DEFAULT_STD_C;
+// #else
+//       LangStd = LangStandard::lang_gnu11;
+// #endif
+//       break;
     case Language::CXX:
-    case Language::ObjCXX:
+    // case Language::ObjCXX:
 #if defined(CLANG_DEFAULT_STD_CXX)
       LangStd = CLANG_DEFAULT_STD_CXX;
 #else
@@ -2427,7 +2427,7 @@ static bool IsInputCompatibleWithStandard(InputKind IK,
     llvm_unreachable("should not parse language flags for this input");
 
   case Language::C:
-  case Language::ObjC:
+  // case Language::ObjC:
   case Language::RenderScript:
     return S.getLanguage() == Language::C;
 
@@ -2435,7 +2435,7 @@ static bool IsInputCompatibleWithStandard(InputKind IK,
     return S.getLanguage() == Language::OpenCL;
 
   case Language::CXX:
-  case Language::ObjCXX:
+  // case Language::ObjCXX:
     return S.getLanguage() == Language::CXX;
 
   case Language::CUDA:
@@ -2461,12 +2461,12 @@ static const StringRef GetInputKindName(InputKind IK) {
   switch (IK.getLanguage()) {
   case Language::C:
     return "C";
-  case Language::ObjC:
-    return "Objective-C";
+  // case Language::ObjC:
+  //   return "Objective-C";
   case Language::CXX:
     return "C++";
-  case Language::ObjCXX:
-    return "Objective-C++";
+  // case Language::ObjCXX:
+  //   return "Objective-C++";
   case Language::OpenCL:
     return "OpenCL";
   case Language::CUDA:
@@ -3143,17 +3143,17 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
   //   Opts.Exceptions = 0;
   //   Opts.CXXExceptions = 0;
   // }
-  // if (Opts.OpenMPIsDevice && T.isNVPTX()) {
-  //   Opts.OpenMPCUDANumSMs =
-  //       getLastArgIntValue(Args, options::OPT_fopenmp_cuda_number_of_sm_EQ,
-  //                          Opts.OpenMPCUDANumSMs, Diags);
-  //   Opts.OpenMPCUDABlocksPerSM =
-  //       getLastArgIntValue(Args, options::OPT_fopenmp_cuda_blocks_per_sm_EQ,
-  //                          Opts.OpenMPCUDABlocksPerSM, Diags);
-  //   Opts.OpenMPCUDAReductionBufNum = getLastArgIntValue(
-  //       Args, options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ,
-  //       Opts.OpenMPCUDAReductionBufNum, Diags);
-  // }
+  if (Opts.OpenMPIsDevice && T.isNVPTX()) {
+    Opts.OpenMPCUDANumSMs =
+        getLastArgIntValue(Args, options::OPT_fopenmp_cuda_number_of_sm_EQ,
+                           Opts.OpenMPCUDANumSMs, Diags);
+    Opts.OpenMPCUDABlocksPerSM =
+        getLastArgIntValue(Args, options::OPT_fopenmp_cuda_blocks_per_sm_EQ,
+                           Opts.OpenMPCUDABlocksPerSM, Diags);
+    Opts.OpenMPCUDAReductionBufNum = getLastArgIntValue(
+        Args, options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ,
+        Opts.OpenMPCUDAReductionBufNum, Diags);
+  }
 
   // Prevent auto-widening the representation of loop counters during an
   // OpenMP collapse clause.
@@ -3192,19 +3192,19 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
   // }
 
   // Set CUDA mode for OpenMP target NVPTX/AMDGCN if specified in options
-  // Opts.OpenMPCUDAMode = Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
-  //                       Args.hasArg(options::OPT_fopenmp_cuda_mode);
+  Opts.OpenMPCUDAMode = Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
+                        Args.hasArg(options::OPT_fopenmp_cuda_mode);
 
   // Set CUDA support for parallel execution of target regions for OpenMP target
   // NVPTX/AMDGCN if specified in options.
-  // Opts.OpenMPCUDATargetParallel =
-  //     Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
-  //     Args.hasArg(options::OPT_fopenmp_cuda_parallel_target_regions);
+  Opts.OpenMPCUDATargetParallel =
+      Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
+      Args.hasArg(options::OPT_fopenmp_cuda_parallel_target_regions);
 
   // Set CUDA mode for OpenMP target NVPTX/AMDGCN if specified in options
-  // Opts.OpenMPCUDAForceFullRuntime =
-  //     Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
-  //     Args.hasArg(options::OPT_fopenmp_cuda_force_full_runtime);
+  Opts.OpenMPCUDAForceFullRuntime =
+      Opts.OpenMPIsDevice && (T.isNVPTX() || T.isAMDGCN()) &&
+      Args.hasArg(options::OPT_fopenmp_cuda_force_full_runtime);
 
   // Record whether the __DEPRECATED define was requested.
   Opts.Deprecated = Args.hasFlag(OPT_fdeprecated_macro,

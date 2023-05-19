@@ -548,7 +548,7 @@ std::string ToolChain::GetProgramPath(const char *Name) const {
 
 std::string ToolChain::GetLinkerPath() const {
   const Arg* A = Args.getLastArg(options::OPT_fuse_ld_EQ);
-  StringRef UseLinker = A ? A->getValue() : LATINO_DEFAULT_LINKER;
+  StringRef UseLinker = A ? A->getValue() : CLANG_DEFAULT_LINKER;
 
   if (llvm::sys::path::is_absolute(UseLinker)) {
     // If we're passed what looks like an absolute path, don't attempt to
@@ -794,9 +794,9 @@ void ToolChain::addProfileRTLibs(const llvm::opt::ArgList &Args,
 ToolChain::RuntimeLibType ToolChain::GetRuntimeLibType(
     const ArgList &Args) const {
   const Arg* A = Args.getLastArg(options::OPT_rtlib_EQ);
-  StringRef LibName = A ? A->getValue() : LATINO_DEFAULT_RTLIB;
+  StringRef LibName = A ? A->getValue() : CLANG_DEFAULT_RTLIB;
 
-  // Only use "platform" in tests to override LATINO_DEFAULT_RTLIB!
+  // Only use "platform" in tests to override CLANG_DEFAULT_RTLIB!
   if (LibName == "compiler-rt")
     return ToolChain::RLT_CompilerRT;
   else if (LibName == "libgcc")
@@ -813,7 +813,7 @@ ToolChain::RuntimeLibType ToolChain::GetRuntimeLibType(
 ToolChain::UnwindLibType ToolChain::GetUnwindLibType(
     const ArgList &Args) const {
   const Arg *A = Args.getLastArg(options::OPT_unwindlib_EQ);
-  StringRef LibName = A ? A->getValue() : LATINO_DEFAULT_UNWINDLIB;
+  StringRef LibName = A ? A->getValue() : CLANG_DEFAULT_UNWINDLIB;
 
   if (LibName == "none")
     return ToolChain::UNW_None;
@@ -839,9 +839,9 @@ ToolChain::UnwindLibType ToolChain::GetUnwindLibType(
 
 ToolChain::CXXStdlibType ToolChain::GetCXXStdlibType(const ArgList &Args) const{
   const Arg *A = Args.getLastArg(options::OPT_stdlib_EQ);
-  StringRef LibName = A ? A->getValue() : LATINO_DEFAULT_CXX_STDLIB;
+  StringRef LibName = A ? A->getValue() : CLANG_DEFAULT_CXX_STDLIB;
 
-  // Only use "platform" in tests to override LATINO_DEFAULT_CXX_STDLIB!
+  // Only use "platform" in tests to override CLANG_DEFAULT_CXX_STDLIB!
   if (LibName == "libc++")
     return ToolChain::CST_Libcxx;
   else if (LibName == "libstdc++")

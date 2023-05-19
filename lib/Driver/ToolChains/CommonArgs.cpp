@@ -409,7 +409,7 @@ void tools::addLTOOptions(const ToolChain &ToolChain, const ArgList &Args,
 
     SmallString<1024> Plugin;
     llvm::sys::path::native(
-        Twine(D.Dir) + "/../lib" LATINO_LIBDIR_SUFFIX "/LLVMgold" + Suffix,
+        Twine(D.Dir) + "/../lib" CLANG_LIBDIR_SUFFIX "/LLVMgold" + Suffix,
         Plugin);
     CmdArgs.push_back(Args.MakeArgString(Plugin));
   }
@@ -890,7 +890,7 @@ void tools::SplitDebugInfo(const ToolChain &TC, Compilation &C, const Tool &T,
   ExtractArgs.push_back(OutFile);
 
   const char *Exec =
-      Args.MakeArgString(TC.GetProgramPath(LATINO_DEFAULT_OBJCOPY));
+      Args.MakeArgString(TC.GetProgramPath(CLANG_DEFAULT_OBJCOPY));
   InputInfo II(types::TY_Object, Output.getFilename(), Output.getFilename());
 
   // First extract the dwo sections.

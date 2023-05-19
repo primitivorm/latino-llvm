@@ -69,7 +69,7 @@ NVPTXTargetInfo::NVPTXTargetInfo(const llvm::Triple &Triple,
   // Define available target features
   // These must be defined in sorted order!
   NoAsmVariants = true;
-  GPU = CudaArch::SM_20;
+  // GPU = CudaArch::SM_20;
 
   if (TargetPointerWidth == 32)
     resetDataLayout("e-p:32:32-i64:64-i128:128-v16:16-v32:32-n16:32:64");

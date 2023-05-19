@@ -9,7 +9,7 @@
 #ifndef LLVM_LATINO_TEST_TESTUTILS_H
 #define LLVM_LATINO_TEST_TESTUTILS_H
 
-#include "clang-c/Index.h"
+#include "latino-c/Index.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/Path.h"

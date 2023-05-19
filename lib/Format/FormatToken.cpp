@@ -41,7 +41,7 @@ bool FormatToken::isSimpleTypeSpecifier() const {
   case tok::kw_short:
   case tok::kw_long:
   // case tok::kw___int64:
-  // case tok::kw___int128:
+  case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw_void:

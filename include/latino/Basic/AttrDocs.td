@@ -1199,83 +1199,83 @@ implementation of an override in a subclass does not call super.  For example:
   }];
 }
 
-def ObjCRuntimeNameDocs : Documentation {
-    let Category = DocCatDecl;
-    let Content = [{
-By default, the Objective-C interface or protocol identifier is used
-in the metadata name for that object. The ``objc_runtime_name``
-attribute allows annotated interfaces or protocols to use the
-specified string argument in the object's metadata name instead of the
-default name.
+// def ObjCRuntimeNameDocs : Documentation {
+//     let Category = DocCatDecl;
+//     let Content = [{
+// By default, the Objective-C interface or protocol identifier is used
+// in the metadata name for that object. The ``objc_runtime_name``
+// attribute allows annotated interfaces or protocols to use the
+// specified string argument in the object's metadata name instead of the
+// default name.
 
-**Usage**: ``__attribute__((objc_runtime_name("MyLocalName")))``.  This attribute
-can only be placed before an @protocol or @interface declaration:
+// **Usage**: ``__attribute__((objc_runtime_name("MyLocalName")))``.  This attribute
+// can only be placed before an @protocol or @interface declaration:
 
-.. code-block:: objc
+// .. code-block:: objc
 
-  __attribute__((objc_runtime_name("MyLocalName")))
-  @interface Message
-  @end
+//   __attribute__((objc_runtime_name("MyLocalName")))
+//   @interface Message
+//   @end
 
-    }];
-}
+//     }];
+// }
 
-def ObjCRuntimeVisibleDocs : Documentation {
-    let Category = DocCatDecl;
-    let Content = [{
-This attribute specifies that the Objective-C class to which it applies is
-visible to the Objective-C runtime but not to the linker. Classes annotated
-with this attribute cannot be subclassed and cannot have categories defined for
-them.
-    }];
-}
+// def ObjCRuntimeVisibleDocs : Documentation {
+//     let Category = DocCatDecl;
+//     let Content = [{
+// This attribute specifies that the Objective-C class to which it applies is
+// visible to the Objective-C runtime but not to the linker. Classes annotated
+// with this attribute cannot be subclassed and cannot have categories defined for
+// them.
+//     }];
+// }
 
-def ObjCClassStubDocs : Documentation {
-    let Category = DocCatType;
-    let Content = [{
-This attribute specifies that the Objective-C class to which it applies is
-instantiated at runtime.
+// def ObjCClassStubDocs : Documentation {
+//     let Category = DocCatType;
+//     let Content = [{
+// This attribute specifies that the Objective-C class to which it applies is
+// instantiated at runtime.
 
-Unlike ``__attribute__((objc_runtime_visible))``, a class having this attribute
-still has a "class stub" that is visible to the linker. This allows categories
-to be defined. Static message sends with the class as a receiver use a special
-access pattern to ensure the class is lazily instantiated from the class stub.
+// Unlike ``__attribute__((objc_runtime_visible))``, a class having this attribute
+// still has a "class stub" that is visible to the linker. This allows categories
+// to be defined. Static message sends with the class as a receiver use a special
+// access pattern to ensure the class is lazily instantiated from the class stub.
 
-Classes annotated with this attribute cannot be subclassed and cannot have
-implementations defined for them. This attribute is intended for use in
-Swift-generated headers for classes defined in Swift.
+// Classes annotated with this attribute cannot be subclassed and cannot have
+// implementations defined for them. This attribute is intended for use in
+// Swift-generated headers for classes defined in Swift.
 
-Adding or removing this attribute to a class is an ABI-breaking change.
-    }];
-}
+// Adding or removing this attribute to a class is an ABI-breaking change.
+//     }];
+// }
 
-def ObjCBoxableDocs : Documentation {
-    let Category = DocCatDecl;
-    let Content = [{
-Structs and unions marked with the ``objc_boxable`` attribute can be used
-with the Objective-C boxed expression syntax, ``@(...)``.
+// def ObjCBoxableDocs : Documentation {
+//     let Category = DocCatDecl;
+//     let Content = [{
+// Structs and unions marked with the ``objc_boxable`` attribute can be used
+// with the Objective-C boxed expression syntax, ``@(...)``.
 
-**Usage**: ``__attribute__((objc_boxable))``. This attribute
-can only be placed on a declaration of a trivially-copyable struct or union:
+// **Usage**: ``__attribute__((objc_boxable))``. This attribute
+// can only be placed on a declaration of a trivially-copyable struct or union:
 
-.. code-block:: objc
+// .. code-block:: objc
 
-  struct __attribute__((objc_boxable)) some_struct {
-    int i;
-  };
-  union __attribute__((objc_boxable)) some_union {
-    int i;
-    float f;
-  };
-  typedef struct __attribute__((objc_boxable)) _some_struct some_struct;
+//   struct __attribute__((objc_boxable)) some_struct {
+//     int i;
+//   };
+//   union __attribute__((objc_boxable)) some_union {
+//     int i;
+//     float f;
+//   };
+//   typedef struct __attribute__((objc_boxable)) _some_struct some_struct;
 
-  // ...
+//   // ...
 
-  some_struct ss;
-  NSValue *boxed = @(ss);
+//   some_struct ss;
+//   NSValue *boxed = @(ss);
 
-    }];
-}
+//     }];
+// }
 
 def AvailabilityDocs : Documentation {
   let Category = DocCatFunction;

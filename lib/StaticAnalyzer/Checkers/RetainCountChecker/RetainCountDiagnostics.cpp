@@ -74,7 +74,7 @@ static bool isNumericLiteralExpression(const Expr *E) {
   return isa<IntegerLiteral>(E) ||
          isa<CharacterLiteral>(E) ||
          isa<FloatingLiteral>(E) ||
-         isa<ObjCBoolLiteralExpr>(E) ||
+        //  isa<ObjCBoolLiteralExpr>(E) ||
          isa<CXXBoolLiteralExpr>(E);
 }
 

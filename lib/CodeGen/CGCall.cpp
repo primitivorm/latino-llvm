@@ -2774,18 +2774,18 @@ static llvm::Value *tryEmitFusedAutoreleaseOfResult(CodeGenFunction &CGF,
     // for that call.  If we can't find it, we can't do this
     // optimization.  But it should always be the immediately previous
     // instruction, unless we needed bitcasts around the call.
-    if (CGF.CGM.getObjCEntrypoints().retainAutoreleasedReturnValueMarker) {
-      llvm::Instruction *prev = call->getPrevNode();
-      assert(prev);
-      if (isa<llvm::BitCastInst>(prev)) {
-        prev = prev->getPrevNode();
-        assert(prev);
-      }
-      assert(isa<llvm::CallInst>(prev));
-      assert(cast<llvm::CallInst>(prev)->getCalledOperand() ==
-             CGF.CGM.getObjCEntrypoints().retainAutoreleasedReturnValueMarker);
-      InstsToKill.push_back(prev);
-    }
+    // if (CGF.CGM.getObjCEntrypoints().retainAutoreleasedReturnValueMarker) {
+    //   llvm::Instruction *prev = call->getPrevNode();
+    //   assert(prev);
+    //   if (isa<llvm::BitCastInst>(prev)) {
+    //     prev = prev->getPrevNode();
+    //     assert(prev);
+    //   }
+    //   assert(isa<llvm::CallInst>(prev));
+    //   assert(cast<llvm::CallInst>(prev)->getCalledOperand() ==
+    //          CGF.CGM.getObjCEntrypoints().retainAutoreleasedReturnValueMarker);
+    //   InstsToKill.push_back(prev);
+    // }
   // } else {
   //   return nullptr;
   // }

@@ -4046,12 +4046,12 @@ void ASTWriter::WriteFPPragmaOptions(const FPOptionsOverride &Opts) {
 //   Stream.EmitRecord(OPENCL_EXTENSION_DECLS, Record);
 // }
 
-// void ASTWriter::WriteCUDAPragmas(Sema &SemaRef) {
-//   if (SemaRef.ForceCUDAHostDeviceDepth > 0) {
-//     RecordData::value_type Record[] = {SemaRef.ForceCUDAHostDeviceDepth};
-//     Stream.EmitRecord(CUDA_PRAGMA_FORCE_HOST_DEVICE_DEPTH, Record);
-//   }
-// }
+void ASTWriter::WriteCUDAPragmas(Sema &SemaRef) {
+  if (SemaRef.ForceCUDAHostDeviceDepth > 0) {
+    RecordData::value_type Record[] = {SemaRef.ForceCUDAHostDeviceDepth};
+    Stream.EmitRecord(CUDA_PRAGMA_FORCE_HOST_DEVICE_DEPTH, Record);
+  }
+}
 
 // void ASTWriter::WriteObjCCategories() {
 //   SmallVector<ObjCCategoriesInfo, 2> CategoriesMap;
@@ -4791,7 +4791,7 @@ ASTFileSignature ASTWriter::WriteASTCore(Sema &SemaRef, StringRef isysroot,
   WriteFPPragmaOptions(SemaRef.CurFPFeatureOverrides());
   // WriteOpenCLExtensions(SemaRef);
   // WriteOpenCLExtensionTypes(SemaRef);
-  // WriteCUDAPragmas(SemaRef);
+  WriteCUDAPragmas(SemaRef);
 
   // If we're emitting a module, write out the submodule information.
   if (WritingModule)

@@ -67,7 +67,7 @@ add_latino_library(latinoStaticAnalyzerCheckers
   MPI-Checker/MPIBugReporter.cpp
   MPI-Checker/MPIChecker.cpp
   MPI-Checker/MPIFunctionClassifier.cpp
-  NSAutoreleasePoolChecker.cpp
+  # NSAutoreleasePoolChecker.cpp
   NSErrorChecker.cpp
   NoReturnFunctionChecker.cpp
   NonNullParamChecker.cpp

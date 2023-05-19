@@ -31,7 +31,7 @@ using namespace ento;
 namespace {
 
 class CallAndMessageChecker
-    : public Checker<check::PreObjCMessage, check::ObjCMessageNil,
+    : public Checker</*check::PreObjCMessage, check::ObjCMessageNil,*/
                      check::PreCall> {
   mutable std::unique_ptr<BugType> BT_call_null;
   mutable std::unique_ptr<BugType> BT_call_undef;
@@ -113,7 +113,7 @@ private:
                           std::unique_ptr<BugType> &BT,
                           const ParmVarDecl *ParamDecl) const;
 
-  // static void emitBadCall(BugType *BT, CheckerContext &C, const Expr *BadE);
+  static void emitBadCall(BugType *BT, CheckerContext &C, const Expr *BadE);
   // void emitNilReceiverBug(CheckerContext &C, const ObjCMethodCall &msg,
   //                         ExplodedNode *N) const;
 

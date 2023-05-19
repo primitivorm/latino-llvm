@@ -335,19 +335,19 @@ void RetainCountChecker::checkPostStmt(const BlockExpr *BE,
 //   C.addTransition(State);
 // }
 
-// static bool isReceiverUnconsumedSelf(const CallEvent &Call) {
-//   if (const auto *MC = dyn_cast<ObjCMethodCall>(&Call)) {
+static bool isReceiverUnconsumedSelf(const CallEvent &Call) {
+  // if (const auto *MC = dyn_cast<ObjCMethodCall>(&Call)) {
 
-//     // Check if the message is not consumed, we know it will not be used in
-//     // an assignment, ex: "self = [super init]".
-//     return MC->getMethodFamily() == OMF_init && MC->isReceiverSelfOrSuper() &&
-//            !Call.getLocationContext()
-//                 ->getAnalysisDeclContext()
-//                 ->getParentMap()
-//                 .isConsumedExpr(Call.getOriginExpr());
-//   }
-//   return false;
-// }
+  //   // Check if the message is not consumed, we know it will not be used in
+  //   // an assignment, ex: "self = [super init]".
+  //   return MC->getMethodFamily() == OMF_init && MC->isReceiverSelfOrSuper() &&
+  //          !Call.getLocationContext()
+  //               ->getAnalysisDeclContext()
+  //               ->getParentMap()
+  //               .isConsumedExpr(Call.getOriginExpr());
+  // }
+  return false;
+}
 
 const static RetainSummary *getSummary(RetainSummaryManager &Summaries,
                                        const CallEvent &Call,
@@ -1477,70 +1477,70 @@ void RetainCountChecker::printState(raw_ostream &Out, ProgramStateRef State,
 std::unique_ptr<CheckerProgramPointTag> RetainCountChecker::DeallocSentTag;
 std::unique_ptr<CheckerProgramPointTag> RetainCountChecker::CastFailTag;
 
-void ento::registerRetainCountBase(CheckerManager &Mgr) {
-  auto *Chk = Mgr.registerChecker<RetainCountChecker>();
-  Chk->DeallocSentTag =
-      std::make_unique<CheckerProgramPointTag>(Chk, "DeallocSent");
-  Chk->CastFailTag =
-      std::make_unique<CheckerProgramPointTag>(Chk, "DynamicCastFail");
-}
+// void ento::registerRetainCountBase(CheckerManager &Mgr) {
+//   auto *Chk = Mgr.registerChecker<RetainCountChecker>();
+//   Chk->DeallocSentTag =
+//       std::make_unique<CheckerProgramPointTag>(Chk, "DeallocSent");
+//   Chk->CastFailTag =
+//       std::make_unique<CheckerProgramPointTag>(Chk, "DynamicCastFail");
+// }
 
-bool ento::shouldRegisterRetainCountBase(const CheckerManager &mgr) {
-  return true;
-}
-void ento::registerRetainCountChecker(CheckerManager &Mgr) {
-  auto *Chk = Mgr.getChecker<RetainCountChecker>();
-  Chk->TrackObjCAndCFObjects = true;
-  Chk->TrackNSCFStartParam = Mgr.getAnalyzerOptions().getCheckerBooleanOption(
-      Mgr.getCurrentCheckerName(), "TrackNSCFStartParam");
+// bool ento::shouldRegisterRetainCountBase(const CheckerManager &mgr) {
+//   return true;
+// }
+// void ento::registerRetainCountChecker(CheckerManager &Mgr) {
+//   auto *Chk = Mgr.getChecker<RetainCountChecker>();
+//   // Chk->TrackObjCAndCFObjects = true;
+//   Chk->TrackNSCFStartParam = Mgr.getAnalyzerOptions().getCheckerBooleanOption(
+//       Mgr.getCurrentCheckerName(), "TrackNSCFStartParam");
 
-#define INIT_BUGTYPE(KIND)                                                     \
-  Chk->KIND = std::make_unique<RefCountBug>(Mgr.getCurrentCheckerName(),       \
-                                            RefCountBug::KIND);
-  // TODO: Ideally, we should have a checker for each of these bug types.
-  INIT_BUGTYPE(UseAfterRelease)
-  INIT_BUGTYPE(ReleaseNotOwned)
-  INIT_BUGTYPE(DeallocNotOwned)
-  INIT_BUGTYPE(FreeNotOwned)
-  INIT_BUGTYPE(OverAutorelease)
-  INIT_BUGTYPE(ReturnNotOwnedForOwned)
-  INIT_BUGTYPE(LeakWithinFunction)
-  INIT_BUGTYPE(LeakAtReturn)
-#undef INIT_BUGTYPE
-}
+// #define INIT_BUGTYPE(KIND)                                                     \
+//   Chk->KIND = std::make_unique<RefCountBug>(Mgr.getCurrentCheckerName(),       \
+//                                             RefCountBug::KIND);
+//   // TODO: Ideally, we should have a checker for each of these bug types.
+//   INIT_BUGTYPE(UseAfterRelease)
+//   INIT_BUGTYPE(ReleaseNotOwned)
+//   INIT_BUGTYPE(DeallocNotOwned)
+//   INIT_BUGTYPE(FreeNotOwned)
+//   INIT_BUGTYPE(OverAutorelease)
+//   INIT_BUGTYPE(ReturnNotOwnedForOwned)
+//   INIT_BUGTYPE(LeakWithinFunction)
+//   INIT_BUGTYPE(LeakAtReturn)
+// #undef INIT_BUGTYPE
+// }
 
-bool ento::shouldRegisterRetainCountChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterRetainCountChecker(const CheckerManager &mgr) {
+//   return true;
+// }
 
-void ento::registerOSObjectRetainCountChecker(CheckerManager &Mgr) {
-  auto *Chk = Mgr.getChecker<RetainCountChecker>();
-  Chk->TrackOSObjects = true;
+// void ento::registerOSObjectRetainCountChecker(CheckerManager &Mgr) {
+//   auto *Chk = Mgr.getChecker<RetainCountChecker>();
+//   Chk->TrackOSObjects = true;
 
-  // FIXME: We want bug reports to always have the same checker name associated
-  // with them, yet here, if RetainCountChecker is disabled but
-  // OSObjectRetainCountChecker is enabled, the checker names will be different.
-  // This hack will make it so that the checker name depends on which checker is
-  // enabled rather than on the registration order.
-  // For the most part, we want **non-hidden checkers** to be associated with
-  // diagnostics, and **hidden checker options** with the fine-tuning of
-  // modeling. Following this logic, OSObjectRetainCountChecker should be the
-  // latter, but we can't just remove it for backward compatibility reasons.
-#define LAZY_INIT_BUGTYPE(KIND)                                                \
-  if (!Chk->KIND)                                                              \
-    Chk->KIND = std::make_unique<RefCountBug>(Mgr.getCurrentCheckerName(),     \
-                                              RefCountBug::KIND);
-  LAZY_INIT_BUGTYPE(UseAfterRelease)
-  LAZY_INIT_BUGTYPE(ReleaseNotOwned)
-  LAZY_INIT_BUGTYPE(DeallocNotOwned)
-  LAZY_INIT_BUGTYPE(FreeNotOwned)
-  LAZY_INIT_BUGTYPE(OverAutorelease)
-  LAZY_INIT_BUGTYPE(ReturnNotOwnedForOwned)
-  LAZY_INIT_BUGTYPE(LeakWithinFunction)
-  LAZY_INIT_BUGTYPE(LeakAtReturn)
-#undef LAZY_INIT_BUGTYPE
-}
+//   // FIXME: We want bug reports to always have the same checker name associated
+//   // with them, yet here, if RetainCountChecker is disabled but
+//   // OSObjectRetainCountChecker is enabled, the checker names will be different.
+//   // This hack will make it so that the checker name depends on which checker is
+//   // enabled rather than on the registration order.
+//   // For the most part, we want **non-hidden checkers** to be associated with
+//   // diagnostics, and **hidden checker options** with the fine-tuning of
+//   // modeling. Following this logic, OSObjectRetainCountChecker should be the
+//   // latter, but we can't just remove it for backward compatibility reasons.
+// #define LAZY_INIT_BUGTYPE(KIND)                                                \
+//   if (!Chk->KIND)                                                              \
+//     Chk->KIND = std::make_unique<RefCountBug>(Mgr.getCurrentCheckerName(),     \
+//                                               RefCountBug::KIND);
+//   LAZY_INIT_BUGTYPE(UseAfterRelease)
+//   LAZY_INIT_BUGTYPE(ReleaseNotOwned)
+//   LAZY_INIT_BUGTYPE(DeallocNotOwned)
+//   LAZY_INIT_BUGTYPE(FreeNotOwned)
+//   LAZY_INIT_BUGTYPE(OverAutorelease)
+//   LAZY_INIT_BUGTYPE(ReturnNotOwnedForOwned)
+//   LAZY_INIT_BUGTYPE(LeakWithinFunction)
+//   LAZY_INIT_BUGTYPE(LeakAtReturn)
+// #undef LAZY_INIT_BUGTYPE
+// }
 
-bool ento::shouldRegisterOSObjectRetainCountChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterOSObjectRetainCountChecker(const CheckerManager &mgr) {
+//   return true;
+// }

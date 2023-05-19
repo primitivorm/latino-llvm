@@ -13,7 +13,7 @@
 #ifndef LLVM_LATINO_SEMA_CODECOMPLETECONSUMER_H
 #define LLVM_LATINO_SEMA_CODECOMPLETECONSUMER_H
 
-#include "clang-c/Index.h"
+#include "latino-c/Index.h"
 #include "latino/AST/Type.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Lex/MacroInfo.h"

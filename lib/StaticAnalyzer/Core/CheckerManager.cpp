@@ -34,8 +34,8 @@ using namespace ento;
 
 bool CheckerManager::hasPathSensitiveCheckers() const {
   return !StmtCheckers.empty()              ||
-         !PreObjCMessageCheckers.empty()    ||
-         !PostObjCMessageCheckers.empty()   ||
+        //  !PreObjCMessageCheckers.empty()    ||
+        //  !PostObjCMessageCheckers.empty()   ||
          !PreCallCheckers.empty()    ||
          !PostCallCheckers.empty()   ||
          !LocationCheckers.empty()          ||
@@ -802,17 +802,17 @@ void CheckerManager::_registerForPostStmt(CheckStmtFunc checkfn,
   StmtCheckers.push_back(info);
 }
 
-void CheckerManager::_registerForPreObjCMessage(CheckObjCMessageFunc checkfn) {
-  PreObjCMessageCheckers.push_back(checkfn);
-}
+// void CheckerManager::_registerForPreObjCMessage(CheckObjCMessageFunc checkfn) {
+//   PreObjCMessageCheckers.push_back(checkfn);
+// }
 
-void CheckerManager::_registerForObjCMessageNil(CheckObjCMessageFunc checkfn) {
-  ObjCMessageNilCheckers.push_back(checkfn);
-}
+// void CheckerManager::_registerForObjCMessageNil(CheckObjCMessageFunc checkfn) {
+//   ObjCMessageNilCheckers.push_back(checkfn);
+// }
 
-void CheckerManager::_registerForPostObjCMessage(CheckObjCMessageFunc checkfn) {
-  PostObjCMessageCheckers.push_back(checkfn);
-}
+// void CheckerManager::_registerForPostObjCMessage(CheckObjCMessageFunc checkfn) {
+//   PostObjCMessageCheckers.push_back(checkfn);
+// }
 
 void CheckerManager::_registerForPreCall(CheckCallFunc checkfn) {
   PreCallCheckers.push_back(checkfn);

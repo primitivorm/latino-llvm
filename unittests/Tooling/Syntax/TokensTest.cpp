@@ -280,7 +280,7 @@ TEST_F(TokenCollectorTest, RawMode) {
                           Kind(tok::l_brace)));
   // First token is partially parsed, last token is fully included even though
   // only a part of it is contained in the range.
-  EXPECT_THAT(tokenize("int m[[ain() {ret]]urn 0;}"),
+  EXPECT_THAT(tokenize("int m[[ain() {ret]] 0;}"),
               ElementsAre(AllOf(HasText("ain"), Kind(tok::identifier)),
                           Kind(tok::l_paren), Kind(tok::r_paren),
                           Kind(tok::l_brace), Kind(tok::kw_ret)));

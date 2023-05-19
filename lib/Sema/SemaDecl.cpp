@@ -129,7 +129,7 @@ bool Sema::isSimpleTypeSpecifier(tok::TokenKind Kind) const {
   case tok::kw_short:
   case tok::kw_long:
   // case tok::kw___int64:
-  // case tok::kw___int128:
+  case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   case tok::kw_void:
@@ -7085,17 +7085,17 @@ NamedDecl *Sema::ActOnVariableDeclarator(
            diag::err_thread_non_global)
         << DeclSpec::getSpecifierName(TSCS);
     else if (!Context.getTargetInfo().isTLSSupported()) {
-      // if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
-      //     getLangOpts().SYCLIsDevice) {
-      //   // Postpone error emission until we've collected attributes required to
-      //   // figure out whether it's a host or device variable and whether the
-      //   // error should be ignored.
-      //   EmitTLSUnsupportedError = true;
-      //   // We still need to mark the variable as TLS so it shows up in AST with
-      //   // proper storage class for other tools to use even if we're not going
-      //   // to emit any code for it.
-      //   NewVD->setTSCSpec(TSCS);
-      // } else
+      if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
+          getLangOpts().SYCLIsDevice) {
+        // Postpone error emission until we've collected attributes required to
+        // figure out whether it's a host or device variable and whether the
+        // error should be ignored.
+        EmitTLSUnsupportedError = true;
+        // We still need to mark the variable as TLS so it shows up in AST with
+        // proper storage class for other tools to use even if we're not going
+        // to emit any code for it.
+        NewVD->setTSCSpec(TSCS);
+      } else
         Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
              diag::err_thread_unsupported);
     } else
@@ -7188,26 +7188,26 @@ NamedDecl *Sema::ActOnVariableDeclarator(
   // Handle attributes prior to checking for duplicates in MergeVarDecl
   ProcessDeclAttributes(S, NewVD, D);
 
-  // if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
-  //     getLangOpts().SYCLIsDevice) {
-  //   if (EmitTLSUnsupportedError &&
-  //       ((getLangOpts().CUDA && DeclAttrsMatchCUDAMode(getLangOpts(), NewVD)) ||
-  //        (getLangOpts().OpenMPIsDevice &&
-  //         OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(NewVD))))
-  //     Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
-  //          diag::err_thread_unsupported);
+  if (getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
+      getLangOpts().SYCLIsDevice) {
+    if (EmitTLSUnsupportedError &&
+        ((getLangOpts().CUDA && DeclAttrsMatchCUDAMode(getLangOpts(), NewVD)) /*||
+         (getLangOpts().OpenMPIsDevice &&
+          OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(NewVD))*/))
+      Diag(D.getDeclSpec().getThreadStorageClassSpecLoc(),
+           diag::err_thread_unsupported);
 
-  //   if (EmitTLSUnsupportedError &&
-  //       (LangOpts.SYCLIsDevice || (LangOpts.OpenMP && LangOpts.OpenMPIsDevice)))
-  //     targetDiag(D.getIdentifierLoc(), diag::err_thread_unsupported);
-  //   // CUDA B.2.5: "__shared__ and __constant__ variables have implied static
-  //   // storage [duration]."
-  //   if (SC == SC_None && S->getFnParent() != nullptr &&
-  //       (NewVD->hasAttr<CUDASharedAttr>() ||
-  //        NewVD->hasAttr<CUDAConstantAttr>())) {
-  //     NewVD->setStorageClass(SC_Static);
-  //   }
-  // }
+    if (EmitTLSUnsupportedError &&
+        (LangOpts.SYCLIsDevice || (LangOpts.OpenMP && LangOpts.OpenMPIsDevice)))
+      targetDiag(D.getIdentifierLoc(), diag::err_thread_unsupported);
+    // CUDA B.2.5: "__shared__ and __constant__ variables have implied static
+    // storage [duration]."
+    if (SC == SC_None && S->getFnParent() != nullptr &&
+        (NewVD->hasAttr<CUDASharedAttr>() ||
+         NewVD->hasAttr<CUDAConstantAttr>())) {
+      NewVD->setStorageClass(SC_Static);
+    }
+  }
 
   // Ensure that dllimport globals without explicit storage class are treated as
   // extern. The storage class is set above using parsed attributes. Now we can
@@ -14528,12 +14528,12 @@ Decl *Sema::ActOnFinishFunctionBody(Decl *dcl, Stmt *Body,
     DiscardCleanupsInEvaluationContext();
   }
 
-  // if (LangOpts.OpenMP || LangOpts.CUDA || LangOpts.SYCLIsDevice) {
-  //   auto ES = getEmissionStatus(FD);
-  //   if (ES == Sema::FunctionEmissionStatus::Emitted ||
-  //       ES == Sema::FunctionEmissionStatus::Unknown)
-  //     DeclsToCheckForDeferredDiags.push_back(FD);
-  // }
+  if (LangOpts.OpenMP || LangOpts.CUDA || LangOpts.SYCLIsDevice) {
+    auto ES = getEmissionStatus(FD);
+    if (ES == Sema::FunctionEmissionStatus::Emitted ||
+        ES == Sema::FunctionEmissionStatus::Unknown)
+      DeclsToCheckForDeferredDiags.push_back(FD);
+  }
 
   return dcl;
 }
@@ -16187,15 +16187,15 @@ bool Sema::ActOnDuplicateDefinition(DeclSpec &DS, Decl *Prev,
   return true;
 }
 
-Decl *Sema::ActOnObjCContainerStartDefinition(Decl *IDecl) {
-  assert(isa<ObjCContainerDecl>(IDecl) &&
-         "ActOnObjCContainerStartDefinition - Not ObjCContainerDecl");
-  DeclContext *OCD = cast<DeclContext>(IDecl);
-  assert(OCD->getLexicalParent() == CurContext &&
-      "The next DeclContext should be lexically contained in the current one.");
-  CurContext = OCD;
-  return IDecl;
-}
+// Decl *Sema::ActOnObjCContainerStartDefinition(Decl *IDecl) {
+//   assert(isa<ObjCContainerDecl>(IDecl) &&
+//          "ActOnObjCContainerStartDefinition - Not ObjCContainerDecl");
+//   DeclContext *OCD = cast<DeclContext>(IDecl);
+//   assert(OCD->getLexicalParent() == CurContext &&
+//       "The next DeclContext should be lexically contained in the current one.");
+//   CurContext = OCD;
+//   return IDecl;
+// }
 
 void Sema::ActOnStartCXXMemberDeclarations(Scope *S, Decl *TagD,
                                            SourceLocation FinalLoc,
@@ -16263,21 +16263,21 @@ void Sema::ActOnTagFinishDefinition(Scope *S, Decl *TagD,
     Consumer.HandleTagDeclDefinition(Tag);
 }
 
-void Sema::ActOnObjCContainerFinishDefinition() {
-  // Exit this scope of this interface definition.
-  PopDeclContext();
-}
+// void Sema::ActOnObjCContainerFinishDefinition() {
+//   // Exit this scope of this interface definition.
+//   PopDeclContext();
+// }
 
-void Sema::ActOnObjCTemporaryExitContainerContext(DeclContext *DC) {
-  assert(DC == CurContext && "Mismatch of container contexts");
-  OriginalLexicalContext = DC;
-  ActOnObjCContainerFinishDefinition();
-}
+// void Sema::ActOnObjCTemporaryExitContainerContext(DeclContext *DC) {
+//   assert(DC == CurContext && "Mismatch of container contexts");
+//   OriginalLexicalContext = DC;
+//   ActOnObjCContainerFinishDefinition();
+// }
 
-void Sema::ActOnObjCReenterContainerContext(DeclContext *DC) {
-  ActOnObjCContainerStartDefinition(cast<Decl>(DC));
-  OriginalLexicalContext = nullptr;
-}
+// void Sema::ActOnObjCReenterContainerContext(DeclContext *DC) {
+//   ActOnObjCContainerStartDefinition(cast<Decl>(DC));
+//   OriginalLexicalContext = nullptr;
+// }
 
 void Sema::ActOnTagDefinitionError(Scope *S, Decl *TagD) {
   AdjustDeclIfTemplate(TagD);
@@ -18254,31 +18254,31 @@ Sema::FunctionEmissionStatus Sema::getEmissionStatus(FunctionDecl *FD,
       (OMPES == FunctionEmissionStatus::Emitted && !LangOpts.CUDA))
     return OMPES;
 
-  // if (LangOpts.CUDA) {
-  //   // When compiling for device, host functions are never emitted.  Similarly,
-  //   // when compiling for host, device and global functions are never emitted.
-  //   // (Technically, we do emit a host-side stub for global functions, but this
-  //   // doesn't count for our purposes here.)
-  //   Sema::CUDAFunctionTarget T = IdentifyCUDATarget(FD);
-  //   if (LangOpts.CUDAIsDevice && T == Sema::CFT_Host)
-  //     return FunctionEmissionStatus::CUDADiscarded;
-  //   if (!LangOpts.CUDAIsDevice &&
-  //       (T == Sema::CFT_Device || T == Sema::CFT_Global))
-  //     return FunctionEmissionStatus::CUDADiscarded;
+  if (LangOpts.CUDA) {
+    // When compiling for device, host functions are never emitted.  Similarly,
+    // when compiling for host, device and global functions are never emitted.
+    // (Technically, we do emit a host-side stub for global functions, but this
+    // doesn't count for our purposes here.)
+    Sema::CUDAFunctionTarget T = IdentifyCUDATarget(FD);
+    if (LangOpts.CUDAIsDevice && T == Sema::CFT_Host)
+      return FunctionEmissionStatus::CUDADiscarded;
+    if (!LangOpts.CUDAIsDevice &&
+        (T == Sema::CFT_Device || T == Sema::CFT_Global))
+      return FunctionEmissionStatus::CUDADiscarded;
 
-  //   // Check whether this function is externally visible -- if so, it's
-  //   // known-emitted.
-  //   //
-  //   // We have to check the GVA linkage of the function's *definition* -- if we
-  //   // only have a declaration, we don't know whether or not the function will
-  //   // be emitted, because (say) the definition could include "inline".
-  //   FunctionDecl *Def = FD->getDefinition();
+    // Check whether this function is externally visible -- if so, it's
+    // known-emitted.
+    //
+    // We have to check the GVA linkage of the function's *definition* -- if we
+    // only have a declaration, we don't know whether or not the function will
+    // be emitted, because (say) the definition could include "inline".
+    FunctionDecl *Def = FD->getDefinition();
 
-  //   if (Def &&
-  //       !isDiscardableGVALinkage(getASTContext().GetGVALinkageForFunction(Def))
-  //       && (!LangOpts.OpenMP || OMPES == FunctionEmissionStatus::Emitted))
-  //     return FunctionEmissionStatus::Emitted;
-  // }
+    if (Def &&
+        !isDiscardableGVALinkage(getASTContext().GetGVALinkageForFunction(Def))
+        && (!LangOpts.OpenMP || OMPES == FunctionEmissionStatus::Emitted))
+      return FunctionEmissionStatus::Emitted;
+  }
 
   // Otherwise, the function is known-emitted if it's in our set of
   // known-emitted functions.

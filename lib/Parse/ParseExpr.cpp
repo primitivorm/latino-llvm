@@ -419,8 +419,8 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
 
     // If we're potentially in a template-id, we may now be able to determine
     // whether we're actually in one or not.
-    if (OpToken.isOneOf(tok::comma, tok::greater, tok::greatergreater/*,
-                        tok::greatergreatergreater*/) &&
+    if (OpToken.isOneOf(tok::comma, tok::greater, tok::greatergreater,
+                        tok::greatergreatergreater) &&
         checkPotentialAngleBracketDelimiter(OpToken))
       return ExprError();
 
@@ -1523,7 +1523,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_int:
   case tok::kw_long:
   // case tok::kw___int64:
-  // case tok::kw___int128:
+  case tok::kw___int128:
   // case tok::kw__ExtInt:
   case tok::kw_signed:
   case tok::kw_unsigned:
@@ -1970,7 +1970,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
     }
 
     case tok::l_paren:         // p-e: p-e '(' argument-expression-list[opt] ')'
-    // case tok::lesslessless: 
+    case tok::lesslessless: 
     {  // p-e: p-e '<<<' argument-expression-list '>>>'
                                //   '(' argument-expression-list[opt] ')'
       tok::TokenKind OpKind = Tok.getKind();
@@ -1980,49 +1980,49 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
 
       BalancedDelimiterTracker PT(*this, tok::l_paren);
 
-      // if (OpKind == tok::lesslessless) {
-      //   ExprVector ExecConfigExprs;
-      //   CommaLocsTy ExecConfigCommaLocs;
-      //   SourceLocation OpenLoc = ConsumeToken();
+      if (OpKind == tok::lesslessless) {
+        ExprVector ExecConfigExprs;
+        CommaLocsTy ExecConfigCommaLocs;
+        SourceLocation OpenLoc = ConsumeToken();
 
-      //   if (ParseSimpleExpressionList(ExecConfigExprs, ExecConfigCommaLocs)) {
-      //     (void)Actions.CorrectDelayedTyposInExpr(LHS);
-      //     LHS = ExprError();
-      //   }
+        if (ParseSimpleExpressionList(ExecConfigExprs, ExecConfigCommaLocs)) {
+          (void)Actions.CorrectDelayedTyposInExpr(LHS);
+          LHS = ExprError();
+        }
 
-      //   SourceLocation CloseLoc;
-      //   if (TryConsumeToken(tok::greatergreatergreater, CloseLoc)) {
-      //   } else if (LHS.isInvalid()) {
-      //     SkipUntil(tok::greatergreatergreater, StopAtSemi);
-      //   } else {
-      //     // There was an error closing the brackets
-      //     Diag(Tok, diag::err_expected) << tok::greatergreatergreater;
-      //     Diag(OpenLoc, diag::note_matching) << tok::lesslessless;
-      //     SkipUntil(tok::greatergreatergreater, StopAtSemi);
-      //     LHS = ExprError();
-      //   }
+        SourceLocation CloseLoc;
+        if (TryConsumeToken(tok::greatergreatergreater, CloseLoc)) {
+        } else if (LHS.isInvalid()) {
+          SkipUntil(tok::greatergreatergreater, StopAtSemi);
+        } else {
+          // There was an error closing the brackets
+          Diag(Tok, diag::err_expected) << tok::greatergreatergreater;
+          Diag(OpenLoc, diag::note_matching) << tok::lesslessless;
+          SkipUntil(tok::greatergreatergreater, StopAtSemi);
+          LHS = ExprError();
+        }
 
-      //   if (!LHS.isInvalid()) {
-      //     if (ExpectAndConsume(tok::l_paren))
-      //       LHS = ExprError();
-      //     else
-      //       Loc = PrevTokLocation;
-      //   }
+        if (!LHS.isInvalid()) {
+          if (ExpectAndConsume(tok::l_paren))
+            LHS = ExprError();
+          else
+            Loc = PrevTokLocation;
+        }
 
-      //   if (!LHS.isInvalid()) {
-      //     ExprResult ECResult = Actions.ActOnCUDAExecConfigExpr(getCurScope(),
-      //                               OpenLoc,
-      //                               ExecConfigExprs,
-      //                               CloseLoc);
-      //     if (ECResult.isInvalid())
-      //       LHS = ExprError();
-      //     else
-      //       ExecConfig = ECResult.get();
-      //   }
-      // } else {
+        if (!LHS.isInvalid()) {
+          ExprResult ECResult = Actions.ActOnCUDAExecConfigExpr(getCurScope(),
+                                    OpenLoc,
+                                    ExecConfigExprs,
+                                    CloseLoc);
+          if (ECResult.isInvalid())
+            LHS = ExprError();
+          else
+            ExecConfig = ECResult.get();
+        }
+      } else {
         PT.consumeOpen();
         Loc = PT.getOpenLocation();
-      // }
+      }
 
       ExprVector ArgExprs;
       CommaLocsTy CommaLocs;

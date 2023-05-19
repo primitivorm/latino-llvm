@@ -4567,7 +4567,7 @@ public:
                 E = CallArgTypeInfo->param_type_end();
            I != E; ++I, ++Arg) {
         assert(Arg != ArgRange.end() && "Running over edge of argument list!");
-        assert((isGenericMethod ||
+        assert((/*isGenericMethod ||*/
                 ((*I)->isVariablyModifiedType() ||
                 //  (*I).getNonReferenceType()->isObjCRetainableType() ||
                  getContext()

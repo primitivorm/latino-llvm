@@ -13,7 +13,7 @@
 #ifndef LLVM_LATINO_FRONTEND_ASTUNIT_H
 #define LLVM_LATINO_FRONTEND_ASTUNIT_H
 
-#include "clang-c/Index.h"
+#include "latino-c/Index.h"
 #include "latino/AST/ASTContext.h"
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/FileSystemOptions.h"

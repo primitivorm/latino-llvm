@@ -549,7 +549,7 @@ StringRef index::getSymbolSubKindString(SymbolSubKind K) {
 StringRef index::getSymbolLanguageString(SymbolLanguage K) {
   switch (K) {
   case SymbolLanguage::C: return "C";
-  case SymbolLanguage::ObjC: return "ObjC";
+  // case SymbolLanguage::ObjC: return "ObjC";
   case SymbolLanguage::CXX: return "C++";
   case SymbolLanguage::Swift: return "Swift";
   }

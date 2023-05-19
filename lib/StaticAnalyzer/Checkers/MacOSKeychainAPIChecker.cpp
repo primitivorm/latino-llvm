@@ -663,10 +663,10 @@ void MacOSKeychainAPIChecker::printState(raw_ostream &Out,
 }
 
 
-void ento::registerMacOSKeychainAPIChecker(CheckerManager &mgr) {
-  mgr.registerChecker<MacOSKeychainAPIChecker>();
-}
+// void ento::registerMacOSKeychainAPIChecker(CheckerManager &mgr) {
+//   mgr.registerChecker<MacOSKeychainAPIChecker>();
+// }
 
-bool ento::shouldRegisterMacOSKeychainAPIChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterMacOSKeychainAPIChecker(const CheckerManager &mgr) {
+//   return true;
+// }

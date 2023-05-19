@@ -319,32 +319,32 @@ static bool IsCFError(QualType T, IdentifierInfo *II) {
   return TT->getDecl()->getIdentifier() == II;
 }
 
-void ento::registerNSOrCFErrorDerefChecker(CheckerManager &mgr) {
-  mgr.registerChecker<NSOrCFErrorDerefChecker>();
-}
+// void ento::registerNSOrCFErrorDerefChecker(CheckerManager &mgr) {
+//   mgr.registerChecker<NSOrCFErrorDerefChecker>();
+// }
 
-bool ento::shouldRegisterNSOrCFErrorDerefChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterNSOrCFErrorDerefChecker(const CheckerManager &mgr) {
+//   return true;
+// }
 
-void ento::registerNSErrorChecker(CheckerManager &mgr) {
-  mgr.registerChecker<NSErrorMethodChecker>();
-  NSOrCFErrorDerefChecker *checker = mgr.getChecker<NSOrCFErrorDerefChecker>();
-  checker->ShouldCheckNSError = true;
-  checker->NSErrorName = mgr.getCurrentCheckerName();
-}
+// void ento::registerNSErrorChecker(CheckerManager &mgr) {
+//   mgr.registerChecker<NSErrorMethodChecker>();
+//   NSOrCFErrorDerefChecker *checker = mgr.getChecker<NSOrCFErrorDerefChecker>();
+//   checker->ShouldCheckNSError = true;
+//   checker->NSErrorName = mgr.getCurrentCheckerName();
+// }
 
-bool ento::shouldRegisterNSErrorChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterNSErrorChecker(const CheckerManager &mgr) {
+//   return true;
+// }
 
-void ento::registerCFErrorChecker(CheckerManager &mgr) {
-  mgr.registerChecker<CFErrorFunctionChecker>();
-  NSOrCFErrorDerefChecker *checker = mgr.getChecker<NSOrCFErrorDerefChecker>();
-  checker->ShouldCheckCFError = true;
-  checker->CFErrorName = mgr.getCurrentCheckerName();
-}
+// void ento::registerCFErrorChecker(CheckerManager &mgr) {
+//   mgr.registerChecker<CFErrorFunctionChecker>();
+//   NSOrCFErrorDerefChecker *checker = mgr.getChecker<NSOrCFErrorDerefChecker>();
+//   checker->ShouldCheckCFError = true;
+//   checker->CFErrorName = mgr.getCurrentCheckerName();
+// }
 
-bool ento::shouldRegisterCFErrorChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterCFErrorChecker(const CheckerManager &mgr) {
+//   return true;
+// }

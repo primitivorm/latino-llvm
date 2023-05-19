@@ -213,7 +213,7 @@ ExprEngine::ExprEngine(cross_tu::CrossTranslationUnitContext &CTU,
       SymMgr(StateMgr.getSymbolManager()),
       MRMgr(StateMgr.getRegionManager()),
       svalBuilder(StateMgr.getSValBuilder()),
-      ObjCNoRet(mgr.getASTContext()),
+      // ObjCNoRet(mgr.getASTContext()),
       BR(mgr, *this),
       VisitedCallees(VisitedCalleesIn),
       HowToInline(HowToInlineIn)
@@ -1785,7 +1785,7 @@ void ExprEngine::Visit(const Stmt *S, ExplodedNode *Pred,
     //   Bldr.addNodes(Dst);
     //   break;
 
-    case Stmt::ObjCAtThrowStmtClass:
+    // case Stmt::ObjCAtThrowStmtClass:
     case Stmt::CXXThrowExprClass:
       // FIXME: This is not complete.  We basically treat @throw as
       // an abort.

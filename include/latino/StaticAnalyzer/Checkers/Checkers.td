@@ -79,19 +79,19 @@ def UnixAlpha : Package<"unix">, ParentPackage<Alpha>;
 def CString : Package<"cstring">, ParentPackage<Unix>;
 def CStringAlpha : Package<"cstring">, ParentPackage<UnixAlpha>;
 
-def OSX : Package<"osx">;
-def OSXAlpha : Package<"osx">, ParentPackage<Alpha>;
-def OSXOptIn : Package<"osx">, ParentPackage<OptIn>;
+// def OSX : Package<"osx">;
+// def OSXAlpha : Package<"osx">, ParentPackage<Alpha>;
+// def OSXOptIn : Package<"osx">, ParentPackage<OptIn>;
 
-def Cocoa : Package<"cocoa">, ParentPackage<OSX>;
-def CocoaAlpha : Package<"cocoa">, ParentPackage<OSXAlpha>;
-def CocoaOptIn : Package<"cocoa">, ParentPackage<OSXOptIn>;
+// def Cocoa : Package<"cocoa">, ParentPackage<OSX>;
+// def CocoaAlpha : Package<"cocoa">, ParentPackage<OSXAlpha>;
+// def CocoaOptIn : Package<"cocoa">, ParentPackage<OSXOptIn>;
 
-def CoreFoundation : Package<"coreFoundation">, ParentPackage<OSX>;
-def Containers : Package<"containers">, ParentPackage<CoreFoundation>;
+// def CoreFoundation : Package<"coreFoundation">, ParentPackage<OSX>;
+// def Containers : Package<"containers">, ParentPackage<CoreFoundation>;
 
-def LocalizabilityAlpha : Package<"localizability">, ParentPackage<CocoaAlpha>;
-def LocalizabilityOptIn : Package<"localizability">, ParentPackage<CocoaOptIn>;
+// def LocalizabilityAlpha : Package<"localizability">, ParentPackage<CocoaAlpha>;
+// def LocalizabilityOptIn : Package<"localizability">, ParentPackage<CocoaOptIn>;
 
 def MPI : Package<"mpi">, ParentPackage<OptIn>;
 
@@ -368,10 +368,10 @@ def StdCLibraryFunctionsChecker : Checker<"StdCLibraryFunctions">,
   Documentation<NotDocumented>,
   Hidden;
 
-def TrustNonnullChecker : Checker<"TrustNonnull">,
-  HelpText<"Trust that returns from framework methods annotated with _Nonnull "
-           "are not null">,
-  Documentation<NotDocumented>;
+// def TrustNonnullChecker : Checker<"TrustNonnull">,
+//   HelpText<"Trust that returns from framework methods annotated with _Nonnull "
+//            "are not null">,
+//   Documentation<NotDocumented>;
 
 } // end "apiModeling"
 
@@ -994,159 +994,159 @@ def GenericTaintChecker : Checker<"TaintPropagation">,
 // Mac OS X, Cocoa, and Core Foundation checkers.
 //===----------------------------------------------------------------------===//
 
-let ParentPackage = Cocoa in {
+// let ParentPackage = Cocoa in {
 
-def RetainCountBase : Checker<"RetainCountBase">,
-  HelpText<"Common base of various retain count related checkers">,
-  Documentation<NotDocumented>,
-  Hidden;
+// def RetainCountBase : Checker<"RetainCountBase">,
+//   HelpText<"Common base of various retain count related checkers">,
+//   Documentation<NotDocumented>,
+//   Hidden;
 
-} // end "osx.cocoa"
+// } // end "osx.cocoa"
 
-let ParentPackage = OSX in {
+// let ParentPackage = OSX in {
 
-def NSOrCFErrorDerefChecker : Checker<"NSOrCFErrorDerefChecker">,
-  HelpText<"Implementation checker for NSErrorChecker and CFErrorChecker">,
-  Documentation<NotDocumented>,
-  Hidden;
+// def NSOrCFErrorDerefChecker : Checker<"NSOrCFErrorDerefChecker">,
+//   HelpText<"Implementation checker for NSErrorChecker and CFErrorChecker">,
+//   Documentation<NotDocumented>,
+//   Hidden;
 
-def NumberObjectConversionChecker : Checker<"NumberObjectConversion">,
-  HelpText<"Check for erroneous conversions of objects representing numbers "
-           "into numbers">,
-  CheckerOptions<[
-    CmdLineOption<Boolean,
-                  "Pedantic",
-                  "Enables detection of more conversion patterns (which are "
-                  "most likely more harmless, and therefore are more likely to "
-                  "produce false positives).",
-                  "false",
-                  Released>
-  ]>,
-  Documentation<NotDocumented>;
+// def NumberObjectConversionChecker : Checker<"NumberObjectConversion">,
+//   HelpText<"Check for erroneous conversions of objects representing numbers "
+//            "into numbers">,
+//   CheckerOptions<[
+//     CmdLineOption<Boolean,
+//                   "Pedantic",
+//                   "Enables detection of more conversion patterns (which are "
+//                   "most likely more harmless, and therefore are more likely to "
+//                   "produce false positives).",
+//                   "false",
+//                   Released>
+//   ]>,
+//   Documentation<NotDocumented>;
 
-def MacOSXAPIChecker : Checker<"API">,
-  HelpText<"Check for proper uses of various Apple APIs">,
-  Documentation<HasDocumentation>;
+// def MacOSXAPIChecker : Checker<"API">,
+//   HelpText<"Check for proper uses of various Apple APIs">,
+//   Documentation<HasDocumentation>;
 
-def MacOSKeychainAPIChecker : Checker<"SecKeychainAPI">,
-  HelpText<"Check for proper uses of Secure Keychain APIs">,
-  Documentation<HasDocumentation>;
+// def MacOSKeychainAPIChecker : Checker<"SecKeychainAPI">,
+//   HelpText<"Check for proper uses of Secure Keychain APIs">,
+//   Documentation<HasDocumentation>;
 
-def MIGChecker : Checker<"MIG">,
-  HelpText<"Find violations of the Mach Interface Generator "
-           "calling convention">,
-  Documentation<NotDocumented>;
+// def MIGChecker : Checker<"MIG">,
+//   HelpText<"Find violations of the Mach Interface Generator "
+//            "calling convention">,
+//   Documentation<NotDocumented>;
 
-def ObjCPropertyChecker : Checker<"ObjCProperty">,
-  HelpText<"Check for proper uses of Objective-C properties">,
-  Documentation<NotDocumented>;
+// def ObjCPropertyChecker : Checker<"ObjCProperty">,
+//   HelpText<"Check for proper uses of Objective-C properties">,
+//   Documentation<NotDocumented>;
 
-def OSObjectRetainCountChecker : Checker<"OSObjectRetainCount">,
-  HelpText<"Check for leaks and improper reference count management for "
-           "OSObject">,
-  Dependencies<[RetainCountBase]>,
-  Documentation<NotDocumented>;
+// def OSObjectRetainCountChecker : Checker<"OSObjectRetainCount">,
+//   HelpText<"Check for leaks and improper reference count management for "
+//            "OSObject">,
+//   Dependencies<[RetainCountBase]>,
+//   Documentation<NotDocumented>;
 
-} // end "osx"
+// } // end "osx"
 
-let ParentPackage = Cocoa in {
+// let ParentPackage = Cocoa in {
 
-def RunLoopAutoreleaseLeakChecker : Checker<"RunLoopAutoreleaseLeak">,
-  HelpText<"Check for leaked memory in autorelease pools that will never be "
-           "drained">,
-  Documentation<NotDocumented>;
+// def RunLoopAutoreleaseLeakChecker : Checker<"RunLoopAutoreleaseLeak">,
+//   HelpText<"Check for leaked memory in autorelease pools that will never be "
+//            "drained">,
+//   Documentation<NotDocumented>;
 
-def ObjCAtSyncChecker : Checker<"AtSync">,
-  HelpText<"Check for nil pointers used as mutexes for @synchronized">,
-  Documentation<HasDocumentation>;
+// def ObjCAtSyncChecker : Checker<"AtSync">,
+//   HelpText<"Check for nil pointers used as mutexes for @synchronized">,
+//   Documentation<HasDocumentation>;
 
-def NilArgChecker : Checker<"NilArg">,
-  HelpText<"Check for prohibited nil arguments to ObjC method calls">,
-  Documentation<HasDocumentation>;
+// def NilArgChecker : Checker<"NilArg">,
+//   HelpText<"Check for prohibited nil arguments to ObjC method calls">,
+//   Documentation<HasDocumentation>;
 
-def ClassReleaseChecker : Checker<"ClassRelease">,
-  HelpText<"Check for sending 'retain', 'release', or 'autorelease' directly "
-           "to a Class">,
-  Documentation<HasDocumentation>;
+// def ClassReleaseChecker : Checker<"ClassRelease">,
+//   HelpText<"Check for sending 'retain', 'release', or 'autorelease' directly "
+//            "to a Class">,
+//   Documentation<HasDocumentation>;
 
-def VariadicMethodTypeChecker : Checker<"VariadicMethodTypes">,
-  HelpText<"Check for passing non-Objective-C types to variadic collection "
-           "initialization methods that expect only Objective-C types">,
-  Documentation<HasDocumentation>;
+// def VariadicMethodTypeChecker : Checker<"VariadicMethodTypes">,
+//   HelpText<"Check for passing non-Objective-C types to variadic collection "
+//            "initialization methods that expect only Objective-C types">,
+//   Documentation<HasDocumentation>;
 
-def NSAutoreleasePoolChecker : Checker<"NSAutoreleasePool">,
-  HelpText<"Warn for suboptimal uses of NSAutoreleasePool in Objective-C GC "
-           "mode">,
-  Documentation<HasDocumentation>;
+// def NSAutoreleasePoolChecker : Checker<"NSAutoreleasePool">,
+//   HelpText<"Warn for suboptimal uses of NSAutoreleasePool in Objective-C GC "
+//            "mode">,
+//   Documentation<HasDocumentation>;
 
-def ObjCMethSigsChecker : Checker<"IncompatibleMethodTypes">,
-  HelpText<"Warn about Objective-C method signatures with type "
-           "incompatibilities">,
-  Documentation<HasDocumentation>;
+// def ObjCMethSigsChecker : Checker<"IncompatibleMethodTypes">,
+//   HelpText<"Warn about Objective-C method signatures with type "
+//            "incompatibilities">,
+//   Documentation<HasDocumentation>;
 
-def ObjCUnusedIvarsChecker : Checker<"UnusedIvars">,
-  HelpText<"Warn about private ivars that are never used">,
-  Documentation<HasDocumentation>;
+// def ObjCUnusedIvarsChecker : Checker<"UnusedIvars">,
+//   HelpText<"Warn about private ivars that are never used">,
+//   Documentation<HasDocumentation>;
 
-def ObjCSelfInitChecker : Checker<"SelfInit">,
-  HelpText<"Check that 'self' is properly initialized inside an initializer "
-           "method">,
-  Documentation<HasDocumentation>;
+// def ObjCSelfInitChecker : Checker<"SelfInit">,
+//   HelpText<"Check that 'self' is properly initialized inside an initializer "
+//            "method">,
+//   Documentation<HasDocumentation>;
 
-def ObjCLoopChecker : Checker<"Loops">,
-  HelpText<"Improved modeling of loops using Cocoa collection types">,
-  Documentation<NotDocumented>;
+// def ObjCLoopChecker : Checker<"Loops">,
+//   HelpText<"Improved modeling of loops using Cocoa collection types">,
+//   Documentation<NotDocumented>;
 
-def ObjCNonNilReturnValueChecker : Checker<"NonNilReturnValue">,
-  HelpText<"Model the APIs that are guaranteed to return a non-nil value">,
-  Documentation<NotDocumented>;
+// def ObjCNonNilReturnValueChecker : Checker<"NonNilReturnValue">,
+//   HelpText<"Model the APIs that are guaranteed to return a non-nil value">,
+//   Documentation<NotDocumented>;
 
-def ObjCSuperCallChecker : Checker<"MissingSuperCall">,
-  HelpText<"Warn about Objective-C methods that lack a necessary call to "
-           "super">,
-  Documentation<NotDocumented>;
+// def ObjCSuperCallChecker : Checker<"MissingSuperCall">,
+//   HelpText<"Warn about Objective-C methods that lack a necessary call to "
+//            "super">,
+//   Documentation<NotDocumented>;
 
-def NSErrorChecker : Checker<"NSError">,
-  HelpText<"Check usage of NSError** parameters">,
-  Dependencies<[NSOrCFErrorDerefChecker]>,
-  Documentation<HasDocumentation>;
+// def NSErrorChecker : Checker<"NSError">,
+//   HelpText<"Check usage of NSError** parameters">,
+//   Dependencies<[NSOrCFErrorDerefChecker]>,
+//   Documentation<HasDocumentation>;
 
-def RetainCountChecker : Checker<"RetainCount">,
-  HelpText<"Check for leaks and improper reference count management">,
-  CheckerOptions<[
-    CmdLineOption<Boolean,
-                  "TrackNSCFStartParam",
-                  "Check not only that the code follows retain-release rules "
-                  "with respect to objects it allocates or borrows from "
-                  "elsewhere, but also that it fulfills its own retain count "
-                  "specification with respect to objects that it receives as "
-                  "arguments.",
-                  "false",
-                  Released>
-  ]>,
-  Dependencies<[RetainCountBase]>,
-  Documentation<HasDocumentation>;
+// def RetainCountChecker : Checker<"RetainCount">,
+//   HelpText<"Check for leaks and improper reference count management">,
+//   CheckerOptions<[
+//     CmdLineOption<Boolean,
+//                   "TrackNSCFStartParam",
+//                   "Check not only that the code follows retain-release rules "
+//                   "with respect to objects it allocates or borrows from "
+//                   "elsewhere, but also that it fulfills its own retain count "
+//                   "specification with respect to objects that it receives as "
+//                   "arguments.",
+//                   "false",
+//                   Released>
+//   ]>,
+//   Dependencies<[RetainCountBase]>,
+//   Documentation<HasDocumentation>;
 
-def ObjCGenericsChecker : Checker<"ObjCGenerics">,
-  HelpText<"Check for type errors when using Objective-C generics">,
-  Dependencies<[DynamicTypePropagation]>,
-  Documentation<HasDocumentation>;
+// def ObjCGenericsChecker : Checker<"ObjCGenerics">,
+//   HelpText<"Check for type errors when using Objective-C generics">,
+//   Dependencies<[DynamicTypePropagation]>,
+//   Documentation<HasDocumentation>;
 
-def ObjCDeallocChecker : Checker<"Dealloc">,
-  HelpText<"Warn about Objective-C classes that lack a correct implementation "
-           "of -dealloc">,
-  Documentation<HasDocumentation>;
+// def ObjCDeallocChecker : Checker<"Dealloc">,
+//   HelpText<"Warn about Objective-C classes that lack a correct implementation "
+//            "of -dealloc">,
+//   Documentation<HasDocumentation>;
 
-def ObjCSuperDeallocChecker : Checker<"SuperDealloc">,
-  HelpText<"Warn about improper use of '[super dealloc]' in Objective-C">,
-  Documentation<HasDocumentation>;
+// def ObjCSuperDeallocChecker : Checker<"SuperDealloc">,
+//   HelpText<"Warn about improper use of '[super dealloc]' in Objective-C">,
+//   Documentation<HasDocumentation>;
 
-def AutoreleaseWriteChecker : Checker<"AutoreleaseWrite">,
-  HelpText<"Warn about potentially crashing writes to autoreleasing objects "
-           "from different autoreleasing pools in Objective-C">,
-  Documentation<NotDocumented>;
+// def AutoreleaseWriteChecker : Checker<"AutoreleaseWrite">,
+//   HelpText<"Warn about potentially crashing writes to autoreleasing objects "
+//            "from different autoreleasing pools in Objective-C">,
+//   Documentation<NotDocumented>;
 
-} // end "osx.cocoa"
+// } // end "osx.cocoa"
 
 let ParentPackage = Performance in {
 
@@ -1156,34 +1156,34 @@ def GCDAntipattern : Checker<"GCDAntipattern">,
   Documentation<NotDocumented>;
 } // end "optin.performance"
 
-let ParentPackage = OSXOptIn in {
+// let ParentPackage = OSXOptIn in {
 
-def OSObjectCStyleCast : Checker<"OSObjectCStyleCast">,
-  HelpText<"Checker for C-style casts of OSObjects">,
-  Documentation<NotDocumented>;
+// def OSObjectCStyleCast : Checker<"OSObjectCStyleCast">,
+//   HelpText<"Checker for C-style casts of OSObjects">,
+//   Documentation<NotDocumented>;
 
-} // end "optin.osx"
+// } // end "optin.osx"
 
-let ParentPackage = CocoaAlpha in {
+// let ParentPackage = CocoaAlpha in {
 
-def IvarInvalidationModeling : Checker<"IvarInvalidationModeling">,
-  HelpText<"Gathers information for annotation driven invalidation checking "
-           "for classes that contains a method annotated with "
-           "'objc_instance_variable_invalidator'">,
-  Documentation<NotDocumented>,
-  Hidden;
+// def IvarInvalidationModeling : Checker<"IvarInvalidationModeling">,
+//   HelpText<"Gathers information for annotation driven invalidation checking "
+//            "for classes that contains a method annotated with "
+//            "'objc_instance_variable_invalidator'">,
+//   Documentation<NotDocumented>,
+//   Hidden;
 
-def InstanceVariableInvalidation : Checker<"InstanceVariableInvalidation">,
-  HelpText<"Check that the invalidatable instance variables are invalidated in "
-           "the methods annotated with objc_instance_variable_invalidator">,
-  Dependencies<[IvarInvalidationModeling]>,
-  Documentation<HasAlphaDocumentation>;
+// def InstanceVariableInvalidation : Checker<"InstanceVariableInvalidation">,
+//   HelpText<"Check that the invalidatable instance variables are invalidated in "
+//            "the methods annotated with objc_instance_variable_invalidator">,
+//   Dependencies<[IvarInvalidationModeling]>,
+//   Documentation<HasAlphaDocumentation>;
 
-def MissingInvalidationMethod : Checker<"MissingInvalidationMethod">,
-  HelpText<"Check that the invalidation methods are present in classes that "
-           "contain invalidatable instance variables">,
-  Dependencies<[IvarInvalidationModeling]>,
-  Documentation<HasAlphaDocumentation>;
+// def MissingInvalidationMethod : Checker<"MissingInvalidationMethod">,
+//   HelpText<"Check that the invalidation methods are present in classes that "
+//            "contain invalidatable instance variables">,
+//   Dependencies<[IvarInvalidationModeling]>,
+//   Documentation<HasAlphaDocumentation>;
 
 // def DirectIvarAssignment : Checker<"DirectIvarAssignment">,
 //   HelpText<"Check for direct assignments to instance variables">,
@@ -1198,73 +1198,73 @@ def MissingInvalidationMethod : Checker<"MissingInvalidationMethod">,
 //   ]>,
 //   Documentation<HasAlphaDocumentation>;
 
-} // end "alpha.osx.cocoa"
+// } // end "alpha.osx.cocoa"
 
-let ParentPackage = CoreFoundation in {
+// let ParentPackage = CoreFoundation in {
 
-def CFNumberChecker : Checker<"CFNumber">,
-  HelpText<"Check for proper uses of CFNumber APIs">,
-  Documentation<HasDocumentation>;
+// def CFNumberChecker : Checker<"CFNumber">,
+//   HelpText<"Check for proper uses of CFNumber APIs">,
+//   Documentation<HasDocumentation>;
 
-def CFRetainReleaseChecker : Checker<"CFRetainRelease">,
-  HelpText<"Check for null arguments to CFRetain/CFRelease/CFMakeCollectable">,
-  Documentation<HasDocumentation>;
+// def CFRetainReleaseChecker : Checker<"CFRetainRelease">,
+//   HelpText<"Check for null arguments to CFRetain/CFRelease/CFMakeCollectable">,
+//   Documentation<HasDocumentation>;
 
-def CFErrorChecker : Checker<"CFError">,
-  HelpText<"Check usage of CFErrorRef* parameters">,
-  Dependencies<[NSOrCFErrorDerefChecker]>,
-  Documentation<HasDocumentation>;
+// def CFErrorChecker : Checker<"CFError">,
+//   HelpText<"Check usage of CFErrorRef* parameters">,
+//   Dependencies<[NSOrCFErrorDerefChecker]>,
+//   Documentation<HasDocumentation>;
 
-} // end "osx.coreFoundation"
+// } // end "osx.coreFoundation"
 
-let ParentPackage = Containers in {
+// let ParentPackage = Containers in {
 
-def ObjCContainersASTChecker : Checker<"PointerSizedValues">,
-  HelpText<"Warns if 'CFArray', 'CFDictionary', 'CFSet' are created with "
-           "non-pointer-size values">,
-  Documentation<HasDocumentation>;
+// def ObjCContainersASTChecker : Checker<"PointerSizedValues">,
+//   HelpText<"Warns if 'CFArray', 'CFDictionary', 'CFSet' are created with "
+//            "non-pointer-size values">,
+//   Documentation<HasDocumentation>;
 
-def ObjCContainersChecker : Checker<"OutOfBounds">,
-  HelpText<"Checks for index out-of-bounds when using 'CFArray' API">,
-  Documentation<HasDocumentation>;
+// def ObjCContainersChecker : Checker<"OutOfBounds">,
+//   HelpText<"Checks for index out-of-bounds when using 'CFArray' API">,
+//   Documentation<HasDocumentation>;
 
-} // end "osx.coreFoundation.containers"
+// } // end "osx.coreFoundation.containers"
 
-let ParentPackage = LocalizabilityOptIn in {
+// let ParentPackage = LocalizabilityOptIn in {
 
-def NonLocalizedStringChecker : Checker<"NonLocalizedStringChecker">,
-  HelpText<"Warns about uses of non-localized NSStrings passed to UI methods "
-           "expecting localized NSStrings">,
-  CheckerOptions<[
-    CmdLineOption<Boolean,
-                  "AggressiveReport",
-                  "Marks a string being returned by any call as localized if "
-                  "it is in LocStringFunctions (LSF) or the function is "
-                  "annotated. Otherwise, we mark it as NonLocalized "
-                  "(Aggressive) or NonLocalized only if it is not backed by a "
-                  "SymRegion (Non-Aggressive), basically leaving only string "
-                  "literals as NonLocalized.",
-                  "false",
-                  InAlpha,
-                  Hide>
-  ]>,
-  Documentation<HasDocumentation>;
+// def NonLocalizedStringChecker : Checker<"NonLocalizedStringChecker">,
+//   HelpText<"Warns about uses of non-localized NSStrings passed to UI methods "
+//            "expecting localized NSStrings">,
+//   CheckerOptions<[
+//     CmdLineOption<Boolean,
+//                   "AggressiveReport",
+//                   "Marks a string being returned by any call as localized if "
+//                   "it is in LocStringFunctions (LSF) or the function is "
+//                   "annotated. Otherwise, we mark it as NonLocalized "
+//                   "(Aggressive) or NonLocalized only if it is not backed by a "
+//                   "SymRegion (Non-Aggressive), basically leaving only string "
+//                   "literals as NonLocalized.",
+//                   "false",
+//                   InAlpha,
+//                   Hide>
+//   ]>,
+//   Documentation<HasDocumentation>;
 
 // def EmptyLocalizationContextChecker :
 //   Checker<"EmptyLocalizationContextChecker">,
 //   HelpText<"Check that NSLocalizedString macros include a comment for context">,
 //   Documentation<HasDocumentation>;
 
-} // end "optin.osx.cocoa.localizability"
+// } // end "optin.osx.cocoa.localizability"
 
-let ParentPackage = LocalizabilityAlpha in {
+// let ParentPackage = LocalizabilityAlpha in {
 
-def PluralMisuseChecker : Checker<"PluralMisuseChecker">,
-  HelpText<"Warns against using one vs. many plural pattern in code when "
-           "generating localized strings.">,
-  Documentation<HasAlphaDocumentation>;
+// def PluralMisuseChecker : Checker<"PluralMisuseChecker">,
+//   HelpText<"Warns against using one vs. many plural pattern in code when "
+//            "generating localized strings.">,
+//   Documentation<HasAlphaDocumentation>;
 
-} // end "alpha.osx.cocoa.localizability"
+// } // end "alpha.osx.cocoa.localizability"
 
 let ParentPackage = MPI in {
 

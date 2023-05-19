@@ -17,7 +17,7 @@ set( LLVM_LINK_COMPONENTS
   Vectorize
   )
 
-option(LATINO_PLUGIN_SUPPORT "Build clang with plugin support" ON)
+option(LATINO_PLUGIN_SUPPORT "Build latino with plugin support" ON)
 
 # Support plugins.
 if(LATINO_PLUGIN_SUPPORT)

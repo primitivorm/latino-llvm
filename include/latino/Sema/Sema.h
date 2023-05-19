@@ -2860,7 +2860,7 @@ public:
   /// Invoked when we enter a tag definition that we're skipping.
   SkippedDefinitionContext ActOnTagStartSkippedDefinition(Scope *S, Decl *TD);
 
-  Decl *ActOnObjCContainerStartDefinition(Decl *IDecl);
+  // Decl *ActOnObjCContainerStartDefinition(Decl *IDecl);
 
   /// ActOnStartCXXMemberDeclarations - Invoked when we have parsed a
   /// C++ record definition's base-specifiers clause and are starting its
@@ -2877,14 +2877,14 @@ public:
 
   void ActOnTagFinishSkippedDefinition(SkippedDefinitionContext Context);
 
-  void ActOnObjCContainerFinishDefinition();
+  // void ActOnObjCContainerFinishDefinition();
 
   /// Invoked when we must temporarily exit the objective-c container
   /// scope for parsing/looking-up C constructs.
   ///
   /// Must be followed by a call to \see ActOnObjCReenterContainerContext
-  void ActOnObjCTemporaryExitContainerContext(DeclContext *DC);
-  void ActOnObjCReenterContainerContext(DeclContext *DC);
+  // void ActOnObjCTemporaryExitContainerContext(DeclContext *DC);
+  // void ActOnObjCReenterContainerContext(DeclContext *DC);
 
   /// ActOnTagDefinitionError - Invoked when there was an unrecoverable
   /// error parsing the definition of a tag.

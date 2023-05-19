@@ -455,14 +455,14 @@ public:
 
   /// Array of category list location information within this
   /// module file, sorted by the definition ID.
-  const serialization::ObjCCategoriesInfo *ObjCCategoriesMap = nullptr;
+  // const serialization::ObjCCategoriesInfo *ObjCCategoriesMap = nullptr;
 
   /// The number of redeclaration info entries in ObjCCategoriesMap.
-  unsigned LocalNumObjCCategoriesInMap = 0;
+  // unsigned LocalNumObjCCategoriesInMap = 0;
 
   /// The Objective-C category lists for categories known to this
   /// module.
-  SmallVector<uint64_t, 1> ObjCCategories;
+  // SmallVector<uint64_t, 1> ObjCCategories;
 
   // === Types ===
 

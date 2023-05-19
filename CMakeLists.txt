@@ -25,170 +25,172 @@ endif()
 # standalone project, using LLVM as an external library:
 if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
 
-project(latino C CXX)
+  project(latino C CXX)
 
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard to conform to")
-set(CMAKE_CXX_STANDARD_REQUIRED YES)
-set(CMAKE_CXX_EXTENSIONS NO)
+  set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard to conform to")
+  set(CMAKE_CXX_STANDARD_REQUIRED YES)
+  set(CMAKE_CXX_EXTENSIONS NO)
 
-message(STATUS "CMAKE_CXX_STANDARD: ${CMAKE_CXX_STANDARD}")
-message(STATUS "CMAKE_CXX_STANDARD_REQUIRED: ${CMAKE_CXX_STANDARD_REQUIRED}")
-message(STATUS "CMAKE_CXX_EXTENSIONS: ${CMAKE_CXX_EXTENSIONS}")
+  message(STATUS "CMAKE_CXX_STANDARD: ${CMAKE_CXX_STANDARD}")
+  message(STATUS "CMAKE_CXX_STANDARD_REQUIRED: ${CMAKE_CXX_STANDARD_REQUIRED}")
+  message(STATUS "CMAKE_CXX_EXTENSIONS: ${CMAKE_CXX_EXTENSIONS}")
 
-set(LLVM_TOOLS_BINARY_DIR ${TOOLS_BINARY_DIR} CACHE PATH "Path to llvm/bin")
-set(LLVM_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to llvm/lib")
-set(LLVM_MAIN_INCLUDE_DIR ${INCLUDE_DIR} CACHE PATH "Path to llvm/include")
-set(LLVM_BINARY_DIR ${LLVM_OBJ_ROOT} CACHE PATH "Path to LLVM build tree")
-set(LLVM_MAIN_SRC_DIR ${MAIN_SRC_DIR} CACHE PATH "Path to LLVM source tree")
+  set(LLVM_TOOLS_BINARY_DIR ${TOOLS_BINARY_DIR} CACHE PATH "Path to llvm/bin")
+  set(LLVM_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to llvm/lib")
+  set(LLVM_MAIN_INCLUDE_DIR ${INCLUDE_DIR} CACHE PATH "Path to llvm/include")
+  set(LLVM_BINARY_DIR ${LLVM_OBJ_ROOT} CACHE PATH "Path to LLVM build tree")
+  set(LLVM_MAIN_SRC_DIR ${MAIN_SRC_DIR} CACHE PATH "Path to LLVM source tree")
 
-if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Release build
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build [Release Debug]" FORCE)
-endif()
-
-if(NOT CMAKE_BUILD_TYPE)
-  # set(CMAKE_BUILD_TYPE Debug)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-
-set(LATINO_ENABLE_STATIC_ANALYZER ON)
-
-set(CMAKE_VERBOSE_MAKEFILE ON)
-if(WIN32)
-  set(LLVM_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/bin")
-  message(STATUS "LLVM_BINARY_DIR: ${LLVM_BINARY_DIR}")
-endif()
-
-if(NOT LLVM_TOOLS_BINARY_DIR)
-  set(LLVM_TOOLS_BINARY_DIR ${LLVM_BINARY_DIR})
-endif()
-
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
-
-set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm")
-message(STATUS "LLVM_MAIN_SRC_DIR: ${LLVM_MAIN_SRC_DIR}")
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/latino/cmake/modules/")
-message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
-
-set(CONFIG_OUTPUT)
-find_program(LLVM_CONFIG "llvm-config" PATHS "${LLVM_BINARY_DIR}")
-if(LLVM_CONFIG)
-  message(STATUS "Found LLVM_CONFIG as ${LLVM_CONFIG}")
-  set(CONFIG_COMMAND ${LLVM_CONFIG}
-    "--assertion-mode"
-    "--bindir"
-    "--libdir"
-    "--includedir"
-    "--prefix"
-    "--src-root"
-    "--cmakedir")
-  execute_process(COMMAND ${CONFIG_COMMAND}
-    RESULT_VARIABLE HAD_ERROR
-    OUTPUT_VARIABLE CONFIG_OUTPUT)
-  if(NOT HAD_ERROR)
-    string(REGEX REPLACE
-      "[ \t]*[\r\n]+[ \t]*" ";"
-      CONFIG_OUTPUT ${CONFIG_OUTPUT})
-  else()
-    string(REPLACE ";" " " CONFIG_COMMAND_STR "${CONFIG_COMMAND}")
-    message(STATUS "${CONFIG_COMMAND_STR}")
-    message(FATAL_ERROR "llvm-config not found -- ${LLVM_CONFIG}")
+  if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE) # Default to a Release build
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build [Release Debug]" FORCE)
   endif()
 
-  list(GET CONFIG_OUTPUT 0 ENABLE_ASSERTIONS)
-  list(GET CONFIG_OUTPUT 1 TOOLS_BINARY_DIR)
-  list(GET CONFIG_OUTPUT 2 LIBRARY_DIR)
-  list(GET CONFIG_OUTPUT 3 INCLUDE_DIR)
-  list(GET CONFIG_OUTPUT 4 LLVM_OBJ_ROOT)
-  list(GET CONFIG_OUTPUT 5 MAIN_SRC_DIR)
-  list(GET CONFIG_OUTPUT 6 LLVM_CONFIG_CMAKE_PATH)
-
-  if(NOT MSVC_IDE)
-    set(LLVM_ENABLE_ASSERTIONS ${ENABLE_ASSERTIONS}
-      CACHE BOOL "Enable assertions")
-    mark_as_advanced(LLVM_ENABLE_ASSERTIONS)
+  if(NOT CMAKE_BUILD_TYPE)
+    # set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE Release)
   endif()
+  message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
-  file(TO_CMAKE_PATH ${LLVM_CONFIG_CMAKE_PATH} LLVM_CMAKE_PATH)
-  
-  set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-  message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")
+  set(CLANG_ENABLE_STATIC_ANALYZER ON)
 
-  find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
-    NO_DEFAULT_PATH)
-  message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
-  
-  find_program(LATINO_TABLEGEN_EXE "latino-tblgen" ${EXECUTABLE_OUTPUT_PATH}
-  NO_DEFAULT_PATH)
-  message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
-  set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})  
-  message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
-
-  if(NOT LATINO_TABLEGEN_EXE)
-    if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
-      set(HOST_EXECUTABLE_SUFFIX ".exe")
-    endif()
-    set(LATINO_TABLEGEN_EXE "${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/bin/latino-tblgen${HOST_EXECUTABLE_SUFFIX}")
-    message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
-    set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})
-    message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
-  endif()
-
-  option(LLVM_INSTALL_TOOLCHAIN_ONLY
-  "Only include toolchain files in the 'install' target." OFF)
-
+  set(CMAKE_VERBOSE_MAKEFILE ON)
   if(WIN32)
-    set(LLVMCONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/cmake/modules/CMakeFiles/LLVMConfig.cmake")
+    set(LLVM_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/bin")
+    message(STATUS "LLVM_BINARY_DIR: ${LLVM_BINARY_DIR}")
   endif()
-  if(EXISTS ${LLVMCONFIG_FILE})
-    include(${LLVMCONFIG_FILE})
-  else()
-    message(FATAL_ERROR "Not found: ${LLVMCONFIG_FILE}")
+
+  if(NOT LLVM_TOOLS_BINARY_DIR)
+    set(LLVM_TOOLS_BINARY_DIR ${LLVM_BINARY_DIR})
   endif()
-  message(STATUS "LLVMCONFIG_FILE: ${LLVMCONFIG_FILE}")
-  set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
-  set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib${LLVM_LIBDIR_SUFFIX})
-  if(WIN32 OR CYGWIN)
-    set(LLVM_SHLIB_OUTPUT_INTDIR ${LLVM_RUNTIME_OUTPUT_INTDIR})
-  else()
-    set(LLVM_SHLIB_OUTPUT_INTDIR ${LLVM_LIBRARY_OUTPUT_INTDIR})
+
+  message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+
+  set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm")
+  message(STATUS "LLVM_MAIN_SRC_DIR: ${LLVM_MAIN_SRC_DIR}")
+
+  set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/cmake/modules/" "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/latino/cmake/modules/")
+  message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+
+  set(CONFIG_OUTPUT)
+  find_program(LLVM_CONFIG "llvm-config" PATHS "${LLVM_BINARY_DIR}")
+  if(LLVM_CONFIG)
+    message(STATUS "Found LLVM_CONFIG as ${LLVM_CONFIG}")
+    set(CONFIG_COMMAND ${LLVM_CONFIG}
+      "--assertion-mode"
+      "--bindir"
+      "--libdir"
+      "--includedir"
+      "--prefix"
+      "--src-root"
+      "--cmakedir")
+    execute_process(COMMAND ${CONFIG_COMMAND}
+      RESULT_VARIABLE HAD_ERROR
+      OUTPUT_VARIABLE CONFIG_OUTPUT)
+    if(NOT HAD_ERROR)
+      string(REGEX REPLACE
+        "[ \t]*[\r\n]+[ \t]*" ";"
+        CONFIG_OUTPUT ${CONFIG_OUTPUT})
+    else()
+      string(REPLACE ";" " " CONFIG_COMMAND_STR "${CONFIG_COMMAND}")
+      message(STATUS "${CONFIG_COMMAND_STR}")
+      message(FATAL_ERROR "llvm-config not found -- ${LLVM_CONFIG}")
+    endif()
+
+    list(GET CONFIG_OUTPUT 0 ENABLE_ASSERTIONS)
+    list(GET CONFIG_OUTPUT 1 TOOLS_BINARY_DIR)
+    list(GET CONFIG_OUTPUT 2 LIBRARY_DIR)
+    list(GET CONFIG_OUTPUT 3 INCLUDE_DIR)
+    list(GET CONFIG_OUTPUT 4 LLVM_OBJ_ROOT)
+    list(GET CONFIG_OUTPUT 5 MAIN_SRC_DIR)
+    list(GET CONFIG_OUTPUT 6 LLVM_CONFIG_CMAKE_PATH)
+
+    if(NOT MSVC_IDE)
+      set(LLVM_ENABLE_ASSERTIONS ${ENABLE_ASSERTIONS}
+        CACHE BOOL "Enable assertions")
+      mark_as_advanced(LLVM_ENABLE_ASSERTIONS)
+    endif()
+
+    file(TO_CMAKE_PATH ${LLVM_CONFIG_CMAKE_PATH} LLVM_CMAKE_PATH)
+    
+    set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+    message(STATUS "EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH}")
+
+    find_program(LLVM_TABLEGEN_EXE "llvm-tblgen" ${LLVM_TOOLS_BINARY_DIR}
+      NO_DEFAULT_PATH)
+    message(STATUS "LLVM_TOOLS_BINARY_DIR: ${LLVM_TOOLS_BINARY_DIR}")
+    
+    find_program(LATINO_TABLEGEN_EXE "latino-tblgen" ${EXECUTABLE_OUTPUT_PATH}
+    NO_DEFAULT_PATH)
+    message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
+    set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})  
+    message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
+
+    if(NOT LATINO_TABLEGEN_EXE)
+      if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
+        set(HOST_EXECUTABLE_SUFFIX ".exe")
+      endif()
+      set(LATINO_TABLEGEN_EXE "${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/bin/latino-tblgen${HOST_EXECUTABLE_SUFFIX}")
+      message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
+      set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})
+      message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
+    endif()
+
+    option(LLVM_INSTALL_TOOLCHAIN_ONLY
+    "Only include toolchain files in the 'install' target." OFF)
+
+    if(WIN32)
+      set(LLVMCONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/cmake/modules/CMakeFiles/LLVMConfig.cmake")
+    endif()
+    if(EXISTS ${LLVMCONFIG_FILE})
+      include(${LLVMCONFIG_FILE})
+    else()
+      message(FATAL_ERROR "Not found: ${LLVMCONFIG_FILE}")
+    endif()
+    message(STATUS "LLVMCONFIG_FILE: ${LLVMCONFIG_FILE}")
+    set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
+    set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib${LLVM_LIBDIR_SUFFIX})
+    if(WIN32 OR CYGWIN)
+      set(LLVM_SHLIB_OUTPUT_INTDIR ${LLVM_RUNTIME_OUTPUT_INTDIR})
+    else()
+      set(LLVM_SHLIB_OUTPUT_INTDIR ${LLVM_LIBRARY_OUTPUT_INTDIR})
+    endif()
+    message(STATUS "LLVM_RUNTIME_OUTPUT_INTDIR: ${LLVM_RUNTIME_OUTPUT_INTDIR}")
+    message(STATUS "LLVM_LIBRARY_OUTPUT_INTDIR: ${LLVM_LIBRARY_OUTPUT_INTDIR}")
+    message(STATUS "LLVM_SHLIB_OUTPUT_INTDIR: ${LLVM_SHLIB_OUTPUT_INTDIR}")
   endif()
-  message(STATUS "LLVM_RUNTIME_OUTPUT_INTDIR: ${LLVM_RUNTIME_OUTPUT_INTDIR}")
-  message(STATUS "LLVM_LIBRARY_OUTPUT_INTDIR: ${LLVM_LIBRARY_OUTPUT_INTDIR}")
-  message(STATUS "LLVM_SHLIB_OUTPUT_INTDIR: ${LLVM_SHLIB_OUTPUT_INTDIR}")
-endif()
 
-option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." OFF)
-option(LATINO_BUILD_TOOLS
-  "Build the Latino tools. If OFF, just generate build targets." ON)
+  option(LATINO_INCLUDE_TESTS "Generate build targets for the Latino unit tests." OFF)
+  option(LATINO_BUILD_TOOLS
+    "Build the Latino tools. If OFF, just generate build targets." ON)
 
-  set(LLVM_TARGETS_TO_BUILD "all"
-  CACHE STRING "Semicolon-separated list of targets to build, or \"all\".")
-# set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
-set(LLVM_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/lib/)
+    set(LLVM_TARGETS_TO_BUILD "all"
+    CACHE STRING "Semicolon-separated list of targets to build, or \"all\".")
+  # set(LLVM_TARGETS_TO_BUILD Native CACHE STRING "")
+  set(LLVM_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/lib/)
 
-# if(NOT LLVM_TARGETS_TO_BUILD)
-#   set(LLVM_TARGETS_TO_BUILD "Native")
-# endif()
-message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
+  # if(NOT LLVM_TARGETS_TO_BUILD)
+  #   set(LLVM_TARGETS_TO_BUILD "Native")
+  # endif()
+  message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
 
-include(CMakeParseArguments)
-include(AddLLVM)
-include(TableGen)
-# include(AddClang)
-include(AddLatino)
+  include(CMakeParseArguments)
+  include(AddLLVM)
+  include(TableGen)
+  # include(AddClang)
+  include(AddLatino)
 
-set(PACKAGE_VERSION "${LLVM_PACKAGE_VERSION}")
+  set(PACKAGE_VERSION "${LLVM_PACKAGE_VERSION}")
   set(BUG_REPORT_URL "${LLVM_PACKAGE_BUGREPORT}" CACHE STRING
     "Default URL where bug reports are to be submitted.")
 
   if (NOT DEFINED LLVM_INCLUDE_TESTS)
-    set(LLVM_INCLUDE_TESTS ON)
+    set(LLVM_INCLUDE_TESTS OFF)
   endif()
 
   include_directories("${LLVM_BINARY_DIR}/include" "${LLVM_MAIN_INCLUDE_DIR}")
   link_directories("${LLVM_LIBRARY_DIR}")
+
+  # include_directories("${LLVM_MAIN_SRC_DIR}/include")
 
   set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
   set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX} )
@@ -235,6 +237,8 @@ set(PACKAGE_VERSION "${LLVM_PACKAGE_VERSION}")
         AND EXISTS ${LLVM_TOOLS_BINARY_DIR}/not${CMAKE_EXECUTABLE_SUFFIX})
       set(LLVM_UTILS_PROVIDED ON)
     endif()
+
+    message(STATUS "LLVM_UTILS_PROVIDED: ${LLVM_UTILS_PROVIDED}")
 
     if(EXISTS ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
       # Note: path not really used, except for checking if lit was found
@@ -379,7 +383,7 @@ include_directories(${LLVM_MAIN_INCLUDE_DIR})
 if(WIN32)
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/include/")
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/llvm/include")
-  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/clang/include")
+  # include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/clang/include")
   # to include .inc files
   # include_directories("${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/tools/clang/include")
 endif()

@@ -24,18 +24,18 @@
 using namespace latino;
 using namespace ento;
 
-// namespace {
+namespace {
 
-// class NoReturnFunctionChecker : public Checker< check::PostCall,
-//                                                 check::PostObjCMessage > {
-//   mutable Selector HandleFailureInFunctionSel;
-//   mutable Selector HandleFailureInMethodSel;
-// public:
-//   void checkPostCall(const CallEvent &CE, CheckerContext &C) const;
-//   void checkPostObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
-// };
+class NoReturnFunctionChecker : public Checker< check::PostCall/*,
+                                                check::PostObjCMessage*/ > {
+  mutable Selector HandleFailureInFunctionSel;
+  mutable Selector HandleFailureInMethodSel;
+public:
+  void checkPostCall(const CallEvent &CE, CheckerContext &C) const;
+  // void checkPostObjCMessage(const ObjCMethodCall &msg, CheckerContext &C) const;
+};
 
-// }
+}
 
 void NoReturnFunctionChecker::checkPostCall(const CallEvent &CE,
                                             CheckerContext &C) const {

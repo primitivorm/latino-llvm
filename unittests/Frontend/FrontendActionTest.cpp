@@ -203,8 +203,8 @@ public:
   TypoCorrection CorrectTypo(const DeclarationNameInfo &Typo, int LookupKind,
                              Scope *S, CXXScopeSpec *SS,
                              CorrectionCandidateCallback &CCC,
-                             DeclContext *MemberContext, bool EnteringContext,
-                             const ObjCObjectPointerType *OPT) override {
+                             DeclContext *MemberContext, bool EnteringContext/*,
+                             const ObjCObjectPointerType *OPT*/) override {
     // Generate a fake typo correction with one attached note.
     ASTContext &Ctx = CI.getASTContext();
     TypoCorrection TC(DeclarationName(&Ctx.Idents.get("moo")));

@@ -289,8 +289,8 @@ class MallocChecker
     : public Checker<check::DeadSymbols, check::PointerEscape,
                      check::ConstPointerEscape, check::PreStmt<ReturnStmt>,
                      check::EndFunction, check::PreCall, check::PostCall,
-                     check::NewAllocator, check::PostStmt<BlockExpr>,
-                     check::PostObjCMessage, check::Location, eval::Assume> {
+                     check::NewAllocator, check::PostStmt<BlockExpr>/*,
+                     check::PostObjCMessage, check::Location, eval::Assume*/> {
 public:
   /// In pessimistic mode, the checker assumes that it does not know which
   /// functions might free the memory.

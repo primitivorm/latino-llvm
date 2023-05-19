@@ -2325,7 +2325,7 @@ bool ConditionBRVisitor::patternMatch(const Expr *Ex,
   const Expr *OriginalExpr = Ex;
   Ex = Ex->IgnoreParenCasts();
 
-  if (isa<GNUNullExpr>(Ex) || isa<ObjCBoolLiteralExpr>(Ex) ||
+  if (isa<GNUNullExpr>(Ex) || /*isa<ObjCBoolLiteralExpr>(Ex) ||*/
       isa<CXXBoolLiteralExpr>(Ex) || isa<IntegerLiteral>(Ex) ||
       isa<FloatingLiteral>(Ex)) {
     // Use heuristics to determine if the expression is a macro

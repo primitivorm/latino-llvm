@@ -12,8 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_CLANG_UTILS_TABLEGEN_TABLEGENBACKENDS_H
-#define LLVM_CLANG_UTILS_TABLEGEN_TABLEGENBACKENDS_H
+#ifndef LLVM_LATINO_UTILS_TABLEGEN_TABLEGENBACKENDS_H
+#define LLVM_LATINO_UTILS_TABLEGEN_TABLEGENBACKENDS_H
 
 #include <string>
 

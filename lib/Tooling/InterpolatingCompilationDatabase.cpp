@@ -259,10 +259,10 @@ private:
       return types::TY_C;
     case Language::CXX:
       return types::TY_CXX;
-    case Language::ObjC:
-      return types::TY_ObjC;
-    case Language::ObjCXX:
-      return types::TY_ObjCXX;
+    // case Language::ObjC:
+    //   return types::TY_ObjC;
+    // case Language::ObjCXX:
+    //   return types::TY_ObjCXX;
     default:
       return types::TY_INVALID;
     }

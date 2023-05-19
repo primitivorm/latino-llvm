@@ -712,7 +712,7 @@ ProgramStateRef CStringChecker::setCStringLength(ProgramStateRef state,
   case MemRegion::NonParamVarRegionKind:
   case MemRegion::ParamVarRegionKind:
   case MemRegion::FieldRegionKind:
-  case MemRegion::ObjCIvarRegionKind:
+  // case MemRegion::ObjCIvarRegionKind:
     // These are the types we can currently track string lengths for.
     break;
 
@@ -818,7 +818,7 @@ SVal CStringChecker::getCStringLength(CheckerContext &C, ProgramStateRef &state,
   case MemRegion::NonParamVarRegionKind:
   case MemRegion::ParamVarRegionKind:
   case MemRegion::FieldRegionKind:
-  case MemRegion::ObjCIvarRegionKind:
+  // case MemRegion::ObjCIvarRegionKind:
     return getCStringLengthForRegion(C, state, Ex, MR, hypothetical);
   case MemRegion::CompoundLiteralRegionKind:
     // FIXME: Can we track this? Is it necessary?
@@ -1023,10 +1023,10 @@ bool CStringChecker::SummarizeRegion(raw_ostream &os, ASTContext &Ctx,
     os << "a field of type "
        << cast<TypedValueRegion>(MR)->getValueType().getAsString();
     return true;
-  case MemRegion::ObjCIvarRegionKind:
-    os << "an instance variable of type "
-       << cast<TypedValueRegion>(MR)->getValueType().getAsString();
-    return true;
+  // case MemRegion::ObjCIvarRegionKind:
+  //   os << "an instance variable of type "
+  //      << cast<TypedValueRegion>(MR)->getValueType().getAsString();
+  //   return true;
   default:
     return false;
   }

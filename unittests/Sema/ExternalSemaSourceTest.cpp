@@ -107,8 +107,9 @@ public:
   TypoCorrection CorrectTypo(const DeclarationNameInfo &Typo, int LookupKind,
                              Scope *S, CXXScopeSpec *SS,
                              CorrectionCandidateCallback &CCC,
-                             DeclContext *MemberContext, bool EnteringContext,
-                             const ObjCObjectPointerType *OPT) override {
+                             DeclContext *MemberContext,
+                             bool EnteringContext /*,
+                             const ObjCObjectPointerType *OPT*/) override {
     ++CallCount;
     if (CurrentSema && Typo.getName().getAsString() == CorrectFrom) {
       DeclContext *DestContext = nullptr;
@@ -149,8 +150,9 @@ public:
   TypoCorrection CorrectTypo(const DeclarationNameInfo &Typo, int LookupKind,
                              Scope *S, CXXScopeSpec *SS,
                              CorrectionCandidateCallback &CCC,
-                             DeclContext *MemberContext, bool EnteringContext,
-                             const ObjCObjectPointerType *OPT) override {
+                             DeclContext *MemberContext,
+                             bool EnteringContext /*,
+                             const ObjCObjectPointerType *OPT*/) override {
     ++CallCount;
     if (CurrentSema && Typo.getName().getAsString() == CorrectFrom) {
       DeclContext *DestContext = nullptr;

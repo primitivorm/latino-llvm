@@ -920,18 +920,18 @@ bool CompilerInstance::ExecuteAction(FrontendAction &Act) {
     return false;
 
   // Create TargetInfo for the other side of CUDA/OpenMP/SYCL compilation.
-  // if ((getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
-  //      getLangOpts().SYCLIsDevice) &&
-  //     !getFrontendOpts().AuxTriple.empty()) {
-  //   auto TO = std::make_shared<TargetOptions>();
-  //   TO->Triple = llvm::Triple::normalize(getFrontendOpts().AuxTriple);
-  //   if (getFrontendOpts().AuxTargetCPU)
-  //     TO->CPU = getFrontendOpts().AuxTargetCPU.getValue();
-  //   if (getFrontendOpts().AuxTargetFeatures)
-  //     TO->FeaturesAsWritten = getFrontendOpts().AuxTargetFeatures.getValue();
-  //   TO->HostTriple = getTarget().getTriple().str();
-  //   setAuxTarget(TargetInfo::CreateTargetInfo(getDiagnostics(), TO));
-  // }
+  if ((getLangOpts().CUDA || getLangOpts().OpenMPIsDevice ||
+       getLangOpts().SYCLIsDevice) &&
+      !getFrontendOpts().AuxTriple.empty()) {
+    auto TO = std::make_shared<TargetOptions>();
+    TO->Triple = llvm::Triple::normalize(getFrontendOpts().AuxTriple);
+    if (getFrontendOpts().AuxTargetCPU)
+      TO->CPU = getFrontendOpts().AuxTargetCPU.getValue();
+    if (getFrontendOpts().AuxTargetFeatures)
+      TO->FeaturesAsWritten = getFrontendOpts().AuxTargetFeatures.getValue();
+    TO->HostTriple = getTarget().getTriple().str();
+    setAuxTarget(TargetInfo::CreateTargetInfo(getDiagnostics(), TO));
+  }
 
   if (!getTarget().hasStrictFP() && !getLangOpts().ExpStrictFP) {
     if (getLangOpts().getFPRoundingMode() !=

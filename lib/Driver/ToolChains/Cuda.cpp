@@ -611,7 +611,7 @@ void NVPTX::OpenMPLinker::ConstructJob(Compilation &C, const JobAction &JA,
   // Add paths for the default clang library path.
   SmallString<256> DefaultLibPath =
       llvm::sys::path::parent_path(TC.getDriver().Dir);
-  llvm::sys::path::append(DefaultLibPath, "lib" LATINO_LIBDIR_SUFFIX);
+  llvm::sys::path::append(DefaultLibPath, "lib" CLANG_LIBDIR_SUFFIX);
   CmdArgs.push_back(Args.MakeArgString(Twine("-L") + DefaultLibPath));
 
   // Add linking against library implementing OpenMP calls on NVPTX target.
@@ -778,7 +778,7 @@ void CudaToolChain::addClangTargetOptions(
     // Add path to lib / lib64 folder.
     SmallString<256> DefaultLibPath =
         llvm::sys::path::parent_path(getDriver().Dir);
-    llvm::sys::path::append(DefaultLibPath, Twine("lib") + LATINO_LIBDIR_SUFFIX);
+    llvm::sys::path::append(DefaultLibPath, Twine("lib") + CLANG_LIBDIR_SUFFIX);
     LibraryPaths.emplace_back(DefaultLibPath.c_str());
 
     std::string LibOmpTargetName =
@@ -884,7 +884,7 @@ CudaToolChain::TranslateArgs(const llvm::opt::DerivedArgList &Args,
     StringRef Arch = DAL->getLastArgValue(options::OPT_march_EQ);
     if (Arch.empty())
       DAL->AddJoinedArg(nullptr, Opts.getOption(options::OPT_march_EQ),
-                        LATINO_OPENMP_NVPTX_DEFAULT_ARCH);
+                        CLANG_OPENMP_NVPTX_DEFAULT_ARCH);
 
     return DAL;
   }

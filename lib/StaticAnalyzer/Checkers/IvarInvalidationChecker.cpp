@@ -586,14 +586,14 @@ struct ChecksFilter {
 //   }
 // }
 
-const Expr *IvarInvalidationCheckerImpl::MethodCrawler::peel(const Expr *E) const {
-  E = E->IgnoreParenCasts();
-  if (const PseudoObjectExpr *POE = dyn_cast<PseudoObjectExpr>(E))
-    E = POE->getSyntacticForm()->IgnoreParenCasts();
-  if (const OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(E))
-    E = OVE->getSourceExpr()->IgnoreParenCasts();
-  return E;
-}
+// const Expr *IvarInvalidationCheckerImpl::MethodCrawler::peel(const Expr *E) const {
+//   E = E->IgnoreParenCasts();
+//   if (const PseudoObjectExpr *POE = dyn_cast<PseudoObjectExpr>(E))
+//     E = POE->getSyntacticForm()->IgnoreParenCasts();
+//   if (const OpaqueValueExpr *OVE = dyn_cast<OpaqueValueExpr>(E))
+//     E = OVE->getSourceExpr()->IgnoreParenCasts();
+//   return E;
+// }
 
 // void IvarInvalidationCheckerImpl::MethodCrawler::checkObjCIvarRefExpr(
 //     const ObjCIvarRefExpr *IvarRef) {
@@ -664,28 +664,28 @@ const Expr *IvarInvalidationCheckerImpl::MethodCrawler::peel(const Expr *E) cons
 //   }
 // }
 
-void IvarInvalidationCheckerImpl::MethodCrawler::VisitBinaryOperator(
-    const BinaryOperator *BO) {
-  VisitStmt(BO);
+// void IvarInvalidationCheckerImpl::MethodCrawler::VisitBinaryOperator(
+//     const BinaryOperator *BO) {
+//   VisitStmt(BO);
 
-  // Do we assign/compare against zero? If yes, check the variable we are
-  // assigning to.
-  BinaryOperatorKind Opcode = BO->getOpcode();
-  if (Opcode != BO_Assign &&
-      Opcode != BO_EQ &&
-      Opcode != BO_NE)
-    return;
+//   // Do we assign/compare against zero? If yes, check the variable we are
+//   // assigning to.
+//   BinaryOperatorKind Opcode = BO->getOpcode();
+//   if (Opcode != BO_Assign &&
+//       Opcode != BO_EQ &&
+//       Opcode != BO_NE)
+//     return;
 
-  if (isZero(BO->getRHS())) {
-      check(BO->getLHS());
-      return;
-  }
+//   if (isZero(BO->getRHS())) {
+//       check(BO->getLHS());
+//       return;
+//   }
 
-  if (Opcode != BO_Assign && isZero(BO->getLHS())) {
-    check(BO->getRHS());
-    return;
-  }
-}
+//   if (Opcode != BO_Assign && isZero(BO->getLHS())) {
+//     check(BO->getRHS());
+//     return;
+//   }
+// }
 
 // void IvarInvalidationCheckerImpl::MethodCrawler::VisitObjCMessageExpr(
 //   const ObjCMessageExpr *ME) {
@@ -739,9 +739,9 @@ void IvarInvalidationCheckerImpl::MethodCrawler::VisitBinaryOperator(
 //   mgr.registerChecker<IvarInvalidationChecker>();
 // }
 
-bool ento::shouldRegisterIvarInvalidationModeling(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterIvarInvalidationModeling(const CheckerManager &mgr) {
+//   return true;
+// }
 
 // #define REGISTER_CHECKER(name)                                                 \
 //   void ento::register##name(CheckerManager &mgr) {                             \

@@ -607,11 +607,11 @@ bool Parser::isCXXTypeId(TentativeCXXTypeIdContext Context, bool &isAmbiguous) {
     } else if (Context == TypeIdAsTemplateArgument &&
                (Tok.isOneOf(tok::greater, tok::comma) ||
                 (getLangOpts().CPlusPlus11 &&
-                 (Tok.is(tok::greatergreater/*,
-                              tok::greatergreatergreater*/) ||
+                 (Tok.isOneOf(tok::greatergreater,
+                              tok::greatergreatergreater) ||
                   (Tok.is(tok::ellipsis) &&
                    NextToken().isOneOf(tok::greater, tok::greatergreater,
-                                      //  tok::greatergreatergreater,
+                                       tok::greatergreatergreater,
                                        tok::comma)))))) {
       TPR = TPResult::True;
       isAmbiguous = true;
@@ -1635,7 +1635,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_int:
   case tok::kw_long:
   // case tok::kw___int64:
-  // case tok::kw___int128:
+  case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   // case tok::kw_half:
@@ -1749,7 +1749,7 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   // case tok::kw__ExtInt:
   case tok::kw_long:
   // case tok::kw___int64:
-  // case tok::kw___int128:
+  case tok::kw___int128:
   case tok::kw_signed:
   case tok::kw_unsigned:
   // case tok::kw_half:
@@ -2121,7 +2121,7 @@ Parser::TPResult Parser::isTemplateArgumentList(unsigned TokensToSkip) {
   // We might be able to disambiguate a few more cases if we're careful.
 
   // A template-argument-list must be terminated by a '>'.
-  if (SkipUntil({tok::greater, tok::greatergreater/*, tok::greatergreatergreater*/},
+  if (SkipUntil({tok::greater, tok::greatergreater, tok::greatergreatergreater},
                 StopAtSemi | StopBeforeMatch))
     return TPResult::Ambiguous;
   return TPResult::False;

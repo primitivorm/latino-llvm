@@ -130,14 +130,14 @@ REGISTER_MAP_WITH_PROGRAMSTATE(NullImplicationMap, SymbolRef, SymbolRef)
 //     C.addTransition(State);
 //   }
 
-//   void checkDeadSymbols(SymbolReaper &SymReaper, CheckerContext &C) const {
-//     ProgramStateRef State = C.getState();
+  // void checkDeadSymbols(SymbolReaper &SymReaper, CheckerContext &C) const {
+  //   ProgramStateRef State = C.getState();
 
-//     State = dropDeadFromGDM<NullImplicationMap>(SymReaper, State);
-//     State = dropDeadFromGDM<NonNullImplicationMap>(SymReaper, State);
+  //   State = dropDeadFromGDM<NullImplicationMap>(SymReaper, State);
+  //   State = dropDeadFromGDM<NonNullImplicationMap>(SymReaper, State);
 
-//     C.addTransition(State);
-//   }
+  //   C.addTransition(State);
+  // }
 
 // private:
 
@@ -248,10 +248,10 @@ REGISTER_MAP_WITH_PROGRAMSTATE(NullImplicationMap, SymbolRef, SymbolRef)
 
 // } // end empty namespace
 
-void ento::registerTrustNonnullChecker(CheckerManager &Mgr) {
-  Mgr.registerChecker<TrustNonnullChecker>(Mgr.getASTContext());
-}
+// void ento::registerTrustNonnullChecker(CheckerManager &Mgr) {
+//   Mgr.registerChecker<TrustNonnullChecker>(Mgr.getASTContext());
+// }
 
-bool ento::shouldRegisterTrustNonnullChecker(const CheckerManager &mgr) {
-  return true;
-}
+// bool ento::shouldRegisterTrustNonnullChecker(const CheckerManager &mgr) {
+//   return true;
+// }

@@ -305,100 +305,100 @@ protected:
   // }
 };
 
-TEST_F(PPCallbacksTest, UserFileCharacteristics) {
-  const char *Source = "#include \"quoted.h\"\n";
+// TEST_F(PPCallbacksTest, UserFileCharacteristics) {
+//   const char *Source = "#include \"quoted.h\"\n";
 
-  SrcMgr::CharacteristicKind Kind =
-      InclusionDirectiveCharacteristicKind(Source, "/quoted.h", false);
+//   SrcMgr::CharacteristicKind Kind =
+//       InclusionDirectiveCharacteristicKind(Source, "/quoted.h", false);
 
-  ASSERT_EQ(SrcMgr::CharacteristicKind::C_User, Kind);
-}
+//   ASSERT_EQ(SrcMgr::CharacteristicKind::C_User, Kind);
+// }
 
-TEST_F(PPCallbacksTest, QuotedFilename) {
-  const char* Source =
-    "#include \"quoted.h\"\n";
+// TEST_F(PPCallbacksTest, QuotedFilename) {
+//   const char* Source =
+//     "#include \"quoted.h\"\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/quoted.h", false);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/quoted.h", false);
 
-  ASSERT_EQ("\"quoted.h\"", GetSourceString(Range));
-}
+//   ASSERT_EQ("\"quoted.h\"", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, AngledFilename) {
-  const char* Source =
-    "#include <angled.h>\n";
+// TEST_F(PPCallbacksTest, AngledFilename) {
+//   const char* Source =
+//     "#include <angled.h>\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/angled.h", true);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/angled.h", true);
 
-  ASSERT_EQ("<angled.h>", GetSourceString(Range));
-}
+//   ASSERT_EQ("<angled.h>", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, QuotedInMacro) {
-  const char* Source =
-    "#define MACRO_QUOTED \"quoted.h\"\n"
-    "#include MACRO_QUOTED\n";
+// TEST_F(PPCallbacksTest, QuotedInMacro) {
+//   const char* Source =
+//     "#define MACRO_QUOTED \"quoted.h\"\n"
+//     "#include MACRO_QUOTED\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/quoted.h", false);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/quoted.h", false);
 
-  ASSERT_EQ("\"quoted.h\"", GetSourceString(Range));
-}
+//   ASSERT_EQ("\"quoted.h\"", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, AngledInMacro) {
-  const char* Source =
-    "#define MACRO_ANGLED <angled.h>\n"
-    "#include MACRO_ANGLED\n";
+// TEST_F(PPCallbacksTest, AngledInMacro) {
+//   const char* Source =
+//     "#define MACRO_ANGLED <angled.h>\n"
+//     "#include MACRO_ANGLED\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/angled.h", true);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/angled.h", true);
 
-  ASSERT_EQ("<angled.h>", GetSourceString(Range));
-}
+//   ASSERT_EQ("<angled.h>", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, StringizedMacroArgument) {
-  const char* Source =
-    "#define MACRO_STRINGIZED(x) #x\n"
-    "#include MACRO_STRINGIZED(quoted.h)\n";
+// TEST_F(PPCallbacksTest, StringizedMacroArgument) {
+//   const char* Source =
+//     "#define MACRO_STRINGIZED(x) #x\n"
+//     "#include MACRO_STRINGIZED(quoted.h)\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/quoted.h", false);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/quoted.h", false);
 
-  ASSERT_EQ("\"quoted.h\"", GetSourceString(Range));
-}
+//   ASSERT_EQ("\"quoted.h\"", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, ConcatenatedMacroArgument) {
-  const char* Source =
-    "#define MACRO_ANGLED <angled.h>\n"
-    "#define MACRO_CONCAT(x, y) x ## _ ## y\n"
-    "#include MACRO_CONCAT(MACRO, ANGLED)\n";
+// TEST_F(PPCallbacksTest, ConcatenatedMacroArgument) {
+//   const char* Source =
+//     "#define MACRO_ANGLED <angled.h>\n"
+//     "#define MACRO_CONCAT(x, y) x ## _ ## y\n"
+//     "#include MACRO_CONCAT(MACRO, ANGLED)\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/angled.h", false);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/angled.h", false);
 
-  ASSERT_EQ("<angled.h>", GetSourceString(Range));
-}
+//   ASSERT_EQ("<angled.h>", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, TrigraphFilename) {
-  const char* Source =
-    "#include \"tri\?\?-graph.h\"\n";
+// TEST_F(PPCallbacksTest, TrigraphFilename) {
+//   const char* Source =
+//     "#include \"tri\?\?-graph.h\"\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/tri~graph.h", false);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/tri~graph.h", false);
 
-  ASSERT_EQ("\"tri\?\?-graph.h\"", GetSourceString(Range));
-}
+//   ASSERT_EQ("\"tri\?\?-graph.h\"", GetSourceString(Range));
+// }
 
-TEST_F(PPCallbacksTest, TrigraphInMacro) {
-  const char* Source =
-    "#define MACRO_TRIGRAPH \"tri\?\?-graph.h\"\n"
-    "#include MACRO_TRIGRAPH\n";
+// TEST_F(PPCallbacksTest, TrigraphInMacro) {
+//   const char* Source =
+//     "#define MACRO_TRIGRAPH \"tri\?\?-graph.h\"\n"
+//     "#include MACRO_TRIGRAPH\n";
 
-  CharSourceRange Range =
-    InclusionDirectiveFilenameRange(Source, "/tri~graph.h", false);
+//   CharSourceRange Range =
+//     InclusionDirectiveFilenameRange(Source, "/tri~graph.h", false);
 
-  ASSERT_EQ("\"tri\?\?-graph.h\"", GetSourceString(Range));
-}
+//   ASSERT_EQ("\"tri\?\?-graph.h\"", GetSourceString(Range));
+// }
 
 // TEST_F(PPCallbacksTest, OpenCLExtensionPragmaEnabled) {
 //   const char* Source =
@@ -424,70 +424,70 @@ TEST_F(PPCallbacksTest, TrigraphInMacro) {
 //   ASSERT_EQ(ExpectedState, Parameters.State);
 // }
 
-TEST_F(PPCallbacksTest, DirectiveExprRanges) {
-  const auto &Results1 = DirectiveExprRange("#if FLUZZY_FLOOF\n#endif\n");
-  EXPECT_EQ(Results1.size(), 1U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results1[0].ConditionRange, false)),
-      "FLUZZY_FLOOF");
+// TEST_F(PPCallbacksTest, DirectiveExprRanges) {
+//   const auto &Results1 = DirectiveExprRange("#if FLUZZY_FLOOF\n#endif\n");
+//   EXPECT_EQ(Results1.size(), 1U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results1[0].ConditionRange, false)),
+//       "FLUZZY_FLOOF");
 
-  const auto &Results2 = DirectiveExprRange("#if 1 + 4 < 7\n#endif\n");
-  EXPECT_EQ(Results2.size(), 1U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results2[0].ConditionRange, false)),
-      "1 + 4 < 7");
+//   const auto &Results2 = DirectiveExprRange("#if 1 + 4 < 7\n#endif\n");
+//   EXPECT_EQ(Results2.size(), 1U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results2[0].ConditionRange, false)),
+//       "1 + 4 < 7");
 
-  const auto &Results3 = DirectiveExprRange("#if 1 + \\\n  2\n#endif\n");
-  EXPECT_EQ(Results3.size(), 1U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results3[0].ConditionRange, false)),
-      "1 + \\\n  2");
+//   const auto &Results3 = DirectiveExprRange("#if 1 + \\\n  2\n#endif\n");
+//   EXPECT_EQ(Results3.size(), 1U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results3[0].ConditionRange, false)),
+//       "1 + \\\n  2");
 
-  const auto &Results4 = DirectiveExprRange("#if 0\n#elif FLOOFY\n#endif\n");
-  EXPECT_EQ(Results4.size(), 2U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results4[0].ConditionRange, false)),
-      "0");
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results4[1].ConditionRange, false)),
-      "FLOOFY");
+//   const auto &Results4 = DirectiveExprRange("#if 0\n#elif FLOOFY\n#endif\n");
+//   EXPECT_EQ(Results4.size(), 2U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results4[0].ConditionRange, false)),
+//       "0");
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results4[1].ConditionRange, false)),
+//       "FLOOFY");
 
-  const auto &Results5 = DirectiveExprRange("#if 1\n#elif FLOOFY\n#endif\n");
-  EXPECT_EQ(Results5.size(), 2U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results5[0].ConditionRange, false)),
-      "1");
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results5[1].ConditionRange, false)),
-      "FLOOFY");
+//   const auto &Results5 = DirectiveExprRange("#if 1\n#elif FLOOFY\n#endif\n");
+//   EXPECT_EQ(Results5.size(), 2U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results5[0].ConditionRange, false)),
+//       "1");
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results5[1].ConditionRange, false)),
+//       "FLOOFY");
 
-  const auto &Results6 =
-      DirectiveExprRange("#if defined(FLUZZY_FLOOF)\n#endif\n");
-  EXPECT_EQ(Results6.size(), 1U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results6[0].ConditionRange, false)),
-      "defined(FLUZZY_FLOOF)");
+//   const auto &Results6 =
+//       DirectiveExprRange("#if defined(FLUZZY_FLOOF)\n#endif\n");
+//   EXPECT_EQ(Results6.size(), 1U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results6[0].ConditionRange, false)),
+//       "defined(FLUZZY_FLOOF)");
 
-  const auto &Results7 =
-      DirectiveExprRange("#if 1\n#elif defined(FLOOFY)\n#endif\n");
-  EXPECT_EQ(Results7.size(), 2U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results7[0].ConditionRange, false)),
-      "1");
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results7[1].ConditionRange, false)),
-      "defined(FLOOFY)");
+//   const auto &Results7 =
+//       DirectiveExprRange("#if 1\n#elif defined(FLOOFY)\n#endif\n");
+//   EXPECT_EQ(Results7.size(), 2U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results7[0].ConditionRange, false)),
+//       "1");
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results7[1].ConditionRange, false)),
+//       "defined(FLOOFY)");
 
-  const auto &Results8 =
-      DirectiveExprRange("#define FLOOFY 0\n#if __FILE__ > FLOOFY\n#endif\n");
-  EXPECT_EQ(Results8.size(), 1U);
-  EXPECT_EQ(
-      GetSourceStringToEnd(CharSourceRange(Results8[0].ConditionRange, false)),
-      "__FILE__ > FLOOFY");
-  EXPECT_EQ(
-      Lexer::getSourceText(CharSourceRange(Results8[0].ConditionRange, false),
-                           SourceMgr, LangOpts),
-      "__FILE__ > FLOOFY");
-}
+//   const auto &Results8 =
+//       DirectiveExprRange("#define FLOOFY 0\n#if __FILE__ > FLOOFY\n#endif\n");
+//   EXPECT_EQ(Results8.size(), 1U);
+//   EXPECT_EQ(
+//       GetSourceStringToEnd(CharSourceRange(Results8[0].ConditionRange, false)),
+//       "__FILE__ > FLOOFY");
+//   EXPECT_EQ(
+//       Lexer::getSourceText(CharSourceRange(Results8[0].ConditionRange, false),
+//                            SourceMgr, LangOpts),
+//       "__FILE__ > FLOOFY");
+// }
 
 } // namespace

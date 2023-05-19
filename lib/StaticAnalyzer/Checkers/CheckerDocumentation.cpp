@@ -35,9 +35,9 @@ namespace ento {
 /// \sa CheckerContext
 class CheckerDocumentation : public Checker< check::PreStmt<ReturnStmt>,
                                        check::PostStmt<DeclStmt>,
-                                       check::PreObjCMessage,
-                                       check::PostObjCMessage,
-                                       check::ObjCMessageNil,
+                                      //  check::PreObjCMessage,
+                                      //  check::PostObjCMessage,
+                                      //  check::ObjCMessageNil,
                                        check::PreCall,
                                        check::PostCall,
                                        check::BranchCondition,

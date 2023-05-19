@@ -52,9 +52,9 @@ class DynamicTypePropagation:
                     check::PostCall,
                     check::DeadSymbols,
                     check::PostStmt<CastExpr>,
-                    check::PostStmt<CXXNewExpr>,
+                    check::PostStmt<CXXNewExpr>/*,
                     check::PreObjCMessage,
-                    check::PostObjCMessage > {
+                    check::PostObjCMessage*/ > {
 
   // const ObjCObjectType *getObjectTypeForAllocAndNew(const ObjCMessageExpr *MsgE,
   //                                                   CheckerContext &C) const;
@@ -74,24 +74,24 @@ class DynamicTypePropagation:
           GenericCheckName, "Generics", categories::CoreFoundationObjectiveC));
   }
 
-  class GenericsBugVisitor : public BugReporterVisitor {
-  public:
-    GenericsBugVisitor(SymbolRef S) : Sym(S) {}
+  // class GenericsBugVisitor : public BugReporterVisitor {
+  // public:
+  //   GenericsBugVisitor(SymbolRef S) : Sym(S) {}
 
-    void Profile(llvm::FoldingSetNodeID &ID) const override {
-      static int X = 0;
-      ID.AddPointer(&X);
-      ID.AddPointer(Sym);
-    }
+  //   void Profile(llvm::FoldingSetNodeID &ID) const override {
+  //     static int X = 0;
+  //     ID.AddPointer(&X);
+  //     ID.AddPointer(Sym);
+  //   }
 
-    PathDiagnosticPieceRef VisitNode(const ExplodedNode *N,
-                                     BugReporterContext &BRC,
-                                     PathSensitiveBugReport &BR) override;
+  //   PathDiagnosticPieceRef VisitNode(const ExplodedNode *N,
+  //                                    BugReporterContext &BRC,
+  //                                    PathSensitiveBugReport &BR) override;
 
-  private:
-    // The tracked symbol.
-    SymbolRef Sym;
-  };
+  // private:
+  //   // The tracked symbol.
+  //   SymbolRef Sym;
+  // };
 
   // void reportGenericsBug(const ObjCObjectPointerType *From,
   //                        const ObjCObjectPointerType *To, ExplodedNode *N,
@@ -230,20 +230,20 @@ public:
 
 void DynamicTypePropagation::checkDeadSymbols(SymbolReaper &SR,
                                               CheckerContext &C) const {
-  ProgramStateRef State = removeDeadTypes(C.getState(), SR);
-  State = removeDeadClassObjectTypes(State, SR);
+  // ProgramStateRef State = removeDeadTypes(C.getState(), SR);
+  // State = removeDeadClassObjectTypes(State, SR);
 
-  MostSpecializedTypeArgsMapTy TyArgMap =
-      State->get<MostSpecializedTypeArgsMap>();
-  for (MostSpecializedTypeArgsMapTy::iterator I = TyArgMap.begin(),
-                                              E = TyArgMap.end();
-       I != E; ++I) {
-    if (SR.isDead(I->first)) {
-      State = State->remove<MostSpecializedTypeArgsMap>(I->first);
-    }
-  }
+  // MostSpecializedTypeArgsMapTy TyArgMap =
+  //     State->get<MostSpecializedTypeArgsMap>();
+  // for (MostSpecializedTypeArgsMapTy::iterator I = TyArgMap.begin(),
+  //                                             E = TyArgMap.end();
+  //      I != E; ++I) {
+  //   if (SR.isDead(I->first)) {
+  //     State = State->remove<MostSpecializedTypeArgsMap>(I->first);
+  //   }
+  // }
 
-  C.addTransition(State);
+  // C.addTransition(State);
 }
 
 static void recordFixedType(const MemRegion *Region, const CXXMethodDecl *MD,
@@ -303,97 +303,97 @@ void DynamicTypePropagation::checkPreCall(const CallEvent &Call,
   }
 }
 
-// void DynamicTypePropagation::checkPostCall(const CallEvent &Call,
-//                                            CheckerContext &C) const {
-//   // We can obtain perfect type info for return values from some calls.
-//   if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(&Call)) {
+void DynamicTypePropagation::checkPostCall(const CallEvent &Call,
+                                           CheckerContext &C) const {
+  // We can obtain perfect type info for return values from some calls.
+  // if (const ObjCMethodCall *Msg = dyn_cast<ObjCMethodCall>(&Call)) {
 
-//     // Get the returned value if it's a region.
-//     const MemRegion *RetReg = Call.getReturnValue().getAsRegion();
-//     if (!RetReg)
-//       return;
+  //   // Get the returned value if it's a region.
+  //   const MemRegion *RetReg = Call.getReturnValue().getAsRegion();
+  //   if (!RetReg)
+  //     return;
 
-//     ProgramStateRef State = C.getState();
-//     const ObjCMethodDecl *D = Msg->getDecl();
+  //   ProgramStateRef State = C.getState();
+  //   const ObjCMethodDecl *D = Msg->getDecl();
 
-//     if (D && D->hasRelatedResultType()) {
-//       switch (Msg->getMethodFamily()) {
-//       default:
-//         break;
+  //   if (D && D->hasRelatedResultType()) {
+  //     switch (Msg->getMethodFamily()) {
+  //     default:
+  //       break;
 
-//       // We assume that the type of the object returned by alloc and new are the
-//       // pointer to the object of the class specified in the receiver of the
-//       // message.
-//       case OMF_alloc:
-//       case OMF_new: {
-//         // Get the type of object that will get created.
-//         RuntimeType ObjTy = inferReceiverType(*Msg, C);
+  //     // We assume that the type of the object returned by alloc and new are the
+  //     // pointer to the object of the class specified in the receiver of the
+  //     // message.
+  //     case OMF_alloc:
+  //     case OMF_new: {
+  //       // Get the type of object that will get created.
+  //       RuntimeType ObjTy = inferReceiverType(*Msg, C);
 
-//         if (!ObjTy)
-//           return;
+  //       if (!ObjTy)
+  //         return;
 
-//         QualType DynResTy =
-//             C.getASTContext().getObjCObjectPointerType(QualType(ObjTy.Type, 0));
-//         // We used to assume that whatever type we got from inferring the
-//         // type is actually precise (and it is not exactly correct).
-//         // A big portion of the existing behavior depends on that assumption
-//         // (e.g. certain inlining won't take place). For this reason, we don't
-//         // use ObjTy.Precise flag here.
-//         //
-//         // TODO: We should mitigate this problem some time in the future
-//         // and replace hardcoded 'false' with '!ObjTy.Precise'.
-//         C.addTransition(setDynamicTypeInfo(State, RetReg, DynResTy, false));
-//         break;
-//       }
-//       case OMF_init: {
-//         // Assume, the result of the init method has the same dynamic type as
-//         // the receiver and propagate the dynamic type info.
-//         const MemRegion *RecReg = Msg->getReceiverSVal().getAsRegion();
-//         if (!RecReg)
-//           return;
-//         DynamicTypeInfo RecDynType = getDynamicTypeInfo(State, RecReg);
-//         C.addTransition(setDynamicTypeInfo(State, RetReg, RecDynType));
-//         break;
-//       }
-//       }
-//     }
-//     return;
-//   }
+  //       QualType DynResTy =
+  //           C.getASTContext().getObjCObjectPointerType(QualType(ObjTy.Type, 0));
+  //       // We used to assume that whatever type we got from inferring the
+  //       // type is actually precise (and it is not exactly correct).
+  //       // A big portion of the existing behavior depends on that assumption
+  //       // (e.g. certain inlining won't take place). For this reason, we don't
+  //       // use ObjTy.Precise flag here.
+  //       //
+  //       // TODO: We should mitigate this problem some time in the future
+  //       // and replace hardcoded 'false' with '!ObjTy.Precise'.
+  //       C.addTransition(setDynamicTypeInfo(State, RetReg, DynResTy, false));
+  //       break;
+  //     }
+  //     case OMF_init: {
+  //       // Assume, the result of the init method has the same dynamic type as
+  //       // the receiver and propagate the dynamic type info.
+  //       const MemRegion *RecReg = Msg->getReceiverSVal().getAsRegion();
+  //       if (!RecReg)
+  //         return;
+  //       DynamicTypeInfo RecDynType = getDynamicTypeInfo(State, RecReg);
+  //       C.addTransition(setDynamicTypeInfo(State, RetReg, RecDynType));
+  //       break;
+  //     }
+  //     }
+  //   }
+  //   return;
+  // }
 
-//   if (const CXXConstructorCall *Ctor = dyn_cast<CXXConstructorCall>(&Call)) {
-//     // We may need to undo the effects of our pre-call check.
-//     switch (Ctor->getOriginExpr()->getConstructionKind()) {
-//     case CXXConstructExpr::CK_Complete:
-//     case CXXConstructExpr::CK_Delegating:
-//       // No additional work necessary.
-//       // Note: This will leave behind the actual type of the object for
-//       // complete constructors, but arguably that's a good thing, since it
-//       // means the dynamic type info will be correct even for objects
-//       // constructed with operator new.
-//       return;
-//     case CXXConstructExpr::CK_NonVirtualBase:
-//     case CXXConstructExpr::CK_VirtualBase:
-//       if (const MemRegion *Target = Ctor->getCXXThisVal().getAsRegion()) {
-//         // We just finished a base constructor. Now we can use the subclass's
-//         // type when resolving virtual calls.
-//         const LocationContext *LCtx = C.getLocationContext();
+  if (const CXXConstructorCall *Ctor = dyn_cast<CXXConstructorCall>(&Call)) {
+    // We may need to undo the effects of our pre-call check.
+    switch (Ctor->getOriginExpr()->getConstructionKind()) {
+    case CXXConstructExpr::CK_Complete:
+    case CXXConstructExpr::CK_Delegating:
+      // No additional work necessary.
+      // Note: This will leave behind the actual type of the object for
+      // complete constructors, but arguably that's a good thing, since it
+      // means the dynamic type info will be correct even for objects
+      // constructed with operator new.
+      return;
+    case CXXConstructExpr::CK_NonVirtualBase:
+    case CXXConstructExpr::CK_VirtualBase:
+      if (const MemRegion *Target = Ctor->getCXXThisVal().getAsRegion()) {
+        // We just finished a base constructor. Now we can use the subclass's
+        // type when resolving virtual calls.
+        const LocationContext *LCtx = C.getLocationContext();
 
-//         // FIXME: In C++17 classes with non-virtual bases may be treated as
-//         // aggregates, and in such case no top-frame constructor will be called.
-//         // Figure out if we need to do anything in this case.
-//         // FIXME: Instead of relying on the ParentMap, we should have the
-//         // trigger-statement (InitListExpr in this case) available in this
-//         // callback, ideally as part of CallEvent.
-//         if (dyn_cast_or_null<InitListExpr>(
-//                 LCtx->getParentMap().getParent(Ctor->getOriginExpr())))
-//           return;
+        // FIXME: In C++17 classes with non-virtual bases may be treated as
+        // aggregates, and in such case no top-frame constructor will be called.
+        // Figure out if we need to do anything in this case.
+        // FIXME: Instead of relying on the ParentMap, we should have the
+        // trigger-statement (InitListExpr in this case) available in this
+        // callback, ideally as part of CallEvent.
+        if (dyn_cast_or_null<InitListExpr>(
+                LCtx->getParentMap().getParent(Ctor->getOriginExpr())))
+          return;
 
-//         recordFixedType(Target, cast<CXXConstructorDecl>(LCtx->getDecl()), C);
-//       }
-//       return;
-//     }
-//   }
-// }
+        recordFixedType(Target, cast<CXXConstructorDecl>(LCtx->getDecl()), C);
+      }
+      return;
+    }
+  }
+}
 
 /// TODO: Handle explicit casts.
 ///       Handle C++ casts.
@@ -1044,60 +1044,60 @@ static const Expr *stripCastsAndSugar(const Expr *E) {
 //   C.emitReport(std::move(R));
 // }
 
-PathDiagnosticPieceRef DynamicTypePropagation::GenericsBugVisitor::VisitNode(
-    const ExplodedNode *N, BugReporterContext &BRC,
-    PathSensitiveBugReport &BR) {
-  ProgramStateRef state = N->getState();
-  ProgramStateRef statePrev = N->getFirstPred()->getState();
+// PathDiagnosticPieceRef DynamicTypePropagation::GenericsBugVisitor::VisitNode(
+//     const ExplodedNode *N, BugReporterContext &BRC,
+//     PathSensitiveBugReport &BR) {
+//   ProgramStateRef state = N->getState();
+//   ProgramStateRef statePrev = N->getFirstPred()->getState();
 
-  // const ObjCObjectPointerType *const *TrackedType =
-  //     state->get<MostSpecializedTypeArgsMap>(Sym);
-  // const ObjCObjectPointerType *const *TrackedTypePrev =
-  //     statePrev->get<MostSpecializedTypeArgsMap>(Sym);
-  // if (!TrackedType)
-  //   return nullptr;
+//   // const ObjCObjectPointerType *const *TrackedType =
+//   //     state->get<MostSpecializedTypeArgsMap>(Sym);
+//   // const ObjCObjectPointerType *const *TrackedTypePrev =
+//   //     statePrev->get<MostSpecializedTypeArgsMap>(Sym);
+//   // if (!TrackedType)
+//   //   return nullptr;
 
-  // if (TrackedTypePrev && *TrackedTypePrev == *TrackedType)
-  //   return nullptr;
+//   // if (TrackedTypePrev && *TrackedTypePrev == *TrackedType)
+//   //   return nullptr;
 
-  // Retrieve the associated statement.
-  const Stmt *S = N->getStmtForDiagnostics();
-  if (!S)
-    return nullptr;
+//   // Retrieve the associated statement.
+//   const Stmt *S = N->getStmtForDiagnostics();
+//   if (!S)
+//     return nullptr;
 
-  const LangOptions &LangOpts = BRC.getASTContext().getLangOpts();
+//   const LangOptions &LangOpts = BRC.getASTContext().getLangOpts();
 
-  SmallString<256> Buf;
-  llvm::raw_svector_ostream OS(Buf);
-  OS << "Type '";
-  QualType::print(*TrackedType, Qualifiers(), OS, LangOpts, llvm::Twine());
-  OS << "' is inferred from ";
+//   SmallString<256> Buf;
+//   llvm::raw_svector_ostream OS(Buf);
+//   OS << "Type '";
+//   QualType::print(*TrackedType, Qualifiers(), OS, LangOpts, llvm::Twine());
+//   OS << "' is inferred from ";
 
-  if (const auto *ExplicitCast = dyn_cast<ExplicitCastExpr>(S)) {
-    OS << "explicit cast (from '";
-    QualType::print(ExplicitCast->getSubExpr()->getType().getTypePtr(),
-                    Qualifiers(), OS, LangOpts, llvm::Twine());
-    OS << "' to '";
-    QualType::print(ExplicitCast->getType().getTypePtr(), Qualifiers(), OS,
-                    LangOpts, llvm::Twine());
-    OS << "')";
-  } else if (const auto *ImplicitCast = dyn_cast<ImplicitCastExpr>(S)) {
-    OS << "implicit cast (from '";
-    QualType::print(ImplicitCast->getSubExpr()->getType().getTypePtr(),
-                    Qualifiers(), OS, LangOpts, llvm::Twine());
-    OS << "' to '";
-    QualType::print(ImplicitCast->getType().getTypePtr(), Qualifiers(), OS,
-                    LangOpts, llvm::Twine());
-    OS << "')";
-  } else {
-    OS << "this context";
-  }
+//   if (const auto *ExplicitCast = dyn_cast<ExplicitCastExpr>(S)) {
+//     OS << "explicit cast (from '";
+//     QualType::print(ExplicitCast->getSubExpr()->getType().getTypePtr(),
+//                     Qualifiers(), OS, LangOpts, llvm::Twine());
+//     OS << "' to '";
+//     QualType::print(ExplicitCast->getType().getTypePtr(), Qualifiers(), OS,
+//                     LangOpts, llvm::Twine());
+//     OS << "')";
+//   } else if (const auto *ImplicitCast = dyn_cast<ImplicitCastExpr>(S)) {
+//     OS << "implicit cast (from '";
+//     QualType::print(ImplicitCast->getSubExpr()->getType().getTypePtr(),
+//                     Qualifiers(), OS, LangOpts, llvm::Twine());
+//     OS << "' to '";
+//     QualType::print(ImplicitCast->getType().getTypePtr(), Qualifiers(), OS,
+//                     LangOpts, llvm::Twine());
+//     OS << "')";
+//   } else {
+//     OS << "this context";
+//   }
 
-  // Generate the extra diagnostic.
-  PathDiagnosticLocation Pos(S, BRC.getSourceManager(),
-                             N->getLocationContext());
-  return std::make_shared<PathDiagnosticEventPiece>(Pos, OS.str(), true);
-}
+//   // Generate the extra diagnostic.
+//   PathDiagnosticLocation Pos(S, BRC.getSourceManager(),
+//                              N->getLocationContext());
+//   return std::make_shared<PathDiagnosticEventPiece>(Pos, OS.str(), true);
+// }
 
 /// Register checkers.
 // void ento::registerObjCGenericsChecker(CheckerManager &mgr) {

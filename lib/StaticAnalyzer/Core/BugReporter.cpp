@@ -599,9 +599,9 @@ PathDiagnosticLocation PathDiagnosticBuilder::ExecutionContinues(
   else {
     os << "Execution jumps to the end of the ";
     const Decl *D = C.getCurrLocationContext()->getDecl();
-    // if (isa<ObjCMethodDecl>(D))
-    //   os << "method";
-    else if (isa<FunctionDecl>(D))
+    /*if (isa<ObjCMethodDecl>(D))
+      os << "method";
+    else*/ if (isa<FunctionDecl>(D))
       os << "function";
     else {
       assert(isa<BlockDecl>(D));
@@ -1102,12 +1102,12 @@ static void addEdgeToPath(PathPieces &path,
 
 /// A customized wrapper for CFGBlock::getTerminatorCondition()
 /// which returns the element for ObjCForCollectionStmts.
-// static const Stmt *getTerminatorCondition(const CFGBlock *B) {
-//   const Stmt *S = B->getTerminatorCondition();
-//   if (const auto *FS = dyn_cast_or_null<ObjCForCollectionStmt>(S))
-//     return FS->getElement();
-//   return S;
-// }
+static const Stmt *getTerminatorCondition(const CFGBlock *B) {
+  const Stmt *S = B->getTerminatorCondition();
+  // if (const auto *FS = dyn_cast_or_null<ObjCForCollectionStmt>(S))
+  //   return FS->getElement();
+  return S;
+}
 
 constexpr llvm::StringLiteral StrEnteringLoop = "Entering loop body";
 constexpr llvm::StringLiteral StrLoopBodyZero = "Loop body executed 0 times";

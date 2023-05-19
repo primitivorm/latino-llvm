@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "latino/Sema/CodeCompleteConsumer.h"
-#include "clang-c/Index.h"
+#include "latino-c/Index.h"
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclBase.h"
 // #include "latino/AST/DeclObjC.h"

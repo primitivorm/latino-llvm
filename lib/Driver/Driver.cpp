@@ -113,7 +113,7 @@ std::string Driver::GetResourcesPath(StringRef BinaryPath,
     // path of the embedding binary, which for LLVM binaries will be in bin/.
     // ../lib gets us to lib/ in both cases.
     P = llvm::sys::path::parent_path(Dir);
-    llvm::sys::path::append(P, Twine("lib") + LATINO_LIBDIR_SUFFIX, "clang",
+    llvm::sys::path::append(P, Twine("lib") + CLANG_LIBDIR_SUFFIX, "latino",
                             LATINO_VERSION_STRING);
   }
 
@@ -156,7 +156,7 @@ Driver::Driver(StringRef ClangExecutable, StringRef TargetTriple,
 #endif
 
   // Compute the path to the resource directory.
-  ResourceDir = GetResourcesPath(ClangExecutable, LATINO_RESOURCE_DIR);
+  ResourceDir = GetResourcesPath(ClangExecutable, CLANG_RESOURCE_DIR);
 }
 
 void Driver::ParseDriverMode(StringRef ProgramName,
@@ -607,7 +607,7 @@ void Driver::setLTOMode(const llvm::opt::ArgList &Args) {
 
 /// Compute the desired OpenMP runtime from the flags provided.
 // Driver::OpenMPRuntimeKind Driver::getOpenMPRuntime(const ArgList &Args) const {
-//   StringRef RuntimeName(LATINO_DEFAULT_OPENMP_RUNTIME);
+//   StringRef RuntimeName(CLANG_DEFAULT_OPENMP_RUNTIME);
 
 //   const Arg *A = Args.getLastArg(options::OPT_fopenmp_EQ);
 //   if (A)
@@ -1086,7 +1086,7 @@ Compilation *Driver::BuildCompilation(ArrayRef<const char *> ArgList) {
     CCCGenericGCCName = A->getValue();
   GenReproducer = Args.hasFlag(options::OPT_gen_reproducer,
                                options::OPT_fno_crash_diagnostics,
-                               !!::getenv("FORCE_CLANG_DIAGNOSTICS_CRASH"));
+                               !!::getenv("FORCE_LATINO_DIAGNOSTICS_CRASH"));
   // FIXME: TargetTriple is used by the target-prefixed calls to as/ld
   // and getToolChain is const.
   if (IsCLMode()) {
@@ -1504,6 +1504,7 @@ int Driver::ExecuteCompilation(
     setUpResponseFiles(C, Job);
 
   C.ExecuteJobs(C.getJobs(), FailingCommands);
+
 
   // If the command succeeded, we are done.
   if (FailingCommands.empty())

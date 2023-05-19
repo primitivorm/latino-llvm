@@ -180,7 +180,7 @@ class DeclarationName {
     StoredCXXDestructorName = 4,
     StoredCXXConversionFunctionName = 5,
     StoredCXXOperatorName = 6,
-    // StoredDeclarationNameExtra = Selector::MultiArg,
+    StoredDeclarationNameExtra = Selector::MultiArg,
     PtrMask = 7,
     UncommonNameKindOffset = 8
   };
@@ -270,7 +270,7 @@ private:
 
   /// Construct a declaration name from a DeclarationNameExtra.
    DeclarationName(detail::DeclarationNameExtra *Name) {
-    setPtrAndKind(Name, /*StoredDeclarationNameExtra*/ UncommonNameKindOffset);
+    setPtrAndKind(Name, StoredDeclarationNameExtra);
    }
 
   /// Construct a declaration name from a CXXSpecialNameExtra.
@@ -385,8 +385,8 @@ public:
     // We rely on the fact that the first 7 NameKind and StoredNameKind
     // have the same numerical value. This makes the usual case efficient.
     StoredNameKind StoredKind = getStoredNameKind();
-    // if (StoredKind != StoredDeclarationNameExtra)
-    //   return static_cast<NameKind>(StoredKind);
+    if (StoredKind != StoredDeclarationNameExtra)
+      return static_cast<NameKind>(StoredKind);
     // We have to consult DeclarationNameExtra. We rely on the fact that the
     // enumeration values of ExtraKind correspond to the enumeration values of
     // NameKind minus an offset of UncommonNameKindOffset.
