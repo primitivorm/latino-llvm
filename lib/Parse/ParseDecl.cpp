@@ -662,99 +662,99 @@ bool Parser::ParseMicrosoftDeclSpecArgs(IdentifierInfo *AttrName,
 /// [MS] extended-decl-modifier-seq:
 ///             extended-decl-modifier[opt]
 ///             extended-decl-modifier extended-decl-modifier-seq
-// void Parser::ParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
-//                                      SourceLocation *End) {
-//   assert(getLangOpts().DeclSpecKeyword && "__declspec keyword is not enabled");
-//   assert(Tok.is(tok::kw___declspec) && "Not a declspec!");
+void Parser::ParseMicrosoftDeclSpecs(ParsedAttributes &Attrs,
+                                     SourceLocation *End) {
+  assert(getLangOpts().DeclSpecKeyword && "__declspec keyword is not enabled");
+  assert(Tok.is(tok::kw___declspec) && "Not a declspec!");
 
-//   while (Tok.is(tok::kw___declspec)) {
-//     ConsumeToken();
-//     BalancedDelimiterTracker T(*this, tok::l_paren);
-//     if (T.expectAndConsume(diag::err_expected_lparen_after, "__declspec",
-//                            tok::r_paren))
-//       return;
+  while (Tok.is(tok::kw___declspec)) {
+    ConsumeToken();
+    BalancedDelimiterTracker T(*this, tok::l_paren);
+    if (T.expectAndConsume(diag::err_expected_lparen_after, "__declspec",
+                           tok::r_paren))
+      return;
 
-//     // An empty declspec is perfectly legal and should not warn.  Additionally,
-//     // you can specify multiple attributes per declspec.
-//     while (Tok.isNot(tok::r_paren)) {
-//       // Attribute not present.
-//       if (TryConsumeToken(tok::comma))
-//         continue;
+    // An empty declspec is perfectly legal and should not warn.  Additionally,
+    // you can specify multiple attributes per declspec.
+    while (Tok.isNot(tok::r_paren)) {
+      // Attribute not present.
+      if (TryConsumeToken(tok::comma))
+        continue;
 
-//       // We expect either a well-known identifier or a generic string.  Anything
-//       // else is a malformed declspec.
-//       bool IsString = Tok.getKind() == tok::string_literal;
-//       if (!IsString && Tok.getKind() != tok::identifier &&
-//           Tok.getKind() != tok::kw_restrict) {
-//         Diag(Tok, diag::err_ms_declspec_type);
-//         T.skipToEnd();
-//         return;
-//       }
+      // We expect either a well-known identifier or a generic string.  Anything
+      // else is a malformed declspec.
+      bool IsString = Tok.getKind() == tok::string_literal;
+      // if (!IsString && Tok.getKind() != tok::identifier &&
+      //     Tok.getKind() != tok::kw_restrict) {
+      //   Diag(Tok, diag::err_ms_declspec_type);
+      //   T.skipToEnd();
+      //   return;
+      // }
 
-//       IdentifierInfo *AttrName;
-//       SourceLocation AttrNameLoc;
-//       if (IsString) {
-//         SmallString<8> StrBuffer;
-//         bool Invalid = false;
-//         StringRef Str = PP.getSpelling(Tok, StrBuffer, &Invalid);
-//         if (Invalid) {
-//           T.skipToEnd();
-//           return;
-//         }
-//         AttrName = PP.getIdentifierInfo(Str);
-//         AttrNameLoc = ConsumeStringToken();
-//       } else {
-//         AttrName = Tok.getIdentifierInfo();
-//         AttrNameLoc = ConsumeToken();
-//       }
+      IdentifierInfo *AttrName;
+      SourceLocation AttrNameLoc;
+      if (IsString) {
+        SmallString<8> StrBuffer;
+        bool Invalid = false;
+        StringRef Str = PP.getSpelling(Tok, StrBuffer, &Invalid);
+        if (Invalid) {
+          T.skipToEnd();
+          return;
+        }
+        AttrName = PP.getIdentifierInfo(Str);
+        AttrNameLoc = ConsumeStringToken();
+      } else {
+        AttrName = Tok.getIdentifierInfo();
+        AttrNameLoc = ConsumeToken();
+      }
 
-//       bool AttrHandled = false;
+      bool AttrHandled = false;
 
-//       // Parse attribute arguments.
-//       if (Tok.is(tok::l_paren))
-//         AttrHandled = ParseMicrosoftDeclSpecArgs(AttrName, AttrNameLoc, Attrs);
-//       else if (AttrName->getName() == "property")
-//         // The property attribute must have an argument list.
-//         Diag(Tok.getLocation(), diag::err_expected_lparen_after)
-//             << AttrName->getName();
+      // Parse attribute arguments.
+      if (Tok.is(tok::l_paren))
+        AttrHandled = ParseMicrosoftDeclSpecArgs(AttrName, AttrNameLoc, Attrs);
+      else if (AttrName->getName() == "property")
+        // The property attribute must have an argument list.
+        Diag(Tok.getLocation(), diag::err_expected_lparen_after)
+            << AttrName->getName();
 
-//       if (!AttrHandled)
-//         Attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-//                      ParsedAttr::AS_Declspec);
-//     }
-//     T.consumeClose();
-//     if (End)
-//       *End = T.getCloseLocation();
-//   }
-// }
+      if (!AttrHandled)
+        Attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+                     ParsedAttr::AS_Declspec);
+    }
+    T.consumeClose();
+    if (End)
+      *End = T.getCloseLocation();
+  }
+}
 
-// void Parser::ParseMicrosoftTypeAttributes(ParsedAttributes &attrs) {
-//   // Treat these like attributes
-//   while (true) {
-//     switch (Tok.getKind()) {
-//     // case tok::kw___fastcall:
-//     // case tok::kw___stdcall:
-//     // case tok::kw___thiscall:
-//     // case tok::kw___regcall:
-//     // case tok::kw___cdecl:
-//     // case tok::kw___vectorcall:
-//     // case tok::kw___ptr64:
-//     // case tok::kw___w64:
-//     // case tok::kw___ptr32:
-//     // case tok::kw___sptr:
-//     // case tok::kw___uptr: 
-//     // {
-//     //   IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-//     //   SourceLocation AttrNameLoc = ConsumeToken();
-//     //   attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-//     //                ParsedAttr::AS_Keyword);
-//     //   break;
-//     // }
-//     default:
-//       return;
-//     }
-//   }
-// }
+void Parser::ParseMicrosoftTypeAttributes(ParsedAttributes &attrs) {
+  // Treat these like attributes
+  while (true) {
+    switch (Tok.getKind()) {
+    case tok::kw___fastcall:
+    case tok::kw___stdcall:
+    case tok::kw___thiscall:
+    case tok::kw___regcall:
+    case tok::kw___cdecl:
+    case tok::kw___vectorcall:
+    case tok::kw___ptr64:
+    case tok::kw___w64:
+    case tok::kw___ptr32:
+    case tok::kw___sptr:
+    case tok::kw___uptr: 
+    {
+      IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+      SourceLocation AttrNameLoc = ConsumeToken();
+      attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+                   ParsedAttr::AS_Keyword);
+      break;
+    }
+    default:
+      return;
+    }
+  }
+}
 
 void Parser::DiagnoseAndSkipExtendedMicrosoftTypeAttributes() {
   SourceLocation StartLoc = Tok.getLocation();
@@ -772,18 +772,18 @@ SourceLocation Parser::SkipExtendedMicrosoftTypeAttributes() {
   while (true) {
     switch (Tok.getKind()) {
     case tok::kw_const:
-    // case tok::kw_volatile:
-    // case tok::kw___fastcall:
-    // case tok::kw___stdcall:
-    // case tok::kw___thiscall:
-    // case tok::kw___cdecl:
-    // case tok::kw___vectorcall:
-    // case tok::kw___ptr32:
-    // case tok::kw___ptr64:
-    // case tok::kw___w64:
-    // case tok::kw___unaligned:
-    // case tok::kw___sptr:
-    // case tok::kw___uptr:
+    case tok::kw_volatile:
+    case tok::kw___fastcall:
+    case tok::kw___stdcall:
+    case tok::kw___thiscall:
+    case tok::kw___cdecl:
+    case tok::kw___vectorcall:
+    case tok::kw___ptr32:
+    case tok::kw___ptr64:
+    case tok::kw___w64:
+    case tok::kw___unaligned:
+    case tok::kw___sptr:
+    case tok::kw___uptr:
       EndLoc = ConsumeToken();
       break;
     default:
@@ -3418,9 +3418,9 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       continue;
 
     // Microsoft declspec support.
-    // case tok::kw___declspec:
-    //   ParseMicrosoftDeclSpecs(DS.getAttributes());
-    //   continue;
+    case tok::kw___declspec:
+      ParseMicrosoftDeclSpecs(DS.getAttributes());
+      continue;
 
     // Microsoft single token adornments.
     // case tok::kw___forceinline: {
@@ -3437,19 +3437,19 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //                              getLangOpts());
     //   break;
 
-    // case tok::kw___sptr:
-    // case tok::kw___uptr:
-    // case tok::kw___ptr64:
-    // case tok::kw___ptr32:
-    // case tok::kw___w64:
-    // case tok::kw___cdecl:
-    // case tok::kw___stdcall:
-    // case tok::kw___fastcall:
-    // case tok::kw___thiscall:
-    // case tok::kw___regcall:
-    // case tok::kw___vectorcall:
-    //   ParseMicrosoftTypeAttributes(DS.getAttributes());
-    //   continue;
+    case tok::kw___sptr:
+    case tok::kw___uptr:
+    case tok::kw___ptr64:
+    case tok::kw___ptr32:
+    case tok::kw___w64:
+    case tok::kw___cdecl:
+    case tok::kw___stdcall:
+    case tok::kw___fastcall:
+    case tok::kw___thiscall:
+    case tok::kw___regcall:
+    case tok::kw___vectorcall:
+      ParseMicrosoftTypeAttributes(DS.getAttributes());
+      continue;
 
     // Borland single token adornments.
     // case tok::kw___pascal:
@@ -3521,11 +3521,11 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
     //   isInvalid = DS.SetTypeSpecType(DeclSpec::TST_auto_type, Loc, PrevSpec,
     //                                  DiagID, Policy);
     //   break;
-    // case tok::kw_register:
-    //   isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_register, Loc,
-    //                                      PrevSpec, DiagID, Policy);
-    //   isStorageClass = true;
-    //   break;
+    case tok::kw_register:
+      isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_register, Loc,
+                                         PrevSpec, DiagID, Policy);
+      isStorageClass = true;
+      break;
     case tok::kw_mutable:
       isInvalid = DS.SetStorageClassSpec(Actions, DeclSpec::SCS_mutable, Loc,
                                          PrevSpec, DiagID, Policy);
@@ -3884,21 +3884,21 @@ void Parser::ParseDeclarationSpecifiers(DeclSpec &DS,
       ParseDecltypeSpecifier(DS);
       continue;
 
-    // case tok::annot_pragma_pack:
-    //   HandlePragmaPack();
-    //   continue;
+    case tok::annot_pragma_pack:
+      HandlePragmaPack();
+      continue;
 
-    // case tok::annot_pragma_ms_pragma:
-    //   HandlePragmaMSPragma();
-    //   continue;
+    case tok::annot_pragma_ms_pragma:
+      HandlePragmaMSPragma();
+      continue;
 
-    // case tok::annot_pragma_ms_vtordisp:
-    //   HandlePragmaMSVtorDisp();
-    //   continue;
+    case tok::annot_pragma_ms_vtordisp:
+      HandlePragmaMSVtorDisp();
+      continue;
 
-    // case tok::annot_pragma_ms_pointers_to_members:
-    //   HandlePragmaMSPointersToMembers();
-    //   continue;
+    case tok::annot_pragma_ms_pointers_to_members:
+      HandlePragmaMSPointersToMembers();
+      continue;
 
     case tok::kw___underlying_type:
       ParseUnderlyingTypeSpecifier(DS);
@@ -4029,12 +4029,12 @@ void Parser::ParseStructDeclaration(
     ParsingDeclSpec &DS,
     llvm::function_ref<void(ParsingFieldDeclarator &)> FieldsCallback) {
 
-  // if (Tok.is(tok::kw___extension__)) {
-  //   // __extension__ silences extension warnings in the subexpression.
-  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-  //   ConsumeToken();
-  //   return ParseStructDeclaration(DS, FieldsCallback);
-  // }
+  if (Tok.is(tok::kw___extension__)) {
+    // __extension__ silences extension warnings in the subexpression.
+    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+    ConsumeToken();
+    return ParseStructDeclaration(DS, FieldsCallback);
+  }
 
   // Parse leading attributes.
   ParsedAttributesWithRange Attrs(AttrFactory);
@@ -4139,15 +4139,15 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
     //   continue;
     // }
 
-    // if (Tok.is(tok::annot_pragma_pack)) {
-    //   HandlePragmaPack();
-    //   continue;
-    // }
+    if (Tok.is(tok::annot_pragma_pack)) {
+      HandlePragmaPack();
+      continue;
+    }
 
-    // if (Tok.is(tok::annot_pragma_align)) {
-    //   HandlePragmaAlign();
-    //   continue;
-    // }
+    if (Tok.is(tok::annot_pragma_align)) {
+      HandlePragmaAlign();
+      continue;
+    }
 
     // if (Tok.is(tok::annot_pragma_openmp)) {
     //   // Result can be ignored, because it must be always empty.
@@ -4157,13 +4157,13 @@ void Parser::ParseStructUnionBody(SourceLocation RecordLoc,
     //   continue;
     // }
 
-    // if (tok::isPragmaAnnotation(Tok.getKind())) {
-    //   Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
-    //       << DeclSpec::getSpecifierName(
-    //              TagType, Actions.getASTContext().getPrintingPolicy());
-    //   ConsumeAnnotationToken();
-    //   continue;
-    // }
+    if (tok::isPragmaAnnotation(Tok.getKind())) {
+      Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
+          << DeclSpec::getSpecifierName(
+                 TagType, Actions.getASTContext().getPrintingPolicy());
+      ConsumeAnnotationToken();
+      continue;
+    }
 
     // if (!Tok.is(tok::at)) {
     //   auto CFieldCallback = [&](ParsingFieldDeclarator &FD) {
@@ -4929,17 +4929,17 @@ bool Parser::isTypeSpecifierQualifier() {
   case tok::less:
     return getLangOpts().ObjC;
 
-  // case tok::kw___cdecl:
-  // case tok::kw___stdcall:
-  // case tok::kw___fastcall:
-  // case tok::kw___thiscall:
-  // case tok::kw___regcall:
-  // case tok::kw___vectorcall:
-  // case tok::kw___w64:
-  // case tok::kw___ptr64:
-  // case tok::kw___ptr32:
+  case tok::kw___cdecl:
+  case tok::kw___stdcall:
+  case tok::kw___fastcall:
+  case tok::kw___thiscall:
+  case tok::kw___regcall:
+  case tok::kw___vectorcall:
+  case tok::kw___w64:
+  case tok::kw___ptr64:
+  case tok::kw___ptr32:
   // case tok::kw___pascal:
-  // case tok::kw___unaligned:
+  case tok::kw___unaligned:
 
   // case tok::kw__Nonnull:
   // case tok::kw__Nullable:
@@ -4955,7 +4955,7 @@ bool Parser::isTypeSpecifierQualifier() {
   // case tok::kw___read_only:
   // case tok::kw___read_write:
   // case tok::kw___write_only:
-    // return true;
+    return true;
 
   case tok::kw_pri:
     return getLangOpts().OpenCL;
@@ -5026,7 +5026,7 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
   case tok::kw_estatica:
   case tok::kw_auto:
   // case tok::kw___auto_type:
-  // case tok::kw_register:
+  case tok::kw_register:
   case tok::kw___thread:
   case tok::kw_thread_local:
   // case tok::kw__Thread_local:
@@ -5152,18 +5152,18 @@ bool Parser::isDeclarationSpecifier(bool DisambiguatingWithExpression) {
         GetLookAheadToken(2).isOneOf(tok::kw_auto, tok::kw_decltype);
   }
 
-  // case tok::kw___declspec:
-  // case tok::kw___cdecl:
-  // case tok::kw___stdcall:
-  // case tok::kw___fastcall:
-  // case tok::kw___thiscall:
-  // case tok::kw___regcall:
-  // case tok::kw___vectorcall:
-  // case tok::kw___w64:
-  // case tok::kw___sptr:
-  // case tok::kw___uptr:
-  // case tok::kw___ptr64:
-  // case tok::kw___ptr32:
+  case tok::kw___declspec:
+  case tok::kw___cdecl:
+  case tok::kw___stdcall:
+  case tok::kw___fastcall:
+  case tok::kw___thiscall:
+  case tok::kw___regcall:
+  case tok::kw___vectorcall:
+  case tok::kw___w64:
+  case tok::kw___sptr:
+  case tok::kw___uptr:
+  case tok::kw___ptr64:
+  case tok::kw___ptr32:
   // case tok::kw___forceinline:
   // case tok::kw___pascal:
   // case tok::kw___unaligned:
@@ -5420,21 +5420,21 @@ void Parser::ParseTypeQualifierListOpt(
     //       continue;
     //   }
     //   LLVM_FALLTHROUGH;
-    // case tok::kw___sptr:
-    // case tok::kw___w64:
-    // case tok::kw___ptr64:
-    // case tok::kw___ptr32:
-    // case tok::kw___cdecl:
-    // case tok::kw___stdcall:
-    // case tok::kw___fastcall:
-    // case tok::kw___thiscall:
-    // case tok::kw___regcall:
-    // case tok::kw___vectorcall:
-    //   if (AttrReqs & AR_DeclspecAttributesParsed) {
-    //     ParseMicrosoftTypeAttributes(DS.getAttributes());
-    //     continue;
-    //   }
-    //   goto DoneWithTypeQuals;
+    case tok::kw___sptr:
+    case tok::kw___w64:
+    case tok::kw___ptr64:
+    case tok::kw___ptr32:
+    case tok::kw___cdecl:
+    case tok::kw___stdcall:
+    case tok::kw___fastcall:
+    case tok::kw___thiscall:
+    case tok::kw___regcall:
+    case tok::kw___vectorcall:
+      if (AttrReqs & AR_DeclspecAttributesParsed) {
+        ParseMicrosoftTypeAttributes(DS.getAttributes());
+        continue;
+      }
+      goto DoneWithTypeQuals;
     // case tok::kw___pascal:
     //   if (AttrReqs & AR_VendorAttributesParsed) {
     //     ParseBorlandTypeAttributes(DS.getAttributes());
@@ -6208,7 +6208,7 @@ void Parser::ParseParenDeclarator(Declarator &D) {
   }
 
   // Eat any Microsoft extensions.
-  // ParseMicrosoftTypeAttributes(attrs);
+  ParseMicrosoftTypeAttributes(attrs);
 
   // Eat any Borland extensions.
   // if  (Tok.is(tok::kw___pascal))

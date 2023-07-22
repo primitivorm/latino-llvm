@@ -51,58 +51,58 @@ protected:
   IntrusiveRefCntPtr<TargetInfo> Target;
 };
 
-// TEST_F(SourceManagerTest, isBeforeInTranslationUnit) {
-//   const char *source =
-//     "#define M(x) [x]\n"
-//     "M(foo)";
-//   std::unique_ptr<llvm::MemoryBuffer> Buf =
-//       llvm::MemoryBuffer::getMemBuffer(source);
-//   FileID mainFileID = SourceMgr.createFileID(std::move(Buf));
-//   SourceMgr.setMainFileID(mainFileID);
+ //TEST_F(SourceManagerTest, isBeforeInTranslationUnit) {
+ //  const char *source =
+ //    "#define M(x) [x]\n"
+ //    "M(foo)";
+ //  std::unique_ptr<llvm::MemoryBuffer> Buf =
+ //      llvm::MemoryBuffer::getMemBuffer(source);
+ //  FileID mainFileID = SourceMgr.createFileID(std::move(Buf));
+ //  SourceMgr.setMainFileID(mainFileID);
 
-//   TrivialModuleLoader ModLoader;
-//   HeaderSearch HeaderInfo(std::make_shared<HeaderSearchOptions>(), SourceMgr,
-//                           Diags, LangOpts, &*Target);
-//   Preprocessor PP(std::make_shared<PreprocessorOptions>(), Diags, LangOpts,
-//                   SourceMgr, HeaderInfo, ModLoader,
-//                   /*IILookup =*/nullptr,
-//                   /*OwnsHeaderSearch =*/false);
-//   PP.Initialize(*Target);
-//   PP.EnterMainSourceFile();
+ //  TrivialModuleLoader ModLoader;
+ //  HeaderSearch HeaderInfo(std::make_shared<HeaderSearchOptions>(), SourceMgr,
+ //                          Diags, LangOpts, &*Target);
+ //  Preprocessor PP(std::make_shared<PreprocessorOptions>(), Diags, LangOpts,
+ //                  SourceMgr, HeaderInfo, ModLoader,
+ //                  /*IILookup =*/nullptr,
+ //                  /*OwnsHeaderSearch =*/false);
+ //  PP.Initialize(*Target);
+ //  PP.EnterMainSourceFile();
 
-//   std::vector<Token> toks;
-//   while (1) {
-//     Token tok;
-//     PP.Lex(tok);
-//     if (tok.is(tok::eof))
-//       break;
-//     toks.push_back(tok);
-//   }
+ //  std::vector<Token> toks;
+ //  while (1) {
+ //    Token tok;
+ //    PP.Lex(tok);
+ //    if (tok.is(tok::eof))
+ //      break;
+ //    toks.push_back(tok);
+ //  }
 
-//   // Make sure we got the tokens that we expected.
-//   ASSERT_EQ(3U, toks.size());
-//   ASSERT_EQ(tok::l_square, toks[0].getKind());
-//   ASSERT_EQ(tok::identifier, toks[1].getKind());
-//   ASSERT_EQ(tok::r_square, toks[2].getKind());
-  
-//   SourceLocation lsqrLoc = toks[0].getLocation();
-//   SourceLocation idLoc = toks[1].getLocation();
-//   SourceLocation rsqrLoc = toks[2].getLocation();
-  
-//   SourceLocation macroExpStartLoc = SourceMgr.translateLineCol(mainFileID, 2, 1);
-//   SourceLocation macroExpEndLoc = SourceMgr.translateLineCol(mainFileID, 2, 6);
-//   ASSERT_TRUE(macroExpStartLoc.isFileID());
-//   ASSERT_TRUE(macroExpEndLoc.isFileID());
+ //  // Make sure we got the tokens that we expected.
+ //  ASSERT_EQ(3U, toks.size());
+ //  ASSERT_EQ(tok::l_square, toks[0].getKind());
+ //  ASSERT_EQ(tok::identifier, toks[1].getKind());
+ //  ASSERT_EQ(tok::r_square, toks[2].getKind());
+ // 
+ //  SourceLocation lsqrLoc = toks[0].getLocation();
+ //  SourceLocation idLoc = toks[1].getLocation();
+ //  SourceLocation rsqrLoc = toks[2].getLocation();
+ // 
+ //  SourceLocation macroExpStartLoc = SourceMgr.translateLineCol(mainFileID, 2, 1);
+ //  SourceLocation macroExpEndLoc = SourceMgr.translateLineCol(mainFileID, 2, 6);
+ //  ASSERT_TRUE(macroExpStartLoc.isFileID());
+ //  ASSERT_TRUE(macroExpEndLoc.isFileID());
 
-//   SmallString<32> str;
-//   ASSERT_EQ("M", PP.getSpelling(macroExpStartLoc, str));
-//   ASSERT_EQ(")", PP.getSpelling(macroExpEndLoc, str));
+ //  SmallString<32> str;
+ //  ASSERT_EQ("M", PP.getSpelling(macroExpStartLoc, str));
+ //  ASSERT_EQ(")", PP.getSpelling(macroExpEndLoc, str));
 
-//   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(lsqrLoc, idLoc));
-//   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(idLoc, rsqrLoc));
-//   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(macroExpStartLoc, idLoc));
-//   EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(idLoc, macroExpEndLoc));
-// }
+ //  EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(lsqrLoc, idLoc));
+ //  EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(idLoc, rsqrLoc));
+ //  EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(macroExpStartLoc, idLoc));
+ //  EXPECT_TRUE(SourceMgr.isBeforeInTranslationUnit(idLoc, macroExpEndLoc));
+ //}
 
 TEST_F(SourceManagerTest, getColumnNumber) {
   const char *Source =

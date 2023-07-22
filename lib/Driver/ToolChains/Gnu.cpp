@@ -603,8 +603,8 @@ void tools::gnutools::Linker::ConstructJob(Compilation &C, const JobAction &JA,
                          Args.hasArg(options::OPT_pthreads);
 
       // Use the static OpenMP runtime with -static-openmp
-      bool StaticOpenMP = Args.hasArg(options::OPT_static_openmp) &&
-                          !Args.hasArg(options::OPT_static);
+      // bool StaticOpenMP = Args.hasArg(options::OPT_static_openmp) &&
+      //                     !Args.hasArg(options::OPT_static);
 
       // FIXME: Only pass GompNeedsRT = true for platforms with libgomp that
       // require librt. Most modern Linux platforms do, but some may not.
@@ -3011,38 +3011,38 @@ Generic_GCC::TranslateArgs(const llvm::opt::DerivedArgList &Args, StringRef,
   // sure we always generate a shared library regardless of the commands the
   // user passed to the host. This is required because the runtime library
   // is required to load the device image dynamically at run time.
-  if (DeviceOffloadKind == Action::OFK_OpenMP) {
-    DerivedArgList *DAL = new DerivedArgList(Args.getBaseArgs());
-    const OptTable &Opts = getDriver().getOpts();
+  // if (DeviceOffloadKind == Action::OFK_OpenMP) {
+  //   DerivedArgList *DAL = new DerivedArgList(Args.getBaseArgs());
+  //   const OptTable &Opts = getDriver().getOpts();
 
-    // Request the shared library. Given that these options are decided
-    // implicitly, they do not refer to any base argument.
-    DAL->AddFlagArg(/*BaseArg=*/nullptr, Opts.getOption(options::OPT_shared));
-    DAL->AddFlagArg(/*BaseArg=*/nullptr, Opts.getOption(options::OPT_fPIC));
+  //   // Request the shared library. Given that these options are decided
+  //   // implicitly, they do not refer to any base argument.
+  //   DAL->AddFlagArg(/*BaseArg=*/nullptr, Opts.getOption(options::OPT_shared));
+  //   DAL->AddFlagArg(/*BaseArg=*/nullptr, Opts.getOption(options::OPT_fPIC));
 
-    // Filter all the arguments we don't care passing to the offloading
-    // toolchain as they can mess up with the creation of a shared library.
-    for (auto *A : Args) {
-      switch ((options::ID)A->getOption().getID()) {
-      default:
-        DAL->append(A);
-        break;
-      case options::OPT_shared:
-      case options::OPT_dynamic:
-      case options::OPT_static:
-      case options::OPT_fPIC:
-      case options::OPT_fno_PIC:
-      case options::OPT_fpic:
-      case options::OPT_fno_pic:
-      case options::OPT_fPIE:
-      case options::OPT_fno_PIE:
-      case options::OPT_fpie:
-      case options::OPT_fno_pie:
-        break;
-      }
-    }
-    return DAL;
-  }
+  //   // Filter all the arguments we don't care passing to the offloading
+  //   // toolchain as they can mess up with the creation of a shared library.
+  //   for (auto *A : Args) {
+  //     switch ((options::ID)A->getOption().getID()) {
+  //     default:
+  //       DAL->append(A);
+  //       break;
+  //     case options::OPT_shared:
+  //     case options::OPT_dynamic:
+  //     case options::OPT_static:
+  //     case options::OPT_fPIC:
+  //     case options::OPT_fno_PIC:
+  //     case options::OPT_fpic:
+  //     case options::OPT_fno_pic:
+  //     case options::OPT_fPIE:
+  //     case options::OPT_fno_PIE:
+  //     case options::OPT_fpie:
+  //     case options::OPT_fno_pie:
+  //       break;
+  //     }
+  //   }
+  //   return DAL;
+  // }
   return nullptr;
 }
 

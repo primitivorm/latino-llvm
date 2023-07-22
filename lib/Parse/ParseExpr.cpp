@@ -139,22 +139,22 @@ ExprResult Parser::ParseExpression(TypeCastState isTypeCast) {
 /// This routine is called when a leading '__extension__' is seen and
 /// consumed.  This is necessary because the token gets consumed in the
 /// process of disambiguating between an expression and a declaration.
-// ExprResult
-// Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
-//   ExprResult LHS(true);
-//   {
-//     // Silence extension warnings in the sub-expression
-//     ExtensionRAIIObject O(Diags);
+ExprResult
+Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
+  ExprResult LHS(true);
+  {
+    // Silence extension warnings in the sub-expression
+    ExtensionRAIIObject O(Diags);
 
-//     LHS = ParseCastExpression(AnyCastExpr);
-//   }
+    LHS = ParseCastExpression(AnyCastExpr);
+  }
 
-//   if (!LHS.isInvalid())
-//     LHS = Actions.ActOnUnaryOp(getCurScope(), ExtLoc, tok::kw___extension__,
-//                                LHS.get());
+  if (!LHS.isInvalid())
+    LHS = Actions.ActOnUnaryOp(getCurScope(), ExtLoc, tok::kw___extension__,
+                               LHS.get());
 
-//   return ParseRHSOfBinaryExpression(LHS, prec::Comma);
-// }
+  return ParseRHSOfBinaryExpression(LHS, prec::Comma);
+}
 
 /// Parse an expr that doesn't include (top-level) commas.
 ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
@@ -1409,17 +1409,17 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
     return Res;
   }
 
-  // case tok::kw___extension__:{//unary-expression:'__extension__' cast-expr [GNU]
-  //   // __extension__ silences extension warnings in the subexpression.
-  //   if (NotPrimaryExpression)
-  //     *NotPrimaryExpression = true;
-  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-  //   SourceLocation SavedLoc = ConsumeToken();
-  //   Res = ParseCastExpression(AnyCastExpr);
-  //   if (!Res.isInvalid())
-  //     Res = Actions.ActOnUnaryOp(getCurScope(), SavedLoc, SavedKind, Res.get());
-  //   return Res;
-  // }
+  case tok::kw___extension__:{//unary-expression:'__extension__' cast-expr [GNU]
+    // __extension__ silences extension warnings in the subexpression.
+    if (NotPrimaryExpression)
+      *NotPrimaryExpression = true;
+    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+    SourceLocation SavedLoc = ConsumeToken();
+    Res = ParseCastExpression(AnyCastExpr);
+    if (!Res.isInvalid())
+      Res = Actions.ActOnUnaryOp(getCurScope(), SavedLoc, SavedKind, Res.get());
+    return Res;
+  }
   // case tok::kw__Alignof:   // unary-expression: '_Alignof' '(' type-name ')'
   //   if (!getLangOpts().C11)
   //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
@@ -1874,18 +1874,18 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       cutOffParsing();
       return ExprError();
 
-    // case tok::identifier:
-    //   // If we see identifier: after an expression, and we're not already in a
-    //   // message send, then this is probably a message send with a missing
-    //   // opening bracket '['.
-    //   if (getLangOpts().ObjC && !InMessageExpression &&
-    //       (NextToken().is(tok::colon) || NextToken().is(tok::r_square))) {
-    //     LHS = ParseObjCMessageExpressionBody(SourceLocation(), SourceLocation(),
-    //                                          nullptr, LHS.get());
-    //     break;
-    //   }
-    //   // Fall through; this isn't a message send.
-    //   LLVM_FALLTHROUGH;
+    case tok::identifier:
+      // If we see identifier: after an expression, and we're not already in a
+      // message send, then this is probably a message send with a missing
+      // opening bracket '['.
+      // if (getLangOpts().ObjC && !InMessageExpression &&
+      //     (NextToken().is(tok::colon) || NextToken().is(tok::r_square))) {
+      //   LHS = ParseObjCMessageExpressionBody(SourceLocation(), SourceLocation(),
+      //                                        nullptr, LHS.get());
+      //   break;
+      // }
+      // Fall through; this isn't a message send.
+      LLVM_FALLTHROUGH;
 
     default:  // Not a postfix-expression suffix.
       return LHS;

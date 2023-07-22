@@ -40,7 +40,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include <algorithm>
 
-using namespace llvm::omp;
+// using namespace llvm::omp;
 
 namespace latino {
 using namespace sema;

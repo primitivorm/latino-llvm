@@ -1295,10 +1295,10 @@ void ASTContext::InitBuiltinTypes(const TargetInfo &Target,
   InitBuiltinType(LongDoubleTy,        BuiltinType::LongDouble);
 
   // GNU extension, __float128 for IEEE quadruple precision
-  // InitBuiltinType(Float128Ty,          BuiltinType::Float128);
+  InitBuiltinType(Float128Ty,          BuiltinType::Float128);
 
   // C11 extension ISO/IEC TS 18661-3
-  // InitBuiltinType(Float16Ty,           BuiltinType::Float16);
+  InitBuiltinType(Float16Ty,           BuiltinType::Float16);
 
   // ISO/IEC JTC1 SC22 WG14 N1169 Extension
   InitBuiltinType(ShortAccumTy,            BuiltinType::ShortAccum);
@@ -1446,7 +1446,7 @@ void ASTContext::InitBuiltinTypes(const TargetInfo &Target,
   InitBuiltinType(NullPtrTy,           BuiltinType::NullPtr);
 
   // half type (OpenCL 6.1.1.1) / ARM NEON __fp16
-  // InitBuiltinType(HalfTy, BuiltinType::Half);
+  InitBuiltinType(HalfTy, BuiltinType::Half);
 
   InitBuiltinType(BFloat16Ty, BuiltinType::BFloat16);
 

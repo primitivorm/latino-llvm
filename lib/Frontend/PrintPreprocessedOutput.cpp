@@ -18,7 +18,7 @@
 #include "latino/Frontend/PreprocessorOutputOptions.h"
 #include "latino/Lex/MacroInfo.h"
 #include "latino/Lex/PPCallbacks.h"
-// #include "latino/Lex/Pragma.h"
+#include "latino/Lex/Pragma.h"
 #include "latino/Lex/Preprocessor.h"
 #include "latino/Lex/TokenConcatenation.h"
 #include "llvm/ADT/STLExtras.h"
@@ -350,29 +350,29 @@ void PrintPPOutputPPCallbacks::InclusionDirective(
   // When preprocessing, turn implicit imports into module import pragmas.
   if (Imported) {
     switch (IncludeTok.getIdentifierInfo()->getPPKeywordID()) {
-    // case tok::pp_include:
-    // case tok::pp_import:
-    // // case tok::pp_include_next:
-    //   startNewLineIfNeeded();
-    //   MoveToLine(HashLoc);
-    //   OS << "#pragma clang module import " << Imported->getFullModuleName(true)
-    //      << " /* clang -E: implicit import for "
-    //      << "#" << PP.getSpelling(IncludeTok) << " "
-    //      << (IsAngled ? '<' : '"') << FileName << (IsAngled ? '>' : '"')
-    //      << " */";
-    //   // Since we want a newline after the pragma, but not a #<line>, start a
-    //   // new line immediately.
-    //   EmittedTokensOnThisLine = true;
-    //   startNewLineIfNeeded();
-    //   break;
+    case tok::pp_include:
+    case tok::pp_import:
+    case tok::pp_include_next:
+      startNewLineIfNeeded();
+      MoveToLine(HashLoc);
+      OS << "#pragma clang module import " << Imported->getFullModuleName(true)
+         << " /* clang -E: implicit import for "
+         << "#" << PP.getSpelling(IncludeTok) << " "
+         << (IsAngled ? '<' : '"') << FileName << (IsAngled ? '>' : '"')
+         << " */";
+      // Since we want a newline after the pragma, but not a #<line>, start a
+      // new line immediately.
+      EmittedTokensOnThisLine = true;
+      startNewLineIfNeeded();
+      break;
 
-    // case tok::pp___include_macros:
-    //   // #__include_macros has no effect on a user of a preprocessed source
-    //   // file; the only effect is on preprocessing.
-    //   //
-    //   // FIXME: That's not *quite* true: it causes the module in question to
-    //   // be loaded, which can affect downstream diagnostics.
-    //   break;
+    case tok::pp___include_macros:
+      // #__include_macros has no effect on a user of a preprocessed source
+      // file; the only effect is on preprocessing.
+      //
+      // FIXME: That's not *quite* true: it causes the module in question to
+      // be loaded, which can affect downstream diagnostics.
+      break;
 
     default:
       llvm_unreachable("unknown include directive kind");
@@ -652,61 +652,61 @@ void PrintPPOutputPPCallbacks::HandleNewlinesInToken(const char *TokStr,
 }
 
 
-// namespace {
-// struct UnknownPragmaHandler : public PragmaHandler {
-//   const char *Prefix;
-//   PrintPPOutputPPCallbacks *Callbacks;
+namespace {
+struct UnknownPragmaHandler : public PragmaHandler {
+  const char *Prefix;
+  PrintPPOutputPPCallbacks *Callbacks;
 
-//   // Set to true if tokens should be expanded
-//   bool ShouldExpandTokens;
+  // Set to true if tokens should be expanded
+  bool ShouldExpandTokens;
 
-//   UnknownPragmaHandler(const char *prefix, PrintPPOutputPPCallbacks *callbacks,
-//                        bool RequireTokenExpansion)
-//       : Prefix(prefix), Callbacks(callbacks),
-//         ShouldExpandTokens(RequireTokenExpansion) {}
-//   void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
-//                     Token &PragmaTok) override {
-//     // Figure out what line we went to and insert the appropriate number of
-//     // newline characters.
-//     Callbacks->startNewLineIfNeeded();
-//     Callbacks->MoveToLine(PragmaTok.getLocation());
-//     Callbacks->OS.write(Prefix, strlen(Prefix));
+  UnknownPragmaHandler(const char *prefix, PrintPPOutputPPCallbacks *callbacks,
+                       bool RequireTokenExpansion)
+      : Prefix(prefix), Callbacks(callbacks),
+        ShouldExpandTokens(RequireTokenExpansion) {}
+  void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
+                    Token &PragmaTok) override {
+    // Figure out what line we went to and insert the appropriate number of
+    // newline characters.
+    Callbacks->startNewLineIfNeeded();
+    Callbacks->MoveToLine(PragmaTok.getLocation());
+    Callbacks->OS.write(Prefix, strlen(Prefix));
 
-//     if (ShouldExpandTokens) {
-//       // The first token does not have expanded macros. Expand them, if
-//       // required.
-//       auto Toks = std::make_unique<Token[]>(1);
-//       Toks[0] = PragmaTok;
-//       PP.EnterTokenStream(std::move(Toks), /*NumToks=*/1,
-//                           /*DisableMacroExpansion=*/false,
-//                           /*IsReinject=*/false);
-//       PP.Lex(PragmaTok);
-//     }
-//     Token PrevToken;
-//     Token PrevPrevToken;
-//     PrevToken.startToken();
-//     PrevPrevToken.startToken();
+    if (ShouldExpandTokens) {
+      // The first token does not have expanded macros. Expand them, if
+      // required.
+      auto Toks = std::make_unique<Token[]>(1);
+      Toks[0] = PragmaTok;
+      PP.EnterTokenStream(std::move(Toks), /*NumToks=*/1,
+                          /*DisableMacroExpansion=*/false,
+                          /*IsReinject=*/false);
+      PP.Lex(PragmaTok);
+    }
+    Token PrevToken;
+    Token PrevPrevToken;
+    PrevToken.startToken();
+    PrevPrevToken.startToken();
 
-//     // Read and print all of the pragma tokens.
-//     while (PragmaTok.isNot(tok::eod)) {
-//       if (PragmaTok.hasLeadingSpace() ||
-//           Callbacks->AvoidConcat(PrevPrevToken, PrevToken, PragmaTok))
-//         Callbacks->OS << ' ';
-//       std::string TokSpell = PP.getSpelling(PragmaTok);
-//       Callbacks->OS.write(&TokSpell[0], TokSpell.size());
+    // Read and print all of the pragma tokens.
+    while (PragmaTok.isNot(tok::eod)) {
+      if (PragmaTok.hasLeadingSpace() ||
+          Callbacks->AvoidConcat(PrevPrevToken, PrevToken, PragmaTok))
+        Callbacks->OS << ' ';
+      std::string TokSpell = PP.getSpelling(PragmaTok);
+      Callbacks->OS.write(&TokSpell[0], TokSpell.size());
 
-//       PrevPrevToken = PrevToken;
-//       PrevToken = PragmaTok;
+      PrevPrevToken = PrevToken;
+      PrevToken = PragmaTok;
 
-//       if (ShouldExpandTokens)
-//         PP.Lex(PragmaTok);
-//       else
-//         PP.LexUnexpandedToken(PragmaTok);
-//     }
-//     Callbacks->setEmittedDirectiveOnThisLine();
-//   }
-// };
-// } // end anonymous namespace
+      if (ShouldExpandTokens)
+        PP.Lex(PragmaTok);
+      else
+        PP.LexUnexpandedToken(PragmaTok);
+    }
+    Callbacks->setEmittedDirectiveOnThisLine();
+  }
+};
+} // end anonymous namespace
 
 
 static void PrintPreprocessedTokens(Preprocessor &PP, Token &Tok,
@@ -824,7 +824,7 @@ static int MacroIDCompare(const id_macro_pair *LHS, const id_macro_pair *RHS) {
 
 static void DoPrintMacros(Preprocessor &PP, raw_ostream *OS) {
   // Ignore unknown pragmas.
-  // PP.IgnorePragmas();
+  PP.IgnorePragmas();
 
   // -dM mode just scans and ignores all tokens in the files, then dumps out
   // the macro table at the end.
@@ -875,25 +875,25 @@ void latino::DoPrintPreprocessedInput(Preprocessor &PP, raw_ostream *OS,
   // Expand macros in pragmas with -fms-extensions.  The assumption is that
   // the majority of pragmas in such a file will be Microsoft pragmas.
   // Remember the handlers we will add so that we can remove them later.
-  // std::unique_ptr<UnknownPragmaHandler> MicrosoftExtHandler(
-  //     new UnknownPragmaHandler(
-  //         "#pragma", Callbacks,
-  //         /*RequireTokenExpansion=*/PP.getLangOpts().MicrosoftExt));
+  std::unique_ptr<UnknownPragmaHandler> MicrosoftExtHandler(
+      new UnknownPragmaHandler(
+          "#pragma", Callbacks,
+          /*RequireTokenExpansion=*/PP.getLangOpts().MicrosoftExt));
 
-  // std::unique_ptr<UnknownPragmaHandler> GCCHandler(new UnknownPragmaHandler(
-  //     "#pragma GCC", Callbacks,
-  //     /*RequireTokenExpansion=*/PP.getLangOpts().MicrosoftExt));
+  std::unique_ptr<UnknownPragmaHandler> GCCHandler(new UnknownPragmaHandler(
+      "#pragma GCC", Callbacks,
+      /*RequireTokenExpansion=*/PP.getLangOpts().MicrosoftExt));
 
-  // std::unique_ptr<UnknownPragmaHandler> ClangHandler(new UnknownPragmaHandler(
-  //     "#pragma clang", Callbacks,
-  //     /*RequireTokenExpansion=*/PP.getLangOpts().MicrosoftExt));
+  std::unique_ptr<UnknownPragmaHandler> ClangHandler(new UnknownPragmaHandler(
+      "#pragma clang", Callbacks,
+      /*RequireTokenExpansion=*/PP.getLangOpts().MicrosoftExt));
 
-  // PP.AddPragmaHandler(MicrosoftExtHandler.get());
-  // PP.AddPragmaHandler("GCC", GCCHandler.get());
-  // PP.AddPragmaHandler("clang", ClangHandler.get());
+  PP.AddPragmaHandler(MicrosoftExtHandler.get());
+  PP.AddPragmaHandler("GCC", GCCHandler.get());
+  PP.AddPragmaHandler("clang", ClangHandler.get());
 
   // The tokens after pragma omp need to be expanded.
-  //
+  
   //  OpenMP [2.1, Directive format]
   //  Preprocessing tokens following the #pragma omp are subject to macro
   //  replacement.
@@ -931,8 +931,8 @@ void latino::DoPrintPreprocessedInput(Preprocessor &PP, raw_ostream *OS,
 
   // Remove the handlers we just added to leave the preprocessor in a sane state
   // so that it can be reused (for example by a latino::Parser instance).
-  // PP.RemovePragmaHandler(MicrosoftExtHandler.get());
-  // PP.RemovePragmaHandler("GCC", GCCHandler.get());
-  // PP.RemovePragmaHandler("clang", ClangHandler.get());
+  PP.RemovePragmaHandler(MicrosoftExtHandler.get());
+  PP.RemovePragmaHandler("GCC", GCCHandler.get());
+  PP.RemovePragmaHandler("clang", ClangHandler.get());
   // PP.RemovePragmaHandler("omp", OpenMPHandler.get());
 }

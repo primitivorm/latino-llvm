@@ -1229,8 +1229,8 @@ void StmtPrinter::VisitUnaryOperator(UnaryOperator *Node) {
     // it might be concatenated incorrectly like '+'.
     switch (Node->getOpcode()) {
     default: break;
-    case UO_Real:
-    case UO_Imag:
+    // case UO_Real:
+    // case UO_Imag:
     case UO_Extension:
       OS << ' ';
       break;

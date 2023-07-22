@@ -181,10 +181,10 @@ void tools::AddLinkerInputs(const ToolChain &TC, const InputInfoList &Inputs,
     // If the current tool chain refers to an OpenMP offloading host, we
     // should ignore inputs that refer to OpenMP offloading devices -
     // they will be embedded according to a proper linker script.
-    if (auto *IA = II.getAction())
-      if ((JA.isHostOffloading(Action::OFK_OpenMP) &&
-           IA->isDeviceOffloading(Action::OFK_OpenMP)))
-        continue;
+    // if (auto *IA = II.getAction())
+    //   if ((JA.isHostOffloading(Action::OFK_OpenMP) &&
+    //        IA->isDeviceOffloading(Action::OFK_OpenMP)))
+    //     continue;
 
     if (!TC.HasNativeLLVMSupport() && types::isLLVMIR(II.getType()))
       // Don't try to pass LLVM inputs unless we have native support.

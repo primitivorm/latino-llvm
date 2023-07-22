@@ -56,12 +56,12 @@ bool tok::isAnnotation(TokenKind Kind) {
   return false;
 }
 
-// bool tok::isPragmaAnnotation(TokenKind Kind) {
-//   switch (Kind) {
-// #define PRAGMA_ANNOTATION(X) case annot_ ## X: return true;
-// #include "latino/Basic/TokenKinds.def"
-//   default:
-//     break;
-//   }
-//   return false;
-// }
+bool tok::isPragmaAnnotation(TokenKind Kind) {
+  switch (Kind) {
+#define PRAGMA_ANNOTATION(X) case annot_ ## X: return true;
+#include "latino/Basic/TokenKinds.def"
+  default:
+    break;
+  }
+  return false;
+}

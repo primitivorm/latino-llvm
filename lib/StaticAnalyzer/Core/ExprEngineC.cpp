@@ -952,38 +952,38 @@ void ExprEngine::VisitUnaryOperator(const UnaryOperator* U, ExplodedNode *Pred,
       Bldr.addNodes(Tmp);
       break;
     }
-    case UO_Real: {
-      const Expr *Ex = U->getSubExpr()->IgnoreParens();
+    // case UO_Real: {
+    //   const Expr *Ex = U->getSubExpr()->IgnoreParens();
 
-      // FIXME: We don't have complex SValues yet.
-      if (Ex->getType()->isAnyComplexType()) {
-        // Just report "Unknown."
-        break;
-      }
+    //   // FIXME: We don't have complex SValues yet.
+    //   if (Ex->getType()->isAnyComplexType()) {
+    //     // Just report "Unknown."
+    //     break;
+    //   }
 
-      // For all other types, UO_Real is an identity operation.
-      assert (U->getType() == Ex->getType());
-      ProgramStateRef state = (*I)->getState();
-      const LocationContext *LCtx = (*I)->getLocationContext();
-      Bldr.generateNode(U, *I, state->BindExpr(U, LCtx,
-                                               state->getSVal(Ex, LCtx)));
-      break;
-    }
+    //   // For all other types, UO_Real is an identity operation.
+    //   assert (U->getType() == Ex->getType());
+    //   ProgramStateRef state = (*I)->getState();
+    //   const LocationContext *LCtx = (*I)->getLocationContext();
+    //   Bldr.generateNode(U, *I, state->BindExpr(U, LCtx,
+    //                                            state->getSVal(Ex, LCtx)));
+    //   break;
+    // }
 
-    case UO_Imag: {
-      const Expr *Ex = U->getSubExpr()->IgnoreParens();
-      // FIXME: We don't have complex SValues yet.
-      if (Ex->getType()->isAnyComplexType()) {
-        // Just report "Unknown."
-        break;
-      }
-      // For all other types, UO_Imag returns 0.
-      ProgramStateRef state = (*I)->getState();
-      const LocationContext *LCtx = (*I)->getLocationContext();
-      SVal X = svalBuilder.makeZeroVal(Ex->getType());
-      Bldr.generateNode(U, *I, state->BindExpr(U, LCtx, X));
-      break;
-    }
+    // case UO_Imag: {
+    //   const Expr *Ex = U->getSubExpr()->IgnoreParens();
+    //   // FIXME: We don't have complex SValues yet.
+    //   if (Ex->getType()->isAnyComplexType()) {
+    //     // Just report "Unknown."
+    //     break;
+    //   }
+    //   // For all other types, UO_Imag returns 0.
+    //   ProgramStateRef state = (*I)->getState();
+    //   const LocationContext *LCtx = (*I)->getLocationContext();
+    //   SVal X = svalBuilder.makeZeroVal(Ex->getType());
+    //   Bldr.generateNode(U, *I, state->BindExpr(U, LCtx, X));
+    //   break;
+    // }
 
     case UO_AddrOf: {
       // Process pointer-to-member address operation.
@@ -1007,7 +1007,8 @@ void ExprEngine::VisitUnaryOperator(const UnaryOperator* U, ExplodedNode *Pred,
       assert(!U->isGLValue());
       LLVM_FALLTHROUGH;
     case UO_Deref:
-    case UO_Extension: {
+    case UO_Extension: 
+    {
       handleUOExtension(I, U, Bldr);
       break;
     }

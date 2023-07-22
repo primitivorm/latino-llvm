@@ -94,7 +94,7 @@ inline bool isLiteral(TokenKind K) {
 bool isAnnotation(TokenKind K);
 
 /// Return true if this is an annotation token representing a pragma.
-// bool isPragmaAnnotation(TokenKind K);
+bool isPragmaAnnotation(TokenKind K);
 
 } // end namespace tok
 } // end namespace latino

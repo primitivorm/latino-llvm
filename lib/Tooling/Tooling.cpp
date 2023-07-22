@@ -129,7 +129,7 @@ static const llvm::opt::ArgStringList *getCC1Arguments(
 
   // The one job we find should be to invoke clang again.
   const auto &Cmd = cast<driver::Command>(*Jobs.begin());
-  if (StringRef(Cmd.getCreator().getName()) != "clang") {
+  if (StringRef(Cmd.getCreator().getName()) != "latino") {
     Diagnostics->Report(diag::err_fe_expected_clang_command);
     return nullptr;
   }

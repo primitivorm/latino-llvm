@@ -80,9 +80,9 @@
 #ifndef ANNOTATION
 #define ANNOTATION(X) TOK(annot_ ## X)
 #endif
-// #ifndef PRAGMA_ANNOTATION
-// #define PRAGMA_ANNOTATION(X) ANNOTATION(X)
-// #endif
+#ifndef PRAGMA_ANNOTATION
+#define PRAGMA_ANNOTATION(X) ANNOTATION(X)
+#endif
 
 //===----------------------------------------------------------------------===//
 // Preprocessor keywords.
@@ -94,43 +94,43 @@
 PPKEYWORD(not_keyword)
 
 // C99 6.10.1 - Conditional Inclusion.
-// PPKEYWORD(if)
-// PPKEYWORD(ifdef)
-// PPKEYWORD(ifndef)
-// PPKEYWORD(elif)
-// PPKEYWORD(else)
-// PPKEYWORD(endif)
-// PPKEYWORD(defined)
+PPKEYWORD(if)
+PPKEYWORD(ifdef)
+PPKEYWORD(ifndef)
+PPKEYWORD(elif)
+PPKEYWORD(else)
+PPKEYWORD(endif)
+PPKEYWORD(defined)
 
 // C99 6.10.2 - Source File Inclusion.
-// PPKEYWORD(include)
-// PPKEYWORD(__include_macros)
+PPKEYWORD(include)
+PPKEYWORD(__include_macros)
 
 // C99 6.10.3 - Macro Replacement.
-// PPKEYWORD(define)
-// PPKEYWORD(undef)
+PPKEYWORD(define)
+PPKEYWORD(undef)
 
 // C99 6.10.4 - Line Control.
-// PPKEYWORD(line)
+PPKEYWORD(line)
 
 // C99 6.10.5 - Error Directive.
-// PPKEYWORD(error)
+PPKEYWORD(error)
 
 // C99 6.10.6 - Pragma Directive.
-// PPKEYWORD(pragma)
+PPKEYWORD(pragma)
 
 // GNU Extensions.
-// PPKEYWORD(import)
-// PPKEYWORD(include_next)
-// PPKEYWORD(warning)
-// PPKEYWORD(ident)
-// PPKEYWORD(sccs)
-// PPKEYWORD(assert)
-// PPKEYWORD(unassert)
+PPKEYWORD(import)
+PPKEYWORD(include_next)
+PPKEYWORD(warning)
+PPKEYWORD(ident)
+PPKEYWORD(sccs)
+PPKEYWORD(assert)
+PPKEYWORD(unassert)
 
 // Clang extensions
-// PPKEYWORD(__public_macro)
-// PPKEYWORD(__private_macro)
+PPKEYWORD(__public_macro)
+PPKEYWORD(__private_macro)
 
 //===----------------------------------------------------------------------===//
 // Language keywords.
@@ -299,9 +299,9 @@ KEYWORD(en_linea                      , KEYC99|KEYCXX|KEYGNU) // inline
 KEYWORD(int                         , KEYALL)
 // KEYWORD(_ExtInt                     , KEYALL)
 KEYWORD(long                        , KEYALL)
-// KEYWORD(register                    , KEYALL)
+KEYWORD(register                    , KEYALL)
 // KEYWORD(restrict                    , KEYC99)
-KEYWORD(ret                      , KEYALL)
+KEYWORD(ret                      , KEYALL) // return
 KEYWORD(short                       , KEYALL)
 KEYWORD(signed                      , KEYALL)
 UNARY_EXPR_OR_TYPE_TRAIT(sizeof, SizeOf, KEYALL)
@@ -312,7 +312,7 @@ KEYWORD(alias                     , KEYALL) // typedef
 KEYWORD(union                       , KEYALL)
 KEYWORD(unsigned                    , KEYALL)
 KEYWORD(void                        , KEYALL)
-// KEYWORD(volatile                    , KEYALL)
+KEYWORD(volatile                    , KEYALL)
 KEYWORD(mientras                       , KEYALL) // while
 // KEYWORD(_Alignas                    , KEYALL)
 // KEYWORD(_Alignof                    , KEYALL)
@@ -434,7 +434,7 @@ KEYWORD(__attribute                 , KEYALL)
 // type trait.
 TYPE_TRAIT_2(__builtin_types_compatible_p, TypeCompatible, KEYNOCXX)
 // KEYWORD(__builtin_va_arg            , KEYALL)
-// KEYWORD(__extension__               , KEYALL)
+KEYWORD(__extension__               , KEYALL)
 KEYWORD(__float128                  , KEYALL)
 // KEYWORD(__imag                      , KEYALL)
 KEYWORD(__int128                    , KEYALL)
@@ -550,17 +550,17 @@ ARRAY_TYPE_TRAIT(__array_extent, ArrayExtent, KEYCXX)
 
 // Extension that will be enabled for Microsoft, Borland and PS4, but can be
 // disabled via '-fno-declspec'.
-// KEYWORD(__declspec                  , 0)
+KEYWORD(__declspec                  , 0)
 
 // Microsoft Extension.
-// KEYWORD(__cdecl                     , KEYALL)
-// KEYWORD(__stdcall                   , KEYALL)
-// KEYWORD(__fastcall                  , KEYALL)
-// KEYWORD(__thiscall                  , KEYALL)
-// KEYWORD(__regcall                   , KEYALL)
-// KEYWORD(__vectorcall                , KEYALL)
-// KEYWORD(__forceinline               , KEYMS)
-// KEYWORD(__unaligned                 , KEYMS)
+KEYWORD(__cdecl                     , KEYALL)
+KEYWORD(__stdcall                   , KEYALL)
+KEYWORD(__fastcall                  , KEYALL)
+KEYWORD(__thiscall                  , KEYALL)
+KEYWORD(__regcall                   , KEYALL)
+KEYWORD(__vectorcall                , KEYALL)
+KEYWORD(__forceinline               , KEYMS)
+KEYWORD(__unaligned                 , KEYMS)
 KEYWORD(base                     , KEYMS) // __super
 
 // OpenCL address space qualifiers
@@ -624,70 +624,70 @@ KEYWORD(base                     , KEYMS) // __super
 
 // Alternate spelling for various tokens.  There are GCC extensions in all
 // languages, but should not be disabled in strict conformance mode.
-// ALIAS("__alignof__"  , __alignof  , KEYALL)
-// ALIAS("__asm"        , asm        , KEYALL)
-// ALIAS("__asm__"      , asm        , KEYALL)
-// ALIAS("__attribute__", __attribute, KEYALL)
+ALIAS("__alignof__"  , __alignof  , KEYALL)
+ALIAS("__asm"        , asm        , KEYALL)
+ALIAS("__asm__"      , asm        , KEYALL)
+ALIAS("__attribute__", __attribute, KEYALL)
 // ALIAS("__complex"    , _Complex   , KEYALL)
 // ALIAS("__complex__"  , _Complex   , KEYALL)
-// ALIAS("__const"      , const      , KEYALL)
-// ALIAS("__const__"    , const      , KEYALL)
-// ALIAS("__decltype"   , decltype   , KEYCXX)
+ALIAS("__const"      , const      , KEYALL)
+ALIAS("__const__"    , const      , KEYALL)
+ALIAS("__decltype"   , decltype   , KEYCXX)
 // ALIAS("__imag__"     , __imag     , KEYALL)
 // ALIAS("__inline"     , inline     , KEYALL)
 // ALIAS("__inline__"   , inline     , KEYALL)
-// ALIAS("__nullptr"    , nullptr    , KEYCXX)
+ALIAS("__nullptr"    , nullptr    , KEYCXX)
 // ALIAS("__real__"     , __real     , KEYALL)
 // ALIAS("__restrict"   , restrict   , KEYALL)
 // ALIAS("__restrict__" , restrict   , KEYALL)
-// ALIAS("__signed"     , signed     , KEYALL)
-// ALIAS("__signed__"   , signed     , KEYALL)
-// ALIAS("__typeof"     , typeof     , KEYALL)
-// ALIAS("__typeof__"   , typeof     , KEYALL)
-// ALIAS("__volatile"   , volatile   , KEYALL)
-// ALIAS("__volatile__" , volatile   , KEYALL)
+ALIAS("__signed"     , signed     , KEYALL)
+ALIAS("__signed__"   , signed     , KEYALL)
+ALIAS("__typeof"     , typeof     , KEYALL)
+ALIAS("__typeof__"   , typeof     , KEYALL)
+ALIAS("__volatile"   , volatile   , KEYALL)
+ALIAS("__volatile__" , volatile   , KEYALL)
 
 // Type nullability.
-// KEYWORD(_Nonnull                 , KEYALL)
-// KEYWORD(_Nullable                , KEYALL)
-// KEYWORD(_Null_unspecified        , KEYALL)
+KEYWORD(_Nonnull                 , KEYALL)
+KEYWORD(_Nullable                , KEYALL)
+KEYWORD(_Null_unspecified        , KEYALL)
 
 // Microsoft extensions which should be disabled in strict conformance mode
-// KEYWORD(__ptr64                       , KEYMS)
-// KEYWORD(__ptr32                       , KEYMS)
-// KEYWORD(__sptr                        , KEYMS)
-// KEYWORD(__uptr                        , KEYMS)
-// KEYWORD(__w64                         , KEYMS)
-// KEYWORD(__uuidof                      , KEYMS | KEYBORLAND)
-// KEYWORD(__try                         , KEYMS | KEYBORLAND)
-// KEYWORD(__finally                     , KEYMS | KEYBORLAND)
-// KEYWORD(__leave                       , KEYMS | KEYBORLAND)
-// KEYWORD(__int64                       , KEYMS)
-// KEYWORD(__if_exists                   , KEYMS)
-// KEYWORD(__if_not_exists               , KEYMS)
-// KEYWORD(__single_inheritance          , KEYMS)
-// KEYWORD(__multiple_inheritance        , KEYMS)
-// KEYWORD(__virtual_inheritance         , KEYMS)
-// KEYWORD(__interface                   , KEYMS)
-// ALIAS("__int8"           , char       , KEYMS)
-// ALIAS("_int8"            , char       , KEYMS)
-// ALIAS("__int16"          , short      , KEYMS)
-// ALIAS("_int16"           , short      , KEYMS)
-// ALIAS("__int32"          , int        , KEYMS)
-// ALIAS("_int32"           , int        , KEYMS)
-// ALIAS("_int64"           , __int64    , KEYMS)
-// ALIAS("__wchar_t"        , wchar_t    , KEYMS)
-// ALIAS("_asm"             , asm        , KEYMS)
-// ALIAS("_alignof"         , __alignof  , KEYMS)
-// ALIAS("__builtin_alignof", __alignof  , KEYMS)
-// ALIAS("_cdecl"           , __cdecl    , KEYMS | KEYBORLAND)
-// ALIAS("_fastcall"        , __fastcall , KEYMS | KEYBORLAND)
-// ALIAS("_stdcall"         , __stdcall  , KEYMS | KEYBORLAND)
-// ALIAS("_thiscall"        , __thiscall , KEYMS)
-// ALIAS("_vectorcall"      , __vectorcall, KEYMS)
-// ALIAS("_uuidof"          , __uuidof   , KEYMS | KEYBORLAND)
+KEYWORD(__ptr64                       , KEYMS)
+KEYWORD(__ptr32                       , KEYMS)
+KEYWORD(__sptr                        , KEYMS)
+KEYWORD(__uptr                        , KEYMS)
+KEYWORD(__w64                         , KEYMS)
+KEYWORD(__uuidof                      , KEYMS | KEYBORLAND)
+KEYWORD(__try                         , KEYMS | KEYBORLAND)
+KEYWORD(__finally                     , KEYMS | KEYBORLAND)
+KEYWORD(__leave                       , KEYMS | KEYBORLAND)
+KEYWORD(__int64                       , KEYMS)
+KEYWORD(__if_exists                   , KEYMS)
+KEYWORD(__if_not_exists               , KEYMS)
+KEYWORD(__single_inheritance          , KEYMS)
+KEYWORD(__multiple_inheritance        , KEYMS)
+KEYWORD(__virtual_inheritance         , KEYMS)
+KEYWORD(__interface                   , KEYMS)
+ALIAS("__int8"           , char       , KEYMS)
+ALIAS("_int8"            , char       , KEYMS)
+ALIAS("__int16"          , short      , KEYMS)
+ALIAS("_int16"           , short      , KEYMS)
+ALIAS("__int32"          , int        , KEYMS)
+ALIAS("_int32"           , int        , KEYMS)
+ALIAS("_int64"           , __int64    , KEYMS)
+ALIAS("__wchar_t"        , wchar_t    , KEYMS)
+ALIAS("_asm"             , asm        , KEYMS)
+ALIAS("_alignof"         , __alignof  , KEYMS)
+ALIAS("__builtin_alignof", __alignof  , KEYMS)
+ALIAS("_cdecl"           , __cdecl    , KEYMS | KEYBORLAND)
+ALIAS("_fastcall"        , __fastcall , KEYMS | KEYBORLAND)
+ALIAS("_stdcall"         , __stdcall  , KEYMS | KEYBORLAND)
+ALIAS("_thiscall"        , __thiscall , KEYMS)
+ALIAS("_vectorcall"      , __vectorcall, KEYMS)
+ALIAS("_uuidof"          , __uuidof   , KEYMS | KEYBORLAND)
 // ALIAS("_inline"          , inline     , KEYMS)
-// ALIAS("_declspec"        , __declspec , KEYMS)
+ALIAS("_declspec"        , __declspec , KEYMS)
 
 // Borland Extensions which should be disabled in strict conformance mode.
 // ALIAS("_pascal"      , __pascal   , KEYBORLAND)
@@ -767,92 +767,92 @@ ANNOTATION(decltype)     // annotation for a decltype expression,
 // Annotation for #pragma unused(...)
 // For each argument inside the parentheses the pragma handler will produce
 // one 'pragma_unused' annotation token followed by the argument token.
-// PRAGMA_ANNOTATION(pragma_unused)
+PRAGMA_ANNOTATION(pragma_unused)
 
 // Annotation for #pragma GCC visibility...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_vis)
+PRAGMA_ANNOTATION(pragma_vis)
 
 // Annotation for #pragma pack...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_pack)
+PRAGMA_ANNOTATION(pragma_pack)
 
 // Annotation for #pragma clang __debug parser_crash...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_parser_crash)
+PRAGMA_ANNOTATION(pragma_parser_crash)
 
 // Annotation for #pragma clang __debug captured...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_captured)
+PRAGMA_ANNOTATION(pragma_captured)
 
 // Annotation for #pragma clang __debug dump...
 // The lexer produces these so that the parser and semantic analysis can
 // look up and dump the operand.
-// PRAGMA_ANNOTATION(pragma_dump)
+PRAGMA_ANNOTATION(pragma_dump)
 
 // Annotation for #pragma ms_struct...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_msstruct)
+PRAGMA_ANNOTATION(pragma_msstruct)
 
 // Annotation for #pragma align...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_align)
+PRAGMA_ANNOTATION(pragma_align)
 
 // Annotation for #pragma weak id
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_weak)
+PRAGMA_ANNOTATION(pragma_weak)
 
 // Annotation for #pragma weak id = id
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_weakalias)
+PRAGMA_ANNOTATION(pragma_weakalias)
 
 // Annotation for #pragma redefine_extname...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_redefine_extname)
+PRAGMA_ANNOTATION(pragma_redefine_extname)
 
 // Annotation for #pragma STDC FP_CONTRACT...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_fp_contract)
+PRAGMA_ANNOTATION(pragma_fp_contract)
 
 // Annotation for #pragma STDC FENV_ACCESS
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_fenv_access)
+PRAGMA_ANNOTATION(pragma_fenv_access)
 
 // Annotation for #pragma float_control
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_float_control)
+PRAGMA_ANNOTATION(pragma_float_control)
 
 // Annotation for #pragma pointers_to_members...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_ms_pointers_to_members)
+PRAGMA_ANNOTATION(pragma_ms_pointers_to_members)
 
 // Annotation for #pragma vtordisp...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_ms_vtordisp)
+PRAGMA_ANNOTATION(pragma_ms_vtordisp)
 
 // Annotation for all microsoft #pragmas...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_ms_pragma)
+PRAGMA_ANNOTATION(pragma_ms_pragma)
 
 // Annotation for #pragma OPENCL EXTENSION...
 // The lexer produces these so that they only take effect when the parser
 // handles them.
-// PRAGMA_ANNOTATION(pragma_opencl_extension)
+PRAGMA_ANNOTATION(pragma_opencl_extension)
 
 // Annotations for OpenMP pragma directives - #pragma omp ...
 // The lexer produces these so that they only take effect when the parser
@@ -863,12 +863,12 @@ ANNOTATION(decltype)     // annotation for a decltype expression,
 // Annotations for loop pragma directives #pragma clang loop ...
 // The lexer produces these so that they only take effect when the parser
 // handles #pragma loop ... directives.
-// PRAGMA_ANNOTATION(pragma_loop_hint)
+PRAGMA_ANNOTATION(pragma_loop_hint)
 
-// PRAGMA_ANNOTATION(pragma_fp)
+PRAGMA_ANNOTATION(pragma_fp)
 
 // Annotation for the attribute pragma directives - #pragma clang attribute ...
-// PRAGMA_ANNOTATION(pragma_attribute)
+PRAGMA_ANNOTATION(pragma_attribute)
 
 // Annotations for module import translated from #include etc.
 ANNOTATION(module_include)
@@ -879,7 +879,7 @@ ANNOTATION(module_end)
 // into the name of a header unit.
 ANNOTATION(header_unit)
 
-// #undef PRAGMA_ANNOTATION
+#undef PRAGMA_ANNOTATION
 #undef ANNOTATION
 #undef TESTING_KEYWORD
 #undef OBJC_AT_KEYWORD

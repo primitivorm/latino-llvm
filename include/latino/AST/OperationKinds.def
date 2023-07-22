@@ -421,8 +421,8 @@ UNARY_OPERATION(Minus, "-")
 UNARY_OPERATION(Not, "~")
 UNARY_OPERATION(LNot, "!")
 // "__real expr"/"__imag expr" Extension.
-UNARY_OPERATION(Real, "__real")
-UNARY_OPERATION(Imag, "__imag")
+// UNARY_OPERATION(Real, "__real")
+// UNARY_OPERATION(Imag, "__imag")
 // __extension__ marker.
 UNARY_OPERATION(Extension, "__extension__")
 // [C++ Coroutines] co_await operator

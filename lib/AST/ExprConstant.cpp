@@ -14656,8 +14656,8 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
     case UO_Plus:
     case UO_Minus:
     case UO_Not:
-    case UO_Real:
-    case UO_Imag:
+    // case UO_Real:
+    // case UO_Imag:
       return CheckICE(Exp->getSubExpr(), Ctx);
     }
     llvm_unreachable("invalid unary operator class");

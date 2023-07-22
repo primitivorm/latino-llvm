@@ -6049,9 +6049,9 @@ static bool isPlaceholderToRemoveAsArg(QualType type) {
   case BuiltinType::BoundMember:
   case BuiltinType::BuiltinFn:
   case BuiltinType::IncompleteMatrixIdx:
-  case BuiltinType::OMPArraySection:
-  case BuiltinType::OMPArrayShaping:
-  case BuiltinType::OMPIterator:
+  // case BuiltinType::OMPArraySection:
+  // case BuiltinType::OMPArrayShaping:
+  // case BuiltinType::OMPIterator:
     return true;
 
   }
@@ -13098,8 +13098,8 @@ static ValueDecl *getPrimaryDecl(Expr *E) {
     UnaryOperator *UO = cast<UnaryOperator>(E);
 
     switch(UO->getOpcode()) {
-    case UO_Real:
-    case UO_Imag:
+    // case UO_Real:
+    // case UO_Imag:
     case UO_Extension:
       return getPrimaryDecl(UO->getSubExpr());
     default:
@@ -13499,7 +13499,7 @@ static inline UnaryOperatorKind ConvertTokenKindToUnaryOpcode(
   case tok::exclaim:      Opc = UO_LNot; break;
   // case tok::kw___real:    Opc = UO_Real; break;
   // case tok::kw___imag:    Opc = UO_Imag; break;
-  // case tok::kw___extension__: Opc = UO_Extension; break;
+  case tok::kw___extension__: Opc = UO_Extension; break;
   }
   return Opc;
 }
@@ -14499,21 +14499,21 @@ ExprResult Sema::CreateBuiltinUnaryOp(SourceLocation OpLoc,
     // In C++, it's bool. C++ 5.3.1p8
     resultType = Context.getLogicalOperationType();
     break;
-  case UO_Real:
-  case UO_Imag:
-    resultType = CheckRealImagOperand(*this, Input, OpLoc, Opc == UO_Real);
-    // _Real maps ordinary l-values into ordinary l-values. _Imag maps ordinary
-    // complex l-values to ordinary l-values and all other values to r-values.
-    if (Input.isInvalid()) return ExprError();
-    if (Opc == UO_Real || Input.get()->getType()->isAnyComplexType()) {
-      if (Input.get()->getValueKind() != VK_RValue &&
-          Input.get()->getObjectKind() == OK_Ordinary)
-        VK = Input.get()->getValueKind();
-    } else if (!getLangOpts().CPlusPlus) {
-      // In C, a volatile scalar is read by __imag. In C++, it is not.
-      Input = DefaultLvalueConversion(Input.get());
-    }
-    break;
+  // case UO_Real:
+  // case UO_Imag:
+  //   resultType = CheckRealImagOperand(*this, Input, OpLoc, Opc == UO_Real);
+  //   // _Real maps ordinary l-values into ordinary l-values. _Imag maps ordinary
+  //   // complex l-values to ordinary l-values and all other values to r-values.
+  //   if (Input.isInvalid()) return ExprError();
+  //   if (Opc == UO_Real || Input.get()->getType()->isAnyComplexType()) {
+  //     if (Input.get()->getValueKind() != VK_RValue &&
+  //         Input.get()->getObjectKind() == OK_Ordinary)
+  //       VK = Input.get()->getValueKind();
+  //   } else if (!getLangOpts().CPlusPlus) {
+  //     // In C, a volatile scalar is read by __imag. In C++, it is not.
+  //     Input = DefaultLvalueConversion(Input.get());
+  //   }
+  //   break;
   case UO_Extension:
     resultType = Input.get()->getType();
     VK = Input.get()->getValueKind();

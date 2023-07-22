@@ -317,10 +317,10 @@ PLACEHOLDER_TYPE(ARCUnbridgedCast, ARCUnbridgedCastTy)
 PLACEHOLDER_TYPE(IncompleteMatrixIdx, IncompleteMatrixIdxTy)
 
 // A placeholder type for OpenMP array sections.
-PLACEHOLDER_TYPE(OMPArraySection, OMPArraySectionTy)
+// PLACEHOLDER_TYPE(OMPArraySection, OMPArraySectionTy)
 
 // A placeholder type for OpenMP array shaping operation.
-PLACEHOLDER_TYPE(OMPArrayShaping, OMPArrayShapingTy)
+// PLACEHOLDER_TYPE(OMPArrayShaping, OMPArrayShapingTy)
 
 // A placeholder type for OpenMP iterators.
 PLACEHOLDER_TYPE(OMPIterator, OMPIteratorTy)

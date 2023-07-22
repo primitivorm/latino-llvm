@@ -3193,10 +3193,10 @@ public:
   llvm::Function *EmitCapturedStmt(const CapturedStmt &S, CapturedRegionKind K);
   llvm::Function *GenerateCapturedStmtFunction(const CapturedStmt &S);
   Address GenerateCapturedStmtArgument(const CapturedStmt &S);
-  llvm::Function *GenerateOpenMPCapturedStmtFunction(const CapturedStmt &S,
-                                                     SourceLocation Loc);
-  void GenerateOpenMPCapturedVars(const CapturedStmt &S,
-                                  SmallVectorImpl<llvm::Value *> &CapturedVars);
+  // llvm::Function *GenerateOpenMPCapturedStmtFunction(const CapturedStmt &S,
+  //                                                    SourceLocation Loc);
+  // void GenerateOpenMPCapturedVars(const CapturedStmt &S,
+  //                                 SmallVectorImpl<llvm::Value *> &CapturedVars);
   // void emitOMPSimpleStore(LValue LVal, RValue RVal, QualType RValTy,
   //                         SourceLocation Loc);
   /// Perform element by element copying of arrays with type \a

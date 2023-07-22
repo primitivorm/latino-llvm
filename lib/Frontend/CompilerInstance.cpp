@@ -959,12 +959,12 @@ bool CompilerInstance::ExecuteAction(FrontendAction &Act) {
     getTarget().setAuxTarget(Aux);
 
   // rewriter project will change target built-in bool type from its default.
-  if (getFrontendOpts().ProgramAction == frontend::RewriteObjC)
-    getTarget().noSignedCharForObjCBool();
+  // if (getFrontendOpts().ProgramAction == frontend::RewriteObjC)
+  //   getTarget().noSignedCharForObjCBool();
 
   // Validate/process some options.
   if (getHeaderSearchOpts().Verbose)
-    OS << "clang -cc1 version " LATINO_VERSION_STRING
+    OS << "latino -cc1 version " LATINO_VERSION_STRING
        << " based upon " << BACKEND_PACKAGE_STRING
        << " default target " << llvm::sys::getDefaultTargetTriple() << "\n";
 

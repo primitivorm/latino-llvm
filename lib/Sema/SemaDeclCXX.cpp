@@ -942,18 +942,18 @@ static bool checkVectorDecomposition(Sema &S, ArrayRef<BindingDecl*> Bindings,
                                  DecompType.getQualifiers()));
 }
 
-static bool checkComplexDecomposition(Sema &S,
-                                      ArrayRef<BindingDecl *> Bindings,
-                                      ValueDecl *Src, QualType DecompType,
-                                      const ComplexType *CT) {
-  return checkSimpleDecomposition(
-      S, Bindings, Src, DecompType, llvm::APSInt::get(2),
-      S.Context.getQualifiedType(CT->getElementType(),
-                                 DecompType.getQualifiers()),
-      [&](SourceLocation Loc, Expr *Base, unsigned I) -> ExprResult {
-        return S.CreateBuiltinUnaryOp(Loc, I ? UO_Imag : UO_Real, Base);
-      });
-}
+// static bool checkComplexDecomposition(Sema &S,
+//                                       ArrayRef<BindingDecl *> Bindings,
+//                                       ValueDecl *Src, QualType DecompType,
+//                                       const ComplexType *CT) {
+//   return checkSimpleDecomposition(
+//       S, Bindings, Src, DecompType, llvm::APSInt::get(2),
+//       S.Context.getQualifiedType(CT->getElementType(),
+//                                  DecompType.getQualifiers()),
+//       [&](SourceLocation Loc, Expr *Base, unsigned I) -> ExprResult {
+//         return S.CreateBuiltinUnaryOp(Loc, I ? UO_Imag : UO_Real, Base);
+//       });
+// }
 
 static std::string printTemplateArgs(const PrintingPolicy &PrintingPolicy,
                                      TemplateArgumentListInfo &Args) {
@@ -1455,11 +1455,11 @@ void Sema::CheckCompleteDecompositionDeclaration(DecompositionDecl *DD) {
       DD->setInvalidDecl();
     return;
   }
-  if (auto *CT = DecompType->getAs<ComplexType>()) {
-    if (checkComplexDecomposition(*this, Bindings, DD, DecompType, CT))
-      DD->setInvalidDecl();
-    return;
-  }
+  // if (auto *CT = DecompType->getAs<ComplexType>()) {
+  //   if (checkComplexDecomposition(*this, Bindings, DD, DecompType, CT))
+  //     DD->setInvalidDecl();
+  //   return;
+  // }
 
   // C++1z [dcl.decomp]/3:
   //   if the expression std::tuple_size<E>::value is a well-formed integral

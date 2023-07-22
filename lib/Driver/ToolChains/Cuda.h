@@ -110,18 +110,18 @@ class LLVM_LIBRARY_VISIBILITY Linker : public Tool {
                      const char *LinkingOutput) const override;
 };
 
-class LLVM_LIBRARY_VISIBILITY OpenMPLinker : public Tool {
- public:
-   OpenMPLinker(const ToolChain &TC)
-       : Tool("NVPTX::OpenMPLinker", "nvlink", TC) {}
+// class LLVM_LIBRARY_VISIBILITY OpenMPLinker : public Tool {
+//  public:
+//    OpenMPLinker(const ToolChain &TC)
+//        : Tool("NVPTX::OpenMPLinker", "nvlink", TC) {}
 
-   bool hasIntegratedCPP() const override { return false; }
+//    bool hasIntegratedCPP() const override { return false; }
 
-   void ConstructJob(Compilation &C, const JobAction &JA,
-                     const InputInfo &Output, const InputInfoList &Inputs,
-                     const llvm::opt::ArgList &TCArgs,
-                     const char *LinkingOutput) const override;
-};
+//    void ConstructJob(Compilation &C, const JobAction &JA,
+//                      const InputInfo &Output, const InputInfoList &Inputs,
+//                      const llvm::opt::ArgList &TCArgs,
+//                      const char *LinkingOutput) const override;
+// };
 
 } // end namespace NVPTX
 } // end namespace tools

@@ -718,25 +718,25 @@ void UnwrappedLineParser::parsePPDirective() {
   }
 
   switch (FormatTok->Tok.getIdentifierInfo()->getPPKeywordID()) {
-  // case tok::pp_define:
-  //   parsePPDefine();
-  //   return;
-  // case tok::pp_if:
-  //   parsePPIf(/*IfDef=*/false);
-  //   break;
-  // case tok::pp_ifdef:
-  // case tok::pp_ifndef:
-  //   parsePPIf(/*IfDef=*/true);
-  //   break;
-  // case tok::pp_else:
-  //   parsePPElse();
-  //   break;
-  // case tok::pp_elif:
-  //   parsePPElIf();
-  //   break;
-  // case tok::pp_endif:
-  //   parsePPEndIf();
-  //   break;
+  case tok::pp_define:
+    parsePPDefine();
+    return;
+  case tok::pp_if:
+    parsePPIf(/*IfDef=*/false);
+    break;
+  case tok::pp_ifdef:
+  case tok::pp_ifndef:
+    parsePPIf(/*IfDef=*/true);
+    break;
+  case tok::pp_else:
+    parsePPElse();
+    break;
+  case tok::pp_elif:
+    parsePPElIf();
+    break;
+  case tok::pp_endif:
+    parsePPEndIf();
+    break;
   default:
     parsePPUnknown();
     break;
@@ -794,102 +794,102 @@ void UnwrappedLineParser::conditionalCompilationEnd() {
     PPStack.pop_back();
 }
 
-// void UnwrappedLineParser::parsePPIf(bool IfDef) {
-//   bool IfNDef = FormatTok->is(tok::pp_ifndef);
-//   nextToken();
-//   bool Unreachable = false;
-//   if (!IfDef && (FormatTok->is(tok::kw_false) || FormatTok->TokenText == "0"))
-//     Unreachable = true;
-//   if (IfDef && !IfNDef && FormatTok->TokenText == "SWIG")
-//     Unreachable = true;
-//   conditionalCompilationStart(Unreachable);
-//   FormatToken *IfCondition = FormatTok;
-//   // If there's a #ifndef on the first line, and the only lines before it are
-//   // comments, it could be an include guard.
-//   bool MaybeIncludeGuard = IfNDef;
-//   if (IncludeGuard == IG_Inited && MaybeIncludeGuard)
-//     for (auto &Line : Lines) {
-//       if (!Line.Tokens.front().Tok->is(tok::comment)) {
-//         MaybeIncludeGuard = false;
-//         IncludeGuard = IG_Rejected;
-//         break;
-//       }
-//     }
-//   --PPBranchLevel;
-//   parsePPUnknown();
-//   ++PPBranchLevel;
-//   if (IncludeGuard == IG_Inited && MaybeIncludeGuard) {
-//     IncludeGuard = IG_IfNdefed;
-//     IncludeGuardToken = IfCondition;
-//   }
-// }
+void UnwrappedLineParser::parsePPIf(bool IfDef) {
+  bool IfNDef = FormatTok->is(tok::pp_ifndef);
+  nextToken();
+  bool Unreachable = false;
+  if (!IfDef && (FormatTok->is(tok::kw_false) || FormatTok->TokenText == "0"))
+    Unreachable = true;
+  if (IfDef && !IfNDef && FormatTok->TokenText == "SWIG")
+    Unreachable = true;
+  conditionalCompilationStart(Unreachable);
+  FormatToken *IfCondition = FormatTok;
+  // If there's a #ifndef on the first line, and the only lines before it are
+  // comments, it could be an include guard.
+  bool MaybeIncludeGuard = IfNDef;
+  if (IncludeGuard == IG_Inited && MaybeIncludeGuard)
+    for (auto &Line : Lines) {
+      if (!Line.Tokens.front().Tok->is(tok::comment)) {
+        MaybeIncludeGuard = false;
+        IncludeGuard = IG_Rejected;
+        break;
+      }
+    }
+  --PPBranchLevel;
+  parsePPUnknown();
+  ++PPBranchLevel;
+  if (IncludeGuard == IG_Inited && MaybeIncludeGuard) {
+    IncludeGuard = IG_IfNdefed;
+    IncludeGuardToken = IfCondition;
+  }
+}
 
-// void UnwrappedLineParser::parsePPElse() {
-//   // If a potential include guard has an #else, it's not an include guard.
-//   if (IncludeGuard == IG_Defined && PPBranchLevel == 0)
-//     IncludeGuard = IG_Rejected;
-//   conditionalCompilationAlternative();
-//   if (PPBranchLevel > -1)
-//     --PPBranchLevel;
-//   parsePPUnknown();
-//   ++PPBranchLevel;
-// }
+void UnwrappedLineParser::parsePPElse() {
+  // If a potential include guard has an #else, it's not an include guard.
+  if (IncludeGuard == IG_Defined && PPBranchLevel == 0)
+    IncludeGuard = IG_Rejected;
+  conditionalCompilationAlternative();
+  if (PPBranchLevel > -1)
+    --PPBranchLevel;
+  parsePPUnknown();
+  ++PPBranchLevel;
+}
 
-// void UnwrappedLineParser::parsePPElIf() { parsePPElse(); }
+void UnwrappedLineParser::parsePPElIf() { parsePPElse(); }
 
-// void UnwrappedLineParser::parsePPEndIf() {
-//   conditionalCompilationEnd();
-//   parsePPUnknown();
-//   // If the #endif of a potential include guard is the last thing in the file,
-//   // then we found an include guard.
-//   unsigned TokenPosition = Tokens->getPosition();
-//   FormatToken *PeekNext = AllTokens[TokenPosition];
-//   if (IncludeGuard == IG_Defined && PPBranchLevel == -1 &&
-//       PeekNext->is(tok::eof) &&
-//       Style.IndentPPDirectives != FormatStyle::PPDIS_None)
-//     IncludeGuard = IG_Found;
-// }
+void UnwrappedLineParser::parsePPEndIf() {
+  conditionalCompilationEnd();
+  parsePPUnknown();
+  // If the #endif of a potential include guard is the last thing in the file,
+  // then we found an include guard.
+  unsigned TokenPosition = Tokens->getPosition();
+  FormatToken *PeekNext = AllTokens[TokenPosition];
+  if (IncludeGuard == IG_Defined && PPBranchLevel == -1 &&
+      PeekNext->is(tok::eof) &&
+      Style.IndentPPDirectives != FormatStyle::PPDIS_None)
+    IncludeGuard = IG_Found;
+}
 
-// void UnwrappedLineParser::parsePPDefine() {
-//   nextToken();
+void UnwrappedLineParser::parsePPDefine() {
+  nextToken();
 
-//   if (!FormatTok->Tok.getIdentifierInfo()) {
-//     IncludeGuard = IG_Rejected;
-//     IncludeGuardToken = nullptr;
-//     parsePPUnknown();
-//     return;
-//   }
+  if (!FormatTok->Tok.getIdentifierInfo()) {
+    IncludeGuard = IG_Rejected;
+    IncludeGuardToken = nullptr;
+    parsePPUnknown();
+    return;
+  }
 
-//   if (IncludeGuard == IG_IfNdefed &&
-//       IncludeGuardToken->TokenText == FormatTok->TokenText) {
-//     IncludeGuard = IG_Defined;
-//     IncludeGuardToken = nullptr;
-//     for (auto &Line : Lines) {
-//       if (!Line.Tokens.front().Tok->isOneOf(tok::comment, tok::hash)) {
-//         IncludeGuard = IG_Rejected;
-//         break;
-//       }
-//     }
-//   }
+  if (IncludeGuard == IG_IfNdefed &&
+      IncludeGuardToken->TokenText == FormatTok->TokenText) {
+    IncludeGuard = IG_Defined;
+    IncludeGuardToken = nullptr;
+    for (auto &Line : Lines) {
+      if (!Line.Tokens.front().Tok->isOneOf(tok::comment, tok::hash)) {
+        IncludeGuard = IG_Rejected;
+        break;
+      }
+    }
+  }
 
-//   nextToken();
-//   if (FormatTok->Tok.getKind() == tok::l_paren &&
-//       FormatTok->WhitespaceRange.getBegin() ==
-//           FormatTok->WhitespaceRange.getEnd()) {
-//     parseParens();
-//   }
-//   if (Style.IndentPPDirectives != FormatStyle::PPDIS_None)
-//     Line->Level += PPBranchLevel + 1;
-//   addUnwrappedLine();
-//   ++Line->Level;
+  nextToken();
+  if (FormatTok->Tok.getKind() == tok::l_paren &&
+      FormatTok->WhitespaceRange.getBegin() ==
+          FormatTok->WhitespaceRange.getEnd()) {
+    parseParens();
+  }
+  if (Style.IndentPPDirectives != FormatStyle::PPDIS_None)
+    Line->Level += PPBranchLevel + 1;
+  addUnwrappedLine();
+  ++Line->Level;
 
-//   // Errors during a preprocessor directive can only affect the layout of the
-//   // preprocessor directive, and thus we ignore them. An alternative approach
-//   // would be to use the same approach we use on the file level (no
-//   // re-indentation if there was a structural error) within the macro
-//   // definition.
-//   parseFile();
-// }
+  // Errors during a preprocessor directive can only affect the layout of the
+  // preprocessor directive, and thus we ignore them. An alternative approach
+  // would be to use the same approach we use on the file level (no
+  // re-indentation if there was a structural error) within the macro
+  // definition.
+  parseFile();
+}
 
 void UnwrappedLineParser::parsePPUnknown() {
   do {
@@ -1021,14 +1021,14 @@ void UnwrappedLineParser::readTokenWithJavaScriptASI() {
 
 void UnwrappedLineParser::parseStructuralElement() {
   assert(!FormatTok->is(tok::l_brace));
-  // if (Style.Language == FormatStyle::LK_TableGen &&
-  //     FormatTok->is(tok::pp_include)) {
-  //   nextToken();
-  //   if (FormatTok->is(tok::string_literal))
-  //     nextToken();
-  //   addUnwrappedLine();
-  //   return;
-  // }
+  if (Style.Language == FormatStyle::LK_TableGen &&
+      FormatTok->is(tok::pp_include)) {
+    nextToken();
+    if (FormatTok->is(tok::string_literal))
+      nextToken();
+    addUnwrappedLine();
+    return;
+  }
   switch (FormatTok->Tok.getKind()) {
   case tok::kw_asm:
     nextToken();
@@ -2470,8 +2470,8 @@ void UnwrappedLineParser::parseRecord(bool ParseAsExpr) {
   // it is often token-pasted.
   // An [[attribute]] can be before the identifier.
   while (FormatTok->isOneOf(tok::identifier, tok::coloncolon, tok::hashhash,
-                            tok::kw___attribute, /*tok::kw___declspec,
-                            tok::kw_alignas,*/ tok::l_square, tok::r_square) ||
+                            tok::kw___attribute, tok::kw___declspec,
+                            /*tok::kw_alignas,*/ tok::l_square, tok::r_square) ||
          ((Style.Language == FormatStyle::LK_Java ||
            Style.Language == FormatStyle::LK_JavaScript) &&
           FormatTok->isOneOf(tok::period, tok::comma))) {

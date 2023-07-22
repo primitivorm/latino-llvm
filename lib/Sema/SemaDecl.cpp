@@ -18250,9 +18250,9 @@ Sema::FunctionEmissionStatus Sema::getEmissionStatus(FunctionDecl *FD,
   //       OMPES = FunctionEmissionStatus::Emitted;
   //   }
   // }
-  if (OMPES == FunctionEmissionStatus::OMPDiscarded ||
-      (OMPES == FunctionEmissionStatus::Emitted && !LangOpts.CUDA))
-    return OMPES;
+  // if (OMPES == FunctionEmissionStatus::OMPDiscarded ||
+  //     (OMPES == FunctionEmissionStatus::Emitted && !LangOpts.CUDA))
+  //   return OMPES;
 
   if (LangOpts.CUDA) {
     // When compiling for device, host functions are never emitted.  Similarly,

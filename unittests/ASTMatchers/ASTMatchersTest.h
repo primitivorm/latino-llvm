@@ -263,31 +263,31 @@ testing::AssertionResult notMatchesWithCuda(const Twine &Code,
   return matchesConditionallyWithCuda(Code, AMatcher, false, "-std=c++11");
 }
 
-template <typename T>
-testing::AssertionResult matchesWithOpenMP(const Twine &Code,
-                                           const T &AMatcher) {
-  return matchesConditionally(Code, AMatcher, true, {"-fopenmp=libomp"});
-}
+// template <typename T>
+// testing::AssertionResult matchesWithOpenMP(const Twine &Code,
+//                                            const T &AMatcher) {
+//   return matchesConditionally(Code, AMatcher, true, {"-fopenmp=libomp"});
+// }
 
-template <typename T>
-testing::AssertionResult notMatchesWithOpenMP(const Twine &Code,
-                                              const T &AMatcher) {
-  return matchesConditionally(Code, AMatcher, false, {"-fopenmp=libomp"});
-}
+// template <typename T>
+// testing::AssertionResult notMatchesWithOpenMP(const Twine &Code,
+//                                               const T &AMatcher) {
+//   return matchesConditionally(Code, AMatcher, false, {"-fopenmp=libomp"});
+// }
 
-template <typename T>
-testing::AssertionResult matchesWithOpenMP51(const Twine &Code,
-                                             const T &AMatcher) {
-  return matchesConditionally(Code, AMatcher, true,
-                              {"-fopenmp=libomp", "-fopenmp-version=51"});
-}
+// template <typename T>
+// testing::AssertionResult matchesWithOpenMP51(const Twine &Code,
+//                                              const T &AMatcher) {
+//   return matchesConditionally(Code, AMatcher, true,
+//                               {"-fopenmp=libomp", "-fopenmp-version=51"});
+// }
 
-template <typename T>
-testing::AssertionResult notMatchesWithOpenMP51(const Twine &Code,
-                                                const T &AMatcher) {
-  return matchesConditionally(Code, AMatcher, false,
-                              {"-fopenmp=libomp", "-fopenmp-version=51"});
-}
+// template <typename T>
+// testing::AssertionResult notMatchesWithOpenMP51(const Twine &Code,
+//                                                 const T &AMatcher) {
+//   return matchesConditionally(Code, AMatcher, false,
+//                               {"-fopenmp=libomp", "-fopenmp-version=51"});
+// }
 
 template <typename T>
 testing::AssertionResult matchAndVerifyResultConditionally(

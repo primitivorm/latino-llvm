@@ -45,7 +45,7 @@ class GlobalValue;
 class DataLayout;
 class FunctionType;
 class LLVMContext;
-class OpenMPIRBuilder;
+// class OpenMPIRBuilder;
 class IndexedInstrProfReader;
 }
 
@@ -504,7 +504,7 @@ private:
   // void createObjCRuntime();
 
   // void createOpenCLRuntime();
-  void createOpenMPRuntime();
+  // void createOpenMPRuntime();
   void createCUDARuntime();
 
   bool isTriviallyRecursive(const FunctionDecl *F);

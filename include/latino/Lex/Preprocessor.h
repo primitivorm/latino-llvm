@@ -72,8 +72,8 @@ class FileEntry;
 class FileManager;
 class HeaderSearch;
 class MacroArgs;
-// class PragmaHandler;
-// class PragmaNamespace;
+class PragmaHandler;
+class PragmaNamespace;
 class PreprocessingRecord;
 class PreprocessorLexer;
 class PreprocessorOptions;
@@ -246,11 +246,11 @@ class Preprocessor {
 
   /// Tracks all of the pragmas that the client registered
   /// with this preprocessor.
-  // std::unique_ptr<PragmaNamespace> PragmaHandlers;
+  std::unique_ptr<PragmaNamespace> PragmaHandlers;
 
   /// Pragma handlers of the original source is stored here during the
   /// parsing of a model file.
-  // std::unique_ptr<PragmaNamespace> PragmaHandlersBackup;
+  std::unique_ptr<PragmaNamespace> PragmaHandlersBackup;
 
   /// Tracks all of the comment handlers that the client registered
   /// with this preprocessor.
@@ -1196,23 +1196,23 @@ public:
   ///
   /// If \p Namespace is non-null, then it is a token required to exist on the
   /// pragma line before the pragma string starts, e.g. "STDC" or "GCC".
-  // void AddPragmaHandler(StringRef Namespace, PragmaHandler *Handler);
-  // void AddPragmaHandler(PragmaHandler *Handler) {
-  //   AddPragmaHandler(StringRef(), Handler);
-  // }
+  void AddPragmaHandler(StringRef Namespace, PragmaHandler *Handler);
+  void AddPragmaHandler(PragmaHandler *Handler) {
+    AddPragmaHandler(StringRef(), Handler);
+  }
 
   /// Remove the specific pragma handler from this preprocessor.
   ///
   /// If \p Namespace is non-null, then it should be the namespace that
   /// \p Handler was added to. It is an error to remove a handler that
   /// has not been registered.
-  // void RemovePragmaHandler(StringRef Namespace, PragmaHandler *Handler);
-  // void RemovePragmaHandler(PragmaHandler *Handler) {
-  //   RemovePragmaHandler(StringRef(), Handler);
-  // }
+  void RemovePragmaHandler(StringRef Namespace, PragmaHandler *Handler);
+  void RemovePragmaHandler(PragmaHandler *Handler) {
+    RemovePragmaHandler(StringRef(), Handler);
+  }
 
   /// Install empty handlers for all pragmas (making them ignored).
-  // void IgnorePragmas();
+  void IgnorePragmas();
 
   /// Add the specified comment handler to the preprocessor.
   void addCommentHandler(CommentHandler *Handler);
@@ -2120,7 +2120,7 @@ private:
 
   /// Install the standard preprocessor pragmas:
   /// \#pragma GCC poison/system_header/dependency and \#pragma once.
-  // void RegisterBuiltinPragmas();
+  void RegisterBuiltinPragmas();
 
   /// Register builtin macros such as __LINE__ with the identifier table.
   void RegisterBuiltinMacros();
@@ -2157,11 +2157,11 @@ private:
   /// Read a \c _Pragma directive, slice it up, process it, then
   /// return the first token after the directive.
   /// This assumes that the \c _Pragma token has just been read into \p Tok.
-  // void Handle_Pragma(Token &Tok);
+  void Handle_Pragma(Token &Tok);
 
   /// Like Handle_Pragma except the pragma text is not enclosed within
   /// a string literal.
-  // void HandleMicrosoft__pragma(Token &Tok);
+  void HandleMicrosoft__pragma(Token &Tok);
 
   /// Add a lexer to the top of the include stack and
   /// start lexing tokens from it instead of the current buffer.
@@ -2215,12 +2215,12 @@ private:
   /// Handle*Directive - implement the various preprocessor directives.  These
   /// should side-effect the current preprocessor object so that the next call
   /// to Lex() will return the appropriate token next.
-  // void HandleLineDirective();
+  void HandleLineDirective();
   void HandleDigitDirective(Token &Tok);
-  // void HandleUserDiagnosticDirective(Token &Tok, bool isWarning);
-  // void HandleIdentSCCSDirective(Token &Tok);
-  // void HandleMacroPublicDirective(Token &Tok);
-  // void HandleMacroPrivateDirective();
+  void HandleUserDiagnosticDirective(Token &Tok, bool isWarning);
+  void HandleIdentSCCSDirective(Token &Tok);
+  void HandleMacroPublicDirective(Token &Tok);
+  void HandleMacroPrivateDirective();
 
   /// An additional notification that can be produced by a header inclusion or
   /// import to tell the parser what happened.
@@ -2251,18 +2251,18 @@ private:
       ModuleMap::KnownHeader &SuggestedModule, bool isAngled);
 
   // File inclusion.
-  // void HandleIncludeDirective(SourceLocation HashLoc, Token &Tok,
-  //                             const DirectoryLookup *LookupFrom = nullptr,
-  //                             const FileEntry *LookupFromFile = nullptr);
+  void HandleIncludeDirective(SourceLocation HashLoc, Token &Tok,
+                              const DirectoryLookup *LookupFrom = nullptr,
+                              const FileEntry *LookupFromFile = nullptr);
   ImportAction
   HandleHeaderIncludeOrImport(SourceLocation HashLoc, Token &IncludeTok,
                               Token &FilenameTok, SourceLocation EndLoc,
                               const DirectoryLookup *LookupFrom = nullptr,
                               const FileEntry *LookupFromFile = nullptr);
-  // void HandleIncludeNextDirective(SourceLocation HashLoc, Token &Tok);
-  // void HandleIncludeMacrosDirective(SourceLocation HashLoc, Token &Tok);
-  // void HandleImportDirective(SourceLocation HashLoc, Token &Tok);
-  // void HandleMicrosoftImportDirective(Token &Tok);
+  void HandleIncludeNextDirective(SourceLocation HashLoc, Token &Tok);
+  void HandleIncludeMacrosDirective(SourceLocation HashLoc, Token &Tok);
+  void HandleImportDirective(SourceLocation HashLoc, Token &Tok);
+  void HandleMicrosoftImportDirective(Token &Tok);
 
 public:
   /// Check that the given module is available, producing a diagnostic if not.
@@ -2328,20 +2328,20 @@ private:
   void replayPreambleConditionalStack();
 
   // Macro handling.
-  // void HandleDefineDirective(Token &Tok, bool ImmediatelyAfterHeaderGuard);
-  // void HandleUndefDirective();
+  void HandleDefineDirective(Token &Tok, bool ImmediatelyAfterHeaderGuard);
+  void HandleUndefDirective();
 
   // Conditional Inclusion.
-  // void HandleIfdefDirective(Token &Result, const Token &HashToken,
-  //                           bool isIfndef, bool ReadAnyTokensBeforeDirective);
-  // void HandleIfDirective(Token &IfToken, const Token &HashToken,
-  //                        bool ReadAnyTokensBeforeDirective);
-  // void HandleEndifDirective(Token &EndifToken);
-  // void HandleElseDirective(Token &Result, const Token &HashToken);
-  // void HandleElifDirective(Token &ElifToken, const Token &HashToken);
+  void HandleIfdefDirective(Token &Result, const Token &HashToken,
+                            bool isIfndef, bool ReadAnyTokensBeforeDirective);
+  void HandleIfDirective(Token &IfToken, const Token &HashToken,
+                         bool ReadAnyTokensBeforeDirective);
+  void HandleEndifDirective(Token &EndifToken);
+  void HandleElseDirective(Token &Result, const Token &HashToken);
+  void HandleElifDirective(Token &ElifToken, const Token &HashToken);
 
   // Pragmas.
-  // void HandlePragmaDirective(PragmaIntroducer Introducer);
+  void HandlePragmaDirective(PragmaIntroducer Introducer);
 
 public:
   void HandlePragmaOnce(Token &OnceTok);
@@ -2386,7 +2386,7 @@ public:
 };
 
 /// Registry of pragma handlers added by plugins
-// using PragmaHandlerRegistry = llvm::Registry<PragmaHandler>;
+using PragmaHandlerRegistry = llvm::Registry<PragmaHandler>;
 
 } // namespace latino
 

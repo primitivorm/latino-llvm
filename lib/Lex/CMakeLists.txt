@@ -18,7 +18,7 @@ add_latino_library(latinoLex
   PPExpressions.cpp
   PPLexerChange.cpp
   PPMacroExpansion.cpp
-  # Pragma.cpp
+  Pragma.cpp
   PreprocessingRecord.cpp
   Preprocessor.cpp
   PreprocessorLexer.cpp

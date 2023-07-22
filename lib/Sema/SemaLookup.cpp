@@ -278,13 +278,13 @@ static inline unsigned getIDNS(Sema::LookupNameKind NameKind,
   //   IDNS = Decl::IDNS_ObjCProtocol;
   //   break;
 
-  case Sema::LookupOMPReductionName:
-    IDNS = Decl::IDNS_OMPReduction;
-    break;
+  // case Sema::LookupOMPReductionName:
+  //   IDNS = Decl::IDNS_OMPReduction;
+  //   break;
 
-  case Sema::LookupOMPMapperName:
-    IDNS = Decl::IDNS_OMPMapper;
-    break;
+  // case Sema::LookupOMPMapperName:
+  //   IDNS = Decl::IDNS_OMPMapper;
+  //   break;
 
   case Sema::LookupAnyName:
     IDNS = Decl::IDNS_Ordinary | Decl::IDNS_Tag | Decl::IDNS_Member
@@ -2221,13 +2221,13 @@ bool Sema::LookupQualifiedName(LookupResult &R, DeclContext *LookupCtx,
       BaseCallback = &LookupAnyMember;
       break;
 
-    case LookupOMPReductionName:
-      BaseCallback = &CXXRecordDecl::FindOMPReductionMember;
-      break;
+    // case LookupOMPReductionName:
+    //   BaseCallback = &CXXRecordDecl::FindOMPReductionMember;
+    //   break;
 
-    case LookupOMPMapperName:
-      BaseCallback = &CXXRecordDecl::FindOMPMapperMember;
-      break;
+    // case LookupOMPMapperName:
+    //   BaseCallback = &CXXRecordDecl::FindOMPMapperMember;
+    //   break;
 
     case LookupUsingDeclName:
       // This lookup is for redeclarations only.

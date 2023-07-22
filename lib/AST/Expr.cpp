@@ -2382,13 +2382,13 @@ bool Expr::isUnusedResultAWarning(const Expr *&WarnE, SourceLocation &Loc,
     case UO_PreInc:
     case UO_PreDec:                 // ++/--
       return false;  // Not a warning.
-    case UO_Real:
-    case UO_Imag:
-      // accessing a piece of a volatile complex is a side-effect.
-      if (Ctx.getCanonicalType(UO->getSubExpr()->getType())
-          .isVolatileQualified())
-        return false;
-      break;
+    // case UO_Real:
+    // case UO_Imag:
+    //   // accessing a piece of a volatile complex is a side-effect.
+    //   if (Ctx.getCanonicalType(UO->getSubExpr()->getType())
+    //       .isVolatileQualified())
+    //     return false;
+    //   break;
     case UO_Extension:
       return UO->getSubExpr()->isUnusedResultAWarning(WarnE, Loc, R1, R2, Ctx);
     }

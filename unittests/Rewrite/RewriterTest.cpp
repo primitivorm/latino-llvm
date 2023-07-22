@@ -41,7 +41,7 @@ TEST(Rewriter, GetRewrittenTextRangeTypes) {
   // after a modification.  Ranges remain in terms of the original text but
   // include the new text.
   StringRef Code = "int main() { return 0; }";
-  //              get char range ^~~    = "ret"
+  //              get char range ^~~    = "return"
   //             get token range ^~~+++ = "return"
   //            get source range ^~~+++ = "return"
   //                  insert "x" ^

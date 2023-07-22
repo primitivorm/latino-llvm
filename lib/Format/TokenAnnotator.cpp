@@ -1143,31 +1143,31 @@ private:
     }
   }
 
-  // void parseWarningOrError() {
-  //   next();
-  //   // We still want to format the whitespace left of the first token of the
-  //   // warning or error.
-  //   next();
-  //   while (CurrentToken) {
-  //     CurrentToken->setType(TT_ImplicitStringLiteral);
-  //     next();
-  //   }
-  // }
+  void parseWarningOrError() {
+    next();
+    // We still want to format the whitespace left of the first token of the
+    // warning or error.
+    next();
+    while (CurrentToken) {
+      CurrentToken->setType(TT_ImplicitStringLiteral);
+      next();
+    }
+  }
 
-  // void parsePragma() {
-  //   next(); // Consume "pragma".
-  //   if (CurrentToken &&
-  //       CurrentToken->isOneOf(Keywords.kw_mark, Keywords.kw_option)) {
-  //     bool IsMark = CurrentToken->is(Keywords.kw_mark);
-  //     next(); // Consume "mark".
-  //     next(); // Consume first token (so we fix leading whitespace).
-  //     while (CurrentToken) {
-  //       if (IsMark || CurrentToken->Previous->is(TT_BinaryOperator))
-  //         CurrentToken->setType(TT_ImplicitStringLiteral);
-  //       next();
-  //     }
-  //   }
-  // }
+  void parsePragma() {
+    next(); // Consume "pragma".
+    if (CurrentToken &&
+        CurrentToken->isOneOf(Keywords.kw_mark, Keywords.kw_option)) {
+      bool IsMark = CurrentToken->is(Keywords.kw_mark);
+      next(); // Consume "mark".
+      next(); // Consume first token (so we fix leading whitespace).
+      while (CurrentToken) {
+        if (IsMark || CurrentToken->Previous->is(TT_BinaryOperator))
+          CurrentToken->setType(TT_ImplicitStringLiteral);
+        next();
+      }
+    }
+  }
 
   void parseHasInclude() {
     if (!CurrentToken || !CurrentToken->is(tok::l_paren))
@@ -1205,26 +1205,26 @@ private:
     if (!CurrentToken->Tok.getIdentifierInfo())
       return Type;
     switch (CurrentToken->Tok.getIdentifierInfo()->getPPKeywordID()) {
-    // case tok::pp_include:
-    // case tok::pp_include_next:
-    // case tok::pp_import:
-    //   next();
-    //   parseIncludeDirective();
-    //   Type = LT_ImportStatement;
-    //   break;
-    // case tok::pp_error:
-    // case tok::pp_warning:
-    //   parseWarningOrError();
-    //   break;
-    // case tok::pp_pragma:
-    //   parsePragma();
-    //   break;
-    // case tok::pp_if:
-    // case tok::pp_elif:
-    //   Contexts.back().IsExpression = true;
-    //   next();
-    //   parseLine();
-    //   break;
+    case tok::pp_include:
+    case tok::pp_include_next:
+    case tok::pp_import:
+      next();
+      parseIncludeDirective();
+      Type = LT_ImportStatement;
+      break;
+    case tok::pp_error:
+    case tok::pp_warning:
+      parseWarningOrError();
+      break;
+    case tok::pp_pragma:
+      parsePragma();
+      break;
+    case tok::pp_if:
+    case tok::pp_elif:
+      Contexts.back().IsExpression = true;
+      next();
+      parseLine();
+      break;
     default:
       break;
     }
@@ -1252,16 +1252,16 @@ public:
     // definitions (github.com/google/protobuf) or missing "#" (either way we
     // should not break the line).
     IdentifierInfo *Info = CurrentToken->Tok.getIdentifierInfo();
-    // if ((Style.Language == FormatStyle::LK_Java &&
-    //      CurrentToken->is(Keywords.kw_package)) ||
-    //     (Info && Info->getPPKeywordID() == tok::pp_import &&
-    //      CurrentToken->Next &&
-    //      CurrentToken->Next->isOneOf(tok::string_literal, tok::identifier,
-    //                                  tok::kw_estatica))) {
-    //   next();
-    //   parseIncludeDirective();
-    //   return LT_ImportStatement;
-    // }
+    if ((Style.Language == FormatStyle::LK_Java &&
+         CurrentToken->is(Keywords.kw_package)) ||
+        (Info && Info->getPPKeywordID() == tok::pp_import &&
+         CurrentToken->Next &&
+         CurrentToken->Next->isOneOf(tok::string_literal, tok::identifier,
+                                     tok::kw_estatica))) {
+      next();
+      parseIncludeDirective();
+      return LT_ImportStatement;
+    }
 
     // If this line starts and ends in '<' and '>', respectively, it is likely
     // part of "#define <a/b.h>".
@@ -2949,14 +2949,14 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
         Left.is(TT_ForEachMacro))
       return false;
     return Line.Type == LT_ObjCDecl || Left.is(tok::semi) ||
-           (Style.SpaceBeforeParens != FormatStyle::SBPO_Never &&
-            (Left.isOneOf(/*tok::pp_elif,*/ tok::kw_desde, tok::kw_mientras,
-                          tok::kw_elegir, tok::kw_caso, TT_ForEachMacro,
-                          TT_ObjCForIn) ||
-             Left.isIf(Line.Type != LT_PreprocessorDirective) ||
-             (Left.isOneOf(tok::kw_intentar, Keywords.kw___except, tok::kw_atrapar,
-                           tok::kw_nuevo, tok::kw_borrar) &&
-              (!Left.Previous || Left.Previous->isNot(tok::period))))) ||
+          //  (Style.SpaceBeforeParens != FormatStyle::SBPO_Never &&
+          //   (Left.isOneOf(tok::pp_elif, tok::kw_desde, tok::kw_mientras,
+          //                 tok::kw_elegir, tok::kw_caso, TT_ForEachMacro,
+          //                 TT_ObjCForIn) ||
+          //    Left.isIf(Line.Type != LT_PreprocessorDirective) ||
+          //    (Left.isOneOf(tok::kw_intentar, Keywords.kw___except, tok::kw_atrapar,
+          //                  tok::kw_nuevo, tok::kw_borrar) &&
+          //     (!Left.Previous || Left.Previous->isNot(tok::period))))) ||
            (spaceRequiredBeforeParens(Right) &&
             (Left.is(tok::identifier) || Left.isFunctionLikeKeyword() ||
              Left.is(tok::r_paren) || Left.isSimpleTypeSpecifier() ||

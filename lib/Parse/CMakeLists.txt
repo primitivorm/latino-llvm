@@ -15,7 +15,7 @@ add_latino_library(latinoParse
   ParseInit.cpp
   # ParseObjc.cpp
   # ParseOpenMP.cpp
-  # ParsePragma.cpp
+  ParsePragma.cpp
   ParseStmt.cpp
   ParseStmtAsm.cpp
   ParseTemplate.cpp

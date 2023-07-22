@@ -471,21 +471,21 @@ void PreprocessingRecord::InclusionDirective(
   InclusionDirective::InclusionKind Kind = InclusionDirective::Include;
 
   switch (IncludeTok.getIdentifierInfo()->getPPKeywordID()) {
-  // case tok::pp_include:
-  //   Kind = InclusionDirective::Include;
-  //   break;
+  case tok::pp_include:
+    Kind = InclusionDirective::Include;
+    break;
 
-  // case tok::pp_import:
-  //   Kind = InclusionDirective::Import;
-  //   break;
+  case tok::pp_import:
+    Kind = InclusionDirective::Import;
+    break;
 
-  // case tok::pp_include_next:
-  //   Kind = InclusionDirective::IncludeNext;
-  //   break;
+  case tok::pp_include_next:
+    Kind = InclusionDirective::IncludeNext;
+    break;
 
-  // case tok::pp___include_macros:
-  //   Kind = InclusionDirective::IncludeMacros;
-  //   break;
+  case tok::pp___include_macros:
+    Kind = InclusionDirective::IncludeMacros;
+    break;
 
   default:
     llvm_unreachable("Unknown include directive kind");

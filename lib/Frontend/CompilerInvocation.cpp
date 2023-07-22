@@ -1832,8 +1832,8 @@ static InputKind ParseFrontendArgs(FrontendOptions &Opts, ArgList &Args,
       Opts.ProgramAction = frontend::TemplightDump; break;
     case OPT_rewrite_macros:
       Opts.ProgramAction = frontend::RewriteMacros; break;
-    case OPT_rewrite_objc:
-      Opts.ProgramAction = frontend::RewriteObjC; break;
+    // case OPT_rewrite_objc:
+    //   Opts.ProgramAction = frontend::RewriteObjC; break;
     case OPT_rewrite_test:
       Opts.ProgramAction = frontend::RewriteTest; break;
     case OPT_analyze:
@@ -3143,17 +3143,17 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
   //   Opts.Exceptions = 0;
   //   Opts.CXXExceptions = 0;
   // }
-  if (Opts.OpenMPIsDevice && T.isNVPTX()) {
-    Opts.OpenMPCUDANumSMs =
-        getLastArgIntValue(Args, options::OPT_fopenmp_cuda_number_of_sm_EQ,
-                           Opts.OpenMPCUDANumSMs, Diags);
-    Opts.OpenMPCUDABlocksPerSM =
-        getLastArgIntValue(Args, options::OPT_fopenmp_cuda_blocks_per_sm_EQ,
-                           Opts.OpenMPCUDABlocksPerSM, Diags);
-    Opts.OpenMPCUDAReductionBufNum = getLastArgIntValue(
-        Args, options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ,
-        Opts.OpenMPCUDAReductionBufNum, Diags);
-  }
+  // if (Opts.OpenMPIsDevice && T.isNVPTX()) {
+  //   Opts.OpenMPCUDANumSMs =
+  //       getLastArgIntValue(Args, options::OPT_fopenmp_cuda_number_of_sm_EQ,
+  //                          Opts.OpenMPCUDANumSMs, Diags);
+  //   Opts.OpenMPCUDABlocksPerSM =
+  //       getLastArgIntValue(Args, options::OPT_fopenmp_cuda_blocks_per_sm_EQ,
+  //                          Opts.OpenMPCUDABlocksPerSM, Diags);
+  //   Opts.OpenMPCUDAReductionBufNum = getLastArgIntValue(
+  //       Args, options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ,
+  //       Opts.OpenMPCUDAReductionBufNum, Diags);
+  // }
 
   // Prevent auto-widening the representation of loop counters during an
   // OpenMP collapse clause.
@@ -3487,7 +3487,7 @@ static bool isStrictlyPreprocessorAction(frontend::ActionKind Action) {
   case frontend::ModuleFileInfo:
   case frontend::VerifyPCH:
   case frontend::PluginAction:
-  case frontend::RewriteObjC:
+  // case frontend::RewriteObjC:
   case frontend::RewriteTest:
   case frontend::RunAnalysis:
   case frontend::TemplightDump:
@@ -3767,8 +3767,8 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
     // FIXME: Should we really be calling this for an Language::Asm input?
     ParseLangArgs(LangOpts, Args, DashX, Res.getTargetOpts(),
                   Res.getPreprocessorOpts(), Diags);
-    if (Res.getFrontendOpts().ProgramAction == frontend::RewriteObjC)
-      LangOpts.ObjCExceptions = 1;
+    // if (Res.getFrontendOpts().ProgramAction == frontend::RewriteObjC)
+    //   LangOpts.ObjCExceptions = 1;
     if (T.isOSDarwin() && DashX.isPreprocessed()) {
       // Supress the darwin-specific 'stdlibcxx-not-found' diagnostic for
       // preprocessed input as we don't expect it to be used with -std=libc++

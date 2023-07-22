@@ -44,7 +44,7 @@
 #include "latino/Lex/MacroArgs.h"
 #include "latino/Lex/MacroInfo.h"
 #include "latino/Lex/ModuleLoader.h"
-// #include "latino/Lex/Pragma.h"
+#include "latino/Lex/Pragma.h"
 #include "latino/Lex/PreprocessingRecord.h"
 #include "latino/Lex/PreprocessorLexer.h"
 #include "latino/Lex/PreprocessorOptions.h"
@@ -72,7 +72,7 @@
 
 using namespace latino;
 
-// LLVM_INSTANTIATE_REGISTRY(PragmaHandlerRegistry)
+LLVM_INSTANTIATE_REGISTRY(PragmaHandlerRegistry)
 
 ExternalPreprocessorSource::~ExternalPreprocessorSource() = default;
 
@@ -89,7 +89,7 @@ Preprocessor::Preprocessor(std::shared_ptr<PreprocessorOptions> PPOpts,
       // As the language options may have not been loaded yet (when
       // deserializing an ASTUnit), adding keywords to the identifier table is
       // deferred to Preprocessor::Initialize().
-      Identifiers(IILookup), /*PragmaHandlers(new PragmaNamespace(StringRef())),*/
+      Identifiers(IILookup), PragmaHandlers(new PragmaNamespace(StringRef())),
       TUKind(TUKind), SkipMainFilePreamble(0, true),
       CurSubmoduleState(&NullSubmoduleState) {
   OwnsHeaderSearch = OwnsHeaders;
@@ -127,7 +127,7 @@ Preprocessor::Preprocessor(std::shared_ptr<PreprocessorOptions> PPOpts,
   }
 
   // Initialize the pragma handlers.
-  // RegisterBuiltinPragmas();
+  RegisterBuiltinPragmas();
 
   // Initialize builtin macros like __LINE__ and friends.
   RegisterBuiltinMacros();
@@ -218,9 +218,9 @@ void Preprocessor::InitializeForModelFile() {
   NumEnteredSourceFiles = 0;
 
   // Reset pragmas
-  // PragmaHandlersBackup = std::move(PragmaHandlers);
-  // PragmaHandlers = std::make_unique<PragmaNamespace>(StringRef());
-  // RegisterBuiltinPragmas();
+  PragmaHandlersBackup = std::move(PragmaHandlers);
+  PragmaHandlers = std::make_unique<PragmaNamespace>(StringRef());
+  RegisterBuiltinPragmas();
 
   // Reset PredefinesFileID
   PredefinesFileID = FileID();
@@ -229,7 +229,7 @@ void Preprocessor::InitializeForModelFile() {
 void Preprocessor::FinalizeForModelFile() {
   NumEnteredSourceFiles = 1;
 
-  // PragmaHandlers = std::move(PragmaHandlersBackup);
+  PragmaHandlers = std::move(PragmaHandlersBackup);
 }
 
 void Preprocessor::DumpToken(const Token &Tok, bool DumpFlags) const {

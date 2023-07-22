@@ -317,103 +317,103 @@ Retry:
   //   SemiError = "__leave";
   //   break;
 
-  // case tok::annot_pragma_vis:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaVisibility();
-  //   return StmtEmpty();
+  case tok::annot_pragma_vis:
+    ProhibitAttributes(Attrs);
+    HandlePragmaVisibility();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_pack:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaPack();
-  //   return StmtEmpty();
+  case tok::annot_pragma_pack:
+    ProhibitAttributes(Attrs);
+    HandlePragmaPack();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_msstruct:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaMSStruct();
-  //   return StmtEmpty();
+  case tok::annot_pragma_msstruct:
+    ProhibitAttributes(Attrs);
+    HandlePragmaMSStruct();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_align:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaAlign();
-  //   return StmtEmpty();
+  case tok::annot_pragma_align:
+    ProhibitAttributes(Attrs);
+    HandlePragmaAlign();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_weak:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaWeak();
-  //   return StmtEmpty();
+  case tok::annot_pragma_weak:
+    ProhibitAttributes(Attrs);
+    HandlePragmaWeak();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_weakalias:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaWeakAlias();
-  //   return StmtEmpty();
+  case tok::annot_pragma_weakalias:
+    ProhibitAttributes(Attrs);
+    HandlePragmaWeakAlias();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_redefine_extname:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaRedefineExtname();
-  //   return StmtEmpty();
+  case tok::annot_pragma_redefine_extname:
+    ProhibitAttributes(Attrs);
+    HandlePragmaRedefineExtname();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_fp_contract:
-  //   ProhibitAttributes(Attrs);
-  //   Diag(Tok, diag::err_pragma_file_or_compound_scope) << "fp_contract";
-  //   ConsumeAnnotationToken();
-  //   return StmtError();
+  case tok::annot_pragma_fp_contract:
+    ProhibitAttributes(Attrs);
+    Diag(Tok, diag::err_pragma_file_or_compound_scope) << "fp_contract";
+    ConsumeAnnotationToken();
+    return StmtError();
 
-  // case tok::annot_pragma_fp:
-  //   ProhibitAttributes(Attrs);
-  //   Diag(Tok, diag::err_pragma_file_or_compound_scope) << "clang fp";
-  //   ConsumeAnnotationToken();
-  //   return StmtError();
+  case tok::annot_pragma_fp:
+    ProhibitAttributes(Attrs);
+    Diag(Tok, diag::err_pragma_file_or_compound_scope) << "clang fp";
+    ConsumeAnnotationToken();
+    return StmtError();
 
-  // case tok::annot_pragma_fenv_access:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaFEnvAccess();
-  //   return StmtEmpty();
+  case tok::annot_pragma_fenv_access:
+    ProhibitAttributes(Attrs);
+    HandlePragmaFEnvAccess();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_float_control:
-  //   ProhibitAttributes(Attrs);
-  //   Diag(Tok, diag::err_pragma_file_or_compound_scope) << "float_control";
-  //   ConsumeAnnotationToken();
-  //   return StmtError();
+  case tok::annot_pragma_float_control:
+    ProhibitAttributes(Attrs);
+    Diag(Tok, diag::err_pragma_file_or_compound_scope) << "float_control";
+    ConsumeAnnotationToken();
+    return StmtError();
 
   // case tok::annot_pragma_opencl_extension:
   //   ProhibitAttributes(Attrs);
   //   HandlePragmaOpenCLExtension();
   //   return StmtEmpty();
 
-  // case tok::annot_pragma_captured:
-  //   ProhibitAttributes(Attrs);
-  //   return HandlePragmaCaptured();
+  case tok::annot_pragma_captured:
+    ProhibitAttributes(Attrs);
+    return HandlePragmaCaptured();
 
   // case tok::annot_pragma_openmp:
   //   ProhibitAttributes(Attrs);
   //   return ParseOpenMPDeclarativeOrExecutableDirective(StmtCtx);
 
-  // case tok::annot_pragma_ms_pointers_to_members:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaMSPointersToMembers();
-  //   return StmtEmpty();
+  case tok::annot_pragma_ms_pointers_to_members:
+    ProhibitAttributes(Attrs);
+    HandlePragmaMSPointersToMembers();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_ms_pragma:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaMSPragma();
-  //   return StmtEmpty();
+  case tok::annot_pragma_ms_pragma:
+    ProhibitAttributes(Attrs);
+    HandlePragmaMSPragma();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_ms_vtordisp:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaMSVtorDisp();
-  //   return StmtEmpty();
+  case tok::annot_pragma_ms_vtordisp:
+    ProhibitAttributes(Attrs);
+    HandlePragmaMSVtorDisp();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_loop_hint:
-  //   ProhibitAttributes(Attrs);
-  //   return ParsePragmaLoopHint(Stmts, StmtCtx, TrailingElseLoc, Attrs);
+  case tok::annot_pragma_loop_hint:
+    ProhibitAttributes(Attrs);
+    return ParsePragmaLoopHint(Stmts, StmtCtx, TrailingElseLoc, Attrs);
 
-  // case tok::annot_pragma_dump:
-  //   HandlePragmaDump();
-  //   return StmtEmpty();
+  case tok::annot_pragma_dump:
+    HandlePragmaDump();
+    return StmtEmpty();
 
-  // case tok::annot_pragma_attribute:
-  //   HandlePragmaAttribute();
-  //   return StmtEmpty();
+  case tok::annot_pragma_attribute:
+    HandlePragmaAttribute();
+    return StmtEmpty();
   }
 
   // If we reached this code, the statement must end in a semicolon.
@@ -906,65 +906,65 @@ StmtResult Parser::ParseCompoundStatement(bool isStmtExpr,
 /// Parse any pragmas at the start of the compound expression. We handle these
 /// separately since some pragmas (FP_CONTRACT) must appear before any C
 /// statement in the compound, but may be intermingled with other pragmas.
-// void Parser::ParseCompoundStatementLeadingPragmas() {
-//   bool checkForPragmas = true;
-//   while (checkForPragmas) {
-//     switch (Tok.getKind()) {
-//     case tok::annot_pragma_vis:
-//       HandlePragmaVisibility();
-//       break;
-//     case tok::annot_pragma_pack:
-//       HandlePragmaPack();
-//       break;
-//     case tok::annot_pragma_msstruct:
-//       HandlePragmaMSStruct();
-//       break;
-//     case tok::annot_pragma_align:
-//       HandlePragmaAlign();
-//       break;
-//     case tok::annot_pragma_weak:
-//       HandlePragmaWeak();
-//       break;
-//     case tok::annot_pragma_weakalias:
-//       HandlePragmaWeakAlias();
-//       break;
-//     case tok::annot_pragma_redefine_extname:
-//       HandlePragmaRedefineExtname();
-//       break;
-//     case tok::annot_pragma_opencl_extension:
-//       HandlePragmaOpenCLExtension();
-//       break;
-//     case tok::annot_pragma_fp_contract:
-//       HandlePragmaFPContract();
-//       break;
-//     case tok::annot_pragma_fp:
-//       HandlePragmaFP();
-//       break;
-//     case tok::annot_pragma_fenv_access:
-//       HandlePragmaFEnvAccess();
-//       break;
-//     case tok::annot_pragma_float_control:
-//       HandlePragmaFloatControl();
-//       break;
-    // case tok::annot_pragma_ms_pointers_to_members:
-    //   HandlePragmaMSPointersToMembers();
+void Parser::ParseCompoundStatementLeadingPragmas() {
+  bool checkForPragmas = true;
+  while (checkForPragmas) {
+    switch (Tok.getKind()) {
+    case tok::annot_pragma_vis:
+      HandlePragmaVisibility();
+      break;
+    case tok::annot_pragma_pack:
+      HandlePragmaPack();
+      break;
+    case tok::annot_pragma_msstruct:
+      HandlePragmaMSStruct();
+      break;
+    case tok::annot_pragma_align:
+      HandlePragmaAlign();
+      break;
+    case tok::annot_pragma_weak:
+      HandlePragmaWeak();
+      break;
+    case tok::annot_pragma_weakalias:
+      HandlePragmaWeakAlias();
+      break;
+    case tok::annot_pragma_redefine_extname:
+      HandlePragmaRedefineExtname();
+      break;
+    // case tok::annot_pragma_opencl_extension:
+    //   HandlePragmaOpenCLExtension();
     //   break;
-    // case tok::annot_pragma_ms_pragma:
-    //   HandlePragmaMSPragma();
-    //   break;
-    // case tok::annot_pragma_ms_vtordisp:
-    //   HandlePragmaMSVtorDisp();
-    //   break;
-    // case tok::annot_pragma_dump:
-    //   HandlePragmaDump();
-    //   break;
-//     default:
-//       checkForPragmas = false;
-//       break;
-//     }
-//   }
+    case tok::annot_pragma_fp_contract:
+      HandlePragmaFPContract();
+      break;
+    case tok::annot_pragma_fp:
+      HandlePragmaFP();
+      break;
+    case tok::annot_pragma_fenv_access:
+      HandlePragmaFEnvAccess();
+      break;
+    case tok::annot_pragma_float_control:
+      HandlePragmaFloatControl();
+      break;
+    case tok::annot_pragma_ms_pointers_to_members:
+      HandlePragmaMSPointersToMembers();
+      break;
+    case tok::annot_pragma_ms_pragma:
+      HandlePragmaMSPragma();
+      break;
+    case tok::annot_pragma_ms_vtordisp:
+      HandlePragmaMSVtorDisp();
+      break;
+    case tok::annot_pragma_dump:
+      HandlePragmaDump();
+      break;
+    default:
+      checkForPragmas = false;
+      break;
+    }
+  }
 
-// }
+}
 
 /// Consume any extra semi-colons resulting in null statements,
 /// returning true if any tok::semi were consumed.
@@ -1036,7 +1036,7 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
   Sema::CompoundScopeRAII CompoundScope(Actions, isStmtExpr);
 
   // Parse any pragmas at the beginning of the compound statement.
-  // ParseCompoundStatementLeadingPragmas();
+  ParseCompoundStatementLeadingPragmas();
 
   StmtVector Stmts;
 
@@ -1076,58 +1076,58 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
 
   while (!tryParseMisplacedModuleImport() && Tok.isNot(tok::r_brace) &&
          Tok.isNot(tok::eof)) {
-    // if (Tok.is(tok::annot_pragma_unused)) {
-    //   HandlePragmaUnused();
-    //   continue;
-    // }
+    if (Tok.is(tok::annot_pragma_unused)) {
+      HandlePragmaUnused();
+      continue;
+    }
 
     if (ConsumeNullStmt(Stmts))
       continue;
 
     StmtResult R;
-    // if (Tok.isNot(tok::kw___extension__)) {
+    if (Tok.isNot(tok::kw___extension__)) {
       R = ParseStatementOrDeclaration(Stmts, SubStmtCtx);
-    // } 
-    // else {
-    //   // __extension__ can start declarations and it can also be a unary
-    //   // operator for expressions.  Consume multiple __extension__ markers here
-    //   // until we can determine which is which.
-    //   // FIXME: This loses extension expressions in the AST!
-    //   SourceLocation ExtLoc = ConsumeToken();
-    //   while (Tok.is(tok::kw___extension__))
-    //     ConsumeToken();
+    } 
+    else {
+      // __extension__ can start declarations and it can also be a unary
+      // operator for expressions.  Consume multiple __extension__ markers here
+      // until we can determine which is which.
+      // FIXME: This loses extension expressions in the AST!
+      SourceLocation ExtLoc = ConsumeToken();
+      while (Tok.is(tok::kw___extension__))
+        ConsumeToken();
 
-    //   ParsedAttributesWithRange attrs(AttrFactory);
-    //   MaybeParseCXX11Attributes(attrs, nullptr,
-    //                             /*MightBeObjCMessageSend*/ true);
+      ParsedAttributesWithRange attrs(AttrFactory);
+      MaybeParseCXX11Attributes(attrs, nullptr,
+                                /*MightBeObjCMessageSend*/ true);
 
-    //   // If this is the start of a declaration, parse it as such.
-    //   if (isDeclarationStatement()) {
-    //     // __extension__ silences extension warnings in the subdeclaration.
-    //     // FIXME: Save the __extension__ on the decl as a node somehow?
-    //     ExtensionRAIIObject O(Diags);
+      // If this is the start of a declaration, parse it as such.
+      if (isDeclarationStatement()) {
+        // __extension__ silences extension warnings in the subdeclaration.
+        // FIXME: Save the __extension__ on the decl as a node somehow?
+        ExtensionRAIIObject O(Diags);
 
-    //     SourceLocation DeclStart = Tok.getLocation(), DeclEnd;
-    //     DeclGroupPtrTy Res =
-    //         ParseDeclaration(DeclaratorContext::BlockContext, DeclEnd, attrs);
-    //     R = Actions.ActOnDeclStmt(Res, DeclStart, DeclEnd);
-    //   } else {
-    //     // Otherwise this was a unary __extension__ marker.
-    //     ExprResult Res(ParseExpressionWithLeadingExtension(ExtLoc));
+        SourceLocation DeclStart = Tok.getLocation(), DeclEnd;
+        DeclGroupPtrTy Res =
+            ParseDeclaration(DeclaratorContext::BlockContext, DeclEnd, attrs);
+        R = Actions.ActOnDeclStmt(Res, DeclStart, DeclEnd);
+      } else {
+        // Otherwise this was a unary __extension__ marker.
+        ExprResult Res(ParseExpressionWithLeadingExtension(ExtLoc));
 
-    //     if (Res.isInvalid()) {
-    //       SkipUntil(tok::semi);
-    //       continue;
-    //     }
+        if (Res.isInvalid()) {
+          SkipUntil(tok::semi);
+          continue;
+        }
 
-    //     // Eat the semicolon at the end of stmt and convert the expr into a
-    //     // statement.
-    //     ExpectAndConsumeSemi(diag::err_expected_semi_after_expr);
-    //     R = handleExprStmt(Res, SubStmtCtx);
-    //     if (R.isUsable())
-    //       R = Actions.ProcessStmtAttributes(R.get(), attrs, attrs.Range);
-    //   }
-    // }
+        // Eat the semicolon at the end of stmt and convert the expr into a
+        // statement.
+        ExpectAndConsumeSemi(diag::err_expected_semi_after_expr);
+        R = handleExprStmt(Res, SubStmtCtx);
+        if (R.isUsable())
+          R = Actions.ProcessStmtAttributes(R.get(), attrs, attrs.Range);
+      }
+    }
 
     if (R.isUsable())
       Stmts.push_back(R.get());
@@ -2181,43 +2181,43 @@ StmtResult Parser::ParseReturnStatement() {
   return Actions.ActOnReturnStmt(ReturnLoc, R.get(), getCurScope());
 }
 
-// StmtResult Parser::ParsePragmaLoopHint(StmtVector &Stmts,
-//                                        ParsedStmtContext StmtCtx,
-//                                        SourceLocation *TrailingElseLoc,
-//                                        ParsedAttributesWithRange &Attrs) {
-//   // Create temporary attribute list.
-//   ParsedAttributesWithRange TempAttrs(AttrFactory);
+StmtResult Parser::ParsePragmaLoopHint(StmtVector &Stmts,
+                                       ParsedStmtContext StmtCtx,
+                                       SourceLocation *TrailingElseLoc,
+                                       ParsedAttributesWithRange &Attrs) {
+  // Create temporary attribute list.
+  ParsedAttributesWithRange TempAttrs(AttrFactory);
 
-//   SourceLocation StartLoc = Tok.getLocation();
+  SourceLocation StartLoc = Tok.getLocation();
 
-//   // Get loop hints and consume annotated token.
-//   while (Tok.is(tok::annot_pragma_loop_hint)) {
-//     LoopHint Hint;
-//     if (!HandlePragmaLoopHint(Hint))
-//       continue;
+  // Get loop hints and consume annotated token.
+  while (Tok.is(tok::annot_pragma_loop_hint)) {
+    LoopHint Hint;
+    if (!HandlePragmaLoopHint(Hint))
+      continue;
 
-//     ArgsUnion ArgHints[] = {Hint.PragmaNameLoc, Hint.OptionLoc, Hint.StateLoc,
-//                             ArgsUnion(Hint.ValueExpr)};
-//     TempAttrs.addNew(Hint.PragmaNameLoc->Ident, Hint.Range, nullptr,
-//                      Hint.PragmaNameLoc->Loc, ArgHints, 4,
-//                      ParsedAttr::AS_Pragma);
-//   }
+    ArgsUnion ArgHints[] = {Hint.PragmaNameLoc, Hint.OptionLoc, Hint.StateLoc,
+                            ArgsUnion(Hint.ValueExpr)};
+    TempAttrs.addNew(Hint.PragmaNameLoc->Ident, Hint.Range, nullptr,
+                     Hint.PragmaNameLoc->Loc, ArgHints, 4,
+                     ParsedAttr::AS_Pragma);
+  }
 
-//   // Get the next statement.
-//   MaybeParseCXX11Attributes(Attrs);
+  // Get the next statement.
+  MaybeParseCXX11Attributes(Attrs);
 
-//   StmtResult S = ParseStatementOrDeclarationAfterAttributes(
-//       Stmts, StmtCtx, TrailingElseLoc, Attrs);
+  StmtResult S = ParseStatementOrDeclarationAfterAttributes(
+      Stmts, StmtCtx, TrailingElseLoc, Attrs);
 
-//   Attrs.takeAllFrom(TempAttrs);
+  Attrs.takeAllFrom(TempAttrs);
 
-//   // Start of attribute range may already be set for some invalid input.
-//   // See PR46336.
-//   if (Attrs.Range.getBegin().isInvalid())
-//     Attrs.Range.setBegin(StartLoc);
+  // Start of attribute range may already be set for some invalid input.
+  // See PR46336.
+  if (Attrs.Range.getBegin().isInvalid())
+    Attrs.Range.setBegin(StartLoc);
 
-//   return S;
-// }
+  return S;
+}
 
 Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
   assert(Tok.is(tok::l_brace));

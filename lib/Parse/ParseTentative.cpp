@@ -801,7 +801,7 @@ Parser::isCXX11AttributeSpecifier(bool Disambiguate,
 }
 
 bool Parser::TrySkipAttributes() {
-  while (Tok.isOneOf(tok::l_square, tok::kw___attribute/*, tok::kw___declspec,
+  while (Tok.isOneOf(tok::l_square, tok::kw___attribute, tok::kw___declspec/*,
                      tok::kw_alignas*/)) {
     if (Tok.is(tok::l_square)) {
       ConsumeBracket();
@@ -840,7 +840,7 @@ Parser::TPResult Parser::TryParsePtrOperatorSeq() {
       if (!TrySkipAttributes())
         return TPResult::Error;
 
-      while (Tok.is(tok::kw_const/*, tok::kw_volatile, tok::kw_restrict,
+      while (Tok.isOneOf(tok::kw_const, tok::kw_volatile/*, tok::kw_restrict,
                          tok::kw__Nonnull, tok::kw__Nullable,
                          tok::kw__Null_unspecified, tok::kw__Atomic*/))
         ConsumeToken();
@@ -1047,9 +1047,9 @@ Parser::TPResult Parser::TryParseDeclarator(bool mayBeAbstract,
       // '(' declarator ')'
       // '(' attributes declarator ')'
       // '(' abstract-declarator ')'
-      if (Tok.is(tok::kw___attribute/*, tok::kw___declspec, tok::kw___cdecl,
+      if (Tok.isOneOf(tok::kw___attribute, tok::kw___declspec, tok::kw___cdecl,
                       tok::kw___stdcall, tok::kw___fastcall, tok::kw___thiscall,
-                      tok::kw___regcall, tok::kw___vectorcall*/))
+                      tok::kw___regcall, tok::kw___vectorcall))
         return TPResult::True; // attributes indicate declaration
       TPResult TPR = TryParseDeclarator(mayBeAbstract, mayHaveIdentifier);
       if (TPR != TPResult::Ambiguous)
@@ -1365,7 +1365,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw_consteval:
   case tok::kw_constinit:
     // storage-class-specifier
-  // case tok::kw_register:
+  case tok::kw_register:
   case tok::kw_estatica:
   case tok::kw_extern:
   case tok::kw_mutable:
@@ -1430,23 +1430,23 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     return TPResult::True;
 
     // Microsoft
-  // case tok::kw___declspec:
-  // case tok::kw___cdecl:
-  // case tok::kw___stdcall:
-  // case tok::kw___fastcall:
-  // case tok::kw___thiscall:
-  // case tok::kw___regcall:
-  // case tok::kw___vectorcall:
-  // case tok::kw___w64:
-  // case tok::kw___sptr:
-  // case tok::kw___uptr:
-  // case tok::kw___ptr64:
-  // case tok::kw___ptr32:
-  // case tok::kw___forceinline:
-  // case tok::kw___unaligned:
-  // case tok::kw__Nonnull:
-  // case tok::kw__Nullable:
-  // case tok::kw__Null_unspecified:
+  case tok::kw___declspec:
+  case tok::kw___cdecl:
+  case tok::kw___stdcall:
+  case tok::kw___fastcall:
+  case tok::kw___thiscall:
+  case tok::kw___regcall:
+  case tok::kw___vectorcall:
+  case tok::kw___w64:
+  case tok::kw___sptr:
+  case tok::kw___uptr:
+  case tok::kw___ptr64:
+  case tok::kw___ptr32:
+  case tok::kw___forceinline:
+  case tok::kw___unaligned:
+  case tok::kw__Nonnull:
+  case tok::kw__Nullable:
+  case tok::kw__Null_unspecified:
   // case tok::kw___kindof:
     return TPResult::True;
 

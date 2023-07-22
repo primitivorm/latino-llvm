@@ -2839,30 +2839,30 @@ LValue CodeGenFunction::EmitUnaryOpLValue(const UnaryOperator *E) {
     //   LV.setNonGC(!E->isOBJCGCCandidate(getContext()));
     return LV;
   }
-  case UO_Real:
-  case UO_Imag: {
-    LValue LV = EmitLValue(E->getSubExpr());
-    assert(LV.isSimple() && "real/imag on non-ordinary l-value");
+  // case UO_Real:
+  // case UO_Imag: {
+  //   LValue LV = EmitLValue(E->getSubExpr());
+  //   assert(LV.isSimple() && "real/imag on non-ordinary l-value");
 
-    // __real is valid on scalars.  This is a faster way of testing that.
-    // __imag can only produce an rvalue on scalars.
-    if (E->getOpcode() == UO_Real &&
-        !LV.getAddress(*this).getElementType()->isStructTy()) {
-      assert(E->getSubExpr()->getType()->isArithmeticType());
-      return LV;
-    }
+  //   // __real is valid on scalars.  This is a faster way of testing that.
+  //   // __imag can only produce an rvalue on scalars.
+  //   if (E->getOpcode() == UO_Real &&
+  //       !LV.getAddress(*this).getElementType()->isStructTy()) {
+  //     assert(E->getSubExpr()->getType()->isArithmeticType());
+  //     return LV;
+  //   }
 
-    QualType T = ExprTy->castAs<ComplexType>()->getElementType();
+  //   QualType T = ExprTy->castAs<ComplexType>()->getElementType();
 
-    Address Component =
-        (E->getOpcode() == UO_Real
-             ? emitAddrOfRealComponent(LV.getAddress(*this), LV.getType())
-             : emitAddrOfImagComponent(LV.getAddress(*this), LV.getType()));
-    LValue ElemLV = MakeAddrLValue(Component, T, LV.getBaseInfo(),
-                                   CGM.getTBAAInfoForSubobject(LV, T));
-    ElemLV.getQuals().addQualifiers(LV.getQuals());
-    return ElemLV;
-  }
+  //   Address Component =
+  //       (E->getOpcode() == UO_Real
+  //            ? emitAddrOfRealComponent(LV.getAddress(*this), LV.getType())
+  //            : emitAddrOfImagComponent(LV.getAddress(*this), LV.getType()));
+  //   LValue ElemLV = MakeAddrLValue(Component, T, LV.getBaseInfo(),
+  //                                  CGM.getTBAAInfoForSubobject(LV, T));
+  //   ElemLV.getQuals().addQualifiers(LV.getQuals());
+  //   return ElemLV;
+  // }
   case UO_PreInc:
   case UO_PreDec: {
     LValue LV = EmitLValue(E->getSubExpr());

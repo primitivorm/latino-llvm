@@ -84,7 +84,7 @@ std::unique_ptr<CompilerInvocation> latino::createInvocationFromCommandLine(
   }
 
   const driver::Command &Cmd = cast<driver::Command>(*Jobs.begin());
-  if (StringRef(Cmd.getCreator().getName()) != "clang") {
+  if (StringRef(Cmd.getCreator().getName()) != "latino") {
     Diags->Report(diag::err_fe_expected_clang_command);
     return nullptr;
   }

@@ -589,7 +589,7 @@ def note_pp_module_begin_here : Note<
 def err_pp_module_build_missing_end : Error<
   "no matching '#pragma clang module endbuild' for this '#pragma clang module build'">;
 
-// def err_defined_macro_name : Error<"'defined' cannot be used as a macro name">;
+def err_defined_macro_name : Error<"'defined' cannot be used as a macro name">;
 def err_paste_at_start : Error<
   "'##' cannot appear at start of macro expansion">;
 def err_paste_at_end : Error<"'##' cannot appear at end of macro expansion">;

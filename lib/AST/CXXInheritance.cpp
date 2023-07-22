@@ -461,35 +461,35 @@ bool CXXRecordDecl::FindOrdinaryMemberInDependentClasses(
   return findOrdinaryMember(RD, Path, Name);
 }
 
-bool CXXRecordDecl::FindOMPReductionMember(const CXXBaseSpecifier *Specifier,
-                                           CXXBasePath &Path,
-                                           DeclarationName Name) {
-  RecordDecl *BaseRecord =
-      Specifier->getType()->castAs<RecordType>()->getDecl();
+// bool CXXRecordDecl::FindOMPReductionMember(const CXXBaseSpecifier *Specifier,
+//                                            CXXBasePath &Path,
+//                                            DeclarationName Name) {
+//   RecordDecl *BaseRecord =
+//       Specifier->getType()->castAs<RecordType>()->getDecl();
 
-  for (Path.Decls = BaseRecord->lookup(Name); !Path.Decls.empty();
-       Path.Decls = Path.Decls.slice(1)) {
-    if (Path.Decls.front()->isInIdentifierNamespace(IDNS_OMPReduction))
-      return true;
-  }
+//   for (Path.Decls = BaseRecord->lookup(Name); !Path.Decls.empty();
+//        Path.Decls = Path.Decls.slice(1)) {
+//     if (Path.Decls.front()->isInIdentifierNamespace(IDNS_OMPReduction))
+//       return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
-bool CXXRecordDecl::FindOMPMapperMember(const CXXBaseSpecifier *Specifier,
-                                        CXXBasePath &Path,
-                                        DeclarationName Name) {
-  RecordDecl *BaseRecord =
-      Specifier->getType()->castAs<RecordType>()->getDecl();
+// bool CXXRecordDecl::FindOMPMapperMember(const CXXBaseSpecifier *Specifier,
+//                                         CXXBasePath &Path,
+//                                         DeclarationName Name) {
+//   RecordDecl *BaseRecord =
+//       Specifier->getType()->castAs<RecordType>()->getDecl();
 
-  for (Path.Decls = BaseRecord->lookup(Name); !Path.Decls.empty();
-       Path.Decls = Path.Decls.slice(1)) {
-    if (Path.Decls.front()->isInIdentifierNamespace(IDNS_OMPMapper))
-      return true;
-  }
+//   for (Path.Decls = BaseRecord->lookup(Name); !Path.Decls.empty();
+//        Path.Decls = Path.Decls.slice(1)) {
+//     if (Path.Decls.front()->isInIdentifierNamespace(IDNS_OMPMapper))
+//       return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 bool CXXRecordDecl::
 FindNestedNameSpecifierMember(const CXXBaseSpecifier *Specifier,

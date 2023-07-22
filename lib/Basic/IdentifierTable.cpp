@@ -224,8 +224,8 @@ void IdentifierTable::AddKeywords(const LangOptions &LangOpts) {
     AddKeyword("__unknown_anytype", tok::kw___unknown_anytype, KEYALL,
                LangOpts, *this);
 
-  // if (LangOpts.DeclSpecKeyword)
-  //   AddKeyword("__declspec", tok::kw___declspec, KEYALL, LangOpts, *this);
+  if (LangOpts.DeclSpecKeyword)
+    AddKeyword("__declspec", tok::kw___declspec, KEYALL, LangOpts, *this);
 
   // Add the 'import' contextual keyword.
   get("import").setModulesImport(true);
@@ -287,35 +287,35 @@ tok::PPKeywordKind IdentifierInfo::getPPKeywordID() const {
   const char *Name = getNameStart();
   switch (HASH(Len, Name[0], Name[2])) {
   default: return tok::pp_not_keyword;
-  // CASE( 2, 'i', '\0', if);
-  // CASE( 4, 'e', 'i', elif);
-  // CASE( 4, 'e', 's', else);
-  // CASE( 4, 'l', 'n', line);
-  // CASE( 4, 's', 'c', sccs);
-  // CASE( 5, 'e', 'd', endif);
-  // CASE( 5, 'e', 'r', error);
-  // CASE( 5, 'i', 'e', ident);
-  // CASE( 5, 'i', 'd', ifdef);
-  // CASE( 5, 'u', 'd', undef);
+  CASE( 2, 'i', '\0', if);
+  CASE( 4, 'e', 'i', elif);
+  CASE( 4, 'e', 's', else);
+  CASE( 4, 'l', 'n', line);
+  CASE( 4, 's', 'c', sccs);
+  CASE( 5, 'e', 'd', endif);
+  CASE( 5, 'e', 'r', error);
+  CASE( 5, 'i', 'e', ident);
+  CASE( 5, 'i', 'd', ifdef);
+  CASE( 5, 'u', 'd', undef);
 
-  // CASE( 6, 'a', 's', assert);
-  // CASE( 6, 'd', 'f', define);
-  // CASE( 6, 'i', 'n', ifndef);
-  // CASE( 6, 'i', 'p', import);
-  // CASE( 6, 'p', 'a', pragma);
+  CASE( 6, 'a', 's', assert);
+  CASE( 6, 'd', 'f', define);
+  CASE( 6, 'i', 'n', ifndef);
+  CASE( 6, 'i', 'p', import);
+  CASE( 6, 'p', 'a', pragma);
 
-  // CASE( 7, 'd', 'f', defined);
-  // CASE( 7, 'i', 'c', include);
-  // CASE( 7, 'w', 'r', warning);
+  CASE( 7, 'd', 'f', defined);
+  CASE( 7, 'i', 'c', include);
+  CASE( 7, 'w', 'r', warning);
 
-  // CASE( 8, 'u', 'a', unassert);
-  // CASE(12, 'i', 'c', include_next);
+  CASE( 8, 'u', 'a', unassert);
+  CASE(12, 'i', 'c', include_next);
 
-  // CASE(14, '_', 'p', __public_macro);
+  CASE(14, '_', 'p', __public_macro);
 
-  // CASE(15, '_', 'p', __private_macro);
+  CASE(15, '_', 'p', __private_macro);
 
-  // CASE(16, '_', 'i', __include_macros);
+  CASE(16, '_', 'i', __include_macros);
 #undef CASE
 #undef HASH
   }

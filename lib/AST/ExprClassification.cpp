@@ -253,16 +253,16 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
 
     // Treat _Real and _Imag basically as if they were member
     // expressions:  l-value only if the operand is a true l-value.
-    case UO_Real:
-    case UO_Imag: {
-      const Expr *Op = cast<UnaryOperator>(E)->getSubExpr()->IgnoreParens();
-      Cl::Kinds K = ClassifyInternal(Ctx, Op);
-      if (K != Cl::CL_LValue) return K;
+    // case UO_Real:
+    // case UO_Imag: {
+    //   const Expr *Op = cast<UnaryOperator>(E)->getSubExpr()->IgnoreParens();
+    //   Cl::Kinds K = ClassifyInternal(Ctx, Op);
+    //   if (K != Cl::CL_LValue) return K;
 
-      // if (isa<ObjCPropertyRefExpr>(Op))
-      //   return Cl::CL_SubObjCPropertySetting;
-      return Cl::CL_LValue;
-    }
+    //   // if (isa<ObjCPropertyRefExpr>(Op))
+    //   //   return Cl::CL_SubObjCPropertySetting;
+    //   return Cl::CL_LValue;
+    // }
 
       // C++ [expr.pre.incr]p1: The result is the updated operand; it is an
       //   lvalue, [...]

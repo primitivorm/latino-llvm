@@ -1236,16 +1236,16 @@ TypeResult Parser::ParseBaseTypeSpecifier(SourceLocation &BaseLoc,
   return Actions.ActOnTypeName(getCurScope(), DeclaratorInfo);
 }
 
-// void Parser::ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs) {
-//   while (Tok.isOneOf(tok::kw___single_inheritance,
-//                      tok::kw___multiple_inheritance,
-//                      tok::kw___virtual_inheritance)) {
-//     IdentifierInfo *AttrName = Tok.getIdentifierInfo();
-//     SourceLocation AttrNameLoc = ConsumeToken();
-//     attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
-//                  ParsedAttr::AS_Keyword);
-//   }
-// }
+void Parser::ParseMicrosoftInheritanceClassAttributes(ParsedAttributes &attrs) {
+  while (Tok.isOneOf(tok::kw___single_inheritance,
+                     tok::kw___multiple_inheritance,
+                     tok::kw___virtual_inheritance)) {
+    IdentifierInfo *AttrName = Tok.getIdentifierInfo();
+    SourceLocation AttrNameLoc = ConsumeToken();
+    attrs.addNew(AttrName, AttrNameLoc, nullptr, AttrNameLoc, nullptr, 0,
+                 ParsedAttr::AS_Keyword);
+  }
+}
 
 /// Determine whether the following tokens are valid after a type-specifier
 /// which could be a standalone declaration. This will conservatively return
@@ -1268,7 +1268,7 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   case tok::l_paren:            // struct foo {...} (         x);
   case tok::comma:              // __builtin_offsetof(struct foo{...} ,
   case tok::kw_operador:        // struct foo       operator  ++() {...}
-  // case tok::kw___declspec:      // struct foo {...} __declspec(...)
+  case tok::kw___declspec:      // struct foo {...} __declspec(...)
   case tok::l_square:           // void f(struct f  [         3])
   case tok::ellipsis:           // void f(struct f  ...       [Ns])
   // FIXME: we should emit semantic diagnostic when declaration
@@ -1286,11 +1286,11 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
     return CouldBeBitfield ||   // enum E { ... }   :         2;
            ColonIsSacred;       // _Generic(..., enum E :     2);
   // Microsoft compatibility
-  // case tok::kw___cdecl:         // struct foo {...} __cdecl      x;
-  // case tok::kw___fastcall:      // struct foo {...} __fastcall   x;
-  // case tok::kw___stdcall:       // struct foo {...} __stdcall    x;
-  // case tok::kw___thiscall:      // struct foo {...} __thiscall   x;
-  // case tok::kw___vectorcall:    // struct foo {...} __vectorcall x;
+  case tok::kw___cdecl:         // struct foo {...} __cdecl      x;
+  case tok::kw___fastcall:      // struct foo {...} __fastcall   x;
+  case tok::kw___stdcall:       // struct foo {...} __stdcall    x;
+  case tok::kw___thiscall:      // struct foo {...} __thiscall   x;
+  case tok::kw___vectorcall:    // struct foo {...} __vectorcall x;
     // We will diagnose these calling-convention specifiers on non-function
     // declarations later, so claim they are valid after a type specifier.
     // return getLangOpts().MicrosoftExt;
@@ -1310,7 +1310,7 @@ bool Parser::isValidAfterTypeSpecifier(bool CouldBeBitfield) {
   case tok::kw_estatica:          // struct foo {...} static    x;
   case tok::kw_extern:          // struct foo {...} extern    x;
   case tok::kw_alias:         // struct foo {...} typedef   x;
-  // case tok::kw_register:        // struct foo {...} register  x;
+  case tok::kw_register:        // struct foo {...} register  x;
   case tok::kw_auto:            // struct foo {...} auto      x;
   case tok::kw_mutable:         // struct foo {...} mutable   x;
   case tok::kw_thread_local:    // struct foo {...} thread_local x;
@@ -1432,10 +1432,10 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   // MaybeParseMicrosoftDeclSpecs(attrs);
 
   // Parse inheritance specifiers.
-  // if (Tok.isOneOf(tok::kw___single_inheritance,
-  //                 tok::kw___multiple_inheritance,
-  //                 tok::kw___virtual_inheritance))
-  //   ParseMicrosoftInheritanceClassAttributes(attrs);
+  if (Tok.isOneOf(tok::kw___single_inheritance,
+                  tok::kw___multiple_inheritance,
+                  tok::kw___virtual_inheritance))
+    ParseMicrosoftInheritanceClassAttributes(attrs);
 
   // If C++0x attributes exist here, parse them.
   // FIXME: Are we consistent with the ordering of parsing of different
@@ -2558,13 +2558,13 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
   }
 
   // Handle:  member-declaration ::= '__extension__' member-declaration
-  // if (Tok.is(tok::kw___extension__)) {
-  //   // __extension__ silences extension warnings in the subexpression.
-  //   ExtensionRAIIObject O(Diags);  // Use RAII to do this.
-  //   ConsumeToken();
-  //   return ParseCXXClassMemberDeclaration(AS, AccessAttrs,
-  //                                         TemplateInfo, TemplateDiags);
-  // }
+  if (Tok.is(tok::kw___extension__)) {
+    // __extension__ silences extension warnings in the subexpression.
+    ExtensionRAIIObject O(Diags);  // Use RAII to do this.
+    ConsumeToken();
+    return ParseCXXClassMemberDeclaration(AS, AccessAttrs,
+                                          TemplateInfo, TemplateDiags);
+  }
 
   ParsedAttributesWithRange attrs(AttrFactory);
   ParsedAttributesViewWithRange FnAttrs;
@@ -3081,27 +3081,27 @@ Parser::DeclGroupPtrTy Parser::ParseCXXClassMemberDeclarationWithPragmas(
     return nullptr;
 
     // Handle pragmas that can appear as member declarations.
-  // case tok::annot_pragma_vis:
-  //   HandlePragmaVisibility();
-  //   return nullptr;
-  // case tok::annot_pragma_pack:
-  //   HandlePragmaPack();
-  //   return nullptr;
-  // case tok::annot_pragma_align:
-  //   HandlePragmaAlign();
-  //   return nullptr;
-  // case tok::annot_pragma_ms_pointers_to_members:
-  //   HandlePragmaMSPointersToMembers();
-  //   return nullptr;
-  // case tok::annot_pragma_ms_pragma:
-  //   HandlePragmaMSPragma();
-  //   return nullptr;
-  // case tok::annot_pragma_ms_vtordisp:
-  //   HandlePragmaMSVtorDisp();
-  //   return nullptr;
-  // case tok::annot_pragma_dump:
-  //   HandlePragmaDump();
-  //   return nullptr;
+  case tok::annot_pragma_vis:
+    HandlePragmaVisibility();
+    return nullptr;
+  case tok::annot_pragma_pack:
+    HandlePragmaPack();
+    return nullptr;
+  case tok::annot_pragma_align:
+    HandlePragmaAlign();
+    return nullptr;
+  case tok::annot_pragma_ms_pointers_to_members:
+    HandlePragmaMSPointersToMembers();
+    return nullptr;
+  case tok::annot_pragma_ms_pragma:
+    HandlePragmaMSPragma();
+    return nullptr;
+  case tok::annot_pragma_ms_vtordisp:
+    HandlePragmaMSVtorDisp();
+    return nullptr;
+  case tok::annot_pragma_dump:
+    HandlePragmaDump();
+    return nullptr;
 
   case tok::kw_contexto:
     // If we see a namespace here, a close brace was missing somewhere.
@@ -3156,13 +3156,13 @@ Parser::DeclGroupPtrTy Parser::ParseCXXClassMemberDeclarationWithPragmas(
   //       AS, AccessAttrs, /*Delayed=*/true, TagType, TagDecl);
 
   default:
-    // if (tok::isPragmaAnnotation(Tok.getKind())) {
-    //   Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
-    //       << DeclSpec::getSpecifierName(TagType,
-    //                                Actions.getASTContext().getPrintingPolicy());
-    //   ConsumeAnnotationToken();
-    //   return nullptr;
-    // }
+    if (tok::isPragmaAnnotation(Tok.getKind())) {
+      Diag(Tok.getLocation(), diag::err_pragma_misplaced_in_decl)
+          << DeclSpec::getSpecifierName(TagType,
+                                   Actions.getASTContext().getPrintingPolicy());
+      ConsumeAnnotationToken();
+      return nullptr;
+    }
     return ParseCXXClassMemberDeclaration(AS, AccessAttrs);
   }
 }
@@ -4442,11 +4442,11 @@ void Parser::ParseMicrosoftAttributes(ParsedAttributes &attrs,
 
 //   while (Tok.isNot(tok::r_brace) && !isEofOrEom()) {
 //     // __if_exists, __if_not_exists can nest.
-//     // if (Tok.isOneOf(tok::kw___if_exists, tok::kw___if_not_exists)) {
-//     //   ParseMicrosoftIfExistsClassDeclaration(TagType,
-//     //                                          AccessAttrs, CurAS);
-//     //   continue;
-//     // }
+//     if (Tok.isOneOf(tok::kw___if_exists, tok::kw___if_not_exists)) {
+//       ParseMicrosoftIfExistsClassDeclaration(TagType,
+//                                              AccessAttrs, CurAS);
+//       continue;
+//     }
 
 //     // Check for extraneous top-level semicolon.
 //     if (Tok.is(tok::semi)) {
