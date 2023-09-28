@@ -5316,7 +5316,7 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
     CmdArgs.push_back("-fapple-kext");
 
   Args.AddLastArg(CmdArgs, options::OPT_flax_vector_conversions_EQ);
-  Args.AddLastArg(CmdArgs, options::OPT_fobjc_sender_dependent_dispatch);
+  // Args.AddLastArg(CmdArgs, options::OPT_fobjc_sender_dependent_dispatch);
   Args.AddLastArg(CmdArgs, options::OPT_fdiagnostics_print_source_range_info);
   Args.AddLastArg(CmdArgs, options::OPT_fdiagnostics_parseable_fixits);
   Args.AddLastArg(CmdArgs, options::OPT_ftime_report);
@@ -5444,7 +5444,7 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
   if (Args.hasFlag(options::OPT_fblocks, options::OPT_fno_blocks,
                    TC.IsBlocksDefault()) ||
       (Args.hasArg(options::OPT_fgnu_runtime) &&
-       Args.hasArg(options::OPT_fobjc_nonfragile_abi) &&
+      //  Args.hasArg(options::OPT_fobjc_nonfragile_abi) &&
        !Args.hasArg(options::OPT_fno_blocks))) {
     CmdArgs.push_back("-fblocks");
 

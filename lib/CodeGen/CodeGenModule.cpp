@@ -156,8 +156,8 @@ CodeGenModule::CodeGenModule(ASTContext &C, const HeaderSearchOptions &HSO,
 
   Block.GlobalUniqueCount = 0;
 
-  if (C.getLangOpts().ObjC)
-    ObjCData.reset(new ObjCEntrypoints());
+  // if (C.getLangOpts().ObjC)
+  //   ObjCData.reset(new ObjCEntrypoints());
 
   if (CodeGenOpts.hasProfileClangUse()) {
     auto ReaderOrErr = llvm::IndexedInstrProfReader::create(
@@ -4892,7 +4892,7 @@ CodeGenModule::GetAddrOfConstantCFString(const StringLiteral *Literal) {
   GV = Fields.finishAndCreateGlobal("_unnamed_cfstring_", Alignment,
                                     /*isConstant=*/false,
                                     llvm::GlobalVariable::PrivateLinkage);
-  GV->addAttribute("objc_arc_inert");
+  // GV->addAttribute("objc_arc_inert");
   switch (Triple.getObjectFormat()) {
   case llvm::Triple::UnknownObjectFormat:
     llvm_unreachable("unknown file format");

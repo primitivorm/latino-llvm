@@ -1261,21 +1261,21 @@ static bool ParseCodeGenArgs(CodeGenOptions &Opts, ArgList &Args, InputKind IK,
 
   Opts.StackClashProtector = Args.hasArg(OPT_fstack_clash_protection);
 
-  if (Arg *A = Args.getLastArg(OPT_fobjc_dispatch_method_EQ)) {
-    StringRef Name = A->getValue();
-    unsigned Method = llvm::StringSwitch<unsigned>(Name)
-      // .Case("legacy", CodeGenOptions::Legacy)
-      // .Case("non-legacy", CodeGenOptions::NonLegacy)
-      // .Case("mixed", CodeGenOptions::Mixed)
-      .Default(~0U);
-    if (Method == ~0U) {
-      Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) << Name;
-      Success = false;
-    } /*else {
-      Opts.setObjCDispatchMethod(
-        static_cast<CodeGenOptions::ObjCDispatchMethodKind>(Method));
-    }*/
-  }
+  // if (Arg *A = Args.getLastArg(OPT_fobjc_dispatch_method_EQ)) {
+  //   StringRef Name = A->getValue();
+  //   unsigned Method = llvm::StringSwitch<unsigned>(Name)
+  //     // .Case("legacy", CodeGenOptions::Legacy)
+  //     // .Case("non-legacy", CodeGenOptions::NonLegacy)
+  //     // .Case("mixed", CodeGenOptions::Mixed)
+  //     .Default(~0U);
+  //   if (Method == ~0U) {
+  //     Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) << Name;
+  //     Success = false;
+  //   } /*else {
+  //     Opts.setObjCDispatchMethod(
+  //       static_cast<CodeGenOptions::ObjCDispatchMethodKind>(Method));
+  //   }*/
+  // }
 
 
   // if (Args.hasArg(OPT_fno_objc_convert_messages_to_runtime_calls))
@@ -2227,10 +2227,10 @@ static void ParseHeaderSearchArgs(HeaderSearchOptions &Opts, ArgList &Args,
     Opts.AddPath(A->getValue(), frontend::CSystem, false, true);
   for (const auto *A : Args.filtered(OPT_cxx_isystem))
     Opts.AddPath(A->getValue(), frontend::CXXSystem, false, true);
-  for (const auto *A : Args.filtered(OPT_objc_isystem))
-    Opts.AddPath(A->getValue(), frontend::ObjCSystem, false,true);
-  for (const auto *A : Args.filtered(OPT_objcxx_isystem))
-    Opts.AddPath(A->getValue(), frontend::ObjCXXSystem, false, true);
+  // for (const auto *A : Args.filtered(OPT_objc_isystem))
+  //   Opts.AddPath(A->getValue(), frontend::ObjCSystem, false,true);
+  // for (const auto *A : Args.filtered(OPT_objcxx_isystem))
+  //   Opts.AddPath(A->getValue(), frontend::ObjCXXSystem, false, true);
 
   // Add the internal paths from a driver that detects standard include paths.
   for (const auto *A :
@@ -2949,8 +2949,8 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
   Opts.MSBitfields = Args.hasArg(OPT_mms_bitfields);
   Opts.ObjCConstantStringClass =
       std::string(Args.getLastArgValue(OPT_fconstant_string_class));
-  Opts.ObjCDefaultSynthProperties =
-    !Args.hasArg(OPT_disable_objc_default_synthesize_properties);
+  // Opts.ObjCDefaultSynthProperties =
+  //   !Args.hasArg(OPT_disable_objc_default_synthesize_properties);
   Opts.EncodeExtendedBlockSig =
     Args.hasArg(OPT_fencode_extended_block_signature);
   Opts.EmitAllDecls = Args.hasArg(OPT_femit_all_decls);
@@ -2982,7 +2982,7 @@ static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
   Opts.ParseUnknownAnytype = Args.hasArg(OPT_funknown_anytype);
   Opts.DebuggerSupport = Args.hasArg(OPT_fdebugger_support);
   Opts.DebuggerCastResultToId = Args.hasArg(OPT_fdebugger_cast_result_to_id);
-  Opts.DebuggerObjCLiteral = Args.hasArg(OPT_fdebugger_objc_literal);
+  // Opts.DebuggerObjCLiteral = Args.hasArg(OPT_fdebugger_objc_literal);
   Opts.ApplePragmaPack = Args.hasArg(OPT_fapple_pragma_pack);
   Opts.ModuleName = std::string(Args.getLastArgValue(OPT_fmodule_name_EQ));
   Opts.CurrentModule = Opts.ModuleName;
@@ -3587,18 +3587,18 @@ static void ParsePreprocessorArgs(PreprocessorOptions &Opts, ArgList &Args,
     Opts.addRemappedFile(Split.first, Split.second);
   }
 
-  if (Arg *A = Args.getLastArg(OPT_fobjc_arc_cxxlib_EQ)) {
-    StringRef Name = A->getValue();
-    unsigned Library = llvm::StringSwitch<unsigned>(Name)
-      .Case("libc++", ARCXX_libcxx)
-      .Case("libstdc++", ARCXX_libstdcxx)
-      .Case("none", ARCXX_nolib)
-      .Default(~0U);
-    if (Library == ~0U)
-      Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) << Name;
-    else
-      Opts.ObjCXXARCStandardLibrary = (ObjCXXARCStandardLibraryKind)Library;
-  }
+  // if (Arg *A = Args.getLastArg(OPT_fobjc_arc_cxxlib_EQ)) {
+  //   StringRef Name = A->getValue();
+  //   unsigned Library = llvm::StringSwitch<unsigned>(Name)
+  //     .Case("libc++", ARCXX_libcxx)
+  //     .Case("libstdc++", ARCXX_libstdcxx)
+  //     .Case("none", ARCXX_nolib)
+  //     .Default(~0U);
+  //   if (Library == ~0U)
+  //     Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) << Name;
+  //   else
+  //     Opts.ObjCXXARCStandardLibrary = (ObjCXXARCStandardLibraryKind)Library;
+  // }
 
   // Always avoid lexing editor placeholders when we're just running the
   // preprocessor as we never want to emit the

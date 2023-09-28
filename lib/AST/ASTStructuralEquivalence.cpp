@@ -1734,22 +1734,22 @@ unsigned StructuralEquivalenceContext::getApplicableDiagnostic(
     return diag::warn_odr_field_type_inconsistent;
   case diag::err_odr_ivar_type_inconsistent:
     return diag::warn_odr_ivar_type_inconsistent;
-  case diag::err_odr_objc_superclass_inconsistent:
-    return diag::warn_odr_objc_superclass_inconsistent;
-  case diag::err_odr_objc_method_result_type_inconsistent:
-    return diag::warn_odr_objc_method_result_type_inconsistent;
-  case diag::err_odr_objc_method_num_params_inconsistent:
-    return diag::warn_odr_objc_method_num_params_inconsistent;
-  case diag::err_odr_objc_method_param_type_inconsistent:
-    return diag::warn_odr_objc_method_param_type_inconsistent;
-  case diag::err_odr_objc_method_variadic_inconsistent:
-    return diag::warn_odr_objc_method_variadic_inconsistent;
-  case diag::err_odr_objc_property_type_inconsistent:
-    return diag::warn_odr_objc_property_type_inconsistent;
-  case diag::err_odr_objc_property_impl_kind_inconsistent:
-    return diag::warn_odr_objc_property_impl_kind_inconsistent;
-  case diag::err_odr_objc_synthesize_ivar_inconsistent:
-    return diag::warn_odr_objc_synthesize_ivar_inconsistent;
+  // case diag::err_odr_objc_superclass_inconsistent:
+  //   return diag::warn_odr_objc_superclass_inconsistent;
+  // case diag::err_odr_objc_method_result_type_inconsistent:
+  //   return diag::warn_odr_objc_method_result_type_inconsistent;
+  // case diag::err_odr_objc_method_num_params_inconsistent:
+  //   return diag::warn_odr_objc_method_num_params_inconsistent;
+  // case diag::err_odr_objc_method_param_type_inconsistent:
+  //   return diag::warn_odr_objc_method_param_type_inconsistent;
+  // case diag::err_odr_objc_method_variadic_inconsistent:
+  //   return diag::warn_odr_objc_method_variadic_inconsistent;
+  // case diag::err_odr_objc_property_type_inconsistent:
+  //   return diag::warn_odr_objc_property_type_inconsistent;
+  // case diag::err_odr_objc_property_impl_kind_inconsistent:
+  //   return diag::warn_odr_objc_property_impl_kind_inconsistent;
+  // case diag::err_odr_objc_synthesize_ivar_inconsistent:
+  //   return diag::warn_odr_objc_synthesize_ivar_inconsistent;
   case diag::err_odr_different_num_template_parameters:
     return diag::warn_odr_different_num_template_parameters;
   case diag::err_odr_different_template_parameter_kind:

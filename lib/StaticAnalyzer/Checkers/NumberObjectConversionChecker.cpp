@@ -120,8 +120,8 @@ void Callback::run(const MatchFinder::MatchResult &Result) {
 
   bool IsInteger =
       (Result.Nodes.getNodeAs<QualType>("int_type") != nullptr);
-  bool IsObjCBool =
-      (Result.Nodes.getNodeAs<QualType>("objc_bool_type") != nullptr);
+  // bool IsObjCBool =
+  //     (Result.Nodes.getNodeAs<QualType>("objc_bool_type") != nullptr);
   bool IsCppBool =
       (Result.Nodes.getNodeAs<QualType>("cpp_bool_type") != nullptr);
 
@@ -163,8 +163,8 @@ void Callback::run(const MatchFinder::MatchResult &Result) {
 
   if (IsInteger)
     OS << EuphemismForPlain << " integer value";
-  else if (IsObjCBool)
-    OS << EuphemismForPlain << " BOOL value";
+  // else if (IsObjCBool)
+  //   OS << EuphemismForPlain << " BOOL value";
   else if (IsCppBool)
     OS << EuphemismForPlain << " bool value";
   else // Branch condition?

@@ -87,24 +87,24 @@ const EHPersonality
 EHPersonality::GNU_C_SJLJ = { "__gcc_personality_sj0", nullptr };
 const EHPersonality
 EHPersonality::GNU_C_SEH = { "__gcc_personality_seh0", nullptr };
-const EHPersonality
-EHPersonality::NeXT_ObjC = { "__objc_personality_v0", nullptr };
+// const EHPersonality
+// EHPersonality::NeXT_ObjC = { "__objc_personality_v0", nullptr };
 const EHPersonality
 EHPersonality::GNU_CPlusPlus = { "__gxx_personality_v0", nullptr };
 const EHPersonality
 EHPersonality::GNU_CPlusPlus_SJLJ = { "__gxx_personality_sj0", nullptr };
 const EHPersonality
 EHPersonality::GNU_CPlusPlus_SEH = { "__gxx_personality_seh0", nullptr };
-const EHPersonality
-EHPersonality::GNU_ObjC = {"__gnu_objc_personality_v0", "objc_exception_throw"};
-const EHPersonality
-EHPersonality::GNU_ObjC_SJLJ = {"__gnu_objc_personality_sj0", "objc_exception_throw"};
-const EHPersonality
-EHPersonality::GNU_ObjC_SEH = {"__gnu_objc_personality_seh0", "objc_exception_throw"};
-const EHPersonality
-EHPersonality::GNU_ObjCXX = { "__gnustep_objcxx_personality_v0", nullptr };
-const EHPersonality
-EHPersonality::GNUstep_ObjC = { "__gnustep_objc_personality_v0", nullptr };
+// const EHPersonality
+// EHPersonality::GNU_ObjC = {"__gnu_objc_personality_v0", "objc_exception_throw"};
+// const EHPersonality
+// EHPersonality::GNU_ObjC_SJLJ = {"__gnu_objc_personality_sj0", "objc_exception_throw"};
+// const EHPersonality
+// EHPersonality::GNU_ObjC_SEH = {"__gnu_objc_personality_seh0", "objc_exception_throw"};
+// const EHPersonality
+// EHPersonality::GNU_ObjCXX = { "__gnustep_objcxx_personality_v0", nullptr };
+// const EHPersonality
+// EHPersonality::GNUstep_ObjC = { "__gnustep_objc_personality_v0", nullptr };
 const EHPersonality
 EHPersonality::MSVC_except_handler = { "_except_handler3", nullptr };
 const EHPersonality

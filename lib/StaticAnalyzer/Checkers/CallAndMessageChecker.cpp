@@ -40,8 +40,8 @@ class CallAndMessageChecker
   mutable std::unique_ptr<BugType> BT_call_arg;
   mutable std::unique_ptr<BugType> BT_cxx_delete_undef;
   mutable std::unique_ptr<BugType> BT_msg_undef;
-  mutable std::unique_ptr<BugType> BT_objc_prop_undef;
-  mutable std::unique_ptr<BugType> BT_objc_subscript_undef;
+  // mutable std::unique_ptr<BugType> BT_objc_prop_undef;
+  // mutable std::unique_ptr<BugType> BT_objc_subscript_undef;
   mutable std::unique_ptr<BugType> BT_msg_arg;
   mutable std::unique_ptr<BugType> BT_msg_ret;
   mutable std::unique_ptr<BugType> BT_call_few_args;

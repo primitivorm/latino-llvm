@@ -2374,8 +2374,8 @@ TEST_F(FormatTestJS, CppKeywords) {
   verifyFormat("_Static_assert!;");
   verifyFormat("_Thread_local!;");
   verifyFormat("__func__!;");
-  verifyFormat("__objc_yes!;");
-  verifyFormat("__objc_no!;");
+  // verifyFormat("__objc_yes!;");
+  // verifyFormat("__objc_no!;");
   verifyFormat("asm!;");
   verifyFormat("bool!;");
   verifyFormat("const_cast!;");

@@ -454,66 +454,66 @@ def warn_odr_ivar_type_inconsistent : Warning<
   "instance variable %0 declared with incompatible types in different "
   "translation units (%1 vs. %2)">,
   InGroup<ODR>;
-def err_odr_objc_superclass_inconsistent : Error<
-  "class %0 has incompatible superclasses">;
-def warn_odr_objc_superclass_inconsistent : Warning<
-  "class %0 has incompatible superclasses">,
-  InGroup<ODR>;
+// def err_odr_objc_superclass_inconsistent : Error<
+//   "class %0 has incompatible superclasses">;
+// def warn_odr_objc_superclass_inconsistent : Warning<
+//   "class %0 has incompatible superclasses">,
+//   InGroup<ODR>;
 def note_odr_objc_superclass : Note<"inherits from superclass %0 here">;
 def note_odr_objc_missing_superclass : Note<"no corresponding superclass here">;
-def err_odr_objc_method_result_type_inconsistent : Error<
-  "%select{class|instance}0 method %1 has incompatible result types in "
-  "different translation units (%2 vs. %3)">;
-def warn_odr_objc_method_result_type_inconsistent : Warning<
-  "%select{class|instance}0 method %1 has incompatible result types in "
-  "different translation units (%2 vs. %3)">,
-  InGroup<ODR>;
-def err_odr_objc_method_num_params_inconsistent : Error<
-  "%select{class|instance}0 method %1 has a different number of parameters in "
-  "different translation units (%2 vs. %3)">;
-def warn_odr_objc_method_num_params_inconsistent : Warning<
-  "%select{class|instance}0 method %1 has a different number of parameters in "
-  "different translation units (%2 vs. %3)">,
-  InGroup<ODR>;
-def err_odr_objc_method_param_type_inconsistent : Error<
-  "%select{class|instance}0 method %1 has a parameter with a different types "
-  "in different translation units (%2 vs. %3)">;
-def warn_odr_objc_method_param_type_inconsistent : Warning<
-  "%select{class|instance}0 method %1 has a parameter with a different types "
-  "in different translation units (%2 vs. %3)">,
-  InGroup<ODR>;
-def err_odr_objc_method_variadic_inconsistent : Error<
-  "%select{class|instance}0 method %1 is variadic in one translation unit "
-  "and not variadic in another">;
-def warn_odr_objc_method_variadic_inconsistent : Warning<
-  "%select{class|instance}0 method %1 is variadic in one translation unit "
-  "and not variadic in another">,
-  InGroup<ODR>;
+// def err_odr_objc_method_result_type_inconsistent : Error<
+//   "%select{class|instance}0 method %1 has incompatible result types in "
+//   "different translation units (%2 vs. %3)">;
+// def warn_odr_objc_method_result_type_inconsistent : Warning<
+//   "%select{class|instance}0 method %1 has incompatible result types in "
+//   "different translation units (%2 vs. %3)">,
+//   InGroup<ODR>;
+// def err_odr_objc_method_num_params_inconsistent : Error<
+//   "%select{class|instance}0 method %1 has a different number of parameters in "
+//   "different translation units (%2 vs. %3)">;
+// def warn_odr_objc_method_num_params_inconsistent : Warning<
+//   "%select{class|instance}0 method %1 has a different number of parameters in "
+//   "different translation units (%2 vs. %3)">,
+//   InGroup<ODR>;
+// def err_odr_objc_method_param_type_inconsistent : Error<
+//   "%select{class|instance}0 method %1 has a parameter with a different types "
+//   "in different translation units (%2 vs. %3)">;
+// def warn_odr_objc_method_param_type_inconsistent : Warning<
+//   "%select{class|instance}0 method %1 has a parameter with a different types "
+//   "in different translation units (%2 vs. %3)">,
+//   InGroup<ODR>;
+// def err_odr_objc_method_variadic_inconsistent : Error<
+//   "%select{class|instance}0 method %1 is variadic in one translation unit "
+//   "and not variadic in another">;
+// def warn_odr_objc_method_variadic_inconsistent : Warning<
+//   "%select{class|instance}0 method %1 is variadic in one translation unit "
+//   "and not variadic in another">,
+//   InGroup<ODR>;
 def note_odr_objc_method_here : Note<
   "%select{class|instance}0 method %1 also declared here">;
-def err_odr_objc_property_type_inconsistent : Error<
-  "property %0 declared with incompatible types in different "
-  "translation units (%1 vs. %2)">;
-def warn_odr_objc_property_type_inconsistent : Warning<
-  "property %0 declared with incompatible types in different "
-  "translation units (%1 vs. %2)">,
-  InGroup<ODR>;
-def err_odr_objc_property_impl_kind_inconsistent : Error<
-  "property %0 is implemented with %select{@synthesize|@dynamic}1 in one "
-  "translation but %select{@dynamic|@synthesize}1 in another translation unit">;
-def warn_odr_objc_property_impl_kind_inconsistent : Warning<
-  "property %0 is implemented with %select{@synthesize|@dynamic}1 in one "
-  "translation but %select{@dynamic|@synthesize}1 in another translation unit">,
-  InGroup<ODR>;
+// def err_odr_objc_property_type_inconsistent : Error<
+//   "property %0 declared with incompatible types in different "
+//   "translation units (%1 vs. %2)">;
+// def warn_odr_objc_property_type_inconsistent : Warning<
+//   "property %0 declared with incompatible types in different "
+//   "translation units (%1 vs. %2)">,
+//   InGroup<ODR>;
+// def err_odr_objc_property_impl_kind_inconsistent : Error<
+//   "property %0 is implemented with %select{@synthesize|@dynamic}1 in one "
+//   "translation but %select{@dynamic|@synthesize}1 in another translation unit">;
+// def warn_odr_objc_property_impl_kind_inconsistent : Warning<
+//   "property %0 is implemented with %select{@synthesize|@dynamic}1 in one "
+//   "translation but %select{@dynamic|@synthesize}1 in another translation unit">,
+//   InGroup<ODR>;
 def note_odr_objc_property_impl_kind : Note<
   "property %0 is implemented with %select{@synthesize|@dynamic}1 here">;
-def err_odr_objc_synthesize_ivar_inconsistent : Error<
-  "property %0 is synthesized to different ivars in different translation "
-  "units (%1 vs. %2)">;
-def warn_odr_objc_synthesize_ivar_inconsistent : Warning<
-  "property %0 is synthesized to different ivars in different translation "
-  "units (%1 vs. %2)">,
-  InGroup<ODR>;
+// def err_odr_objc_synthesize_ivar_inconsistent : Error<
+//   "property %0 is synthesized to different ivars in different translation "
+//   "units (%1 vs. %2)">;
+// def warn_odr_objc_synthesize_ivar_inconsistent : Warning<
+//   "property %0 is synthesized to different ivars in different translation "
+//   "units (%1 vs. %2)">,
+//   InGroup<ODR>;
 def note_odr_objc_synthesize_ivar_here : Note<
   "property is synthesized to ivar %0 here">;
 

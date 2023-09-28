@@ -93,12 +93,12 @@ LANGOPT(CPlusPlus14       , 1, 0, "C++14")
 LANGOPT(CPlusPlus17       , 1, 0, "C++17")
 LANGOPT(CPlusPlus20       , 1, 0, "C++20")
 LANGOPT(ObjC              , 1, 0, "Objective-C")
-BENIGN_LANGOPT(ObjCDefaultSynthProperties , 1, 0,
-               "Objective-C auto-synthesized properties")
+// BENIGN_LANGOPT(ObjCDefaultSynthProperties , 1, 0,
+//                "Objective-C auto-synthesized properties")
 BENIGN_LANGOPT(EncodeExtendedBlockSig , 1, 0,
                "Encoding extended block type signature")
-BENIGN_LANGOPT(ObjCInferRelatedResultType , 1, 1,
-               "Objective-C related result type inference")
+// BENIGN_LANGOPT(ObjCInferRelatedResultType , 1, 1,
+//                "Objective-C related result type inference")
 LANGOPT(AppExt , 1, 0, "Objective-C App Extension")
 LANGOPT(Trigraphs         , 1, 0,"trigraphs")
 LANGOPT(LineComment       , 1, 0, "'//' comments")

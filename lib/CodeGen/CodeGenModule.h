@@ -119,98 +119,98 @@ struct OrderGlobalInits {
   }
 };
 
-struct ObjCEntrypoints {
-  ObjCEntrypoints() { memset(this, 0, sizeof(*this)); }
+// struct ObjCEntrypoints {
+//   ObjCEntrypoints() { memset(this, 0, sizeof(*this)); }
 
-  /// void objc_alloc(id);
-  llvm::FunctionCallee objc_alloc;
+//   /// void objc_alloc(id);
+//   llvm::FunctionCallee objc_alloc;
 
-  /// void objc_allocWithZone(id);
-  llvm::FunctionCallee objc_allocWithZone;
+//   /// void objc_allocWithZone(id);
+//   llvm::FunctionCallee objc_allocWithZone;
 
-  /// void objc_alloc_init(id);
-  llvm::FunctionCallee objc_alloc_init;
+//   /// void objc_alloc_init(id);
+//   llvm::FunctionCallee objc_alloc_init;
 
-  /// void objc_autoreleasePoolPop(void*);
-  llvm::FunctionCallee objc_autoreleasePoolPop;
+//   /// void objc_autoreleasePoolPop(void*);
+//   llvm::FunctionCallee objc_autoreleasePoolPop;
 
-  /// void objc_autoreleasePoolPop(void*);
-  /// Note this method is used when we are using exception handling
-  llvm::FunctionCallee objc_autoreleasePoolPopInvoke;
+//   /// void objc_autoreleasePoolPop(void*);
+//   /// Note this method is used when we are using exception handling
+//   llvm::FunctionCallee objc_autoreleasePoolPopInvoke;
 
-  /// void *objc_autoreleasePoolPush(void);
-  llvm::Function *objc_autoreleasePoolPush;
+//   /// void *objc_autoreleasePoolPush(void);
+//   llvm::Function *objc_autoreleasePoolPush;
 
-  /// id objc_autorelease(id);
-  llvm::Function *objc_autorelease;
+//   /// id objc_autorelease(id);
+//   llvm::Function *objc_autorelease;
 
-  /// id objc_autorelease(id);
-  /// Note this is the runtime method not the intrinsic.
-  llvm::FunctionCallee objc_autoreleaseRuntimeFunction;
+//   /// id objc_autorelease(id);
+//   /// Note this is the runtime method not the intrinsic.
+//   llvm::FunctionCallee objc_autoreleaseRuntimeFunction;
 
-  /// id objc_autoreleaseReturnValue(id);
-  llvm::Function *objc_autoreleaseReturnValue;
+//   /// id objc_autoreleaseReturnValue(id);
+//   llvm::Function *objc_autoreleaseReturnValue;
 
-  /// void objc_copyWeak(id *dest, id *src);
-  llvm::Function *objc_copyWeak;
+//   /// void objc_copyWeak(id *dest, id *src);
+//   llvm::Function *objc_copyWeak;
 
-  /// void objc_destroyWeak(id*);
-  llvm::Function *objc_destroyWeak;
+//   /// void objc_destroyWeak(id*);
+//   llvm::Function *objc_destroyWeak;
 
-  /// id objc_initWeak(id*, id);
-  llvm::Function *objc_initWeak;
+//   /// id objc_initWeak(id*, id);
+//   llvm::Function *objc_initWeak;
 
-  /// id objc_loadWeak(id*);
-  llvm::Function *objc_loadWeak;
+//   /// id objc_loadWeak(id*);
+//   llvm::Function *objc_loadWeak;
 
-  /// id objc_loadWeakRetained(id*);
-  llvm::Function *objc_loadWeakRetained;
+//   /// id objc_loadWeakRetained(id*);
+//   llvm::Function *objc_loadWeakRetained;
 
-  /// void objc_moveWeak(id *dest, id *src);
-  llvm::Function *objc_moveWeak;
+//   /// void objc_moveWeak(id *dest, id *src);
+//   llvm::Function *objc_moveWeak;
 
-  /// id objc_retain(id);
-  llvm::Function *objc_retain;
+//   /// id objc_retain(id);
+//   llvm::Function *objc_retain;
 
-  /// id objc_retain(id);
-  /// Note this is the runtime method not the intrinsic.
-  llvm::FunctionCallee objc_retainRuntimeFunction;
+//   /// id objc_retain(id);
+//   /// Note this is the runtime method not the intrinsic.
+//   llvm::FunctionCallee objc_retainRuntimeFunction;
 
-  /// id objc_retainAutorelease(id);
-  llvm::Function *objc_retainAutorelease;
+//   /// id objc_retainAutorelease(id);
+//   llvm::Function *objc_retainAutorelease;
 
-  /// id objc_retainAutoreleaseReturnValue(id);
-  llvm::Function *objc_retainAutoreleaseReturnValue;
+//   /// id objc_retainAutoreleaseReturnValue(id);
+//   llvm::Function *objc_retainAutoreleaseReturnValue;
 
-  /// id objc_retainAutoreleasedReturnValue(id);
-  llvm::Function *objc_retainAutoreleasedReturnValue;
+//   /// id objc_retainAutoreleasedReturnValue(id);
+//   llvm::Function *objc_retainAutoreleasedReturnValue;
 
-  /// id objc_retainBlock(id);
-  llvm::Function *objc_retainBlock;
+//   /// id objc_retainBlock(id);
+//   llvm::Function *objc_retainBlock;
 
-  /// void objc_release(id);
-  llvm::Function *objc_release;
+//   /// void objc_release(id);
+//   llvm::Function *objc_release;
 
-  /// void objc_release(id);
-  /// Note this is the runtime method not the intrinsic.
-  llvm::FunctionCallee objc_releaseRuntimeFunction;
+//   /// void objc_release(id);
+//   /// Note this is the runtime method not the intrinsic.
+//   llvm::FunctionCallee objc_releaseRuntimeFunction;
 
-  /// void objc_storeStrong(id*, id);
-  llvm::Function *objc_storeStrong;
+//   /// void objc_storeStrong(id*, id);
+//   llvm::Function *objc_storeStrong;
 
-  /// id objc_storeWeak(id*, id);
-  llvm::Function *objc_storeWeak;
+//   /// id objc_storeWeak(id*, id);
+//   llvm::Function *objc_storeWeak;
 
-  /// id objc_unsafeClaimAutoreleasedReturnValue(id);
-  llvm::Function *objc_unsafeClaimAutoreleasedReturnValue;
+//   /// id objc_unsafeClaimAutoreleasedReturnValue(id);
+//   llvm::Function *objc_unsafeClaimAutoreleasedReturnValue;
 
-  /// A void(void) inline asm to use to mark that the return value of
-  /// a call will be immediately retain.
-  llvm::InlineAsm *retainAutoreleasedReturnValueMarker;
+//   /// A void(void) inline asm to use to mark that the return value of
+//   /// a call will be immediately retain.
+//   llvm::InlineAsm *retainAutoreleasedReturnValueMarker;
 
-  /// void clang.arc.use(...);
-  llvm::Function *clang_arc_use;
-};
+//   /// void clang.arc.use(...);
+//   llvm::Function *clang_arc_use;
+// };
 
 /// This class records statistics on instrumentation based profiling.
 class InstrProfStats {
@@ -326,7 +326,7 @@ private:
   // std::unique_ptr<CGOpenMPRuntime> OpenMPRuntime;
   std::unique_ptr<CGCUDARuntime> CUDARuntime;
   std::unique_ptr<CGDebugInfo> DebugInfo;
-  std::unique_ptr<ObjCEntrypoints> ObjCData;
+  // std::unique_ptr<ObjCEntrypoints> ObjCData;
   llvm::MDNode *NoObjCARCExceptionsMetadata = nullptr;
   std::unique_ptr<llvm::IndexedInstrProfReader> PGOReader;
   InstrProfStats PGOStats;
@@ -602,10 +602,10 @@ public:
     return *CUDARuntime;
   }
 
-  ObjCEntrypoints &getObjCEntrypoints() const {
-    assert(ObjCData != nullptr);
-    return *ObjCData;
-  }
+  // ObjCEntrypoints &getObjCEntrypoints() const {
+  //   assert(ObjCData != nullptr);
+  //   return *ObjCData;
+  // }
 
   // Version checking function, used to implement ObjC's @available:
   // i32 @__isOSVersionAtLeast(i32, i32, i32)
