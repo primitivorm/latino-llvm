@@ -29,7 +29,7 @@ FormatTokenLexer::FormatTokenLexer(
     IdentifierTable &IdentTable)
     : FormatTok(nullptr), IsFirstToken(true), StateStack({LexerState::NORMAL}),
       Column(Column), TrailingWhitespace(0), SourceMgr(SourceMgr), ID(ID),
-      Style(Style), IdentTable(IdentTable), Keywords(IdentTable),
+      Style(Style), IdentTable(IdentTable), /*Keywords(IdentTable),*/
       Encoding(Encoding), Allocator(Allocator), FirstInLineIndex(0),
       FormattingDisabled(false), MacroBlockBeginRegex(Style.MacroBlockBegin),
       MacroBlockEndRegex(Style.MacroBlockEnd) {
@@ -150,12 +150,12 @@ void FormatTokenLexer::tryMergePreviousTokens() {
       return;
   }
 
-  if (Style.Language == FormatStyle::LK_Java) {
-    static const tok::TokenKind JavaRightLogicalShiftAssign[] = {
-        tok::greater, tok::greater, tok::greaterequal};
-    if (tryMergeTokens(JavaRightLogicalShiftAssign, TT_BinaryOperator))
-      return;
-  }
+  // if (Style.Language == FormatStyle::LK_Java) {
+  //   static const tok::TokenKind JavaRightLogicalShiftAssign[] = {
+  //       tok::greater, tok::greater, tok::greaterequal};
+  //   if (tryMergeTokens(JavaRightLogicalShiftAssign, TT_BinaryOperator))
+  //     return;
+  // }
 }
 
 // bool FormatTokenLexer::tryMergeNSStringLiteral() {
@@ -343,8 +343,8 @@ bool FormatTokenLexer::tryMergeCSharpKeywordVariables() {
   auto &Keyword = *(Tokens.end() - 1);
   if (!At->is(tok::at))
     return false;
-  if (!Keywords.isCSharpKeyword(*Keyword))
-    return false;
+  // if (!Keywords.isCSharpKeyword(*Keyword))
+  //   return false;
 
   At->Tok.setKind(tok::identifier);
   At->TokenText = StringRef(At->TokenText.begin(),
@@ -472,7 +472,7 @@ bool FormatTokenLexer::precedesOperand(FormatToken *Tok) {
                       tok::colon, tok::question, tok::tilde) ||
          Tok->isOneOf(tok::kw_ret, tok::kw_hacer, tok::kw_caso, tok::kw_lanzar,
                       tok::kw_sino, tok::kw_nuevo, tok::kw_borrar, tok::kw_void,
-                      tok::kw_typeof, Keywords.kw_instanceof, Keywords.kw_in) ||
+                      tok::kw_typeof/*, Keywords.kw_instanceof, Keywords.kw_in*/) ||
          Tok->isBinaryOperator();
 }
 
@@ -906,26 +906,26 @@ FormatToken *FormatTokenLexer::getNextToken() {
   // finds comments that contain a backslash followed by a line break, truncates
   // the comment token at the backslash, and resets the lexer to restart behind
   // the backslash.
-  if ((Style.Language == FormatStyle::LK_JavaScript ||
-       Style.Language == FormatStyle::LK_Java) &&
-      FormatTok->is(tok::comment) && FormatTok->TokenText.startswith("//")) {
-    size_t BackslashPos = FormatTok->TokenText.find('\\');
-    while (BackslashPos != StringRef::npos) {
-      if (BackslashPos + 1 < FormatTok->TokenText.size() &&
-          FormatTok->TokenText[BackslashPos + 1] == '\n') {
-        const char *Offset = Lex->getBufferLocation();
-        Offset -= FormatTok->TokenText.size();
-        Offset += BackslashPos + 1;
-        resetLexer(SourceMgr.getFileOffset(Lex->getSourceLocation(Offset)));
-        FormatTok->TokenText = FormatTok->TokenText.substr(0, BackslashPos + 1);
-        FormatTok->ColumnWidth = encoding::columnWidthWithTabs(
-            FormatTok->TokenText, FormatTok->OriginalColumn, Style.TabWidth,
-            Encoding);
-        break;
-      }
-      BackslashPos = FormatTok->TokenText.find('\\', BackslashPos + 1);
-    }
-  }
+  // if ((Style.Language == FormatStyle::LK_JavaScript ||
+  //      Style.Language == FormatStyle::LK_Java) &&
+  //     FormatTok->is(tok::comment) && FormatTok->TokenText.startswith("//")) {
+  //   size_t BackslashPos = FormatTok->TokenText.find('\\');
+  //   while (BackslashPos != StringRef::npos) {
+  //     if (BackslashPos + 1 < FormatTok->TokenText.size() &&
+  //         FormatTok->TokenText[BackslashPos + 1] == '\n') {
+  //       const char *Offset = Lex->getBufferLocation();
+  //       Offset -= FormatTok->TokenText.size();
+  //       Offset += BackslashPos + 1;
+  //       resetLexer(SourceMgr.getFileOffset(Lex->getSourceLocation(Offset)));
+  //       FormatTok->TokenText = FormatTok->TokenText.substr(0, BackslashPos + 1);
+  //       FormatTok->ColumnWidth = encoding::columnWidthWithTabs(
+  //           FormatTok->TokenText, FormatTok->OriginalColumn, Style.TabWidth,
+  //           Encoding);
+  //       break;
+  //     }
+  //     BackslashPos = FormatTok->TokenText.find('\\', BackslashPos + 1);
+  //   }
+  // }
 
   // In case the token starts with escaped newlines, we want to
   // take them into account as whitespace - this pattern is quite frequent
@@ -963,17 +963,17 @@ FormatToken *FormatTokenLexer::getNextToken() {
     IdentifierInfo &Info = IdentTable.get(FormatTok->TokenText);
     FormatTok->Tok.setIdentifierInfo(&Info);
     FormatTok->Tok.setKind(Info.getTokenID());
-    if (Style.Language == FormatStyle::LK_Java &&
-        FormatTok->isOneOf(tok::kw_estructura, tok::kw_union, tok::kw_borrar,
-                           tok::kw_operador)) {
-      FormatTok->Tok.setKind(tok::identifier);
-      FormatTok->Tok.setIdentifierInfo(nullptr);
-    } else if (Style.Language == FormatStyle::LK_JavaScript &&
-               FormatTok->isOneOf(tok::kw_estructura, tok::kw_union,
-                                  tok::kw_operador)) {
-      FormatTok->Tok.setKind(tok::identifier);
-      FormatTok->Tok.setIdentifierInfo(nullptr);
-    }
+    // if (Style.Language == FormatStyle::LK_Java &&
+    //     FormatTok->isOneOf(tok::kw_estructura, tok::kw_union, tok::kw_borrar,
+    //                        tok::kw_operador)) {
+    //   FormatTok->Tok.setKind(tok::identifier);
+    //   FormatTok->Tok.setIdentifierInfo(nullptr);
+    // } else if (Style.Language == FormatStyle::LK_JavaScript &&
+    //            FormatTok->isOneOf(tok::kw_estructura, tok::kw_union,
+    //                               tok::kw_operador)) {
+    //   FormatTok->Tok.setKind(tok::identifier);
+    //   FormatTok->Tok.setIdentifierInfo(nullptr);
+    // }
   } else if (FormatTok->Tok.is(tok::greatergreater)) {
     FormatTok->Tok.setKind(tok::greater);
     FormatTok->TokenText = FormatTok->TokenText.substr(0, 1);

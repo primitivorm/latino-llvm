@@ -701,353 +701,353 @@ private:
 
 /// Encapsulates keywords that are context sensitive or for languages not
 /// properly supported by Clang's lexer.
-struct AdditionalKeywords {
-  AdditionalKeywords(IdentifierTable &IdentTable) {
-    kw_final = &IdentTable.get("final");
-    kw_override = &IdentTable.get("override");
-    kw_in = &IdentTable.get("in");
-    kw_of = &IdentTable.get("of");
-    kw_CF_CLOSED_ENUM = &IdentTable.get("CF_CLOSED_ENUM");
-    kw_CF_ENUM = &IdentTable.get("CF_ENUM");
-    kw_CF_OPTIONS = &IdentTable.get("CF_OPTIONS");
-    kw_NS_CLOSED_ENUM = &IdentTable.get("NS_CLOSED_ENUM");
-    kw_NS_ENUM = &IdentTable.get("NS_ENUM");
-    kw_NS_OPTIONS = &IdentTable.get("NS_OPTIONS");
+// struct AdditionalKeywords {
+//   AdditionalKeywords(IdentifierTable &IdentTable) {
+//     kw_final = &IdentTable.get("final");
+//     kw_override = &IdentTable.get("override");
+//     kw_in = &IdentTable.get("in");
+//     kw_of = &IdentTable.get("of");
+//     kw_CF_CLOSED_ENUM = &IdentTable.get("CF_CLOSED_ENUM");
+//     kw_CF_ENUM = &IdentTable.get("CF_ENUM");
+//     kw_CF_OPTIONS = &IdentTable.get("CF_OPTIONS");
+//     kw_NS_CLOSED_ENUM = &IdentTable.get("NS_CLOSED_ENUM");
+//     kw_NS_ENUM = &IdentTable.get("NS_ENUM");
+//     kw_NS_OPTIONS = &IdentTable.get("NS_OPTIONS");
 
-    kw_as = &IdentTable.get("as");
-    kw_async = &IdentTable.get("async");
-    kw_await = &IdentTable.get("await");
-    kw_declare = &IdentTable.get("declare");
-    kw_finally = &IdentTable.get("finally");
-    kw_from = &IdentTable.get("from");
-    kw_function = &IdentTable.get("function");
-    kw_get = &IdentTable.get("get");
-    kw_import = &IdentTable.get("import");
-    kw_infer = &IdentTable.get("infer");
-    kw_is = &IdentTable.get("is");
-    kw_let = &IdentTable.get("let");
-    kw_modulo = &IdentTable.get("module");
-    kw_readonly = &IdentTable.get("readonly");
-    kw_set = &IdentTable.get("set");
-    kw_type = &IdentTable.get("type");
-    kw_typeof = &IdentTable.get("typeof");
-    kw_var = &IdentTable.get("var");
-    kw_yield = &IdentTable.get("yield");
+//     kw_as = &IdentTable.get("as");
+//     kw_async = &IdentTable.get("async");
+//     kw_await = &IdentTable.get("await");
+//     kw_declare = &IdentTable.get("declare");
+//     kw_finally = &IdentTable.get("finally");
+//     kw_from = &IdentTable.get("from");
+//     kw_function = &IdentTable.get("function");
+//     kw_get = &IdentTable.get("get");
+//     kw_import = &IdentTable.get("import");
+//     kw_infer = &IdentTable.get("infer");
+//     kw_is = &IdentTable.get("is");
+//     kw_let = &IdentTable.get("let");
+//     kw_modulo = &IdentTable.get("module");
+//     kw_readonly = &IdentTable.get("readonly");
+//     kw_set = &IdentTable.get("set");
+//     kw_type = &IdentTable.get("type");
+//     kw_typeof = &IdentTable.get("typeof");
+//     kw_var = &IdentTable.get("var");
+//     kw_yield = &IdentTable.get("yield");
 
-    kw_abstract = &IdentTable.get("abstract");
-    kw_assert = &IdentTable.get("assert");
-    kw_extends = &IdentTable.get("extends");
-    kw_implements = &IdentTable.get("implements");
-    kw_instanceof = &IdentTable.get("instanceof");
-    kw_interface = &IdentTable.get("interface");
-    kw_native = &IdentTable.get("native");
-    kw_package = &IdentTable.get("package");
-    kw_synchronized = &IdentTable.get("synchronized");
-    kw_throws = &IdentTable.get("throws");
-    kw___except = &IdentTable.get("__except");
-    kw___has_include = &IdentTable.get("__has_include");
-    kw___has_include_next = &IdentTable.get("__has_include_next");
+//     kw_abstract = &IdentTable.get("abstract");
+//     kw_assert = &IdentTable.get("assert");
+//     kw_extends = &IdentTable.get("extends");
+//     kw_implements = &IdentTable.get("implements");
+//     kw_instanceof = &IdentTable.get("instanceof");
+//     kw_interface = &IdentTable.get("interface");
+//     kw_native = &IdentTable.get("native");
+//     kw_package = &IdentTable.get("package");
+//     kw_synchronized = &IdentTable.get("synchronized");
+//     kw_throws = &IdentTable.get("throws");
+//     kw___except = &IdentTable.get("__except");
+//     kw___has_include = &IdentTable.get("__has_include");
+//     kw___has_include_next = &IdentTable.get("__has_include_next");
 
-    kw_mark = &IdentTable.get("mark");
+//     kw_mark = &IdentTable.get("mark");
 
-    kw_extend = &IdentTable.get("extend");
-    kw_option = &IdentTable.get("option");
-    kw_optional = &IdentTable.get("optional");
-    kw_repeated = &IdentTable.get("repeated");
-    kw_required = &IdentTable.get("required");
-    kw_returns = &IdentTable.get("returns");
+//     kw_extend = &IdentTable.get("extend");
+//     kw_option = &IdentTable.get("option");
+//     kw_optional = &IdentTable.get("optional");
+//     kw_repeated = &IdentTable.get("repeated");
+//     kw_required = &IdentTable.get("required");
+//     kw_returns = &IdentTable.get("returns");
 
-    kw_signals = &IdentTable.get("signals");
-    kw_qsignals = &IdentTable.get("Q_SIGNALS");
-    kw_slots = &IdentTable.get("slots");
-    kw_qslots = &IdentTable.get("Q_SLOTS");
+//     kw_signals = &IdentTable.get("signals");
+//     kw_qsignals = &IdentTable.get("Q_SIGNALS");
+//     kw_slots = &IdentTable.get("slots");
+//     kw_qslots = &IdentTable.get("Q_SLOTS");
 
-    // C# keywords
-    kw_hacerllar = &IdentTable.get("dollar");
-    kw_base = &IdentTable.get("base");
-    kw_byte = &IdentTable.get("byte");
-    kw_checked = &IdentTable.get("checked");
-    kw_decimal = &IdentTable.get("decimal");
-    kw_delegate = &IdentTable.get("delegate");
-    kw_event = &IdentTable.get("event");
-    kw_fixed = &IdentTable.get("fixed");
-    kw_desdeeach = &IdentTable.get("foreach");
-    kw_implicit = &IdentTable.get("implicit");
-    kw_internal = &IdentTable.get("internal");
-    kw_lock = &IdentTable.get("lock");
-    kw_null = &IdentTable.get("null");
-    kw_object = &IdentTable.get("object");
-    kw_out = &IdentTable.get("out");
-    kw_params = &IdentTable.get("params");
-    kw_ref = &IdentTable.get("ref");
-    kw_string = &IdentTable.get("string");
-    kw_stackalloc = &IdentTable.get("stackalloc");
-    kw_sbyte = &IdentTable.get("sbyte");
-    kw_sealed = &IdentTable.get("sealed");
-    kw_uint = &IdentTable.get("uint");
-    kw_ulong = &IdentTable.get("ulong");
-    kw_unchecked = &IdentTable.get("unchecked");
-    kw_unsafe = &IdentTable.get("unsafe");
-    kw_ushort = &IdentTable.get("ushort");
-    kw_when = &IdentTable.get("when");
-    kw_where = &IdentTable.get("where");
+//     // C# keywords
+//     kw_dollar = &IdentTable.get("dollar");
+//     kw_base = &IdentTable.get("base");
+//     kw_byte = &IdentTable.get("byte");
+//     kw_checked = &IdentTable.get("checked");
+//     kw_decimal = &IdentTable.get("decimal");
+//     kw_delegate = &IdentTable.get("delegate");
+//     kw_event = &IdentTable.get("event");
+//     kw_fixed = &IdentTable.get("fixed");
+//     kw_desdeeach = &IdentTable.get("foreach");
+//     kw_implicit = &IdentTable.get("implicit");
+//     kw_internal = &IdentTable.get("internal");
+//     kw_lock = &IdentTable.get("lock");
+//     kw_null = &IdentTable.get("null");
+//     kw_object = &IdentTable.get("object");
+//     kw_out = &IdentTable.get("out");
+//     kw_params = &IdentTable.get("params");
+//     kw_ref = &IdentTable.get("ref");
+//     kw_string = &IdentTable.get("string");
+//     kw_stackalloc = &IdentTable.get("stackalloc");
+//     kw_sbyte = &IdentTable.get("sbyte");
+//     kw_sealed = &IdentTable.get("sealed");
+//     kw_uint = &IdentTable.get("uint");
+//     kw_ulong = &IdentTable.get("ulong");
+//     kw_unchecked = &IdentTable.get("unchecked");
+//     kw_unsafe = &IdentTable.get("unsafe");
+//     kw_ushort = &IdentTable.get("ushort");
+//     kw_when = &IdentTable.get("when");
+//     kw_where = &IdentTable.get("where");
 
-    // Keep this at the end of the constructor to make sure everything here
-    // is
-    // already initialized.
-    JsExtraKeywords = std::unordered_set<IdentifierInfo *>(
-        {kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
-         kw_function, kw_get, kw_import, kw_is, kw_let, kw_modulo, kw_readonly,
-         kw_set, kw_type, kw_typeof, kw_var, kw_yield,
-         // Keywords from the Java section.
-         kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
+//     // Keep this at the end of the constructor to make sure everything here
+//     // is
+//     // already initialized.
+//     JsExtraKeywords = std::unordered_set<IdentifierInfo *>(
+//         {kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
+//          kw_function, kw_get, kw_import, kw_is, kw_let, kw_modulo, kw_readonly,
+//          kw_set, kw_type, kw_typeof, kw_var, kw_yield,
+//          // Keywords from the Java section.
+//          kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
 
-    CSharpExtraKeywords = std::unordered_set<IdentifierInfo *>(
-        {kw_base, kw_byte, kw_checked, kw_decimal, kw_delegate, kw_event,
-         kw_fixed, kw_desdeeach, kw_implicit, kw_in, kw_interface, kw_internal,
-         kw_is, kw_lock, kw_null, kw_object, kw_out, kw_override, kw_params,
-         kw_readonly, kw_ref, kw_string, kw_stackalloc, kw_sbyte, kw_sealed,
-         kw_uint, kw_ulong, kw_unchecked, kw_unsafe, kw_ushort, kw_when,
-         kw_where,
-         // Keywords from the JavaScript section.
-         kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
-         kw_function, kw_get, kw_import, kw_is, kw_let, kw_modulo, kw_readonly,
-         kw_set, kw_type, kw_typeof, kw_var, kw_yield,
-         // Keywords from the Java section.
-         kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
-  }
+//     CSharpExtraKeywords = std::unordered_set<IdentifierInfo *>(
+//         {kw_base, kw_byte, kw_checked, kw_decimal, kw_delegate, kw_event,
+//          kw_fixed, kw_desdeeach, kw_implicit, kw_in, kw_interface, kw_internal,
+//          kw_is, kw_lock, kw_null, kw_object, kw_out, kw_override, kw_params,
+//          kw_readonly, kw_ref, kw_string, kw_stackalloc, kw_sbyte, kw_sealed,
+//          kw_uint, kw_ulong, kw_unchecked, kw_unsafe, kw_ushort, kw_when,
+//          kw_where,
+//          // Keywords from the JavaScript section.
+//          kw_as, kw_async, kw_await, kw_declare, kw_finally, kw_from,
+//          kw_function, kw_get, kw_import, kw_is, kw_let, kw_modulo, kw_readonly,
+//          kw_set, kw_type, kw_typeof, kw_var, kw_yield,
+//          // Keywords from the Java section.
+//          kw_abstract, kw_extends, kw_implements, kw_instanceof, kw_interface});
+//   }
 
-  // Context sensitive keywords.
-  IdentifierInfo *kw_final;
-  IdentifierInfo *kw_override;
-  IdentifierInfo *kw_in;
-  IdentifierInfo *kw_of;
-  IdentifierInfo *kw_CF_CLOSED_ENUM;
-  IdentifierInfo *kw_CF_ENUM;
-  IdentifierInfo *kw_CF_OPTIONS;
-  IdentifierInfo *kw_NS_CLOSED_ENUM;
-  IdentifierInfo *kw_NS_ENUM;
-  IdentifierInfo *kw_NS_OPTIONS;
-  IdentifierInfo *kw___except;
-  IdentifierInfo *kw___has_include;
-  IdentifierInfo *kw___has_include_next;
+//   // Context sensitive keywords.
+//   IdentifierInfo *kw_final;
+//   IdentifierInfo *kw_override;
+//   IdentifierInfo *kw_in;
+//   IdentifierInfo *kw_of;
+//   IdentifierInfo *kw_CF_CLOSED_ENUM;
+//   IdentifierInfo *kw_CF_ENUM;
+//   IdentifierInfo *kw_CF_OPTIONS;
+//   IdentifierInfo *kw_NS_CLOSED_ENUM;
+//   IdentifierInfo *kw_NS_ENUM;
+//   IdentifierInfo *kw_NS_OPTIONS;
+//   IdentifierInfo *kw___except;
+//   IdentifierInfo *kw___has_include;
+//   IdentifierInfo *kw___has_include_next;
 
-  // JavaScript keywords.
-  IdentifierInfo *kw_as;
-  IdentifierInfo *kw_async;
-  IdentifierInfo *kw_await;
-  IdentifierInfo *kw_declare;
-  IdentifierInfo *kw_finally;
-  IdentifierInfo *kw_from;
-  IdentifierInfo *kw_function;
-  IdentifierInfo *kw_get;
-  IdentifierInfo *kw_import;
-  IdentifierInfo *kw_infer;
-  IdentifierInfo *kw_is;
-  IdentifierInfo *kw_let;
-  IdentifierInfo *kw_modulo;
-  IdentifierInfo *kw_readonly;
-  IdentifierInfo *kw_set;
-  IdentifierInfo *kw_type;
-  IdentifierInfo *kw_typeof;
-  IdentifierInfo *kw_var;
-  IdentifierInfo *kw_yield;
+//   // JavaScript keywords.
+//   IdentifierInfo *kw_as;
+//   IdentifierInfo *kw_async;
+//   IdentifierInfo *kw_await;
+//   IdentifierInfo *kw_declare;
+//   IdentifierInfo *kw_finally;
+//   IdentifierInfo *kw_from;
+//   IdentifierInfo *kw_function;
+//   IdentifierInfo *kw_get;
+//   IdentifierInfo *kw_import;
+//   IdentifierInfo *kw_infer;
+//   IdentifierInfo *kw_is;
+//   IdentifierInfo *kw_let;
+//   IdentifierInfo *kw_modulo;
+//   IdentifierInfo *kw_readonly;
+//   IdentifierInfo *kw_set;
+//   IdentifierInfo *kw_type;
+//   IdentifierInfo *kw_typeof;
+//   IdentifierInfo *kw_var;
+//   IdentifierInfo *kw_yield;
 
-  // Java keywords.
-  IdentifierInfo *kw_abstract;
-  IdentifierInfo *kw_assert;
-  IdentifierInfo *kw_extends;
-  IdentifierInfo *kw_implements;
-  IdentifierInfo *kw_instanceof;
-  IdentifierInfo *kw_interface;
-  IdentifierInfo *kw_native;
-  IdentifierInfo *kw_package;
-  IdentifierInfo *kw_synchronized;
-  IdentifierInfo *kw_throws;
+//   // Java keywords.
+//   IdentifierInfo *kw_abstract;
+//   IdentifierInfo *kw_assert;
+//   IdentifierInfo *kw_extends;
+//   IdentifierInfo *kw_implements;
+//   IdentifierInfo *kw_instanceof;
+//   IdentifierInfo *kw_interface;
+//   IdentifierInfo *kw_native;
+//   IdentifierInfo *kw_package;
+//   IdentifierInfo *kw_synchronized;
+//   IdentifierInfo *kw_throws;
 
-  // Pragma keywords.
-  IdentifierInfo *kw_mark;
+//   // Pragma keywords.
+//   IdentifierInfo *kw_mark;
 
-  // Proto keywords.
-  IdentifierInfo *kw_extend;
-  IdentifierInfo *kw_option;
-  IdentifierInfo *kw_optional;
-  IdentifierInfo *kw_repeated;
-  IdentifierInfo *kw_required;
-  IdentifierInfo *kw_returns;
+//   // Proto keywords.
+//   IdentifierInfo *kw_extend;
+//   IdentifierInfo *kw_option;
+//   IdentifierInfo *kw_optional;
+//   IdentifierInfo *kw_repeated;
+//   IdentifierInfo *kw_required;
+//   IdentifierInfo *kw_returns;
 
-  // QT keywords.
-  IdentifierInfo *kw_signals;
-  IdentifierInfo *kw_qsignals;
-  IdentifierInfo *kw_slots;
-  IdentifierInfo *kw_qslots;
+//   // QT keywords.
+//   IdentifierInfo *kw_signals;
+//   IdentifierInfo *kw_qsignals;
+//   IdentifierInfo *kw_slots;
+//   IdentifierInfo *kw_qslots;
 
-  // C# keywords
-  IdentifierInfo *kw_hacerllar;
-  IdentifierInfo *kw_base;
-  IdentifierInfo *kw_byte;
-  IdentifierInfo *kw_checked;
-  IdentifierInfo *kw_decimal;
-  IdentifierInfo *kw_delegate;
-  IdentifierInfo *kw_event;
-  IdentifierInfo *kw_fixed;
-  IdentifierInfo *kw_desdeeach;
-  IdentifierInfo *kw_implicit;
-  IdentifierInfo *kw_internal;
+//   // C# keywords
+//   IdentifierInfo *kw_dollar;
+//   IdentifierInfo *kw_base;
+//   IdentifierInfo *kw_byte;
+//   IdentifierInfo *kw_checked;
+//   IdentifierInfo *kw_decimal;
+//   IdentifierInfo *kw_delegate;
+//   IdentifierInfo *kw_event;
+//   IdentifierInfo *kw_fixed;
+//   IdentifierInfo *kw_desdeeach;
+//   IdentifierInfo *kw_implicit;
+//   IdentifierInfo *kw_internal;
 
-  IdentifierInfo *kw_lock;
-  IdentifierInfo *kw_null;
-  IdentifierInfo *kw_object;
-  IdentifierInfo *kw_out;
+//   IdentifierInfo *kw_lock;
+//   IdentifierInfo *kw_null;
+//   IdentifierInfo *kw_object;
+//   IdentifierInfo *kw_out;
 
-  IdentifierInfo *kw_params;
+//   IdentifierInfo *kw_params;
 
-  IdentifierInfo *kw_ref;
-  IdentifierInfo *kw_string;
-  IdentifierInfo *kw_stackalloc;
-  IdentifierInfo *kw_sbyte;
-  IdentifierInfo *kw_sealed;
-  IdentifierInfo *kw_uint;
-  IdentifierInfo *kw_ulong;
-  IdentifierInfo *kw_unchecked;
-  IdentifierInfo *kw_unsafe;
-  IdentifierInfo *kw_ushort;
-  IdentifierInfo *kw_when;
-  IdentifierInfo *kw_where;
+//   IdentifierInfo *kw_ref;
+//   IdentifierInfo *kw_string;
+//   IdentifierInfo *kw_stackalloc;
+//   IdentifierInfo *kw_sbyte;
+//   IdentifierInfo *kw_sealed;
+//   IdentifierInfo *kw_uint;
+//   IdentifierInfo *kw_ulong;
+//   IdentifierInfo *kw_unchecked;
+//   IdentifierInfo *kw_unsafe;
+//   IdentifierInfo *kw_ushort;
+//   IdentifierInfo *kw_when;
+//   IdentifierInfo *kw_where;
 
-  /// Returns \c true if \p Tok is a true JavaScript identifier, returns
-  /// \c false if it is a keyword or a pseudo keyword.
-  /// If \c AcceptIdentifierName is true, returns true not only for keywords,
-  // but also for IdentifierName tokens (aka pseudo-keywords), such as
-  // ``yield``.
-  bool IsJavaScriptIdentifier(const FormatToken &Tok,
-                              bool AcceptIdentifierName = true) const {
-    // Based on the list of JavaScript & TypeScript keywords here:
-    // https://github.com/microsoft/TypeScript/blob/master/src/compiler/scanner.ts#L74
-    switch (Tok.Tok.getKind()) {
-    case tok::kw_romper:
-    case tok::kw_caso:
-    case tok::kw_atrapar:
-    case tok::kw_clase:
-    case tok::kw_continuar:
-    case tok::kw_const:
-    case tok::kw_otro:
-    case tok::kw_borrar:
-    case tok::kw_hacer:
-    case tok::kw_sino:
-    case tok::kw_enum:
-    case tok::kw_exportar:
-    case tok::kw_false:
-    case tok::kw_desde:
-    case tok::kw_si:
-    case tok::kw_importar:
-    case tok::kw_modulo:
-    case tok::kw_nuevo:
-    case tok::kw_pri:
-    case tok::kw_pro:
-    case tok::kw_pub:
-    case tok::kw_ret:
-    case tok::kw_estatica:
-    case tok::kw_elegir:
-    case tok::kw_mi:
-    case tok::kw_lanzar:
-    case tok::kw_true:
-    case tok::kw_intentar:
-    case tok::kw_typeof:
-    case tok::kw_void:
-    case tok::kw_mientras:
-      // These are JS keywords that are lexed by LLVM/clang as keywords.
-      return false;
-    case tok::identifier: {
-      // For identifiers, make sure they are true identifiers, excluding the
-      // JavaScript pseudo-keywords (not lexed by LLVM/clang as keywords).
-      bool IsPseudoKeyword =
-          JsExtraKeywords.find(Tok.Tok.getIdentifierInfo()) !=
-          JsExtraKeywords.end();
-      return AcceptIdentifierName || !IsPseudoKeyword;
-    }
-    default:
-      // Other keywords are handled in the switch below, to avoid problems due
-      // to duplicate case labels when using the #include trick.
-      break;
-    }
+//   /// Returns \c true if \p Tok is a true JavaScript identifier, returns
+//   /// \c false if it is a keyword or a pseudo keyword.
+//   /// If \c AcceptIdentifierName is true, returns true not only for keywords,
+//   // but also for IdentifierName tokens (aka pseudo-keywords), such as
+//   // ``yield``.
+//   bool IsJavaScriptIdentifier(const FormatToken &Tok,
+//                               bool AcceptIdentifierName = true) const {
+//     // Based on the list of JavaScript & TypeScript keywords here:
+//     // https://github.com/microsoft/TypeScript/blob/master/src/compiler/scanner.ts#L74
+//     switch (Tok.Tok.getKind()) {
+//     case tok::kw_romper:
+//     case tok::kw_caso:
+//     case tok::kw_atrapar:
+//     case tok::kw_clase:
+//     case tok::kw_continuar:
+//     case tok::kw_const:
+//     case tok::kw_otro:
+//     case tok::kw_borrar:
+//     case tok::kw_hacer:
+//     case tok::kw_sino:
+//     case tok::kw_enum:
+//     case tok::kw_exportar:
+//     case tok::kw_false:
+//     case tok::kw_desde:
+//     case tok::kw_si:
+//     case tok::kw_importar:
+//     case tok::kw_modulo:
+//     case tok::kw_nuevo:
+//     case tok::kw_pri:
+//     case tok::kw_pro:
+//     case tok::kw_pub:
+//     case tok::kw_ret:
+//     case tok::kw_estatica:
+//     case tok::kw_elegir:
+//     case tok::kw_mi:
+//     case tok::kw_lanzar:
+//     case tok::kw_true:
+//     case tok::kw_intentar:
+//     case tok::kw_typeof:
+//     case tok::kw_void:
+//     case tok::kw_mientras:
+//       // These are JS keywords that are lexed by LLVM/clang as keywords.
+//       return false;
+//     case tok::identifier: {
+//       // For identifiers, make sure they are true identifiers, excluding the
+//       // JavaScript pseudo-keywords (not lexed by LLVM/clang as keywords).
+//       bool IsPseudoKeyword =
+//           JsExtraKeywords.find(Tok.Tok.getIdentifierInfo()) !=
+//           JsExtraKeywords.end();
+//       return AcceptIdentifierName || !IsPseudoKeyword;
+//     }
+//     default:
+//       // Other keywords are handled in the switch below, to avoid problems due
+//       // to duplicate case labels when using the #include trick.
+//       break;
+//     }
 
-    switch (Tok.Tok.getKind()) {
-      // Handle C++ keywords not included above: these are all JS identifiers.
-#define KEYWORD(X, Y) case tok::kw_##X:
-#include "latino/Basic/TokenKinds.def"
-      // #undef KEYWORD is not needed -- it's #undef-ed at the end of
-      // TokenKinds.def
-      return true;
-    default:
-      // All other tokens (punctuation etc) are not JS identifiers.
-      return false;
-    }
-  }
+//     switch (Tok.Tok.getKind()) {
+//       // Handle C++ keywords not included above: these are all JS identifiers.
+// #define KEYWORD(X, Y) case tok::kw_##X:
+// #include "latino/Basic/TokenKinds.def"
+//       // #undef KEYWORD is not needed -- it's #undef-ed at the end of
+//       // TokenKinds.def
+//       return true;
+//     default:
+//       // All other tokens (punctuation etc) are not JS identifiers.
+//       return false;
+//     }
+//   }
 
-  /// Returns \c true if \p Tok is a C# keyword, returns
-  /// \c false if it is a anything else.
-  bool isCSharpKeyword(const FormatToken &Tok) const {
-    switch (Tok.Tok.getKind()) {
-    case tok::kw_bool:
-    case tok::kw_romper:
-    case tok::kw_caso:
-    case tok::kw_atrapar:
-    case tok::kw_char:
-    case tok::kw_clase:
-    case tok::kw_const:
-    case tok::kw_continuar:
-    case tok::kw_otro:
-    case tok::kw_hacer:
-    case tok::kw_double:
-    case tok::kw_sino:
-    case tok::kw_enum:
-    case tok::kw_explicit:
-    case tok::kw_extern:
-    case tok::kw_false:
-    case tok::kw_float:
-    case tok::kw_desde:
-    case tok::kw_ir:
-    case tok::kw_si:
-    case tok::kw_int:
-    case tok::kw_long:
-    case tok::kw_contexto:
-    case tok::kw_nuevo:
-    case tok::kw_operador:
-    case tok::kw_pri:
-    case tok::kw_pro:
-    case tok::kw_pub:
-    case tok::kw_ret:
-    case tok::kw_short:
-    case tok::kw_sizeof:
-    case tok::kw_estatica:
-    case tok::kw_estructura:
-    case tok::kw_elegir:
-    case tok::kw_mi:
-    case tok::kw_lanzar:
-    case tok::kw_true:
-    case tok::kw_intentar:
-    case tok::kw_typeof:
-    case tok::kw_usar:
-    case tok::kw_virtual:
-    case tok::kw_void:
-    // case tok::kw_volatile:
-    case tok::kw_mientras:
-      return true;
-    default:
-      return Tok.is(tok::identifier) &&
-             CSharpExtraKeywords.find(Tok.Tok.getIdentifierInfo()) ==
-                 CSharpExtraKeywords.end();
-    }
-  }
+//   /// Returns \c true if \p Tok is a C# keyword, returns
+//   /// \c false if it is a anything else.
+//   bool isCSharpKeyword(const FormatToken &Tok) const {
+//     switch (Tok.Tok.getKind()) {
+//     case tok::kw_bool:
+//     case tok::kw_romper:
+//     case tok::kw_caso:
+//     case tok::kw_atrapar:
+//     case tok::kw_char:
+//     case tok::kw_clase:
+//     case tok::kw_const:
+//     case tok::kw_continuar:
+//     case tok::kw_otro:
+//     case tok::kw_hacer:
+//     case tok::kw_double:
+//     case tok::kw_sino:
+//     case tok::kw_enum:
+//     case tok::kw_explicit:
+//     case tok::kw_extern:
+//     case tok::kw_false:
+//     case tok::kw_float:
+//     case tok::kw_desde:
+//     case tok::kw_ir:
+//     case tok::kw_si:
+//     case tok::kw_int:
+//     case tok::kw_long:
+//     case tok::kw_contexto:
+//     case tok::kw_nuevo:
+//     case tok::kw_operador:
+//     case tok::kw_pri:
+//     case tok::kw_pro:
+//     case tok::kw_pub:
+//     case tok::kw_ret:
+//     case tok::kw_short:
+//     case tok::kw_sizeof:
+//     case tok::kw_estatica:
+//     case tok::kw_estructura:
+//     case tok::kw_elegir:
+//     case tok::kw_mi:
+//     case tok::kw_lanzar:
+//     case tok::kw_true:
+//     case tok::kw_intentar:
+//     case tok::kw_typeof:
+//     case tok::kw_usar:
+//     case tok::kw_virtual:
+//     case tok::kw_void:
+//     // case tok::kw_volatile:
+//     case tok::kw_mientras:
+//       return true;
+//     default:
+//       return Tok.is(tok::identifier) &&
+//              CSharpExtraKeywords.find(Tok.Tok.getIdentifierInfo()) ==
+//                  CSharpExtraKeywords.end();
+//     }
+//   }
 
-private:
-  /// The JavaScript keywords beyond the C++ keyword set.
-  std::unordered_set<IdentifierInfo *> JsExtraKeywords;
+// private:
+//   /// The JavaScript keywords beyond the C++ keyword set.
+//   std::unordered_set<IdentifierInfo *> JsExtraKeywords;
 
-  /// The C# keywords beyond the C++ keyword set
-  std::unordered_set<IdentifierInfo *> CSharpExtraKeywords;
-};
+//   /// The C# keywords beyond the C++ keyword set
+//   std::unordered_set<IdentifierInfo *> CSharpExtraKeywords;
+// };
 
 } // namespace format
 } // namespace latino

@@ -19,7 +19,7 @@
 #include "FormatInternal.h"
 #include "FormatTokenLexer.h"
 #include "NamespaceEndCommentsFixer.h"
-#include "SortJavaScriptImports.h"
+// #include "SortJavaScriptImports.h"
 #include "TokenAnalyzer.h"
 #include "TokenAnnotator.h"
 #include "UnwrappedLineFormatter.h"
@@ -1027,7 +1027,7 @@ FormatStyle getGoogleStyle(FormatStyle::LanguageKind Language) {
   GoogleStyle.PenaltyReturnTypeOnItsOwnLine = 200;
   GoogleStyle.PenaltyBreakBeforeFirstCallParameter = 1;
 
-  if (Language == FormatStyle::LK_Java) {
+  /*if (Language == FormatStyle::LK_Java) {
     GoogleStyle.AlignAfterOpenBracket = FormatStyle::BAS_DontAlign;
     GoogleStyle.AlignOperands = FormatStyle::OAS_DontAlign;
     GoogleStyle.AlignTrailingComments = false;
@@ -1057,7 +1057,7 @@ FormatStyle getGoogleStyle(FormatStyle::LanguageKind Language) {
     GoogleStyle.SpacesInContainerLiterals = false;
     GoogleStyle.JavaScriptQuotes = FormatStyle::JSQS_Single;
     GoogleStyle.JavaScriptWrapImports = false;
-  } else if (Language == FormatStyle::LK_Proto) {
+  } else*/ if (Language == FormatStyle::LK_Proto) {
     GoogleStyle.AllowShortFunctionsOnASingleLine = FormatStyle::SFS_Empty;
     GoogleStyle.AlwaysBreakBeforeMultilineStrings = false;
     GoogleStyle.SpacesInContainerLiterals = false;
@@ -1110,7 +1110,7 @@ FormatStyle getChromiumStyle(FormatStyle::LanguageKind Language) {
   ChromiumStyle.IncludeStyle.IncludeBlocks =
       tooling::IncludeStyle::IBS_Preserve;
 
-  if (Language == FormatStyle::LK_Java) {
+  /*if (Language == FormatStyle::LK_Java) {
     ChromiumStyle.AllowShortIfStatementsOnASingleLine =
         FormatStyle::SIS_WithoutElse;
     ChromiumStyle.BreakAfterJavaFieldAnnotations = true;
@@ -1134,7 +1134,7 @@ FormatStyle getChromiumStyle(FormatStyle::LanguageKind Language) {
   } else if (Language == FormatStyle::LK_JavaScript) {
     ChromiumStyle.AllowShortIfStatementsOnASingleLine = FormatStyle::SIS_Never;
     ChromiumStyle.AllowShortLoopsOnASingleLine = false;
-  } else {
+  } else*/ {
     ChromiumStyle.AllowAllParametersOfDeclarationOnNextLine = false;
     ChromiumStyle.AllowShortFunctionsOnASingleLine = FormatStyle::SFS_Inline;
     ChromiumStyle.AllowShortIfStatementsOnASingleLine = FormatStyle::SIS_Never;
@@ -1489,12 +1489,12 @@ public:
                   Env.getSourceManager().getBufferData(Env.getFileID()),
                   Style.UseCRLF)
             : Style.UseCRLF);
-    ContinuationIndenter Indenter(Style, Tokens.getKeywords(),
+    ContinuationIndenter Indenter(Style, /*Tokens.getKeywords(),*/
                                   Env.getSourceManager(), Whitespaces, Encoding,
                                   BinPackInconclusiveFunctions);
     unsigned Penalty =
         UnwrappedLineFormatter(&Indenter, &Whitespaces, Style,
-                               Tokens.getKeywords(), Env.getSourceManager(),
+                               /*Tokens.getKeywords(),*/ Env.getSourceManager(),
                                Status)
             .format(AnnotatedLines, /*DryRun=*/false,
                     /*AdditionalIndent=*/0,
@@ -2425,13 +2425,13 @@ tooling::Replacements sortIncludes(const FormatStyle &Style, StringRef Code,
     return Replaces;
   if (isLikelyXml(Code))
     return Replaces;
-  if (Style.Language == FormatStyle::LanguageKind::LK_JavaScript &&
-      isMpegTS(Code))
-    return Replaces;
-  if (Style.Language == FormatStyle::LanguageKind::LK_JavaScript)
-    return sortJavaScriptImports(Style, Code, Ranges, FileName);
-  if (Style.Language == FormatStyle::LanguageKind::LK_Java)
-    return sortJavaImports(Style, Code, Ranges, FileName, Replaces);
+  // if (Style.Language == FormatStyle::LanguageKind::LK_JavaScript &&
+  //     isMpegTS(Code))
+    // return Replaces;
+  // if (Style.Language == FormatStyle::LanguageKind::LK_JavaScript)
+  //   return sortJavaScriptImports(Style, Code, Ranges, FileName);
+  // if (Style.Language == FormatStyle::LanguageKind::LK_Java)
+  //   return sortJavaImports(Style, Code, Ranges, FileName, Replaces);
   sortCppIncludes(Style, Code, Ranges, FileName, Replaces, Cursor);
   return Replaces;
 }
@@ -2741,25 +2741,25 @@ const char *StyleOptionHelpDescription =
     "  -style=\"{BasedOnStyle: llvm, IndentWidth: 8}\"";
 
 static FormatStyle::LanguageKind getLanguageByFileName(StringRef FileName) {
-  if (FileName.endswith(".java"))
-    return FormatStyle::LK_Java;
-  if (FileName.endswith_lower(".js") || FileName.endswith_lower(".mjs") ||
-      FileName.endswith_lower(".ts"))
-    return FormatStyle::LK_JavaScript; // (module) JavaScript or TypeScript.
-  if (FileName.endswith(".m") || FileName.endswith(".mm"))
-    return FormatStyle::LK_ObjC;
-  if (FileName.endswith_lower(".proto") ||
-      FileName.endswith_lower(".protodevel"))
-    return FormatStyle::LK_Proto;
-  if (FileName.endswith_lower(".textpb") ||
-      FileName.endswith_lower(".pb.txt") ||
-      FileName.endswith_lower(".textproto") ||
-      FileName.endswith_lower(".asciipb"))
-    return FormatStyle::LK_TextProto;
+  // if (FileName.endswith(".java"))
+  //   return FormatStyle::LK_Java;
+  // if (FileName.endswith_lower(".js") || FileName.endswith_lower(".mjs") ||
+  //     FileName.endswith_lower(".ts"))
+  //   return FormatStyle::LK_JavaScript; // (module) JavaScript or TypeScript.
+  // if (FileName.endswith(".m") || FileName.endswith(".mm"))
+  //   return FormatStyle::LK_ObjC;
+  // if (FileName.endswith_lower(".proto") ||
+  //     FileName.endswith_lower(".protodevel"))
+  //   return FormatStyle::LK_Proto;
+  // if (FileName.endswith_lower(".textpb") ||
+  //     FileName.endswith_lower(".pb.txt") ||
+  //     FileName.endswith_lower(".textproto") ||
+  //     FileName.endswith_lower(".asciipb"))
+  //   return FormatStyle::LK_TextProto;
   if (FileName.endswith_lower(".td"))
     return FormatStyle::LK_TableGen;
-  if (FileName.endswith_lower(".cs"))
-    return FormatStyle::LK_CSharp;
+  // if (FileName.endswith_lower(".cs"))
+  //   return FormatStyle::LK_CSharp;
   return FormatStyle::LK_Cpp;
 }
 

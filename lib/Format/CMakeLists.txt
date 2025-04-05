@@ -8,7 +8,7 @@ add_latino_library(latinoFormat
   FormatToken.cpp
   FormatTokenLexer.cpp
   NamespaceEndCommentsFixer.cpp
-  SortJavaScriptImports.cpp
+  # SortJavaScriptImports.cpp
   TokenAnalyzer.cpp
   TokenAnnotator.cpp
   UnwrappedLineFormatter.cpp

@@ -75,7 +75,7 @@ class FormatTokenSource;
 class UnwrappedLineParser {
 public:
   UnwrappedLineParser(const FormatStyle &Style,
-                      const AdditionalKeywords &Keywords,
+                      // const AdditionalKeywords &Keywords,
                       unsigned FirstStartColumn, ArrayRef<FormatToken *> Tokens,
                       UnwrappedLineConsumer &Callback);
 
@@ -95,7 +95,7 @@ private:
   void parsePPElse();
   void parsePPEndIf();
   void parsePPUnknown();
-  void readTokenWithJavaScriptASI();
+  // void readTokenWithJavaScriptASI();
   void parseStructuralElement();
   bool tryToParseBracedList();
   bool parseBracedList(bool ContinueOnSemicolons = false, bool IsEnum = false,
@@ -123,9 +123,9 @@ private:
   // void parseObjCUntilAtEnd();
   // void parseObjCInterfaceOrImplementation();
   // bool parseObjCProtocol();
-  void parseJavaScriptEs6ImportExport();
+  // void parseJavaScriptEs6ImportExport();
   void parseStatementMacro();
-  void parseCSharpAttribute();
+  // void parseCSharpAttribute();
   // Parse a C# generic type constraint: `where T : IComparable<T>`.
   // See:
   // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/where-generic-type-constraint
@@ -210,7 +210,7 @@ private:
   std::vector<bool> DeclarationScopeStack;
 
   const FormatStyle &Style;
-  const AdditionalKeywords &Keywords;
+  // const AdditionalKeywords &Keywords;
 
   llvm::Regex CommentPragmasRegex;
 

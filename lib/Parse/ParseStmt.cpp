@@ -2365,28 +2365,28 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
 
   // Borland allows SEH-handlers with 'try'
 
-  if ((Tok.is(tok::identifier) &&
-       Tok.getIdentifierInfo() == getSEHExceptKeyword()) /*||
-      Tok.is(tok::kw___finally)*/) {
-    // TODO: Factor into common return ParseSEHHandlerCommon(...)
-    StmtResult Handler;
-    if(Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
-      SourceLocation Loc = ConsumeToken();
-      Handler = ParseSEHExceptBlock(Loc);
-    }
-    else {
-      SourceLocation Loc = ConsumeToken();
-      Handler = ParseSEHFinallyBlock(Loc);
-    }
-    if(Handler.isInvalid())
-      return Handler;
+  // if ((Tok.is(tok::identifier) &&
+  //      Tok.getIdentifierInfo() == getSEHExceptKeyword()) /*||
+  //     Tok.is(tok::kw___finally)*/) {
+  //   // TODO: Factor into common return ParseSEHHandlerCommon(...)
+  //   StmtResult Handler;
+  //   if(Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
+  //     SourceLocation Loc = ConsumeToken();
+  //     Handler = ParseSEHExceptBlock(Loc);
+  //   }
+  //   else {
+  //     SourceLocation Loc = ConsumeToken();
+  //     Handler = ParseSEHFinallyBlock(Loc);
+  //   }
+  //   if(Handler.isInvalid())
+  //     return Handler;
 
-    return Actions.ActOnSEHTryBlock(true /* IsCXXTry */,
-                                    TryLoc,
-                                    TryBlock.get(),
-                                    Handler.get());
-  }
-  else {
+  //   return Actions.ActOnSEHTryBlock(true /* IsCXXTry */,
+  //                                   TryLoc,
+  //                                   TryBlock.get(),
+  //                                   Handler.get());
+  // }
+  // else {
     StmtVector Handlers;
 
     // C++11 attributes can't appear here, despite this context seeming
@@ -2406,7 +2406,7 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
       return StmtError();
 
     return Actions.ActOnCXXTryBlock(TryLoc, TryBlock.get(), Handlers);
-  }
+  // }
 }
 
 /// ParseCXXCatchBlock - Parse a C++ catch block, called handler in the standard

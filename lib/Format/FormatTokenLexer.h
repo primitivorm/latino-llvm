@@ -44,7 +44,7 @@ public:
 
   ArrayRef<FormatToken *> lex();
 
-  const AdditionalKeywords &getKeywords() { return Keywords; }
+  // const AdditionalKeywords &getKeywords() { return Keywords; }
 
 private:
   void tryMergePreviousTokens();
@@ -106,7 +106,7 @@ private:
   FileID ID;
   const FormatStyle &Style;
   IdentifierTable &IdentTable;
-  AdditionalKeywords Keywords;
+  // AdditionalKeywords Keywords;
   encoding::Encoding Encoding;
   llvm::SpecificBumpPtrAllocator<FormatToken> &Allocator;
   // Index (in 'Tokens') of the last token that starts a new line.

@@ -6,18 +6,18 @@ add_latino_unittest(FormatTests
   CleanupTest.cpp
   FormatTest.cpp
   FormatTestComments.cpp
-  FormatTestCSharp.cpp
-  FormatTestJS.cpp
-  FormatTestJava.cpp
+  # FormatTestCSharp.cpp
+  # FormatTestJS.cpp
+  # FormatTestJava.cpp
   # FormatTestObjC.cpp
-  FormatTestProto.cpp
+  # FormatTestProto.cpp
   FormatTestRawStrings.cpp
   FormatTestSelective.cpp
   FormatTestTableGen.cpp
-  FormatTestTextProto.cpp
+  # FormatTestTextProto.cpp
   NamespaceEndCommentsFixerTest.cpp
-  SortImportsTestJS.cpp
-  SortImportsTestJava.cpp
+  # SortImportsTestJS.cpp
+  # SortImportsTestJava.cpp
   SortIncludesTest.cpp
   UsingDeclarationsSorterTest.cpp
   )

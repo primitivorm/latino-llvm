@@ -40,13 +40,13 @@ public:
 };
 } // end anonymous namespace
 
-IdentifierInfo *Parser::getSEHExceptKeyword() {
-  // __except is accepted as a (contextual) keyword
-  if (!Ident__except && (getLangOpts().MicrosoftExt || getLangOpts().Borland))
-    Ident__except = PP.getIdentifierInfo("__except");
+// IdentifierInfo *Parser::getSEHExceptKeyword() {
+//   // __except is accepted as a (contextual) keyword
+//   if (!Ident__except && (getLangOpts().MicrosoftExt || getLangOpts().Borland))
+//     Ident__except = PP.getIdentifierInfo("__except");
 
-  return Ident__except;
-}
+//   return Ident__except;
+// }
 
 Parser::Parser(Preprocessor &pp, Sema &actions, bool skipFunctionBodies)
   : PP(pp), Actions(actions), Diags(PP.getDiagnostics()),
@@ -58,7 +58,7 @@ Parser::Parser(Preprocessor &pp, Sema &actions, bool skipFunctionBodies)
   Tok.setKind(tok::eof);
   Actions.CurScope = nullptr;
   NumCachedScopes = 0;
-  CurParsedObjCImpl = nullptr;
+  // CurParsedObjCImpl = nullptr;
 
   // Add #pragma handlers. These are removed and destroyed in the
   // destructor.

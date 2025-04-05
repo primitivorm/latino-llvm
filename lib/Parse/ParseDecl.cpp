@@ -2314,7 +2314,7 @@ Decl *Parser::ParseDeclarationAfterDeclaratorAndAttributes(
                                    /*DirectInit=*/true);
     }
   } else if (getLangOpts().CPlusPlus11 && Tok.is(tok::l_brace) &&
-             (!CurParsedObjCImpl || !D.isFunctionDeclarator())) {
+             (/*!CurParsedObjCImpl ||*/ !D.isFunctionDeclarator())) {
     // Parse C++0x braced-init-list.
     Diag(Tok, diag::warn_cxx98_compat_generalized_initializer_lists);
 

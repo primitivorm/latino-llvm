@@ -224,7 +224,7 @@ class Parser : public CodeCompletionHandler {
   bool ColonIsSacred;
 
   /// Parsing OpenMP directive mode.
-  bool OpenMPDirectiveParsing = false;
+  // bool OpenMPDirectiveParsing = false;
 
   /// When true, we are directly inside an Objective-C message
   /// send expression.
@@ -372,7 +372,7 @@ class Parser : public CodeCompletionHandler {
         Locs.pop_back();
     }
 
-    /// Get the current enclosing expression that might hve been intended to be
+    /// Get the current enclosing expression that might have been intended to be
     /// a template name.
     Loc *getCurrent(Parser &P) {
       if (!Locs.empty() && Locs.back().isActive(P))
@@ -383,7 +383,7 @@ class Parser : public CodeCompletionHandler {
 
   AngleBracketTracker AngleBrackets;
 
-  IdentifierInfo *getSEHExceptKeyword();
+  // IdentifierInfo *getSEHExceptKeyword();
 
   /// True if we are within an Objective-C container while parsing C-like decls.
   ///
@@ -902,14 +902,14 @@ private:
   /// Returns true if the current token is the identifier 'instancetype'.
   ///
   /// Should only be used in Objective-C language modes.
-  bool isObjCInstancetype() {
-    assert(getLangOpts().ObjC);
-    if (Tok.isAnnotation())
-      return false;
-    if (!Ident_instancetype)
-      Ident_instancetype = PP.getIdentifierInfo("instancetype");
-    return Tok.getIdentifierInfo() == Ident_instancetype;
-  }
+  // bool isObjCInstancetype() {
+  //   assert(getLangOpts().ObjC);
+  //   if (Tok.isAnnotation())
+  //     return false;
+  //   if (!Ident_instancetype)
+  //     Ident_instancetype = PP.getIdentifierInfo("instancetype");
+  //   return Tok.getIdentifierInfo() == Ident_instancetype;
+  // }
 
   /// TryKeywordIdentFallback - For compatibility with system headers using
   /// keywords as identifiers, attempt to convert the current token to an
@@ -1151,7 +1151,7 @@ public:
 private:
   void SuggestParentheses(SourceLocation Loc, unsigned DK,
                           SourceRange ParenRange);
-  void CheckNestedObjCContexts(SourceLocation AtLoc);
+  // void CheckNestedObjCContexts(SourceLocation AtLoc);
 
 public:
 
@@ -1667,27 +1667,27 @@ private:
   // DeclGroupPtrTy ParseObjCAtProtocolDeclaration(SourceLocation atLoc,
   //                                               ParsedAttributes &prefixAttrs);
 
-  struct ObjCImplParsingDataRAII {
-    Parser &P;
-    Decl *Dcl;
-    bool HasCFunction;
-    typedef SmallVector<LexedMethod*, 8> LateParsedObjCMethodContainer;
-    LateParsedObjCMethodContainer LateParsedObjCMethods;
+  // struct ObjCImplParsingDataRAII {
+  //   Parser &P;
+  //   Decl *Dcl;
+  //   bool HasCFunction;
+  //   typedef SmallVector<LexedMethod*, 8> LateParsedObjCMethodContainer;
+  //   LateParsedObjCMethodContainer LateParsedObjCMethods;
 
-    ObjCImplParsingDataRAII(Parser &parser, Decl *D)
-      : P(parser), Dcl(D), HasCFunction(false) {
-      P.CurParsedObjCImpl = this;
-      Finished = false;
-    }
-    ~ObjCImplParsingDataRAII();
+  //   ObjCImplParsingDataRAII(Parser &parser, Decl *D)
+  //     : P(parser), Dcl(D), HasCFunction(false) {
+  //     P.CurParsedObjCImpl = this;
+  //     Finished = false;
+  //   }
+  //   ~ObjCImplParsingDataRAII();
 
-    void finish(SourceRange AtEnd);
-    bool isFinished() const { return Finished; }
+  //   void finish(SourceRange AtEnd);
+  //   bool isFinished() const { return Finished; }
 
-  private:
-    bool Finished;
-  };
-  ObjCImplParsingDataRAII *CurParsedObjCImpl;
+  // private:
+  //   bool Finished;
+  // };
+  // ObjCImplParsingDataRAII *CurParsedObjCImpl;
   // void StashAwayMethodOrFunctionBodyTokens(Decl *MDecl);
 
   // DeclGroupPtrTy ParseObjCAtImplementationDeclaration(SourceLocation AtLoc,

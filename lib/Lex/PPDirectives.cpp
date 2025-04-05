@@ -882,12 +882,12 @@ void Preprocessor::HandleSkippedDirectiveWhileUsingPCH(Token &Result,
         II->getPPKeywordID() == tok::pp_include) {
       return HandleIncludeDirective(HashLoc, Result);
     }
-    if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
-      Lex(Result);
-      auto *II = Result.getIdentifierInfo();
-      if (II && II->getName() == "hdrstop")
-        return HandlePragmaHdrstop(Result);
-    }
+    // if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
+    //   Lex(Result);
+    //   auto *II = Result.getIdentifierInfo();
+    //   if (II && II->getName() == "hdrstop")
+    //     return HandlePragmaHdrstop(Result);
+    // }
   }
   DiscardUntilEndOfDirective();
 }
@@ -938,7 +938,7 @@ void Preprocessor::HandleDirective(Token &Result) {
       case tok::pp_import:
       case tok::pp_include_next:
       case tok::pp___include_macros:
-      case tok::pp_pragma:
+      // case tok::pp_pragma:
         Diag(Result, diag::err_embedded_directive) << II->getName();
         Diag(*ArgMacro, diag::note_macro_expansion_here)
             << ArgMacro->getIdentifierInfo();
@@ -1017,8 +1017,8 @@ void Preprocessor::HandleDirective(Token &Result) {
       return HandleUserDiagnosticDirective(Result, false);
 
     // C99 6.10.6 - Pragma Directive.
-    case tok::pp_pragma:
-      return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
+    // case tok::pp_pragma:
+    //   return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
 
     // GNU Extensions.
     case tok::pp_import:

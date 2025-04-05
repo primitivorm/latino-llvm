@@ -128,5 +128,6 @@
         "hash_set": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
-    "esbonio.server.enabled": true
+    "esbonio.server.enabled": true,
+    "dotnet.defaultSolution": "build/latino.sln"
 }

@@ -156,8 +156,8 @@ private:
 /// \c UnwrappedLine.
 class TokenAnnotator {
 public:
-  TokenAnnotator(const FormatStyle &Style, const AdditionalKeywords &Keywords)
-      : Style(Style), Keywords(Keywords) {}
+  TokenAnnotator(const FormatStyle &Style/*, const AdditionalKeywords &Keywords*/)
+      : Style(Style)/*, Keywords(Keywords)*/ {}
 
   /// Adapts the indent levels of comment lines to the indent of the
   /// subsequent line.
@@ -191,7 +191,7 @@ private:
 
   const FormatStyle &Style;
 
-  const AdditionalKeywords &Keywords;
+  // const AdditionalKeywords &Keywords;
 };
 
 } // end namespace format

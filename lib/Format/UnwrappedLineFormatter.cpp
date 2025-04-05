@@ -38,9 +38,9 @@ bool startsExternCBlock(const AnnotatedLine &Line) {
 class LevelIndentTracker {
 public:
   LevelIndentTracker(const FormatStyle &Style,
-                     const AdditionalKeywords &Keywords, unsigned StartLevel,
+                     /*const AdditionalKeywords &Keywords,*/ unsigned StartLevel,
                      int AdditionalIndent)
-      : Style(Style), Keywords(Keywords), AdditionalIndent(AdditionalIndent) {
+      : Style(Style), /*Keywords(Keywords),*/ AdditionalIndent(AdditionalIndent) {
     for (unsigned i = 0; i != StartLevel; ++i)
       IndentForLevel.push_back(Style.IndentWidth * i + AdditionalIndent);
   }
@@ -95,13 +95,13 @@ private:
   /// For example, 'public:' labels in classes are offset by 1 or 2
   /// characters to the left from their level.
   int getIndentOffset(const FormatToken &RootToken) {
-    if (Style.Language == FormatStyle::LK_Java ||
-        Style.Language == FormatStyle::LK_JavaScript || Style.isCSharp())
-      return 0;
-    if (RootToken.isAccessSpecifier(false) ||
-        // RootToken.isObjCAccessSpecifier() ||
+    // if (Style.Language == FormatStyle::LK_Java ||
+    //     Style.Language == FormatStyle::LK_JavaScript || Style.isCSharp())
+    //   return 0;
+    if (RootToken.isAccessSpecifier(false) /*||
+        RootToken.isObjCAccessSpecifier() ||
         (RootToken.isOneOf(Keywords.kw_signals, Keywords.kw_qsignals) &&
-         RootToken.Next && RootToken.Next->is(tok::colon)))
+         RootToken.Next && RootToken.Next->is(tok::colon))*/)
       return Style.AccessModifierOffset;
     return 0;
   }
@@ -120,7 +120,7 @@ private:
   }
 
   const FormatStyle &Style;
-  const AdditionalKeywords &Keywords;
+  // const AdditionalKeywords &Keywords;
   const unsigned AdditionalIndent;
 
   /// The indent in characters for each level.
@@ -163,9 +163,9 @@ StringRef getMatchingNamespaceTokenText(
 
 class LineJoiner {
 public:
-  LineJoiner(const FormatStyle &Style, const AdditionalKeywords &Keywords,
+  LineJoiner(const FormatStyle &Style, const /*AdditionalKeywords &Keywords,*/
              const SmallVectorImpl<AnnotatedLine *> &Lines)
-      : Style(Style), Keywords(Keywords), End(Lines.end()), Next(Lines.begin()),
+      : Style(Style), /*Keywords(Keywords),*/ End(Lines.end()), Next(Lines.begin()),
         AnnotatedLines(Lines) {}
 
   /// Returns the next line, merging multiple lines into one if possible.
@@ -244,7 +244,7 @@ private:
       if (Tok && Tok->is(tok::kw_alias))
         Tok = Tok->getNextNonComment();
       if (Tok && Tok->isOneOf(tok::kw_clase, tok::kw_estructura, tok::kw_union,
-                              tok::kw_extern, Keywords.kw_interface))
+                              tok::kw_extern/*, Keywords.kw_interface*/))
         return !Style.BraceWrapping.SplitEmptyRecord && EmptyBlock
                    ? tryMergeSimpleBlock(I, E, Limit)
                    : 0;
@@ -514,9 +514,9 @@ private:
     // Don't merge ObjC @ keywords and methods.
     // FIXME: If an option to allow short exception handling clauses on a single
     // line is added, change this to not return for @try and friends.
-    if (Style.Language != FormatStyle::LK_Java &&
-        Line.First->isOneOf(tok::at, tok::minus, tok::plus))
-      return 0;
+    // if (Style.Language != FormatStyle::LK_Java &&
+    //     Line.First->isOneOf(tok::at, tok::minus, tok::plus))
+    //   return 0;
 
     // Check that the current line allows merging. This depends on whether we
     // are in a control flow statements as well as several style flags.
@@ -531,7 +531,7 @@ private:
     }
     if (Line.First->isOneOf(tok::kw_si, tok::kw_mientras, tok::kw_hacer, tok::kw_intentar,
                             /*tok::kw___try,*/ tok::kw_atrapar, /*tok::kw___finally,*/
-                            tok::kw_desde, tok::r_brace, Keywords.kw___except)) {
+                            tok::kw_desde, tok::r_brace/*, Keywords.kw___except*/)) {
       if (Style.AllowShortBlocksOnASingleLine == FormatStyle::SBS_Never)
         return 0;
       // Don't merge when we can't except the case when
@@ -563,8 +563,8 @@ private:
       // FIXME: This isn't covered by tests.
       // FIXME: For catch, __except, __finally the first token on the line
       // is '}', so this isn't correct here.
-      if (Line.First->isOneOf(tok::kw_intentar, /*tok::kw___try,*/ tok::kw_atrapar,
-                              Keywords.kw___except/*, tok::kw___finally*/))
+      if (Line.First->isOneOf(tok::kw_intentar, /*tok::kw___try,*/ tok::kw_atrapar/*,
+                              Keywords.kw___except, tok::kw___finally*/))
         return 0;
     }
 
@@ -584,13 +584,13 @@ private:
         // Skip record modifiers.
         while (RecordTok->Next &&
                RecordTok->isOneOf(
-                   tok::kw_alias, tok::kw_exportar, Keywords.kw_declare,
-                   Keywords.kw_abstract, tok::kw_otro, tok::kw_pub,
-                   tok::kw_pri, tok::kw_pro, Keywords.kw_internal))
+                   tok::kw_alias, tok::kw_exportar, /*Keywords.kw_declare,
+                   Keywords.kw_abstract,*/ tok::kw_otro, tok::kw_pub,
+                   tok::kw_pri, tok::kw_pro/*, Keywords.kw_internal*/))
           RecordTok = RecordTok->Next;
         if (RecordTok &&
-            RecordTok->isOneOf(tok::kw_clase, tok::kw_union, tok::kw_estructura,
-                               Keywords.kw_interface))
+            RecordTok->isOneOf(tok::kw_clase, tok::kw_union, tok::kw_estructura/*,
+                               Keywords.kw_interface*/))
           return 0;
 
         // Check that we still have three lines and they fit into the limit.
@@ -700,7 +700,7 @@ private:
   }
 
   const FormatStyle &Style;
-  const AdditionalKeywords &Keywords;
+  // const AdditionalKeywords &Keywords;
   const SmallVectorImpl<AnnotatedLine *>::const_iterator End;
 
   SmallVectorImpl<AnnotatedLine *>::const_iterator Next;
@@ -1060,7 +1060,7 @@ unsigned UnwrappedLineFormatter::format(
     const SmallVectorImpl<AnnotatedLine *> &Lines, bool DryRun,
     int AdditionalIndent, bool FixBadIndentation, unsigned FirstStartColumn,
     unsigned NextStartColumn, unsigned LastStartColumn) {
-  LineJoiner Joiner(Style, Keywords, Lines);
+  LineJoiner Joiner(Style, /*Keywords,*/ Lines);
 
   // Try to look up already computed penalty in DryRun-mode.
   std::pair<const SmallVectorImpl<AnnotatedLine *> *, unsigned> CacheKey(
@@ -1071,7 +1071,7 @@ unsigned UnwrappedLineFormatter::format(
 
   assert(!Lines.empty());
   unsigned Penalty = 0;
-  LevelIndentTracker IndentTracker(Style, Keywords, Lines[0]->Level,
+  LevelIndentTracker IndentTracker(Style, /*Keywords,*/ Lines[0]->Level,
                                    AdditionalIndent);
   const AnnotatedLine *PreviousLine = nullptr;
   const AnnotatedLine *NextLine = nullptr;
