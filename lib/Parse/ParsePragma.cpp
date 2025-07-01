@@ -82,11 +82,11 @@ struct PragmaRedefineExtnameHandler : public PragmaHandler {
                     Token &FirstToken) override;
 };
 
-// struct PragmaOpenCLExtensionHandler : public PragmaHandler {
-//   PragmaOpenCLExtensionHandler() : PragmaHandler("EXTENSION") {}
-//   void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
-//                     Token &FirstToken) override;
-// };
+struct PragmaOpenCLExtensionHandler : public PragmaHandler {
+  PragmaOpenCLExtensionHandler() : PragmaHandler("EXTENSION") {}
+  void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
+                    Token &FirstToken) override;
+};
 
 
 struct PragmaFPContractHandler : public PragmaHandler {
@@ -152,17 +152,17 @@ struct PragmaFPHandler : public PragmaHandler {
                     Token &FirstToken) override;
 };
 
-// struct PragmaNoOpenMPHandler : public PragmaHandler {
-//   PragmaNoOpenMPHandler() : PragmaHandler("omp") { }
-//   void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
-//                     Token &FirstToken) override;
-// };
+struct PragmaNoOpenMPHandler : public PragmaHandler {
+  PragmaNoOpenMPHandler() : PragmaHandler("omp") { }
+  void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
+                    Token &FirstToken) override;
+};
 
-// struct PragmaOpenMPHandler : public PragmaHandler {
-//   PragmaOpenMPHandler() : PragmaHandler("omp") { }
-//   void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
-//                     Token &FirstToken) override;
-// };
+struct PragmaOpenMPHandler : public PragmaHandler {
+  PragmaOpenMPHandler() : PragmaHandler("omp") { }
+  void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
+                    Token &FirstToken) override;
+};
 
 /// PragmaCommentHandler - "\#pragma comment ...".
 struct PragmaCommentHandler : public PragmaHandler {
@@ -324,17 +324,17 @@ void Parser::initializePragmaHandlers() {
   PCSectionHandler = std::make_unique<PragmaClangSectionHandler>(Actions);
   PP.AddPragmaHandler("latino", PCSectionHandler.get());
 
-  // if (getLangOpts().OpenCL) {
-  //   OpenCLExtensionHandler = std::make_unique<PragmaOpenCLExtensionHandler>();
-  //   PP.AddPragmaHandler("OPENCL", OpenCLExtensionHandler.get());
+  if (getLangOpts().OpenCL) {
+    OpenCLExtensionHandler = std::make_unique<PragmaOpenCLExtensionHandler>();
+    PP.AddPragmaHandler("OPENCL", OpenCLExtensionHandler.get());
 
-  //   PP.AddPragmaHandler("OPENCL", FPContractHandler.get());
-  // }
-  // if (getLangOpts().OpenMP)
-  //   OpenMPHandler = std::make_unique<PragmaOpenMPHandler>();
-  // else
-  //   OpenMPHandler = std::make_unique<PragmaNoOpenMPHandler>();
-  // PP.AddPragmaHandler(OpenMPHandler.get());
+    PP.AddPragmaHandler("OPENCL", FPContractHandler.get());
+  }
+  if (getLangOpts().OpenMP)
+    OpenMPHandler = std::make_unique<PragmaOpenMPHandler>();
+  else
+    OpenMPHandler = std::make_unique<PragmaNoOpenMPHandler>();
+  PP.AddPragmaHandler(OpenMPHandler.get());
 
   if (getLangOpts().MicrosoftExt ||
       getTargetInfo().getTriple().isOSBinFormatELF()) {
@@ -436,8 +436,8 @@ void Parser::resetPragmaHandlers() {
     OpenCLExtensionHandler.reset();
     PP.RemovePragmaHandler("OPENCL", FPContractHandler.get());
   }
-  // PP.RemovePragmaHandler(OpenMPHandler.get());
-  // OpenMPHandler.reset();
+  PP.RemovePragmaHandler(OpenMPHandler.get());
+  OpenMPHandler.reset();
 
   if (getLangOpts().MicrosoftExt ||
       getTargetInfo().getTriple().isOSBinFormatELF()) {
@@ -733,44 +733,44 @@ namespace {
   typedef std::pair<const IdentifierInfo *, OpenCLExtState> OpenCLExtData;
 }
 
-// void Parser::HandlePragmaOpenCLExtension() {
-//   assert(Tok.is(tok::annot_pragma_opencl_extension));
-//   OpenCLExtData *Data = static_cast<OpenCLExtData*>(Tok.getAnnotationValue());
-//   auto State = Data->second;
-//   auto Ident = Data->first;
-//   SourceLocation NameLoc = Tok.getLocation();
-//   ConsumeAnnotationToken();
+void Parser::HandlePragmaOpenCLExtension() {
+  assert(Tok.is(tok::annot_pragma_opencl_extension));
+  OpenCLExtData *Data = static_cast<OpenCLExtData*>(Tok.getAnnotationValue());
+  auto State = Data->second;
+  auto Ident = Data->first;
+  SourceLocation NameLoc = Tok.getLocation();
+  ConsumeAnnotationToken();
 
-//   auto &Opt = Actions.getOpenCLOptions();
-//   auto Name = Ident->getName();
-//   // OpenCL 1.1 9.1: "The all variant sets the behavior for all extensions,
-//   // overriding all previously issued extension directives, but only if the
-//   // behavior is set to disable."
-//   if (Name == "all") {
-//     if (State == Disable) {
-//       Opt.disableAll();
-//       Opt.enableSupportedCore(getLangOpts());
-//     } else {
-//       PP.Diag(NameLoc, diag::warn_pragma_expected_predicate) << 1;
-//     }
-//   } else if (State == Begin) {
-//     if (!Opt.isKnown(Name) || !Opt.isSupported(Name, getLangOpts())) {
-//       Opt.support(Name);
-//     }
-//     Actions.setCurrentOpenCLExtension(Name);
-//   } else if (State == End) {
-//     if (Name != Actions.getCurrentOpenCLExtension())
-//       PP.Diag(NameLoc, diag::warn_pragma_begin_end_mismatch);
-//     Actions.setCurrentOpenCLExtension("");
-//   } else if (!Opt.isKnown(Name))
-//     PP.Diag(NameLoc, diag::warn_pragma_unknown_extension) << Ident;
-//   else if (Opt.isSupportedExtension(Name, getLangOpts()))
-//     Opt.enable(Name, State == Enable);
-//   else if (Opt.isSupportedCore(Name, getLangOpts()))
-//     PP.Diag(NameLoc, diag::warn_pragma_extension_is_core) << Ident;
-//   else
-//     PP.Diag(NameLoc, diag::warn_pragma_unsupported_extension) << Ident;
-// }
+  auto &Opt = Actions.getOpenCLOptions();
+  auto Name = Ident->getName();
+  // OpenCL 1.1 9.1: "The all variant sets the behavior for all extensions,
+  // overriding all previously issued extension directives, but only if the
+  // behavior is set to disable."
+  if (Name == "all") {
+    if (State == Disable) {
+      Opt.disableAll();
+      Opt.enableSupportedCore(getLangOpts());
+    } else {
+      PP.Diag(NameLoc, diag::warn_pragma_expected_predicate) << 1;
+    }
+  } else if (State == Begin) {
+    if (!Opt.isKnown(Name) || !Opt.isSupported(Name, getLangOpts())) {
+      Opt.support(Name);
+    }
+    Actions.setCurrentOpenCLExtension(Name);
+  } else if (State == End) {
+    if (Name != Actions.getCurrentOpenCLExtension())
+      PP.Diag(NameLoc, diag::warn_pragma_begin_end_mismatch);
+    Actions.setCurrentOpenCLExtension("");
+  } else if (!Opt.isKnown(Name))
+    PP.Diag(NameLoc, diag::warn_pragma_unknown_extension) << Ident;
+  else if (Opt.isSupportedExtension(Name, getLangOpts()))
+    Opt.enable(Name, State == Enable);
+  else if (Opt.isSupportedCore(Name, getLangOpts()))
+    PP.Diag(NameLoc, diag::warn_pragma_extension_is_core) << Ident;
+  else
+    PP.Diag(NameLoc, diag::warn_pragma_unsupported_extension) << Ident;
+}
 
 void Parser::HandlePragmaMSPointersToMembers() {
   assert(Tok.is(tok::annot_pragma_ms_pointers_to_members));
@@ -1481,10 +1481,10 @@ void Parser::HandlePragmaAttribute() {
     ConsumeToken();
   };
 
-  if (Tok.is(tok::l_square) && NextToken().is(tok::l_square)) {
+  /*if (Tok.is(tok::l_square) && NextToken().is(tok::l_square)) {
     // Parse the CXX11 style attribute.
     ParseCXX11AttributeSpecifier(Attrs);
-  } else if (Tok.is(tok::kw___attribute)) {
+  } else*/ if (Tok.is(tok::kw___attribute)) {
     ConsumeToken();
     if (ExpectAndConsume(tok::l_paren, diag::err_expected_lparen_after,
                          "attribute"))
@@ -2180,124 +2180,124 @@ void PragmaFPContractHandler::HandlePragma(Preprocessor &PP,
                       /*IsReinject=*/false);
 }
 
-// void PragmaOpenCLExtensionHandler::HandlePragma(Preprocessor &PP,
-//                                                 PragmaIntroducer Introducer,
-//                                                 Token &Tok) {
-//   PP.LexUnexpandedToken(Tok);
-//   if (Tok.isNot(tok::identifier)) {
-//     PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_identifier) <<
-//       "OPENCL";
-//     return;
-//   }
-//   IdentifierInfo *Ext = Tok.getIdentifierInfo();
-//   SourceLocation NameLoc = Tok.getLocation();
+void PragmaOpenCLExtensionHandler::HandlePragma(Preprocessor &PP,
+                                                PragmaIntroducer Introducer,
+                                                Token &Tok) {
+  PP.LexUnexpandedToken(Tok);
+  if (Tok.isNot(tok::identifier)) {
+    PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_identifier) <<
+      "OPENCL";
+    return;
+  }
+  IdentifierInfo *Ext = Tok.getIdentifierInfo();
+  SourceLocation NameLoc = Tok.getLocation();
 
-//   PP.Lex(Tok);
-//   if (Tok.isNot(tok::colon)) {
-//     PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_colon) << Ext;
-//     return;
-//   }
+  PP.Lex(Tok);
+  if (Tok.isNot(tok::colon)) {
+    PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_colon) << Ext;
+    return;
+  }
 
-//   PP.Lex(Tok);
-//   if (Tok.isNot(tok::identifier)) {
-//     PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_predicate) << 0;
-//     return;
-//   }
-//   IdentifierInfo *Pred = Tok.getIdentifierInfo();
+  PP.Lex(Tok);
+  if (Tok.isNot(tok::identifier)) {
+    PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_predicate) << 0;
+    return;
+  }
+  IdentifierInfo *Pred = Tok.getIdentifierInfo();
 
-//   OpenCLExtState State;
-//   if (Pred->isStr("enable")) {
-//     State = Enable;
-//   } else if (Pred->isStr("disable")) {
-//     State = Disable;
-//   } else if (Pred->isStr("begin"))
-//     State = Begin;
-//   else if (Pred->isStr("end"))
-//     State = End;
-//   else {
-//     PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_predicate)
-//       << Ext->isStr("all");
-//     return;
-//   }
-//   SourceLocation StateLoc = Tok.getLocation();
+  OpenCLExtState State;
+  if (Pred->isStr("enable")) {
+    State = Enable;
+  } else if (Pred->isStr("disable")) {
+    State = Disable;
+  } else if (Pred->isStr("begin"))
+    State = Begin;
+  else if (Pred->isStr("end"))
+    State = End;
+  else {
+    PP.Diag(Tok.getLocation(), diag::warn_pragma_expected_predicate)
+      << Ext->isStr("all");
+    return;
+  }
+  SourceLocation StateLoc = Tok.getLocation();
 
-//   PP.Lex(Tok);
-//   if (Tok.isNot(tok::eod)) {
-//     PP.Diag(Tok.getLocation(), diag::warn_pragma_extra_tokens_at_eol) <<
-//       "OPENCL EXTENSION";
-//     return;
-//   }
+  PP.Lex(Tok);
+  if (Tok.isNot(tok::eod)) {
+    PP.Diag(Tok.getLocation(), diag::warn_pragma_extra_tokens_at_eol) <<
+      "OPENCL EXTENSION";
+    return;
+  }
 
-//   auto Info = PP.getPreprocessorAllocator().Allocate<OpenCLExtData>(1);
-//   Info->first = Ext;
-//   Info->second = State;
-//   MutableArrayRef<Token> Toks(PP.getPreprocessorAllocator().Allocate<Token>(1),
-//                               1);
-//   Toks[0].startToken();
-//   Toks[0].setKind(tok::annot_pragma_opencl_extension);
-//   Toks[0].setLocation(NameLoc);
-//   Toks[0].setAnnotationValue(static_cast<void*>(Info));
-//   Toks[0].setAnnotationEndLoc(StateLoc);
-//   PP.EnterTokenStream(Toks, /*DisableMacroExpansion=*/true,
-//                       /*IsReinject=*/false);
+  auto Info = PP.getPreprocessorAllocator().Allocate<OpenCLExtData>(1);
+  Info->first = Ext;
+  Info->second = State;
+  MutableArrayRef<Token> Toks(PP.getPreprocessorAllocator().Allocate<Token>(1),
+                              1);
+  Toks[0].startToken();
+  Toks[0].setKind(tok::annot_pragma_opencl_extension);
+  Toks[0].setLocation(NameLoc);
+  Toks[0].setAnnotationValue(static_cast<void*>(Info));
+  Toks[0].setAnnotationEndLoc(StateLoc);
+  PP.EnterTokenStream(Toks, /*DisableMacroExpansion=*/true,
+                      /*IsReinject=*/false);
 
-//   if (PP.getPPCallbacks())
-//     PP.getPPCallbacks()->PragmaOpenCLExtension(NameLoc, Ext,
-//                                                StateLoc, State);
-// }
+  if (PP.getPPCallbacks())
+    PP.getPPCallbacks()->PragmaOpenCLExtension(NameLoc, Ext,
+                                               StateLoc, State);
+}
 
 /// Handle '#pragma omp ...' when OpenMP is disabled.
 ///
-// void PragmaNoOpenMPHandler::HandlePragma(Preprocessor &PP,
-//                                          PragmaIntroducer Introducer,
-//                                          Token &FirstTok) {
-//   if (!PP.getDiagnostics().isIgnored(diag::warn_pragma_omp_ignored,
-//                                      FirstTok.getLocation())) {
-//     PP.Diag(FirstTok, diag::warn_pragma_omp_ignored);
-//     PP.getDiagnostics().setSeverity(diag::warn_pragma_omp_ignored,
-//                                     diag::Severity::Ignored, SourceLocation());
-//   }
-//   PP.DiscardUntilEndOfDirective();
-// }
+void PragmaNoOpenMPHandler::HandlePragma(Preprocessor &PP,
+                                         PragmaIntroducer Introducer,
+                                         Token &FirstTok) {
+  if (!PP.getDiagnostics().isIgnored(diag::warn_pragma_omp_ignored,
+                                     FirstTok.getLocation())) {
+    PP.Diag(FirstTok, diag::warn_pragma_omp_ignored);
+    PP.getDiagnostics().setSeverity(diag::warn_pragma_omp_ignored,
+                                    diag::Severity::Ignored, SourceLocation());
+  }
+  PP.DiscardUntilEndOfDirective();
+}
 
 /// Handle '#pragma omp ...' when OpenMP is enabled.
 ///
-// void PragmaOpenMPHandler::HandlePragma(Preprocessor &PP,
-//                                        PragmaIntroducer Introducer,
-//                                        Token &FirstTok) {
-//   SmallVector<Token, 16> Pragma;
-//   Token Tok;
-//   Tok.startToken();
-//   Tok.setKind(tok::annot_pragma_openmp);
-//   Tok.setLocation(Introducer.Loc);
+void PragmaOpenMPHandler::HandlePragma(Preprocessor &PP,
+                                       PragmaIntroducer Introducer,
+                                       Token &FirstTok) {
+  SmallVector<Token, 16> Pragma;
+  Token Tok;
+  Tok.startToken();
+  Tok.setKind(tok::annot_pragma_openmp);
+  Tok.setLocation(Introducer.Loc);
 
-//   while (Tok.isNot(tok::eod) && Tok.isNot(tok::eof)) {
-//     Pragma.push_back(Tok);
-//     PP.Lex(Tok);
-//     if (Tok.is(tok::annot_pragma_openmp)) {
-//       PP.Diag(Tok, diag::err_omp_unexpected_directive) << 0;
-//       unsigned InnerPragmaCnt = 1;
-//       while (InnerPragmaCnt != 0) {
-//         PP.Lex(Tok);
-//         if (Tok.is(tok::annot_pragma_openmp))
-//           ++InnerPragmaCnt;
-//         else if (Tok.is(tok::annot_pragma_openmp_end))
-//           --InnerPragmaCnt;
-//       }
-//       PP.Lex(Tok);
-//     }
-//   }
-//   SourceLocation EodLoc = Tok.getLocation();
-//   Tok.startToken();
-//   Tok.setKind(tok::annot_pragma_openmp_end);
-//   Tok.setLocation(EodLoc);
-//   Pragma.push_back(Tok);
+  while (Tok.isNot(tok::eod) && Tok.isNot(tok::eof)) {
+    Pragma.push_back(Tok);
+    PP.Lex(Tok);
+    if (Tok.is(tok::annot_pragma_openmp)) {
+      PP.Diag(Tok, diag::err_omp_unexpected_directive) << 0;
+      unsigned InnerPragmaCnt = 1;
+      while (InnerPragmaCnt != 0) {
+        PP.Lex(Tok);
+        if (Tok.is(tok::annot_pragma_openmp))
+          ++InnerPragmaCnt;
+        else if (Tok.is(tok::annot_pragma_openmp_end))
+          --InnerPragmaCnt;
+      }
+      PP.Lex(Tok);
+    }
+  }
+  SourceLocation EodLoc = Tok.getLocation();
+  Tok.startToken();
+  Tok.setKind(tok::annot_pragma_openmp_end);
+  Tok.setLocation(EodLoc);
+  Pragma.push_back(Tok);
 
-//   auto Toks = std::make_unique<Token[]>(Pragma.size());
-//   std::copy(Pragma.begin(), Pragma.end(), Toks.get());
-//   PP.EnterTokenStream(std::move(Toks), Pragma.size(),
-//                       /*DisableMacroExpansion=*/false, /*IsReinject=*/false);
-// }
+  auto Toks = std::make_unique<Token[]>(Pragma.size());
+  std::copy(Pragma.begin(), Pragma.end(), Toks.get());
+  PP.EnterTokenStream(std::move(Toks), Pragma.size(),
+                      /*DisableMacroExpansion=*/false, /*IsReinject=*/false);
+}
 
 /// Handle '#pragma pointers_to_members'
 // The grammar for this pragma is as follows:
@@ -3309,11 +3309,11 @@ void PragmaForceCUDAHostDeviceHandler::HandlePragma(
     return;
   }
 
-  if (Info->isStr("begin"))
-    Actions.PushForceCUDAHostDevice();
-  else if (!Actions.PopForceCUDAHostDevice())
-    PP.Diag(FirstTok.getLocation(),
-            diag::err_pragma_cannot_end_force_cuda_host_device);
+  // if (Info->isStr("begin"))
+  //   Actions.PushForceCUDAHostDevice();
+  // else if (!Actions.PopForceCUDAHostDevice())
+  //   PP.Diag(FirstTok.getLocation(),
+  //           diag::err_pragma_cannot_end_force_cuda_host_device);
 
   PP.Lex(Tok);
   if (!Tok.is(tok::eod))

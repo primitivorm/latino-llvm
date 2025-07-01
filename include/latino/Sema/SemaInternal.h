@@ -42,12 +42,12 @@ FTIHasNonVoidParameters(const DeclaratorChunk::FunctionTypeInfo &FTI) {
 // Decls with mismatched attributes and related diagnostics may have to be
 // ignored during this CUDA compilation pass.
 inline bool DeclAttrsMatchCUDAMode(const LangOptions &LangOpts, Decl *D) {
-  if (!LangOpts.CUDA || !D)
-    return true;
-  bool isDeviceSideDecl = D->hasAttr<CUDADeviceAttr>() ||
-                          D->hasAttr<CUDASharedAttr>() ||
-                          D->hasAttr<CUDAGlobalAttr>();
-  return isDeviceSideDecl == LangOpts.CUDAIsDevice;
+ if (!LangOpts.CUDA || !D)
+   return true;
+ bool isDeviceSideDecl = D->hasAttr<CUDADeviceAttr>() ||
+                         D->hasAttr<CUDASharedAttr>() ||
+                         D->hasAttr<CUDAGlobalAttr>();
+ return isDeviceSideDecl == LangOpts.CUDAIsDevice;
 }
 
 /// Return a DLL attribute from the declaration.

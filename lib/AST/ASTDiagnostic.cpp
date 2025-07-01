@@ -343,7 +343,7 @@ void latino::FormatASTNodeDiagnosticArgument(
 
       auto S = Qualifiers::getAddrSpaceAsString(static_cast<LangAS>(Val));
       if (S.empty()) {
-        OS << (/*Context.getLangOpts().OpenCL ? "default" :*/ "generic");
+        OS << (Context.getLangOpts().OpenCL ? "default" : "generic");
         OS << " address space";
       } else {
         OS << "address space";

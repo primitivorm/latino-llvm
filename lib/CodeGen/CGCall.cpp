@@ -1985,20 +1985,20 @@ void CodeGenModule::ConstructAttributeList(
                                  NumElemsParam);
     }
 
-    // if (TargetDecl->hasAttr<OpenCLKernelAttr>()) {
-    //   if (getLangOpts().OpenCLVersion <= 120) {
-    //     // OpenCL v1.2 Work groups are always uniform
-    //     FuncAttrs.addAttribute("uniform-work-group-size", "true");
-    //   } else {
-    //     // OpenCL v2.0 Work groups may be whether uniform or not.
-    //     // '-cl-uniform-work-group-size' compile option gets a hint
-    //     // to the compiler that the global work-size be a multiple of
-    //     // the work-group size specified to clEnqueueNDRangeKernel
-    //     // (i.e. work groups are uniform).
-    //     FuncAttrs.addAttribute("uniform-work-group-size",
-    //                            llvm::toStringRef(CodeGenOpts.UniformWGSize));
-    //   }
-    // }
+    if (TargetDecl->hasAttr<OpenCLKernelAttr>()) {
+      if (getLangOpts().OpenCLVersion <= 120) {
+        // OpenCL v1.2 Work groups are always uniform
+        FuncAttrs.addAttribute("uniform-work-group-size", "true");
+      } else {
+        // OpenCL v2.0 Work groups may be whether uniform or not.
+        // '-cl-uniform-work-group-size' compile option gets a hint
+        // to the compiler that the global work-size be a multiple of
+        // the work-group size specified to clEnqueueNDRangeKernel
+        // (i.e. work groups are uniform).
+        FuncAttrs.addAttribute("uniform-work-group-size",
+                               llvm::toStringRef(CodeGenOpts.UniformWGSize));
+      }
+    }
   }
 
   // Attach "no-builtins" attributes to:
@@ -4457,20 +4457,20 @@ RValue CodeGenFunction::EmitCall(const CGFunctionInfo &CallInfo,
               (LV.getAlignment() < getContext().getTypeAlignInChars(I->Ty))) {
             NeedCopy = true;
           }
-          // if (!getLangOpts().OpenCL) {
+          if (!getLangOpts().OpenCL) {
             if ((ArgInfo.getIndirectByVal() &&
                 (AS != LangAS::Default &&
                  AS != CGM.getASTAllocaAddressSpace()))) {
               NeedCopy = true;
             }
-          // }
+          }
           // For OpenCL even if RV is located in default or alloca address space
           // we don't want to perform address space cast for it.
-          // else if ((ArgInfo.getIndirectByVal() &&
-          //           Addr.getType()->getAddressSpace() != IRFuncTy->
-          //             getParamType(FirstIRArg)->getPointerAddressSpace())) {
-          //   NeedCopy = true;
-          // }
+          else if ((ArgInfo.getIndirectByVal() &&
+                    Addr.getType()->getAddressSpace() != IRFuncTy->
+                      getParamType(FirstIRArg)->getPointerAddressSpace())) {
+            NeedCopy = true;
+          }
         }
 
         if (NeedCopy) {

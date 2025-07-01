@@ -698,34 +698,34 @@ void USRGenerator::VisitType(QualType T) {
           c = 'K'; break;
         case BuiltinType::Int128:
           c = 'J'; break;
-        // case BuiltinType::Float16:
-        // case BuiltinType::Half:
-        //   c = 'h'; break;
+        case BuiltinType::Float16:
+        case BuiltinType::Half:
+          c = 'h'; break;
         case BuiltinType::Float:
           c = 'f'; break;
         case BuiltinType::Double:
           c = 'd'; break;
         case BuiltinType::LongDouble:
           c = 'D'; break;
-        // case BuiltinType::Float128:
-        //   c = 'Q'; break;
+        case BuiltinType::Float128:
+          c = 'Q'; break;
         case BuiltinType::NullPtr:
           c = 'n'; break;
 #define BUILTIN_TYPE(Id, SingletonId)
 #define PLACEHOLDER_TYPE(Id, SingletonId) case BuiltinType::Id:
 #include "latino/AST/BuiltinTypes.def"
         case BuiltinType::Dependent:
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//         case BuiltinType::Id:
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//         case BuiltinType::Id:
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-        // case BuiltinType::OCLEvent:
-        // case BuiltinType::OCLClkEvent:
-        // case BuiltinType::OCLQueue:
-        // case BuiltinType::OCLReserveID:
-        // case BuiltinType::OCLSampler:
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+        case BuiltinType::Id:
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+        case BuiltinType::Id:
+#include "latino/Basic/OpenCLExtensionTypes.def"
+        case BuiltinType::OCLEvent:
+        case BuiltinType::OCLClkEvent:
+        case BuiltinType::OCLQueue:
+        case BuiltinType::OCLReserveID:
+        case BuiltinType::OCLSampler:
 #define SVE_TYPE(Name, Id, SingletonId) \
         case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"

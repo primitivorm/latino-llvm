@@ -1,5 +1,5 @@
 # establecer path donde se instalo visual studio
-$vs_path = 'C:\Program Files\Microsoft Visual Studio\2022\Community'
+$vs_path = 'C:\Program Files\Microsoft Visual Studio\2022\Professional'
 
 $directorio_actual = Get-Location
 

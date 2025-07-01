@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-// #include "CGOpenMPRuntime.h"
+#include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
@@ -526,7 +526,7 @@ ComplexPairTy ComplexExprEmitter::EmitCast(CastKind CK, Expr *Op,
   case CK_BuiltinFnToFnPtr:
   case CK_ZeroToOCLOpaqueType:
   case CK_AddressSpaceConversion:
-  // case CK_IntToOCLSampler:
+  case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:
@@ -1143,9 +1143,9 @@ LValue CodeGenFunction::EmitComplexAssignmentLValue(const BinaryOperator *E) {
   assert(E->getOpcode() == BO_Assign);
   ComplexPairTy Val; // ignored
   LValue LVal = ComplexExprEmitter(*this).EmitBinAssignLValue(E, Val);
-  // if (getLangOpts().OpenMP)
-  //   CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(*this,
-  //                                                             E->getLHS());
+  if (getLangOpts().OpenMP)
+    CGM.getOpenMPRuntime().checkAndEmitLastprivateConditional(*this,
+                                                              E->getLHS());
   return LVal;
 }
 

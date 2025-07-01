@@ -111,7 +111,7 @@ class alignas(IdentifierInfoAlignment) IdentifierInfo {
   unsigned IsModulesImport : 1;
 
   // True if this is a mangled OpenMP variant name.
-  // unsigned IsMangledOpenMPVariantName : 1;
+  unsigned IsMangledOpenMPVariantName : 1;
 
   // 28 bits left in a 64-bit word.
 
@@ -126,7 +126,7 @@ class alignas(IdentifierInfoAlignment) IdentifierInfo {
         IsPoisoned(false), IsCPPOperatorKeyword(false),
         NeedsHandleIdentifier(false), IsFromAST(false), ChangedAfterLoad(false),
         FEChangedAfterLoad(false), RevertedTokenID(false), OutOfDate(false),
-        IsModulesImport(false)/*, IsMangledOpenMPVariantName(false)*/ {}
+        IsModulesImport(false), IsMangledOpenMPVariantName(false) {}
 
 public:
   IdentifierInfo(const IdentifierInfo &) = delete;
@@ -365,10 +365,10 @@ public:
   }
 
   /// Determine whether this is the mangled name of an OpenMP variant.
-  // bool isMangledOpenMPVariantName() const { return IsMangledOpenMPVariantName; }
+  bool isMangledOpenMPVariantName() const { return IsMangledOpenMPVariantName; }
 
   /// Set whether this is the mangled name of an OpenMP variant.
-  // void setMangledOpenMPVariantName(bool I) { IsMangledOpenMPVariantName = I; }
+  void setMangledOpenMPVariantName(bool I) { IsMangledOpenMPVariantName = I; }
 
   /// Return true if this identifier is an editor placeholder.
   ///

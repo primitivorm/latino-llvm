@@ -1172,20 +1172,20 @@ static char GetTrigraphCharForLetter(char Letter) {
 /// prefixed with ??, emit a trigraph warning.  If trigraphs are enabled,
 /// return the result character.  Finally, emit a warning about trigraph use
 /// whether trigraphs are enabled or not.
-static char DecodeTrigraphChar(const char *CP, Lexer *L) {
-  char Res = GetTrigraphCharForLetter(*CP);
-  if (!Res || !L) return Res;
+// static char DecodeTrigraphChar(const char *CP, Lexer *L) {
+//   char Res = GetTrigraphCharForLetter(*CP);
+//   if (!Res || !L) return Res;
 
-  if (!L->getLangOpts().Trigraphs) {
-    if (!L->isLexingRawMode())
-      L->Diag(CP-2, diag::trigraph_ignored);
-    return 0;
-  }
+//   if (!L->getLangOpts().Trigraphs) {
+//     if (!L->isLexingRawMode())
+//       L->Diag(CP-2, diag::trigraph_ignored);
+//     return 0;
+//   }
 
-  if (!L->isLexingRawMode())
-    L->Diag(CP-2, diag::trigraph_converted) << StringRef(&Res, 1);
-  return Res;
-}
+//   if (!L->isLexingRawMode())
+//     L->Diag(CP-2, diag::trigraph_converted) << StringRef(&Res, 1);
+//   return Res;
+// }
 
 /// getEscapedNewLineSize - Return the size of the specified escaped newline,
 /// or 0 if it is not an escaped newline. P[-1] is known to be a "\" or a
@@ -1347,19 +1347,19 @@ Slash:
   }
 
   // If this is a trigraph, process it.
-  if (Ptr[0] == '?' && Ptr[1] == '?') {
-    // If this is actually a legal trigraph (not something like "??x"), emit
-    // a trigraph warning.  If so, and if trigraphs are enabled, return it.
-    if (char C = DecodeTrigraphChar(Ptr+2, Tok ? this : nullptr)) {
-      // Remember that this token needs to be cleaned.
-      if (Tok) Tok->setFlag(Token::NeedsCleaning);
+  // if (Ptr[0] == '?' && Ptr[1] == '?') {
+  //   // If this is actually a legal trigraph (not something like "??x"), emit
+  //   // a trigraph warning.  If so, and if trigraphs are enabled, return it.
+  //   if (char C = DecodeTrigraphChar(Ptr+2, Tok ? this : nullptr)) {
+  //     // Remember that this token needs to be cleaned.
+  //     if (Tok) Tok->setFlag(Token::NeedsCleaning);
 
-      Ptr += 3;
-      Size += 3;
-      if (C == '\\') goto Slash;
-      return C;
-    }
-  }
+  //     Ptr += 3;
+  //     Size += 3;
+  //     if (C == '\\') goto Slash;
+  //     return C;
+  //   }
+  // }
 
   // If this is neither, return a single character.
   ++Size;
@@ -1397,16 +1397,16 @@ Slash:
   }
 
   // If this is a trigraph, process it.
-  if (LangOpts.Trigraphs && Ptr[0] == '?' && Ptr[1] == '?') {
-    // If this is actually a legal trigraph (not something like "??x"), return
-    // it.
-    if (char C = GetTrigraphCharForLetter(Ptr[2])) {
-      Ptr += 3;
-      Size += 3;
-      if (C == '\\') goto Slash;
-      return C;
-    }
-  }
+  // if (LangOpts.Trigraphs && Ptr[0] == '?' && Ptr[1] == '?') {
+  //   // If this is actually a legal trigraph (not something like "??x"), return
+  //   // it.
+  //   if (char C = GetTrigraphCharForLetter(Ptr[2])) {
+  //     Ptr += 3;
+  //     Size += 3;
+  //     if (C == '\\') goto Slash;
+  //     return C;
+  //   }
+  // }
 
   // If this is neither, return a single character.
   ++Size;
@@ -2288,10 +2288,10 @@ bool Lexer::SkipLineComment(Token &Result, const char *CurPtr,
       if (*EscapePtr == '\\')
         // Escaped newline.
         CurPtr = EscapePtr;
-      else if (EscapePtr[0] == '/' && EscapePtr[-1] == '?' &&
-               EscapePtr[-2] == '?' && LangOpts.Trigraphs)
-        // Trigraph-escaped newline.
-        CurPtr = EscapePtr-2;
+      // else if (EscapePtr[0] == '/' && EscapePtr[-1] == '?' &&
+      //          EscapePtr[-2] == '?' && LangOpts.Trigraphs)
+      //   // Trigraph-escaped newline.
+      //   CurPtr = EscapePtr-2;
       else
         break; // This is a newline, we're done.
 
@@ -2456,13 +2456,13 @@ static bool isEndOfBlockCommentWithEscapedNewLine(const char *CurPtr,
 
     // If no trigraphs are enabled, warn that we ignored this trigraph and
     // ignore this * character.
-    if (!L->getLangOpts().Trigraphs) {
-      if (!L->isLexingRawMode())
-        L->Diag(CurPtr, diag::trigraph_ignored_block_comment);
-      return false;
-    }
-    if (!L->isLexingRawMode())
-      L->Diag(CurPtr, diag::trigraph_ends_block_comment);
+    // if (!L->getLangOpts().Trigraphs) {
+    //   if (!L->isLexingRawMode())
+    //     L->Diag(CurPtr, diag::trigraph_ignored_block_comment);
+    //   return false;
+    // }
+    // if (!L->isLexingRawMode())
+    //   L->Diag(CurPtr, diag::trigraph_ends_block_comment);
   }
 
   // Warn about having an escaped newline between the */ characters.
@@ -3642,7 +3642,7 @@ LexNextToken:
     if (Char == '=') {
       Kind = tok::percentequal;
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
-    } else if (LangOpts.Digraphs && Char == '>') {
+    } /*else if (LangOpts.Digraphs && Char == '>') {
       Kind = tok::r_brace;                             // '%>' -> '}'
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
     } else if (LangOpts.Digraphs && Char == ':') {
@@ -3667,7 +3667,7 @@ LexNextToken:
 
         Kind = tok::hash;
       }
-    } else {
+    }*/ else {
       Kind = tok::percent;
     }
     break;
@@ -3689,11 +3689,11 @@ LexNextToken:
         // If this is '<<<<' and we're in a Perforce-style conflict marker,
         // ignore it.
         goto LexNextToken;
-      } else if (LangOpts.CUDA && After == '<') {
+      }/* else if (LangOpts.CUDA && After == '<') {
         Kind = tok::lesslessless;
         CurPtr = ConsumeChar(ConsumeChar(CurPtr, SizeTmp, Result),
                              SizeTmp2, Result);
-      } else {
+      } */else {
         CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
         Kind = tok::lessless;
       }
@@ -3718,7 +3718,7 @@ LexNextToken:
       }
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
       Kind = tok::lessequal;
-    } else if (LangOpts.Digraphs && Char == ':') {     // '<:' -> '['
+    } /*else if (LangOpts.Digraphs && Char == ':') {     // '<:' -> '['
       if (LangOpts.CPlusPlus11 &&
           getCharAndSize(CurPtr + SizeTmp, SizeTmp2) == ':') {
         // C++0x [lex.pptoken]p3:
@@ -3741,7 +3741,7 @@ LexNextToken:
     } else if (LangOpts.Digraphs && Char == '%') {     // '<%' -> '{'
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
       Kind = tok::l_brace;
-    } else if (Char == '#' && /*Not a trigraph*/ SizeTmp == 1 &&
+    }*/ else if (Char == '#' && /*Not a trigraph*/ SizeTmp == 1 &&
                lexEditorPlaceholder(Result, CurPtr)) {
       return true;
     } else {
@@ -3766,11 +3766,11 @@ LexNextToken:
       } else if (After == '>' && HandleEndOfConflictMarker(CurPtr-1)) {
         // If this is '>>>>>>>' and we're in a conflict marker, ignore it.
         goto LexNextToken;
-      } else if (LangOpts.CUDA && After == '>') {
+      } /*else if (LangOpts.CUDA && After == '>') {
         Kind = tok::greatergreatergreater;
         CurPtr = ConsumeChar(ConsumeChar(CurPtr, SizeTmp, Result),
                              SizeTmp2, Result);
-      } else {
+      } */else {
         CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
         Kind = tok::greatergreater;
       }
@@ -3807,7 +3807,7 @@ LexNextToken:
     break;
   case ':':
     Char = getCharAndSize(CurPtr, SizeTmp);
-    if (LangOpts.Digraphs && Char == '>') {
+    /*if (LangOpts.Digraphs && Char == '>') {
       Kind = tok::r_square; // ':>' -> ']'
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
     } else if ((LangOpts.CPlusPlus ||
@@ -3815,9 +3815,9 @@ LexNextToken:
                Char == ':') {
       Kind = tok::coloncolon;
       CurPtr = ConsumeChar(CurPtr, SizeTmp, Result);
-    } else {
+    } else {*/
       Kind = tok::colon;
-    }
+    // }
     break;
   case ';':
     Kind = tok::semi;

@@ -609,8 +609,8 @@ void darwin::Linker::ConstructJob(Compilation &C, const JobAction &JA,
     InputFileList.push_back(II.getFilename());
   }
 
-  // if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs))
-  //   addOpenMPRuntime(CmdArgs, getToolChain(), Args);
+  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs))
+    addOpenMPRuntime(CmdArgs, getToolChain(), Args);
 
   // if (isObjCRuntimeLinked(Args) &&
   //     !Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {

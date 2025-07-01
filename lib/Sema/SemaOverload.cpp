@@ -1932,7 +1932,7 @@ static bool IsStandardConversion(Sema &S, Expr* From, QualType ToType,
     // tryAtomicConversion has updated the standard conversion sequence
     // appropriately.
     return true;
-  } /*else if (ToType->isEventT() &&
+  } else if (ToType->isEventT() &&
              From->isIntegerConstantExpr(S.getASTContext()) &&
              From->EvaluateKnownConstInt(S.getASTContext()) == 0) {
     SCS.Second = ICK_Zero_Event_Conversion;
@@ -1946,7 +1946,7 @@ static bool IsStandardConversion(Sema &S, Expr* From, QualType ToType,
              From->isIntegerConstantExpr(S.getASTContext())) {
     SCS.Second = ICK_Compatible_Conversion;
     FromType = ToType;
-  }*/ else {
+  } else {
     // No second conversion required.
     SCS.Second = ICK_Identity;
   }
@@ -2233,8 +2233,8 @@ bool Sema::IsFloatingPointPromotion(QualType FromType, QualType ToType) {
       if (!getLangOpts().CPlusPlus &&
           (FromBuiltin->getKind() == BuiltinType::Float ||
            FromBuiltin->getKind() == BuiltinType::Double) &&
-          (ToBuiltin->getKind() == BuiltinType::LongDouble /*||
-           ToBuiltin->getKind() == BuiltinType::Float128*/))
+          (ToBuiltin->getKind() == BuiltinType::LongDouble ||
+           ToBuiltin->getKind() == BuiltinType::Float128))
         return true;
 
       // Half can be promoted to float.
@@ -3649,7 +3649,7 @@ Sema::DiagnoseMultipleUserDefinedConversion(Expr *From, QualType ToType) {
 static ImplicitConversionSequence::CompareKind
 compareConversionFunctions(Sema &S, FunctionDecl *Function1,
                            FunctionDecl *Function2) {
-  if (!S.getLangOpts().ObjC || !S.getLangOpts().CPlusPlus11)
+  if (/*!S.getLangOpts().ObjC ||*/ !S.getLangOpts().CPlusPlus11)
     return ImplicitConversionSequence::Indistinguishable;
 
   // Objective-C++:
@@ -6374,11 +6374,11 @@ void Sema::AddOverloadCandidate(
     return;
   }
 
-  // if (LangOpts.OpenCL && isOpenCLDisabledDecl(Function)) {
-  //   Candidate.Viable = false;
-  //   Candidate.FailureKind = ovl_fail_ext_disabled;
-  //   return;
-  // }
+  if (LangOpts.OpenCL && isOpenCLDisabledDecl(Function)) {
+    Candidate.Viable = false;
+    Candidate.FailureKind = ovl_fail_ext_disabled;
+    return;
+  }
 }
 
 // ObjCMethodDecl *
@@ -10951,13 +10951,13 @@ static void DiagnoseFailedExplicitSpec(Sema &S, OverloadCandidate *Cand) {
       << (ES.getExpr() ? ES.getExpr()->getSourceRange() : SourceRange());
 }
 
-// static void DiagnoseOpenCLExtensionDisabled(Sema &S, OverloadCandidate *Cand) {
-//   FunctionDecl *Callee = Cand->Function;
+static void DiagnoseOpenCLExtensionDisabled(Sema &S, OverloadCandidate *Cand) {
+  FunctionDecl *Callee = Cand->Function;
 
-//   S.Diag(Callee->getLocation(),
-//          diag::note_ovl_candidate_disabled_by_extension)
-//     << S.getOpenCLExtensionsFromDeclExtMap(Callee);
-// }
+  S.Diag(Callee->getLocation(),
+         diag::note_ovl_candidate_disabled_by_extension)
+    << S.getOpenCLExtensionsFromDeclExtMap(Callee);
+}
 
 /// Generates a 'note' diagnostic for an overload candidate.  We've
 /// already generated a primary error at the call site.
@@ -11052,8 +11052,8 @@ static void NoteFunctionCandidate(Sema &S, OverloadCandidate *Cand,
   case ovl_fail_explicit:
     return DiagnoseFailedExplicitSpec(S, Cand);
 
-  // case ovl_fail_ext_disabled:
-  //   return DiagnoseOpenCLExtensionDisabled(S, Cand);
+  case ovl_fail_ext_disabled:
+    return DiagnoseOpenCLExtensionDisabled(S, Cand);
 
   case ovl_fail_inhctor_slice:
     // It's generally not interesting to note copy/move constructors here.

@@ -118,7 +118,7 @@ struct MSGuidDeclParts;
 // class ObjCPropertyImplDecl;
 // class ObjCProtocolDecl;
 // class ObjCTypeParamDecl;
-// class OMPTraitInfo;
+class OMPTraitInfo;
 struct ParsedTargetAttr;
 class Preprocessor;
 class Stmt;
@@ -975,16 +975,16 @@ public:
   CanQualType PseudoObjectTy, ARCUnbridgedCastTy;
   // CanQualType ObjCBuiltinIdTy, ObjCBuiltinClassTy, ObjCBuiltinSelTy;
   // CanQualType ObjCBuiltinBoolTy;
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   CanQualType SingletonId;
-// #include "latino/Basic/OpenCLImageTypes.def"
-  // CanQualType OCLSamplerTy, OCLEventTy, OCLClkEventTy;
-  // CanQualType OCLQueueTy, OCLReserveIDTy;
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  CanQualType SingletonId;
+#include "latino/Basic/OpenCLImageTypes.def"
+  CanQualType OCLSamplerTy, OCLEventTy, OCLClkEventTy;
+  CanQualType OCLQueueTy, OCLReserveIDTy;
   CanQualType IncompleteMatrixIdxTy;
-  CanQualType /*OMPArraySectionTy, OMPArrayShapingTy,*/ OMPIteratorTy;
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   CanQualType Id##Ty;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+  CanQualType OMPArraySectionTy, OMPArrayShapingTy, OMPIteratorTy;
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  CanQualType Id##Ty;
+#include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   CanQualType SingletonId;
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -1223,10 +1223,10 @@ public:
   QualType getBlockDescriptorExtendedType() const;
 
   /// Map an AST Type to an OpenCLTypeKind enum value.
-  // OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;
+  OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;
 
   /// Get address space for OpenCL type.
-  // LangAS getOpenCLTypeAddrSpace(const Type *T) const;
+  LangAS getOpenCLTypeAddrSpace(const Type *T) const;
 
   void setcudaConfigureCallDecl(FunctionDecl *FD) {
     cudaConfigureCallDecl = FD;
@@ -2070,7 +2070,7 @@ public:
   TypeInfo getTypeInfo(QualType T) const { return getTypeInfo(T.getTypePtr()); }
 
   /// Get default simd alignment of the specified complete type in bits.
-  // unsigned getOpenMPDefaultSimdAlign(QualType T) const;
+  unsigned getOpenMPDefaultSimdAlign(QualType T) const;
 
   /// Return the size of the specified (complete) type \p T, in bits.
   uint64_t getTypeSize(QualType T) const { return getTypeInfo(T).Width; }
@@ -3032,12 +3032,12 @@ public:
   llvm::StringMap<SectionInfo> SectionInfos;
 
   /// Return a new OMPTraitInfo object owned by this context.
-  // OMPTraitInfo &getNewOMPTraitInfo();
+  OMPTraitInfo &getNewOMPTraitInfo();
 
-// private:
+private:
   /// All OMPTraitInfo objects live in this collection, one per
   /// `pragma omp [begin] declare variant` directive.
-  // SmallVector<std::unique_ptr<OMPTraitInfo>, 4> OMPTraitInfoVector;
+  SmallVector<std::unique_ptr<OMPTraitInfo>, 4> OMPTraitInfoVector;
 };
 
 /// Insertion operator for diagnostics.

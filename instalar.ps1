@@ -1,5 +1,5 @@
 # establecer path donde se instalo visual studio
-$vs_path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community'
+$vs_path = 'C:\Program Files\Microsoft Visual Studio\2022\Professional'
 
 $directorio_actual = Get-Location
 
@@ -14,7 +14,7 @@ if (!(Test-Path -Path $directorio_actual\build)) {
 Set-Location build
 
 # Agregar -Thost=x64 para forzar a compilar para x64
-cmake -G "Visual Studio 16 2019" -DLLVM_TARGETS_TO_BUILD=host `
+cmake -G "Visual Studio 17 2022" -DLLVM_TARGETS_TO_BUILD=host `
     -DCMAKE_BUILD_TYPE=Release ..\
 
 # ejecuta msbuild en modo Release

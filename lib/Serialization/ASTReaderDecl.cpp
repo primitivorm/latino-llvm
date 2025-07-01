@@ -21,7 +21,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
 #include "latino/AST/DeclarationName.h"
@@ -29,7 +29,7 @@
 #include "latino/AST/ExternalASTSource.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
-// #include "latino/AST/OpenMPClause.h"
+#include "latino/AST/OpenMPClause.h"
 #include "latino/AST/Redeclarable.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/TemplateBase.h"
@@ -441,12 +441,12 @@ namespace latino {
     // void VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D);
     // void VisitObjCPropertyDecl(ObjCPropertyDecl *D);
     // void VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
-    // void VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D);
-    // void VisitOMPAllocateDecl(OMPAllocateDecl *D);
-    // void VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D);
-    // void VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D);
-    // void VisitOMPRequiresDecl(OMPRequiresDecl *D);
-    // void VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D);
+    void VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D);
+    void VisitOMPAllocateDecl(OMPAllocateDecl *D);
+    void VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D);
+    void VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D);
+    void VisitOMPRequiresDecl(OMPRequiresDecl *D);
+    void VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D);
   };
 
 } // namespace latino
@@ -505,9 +505,9 @@ uint64_t ASTDeclReader::GetCurrentCursorOffset() {
 void ASTDeclReader::ReadFunctionDefinition(FunctionDecl *FD) {
   if (Record.readInt()) {
     Reader.DefinitionSource[FD] = Loc.F->Kind == ModuleKind::MK_MainFile;
-    if (Reader.getContext().getLangOpts().BuildingPCHWithObjectFile &&
-        Reader.DeclIsFromPCHWithObjectFile(FD))
-      Reader.DefinitionSource[FD] = true;
+    // if (Reader.getContext().getLangOpts().BuildingPCHWithObjectFile &&
+    //     Reader.DeclIsFromPCHWithObjectFile(FD))
+    //   Reader.DefinitionSource[FD] = true;
   }
   if (auto *CD = dyn_cast<CXXConstructorDecl>(FD)) {
     CD->setNumCtorInitializers(Record.readInt());
@@ -1437,9 +1437,9 @@ ASTDeclReader::RedeclarableResult ASTDeclReader::VisitVarDeclImpl(VarDecl *VD) {
 
   if (VD->getStorageDuration() == SD_Static && Record.readInt()) {
     Reader.DefinitionSource[VD] = Loc.F->Kind == ModuleKind::MK_MainFile;
-    if (Reader.getContext().getLangOpts().BuildingPCHWithObjectFile &&
-        Reader.DeclIsFromPCHWithObjectFile(VD))
-      Reader.DefinitionSource[VD] = true;
+    // if (Reader.getContext().getLangOpts().BuildingPCHWithObjectFile &&
+    //     Reader.DeclIsFromPCHWithObjectFile(VD))
+    //   Reader.DefinitionSource[VD] = true;
   }
 
   enum VarKind {
@@ -1701,9 +1701,9 @@ void ASTDeclReader::ReadCXXDefinitionData(
 
   if (Record.readInt()) {
     Reader.DefinitionSource[D] = Loc.F->Kind == ModuleKind::MK_MainFile;
-    if (Reader.getContext().getLangOpts().BuildingPCHWithObjectFile &&
-        Reader.DeclIsFromPCHWithObjectFile(D))
-      Reader.DefinitionSource[D] = true;
+    // if (Reader.getContext().getLangOpts().BuildingPCHWithObjectFile &&
+    //     Reader.DeclIsFromPCHWithObjectFile(D))
+    //   Reader.DefinitionSource[D] = true;
   }
 
   Data.NumBases = Record.readInt();
@@ -2654,79 +2654,79 @@ void ASTDeclReader::mergeMergeable(Mergeable<T> *D) {
                                                Existing->getCanonicalDecl());
 }
 
-// void ASTDeclReader::VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D) {
-//   VisitDecl(D);
-//   unsigned NumVars = D->varlist_size();
-//   SmallVector<Expr *, 16> Vars;
-//   Vars.reserve(NumVars);
-//   for (unsigned i = 0; i != NumVars; ++i) {
-//     Vars.push_back(Record.readExpr());
-//   }
-//   D->setVars(Vars);
-// }
+void ASTDeclReader::VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D) {
+  VisitDecl(D);
+  unsigned NumVars = D->varlist_size();
+  SmallVector<Expr *, 16> Vars;
+  Vars.reserve(NumVars);
+  for (unsigned i = 0; i != NumVars; ++i) {
+    Vars.push_back(Record.readExpr());
+  }
+  D->setVars(Vars);
+}
 
-// void ASTDeclReader::VisitOMPAllocateDecl(OMPAllocateDecl *D) {
-//   VisitDecl(D);
-//   unsigned NumVars = D->varlist_size();
-//   unsigned NumClauses = D->clauselist_size();
-//   SmallVector<Expr *, 16> Vars;
-//   Vars.reserve(NumVars);
-//   for (unsigned i = 0; i != NumVars; ++i) {
-//     Vars.push_back(Record.readExpr());
-//   }
-//   D->setVars(Vars);
-//   SmallVector<OMPClause *, 8> Clauses;
-//   Clauses.reserve(NumClauses);
-//   for (unsigned I = 0; I != NumClauses; ++I)
-//     Clauses.push_back(Record.readOMPClause());
-//   D->setClauses(Clauses);
-// }
+void ASTDeclReader::VisitOMPAllocateDecl(OMPAllocateDecl *D) {
+  VisitDecl(D);
+  unsigned NumVars = D->varlist_size();
+  unsigned NumClauses = D->clauselist_size();
+  SmallVector<Expr *, 16> Vars;
+  Vars.reserve(NumVars);
+  for (unsigned i = 0; i != NumVars; ++i) {
+    Vars.push_back(Record.readExpr());
+  }
+  D->setVars(Vars);
+  SmallVector<OMPClause *, 8> Clauses;
+  Clauses.reserve(NumClauses);
+  for (unsigned I = 0; I != NumClauses; ++I)
+    Clauses.push_back(Record.readOMPClause());
+  D->setClauses(Clauses);
+}
 
-// void ASTDeclReader::VisitOMPRequiresDecl(OMPRequiresDecl * D) {
-//   VisitDecl(D);
-//   unsigned NumClauses = D->clauselist_size();
-//   SmallVector<OMPClause *, 8> Clauses;
-//   Clauses.reserve(NumClauses);
-//   for (unsigned I = 0; I != NumClauses; ++I)
-//     Clauses.push_back(Record.readOMPClause());
-//   D->setClauses(Clauses);
-// }
+void ASTDeclReader::VisitOMPRequiresDecl(OMPRequiresDecl * D) {
+  VisitDecl(D);
+  unsigned NumClauses = D->clauselist_size();
+  SmallVector<OMPClause *, 8> Clauses;
+  Clauses.reserve(NumClauses);
+  for (unsigned I = 0; I != NumClauses; ++I)
+    Clauses.push_back(Record.readOMPClause());
+  D->setClauses(Clauses);
+}
 
-// void ASTDeclReader::VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D) {
-//   VisitValueDecl(D);
-//   D->setLocation(readSourceLocation());
-//   Expr *In = Record.readExpr();
-//   Expr *Out = Record.readExpr();
-//   D->setCombinerData(In, Out);
-//   Expr *Combiner = Record.readExpr();
-//   D->setCombiner(Combiner);
-//   Expr *Orig = Record.readExpr();
-//   Expr *Priv = Record.readExpr();
-//   D->setInitializerData(Orig, Priv);
-//   Expr *Init = Record.readExpr();
-//   auto IK = static_cast<OMPDeclareReductionDecl::InitKind>(Record.readInt());
-//   D->setInitializer(Init, IK);
-//   D->PrevDeclInScope = readDeclID();
-// }
+void ASTDeclReader::VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D) {
+  VisitValueDecl(D);
+  D->setLocation(readSourceLocation());
+  Expr *In = Record.readExpr();
+  Expr *Out = Record.readExpr();
+  D->setCombinerData(In, Out);
+  Expr *Combiner = Record.readExpr();
+  D->setCombiner(Combiner);
+  Expr *Orig = Record.readExpr();
+  Expr *Priv = Record.readExpr();
+  D->setInitializerData(Orig, Priv);
+  Expr *Init = Record.readExpr();
+  auto IK = static_cast<OMPDeclareReductionDecl::InitKind>(Record.readInt());
+  D->setInitializer(Init, IK);
+  D->PrevDeclInScope = readDeclID();
+}
 
-// void ASTDeclReader::VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D) {
-//   VisitValueDecl(D);
-//   D->setLocation(readSourceLocation());
-//   Expr *MapperVarRefE = Record.readExpr();
-//   D->setMapperVarRef(MapperVarRefE);
-//   D->VarName = Record.readDeclarationName();
-//   D->PrevDeclInScope = readDeclID();
-//   unsigned NumClauses = D->clauselist_size();
-//   SmallVector<OMPClause *, 8> Clauses;
-//   Clauses.reserve(NumClauses);
-//   for (unsigned I = 0; I != NumClauses; ++I)
-//     Clauses.push_back(Record.readOMPClause());
-//   D->setClauses(Clauses);
-// }
+void ASTDeclReader::VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D) {
+  VisitValueDecl(D);
+  D->setLocation(readSourceLocation());
+  Expr *MapperVarRefE = Record.readExpr();
+  D->setMapperVarRef(MapperVarRefE);
+  D->VarName = Record.readDeclarationName();
+  D->PrevDeclInScope = readDeclID();
+  unsigned NumClauses = D->clauselist_size();
+  SmallVector<OMPClause *, 8> Clauses;
+  Clauses.reserve(NumClauses);
+  for (unsigned I = 0; I != NumClauses; ++I)
+    Clauses.push_back(Record.readOMPClause());
+  D->setClauses(Clauses);
+}
 
-// void ASTDeclReader::VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D) {
-//   VisitVarDecl(D);
-// }
+void ASTDeclReader::VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D) {
+  VisitVarDecl(D);
+}
 
 //===----------------------------------------------------------------------===//
 // Attribute Reading
@@ -2769,7 +2769,7 @@ public:
     return Reader.readVersionTuple();
   }
 
-  // OMPTraitInfo *readOMPTraitInfo() { return Reader.readOMPTraitInfo(); }
+  OMPTraitInfo *readOMPTraitInfo() { return Reader.readOMPTraitInfo(); }
 
   template <typename T> T *GetLocalDeclAs(uint32_t LocalID) {
     return Reader.GetLocalDeclAs<T>(LocalID);
@@ -2854,14 +2854,14 @@ static bool isConsumerInterestedIn(ASTContext &Ctx, Decl *D, bool HasBody) {
       isa<PragmaCommentDecl>(D) ||
       isa<PragmaDetectMismatchDecl>(D))
     return true;
-  // if (isa<OMPThreadPrivateDecl>(D) || isa<OMPDeclareReductionDecl>(D) ||
-  //     isa<OMPDeclareMapperDecl>(D) || isa<OMPAllocateDecl>(D) ||
-  //     isa<OMPRequiresDecl>(D))
-  //   return !D->getDeclContext()->isFunctionOrMethod();
+  if (isa<OMPThreadPrivateDecl>(D) || isa<OMPDeclareReductionDecl>(D) ||
+      isa<OMPDeclareMapperDecl>(D) || isa<OMPAllocateDecl>(D) ||
+      isa<OMPRequiresDecl>(D))
+    return !D->getDeclContext()->isFunctionOrMethod();
   if (const auto *Var = dyn_cast<VarDecl>(D))
     return Var->isFileVarDecl() &&
-           (Var->isThisDeclarationADefinition() == VarDecl::Definition /*||
-            OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(Var)*/);
+           (Var->isThisDeclarationADefinition() == VarDecl::Definition ||
+            OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(Var));
   if (const auto *Func = dyn_cast<FunctionDecl>(D))
     return Func->doesThisDeclarationHaveABody() || HasBody;
 
@@ -4010,27 +4010,27 @@ Decl *ASTReader::ReadDeclRecord(DeclID ID) {
     // locations.
     D = ImportDecl::CreateDeserialized(Context, ID, Record.back());
     break;
-  // case DECL_OMP_THREADPRIVATE:
-  //   D = OMPThreadPrivateDecl::CreateDeserialized(Context, ID, Record.readInt());
-  //   break;
-  // case DECL_OMP_ALLOCATE: {
-  //   unsigned NumVars = Record.readInt();
-  //   unsigned NumClauses = Record.readInt();
-  //   D = OMPAllocateDecl::CreateDeserialized(Context, ID, NumVars, NumClauses);
-  //   break;
-  // }
-  // case DECL_OMP_REQUIRES:
-  //   D = OMPRequiresDecl::CreateDeserialized(Context, ID, Record.readInt());
-  //   break;
-  // case DECL_OMP_DECLARE_REDUCTION:
-  //   D = OMPDeclareReductionDecl::CreateDeserialized(Context, ID);
-  //   break;
-  // case DECL_OMP_DECLARE_MAPPER:
-  //   D = OMPDeclareMapperDecl::CreateDeserialized(Context, ID, Record.readInt());
-  //   break;
-  // case DECL_OMP_CAPTUREDEXPR:
-  //   D = OMPCapturedExprDecl::CreateDeserialized(Context, ID);
-  //   break;
+  case DECL_OMP_THREADPRIVATE:
+    D = OMPThreadPrivateDecl::CreateDeserialized(Context, ID, Record.readInt());
+    break;
+  case DECL_OMP_ALLOCATE: {
+    unsigned NumVars = Record.readInt();
+    unsigned NumClauses = Record.readInt();
+    D = OMPAllocateDecl::CreateDeserialized(Context, ID, NumVars, NumClauses);
+    break;
+  }
+  case DECL_OMP_REQUIRES:
+    D = OMPRequiresDecl::CreateDeserialized(Context, ID, Record.readInt());
+    break;
+  case DECL_OMP_DECLARE_REDUCTION:
+    D = OMPDeclareReductionDecl::CreateDeserialized(Context, ID);
+    break;
+  case DECL_OMP_DECLARE_MAPPER:
+    D = OMPDeclareMapperDecl::CreateDeserialized(Context, ID, Record.readInt());
+    break;
+  case DECL_OMP_CAPTUREDEXPR:
+    D = OMPCapturedExprDecl::CreateDeserialized(Context, ID);
+    break;
   case DECL_PRAGMA_COMMENT:
     D = PragmaCommentDecl::CreateDeserialized(Context, ID, Record.readInt());
     break;
@@ -4666,16 +4666,16 @@ void ASTDeclReader::UpdateDecl(Decl *D,
       break;
     }
 
-    // case UPD_DECL_MARKED_OPENMP_DECLARETARGET: {
-    //   OMPDeclareTargetDeclAttr::MapTypeTy MapType =
-    //       static_cast<OMPDeclareTargetDeclAttr::MapTypeTy>(Record.readInt());
-    //   OMPDeclareTargetDeclAttr::DevTypeTy DevType =
-    //       static_cast<OMPDeclareTargetDeclAttr::DevTypeTy>(Record.readInt());
-    //   D->addAttr(OMPDeclareTargetDeclAttr::CreateImplicit(
-    //       Reader.getContext(), MapType, DevType, readSourceRange(),
-    //       AttributeCommonInfo::AS_Pragma));
-    //   break;
-    // }
+    case UPD_DECL_MARKED_OPENMP_DECLARETARGET: {
+      OMPDeclareTargetDeclAttr::MapTypeTy MapType =
+          static_cast<OMPDeclareTargetDeclAttr::MapTypeTy>(Record.readInt());
+      OMPDeclareTargetDeclAttr::DevTypeTy DevType =
+          static_cast<OMPDeclareTargetDeclAttr::DevTypeTy>(Record.readInt());
+      D->addAttr(OMPDeclareTargetDeclAttr::CreateImplicit(
+          Reader.getContext(), MapType, DevType, readSourceRange(),
+          AttributeCommonInfo::AS_Pragma));
+      break;
+    }
 
     case UPD_ADDED_ATTR_TO_RECORD:
       AttrVec Attrs;

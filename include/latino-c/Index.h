@@ -2161,7 +2161,7 @@ enum CXCursorKind {
 
   /** Represents the "self" expression in an Objective-C method.
    */
-  CXCursor_ObjCSelfExpr = 146,
+  // CXCursor_ObjCSelfExpr = 146,
 
   /** OpenMP 5.0 [2.1.5, Array Section].
    */

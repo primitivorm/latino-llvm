@@ -14,7 +14,7 @@
 // #include "latino/AST/DeclObjC.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-// #include "latino/AST/ExprOpenMP.h"
+#include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/TypeLoc.h"
 #include "latino/Basic/CharInfo.h"
 #include "latino/Basic/SourceManager.h"
@@ -1413,8 +1413,8 @@ void InitListChecker::CheckSubElementType(const InitializedEntity &Entity,
     // Fall through for subaggregate initialization.
 
   } else {
-    assert((ElemType->isRecordType() || ElemType->isVectorType() /*||
-            ElemType->isOpenCLSpecificType()*/) && "Unexpected type");
+    assert((ElemType->isRecordType() || ElemType->isVectorType() ||
+            ElemType->isOpenCLSpecificType()) && "Unexpected type");
 
     // C99 6.7.8p13:
     //
@@ -3449,13 +3449,13 @@ void InitializationSequence::Step::Destroy() {
   case SK_ArrayInit:
   case SK_GNUArrayInit:
   case SK_ParenthesizedArrayInit:
-  // case SK_PassByIndirectCopyRestore:
-  // case SK_PassByIndirectRestore:
+  case SK_PassByIndirectCopyRestore:
+  case SK_PassByIndirectRestore:
   // case SK_ProduceObjCObject:
   case SK_StdInitializerList:
   case SK_StdInitializerListConstructorCall:
-  // case SK_OCLSamplerInit:
-  // case SK_OCLZeroOpaqueType:
+  case SK_OCLSamplerInit:
+  case SK_OCLZeroOpaqueType:
     break;
 
   case SK_ConversionSequence:
@@ -3704,14 +3704,14 @@ void InitializationSequence::AddParenthesizedArrayInitStep(QualType T) {
   Steps.push_back(S);
 }
 
-// void InitializationSequence::AddPassByIndirectCopyRestoreStep(QualType type,
-//                                                               bool shouldCopy) {
-//   Step s;
-//   s.Kind = (shouldCopy ? SK_PassByIndirectCopyRestore
-//                        : SK_PassByIndirectRestore);
-//   s.Type = type;
-//   Steps.push_back(s);
-// }
+void InitializationSequence::AddPassByIndirectCopyRestoreStep(QualType type,
+                                                              bool shouldCopy) {
+  Step s;
+  s.Kind = (shouldCopy ? SK_PassByIndirectCopyRestore
+                       : SK_PassByIndirectRestore);
+  s.Type = type;
+  Steps.push_back(s);
+}
 
 // void InitializationSequence::AddProduceObjCObjectStep(QualType T) {
 //   Step S;
@@ -3727,19 +3727,19 @@ void InitializationSequence::AddStdInitializerListConstructionStep(QualType T) {
   Steps.push_back(S);
 }
 
-// void InitializationSequence::AddOCLSamplerInitStep(QualType T) {
-//   Step S;
-//   S.Kind = SK_OCLSamplerInit;
-//   S.Type = T;
-//   Steps.push_back(S);
-// }
+void InitializationSequence::AddOCLSamplerInitStep(QualType T) {
+  Step S;
+  S.Kind = SK_OCLSamplerInit;
+  S.Type = T;
+  Steps.push_back(S);
+}
 
-// void InitializationSequence::AddOCLZeroOpaqueTypeStep(QualType T) {
-//   Step S;
-//   S.Kind = SK_OCLZeroOpaqueType;
-//   S.Type = T;
-//   Steps.push_back(S);
-// }
+void InitializationSequence::AddOCLZeroOpaqueTypeStep(QualType T) {
+  Step S;
+  S.Kind = SK_OCLZeroOpaqueType;
+  S.Type = T;
+  Steps.push_back(S);
+}
 
 void InitializationSequence::RewrapReferenceInitList(QualType T,
                                                      InitListExpr *Syntactic) {
@@ -5488,65 +5488,65 @@ static bool hasCompatibleArrayTypes(ASTContext &Context, const ArrayType *Dest,
 //   return true;
 // }
 
-// static bool TryOCLSamplerInitialization(Sema &S,
-//                                         InitializationSequence &Sequence,
-//                                         QualType DestType,
-//                                         Expr *Initializer) {
-//   if (!S.getLangOpts().OpenCL || !DestType->isSamplerT() ||
-//       (!Initializer->isIntegerConstantExpr(S.Context) &&
-//       !Initializer->getType()->isSamplerT()))
-//     return false;
+static bool TryOCLSamplerInitialization(Sema &S,
+                                        InitializationSequence &Sequence,
+                                        QualType DestType,
+                                        Expr *Initializer) {
+  if (!S.getLangOpts().OpenCL || !DestType->isSamplerT() ||
+      (!Initializer->isIntegerConstantExpr(S.Context) &&
+      !Initializer->getType()->isSamplerT()))
+    return false;
 
-//   Sequence.AddOCLSamplerInitStep(DestType);
-//   return true;
-// }
+  Sequence.AddOCLSamplerInitStep(DestType);
+  return true;
+}
 
 static bool IsZeroInitializer(Expr *Initializer, Sema &S) {
   return Initializer->isIntegerConstantExpr(S.getASTContext()) &&
     (Initializer->EvaluateKnownConstInt(S.getASTContext()) == 0);
 }
 
-// static bool TryOCLZeroOpaqueTypeInitialization(Sema &S,
-//                                                InitializationSequence &Sequence,
-//                                                QualType DestType,
-//                                                Expr *Initializer) {
-//   if (!S.getLangOpts().OpenCL)
-//     return false;
+static bool TryOCLZeroOpaqueTypeInitialization(Sema &S,
+                                               InitializationSequence &Sequence,
+                                               QualType DestType,
+                                               Expr *Initializer) {
+  if (!S.getLangOpts().OpenCL)
+    return false;
 
-//   //
-//   // OpenCL 1.2 spec, s6.12.10
-//   //
-//   // The event argument can also be used to associate the
-//   // async_work_group_copy with a previous async copy allowing
-//   // an event to be shared by multiple async copies; otherwise
-//   // event should be zero.
-//   //
-//   // if (DestType->isEventT() || DestType->isQueueT()) {
-//   //   if (!IsZeroInitializer(Initializer, S))
-//   //     return false;
+  //
+  // OpenCL 1.2 spec, s6.12.10
+  //
+  // The event argument can also be used to associate the
+  // async_work_group_copy with a previous async copy allowing
+  // an event to be shared by multiple async copies; otherwise
+  // event should be zero.
+  //
+  if (DestType->isEventT() || DestType->isQueueT()) {
+    if (!IsZeroInitializer(Initializer, S))
+      return false;
 
-//   //   Sequence.AddOCLZeroOpaqueTypeStep(DestType);
-//   //   return true;
-//   // }
+    Sequence.AddOCLZeroOpaqueTypeStep(DestType);
+    return true;
+  }
 
-//   // We should allow zero initialization for all types defined in the
-//   // cl_intel_device_side_avc_motion_estimation extension, except
-//   // intel_sub_group_avc_mce_payload_t and intel_sub_group_avc_mce_result_t.
-//   // if (S.getOpenCLOptions().isEnabled(
-//   //         "cl_intel_device_side_avc_motion_estimation") &&
-//   //     DestType->isOCLIntelSubgroupAVCType()) {
-//   //   // if (DestType->isOCLIntelSubgroupAVCMcePayloadType() ||
-//   //   //     DestType->isOCLIntelSubgroupAVCMceResultType())
-//   //   //   return false;
-//   //   if (!IsZeroInitializer(Initializer, S))
-//   //     return false;
+  // We should allow zero initialization for all types defined in the
+  // cl_intel_device_side_avc_motion_estimation extension, except
+  // intel_sub_group_avc_mce_payload_t and intel_sub_group_avc_mce_result_t.
+  if (S.getOpenCLOptions().isEnabled(
+          "cl_intel_device_side_avc_motion_estimation") &&
+      DestType->isOCLIntelSubgroupAVCType()) {
+    if (DestType->isOCLIntelSubgroupAVCMcePayloadType() ||
+        DestType->isOCLIntelSubgroupAVCMceResultType())
+      return false;
+    if (!IsZeroInitializer(Initializer, S))
+      return false;
 
-//   //   Sequence.AddOCLZeroOpaqueTypeStep(DestType);
-//   //   return true;
-//   // }
+    Sequence.AddOCLZeroOpaqueTypeStep(DestType);
+    return true;
+  }
 
-//   return false;
-// }
+  return false;
+}
 
 InitializationSequence::InitializationSequence(Sema &S,
                                                const InitializedEntity &Entity,
@@ -5807,8 +5807,8 @@ void InitializationSequence::InitializeFrom(Sema &S,
   // bool allowObjCWritebackConversion = S.getLangOpts().ObjCAutoRefCount &&
   //        Entity.isParameterKind();
 
-  // if (TryOCLSamplerInitialization(S, *this, DestType, Initializer))
-  //   return;
+  if (TryOCLSamplerInitialization(S, *this, DestType, Initializer))
+    return;
 
   // We're at the end of the line for C: it's either a write-back conversion
   // or it's a C assignment. There's no need to check anything else.
@@ -5819,8 +5819,8 @@ void InitializationSequence::InitializeFrom(Sema &S,
     //   return;
     // }
 
-    // if (TryOCLZeroOpaqueTypeInitialization(S, *this, DestType, Initializer))
-    //   return;
+    if (TryOCLZeroOpaqueTypeInitialization(S, *this, DestType, Initializer))
+      return;
 
     // Handle initialization in C
     AddCAssignmentStep(DestType);
@@ -7044,12 +7044,12 @@ static void visitLocalsRetainedByReferenceBinding(IndirectLocalPath &Path,
     break;
   }
 
-  // case Stmt::OMPArraySectionExprClass: {
-  //   visitLocalsRetainedByInitializer(Path,
-  //                                    cast<OMPArraySectionExpr>(Init)->getBase(),
-  //                                    Visit, true, EnableLifetimeWarnings);
-  //   break;
-  // }
+  case Stmt::OMPArraySectionExprClass: {
+    visitLocalsRetainedByInitializer(Path,
+                                     cast<OMPArraySectionExpr>(Init)->getBase(),
+                                     Visit, true, EnableLifetimeWarnings);
+    break;
+  }
 
   case Stmt::ConditionalOperatorClass:
   case Stmt::BinaryConditionalOperatorClass: {
@@ -7943,12 +7943,12 @@ ExprResult InitializationSequence::Perform(Sema &S,
   case SK_ArrayInit:
   case SK_GNUArrayInit:
   case SK_ParenthesizedArrayInit:
-  // case SK_PassByIndirectCopyRestore:
-  // case SK_PassByIndirectRestore:
+  case SK_PassByIndirectCopyRestore:
+  case SK_PassByIndirectRestore:
   // case SK_ProduceObjCObject:
   case SK_StdInitializerList:
-  // case SK_OCLSamplerInit:
-  // case SK_OCLZeroOpaqueType: 
+  case SK_OCLSamplerInit:
+  case SK_OCLZeroOpaqueType: 
   {
     assert(Args.size() == 1);
     CurInit = Args[0];
@@ -8523,109 +8523,109 @@ ExprResult InitializationSequence::Perform(Sema &S,
       break;
     }
 
-    // case SK_OCLSamplerInit: {
-    //   // Sampler initialization have 5 cases:
-    //   //   1. function argument passing
-    //   //      1a. argument is a file-scope variable
-    //   //      1b. argument is a function-scope variable
-    //   //      1c. argument is one of caller function's parameters
-    //   //   2. variable initialization
-    //   //      2a. initializing a file-scope variable
-    //   //      2b. initializing a function-scope variable
-    //   //
-    //   // For file-scope variables, since they cannot be initialized by function
-    //   // call of __translate_sampler_initializer in LLVM IR, their references
-    //   // need to be replaced by a cast from their literal initializers to
-    //   // sampler type. Since sampler variables can only be used in function
-    //   // calls as arguments, we only need to replace them when handling the
-    //   // argument passing.
-    //   assert(Step->Type->isSamplerT() &&
-    //          "Sampler initialization on non-sampler type.");
-    //   Expr *Init = CurInit.get()->IgnoreParens();
-    //   QualType SourceType = Init->getType();
-    //   // Case 1
-    //   if (Entity.isParameterKind()) {
-    //     if (!SourceType->isSamplerT() && !SourceType->isIntegerType()) {
-    //       S.Diag(Kind.getLocation(), diag::err_sampler_argument_required)
-    //         << SourceType;
-    //       break;
-    //     } else if (const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Init)) {
-    //       auto Var = cast<VarDecl>(DRE->getDecl());
-    //       // Case 1b and 1c
-    //       // No cast from integer to sampler is needed.
-    //       if (!Var->hasGlobalStorage()) {
-    //         CurInit = ImplicitCastExpr::Create(S.Context, Step->Type,
-    //                                            CK_LValueToRValue, Init,
-    //                                            /*BasePath=*/nullptr, VK_RValue);
-    //         break;
-    //       }
-    //       // Case 1a
-    //       // For function call with a file-scope sampler variable as argument,
-    //       // get the integer literal.
-    //       // Do not diagnose if the file-scope variable does not have initializer
-    //       // since this has already been diagnosed when parsing the variable
-    //       // declaration.
-    //       if (!Var->getInit() || !isa<ImplicitCastExpr>(Var->getInit()))
-    //         break;
-    //       Init = cast<ImplicitCastExpr>(const_cast<Expr*>(
-    //         Var->getInit()))->getSubExpr();
-    //       SourceType = Init->getType();
-    //     }
-    //   } else {
-    //     // Case 2
-    //     // Check initializer is 32 bit integer constant.
-    //     // If the initializer is taken from global variable, do not diagnose since
-    //     // this has already been done when parsing the variable declaration.
-    //     if (!Init->isConstantInitializer(S.Context, false))
-    //       break;
+    case SK_OCLSamplerInit: {
+      // Sampler initialization have 5 cases:
+      //   1. function argument passing
+      //      1a. argument is a file-scope variable
+      //      1b. argument is a function-scope variable
+      //      1c. argument is one of caller function's parameters
+      //   2. variable initialization
+      //      2a. initializing a file-scope variable
+      //      2b. initializing a function-scope variable
+      //
+      // For file-scope variables, since they cannot be initialized by function
+      // call of __translate_sampler_initializer in LLVM IR, their references
+      // need to be replaced by a cast from their literal initializers to
+      // sampler type. Since sampler variables can only be used in function
+      // calls as arguments, we only need to replace them when handling the
+      // argument passing.
+      assert(Step->Type->isSamplerT() &&
+             "Sampler initialization on non-sampler type.");
+      Expr *Init = CurInit.get()->IgnoreParens();
+      QualType SourceType = Init->getType();
+      // Case 1
+      if (Entity.isParameterKind()) {
+        if (!SourceType->isSamplerT() && !SourceType->isIntegerType()) {
+          S.Diag(Kind.getLocation(), diag::err_sampler_argument_required)
+            << SourceType;
+          break;
+        } else if (const DeclRefExpr *DRE = dyn_cast<DeclRefExpr>(Init)) {
+          auto Var = cast<VarDecl>(DRE->getDecl());
+          // Case 1b and 1c
+          // No cast from integer to sampler is needed.
+          if (!Var->hasGlobalStorage()) {
+            CurInit = ImplicitCastExpr::Create(S.Context, Step->Type,
+                                               CK_LValueToRValue, Init,
+                                               /*BasePath=*/nullptr, VK_RValue);
+            break;
+          }
+          // Case 1a
+          // For function call with a file-scope sampler variable as argument,
+          // get the integer literal.
+          // Do not diagnose if the file-scope variable does not have initializer
+          // since this has already been diagnosed when parsing the variable
+          // declaration.
+          if (!Var->getInit() || !isa<ImplicitCastExpr>(Var->getInit()))
+            break;
+          Init = cast<ImplicitCastExpr>(const_cast<Expr*>(
+            Var->getInit()))->getSubExpr();
+          SourceType = Init->getType();
+        }
+      } else {
+        // Case 2
+        // Check initializer is 32 bit integer constant.
+        // If the initializer is taken from global variable, do not diagnose since
+        // this has already been done when parsing the variable declaration.
+        if (!Init->isConstantInitializer(S.Context, false))
+          break;
 
-    //     if (!SourceType->isIntegerType() ||
-    //         32 != S.Context.getIntWidth(SourceType)) {
-    //       S.Diag(Kind.getLocation(), diag::err_sampler_initializer_not_integer)
-    //         << SourceType;
-    //       break;
-    //     }
+        if (!SourceType->isIntegerType() ||
+            32 != S.Context.getIntWidth(SourceType)) {
+          S.Diag(Kind.getLocation(), diag::err_sampler_initializer_not_integer)
+            << SourceType;
+          break;
+        }
 
-    //     Expr::EvalResult EVResult;
-    //     Init->EvaluateAsInt(EVResult, S.Context);
-    //     llvm::APSInt Result = EVResult.Val.getInt();
-    //     const uint64_t SamplerValue = Result.getLimitedValue();
-    //     // 32-bit value of sampler's initializer is interpreted as
-    //     // bit-field with the following structure:
-    //     // |unspecified|Filter|Addressing Mode| Normalized Coords|
-    //     // |31        6|5    4|3             1|                 0|
-    //     // This structure corresponds to enum values of sampler properties
-    //     // defined in SPIR spec v1.2 and also opencl-c.h
-    //     unsigned AddressingMode  = (0x0E & SamplerValue) >> 1;
-    //     unsigned FilterMode      = (0x30 & SamplerValue) >> 4;
-    //     if (FilterMode != 1 && FilterMode != 2 &&
-    //         !S.getOpenCLOptions().isEnabled(
-    //             "cl_intel_device_side_avc_motion_estimation"))
-    //       S.Diag(Kind.getLocation(),
-    //              diag::warn_sampler_initializer_invalid_bits)
-    //              << "Filter Mode";
-    //     if (AddressingMode > 4)
-    //       S.Diag(Kind.getLocation(),
-    //              diag::warn_sampler_initializer_invalid_bits)
-    //              << "Addressing Mode";
-    //   }
+        Expr::EvalResult EVResult;
+        Init->EvaluateAsInt(EVResult, S.Context);
+        llvm::APSInt Result = EVResult.Val.getInt();
+        const uint64_t SamplerValue = Result.getLimitedValue();
+        // 32-bit value of sampler's initializer is interpreted as
+        // bit-field with the following structure:
+        // |unspecified|Filter|Addressing Mode| Normalized Coords|
+        // |31        6|5    4|3             1|                 0|
+        // This structure corresponds to enum values of sampler properties
+        // defined in SPIR spec v1.2 and also opencl-c.h
+        unsigned AddressingMode  = (0x0E & SamplerValue) >> 1;
+        unsigned FilterMode      = (0x30 & SamplerValue) >> 4;
+        if (FilterMode != 1 && FilterMode != 2 &&
+            !S.getOpenCLOptions().isEnabled(
+                "cl_intel_device_side_avc_motion_estimation"))
+          S.Diag(Kind.getLocation(),
+                 diag::warn_sampler_initializer_invalid_bits)
+                 << "Filter Mode";
+        if (AddressingMode > 4)
+          S.Diag(Kind.getLocation(),
+                 diag::warn_sampler_initializer_invalid_bits)
+                 << "Addressing Mode";
+      }
 
-    //   // Cases 1a, 2a and 2b
-    //   // Insert cast from integer to sampler.
-    //   CurInit = S.ImpCastExprToType(Init, S.Context.OCLSamplerTy,
-    //                                   CK_IntToOCLSampler);
-    //   break;
-    // }
-    // case SK_OCLZeroOpaqueType: {
-    //   assert((Step->Type->isEventT() || Step->Type->isQueueT() ||
-    //           Step->Type->isOCLIntelSubgroupAVCType()) &&
-    //          "Wrong type for initialization of OpenCL opaque type.");
+      // Cases 1a, 2a and 2b
+      // Insert cast from integer to sampler.
+      CurInit = S.ImpCastExprToType(Init, S.Context.OCLSamplerTy,
+                                      CK_IntToOCLSampler);
+      break;
+    }
+    case SK_OCLZeroOpaqueType: {
+      assert((Step->Type->isEventT() || Step->Type->isQueueT() ||
+              Step->Type->isOCLIntelSubgroupAVCType()) &&
+             "Wrong type for initialization of OpenCL opaque type.");
 
-    //   CurInit = S.ImpCastExprToType(CurInit.get(), Step->Type,
-    //                                 CK_ZeroToOCLOpaqueType,
-    //                                 CurInit.get()->getValueKind());
-    //   break;
-    // }
+      CurInit = S.ImpCastExprToType(CurInit.get(), Step->Type,
+                                    CK_ZeroToOCLOpaqueType,
+                                    CurInit.get()->getValueKind());
+      break;
+    }
     }
   }
 
@@ -9516,13 +9516,13 @@ void InitializationSequence::dump(raw_ostream &OS) const {
       OS << "parenthesized array initialization";
       break;
 
-    // case SK_PassByIndirectCopyRestore:
-    //   OS << "pass by indirect copy and restore";
-    //   break;
+    case SK_PassByIndirectCopyRestore:
+      OS << "pass by indirect copy and restore";
+      break;
 
-    // case SK_PassByIndirectRestore:
-    //   OS << "pass by indirect restore";
-    //   break;
+    case SK_PassByIndirectRestore:
+      OS << "pass by indirect restore";
+      break;
 
     // case SK_ProduceObjCObject:
     //   OS << "Objective-C object retension";
@@ -9536,13 +9536,13 @@ void InitializationSequence::dump(raw_ostream &OS) const {
       OS << "list initialization from std::initializer_list";
       break;
 
-    // case SK_OCLSamplerInit:
-    //   OS << "OpenCL sampler_t from integer constant";
-    //   break;
+    case SK_OCLSamplerInit:
+      OS << "OpenCL sampler_t from integer constant";
+      break;
 
-    // case SK_OCLZeroOpaqueType:
-    //   OS << "OpenCL opaque type from zero";
-    //   break;
+    case SK_OCLZeroOpaqueType:
+      OS << "OpenCL opaque type from zero";
+      break;
     }
 
     OS << " [" << S->Type.getAsString() << ']';

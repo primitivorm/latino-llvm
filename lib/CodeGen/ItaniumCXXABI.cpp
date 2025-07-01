@@ -3065,12 +3065,12 @@ static bool TypeInfoIsInStandardLibrary(const BuiltinType *Ty) {
     case BuiltinType::ULong:
     case BuiltinType::LongLong:
     case BuiltinType::ULongLong:
-    // case BuiltinType::Half:
+    case BuiltinType::Half:
     case BuiltinType::Float:
     case BuiltinType::Double:
     case BuiltinType::LongDouble:
-    // case BuiltinType::Float16:
-    // case BuiltinType::Float128:
+    case BuiltinType::Float16:
+    case BuiltinType::Float128:
     case BuiltinType::Char8:
     case BuiltinType::Char16:
     case BuiltinType::Char32:
@@ -3078,17 +3078,17 @@ static bool TypeInfoIsInStandardLibrary(const BuiltinType *Ty) {
     case BuiltinType::UInt128:
       return true;
 
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-    // case BuiltinType::OCLSampler:
-    // case BuiltinType::OCLEvent:
-    // case BuiltinType::OCLClkEvent:
-    // case BuiltinType::OCLQueue:
-    // case BuiltinType::OCLReserveID:
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLExtensionTypes.def"
+    case BuiltinType::OCLSampler:
+    case BuiltinType::OCLEvent:
+    case BuiltinType::OCLClkEvent:
+    case BuiltinType::OCLQueue:
+    case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
     case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"

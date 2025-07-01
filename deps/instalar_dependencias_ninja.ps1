@@ -3,7 +3,7 @@
 $directorio_actual = Get-Location
 
 # establecer path donde se instalo visual studio
-$vs_path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community'
+$vs_path = 'C:\Program Files\Microsoft Visual Studio\2022\Professional'
 
 # Cambiar la siguiente linea para compilar para x64
 # cmd.exe /c "call `"$vs_path\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"

@@ -17,7 +17,7 @@
 #include "latino/Basic/Diagnostic.h"
 #include "latino/Basic/DiagnosticOptions.h"
 #include "latino/Basic/IdentifierTable.h"
-// #include "latino/Basic/OpenCLOptions.h"
+#include "latino/Basic/OpenCLOptions.h"
 #include "latino/Basic/SourceLocation.h"
 #include "latino/Basic/Version.h"
 #include "latino/Lex/ExternalPreprocessorSource.h"
@@ -882,7 +882,7 @@ private:
   llvm::SmallVector<std::string, 2> PragmaPackStrings;
 
   /// The OpenCL extension settings.
-  // OpenCLOptions OpenCLExtensions;
+  OpenCLOptions OpenCLExtensions;
 
   /// Extensions required by an OpenCL type.
   llvm::DenseMap<const Type *, std::set<std::string>> OpenCLTypeExtMap;

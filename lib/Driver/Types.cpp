@@ -98,7 +98,7 @@ bool types::onlyPrecompileType(ID Id) {
 bool types::canTypeBeUserSpecified(ID Id) {
   static const latino::driver::types::ID kStaticLangageTypes[] = {
       TY_CUDA_DEVICE,   TY_HIP_DEVICE,    TY_PP_CHeader,
-      TY_PP_ObjCHeader, TY_PP_CXXHeader,  TY_PP_ObjCXXHeader,
+      /*TY_PP_ObjCHeader,*/ TY_PP_CXXHeader,  /*TY_PP_ObjCXXHeader,*/
       TY_PP_CXXModule,  TY_LTO_IR,        TY_LTO_BC,
       TY_Plist,         TY_RewrittenObjC, TY_RewrittenLegacyObjC,
       TY_Remap,         TY_PCH,           TY_Object,
@@ -132,14 +132,14 @@ bool types::isAcceptedByClang(ID Id) {
   case TY_HIP:
   case TY_PP_HIP:
   case TY_HIP_DEVICE:
-  case TY_ObjC: case TY_PP_ObjC: case TY_PP_ObjC_Alias:
+  // case TY_ObjC: case TY_PP_ObjC: case TY_PP_ObjC_Alias:
   case TY_CXX: case TY_PP_CXX:
-  case TY_ObjCXX: case TY_PP_ObjCXX: case TY_PP_ObjCXX_Alias:
+  // case TY_ObjCXX: case TY_PP_ObjCXX: case TY_PP_ObjCXX_Alias:
   case TY_CHeader: case TY_PP_CHeader:
   case TY_CLHeader:
-  case TY_ObjCHeader: case TY_PP_ObjCHeader:
+  // case TY_ObjCHeader: case TY_PP_ObjCHeader:
   case TY_CXXHeader: case TY_PP_CXXHeader:
-  case TY_ObjCXXHeader: case TY_PP_ObjCXXHeader:
+  // case TY_ObjCXXHeader: case TY_PP_ObjCXXHeader:
   case TY_CXXModule: case TY_PP_CXXModule:
   case TY_AST: case TY_ModuleFile: case TY_PCH:
   case TY_LLVM_IR: case TY_LLVM_BC:
@@ -166,9 +166,9 @@ bool types::isCXX(ID Id) {
     return false;
 
   case TY_CXX: case TY_PP_CXX:
-  case TY_ObjCXX: case TY_PP_ObjCXX: case TY_PP_ObjCXX_Alias:
+  // case TY_ObjCXX: case TY_PP_ObjCXX: case TY_PP_ObjCXX_Alias:
   case TY_CXXHeader: case TY_PP_CXXHeader:
-  case TY_ObjCXXHeader: case TY_PP_ObjCXXHeader:
+  // case TY_ObjCXXHeader: case TY_PP_ObjCXXHeader:
   case TY_CXXModule: case TY_PP_CXXModule:
   case TY_CUDA: case TY_PP_CUDA: case TY_CUDA_DEVICE:
   case TY_HIP:
@@ -208,10 +208,10 @@ bool types::isHIP(ID Id) {
   default:
     return false;
 
-  case TY_HIP:
-  case TY_PP_HIP:
-  case TY_HIP_DEVICE:
-    return true;
+  // case TY_HIP:
+  // case TY_PP_HIP:
+  // case TY_HIP_DEVICE:
+  //   return true;
   }
 }
 
@@ -220,8 +220,8 @@ bool types::isFortran(ID Id) {
   default:
     return false;
 
-  case TY_Fortran: case TY_PP_Fortran:
-    return true;
+  // case TY_Fortran: case TY_PP_Fortran:
+  //   return true;
   }
 }
 
@@ -233,13 +233,13 @@ types::ID types::lookupTypeForExtension(llvm::StringRef Ext) {
   return llvm::StringSwitch<types::ID>(Ext)
            .Case("c", TY_C)
            .Case("C", TY_CXX)
-           .Case("F", TY_Fortran)
-           .Case("f", TY_PP_Fortran)
+          //  .Case("F", TY_Fortran)
+          //  .Case("f", TY_PP_Fortran)
            .Case("h", TY_CHeader)
            .Case("H", TY_CXXHeader)
            .Case("i", TY_PP_C)
-           .Case("m", TY_ObjC)
-           .Case("M", TY_ObjCXX)
+          //  .Case("m", TY_ObjC)
+          //  .Case("M", TY_ObjCXX)
            .Case("o", TY_Object)
            .Case("S", TY_Asm)
            .Case("s", TY_PP_Asm)
@@ -252,11 +252,11 @@ types::ID types::lookupTypeForExtension(llvm::StringRef Ext) {
            .Case("hh", TY_CXXHeader)
            .Case("ii", TY_PP_CXX)
            .Case("ll", TY_LLVM_IR)
-           .Case("mi", TY_PP_ObjC)
-           .Case("mm", TY_ObjCXX)
-           .Case("rs", TY_RenderScript)
-           .Case("adb", TY_Ada)
-           .Case("ads", TY_Ada)
+           //.Case("mi", TY_PP_ObjC)
+          //  .Case("mm", TY_ObjCXX)
+          //  .Case("rs", TY_RenderScript)
+          //  .Case("adb", TY_Ada)
+          //  .Case("ads", TY_Ada)
            .Case("asm", TY_PP_Asm)
            .Case("ast", TY_AST)
            .Case("ccm", TY_CXXModule)
@@ -264,24 +264,24 @@ types::ID types::lookupTypeForExtension(llvm::StringRef Ext) {
            .Case("CPP", TY_CXX)
            .Case("c++", TY_CXX)
            .Case("C++", TY_CXX)
-           .Case("cui", TY_PP_CUDA)
+          //  .Case("cui", TY_PP_CUDA)
            .Case("cxx", TY_CXX)
            .Case("CXX", TY_CXX)
-           .Case("F90", TY_Fortran)
-           .Case("f90", TY_PP_Fortran)
-           .Case("F95", TY_Fortran)
-           .Case("f95", TY_PP_Fortran)
-           .Case("for", TY_PP_Fortran)
-           .Case("FOR", TY_PP_Fortran)
-           .Case("fpp", TY_Fortran)
-           .Case("FPP", TY_Fortran)
-           .Case("gch", TY_PCH)
-           .Case("hip", TY_HIP)
+          //  .Case("F90", TY_Fortran)
+          //  .Case("f90", TY_PP_Fortran)
+          //  .Case("F95", TY_Fortran)
+          //  .Case("f95", TY_PP_Fortran)
+          //  .Case("for", TY_PP_Fortran)
+          //  .Case("FOR", TY_PP_Fortran)
+          //  .Case("fpp", TY_Fortran)
+          //  .Case("FPP", TY_Fortran)
+          //  .Case("gch", TY_PCH)
+          //  .Case("hip", TY_HIP)
            .Case("hpp", TY_CXXHeader)
            .Case("hxx", TY_CXXHeader)
            .Case("iim", TY_PP_CXXModule)
            .Case("lib", TY_Object)
-           .Case("mii", TY_PP_ObjCXX)
+          //  .Case("mii", TY_PP_ObjCXX)
            .Case("obj", TY_Object)
            .Case("ifs", TY_IFS)
            .Case("pch", TY_PCH)
@@ -389,10 +389,10 @@ ID types::lookupHeaderTypeForSourceType(ID Id) {
   case types::TY_CXX:
   case types::TY_CXXModule:
     return types::TY_CXXHeader;
-  case types::TY_ObjC:
-    return types::TY_ObjCHeader;
-  case types::TY_ObjCXX:
-    return types::TY_ObjCXXHeader;
+  // case types::TY_ObjC:
+  //   return types::TY_ObjCHeader;
+  // case types::TY_ObjCXX:
+  //   return types::TY_ObjCXXHeader;
   case types::TY_CL:
     return types::TY_CLHeader;
   }

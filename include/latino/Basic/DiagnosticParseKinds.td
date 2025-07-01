@@ -144,8 +144,8 @@ def err_duplicate_default_assoc : Error<
 def note_previous_default_assoc : Note<
   "previous default generic association is here">;
 
-// def ext_c99_feature : Extension<
-//   "'%0' is a C99 extension">, InGroup<C99>;
+def ext_c99_feature : Extension<
+  "'%0' is a C99 extension">, InGroup<C99>;
 def ext_c11_feature : Extension<
   "'%0' is a C11 extension">, InGroup<C11>;
 
@@ -430,13 +430,13 @@ def ext_decomp_decl_empty : ExtWarn<
 /// Objective-C parser diagnostics
 def err_expected_minus_or_plus : Error<
   "method type specifier must start with '-' or '+'">;
-def err_objc_missing_end : Error<"missing '@end'">;
-def note_objc_container_start : Note<
-  "%select{class|protocol|category|class extension|implementation"
-  "|category implementation}0 started here">;
-def warn_objc_protocol_qualifier_missing_id : Warning<
-  "protocol has no object type specified; defaults to qualified 'id'">;
-def err_objc_unknown_at : Error<"expected an Objective-C directive after '@'">;
+// def err_objc_missing_end : Error<"missing '@end'">;
+// def note_objc_container_start : Note<
+//   "%select{class|protocol|category|class extension|implementation"
+//   "|category implementation}0 started here">;
+// def warn_objc_protocol_qualifier_missing_id : Warning<
+//   "protocol has no object type specified; defaults to qualified 'id'">;
+// def err_objc_unknown_at : Error<"expected an Objective-C directive after '@'">;
 def err_illegal_super_cast : Error<
   "cannot cast 'super' (it isn't an expression)">;
 def err_nsnumber_nonliteral_unary : Error<
@@ -454,37 +454,37 @@ def warn_arc_bridge_cast_nonarc : Warning<
   InGroup<DiagGroup<"arc-bridge-casts-disallowed-in-nonarc">>;
 }
 
-def err_objc_illegal_visibility_spec : Error<
-  "illegal visibility specification">;
-def err_objc_illegal_interface_qual : Error<"illegal interface qualifier">;
-def err_objc_expected_equal_for_getter : Error<
-  "expected '=' for Objective-C getter">;
-def err_objc_expected_equal_for_setter : Error<
-  "expected '=' for Objective-C setter">;
-def err_objc_expected_selector_for_getter_setter : Error<
-  "expected selector for Objective-C %select{setter|getter}0">;
-def err_objc_property_requires_field_name : Error<
-  "property requires fields to be named">;
-def err_objc_property_bitfield : Error<"property name cannot be a bit-field">;
-def err_objc_expected_property_attr : Error<"unknown property attribute %0">;
-def err_objc_unexpected_attr : Error<
-  "prefix attribute must be followed by an interface, protocol, or implementation">;
-def err_objc_postfix_attribute : Error <
-  "postfix attributes are not allowed on Objective-C directives">;
-def err_objc_postfix_attribute_hint : Error <
-  "postfix attributes are not allowed on Objective-C directives, place"
-  " them in front of '%select{@interface|@protocol}0'">;
-def err_objc_directive_only_in_protocol : Error<
-  "directive may only be specified in protocols only">;
+// def err_objc_illegal_visibility_spec : Error<
+//   "illegal visibility specification">;
+// def err_objc_illegal_interface_qual : Error<"illegal interface qualifier">;
+// def err_objc_expected_equal_for_getter : Error<
+//   "expected '=' for Objective-C getter">;
+// def err_objc_expected_equal_for_setter : Error<
+//   "expected '=' for Objective-C setter">;
+// def err_objc_expected_selector_for_getter_setter : Error<
+//   "expected selector for Objective-C %select{setter|getter}0">;
+// def err_objc_property_requires_field_name : Error<
+//   "property requires fields to be named">;
+// def err_objc_property_bitfield : Error<"property name cannot be a bit-field">;
+// def err_objc_expected_property_attr : Error<"unknown property attribute %0">;
+// def err_objc_unexpected_attr : Error<
+//   "prefix attribute must be followed by an interface, protocol, or implementation">;
+// def err_objc_postfix_attribute : Error <
+//   "postfix attributes are not allowed on Objective-C directives">;
+// def err_objc_postfix_attribute_hint : Error <
+//   "postfix attributes are not allowed on Objective-C directives, place"
+//   " them in front of '%select{@interface|@protocol}0'">;
+// def err_objc_directive_only_in_protocol : Error<
+//   "directive may only be specified in protocols only">;
 def err_missing_catch_finally : Error<
   "@try statement without a @catch and @finally clause">;
-def err_objc_concat_string : Error<"unexpected token after Objective-C string">;
-def err_expected_objc_container : Error<
-  "'@end' must appear in an Objective-C context">;
+// def err_objc_concat_string : Error<"unexpected token after Objective-C string">;
+// def err_expected_objc_container : Error<
+//   "'@end' must appear in an Objective-C context">;
 def err_unexpected_protocol_qualifier : Error<
   "@implementation declaration cannot be protocol qualified">;
-def err_objc_unexpected_atend : Error<
-  "'@end' appears where closing brace '}' is expected">;
+// def err_objc_unexpected_atend : Error<
+//   "'@end' appears where closing brace '}' is expected">;
 def err_synthesized_property_name : Error<
   "expected a property name in @synthesize">;
 def warn_semicolon_before_method_body : Warning<
@@ -1210,132 +1210,132 @@ def warn_pragma_extension_is_core : Warning<
 // OpenCL errors.
 def err_opencl_taking_function_address_parser : Error<
   "taking address of function is not allowed">;
-// def err_opencl_logical_exclusive_or : Error<
-//   "^^ is a reserved operator in OpenCL">;
+def err_opencl_logical_exclusive_or : Error<
+  "^^ is a reserved operator in OpenCL">;
 
 // C++ for OpenCL.
 def err_openclcxx_virtual_function : Error<
   "virtual functions are not supported in C++ for OpenCL">;
 
 // OpenMP support.
-// def warn_pragma_omp_ignored : Warning<
-//   "unexpected '#pragma omp ...' in program">, InGroup<SourceUsesOpenMP>, DefaultIgnore;
-// def warn_omp_extra_tokens_at_eol : Warning<
-//   "extra tokens at the end of '#pragma omp %0' are ignored">,
-//   InGroup<ExtraTokens>;
-// def warn_pragma_expected_colon_r_paren : Warning<
-//   "missing ':' or ')' after %0 - ignoring">, InGroup<IgnoredPragmas>;
-// def err_omp_unknown_directive : Error<
-//   "expected an OpenMP directive">;
-// def err_omp_unexpected_directive : Error<
-//   "unexpected OpenMP directive %select{|'#pragma omp %1'}0">;
-// def err_omp_expected_punc : Error<
-//   "expected ',' or ')' in '%0' %select{clause|directive}1">;
-// def err_omp_unexpected_clause : Error<
-//   "unexpected OpenMP clause '%0' in directive '#pragma omp %1'">;
-// def err_omp_immediate_directive : Error<
-//   "'#pragma omp %0' %select{|with '%2' clause }1cannot be an immediate substatement">;
-// def err_omp_expected_identifier_for_critical : Error<
-//   "expected identifier specifying the name of the 'omp critical' directive">;
-// def err_omp_expected_reduction_identifier : Error<
-//   "expected identifier or one of the following operators: '+', '-', '*', '&', '|', '^', '&&', or '||'">;
-// def err_omp_expected_equal_in_iterator : Error<
-//   "expected '=' in iterator specifier">;
-// def err_omp_expected_punc_after_iterator : Error<
-//   "expected ',' or ')' after iterator specifier">;
-// def err_omp_decl_in_declare_simd_variant : Error<
-//   "function declaration is expected after 'declare %select{simd|variant}0' directive">;
-// def err_omp_unknown_map_type : Error<
-//   "incorrect map type, expected one of 'to', 'from', 'tofrom', 'alloc', 'release', or 'delete'">;
-// def err_omp_unknown_map_type_modifier : Error<
-//   "incorrect map type modifier, expected 'always', 'close', or 'mapper'">;
-// def err_omp_map_type_missing : Error<
-//   "missing map type">;
-// def err_omp_map_type_modifier_missing : Error<
-//   "missing map type modifier">;
-// def err_omp_declare_simd_inbranch_notinbranch : Error<
-//   "unexpected '%0' clause, '%1' is specified already">;
-// def err_expected_end_declare_target_or_variant : Error<
-//   "expected '#pragma omp end declare %select{target|variant}0'">;
-// def err_expected_begin_declare_variant
-//     : Error<"'#pragma omp end declare variant' with no matching '#pragma omp "
-//             "begin declare variant'">;
-// def err_omp_declare_target_unexpected_clause: Error<
-//   "unexpected '%0' clause, only %select{'to' or 'link'|'to', 'link' or 'device_type'}1 clauses expected">;
-// def err_omp_expected_clause: Error<
-//   "expected at least one clause on '#pragma omp %0' directive">;
-// def err_omp_mapper_illegal_identifier : Error<
-//   "illegal OpenMP user-defined mapper identifier">;
-// def err_omp_mapper_expected_declarator : Error<
-//   "expected declarator on 'omp declare mapper' directive">;
-// def err_omp_declare_variant_wrong_clause : Error<
-//   "expected '%0' clause on 'omp declare variant' directive">;
-// def warn_omp_declare_variant_string_literal_or_identifier
-//     : Warning<"expected identifier or string literal describing a context "
-//               "%select{set|selector|property}0; "
-//               "%select{set|selector|property}0 skipped">,
-//       InGroup<OpenMPClauses>;
-// def note_omp_declare_variant_ctx_options
-//     : Note<"context %select{set|selector|property}0 options are: %1">;
-// def warn_omp_declare_variant_expected
-//     : Warning<"expected '%0' after the %1; '%0' assumed">,
-//       InGroup<OpenMPClauses>;
-// def warn_omp_declare_variant_ctx_not_a_property
-//     : Warning<"'%0' is not a valid context property for the context selector "
-//               "'%1' and the context set '%2'; property ignored">,
-//       InGroup<OpenMPClauses>;
-// def note_omp_declare_variant_ctx_is_a
-//     : Note<"'%0' is a context %select{set|selector|property}1 not a context "
-//            "%select{set|selector|property}2">;
-// def note_omp_declare_variant_ctx_try : Note<"try 'match(%0={%1%2})'">;
-// def warn_omp_declare_variant_ctx_not_a_selector
-//     : Warning<"'%0' is not a valid context selector for the context set '%1'; "
-//               "selector ignored">,
-//       InGroup<OpenMPClauses>;
-// def warn_omp_declare_variant_ctx_not_a_set
-//     : Warning<"'%0' is not a valid context set in a `declare variant`; set "
-//               "ignored">,
-//       InGroup<OpenMPClauses>;
-// def warn_omp_declare_variant_ctx_mutiple_use
-//     : Warning<"the context %select{set|selector|property}0 '%1' was used "
-//               "already in the same 'omp declare variant' directive; "
-//               "%select{set|selector|property}0 ignored">,
-//       InGroup<OpenMPClauses>;
-// def note_omp_declare_variant_ctx_used_here
-//     : Note<"the previous context %select{set|selector|property}0 '%1' used "
-//            "here">;
-// def note_omp_declare_variant_ctx_continue_here
-//     : Note<"the ignored %select{set|selector|property}0 spans until here">;
-// def warn_omp_ctx_incompatible_selector_for_set
-//     : Warning<"the context selector '%0' is not valid for the context set "
-//               "'%1'; selector ignored">,
-//       InGroup<OpenMPClauses>;
-// def note_omp_ctx_compatible_set_for_selector
-//     : Note<"the context selector '%0' can be nested in the context set '%1'; "
-//            "try 'match(%1={%0%select{|(property)}2})'">;
-// def warn_omp_ctx_selector_without_properties
-//     : Warning<"the context selector '%0' in context set '%1' requires a "
-//               "context property defined in parentheses; selector ignored">,
-//       InGroup<OpenMPClauses>;
-// def warn_omp_ctx_incompatible_property_for_selector
-//     : Warning<"the context property '%0' is not valid for the context selector "
-//               "'%1' and the context set '%2'; property ignored">,
-//       InGroup<OpenMPClauses>;
-// def note_omp_ctx_compatible_set_and_selector_for_property
-//     : Note<"the context property '%0' can be nested in the context selector "
-//            "'%1' which is nested in the context set '%2'; try "
-//            "'match(%2={%1(%0)})'">;
-// def warn_omp_ctx_incompatible_score_for_property
-//     : Warning<"the context selector '%0' in the context set '%1' cannot have a "
-//               "score ('%2'); score ignored">,
-//       InGroup<OpenMPClauses>;
-// def warn_omp_more_one_device_type_clause
-//     : Warning<"more than one 'device_type' clause is specified">,
-//       InGroup<OpenMPClauses>;
-// def err_omp_variant_ctx_second_match_extension : Error<
-//   "only a single match extension allowed per OpenMP context selector">;
-// def err_omp_invalid_dsa: Error<
-//   "data-sharing attribute '%0' in '%1' clause requires OpenMP version %2 or above">;
+def warn_pragma_omp_ignored : Warning<
+  "unexpected '#pragma omp ...' in program">, InGroup<SourceUsesOpenMP>, DefaultIgnore;
+def warn_omp_extra_tokens_at_eol : Warning<
+  "extra tokens at the end of '#pragma omp %0' are ignored">,
+  InGroup<ExtraTokens>;
+def warn_pragma_expected_colon_r_paren : Warning<
+  "missing ':' or ')' after %0 - ignoring">, InGroup<IgnoredPragmas>;
+def err_omp_unknown_directive : Error<
+  "expected an OpenMP directive">;
+def err_omp_unexpected_directive : Error<
+  "unexpected OpenMP directive %select{|'#pragma omp %1'}0">;
+def err_omp_expected_punc : Error<
+  "expected ',' or ')' in '%0' %select{clause|directive}1">;
+def err_omp_unexpected_clause : Error<
+  "unexpected OpenMP clause '%0' in directive '#pragma omp %1'">;
+def err_omp_immediate_directive : Error<
+  "'#pragma omp %0' %select{|with '%2' clause }1cannot be an immediate substatement">;
+def err_omp_expected_identifier_for_critical : Error<
+  "expected identifier specifying the name of the 'omp critical' directive">;
+def err_omp_expected_reduction_identifier : Error<
+  "expected identifier or one of the following operators: '+', '-', '*', '&', '|', '^', '&&', or '||'">;
+def err_omp_expected_equal_in_iterator : Error<
+  "expected '=' in iterator specifier">;
+def err_omp_expected_punc_after_iterator : Error<
+  "expected ',' or ')' after iterator specifier">;
+def err_omp_decl_in_declare_simd_variant : Error<
+  "function declaration is expected after 'declare %select{simd|variant}0' directive">;
+def err_omp_unknown_map_type : Error<
+  "incorrect map type, expected one of 'to', 'from', 'tofrom', 'alloc', 'release', or 'delete'">;
+def err_omp_unknown_map_type_modifier : Error<
+  "incorrect map type modifier, expected 'always', 'close', or 'mapper'">;
+def err_omp_map_type_missing : Error<
+  "missing map type">;
+def err_omp_map_type_modifier_missing : Error<
+  "missing map type modifier">;
+def err_omp_declare_simd_inbranch_notinbranch : Error<
+  "unexpected '%0' clause, '%1' is specified already">;
+def err_expected_end_declare_target_or_variant : Error<
+  "expected '#pragma omp end declare %select{target|variant}0'">;
+def err_expected_begin_declare_variant
+    : Error<"'#pragma omp end declare variant' with no matching '#pragma omp "
+            "begin declare variant'">;
+def err_omp_declare_target_unexpected_clause: Error<
+  "unexpected '%0' clause, only %select{'to' or 'link'|'to', 'link' or 'device_type'}1 clauses expected">;
+def err_omp_expected_clause: Error<
+  "expected at least one clause on '#pragma omp %0' directive">;
+def err_omp_mapper_illegal_identifier : Error<
+  "illegal OpenMP user-defined mapper identifier">;
+def err_omp_mapper_expected_declarator : Error<
+  "expected declarator on 'omp declare mapper' directive">;
+def err_omp_declare_variant_wrong_clause : Error<
+  "expected '%0' clause on 'omp declare variant' directive">;
+def warn_omp_declare_variant_string_literal_or_identifier
+    : Warning<"expected identifier or string literal describing a context "
+              "%select{set|selector|property}0; "
+              "%select{set|selector|property}0 skipped">,
+      InGroup<OpenMPClauses>;
+def note_omp_declare_variant_ctx_options
+    : Note<"context %select{set|selector|property}0 options are: %1">;
+def warn_omp_declare_variant_expected
+    : Warning<"expected '%0' after the %1; '%0' assumed">,
+      InGroup<OpenMPClauses>;
+def warn_omp_declare_variant_ctx_not_a_property
+    : Warning<"'%0' is not a valid context property for the context selector "
+              "'%1' and the context set '%2'; property ignored">,
+      InGroup<OpenMPClauses>;
+def note_omp_declare_variant_ctx_is_a
+    : Note<"'%0' is a context %select{set|selector|property}1 not a context "
+           "%select{set|selector|property}2">;
+def note_omp_declare_variant_ctx_try : Note<"try 'match(%0={%1%2})'">;
+def warn_omp_declare_variant_ctx_not_a_selector
+    : Warning<"'%0' is not a valid context selector for the context set '%1'; "
+              "selector ignored">,
+      InGroup<OpenMPClauses>;
+def warn_omp_declare_variant_ctx_not_a_set
+    : Warning<"'%0' is not a valid context set in a `declare variant`; set "
+              "ignored">,
+      InGroup<OpenMPClauses>;
+def warn_omp_declare_variant_ctx_mutiple_use
+    : Warning<"the context %select{set|selector|property}0 '%1' was used "
+              "already in the same 'omp declare variant' directive; "
+              "%select{set|selector|property}0 ignored">,
+      InGroup<OpenMPClauses>;
+def note_omp_declare_variant_ctx_used_here
+    : Note<"the previous context %select{set|selector|property}0 '%1' used "
+           "here">;
+def note_omp_declare_variant_ctx_continue_here
+    : Note<"the ignored %select{set|selector|property}0 spans until here">;
+def warn_omp_ctx_incompatible_selector_for_set
+    : Warning<"the context selector '%0' is not valid for the context set "
+              "'%1'; selector ignored">,
+      InGroup<OpenMPClauses>;
+def note_omp_ctx_compatible_set_for_selector
+    : Note<"the context selector '%0' can be nested in the context set '%1'; "
+           "try 'match(%1={%0%select{|(property)}2})'">;
+def warn_omp_ctx_selector_without_properties
+    : Warning<"the context selector '%0' in context set '%1' requires a "
+              "context property defined in parentheses; selector ignored">,
+      InGroup<OpenMPClauses>;
+def warn_omp_ctx_incompatible_property_for_selector
+    : Warning<"the context property '%0' is not valid for the context selector "
+              "'%1' and the context set '%2'; property ignored">,
+      InGroup<OpenMPClauses>;
+def note_omp_ctx_compatible_set_and_selector_for_property
+    : Note<"the context property '%0' can be nested in the context selector "
+           "'%1' which is nested in the context set '%2'; try "
+           "'match(%2={%1(%0)})'">;
+def warn_omp_ctx_incompatible_score_for_property
+    : Warning<"the context selector '%0' in the context set '%1' cannot have a "
+              "score ('%2'); score ignored">,
+      InGroup<OpenMPClauses>;
+def warn_omp_more_one_device_type_clause
+    : Warning<"more than one 'device_type' clause is specified">,
+      InGroup<OpenMPClauses>;
+def err_omp_variant_ctx_second_match_extension : Error<
+  "only a single match extension allowed per OpenMP context selector">;
+def err_omp_invalid_dsa: Error<
+  "data-sharing attribute '%0' in '%1' clause requires OpenMP version %2 or above">;
 
 // Pragma loop support.
 def err_pragma_loop_missing_argument : Error<
@@ -1402,14 +1402,14 @@ def err_export_empty : Error<"export declaration cannot be empty">;
 
 let CategoryName = "Generics Issue" in {
 
-def err_objc_expected_type_parameter : Error<
-  "expected type parameter name">;
+// def err_objc_expected_type_parameter : Error<
+//   "expected type parameter name">;
 
-def err_objc_parameterized_implementation : Error<
-  "@implementation cannot have type parameters">;
+// def err_objc_parameterized_implementation : Error<
+//   "@implementation cannot have type parameters">;
 
-def err_objc_type_args_after_protocols : Error<
-  "protocol qualifiers must precede type arguments">;
+// def err_objc_type_args_after_protocols : Error<
+//   "protocol qualifiers must precede type arguments">;
 
 def note_meant_to_use_typename : Note<
   "did you mean to use 'typename'?">;

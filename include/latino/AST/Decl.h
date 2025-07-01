@@ -4565,9 +4565,9 @@ inline bool IsEnumDeclScoped(EnumDecl *ED) {
 /// OpenMP variants are mangled early based on their OpenMP context selector.
 /// The new name looks likes this:
 ///  <name> + OpenMPVariantManglingSeparatorStr + <mangled OpenMP context>
-// static constexpr StringRef getOpenMPVariantManglingSeparatorStr() {
-//   return "$ompvariant";
-// }
+static constexpr StringRef getOpenMPVariantManglingSeparatorStr() {
+  return "$ompvariant";
+}
 
 } // namespace latino
 

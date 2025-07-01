@@ -78,9 +78,9 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::Int128:
     ID = PREDEF_TYPE_INT128_ID;
     break;
-  // case BuiltinType::Half:
-  //   ID = PREDEF_TYPE_HALF_ID;
-  //   break;
+  case BuiltinType::Half:
+    ID = PREDEF_TYPE_HALF_ID;
+    break;
   case BuiltinType::Float:
     ID = PREDEF_TYPE_FLOAT_ID;
     break;
@@ -162,12 +162,12 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   case BuiltinType::SatULongFract:
     ID = PREDEF_TYPE_SAT_ULONG_FRACT_ID;
     break;
-  // case BuiltinType::Float16:
-  //   ID = PREDEF_TYPE_FLOAT16_ID;
-  //   break;
-  // case BuiltinType::Float128:
-  //   ID = PREDEF_TYPE_FLOAT128_ID;
-  //   break;
+  case BuiltinType::Float16:
+    ID = PREDEF_TYPE_FLOAT16_ID;
+    break;
+  case BuiltinType::Float128:
+    ID = PREDEF_TYPE_FLOAT128_ID;
+    break;
   case BuiltinType::NullPtr:
     ID = PREDEF_TYPE_NULLPTR_ID;
     break;
@@ -207,31 +207,31 @@ serialization::TypeIdxFromBuiltin(const BuiltinType *BT) {
   // case BuiltinType::ObjCSel:
   //   ID = PREDEF_TYPE_OBJC_SEL;
   //   break;
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   case BuiltinType::Id: \
-//     ID = PREDEF_TYPE_##Id##_ID; \
-//     break;
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case BuiltinType::Id: \
-//     ID = PREDEF_TYPE_##Id##_ID; \
-//     break;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-  // case BuiltinType::OCLSampler:
-  //   ID = PREDEF_TYPE_SAMPLER_ID;
-  //   break;
-  // case BuiltinType::OCLEvent:
-  //   ID = PREDEF_TYPE_EVENT_ID;
-  //   break;
-  // case BuiltinType::OCLClkEvent:
-  //   ID = PREDEF_TYPE_CLK_EVENT_ID;
-  //   break;
-  // case BuiltinType::OCLQueue:
-  //   ID = PREDEF_TYPE_QUEUE_ID;
-  //   break;
-  // case BuiltinType::OCLReserveID:
-  //   ID = PREDEF_TYPE_RESERVE_ID_ID;
-  //   break;
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  case BuiltinType::Id: \
+    ID = PREDEF_TYPE_##Id##_ID; \
+    break;
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case BuiltinType::Id: \
+    ID = PREDEF_TYPE_##Id##_ID; \
+    break;
+#include "latino/Basic/OpenCLExtensionTypes.def"
+  case BuiltinType::OCLSampler:
+    ID = PREDEF_TYPE_SAMPLER_ID;
+    break;
+  case BuiltinType::OCLEvent:
+    ID = PREDEF_TYPE_EVENT_ID;
+    break;
+  case BuiltinType::OCLClkEvent:
+    ID = PREDEF_TYPE_CLK_EVENT_ID;
+    break;
+  case BuiltinType::OCLQueue:
+    ID = PREDEF_TYPE_QUEUE_ID;
+    break;
+  case BuiltinType::OCLReserveID:
+    ID = PREDEF_TYPE_RESERVE_ID_ID;
+    break;
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id: \
     ID = PREDEF_TYPE_##Id##_ID; \
@@ -404,12 +404,12 @@ bool serialization::isRedeclarableDeclKind(unsigned Kind) {
   case Decl::Captured:
   case Decl::ClassScopeFunctionSpecialization:
   case Decl::Import:
-  // case Decl::OMPThreadPrivate:
-  // case Decl::OMPAllocate:
-  // case Decl::OMPRequires:
-  // case Decl::OMPCapturedExpr:
-  // case Decl::OMPDeclareReduction:
-  // case Decl::OMPDeclareMapper:
+  case Decl::OMPThreadPrivate:
+  case Decl::OMPAllocate:
+  case Decl::OMPRequires:
+  case Decl::OMPCapturedExpr:
+  case Decl::OMPDeclareReduction:
+  case Decl::OMPDeclareMapper:
   case Decl::BuiltinTemplate:
   case Decl::Decomposition:
   case Decl::Binding:

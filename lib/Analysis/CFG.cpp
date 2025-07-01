@@ -613,8 +613,8 @@ private:
   CFGBlock *VisitStmt(Stmt *S, AddStmtChoice asc);
   CFGBlock *VisitChildren(Stmt *S);
   CFGBlock *VisitNoRecurse(Expr *E, AddStmtChoice asc);
-  // CFGBlock *VisitOMPExecutableDirective(OMPExecutableDirective *D,
-  //                                       AddStmtChoice asc);
+  CFGBlock *VisitOMPExecutableDirective(OMPExecutableDirective *D,
+                                        AddStmtChoice asc);
 
   void maybeAddScopeBeginForVarDecl(CFGBlock *B, const VarDecl *VD,
                                     const Stmt *S) {
@@ -2127,9 +2127,9 @@ CFGBlock *CFGBuilder::Visit(Stmt * S, AddStmtChoice asc,
   if (Expr *E = dyn_cast<Expr>(S))
     S = E->IgnoreParens();
 
-  // if (Context->getLangOpts().OpenMP)
-  //   if (auto *D = dyn_cast<OMPExecutableDirective>(S))
-  //     return VisitOMPExecutableDirective(D, asc);
+  if (Context->getLangOpts().OpenMP)
+    if (auto *D = dyn_cast<OMPExecutableDirective>(S))
+      return VisitOMPExecutableDirective(D, asc);
 
   switch (S->getStmtClass()) {
     default:
@@ -4898,37 +4898,37 @@ CFGBlock *CFGBuilder::VisitConditionalOperatorForTemporaryDtors(
   return Block;
 }
 
-// CFGBlock *CFGBuilder::VisitOMPExecutableDirective(OMPExecutableDirective *D,
-//                                                   AddStmtChoice asc) {
-//   if (asc.alwaysAdd(*this, D)) {
-//     autoCreateBlock();
-//     appendStmt(Block, D);
-//   }
+CFGBlock *CFGBuilder::VisitOMPExecutableDirective(OMPExecutableDirective *D,
+                                                  AddStmtChoice asc) {
+  if (asc.alwaysAdd(*this, D)) {
+    autoCreateBlock();
+    appendStmt(Block, D);
+  }
 
-//   // Iterate over all used expression in clauses.
-//   CFGBlock *B = Block;
+  // Iterate over all used expression in clauses.
+  CFGBlock *B = Block;
 
-//   // Reverse the elements to process them in natural order. Iterators are not
-//   // bidirectional, so we need to create temp vector.
-//   SmallVector<Stmt *, 8> Used(
-//       OMPExecutableDirective::used_clauses_children(D->clauses()));
-//   for (Stmt *S : llvm::reverse(Used)) {
-//     assert(S && "Expected non-null used-in-clause child.");
-//     if (CFGBlock *R = Visit(S))
-//       B = R;
-//   }
-//   // Visit associated structured block if any.
-//   if (!D->isStandaloneDirective())
-//     if (CapturedStmt *CS = D->getInnermostCapturedStmt()) {
-//       Stmt *S = CS->getCapturedStmt();
-//       if (!isa<CompoundStmt>(S))
-//         addLocalScopeAndDtors(S);
-//       if (CFGBlock *R = addStmt(S))
-//         B = R;
-//     }
+  // Reverse the elements to process them in natural order. Iterators are not
+  // bidirectional, so we need to create temp vector.
+  SmallVector<Stmt *, 8> Used(
+      OMPExecutableDirective::used_clauses_children(D->clauses()));
+  for (Stmt *S : llvm::reverse(Used)) {
+    assert(S && "Expected non-null used-in-clause child.");
+    if (CFGBlock *R = Visit(S))
+      B = R;
+  }
+  // Visit associated structured block if any.
+  if (!D->isStandaloneDirective())
+    if (CapturedStmt *CS = D->getInnermostCapturedStmt()) {
+      Stmt *S = CS->getCapturedStmt();
+      if (!isa<CompoundStmt>(S))
+        addLocalScopeAndDtors(S);
+      if (CFGBlock *R = addStmt(S))
+        B = R;
+    }
 
-//   return B;
-// }
+  return B;
+}
 
 /// createBlock - Constructs and adds a new CFGBlock to the CFG.  The block has
 ///  no successors or predecessors.  If this is the first block created in the

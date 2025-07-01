@@ -2723,7 +2723,7 @@ LangOptions getFormattingLangOpts(const FormatStyle &Style) {
   bool AlternativeOperators = Style.isCpp();
   LangOpts.CXXOperatorNames = AlternativeOperators ? 1 : 0;
   LangOpts.Bool = 1;
-  LangOpts.ObjC = 1;
+  // LangOpts.ObjC = 1;
   LangOpts.MicrosoftExt = 1;    // To get kw___try, kw___finally.
   LangOpts.DeclSpecKeyword = 1; // To get __declspec.
   return LangOpts;
@@ -2741,25 +2741,25 @@ const char *StyleOptionHelpDescription =
     "  -style=\"{BasedOnStyle: llvm, IndentWidth: 8}\"";
 
 static FormatStyle::LanguageKind getLanguageByFileName(StringRef FileName) {
-  // if (FileName.endswith(".java"))
-  //   return FormatStyle::LK_Java;
-  // if (FileName.endswith_lower(".js") || FileName.endswith_lower(".mjs") ||
-  //     FileName.endswith_lower(".ts"))
-  //   return FormatStyle::LK_JavaScript; // (module) JavaScript or TypeScript.
-  // if (FileName.endswith(".m") || FileName.endswith(".mm"))
-  //   return FormatStyle::LK_ObjC;
-  // if (FileName.endswith_lower(".proto") ||
-  //     FileName.endswith_lower(".protodevel"))
-  //   return FormatStyle::LK_Proto;
-  // if (FileName.endswith_lower(".textpb") ||
-  //     FileName.endswith_lower(".pb.txt") ||
-  //     FileName.endswith_lower(".textproto") ||
-  //     FileName.endswith_lower(".asciipb"))
-  //   return FormatStyle::LK_TextProto;
+  if (FileName.endswith(".java"))
+    return FormatStyle::LK_Java;
+  if (FileName.endswith_lower(".js") || FileName.endswith_lower(".mjs") ||
+      FileName.endswith_lower(".ts"))
+    return FormatStyle::LK_JavaScript; // (module) JavaScript or TypeScript.
+  if (FileName.endswith(".m") || FileName.endswith(".mm"))
+    return FormatStyle::LK_ObjC;
+  if (FileName.endswith_lower(".proto") ||
+      FileName.endswith_lower(".protodevel"))
+    return FormatStyle::LK_Proto;
+  if (FileName.endswith_lower(".textpb") ||
+      FileName.endswith_lower(".pb.txt") ||
+      FileName.endswith_lower(".textproto") ||
+      FileName.endswith_lower(".asciipb"))
+    return FormatStyle::LK_TextProto;
   if (FileName.endswith_lower(".td"))
     return FormatStyle::LK_TableGen;
-  // if (FileName.endswith_lower(".cs"))
-  //   return FormatStyle::LK_CSharp;
+  if (FileName.endswith_lower(".cs"))
+    return FormatStyle::LK_CSharp;
   return FormatStyle::LK_Cpp;
 }
 

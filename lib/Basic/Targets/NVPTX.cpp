@@ -16,7 +16,7 @@
 #include "latino/Basic/MacroBuilder.h"
 #include "latino/Basic/TargetBuiltins.h"
 #include "llvm/ADT/StringSwitch.h"
-// #include "llvm/Frontend/OpenMP/OMPGridValues.h"
+#include "llvm/Frontend/OpenMP/OMPGridValues.h"
 
 using namespace latino;
 using namespace latino::targets;

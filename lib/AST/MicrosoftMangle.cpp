@@ -17,7 +17,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
@@ -99,8 +99,8 @@ static const DeclContext *getEffectiveDeclContext(const Decl *D) {
   }
 
   const DeclContext *DC = D->getDeclContext();
-  if (isa<CapturedDecl>(DC) /*|| isa<OMPDeclareReductionDecl>(DC) ||
-      isa<OMPDeclareMapperDecl>(DC)*/) {
+  if (isa<CapturedDecl>(DC) || isa<OMPDeclareReductionDecl>(DC) ||
+      isa<OMPDeclareMapperDecl>(DC)) {
     return getEffectiveDeclContext(cast<Decl>(DC));
   }
 
@@ -2044,48 +2044,48 @@ void MicrosoftCXXNameMangler::mangleType(const BuiltinType *T, Qualifiers,
   //   mangleArtificialTagType(TTK_Struct, "objc_selector");
   //   break;
 
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   case BuiltinType::Id: \
-//     Out << "PAUocl_" #ImgType "_" #Suffix "@@"; \
-//     break;
-// #include "latino/Basic/OpenCLImageTypes.def"
-  // case BuiltinType::OCLSampler:
-  //   Out << "PA";
-  //   mangleArtificialTagType(TTK_Struct, "ocl_sampler");
-  //   break;
-  // case BuiltinType::OCLEvent:
-  //   Out << "PA";
-  //   mangleArtificialTagType(TTK_Struct, "ocl_event");
-  //   break;
-  // case BuiltinType::OCLClkEvent:
-  //   Out << "PA";
-  //   mangleArtificialTagType(TTK_Struct, "ocl_clkevent");
-  //   break;
-  // case BuiltinType::OCLQueue:
-  //   Out << "PA";
-  //   mangleArtificialTagType(TTK_Struct, "ocl_queue");
-  //   break;
-  // case BuiltinType::OCLReserveID:
-  //   Out << "PA";
-  //   mangleArtificialTagType(TTK_Struct, "ocl_reserveid");
-  //   break;
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case BuiltinType::Id: \
-//     mangleArtificialTagType(TTK_Struct, "ocl_" #ExtType); \
-//     break;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  case BuiltinType::Id: \
+    Out << "PAUocl_" #ImgType "_" #Suffix "@@"; \
+    break;
+#include "latino/Basic/OpenCLImageTypes.def"
+  case BuiltinType::OCLSampler:
+    Out << "PA";
+    mangleArtificialTagType(TTK_Struct, "ocl_sampler");
+    break;
+  case BuiltinType::OCLEvent:
+    Out << "PA";
+    mangleArtificialTagType(TTK_Struct, "ocl_event");
+    break;
+  case BuiltinType::OCLClkEvent:
+    Out << "PA";
+    mangleArtificialTagType(TTK_Struct, "ocl_clkevent");
+    break;
+  case BuiltinType::OCLQueue:
+    Out << "PA";
+    mangleArtificialTagType(TTK_Struct, "ocl_queue");
+    break;
+  case BuiltinType::OCLReserveID:
+    Out << "PA";
+    mangleArtificialTagType(TTK_Struct, "ocl_reserveid");
+    break;
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case BuiltinType::Id: \
+    mangleArtificialTagType(TTK_Struct, "ocl_" #ExtType); \
+    break;
+#include "latino/Basic/OpenCLExtensionTypes.def"
 
   case BuiltinType::NullPtr:
     Out << "$$T";
     break;
 
-  // case BuiltinType::Float16:
-  //   mangleArtificialTagType(TTK_Struct, "_Float16", {"__clang"});
-  //   break;
+  case BuiltinType::Float16:
+    mangleArtificialTagType(TTK_Struct, "_Float16", {"__clang"});
+    break;
 
-  // case BuiltinType::Half:
-  //   mangleArtificialTagType(TTK_Struct, "_Half", {"__clang"});
-  //   break;
+  case BuiltinType::Half:
+    mangleArtificialTagType(TTK_Struct, "_Half", {"__clang"});
+    break;
 
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id:
@@ -2115,7 +2115,7 @@ void MicrosoftCXXNameMangler::mangleType(const BuiltinType *T, Qualifiers,
   case BuiltinType::SatUFract:
   case BuiltinType::SatULongFract:
   case BuiltinType::BFloat16:
-  // case BuiltinType::Float128: 
+  case BuiltinType::Float128: 
   {
     DiagnosticsEngine &Diags = Context.getDiags();
     unsigned DiagID = Diags.getCustomDiagID(

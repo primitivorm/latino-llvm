@@ -113,7 +113,7 @@ TargetInfo::TargetInfo(const llvm::Triple &T) : TargetOpts(), Triple(T) {
   SSERegParmMax = 0;
   HasAlignMac68kSupport = false;
   HasBuiltinMSVaList = false;
-  IsRenderScriptTarget = false;
+  //IsRenderScriptTarget = false;
   HasAArch64SVETypes = false;
   ARMCDECoprocMask = 0;
 
@@ -354,40 +354,40 @@ void TargetInfo::adjust(LangOptions &Opts) {
     LongDoubleAlign = 64;
   }
 
-  // if (Opts.OpenCL) {
-  //   // OpenCL C requires specific widths for types, irrespective of
-  //   // what these normally are for the target.
-  //   // We also define long long and long double here, although the
-  //   // OpenCL standard only mentions these as "reserved".
-  //   IntWidth = IntAlign = 32;
-  //   LongWidth = LongAlign = 64;
-  //   LongLongWidth = LongLongAlign = 128;
-  //   HalfWidth = HalfAlign = 16;
-  //   FloatWidth = FloatAlign = 32;
+  if (Opts.OpenCL) {
+    // OpenCL C requires specific widths for types, irrespective of
+    // what these normally are for the target.
+    // We also define long long and long double here, although the
+    // OpenCL standard only mentions these as "reserved".
+    IntWidth = IntAlign = 32;
+    LongWidth = LongAlign = 64;
+    LongLongWidth = LongLongAlign = 128;
+    HalfWidth = HalfAlign = 16;
+    FloatWidth = FloatAlign = 32;
 
-  //   // Embedded 32-bit targets (OpenCL EP) might have double C type
-  //   // defined as float. Let's not override this as it might lead
-  //   // to generating illegal code that uses 64bit doubles.
-  //   if (DoubleWidth != FloatWidth) {
-  //     DoubleWidth = DoubleAlign = 64;
-  //     DoubleFormat = &llvm::APFloat::IEEEdouble();
-  //   }
-  //   LongDoubleWidth = LongDoubleAlign = 128;
+    // Embedded 32-bit targets (OpenCL EP) might have double C type
+    // defined as float. Let's not override this as it might lead
+    // to generating illegal code that uses 64bit doubles.
+    if (DoubleWidth != FloatWidth) {
+      DoubleWidth = DoubleAlign = 64;
+      DoubleFormat = &llvm::APFloat::IEEEdouble();
+    }
+    LongDoubleWidth = LongDoubleAlign = 128;
 
-  //   unsigned MaxPointerWidth = getMaxPointerWidth();
-  //   assert(MaxPointerWidth == 32 || MaxPointerWidth == 64);
-  //   bool Is32BitArch = MaxPointerWidth == 32;
-  //   SizeType = Is32BitArch ? UnsignedInt : UnsignedLong;
-  //   PtrDiffType = Is32BitArch ? SignedInt : SignedLong;
-  //   IntPtrType = Is32BitArch ? SignedInt : SignedLong;
+    unsigned MaxPointerWidth = getMaxPointerWidth();
+    assert(MaxPointerWidth == 32 || MaxPointerWidth == 64);
+    bool Is32BitArch = MaxPointerWidth == 32;
+    SizeType = Is32BitArch ? UnsignedInt : UnsignedLong;
+    PtrDiffType = Is32BitArch ? SignedInt : SignedLong;
+    IntPtrType = Is32BitArch ? SignedInt : SignedLong;
 
-  //   IntMaxType = SignedLongLong;
-  //   Int64Type = SignedLong;
+    IntMaxType = SignedLongLong;
+    Int64Type = SignedLong;
 
-  //   HalfFormat = &llvm::APFloat::IEEEhalf();
-  //   FloatFormat = &llvm::APFloat::IEEEsingle();
-  //   LongDoubleFormat = &llvm::APFloat::IEEEquad();
-  // }
+    HalfFormat = &llvm::APFloat::IEEEhalf();
+    FloatFormat = &llvm::APFloat::IEEEsingle();
+    LongDoubleFormat = &llvm::APFloat::IEEEquad();
+  }
 
   if (Opts.DoubleSize) {
     if (Opts.DoubleSize == 32) {
@@ -443,19 +443,19 @@ TargetInfo::getCallingConvKind(bool ClangABICompat4) const {
   return CCK_Default;
 }
 
-// LangAS TargetInfo::getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const {
-//   switch (TK) {
-//   case OCLTK_Image:
-//   case OCLTK_Pipe:
-//     return LangAS::opencl_global;
+LangAS TargetInfo::getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const {
+  switch (TK) {
+  case OCLTK_Image:
+  case OCLTK_Pipe:
+    return LangAS::opencl_global;
 
-//   case OCLTK_Sampler:
-//     return LangAS::opencl_constant;
+  case OCLTK_Sampler:
+    return LangAS::opencl_constant;
 
-//   default:
-//     return LangAS::Default;
-//   }
-// }
+  default:
+    return LangAS::Default;
+  }
+}
 
 //===----------------------------------------------------------------------===//
 

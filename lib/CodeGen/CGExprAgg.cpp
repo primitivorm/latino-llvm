@@ -902,7 +902,7 @@ void AggExprEmitter::VisitCastExpr(CastExpr *E) {
   case CK_BuiltinFnToFnPtr:
   case CK_ZeroToOCLOpaqueType:
 
-  // case CK_IntToOCLSampler:
+  case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:
@@ -2015,25 +2015,25 @@ void CodeGenFunction::EmitAggregateCopy(LValue Dest, LValue Src, QualType Ty,
   SrcPtr = Builder.CreateElementBitCast(SrcPtr, Int8Ty);
 
   // Don't do any of the memmove_collectable tests if GC isn't set.
-  // if (CGM.getLangOpts().getGC() == LangOptions::NonGC) {
-  //   // fall through
-  // } else if (const RecordType *RecordTy = Ty->getAs<RecordType>()) {
-  //   RecordDecl *Record = RecordTy->getDecl();
-  //   // if (Record->hasObjectMember()) {
-  //   //   CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
-  //   //                                                 SizeVal);
-  //   //   return;
-  //   // }
-  // } else if (Ty->isArrayType()) {
-  //   QualType BaseType = getContext().getBaseElementType(Ty);
-  //   if (const RecordType *RecordTy = BaseType->getAs<RecordType>()) {
-  //     if (RecordTy->getDecl()->hasObjectMember()) {
-  //       CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
-  //                                                     SizeVal);
-  //       return;
-  //     }
-  //   }
-  // }
+  if (CGM.getLangOpts().getGC() == LangOptions::NonGC) {
+    // fall through
+  }/* else if (const RecordType *RecordTy = Ty->getAs<RecordType>()) {
+    RecordDecl *Record = RecordTy->getDecl();
+    if (Record->hasObjectMember()) {
+      CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
+                                                    SizeVal);
+      return;
+    }
+  } else if (Ty->isArrayType()) {
+    QualType BaseType = getContext().getBaseElementType(Ty);
+    if (const RecordType *RecordTy = BaseType->getAs<RecordType>()) {
+      if (RecordTy->getDecl()->hasObjectMember()) {
+        CGM.getObjCRuntime().EmitGCMemmoveCollectable(*this, DestPtr, SrcPtr,
+                                                      SizeVal);
+        return;
+      }
+    }
+  }*/
 
   auto Inst = Builder.CreateMemCpy(DestPtr, SrcPtr, SizeVal, isVolatile);
 

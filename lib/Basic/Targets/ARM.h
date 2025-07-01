@@ -270,15 +270,15 @@ public:
 };
 
 // 32-bit RenderScript is armv7 with width and align of 'long' set to 8-bytes
-class LLVM_LIBRARY_VISIBILITY RenderScript32TargetInfo
-    : public ARMleTargetInfo {
-public:
-  RenderScript32TargetInfo(const llvm::Triple &Triple,
-                           const TargetOptions &Opts);
+// class LLVM_LIBRARY_VISIBILITY RenderScript32TargetInfo
+//     : public ARMleTargetInfo {
+// public:
+//   RenderScript32TargetInfo(const llvm::Triple &Triple,
+//                            const TargetOptions &Opts);
 
-  void getTargetDefines(const LangOptions &Opts,
-                        MacroBuilder &Builder) const override;
-};
+//   void getTargetDefines(const LangOptions &Opts,
+//                         MacroBuilder &Builder) const override;
+// };
 
 } // namespace targets
 } // namespace latino

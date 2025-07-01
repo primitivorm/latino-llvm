@@ -530,23 +530,23 @@ void MigrationContext::traverse(TranslationUnitDecl *TU) {
 //       if (!MD->hasBody())
 //         continue;
 
-//       // if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
-//       //   const ObjCMethodDecl *FinalizeM = MD;
-//       //   Transaction Trans(TA);
-//       //   TA.insert(FinalizeM->getSourceRange().getBegin(),
-//       //             "#if !__has_feature(objc_arc)\n");
-//       //   CharSourceRange::getTokenRange(FinalizeM->getSourceRange());
-//       //   const SourceManager &SM = pass.Ctx.getSourceManager();
-//       //   const LangOptions &LangOpts = pass.Ctx.getLangOpts();
-//       //   bool Invalid;
-//       //   std::string str = "\n#endif\n";
-//       //   str += Lexer::getSourceText(
-//       //             CharSourceRange::getTokenRange(FinalizeM->getSourceRange()),
-//       //                               SM, LangOpts, &Invalid);
-//       //   TA.insertAfterToken(FinalizeM->getSourceRange().getEnd(), str);
+//       if (MD->isInstanceMethod() && MD->getSelector() == FinalizeSel) {
+//         const ObjCMethodDecl *FinalizeM = MD;
+//         Transaction Trans(TA);
+//         TA.insert(FinalizeM->getSourceRange().getBegin(),
+//                   "#if !__has_feature(objc_arc)\n");
+//         CharSourceRange::getTokenRange(FinalizeM->getSourceRange());
+//         const SourceManager &SM = pass.Ctx.getSourceManager();
+//         const LangOptions &LangOpts = pass.Ctx.getLangOpts();
+//         bool Invalid;
+//         std::string str = "\n#endif\n";
+//         str += Lexer::getSourceText(
+//                   CharSourceRange::getTokenRange(FinalizeM->getSourceRange()),
+//                                     SM, LangOpts, &Invalid);
+//         TA.insertAfterToken(FinalizeM->getSourceRange().getEnd(), str);
 
-//       //   break;
-//       // }
+//         break;
+//       }
 //     }
 //   }
 // }
@@ -560,9 +560,9 @@ static void traverseAST(MigrationPass &pass) {
 
   if (pass.isGCMigration()) {
     MigrateCtx.addTraverser(new GCCollectableCallsTraverser);
-    MigrateCtx.addTraverser(new GCAttrsTraverser());
+    // MigrateCtx.addTraverser(new GCAttrsTraverser());
   }
-  MigrateCtx.addTraverser(new PropertyRewriteTraverser());
+  // MigrateCtx.addTraverser(new PropertyRewriteTraverser());
   // MigrateCtx.addTraverser(new BlockObjCVariableTraverser());
   MigrateCtx.addTraverser(new ProtectedScopeTraverser());
 
@@ -585,8 +585,8 @@ std::vector<TransformFn> arcmt::getAllTransformations(
                                                bool NoFinalizeRemoval) {
   std::vector<TransformFn> transforms;
 
-  if (OrigGCMode ==  LangOptions::GCOnly && NoFinalizeRemoval)
-    transforms.push_back(GCRewriteFinalize);
+  // if (OrigGCMode ==  LangOptions::GCOnly && NoFinalizeRemoval)
+  //   transforms.push_back(GCRewriteFinalize);
   transforms.push_back(independentTransforms);
   // This depends on previous transformations removing various expressions.
   transforms.push_back(removeEmptyStatementsAndDeallocFinalize);

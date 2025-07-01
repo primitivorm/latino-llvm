@@ -699,9 +699,9 @@ static void addDashXForInput(const ArgList &Args, const InputInfo &Input,
     return;
 
   CmdArgs.push_back("-x");
-  if (Args.hasArg(options::OPT_rewrite_objc))
-    CmdArgs.push_back(types::getTypeName(types::TY_PP_ObjCXX));
-  else {
+  // if (Args.hasArg(options::OPT_rewrite_objc))
+  //   CmdArgs.push_back(types::getTypeName(types::TY_PP_ObjCXX));
+  // else {
     // Map the driver type to the frontend type. This is mostly an identity
     // mapping, except that the distinction between module interface units
     // and other source files does not exist at the frontend layer.
@@ -718,7 +718,7 @@ static void addDashXForInput(const ArgList &Args, const InputInfo &Input,
       break;
     }
     CmdArgs.push_back(ClangType);
-  }
+  // }
 }
 
 static void addPGOAndCoverageFlags(const ToolChain &TC, Compilation &C,
@@ -1199,9 +1199,9 @@ void Clang::AddPreprocessingOptions(Compilation &C, const JobAction &JA,
       CmdArgs.push_back(Args.MakeArgString("-building-pch-with-obj"));
       // -fpch-instantiate-templates is the default when creating
       // precomp using /Yc
-      if (Args.hasFlag(options::OPT_fpch_instantiate_templates,
-                       options::OPT_fno_pch_instantiate_templates, true))
-        CmdArgs.push_back(Args.MakeArgString("-fpch-instantiate-templates"));
+      // if (Args.hasFlag(options::OPT_fpch_instantiate_templates,
+      //                  options::OPT_fno_pch_instantiate_templates, true))
+      //   CmdArgs.push_back(Args.MakeArgString("-fpch-instantiate-templates"));
     }
     if (YcArg || YuArg) {
       StringRef ThroughHeader = YcArg ? YcArg->getValue() : YuArg->getValue();
@@ -3917,7 +3917,7 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
   // one input.
   bool IsCuda = JA.isOffloading(Action::OFK_Cuda);
   bool IsHIP = JA.isOffloading(Action::OFK_HIP);
-  // bool IsOpenMPDevice = JA.isDeviceOffloading(Action::OFK_OpenMP);
+  bool IsOpenMPDevice = JA.isDeviceOffloading(Action::OFK_OpenMP);
   bool IsHeaderModulePrecompile = isa<HeaderModulePrecompileJobAction>(JA);
 
   // A header module compilation doesn't have a main input file, so invent a
@@ -3948,9 +3948,9 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
       ModuleHeaderInputs.push_back(I);
     } else if ((IsCuda || IsHIP) && !CudaDeviceInput) {
       CudaDeviceInput = &I;
-    }/* else if (IsOpenMPDevice && !OpenMPDeviceInput) {
+    } else if (IsOpenMPDevice && !OpenMPDeviceInput) {
       OpenMPDeviceInput = &I;
-    }*/ else {
+    } else {
       llvm_unreachable("unexpectedly given multiple inputs");
     }
   }
@@ -4033,15 +4033,15 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
     }
   }
 
-  // if (IsOpenMPDevice) {
-  //   // We have to pass the triple of the host if compiling for an OpenMP device.
-  //   std::string NormalizedTriple =
-  //       C.getSingleOffloadToolChain<Action::OFK_Host>()
-  //           ->getTriple()
-  //           .normalize();
-  //   CmdArgs.push_back("-aux-triple");
-  //   CmdArgs.push_back(Args.MakeArgString(NormalizedTriple));
-  // }
+  if (IsOpenMPDevice) {
+    // We have to pass the triple of the host if compiling for an OpenMP device.
+    std::string NormalizedTriple =
+        C.getSingleOffloadToolChain<Action::OFK_Host>()
+            ->getTriple()
+            .normalize();
+    CmdArgs.push_back("-aux-triple");
+    CmdArgs.push_back(Args.MakeArgString(NormalizedTriple));
+  }
 
   if (Triple.isOSWindows() && (Triple.getArch() == llvm::Triple::arm ||
                                Triple.getArch() == llvm::Triple::thumb)) {
@@ -5193,69 +5193,69 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
 
   // Forward flags for OpenMP. We don't do this if the current action is an
   // device offloading action other than OpenMP.
-  // if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-  //                  options::OPT_fno_openmp, false) &&
-  //     (JA.isDeviceOffloading(Action::OFK_None) ||
-  //      JA.isDeviceOffloading(Action::OFK_OpenMP))) {
-  //   switch (D.getOpenMPRuntime(Args)) {
-  //   case Driver::OMPRT_OMP:
-  //   case Driver::OMPRT_IOMP5:
-  //     // Clang can generate useful OpenMP code for these two runtime libraries.
-  //     CmdArgs.push_back("-fopenmp");
+  if (Args.hasFlag(options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+                   options::OPT_fno_openmp, false) &&
+      (JA.isDeviceOffloading(Action::OFK_None) ||
+       JA.isDeviceOffloading(Action::OFK_OpenMP))) {
+    switch (D.getOpenMPRuntime(Args)) {
+    case Driver::OMPRT_OMP:
+    case Driver::OMPRT_IOMP5:
+      // Clang can generate useful OpenMP code for these two runtime libraries.
+      CmdArgs.push_back("-fopenmp");
 
-  //     // If no option regarding the use of TLS in OpenMP codegeneration is
-  //     // given, decide a default based on the target. Otherwise rely on the
-  //     // options and pass the right information to the frontend.
-  //     if (!Args.hasFlag(options::OPT_fopenmp_use_tls,
-  //                       options::OPT_fnoopenmp_use_tls, /*Default=*/true))
-  //       CmdArgs.push_back("-fnoopenmp-use-tls");
-  //     Args.AddLastArg(CmdArgs, options::OPT_fopenmp_simd,
-  //                     options::OPT_fno_openmp_simd);
-  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_enable_irbuilder);
-  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_version_EQ);
-  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_number_of_sm_EQ);
-  //     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_blocks_per_sm_EQ);
-  //     Args.AddAllArgs(CmdArgs,
-  //                     options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ);
-  //     if (Args.hasFlag(options::OPT_fopenmp_optimistic_collapse,
-  //                      options::OPT_fno_openmp_optimistic_collapse,
-  //                      /*Default=*/false))
-  //       CmdArgs.push_back("-fopenmp-optimistic-collapse");
+      // If no option regarding the use of TLS in OpenMP codegeneration is
+      // given, decide a default based on the target. Otherwise rely on the
+      // options and pass the right information to the frontend.
+      if (!Args.hasFlag(options::OPT_fopenmp_use_tls,
+                        options::OPT_fnoopenmp_use_tls, /*Default=*/true))
+        CmdArgs.push_back("-fnoopenmp-use-tls");
+      Args.AddLastArg(CmdArgs, options::OPT_fopenmp_simd,
+                      options::OPT_fno_openmp_simd);
+      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_enable_irbuilder);
+      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_version_EQ);
+      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_number_of_sm_EQ);
+      Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_cuda_blocks_per_sm_EQ);
+      Args.AddAllArgs(CmdArgs,
+                      options::OPT_fopenmp_cuda_teams_reduction_recs_num_EQ);
+      if (Args.hasFlag(options::OPT_fopenmp_optimistic_collapse,
+                       options::OPT_fno_openmp_optimistic_collapse,
+                       /*Default=*/false))
+        CmdArgs.push_back("-fopenmp-optimistic-collapse");
 
-  //     // When in OpenMP offloading mode with NVPTX target, forward
-  //     // cuda-mode flag
-  //     if (Args.hasFlag(options::OPT_fopenmp_cuda_mode,
-  //                      options::OPT_fno_openmp_cuda_mode, /*Default=*/false))
-  //       CmdArgs.push_back("-fopenmp-cuda-mode");
+      // When in OpenMP offloading mode with NVPTX target, forward
+      // cuda-mode flag
+      if (Args.hasFlag(options::OPT_fopenmp_cuda_mode,
+                       options::OPT_fno_openmp_cuda_mode, /*Default=*/false))
+        CmdArgs.push_back("-fopenmp-cuda-mode");
 
-  //     // When in OpenMP offloading mode with NVPTX target, forward
-  //     // cuda-parallel-target-regions flag
-  //     if (Args.hasFlag(options::OPT_fopenmp_cuda_parallel_target_regions,
-  //                      options::OPT_fno_openmp_cuda_parallel_target_regions,
-  //                      /*Default=*/true))
-  //       CmdArgs.push_back("-fopenmp-cuda-parallel-target-regions");
+      // When in OpenMP offloading mode with NVPTX target, forward
+      // cuda-parallel-target-regions flag
+      if (Args.hasFlag(options::OPT_fopenmp_cuda_parallel_target_regions,
+                       options::OPT_fno_openmp_cuda_parallel_target_regions,
+                       /*Default=*/true))
+        CmdArgs.push_back("-fopenmp-cuda-parallel-target-regions");
 
-  //     // When in OpenMP offloading mode with NVPTX target, check if full runtime
-  //     // is required.
-  //     if (Args.hasFlag(options::OPT_fopenmp_cuda_force_full_runtime,
-  //                      options::OPT_fno_openmp_cuda_force_full_runtime,
-  //                      /*Default=*/false))
-  //       CmdArgs.push_back("-fopenmp-cuda-force-full-runtime");
-  //     break;
-  //   default:
-  //     // By default, if Clang doesn't know how to generate useful OpenMP code
-  //     // for a specific runtime library, we just don't pass the '-fopenmp' flag
-  //     // down to the actual compilation.
-  //     // FIXME: It would be better to have a mode which *only* omits IR
-  //     // generation based on the OpenMP support so that we get consistent
-  //     // semantic analysis, etc.
-  //     break;
-  //   }
-  // } else {
+      // When in OpenMP offloading mode with NVPTX target, check if full runtime
+      // is required.
+      if (Args.hasFlag(options::OPT_fopenmp_cuda_force_full_runtime,
+                       options::OPT_fno_openmp_cuda_force_full_runtime,
+                       /*Default=*/false))
+        CmdArgs.push_back("-fopenmp-cuda-force-full-runtime");
+      break;
+    default:
+      // By default, if Clang doesn't know how to generate useful OpenMP code
+      // for a specific runtime library, we just don't pass the '-fopenmp' flag
+      // down to the actual compilation.
+      // FIXME: It would be better to have a mode which *only* omits IR
+      // generation based on the OpenMP support so that we get consistent
+      // semantic analysis, etc.
+      break;
+    }
+  } else {
     Args.AddLastArg(CmdArgs, options::OPT_fopenmp_simd,
                     options::OPT_fno_openmp_simd);
     Args.AddAllArgs(CmdArgs, options::OPT_fopenmp_version_EQ);
-  // }
+  }
 
   const SanitizerArgs &Sanitize = TC.getSanitizerArgs();
   Sanitize.addArgs(TC, Args, CmdArgs, InputType);
@@ -5626,9 +5626,9 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
   if (Args.hasFlag(options::OPT_fpch_validate_input_files_content,
                    options::OPT_fno_pch_validate_input_files_content, false))
     CmdArgs.push_back("-fvalidate-ast-input-files-content");
-  if (Args.hasFlag(options::OPT_fpch_instantiate_templates,
-                   options::OPT_fno_pch_instantiate_templates, false))
-    CmdArgs.push_back("-fpch-instantiate-templates");
+  // if (Args.hasFlag(options::OPT_fpch_instantiate_templates,
+  //                  options::OPT_fno_pch_instantiate_templates, false))
+  //   CmdArgs.push_back("-fpch-instantiate-templates");
   if (Args.hasFlag(options::OPT_fpch_codegen, options::OPT_fno_pch_codegen,
                    false))
     CmdArgs.push_back("-fmodules-codegen");
@@ -5950,8 +5950,8 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
   // FIXME: -fembed-bitcode -save-temps will save optimized bitcode instead of
   // pristine IR generated by the frontend. Ideally, a new compile action should
   // be added so both IR can be captured.
-  if ((C.getDriver().isSaveTempsEnabled() /*||
-       JA.isHostOffloading(Action::OFK_OpenMP)*/) &&
+  if ((C.getDriver().isSaveTempsEnabled() ||
+       JA.isHostOffloading(Action::OFK_OpenMP)) &&
       !(C.getDriver().embedBitcodeInObject() && !C.getDriver().isUsingLTO()) &&
       isa<CompileJobAction>(JA))
     CmdArgs.push_back("-disable-llvm-passes");
@@ -6022,32 +6022,32 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
   // device declarations can be identified. Also, -fopenmp-is-device is passed
   // along to tell the frontend that it is generating code for a device, so that
   // only the relevant declarations are emitted.
-  // if (IsOpenMPDevice) {
-  //   CmdArgs.push_back("-fopenmp-is-device");
-  //   if (OpenMPDeviceInput) {
-  //     CmdArgs.push_back("-fopenmp-host-ir-file-path");
-  //     CmdArgs.push_back(Args.MakeArgString(OpenMPDeviceInput->getFilename()));
-  //   }
-  // }
+  if (IsOpenMPDevice) {
+    CmdArgs.push_back("-fopenmp-is-device");
+    if (OpenMPDeviceInput) {
+      CmdArgs.push_back("-fopenmp-host-ir-file-path");
+      CmdArgs.push_back(Args.MakeArgString(OpenMPDeviceInput->getFilename()));
+    }
+  }
 
   // For all the host OpenMP offloading compile jobs we need to pass the targets
   // information using -fopenmp-targets= option.
-  // if (JA.isHostOffloading(Action::OFK_OpenMP)) {
-  //   SmallString<128> TargetInfo("-fopenmp-targets=");
+  if (JA.isHostOffloading(Action::OFK_OpenMP)) {
+    SmallString<128> TargetInfo("-fopenmp-targets=");
 
-  //   Arg *Tgts = Args.getLastArg(options::OPT_fopenmp_targets_EQ);
-  //   assert(Tgts && Tgts->getNumValues() &&
-  //          "OpenMP offloading has to have targets specified.");
-  //   for (unsigned i = 0; i < Tgts->getNumValues(); ++i) {
-  //     if (i)
-  //       TargetInfo += ',';
-  //     // We need to get the string from the triple because it may be not exactly
-  //     // the same as the one we get directly from the arguments.
-  //     llvm::Triple T(Tgts->getValue(i));
-  //     TargetInfo += T.getTriple();
-  //   }
-  //   CmdArgs.push_back(Args.MakeArgString(TargetInfo.str()));
-  // }
+    Arg *Tgts = Args.getLastArg(options::OPT_fopenmp_targets_EQ);
+    assert(Tgts && Tgts->getNumValues() &&
+           "OpenMP offloading has to have targets specified.");
+    for (unsigned i = 0; i < Tgts->getNumValues(); ++i) {
+      if (i)
+        TargetInfo += ',';
+      // We need to get the string from the triple because it may be not exactly
+      // the same as the one we get directly from the arguments.
+      llvm::Triple T(Tgts->getValue(i));
+      TargetInfo += T.getTriple();
+    }
+    CmdArgs.push_back(Args.MakeArgString(TargetInfo.str()));
+  }
 
   bool VirtualFunctionElimination =
       Args.hasFlag(options::OPT_fvirtual_function_elimination,

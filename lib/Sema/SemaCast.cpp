@@ -635,7 +635,7 @@ CastsAwayConstness(Sema &Self, QualType SrcType, QualType DestType,
                    Qualifiers *CastAwayQualifiers = nullptr) {
   // If the only checking we care about is for Objective-C lifetime qualifiers,
   // and we're not in ObjC mode, there's nothing to check.
-  if (!CheckCVR && CheckObjCLifetime && !Self.Context.getLangOpts().ObjC)
+  if (!CheckCVR && CheckObjCLifetime /*&& !Self.Context.getLangOpts().ObjC*/)
     return CastAwayConstnessKind::CACK_None;
 
   if (!DestType->isReferenceType()) {
@@ -2455,35 +2455,35 @@ void CastOperation::checkAddressSpaceCast(QualType SrcType, QualType DestType) {
   //   local int ** p;
   //   return (generic int **) p;
   // warn even though local -> generic is permitted.
-  // if (Self.getLangOpts().OpenCL) {
-  //   const Type *DestPtr, *SrcPtr;
-  //   bool Nested = false;
-  //   unsigned DiagID = diag::err_typecheck_incompatible_address_space;
-  //   DestPtr = Self.getASTContext().getCanonicalType(DestType.getTypePtr()),
-  //   SrcPtr  = Self.getASTContext().getCanonicalType(SrcType.getTypePtr());
+  if (Self.getLangOpts().OpenCL) {
+    const Type *DestPtr, *SrcPtr;
+    bool Nested = false;
+    unsigned DiagID = diag::err_typecheck_incompatible_address_space;
+    DestPtr = Self.getASTContext().getCanonicalType(DestType.getTypePtr()),
+    SrcPtr  = Self.getASTContext().getCanonicalType(SrcType.getTypePtr());
 
-  //   while (isa<PointerType>(DestPtr) && isa<PointerType>(SrcPtr)) {
-  //     const PointerType *DestPPtr = cast<PointerType>(DestPtr);
-  //     const PointerType *SrcPPtr = cast<PointerType>(SrcPtr);
-  //     QualType DestPPointee = DestPPtr->getPointeeType();
-  //     QualType SrcPPointee = SrcPPtr->getPointeeType();
-  //     if (Nested
-  //             ? DestPPointee.getAddressSpace() != SrcPPointee.getAddressSpace()
-  //             : !DestPPointee.isAddressSpaceOverlapping(SrcPPointee)) {
-  //       Self.Diag(OpRange.getBegin(), DiagID)
-  //           << SrcType << DestType << Sema::AA_Casting
-  //           << SrcExpr.get()->getSourceRange();
-  //       if (!Nested)
-  //         SrcExpr = ExprError();
-  //       return;
-  //     }
+    while (isa<PointerType>(DestPtr) && isa<PointerType>(SrcPtr)) {
+      const PointerType *DestPPtr = cast<PointerType>(DestPtr);
+      const PointerType *SrcPPtr = cast<PointerType>(SrcPtr);
+      QualType DestPPointee = DestPPtr->getPointeeType();
+      QualType SrcPPointee = SrcPPtr->getPointeeType();
+      if (Nested
+              ? DestPPointee.getAddressSpace() != SrcPPointee.getAddressSpace()
+              : !DestPPointee.isAddressSpaceOverlapping(SrcPPointee)) {
+        Self.Diag(OpRange.getBegin(), DiagID)
+            << SrcType << DestType << Sema::AA_Casting
+            << SrcExpr.get()->getSourceRange();
+        if (!Nested)
+          SrcExpr = ExprError();
+        return;
+      }
 
-  //     DestPtr = DestPPtr->getPointeeType().getTypePtr();
-  //     SrcPtr = SrcPPtr->getPointeeType().getTypePtr();
-  //     Nested = true;
-  //     DiagID = diag::ext_nested_pointer_qualifier_mismatch;
-  //   }
-  // }
+      DestPtr = DestPPtr->getPointeeType().getTypePtr();
+      SrcPtr = SrcPPtr->getPointeeType().getTypePtr();
+      Nested = true;
+      DiagID = diag::ext_nested_pointer_qualifier_mismatch;
+    }
+  }
 }
 
 void CastOperation::CheckCXXCStyleCast(bool FunctionalStyle,
@@ -2752,21 +2752,21 @@ void CastOperation::CheckCStyleCast() {
     }
 
     // OpenCL v2.0 s6.13.10 - Allow casts from '0' to event_t type.
-    // if (Self.getLangOpts().OpenCL && DestType->isEventT()) {
-    //   Expr::EvalResult Result;
-    //   if (SrcExpr.get()->EvaluateAsInt(Result, Self.Context)) {
-    //     llvm::APSInt CastInt = Result.Val.getInt();
-    //     if (0 == CastInt) {
-    //       Kind = CK_ZeroToOCLOpaqueType;
-    //       return;
-    //     }
-    //     Self.Diag(OpRange.getBegin(),
-    //               diag::err_opencl_cast_non_zero_to_event_t)
-    //               << CastInt.toString(10) << SrcExpr.get()->getSourceRange();
-    //     SrcExpr = ExprError();
-    //     return;
-    //   }
-    // }
+    if (Self.getLangOpts().OpenCL && DestType->isEventT()) {
+      Expr::EvalResult Result;
+      if (SrcExpr.get()->EvaluateAsInt(Result, Self.Context)) {
+        llvm::APSInt CastInt = Result.Val.getInt();
+        if (0 == CastInt) {
+          Kind = CK_ZeroToOCLOpaqueType;
+          return;
+        }
+        Self.Diag(OpRange.getBegin(),
+                  diag::err_opencl_cast_non_zero_to_event_t)
+                  << CastInt.toString(10) << SrcExpr.get()->getSourceRange();
+        SrcExpr = ExprError();
+        return;
+      }
+    }
 
     // Reject any other conversions to non-scalar types.
     Self.Diag(OpRange.getBegin(), diag::err_typecheck_cond_expect_scalar)
@@ -2875,15 +2875,15 @@ void CastOperation::CheckCStyleCast() {
     }
   }
 
-  // if (Self.getLangOpts().OpenCL &&
-  //     !Self.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
-  //   if (DestType->isHalfType()) {
-  //     Self.Diag(SrcExpr.get()->getBeginLoc(), diag::err_opencl_cast_to_half)
-  //         << DestType << SrcExpr.get()->getSourceRange();
-  //     SrcExpr = ExprError();
-  //     return;
-  //   }
-  // }
+  if (Self.getLangOpts().OpenCL &&
+      !Self.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
+    if (DestType->isHalfType()) {
+      Self.Diag(SrcExpr.get()->getBeginLoc(), diag::err_opencl_cast_to_half)
+          << DestType << SrcExpr.get()->getSourceRange();
+      SrcExpr = ExprError();
+      return;
+    }
+  }
 
   // ARC imposes extra restrictions on casts.
   // if (Self.getLangOpts().allowsNonTrivialObjCLifetimeQualifiers()) {
@@ -2891,30 +2891,30 @@ void CastOperation::CheckCStyleCast() {
   //   if (SrcExpr.isInvalid())
   //     return;
 
-  //   // const PointerType *CastPtr = DestType->getAs<PointerType>();
-  //   // if (Self.getLangOpts().ObjCAutoRefCount && CastPtr) {
-  //   //   if (const PointerType *ExprPtr = SrcType->getAs<PointerType>()) {
-  //   //     Qualifiers CastQuals = CastPtr->getPointeeType().getQualifiers();
-  //   //     Qualifiers ExprQuals = ExprPtr->getPointeeType().getQualifiers();
-  //   //     if (CastPtr->getPointeeType()->isObjCLifetimeType() &&
-  //   //         ExprPtr->getPointeeType()->isObjCLifetimeType() /*&&
-  //   //         !CastQuals.compatiblyIncludesObjCLifetime(ExprQuals)*/) {
-  //   //       Self.Diag(SrcExpr.get()->getBeginLoc(),
-  //   //                 diag::err_typecheck_incompatible_ownership)
-  //   //           << SrcType << DestType << Sema::AA_Casting
-  //   //           << SrcExpr.get()->getSourceRange();
-  //   //       return;
-  //   //     }
-  //   //   }
-  //   // }
-  //   // else 
-  //   // if (!Self.CheckObjCARCUnavailableWeakConversion(DestType, SrcType)) {
-  //   //   Self.Diag(SrcExpr.get()->getBeginLoc(),
-  //   //             diag::err_arc_convesion_of_weak_unavailable)
-  //   //       << 1 << SrcType << DestType << SrcExpr.get()->getSourceRange();
-  //   //   SrcExpr = ExprError();
-  //   //   return;
-  //   // }
+  //   const PointerType *CastPtr = DestType->getAs<PointerType>();
+  //   if (Self.getLangOpts().ObjCAutoRefCount && CastPtr) {
+  //     if (const PointerType *ExprPtr = SrcType->getAs<PointerType>()) {
+  //       Qualifiers CastQuals = CastPtr->getPointeeType().getQualifiers();
+  //       Qualifiers ExprQuals = ExprPtr->getPointeeType().getQualifiers();
+  //       if (CastPtr->getPointeeType()->isObjCLifetimeType() &&
+  //           ExprPtr->getPointeeType()->isObjCLifetimeType() /*&&
+  //           !CastQuals.compatiblyIncludesObjCLifetime(ExprQuals)*/) {
+  //         Self.Diag(SrcExpr.get()->getBeginLoc(),
+  //                   diag::err_typecheck_incompatible_ownership)
+  //             << SrcType << DestType << Sema::AA_Casting
+  //             << SrcExpr.get()->getSourceRange();
+  //         return;
+  //       }
+  //     }
+  //   }
+  //   else 
+  //   if (!Self.CheckObjCARCUnavailableWeakConversion(DestType, SrcType)) {
+  //     Self.Diag(SrcExpr.get()->getBeginLoc(),
+  //               diag::err_arc_convesion_of_weak_unavailable)
+  //         << 1 << SrcType << DestType << SrcExpr.get()->getSourceRange();
+  //     SrcExpr = ExprError();
+  //     return;
+  //   }
   // }
 
   DiagnoseCastOfObjCSEL(Self, SrcExpr, DestType);

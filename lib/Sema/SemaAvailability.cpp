@@ -35,11 +35,11 @@ static const AvailabilityAttr *getAttrForPlatform(ASTContext &Context,
       // the suffix for matching with the actual platform.
       StringRef ActualPlatform = Avail->getPlatform()->getName();
       StringRef RealizedPlatform = ActualPlatform;
-      if (Context.getLangOpts().AppExt) {
-        size_t suffix = RealizedPlatform.rfind("_app_extension");
-        if (suffix != StringRef::npos)
-          RealizedPlatform = RealizedPlatform.slice(0, suffix);
-      }
+      // if (Context.getLangOpts().AppExt) {
+      //   size_t suffix = RealizedPlatform.rfind("_app_extension");
+      //   if (suffix != StringRef::npos)
+      //     RealizedPlatform = RealizedPlatform.slice(0, suffix);
+      // }
 
       StringRef TargetPlatform = Context.getTargetInfo().getPlatformName();
 
@@ -785,8 +785,9 @@ void DiagnoseUnguardedAvailability::DiagnoseDeclAvailability(
     auto FixitDiag =
         SemaRef.Diag(Range.getBegin(), diag::note_unguarded_available_silence)
         << Range << D
-        << (SemaRef.getLangOpts().ObjC ? /*@available*/ 0
-                                       : /*__builtin_available*/ 1);
+        // << (SemaRef.getLangOpts().ObjC ? /*@available*/ 0
+        //                                : /*__builtin_available*/ 1)
+        ;
 
     // Find the statement which should be enclosed in the if @available check.
     if (StmtStack.empty())
@@ -830,8 +831,8 @@ void DiagnoseUnguardedAvailability::DiagnoseDeclAvailability(
     const char *ExtraIndentation = "    ";
     std::string FixItString;
     llvm::raw_string_ostream FixItOS(FixItString);
-    FixItOS << "if (" << (SemaRef.getLangOpts().ObjC ? "@available"
-                                                     : "__builtin_available")
+    FixItOS << "if (" << (/*SemaRef.getLangOpts().ObjC ? "@available"
+                                                     :*/ "__builtin_available")
             << "("
             << AvailabilityAttr::getPlatformNameSourceSpelling(
                    SemaRef.getASTContext().getTargetInfo().getPlatformName())

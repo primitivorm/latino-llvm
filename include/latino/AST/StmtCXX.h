@@ -249,67 +249,67 @@ public:
 /// compromise the template instantiation model. This behavior differs from
 /// Visual C++ (which never introduces a scope), but is a fairly reasonable
 /// approximation of the VC++ behavior.
-class MSDependentExistsStmt : public Stmt {
-  SourceLocation KeywordLoc;
-  bool IsIfExists;
-  NestedNameSpecifierLoc QualifierLoc;
-  DeclarationNameInfo NameInfo;
-  Stmt *SubStmt;
+// class MSDependentExistsStmt : public Stmt {
+//   SourceLocation KeywordLoc;
+//   bool IsIfExists;
+//   NestedNameSpecifierLoc QualifierLoc;
+//   DeclarationNameInfo NameInfo;
+//   Stmt *SubStmt;
 
-  friend class ASTReader;
-  friend class ASTStmtReader;
+//   friend class ASTReader;
+//   friend class ASTStmtReader;
 
-public:
-  MSDependentExistsStmt(SourceLocation KeywordLoc, bool IsIfExists,
-                        NestedNameSpecifierLoc QualifierLoc,
-                        DeclarationNameInfo NameInfo,
-                        CompoundStmt *SubStmt)
-  : Stmt(MSDependentExistsStmtClass),
-    KeywordLoc(KeywordLoc), IsIfExists(IsIfExists),
-    QualifierLoc(QualifierLoc), NameInfo(NameInfo),
-    SubStmt(reinterpret_cast<Stmt *>(SubStmt)) { }
+// public:
+//   MSDependentExistsStmt(SourceLocation KeywordLoc, bool IsIfExists,
+//                         NestedNameSpecifierLoc QualifierLoc,
+//                         DeclarationNameInfo NameInfo,
+//                         CompoundStmt *SubStmt)
+//   : Stmt(MSDependentExistsStmtClass),
+//     KeywordLoc(KeywordLoc), IsIfExists(IsIfExists),
+//     QualifierLoc(QualifierLoc), NameInfo(NameInfo),
+//     SubStmt(reinterpret_cast<Stmt *>(SubStmt)) { }
 
-  /// Retrieve the location of the __if_exists or __if_not_exists
-  /// keyword.
-  SourceLocation getKeywordLoc() const { return KeywordLoc; }
+//   /// Retrieve the location of the __if_exists or __if_not_exists
+//   /// keyword.
+//   SourceLocation getKeywordLoc() const { return KeywordLoc; }
 
-  /// Determine whether this is an __if_exists statement.
-  bool isIfExists() const { return IsIfExists; }
+//   /// Determine whether this is an __if_exists statement.
+//   bool isIfExists() const { return IsIfExists; }
 
-  /// Determine whether this is an __if_exists statement.
-  bool isIfNotExists() const { return !IsIfExists; }
+//   /// Determine whether this is an __if_exists statement.
+//   bool isIfNotExists() const { return !IsIfExists; }
 
-  /// Retrieve the nested-name-specifier that qualifies this name, if
-  /// any.
-  NestedNameSpecifierLoc getQualifierLoc() const { return QualifierLoc; }
+//   /// Retrieve the nested-name-specifier that qualifies this name, if
+//   /// any.
+//   NestedNameSpecifierLoc getQualifierLoc() const { return QualifierLoc; }
 
-  /// Retrieve the name of the entity we're testing for, along with
-  /// location information
-  DeclarationNameInfo getNameInfo() const { return NameInfo; }
+//   /// Retrieve the name of the entity we're testing for, along with
+//   /// location information
+//   DeclarationNameInfo getNameInfo() const { return NameInfo; }
 
-  /// Retrieve the compound statement that will be included in the
-  /// program only if the existence of the symbol matches the initial keyword.
-  CompoundStmt *getSubStmt() const {
-    return reinterpret_cast<CompoundStmt *>(SubStmt);
-  }
+//   /// Retrieve the compound statement that will be included in the
+//   /// program only if the existence of the symbol matches the initial keyword.
+//   CompoundStmt *getSubStmt() const {
+//     return reinterpret_cast<CompoundStmt *>(SubStmt);
+//   }
 
-  SourceLocation getBeginLoc() const LLVM_READONLY { return KeywordLoc; }
-  SourceLocation getEndLoc() const LLVM_READONLY {
-    return SubStmt->getEndLoc();
-  }
+//   SourceLocation getBeginLoc() const LLVM_READONLY { return KeywordLoc; }
+//   SourceLocation getEndLoc() const LLVM_READONLY {
+//     return SubStmt->getEndLoc();
+//   }
 
-  child_range children() {
-    return child_range(&SubStmt, &SubStmt+1);
-  }
+//   child_range children() {
+//     return child_range(&SubStmt, &SubStmt+1);
+//   }
 
-  const_child_range children() const {
-    return const_child_range(&SubStmt, &SubStmt + 1);
-  }
+//   const_child_range children() const {
+//     return const_child_range(&SubStmt, &SubStmt + 1);
+//   }
 
-  static bool classof(const Stmt *T) {
-    return T->getStmtClass() == MSDependentExistsStmtClass;
-  }
-};
+//   static bool classof(const Stmt *T) {
+//     return T->getStmtClass() == MSDependentExistsStmtClass;
+//   }
+// };
 
 /// Represents the body of a coroutine. This wraps the normal function
 /// body and holds the additional semantic context required to set up and tear

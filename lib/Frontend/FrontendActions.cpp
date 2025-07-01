@@ -111,13 +111,13 @@ GeneratePCHAction::CreateASTConsumer(CompilerInstance &CI, StringRef InFile) {
   const auto &FrontendOpts = CI.getFrontendOpts();
   auto Buffer = std::make_shared<PCHBuffer>();
   std::vector<std::unique_ptr<ASTConsumer>> Consumers;
-  Consumers.push_back(std::make_unique<PCHGenerator>(
-      CI.getPreprocessor(), CI.getModuleCache(), OutputFile, Sysroot, Buffer,
-      FrontendOpts.ModuleFileExtensions,
-      CI.getPreprocessorOpts().AllowPCHWithCompilerErrors,
-      FrontendOpts.IncludeTimestamps, +CI.getLangOpts().CacheGeneratedPCH));
-  Consumers.push_back(CI.getPCHContainerWriter().CreatePCHContainerGenerator(
-      CI, std::string(InFile), OutputFile, std::move(OS), Buffer));
+  // Consumers.push_back(std::make_unique<PCHGenerator>(
+  //     CI.getPreprocessor(), CI.getModuleCache(), OutputFile, Sysroot, Buffer,
+  //     FrontendOpts.ModuleFileExtensions,
+  //     CI.getPreprocessorOpts().AllowPCHWithCompilerErrors,
+  //     FrontendOpts.IncludeTimestamps, +CI.getLangOpts().CacheGeneratedPCH));
+  // Consumers.push_back(CI.getPCHContainerWriter().CreatePCHContainerGenerator(
+  //     CI, std::string(InFile), OutputFile, std::move(OS), Buffer));
 
   return std::make_unique<MultiplexConsumer>(std::move(Consumers));
 }
@@ -157,7 +157,7 @@ bool GeneratePCHAction::shouldEraseOutputFiles() {
 }
 
 bool GeneratePCHAction::BeginSourceFileAction(CompilerInstance &CI) {
-  CI.getLangOpts().CompilingPCH = true;
+  // CI.getLangOpts().CompilingPCH = true;
   return true;
 }
 
@@ -867,7 +867,7 @@ void PrintPreambleAction::ExecuteAction() {
   case Language::Unknown:
   case Language::Asm:
   case Language::LLVM_IR:
-  case Language::RenderScript:
+  // case Language::RenderScript:
     // We can't do anything with these.
     return;
   }

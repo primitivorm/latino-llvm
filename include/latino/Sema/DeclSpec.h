@@ -307,9 +307,9 @@ public:
   static const TST TST_auto_type = latino::TST_auto_type;
   static const TST TST_unknown_anytype = latino::TST_unknown_anytype;
   static const TST TST_atomic = latino::TST_atomic;
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) \
-//   static const TST TST_##ImgType##_t = latino::TST_##ImgType##_t;
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id) \
+  static const TST TST_##ImgType##_t = latino::TST_##ImgType##_t;
+#include "latino/Basic/OpenCLImageTypes.def"
   static const TST TST_error = latino::TST_error;
 
   // type-qualifiers
@@ -695,15 +695,15 @@ public:
   bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, Expr *Rep,
                        const PrintingPolicy &policy);
-  // bool SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
-  //                      const char *&PrevSpec, unsigned &DiagID,
-  //                      const PrintingPolicy &Policy);
-  // bool SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
-  //                      const char *&PrevSpec, unsigned &DiagID,
-  //                      const PrintingPolicy &Policy);
-  // bool SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
-  //                      const char *&PrevSpec, unsigned &DiagID,
-  //                      const PrintingPolicy &Policy);
+  bool SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
+                       const char *&PrevSpec, unsigned &DiagID,
+                       const PrintingPolicy &Policy);
+  bool SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
+                       const char *&PrevSpec, unsigned &DiagID,
+                       const PrintingPolicy &Policy);
+  bool SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
+                       const char *&PrevSpec, unsigned &DiagID,
+                       const PrintingPolicy &Policy);
   bool SetTypePipe(bool isPipe, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID,
                        const PrintingPolicy &Policy);
@@ -1407,7 +1407,7 @@ struct DeclaratorChunk {
     /// isKNRPrototype - Return true if this is a K&R style identifier list,
     /// like "void foo(a,b,c)".  In a function definition, this will be followed
     /// by the parameter type definitions.
-    bool isKNRPrototype() const { return !hasPrototype && NumParams != 0; }
+    // bool isKNRPrototype() const { return !hasPrototype && NumParams != 0; }
 
     SourceLocation getLParenLoc() const {
       return SourceLocation::getFromRawEncoding(LParenLoc);

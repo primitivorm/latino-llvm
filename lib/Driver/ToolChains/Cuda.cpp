@@ -400,10 +400,10 @@ void NVPTX::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
   // If this is an OpenMP action we need to extract the device architecture
   // from the -march=arch option. This option may come from -Xopenmp-target
   // flag or the default value.
-  // if (JA.isDeviceOffloading(Action::OFK_OpenMP)) {
-  //   GPUArchName = Args.getLastArgValue(options::OPT_march_EQ);
-  //   assert(!GPUArchName.empty() && "Must have an architecture passed in.");
-  // } else
+  if (JA.isDeviceOffloading(Action::OFK_OpenMP)) {
+    GPUArchName = Args.getLastArgValue(options::OPT_march_EQ);
+    assert(!GPUArchName.empty() && "Must have an architecture passed in.");
+  } else
     GPUArchName = JA.getOffloadingArch();
 
   // Obtain architecture from the action.
@@ -473,12 +473,12 @@ void NVPTX::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
     CmdArgs.push_back(Args.MakeArgString(A));
 
   bool Relocatable = false;
-  // if (JA.isOffloading(Action::OFK_OpenMP))
-  //   // In OpenMP we need to generate relocatable code.
-  //   Relocatable = Args.hasFlag(options::OPT_fopenmp_relocatable_target,
-  //                              options::OPT_fnoopenmp_relocatable_target,
-  //                              /*Default=*/true);
-  // else 
+  if (JA.isOffloading(Action::OFK_OpenMP))
+    // In OpenMP we need to generate relocatable code.
+    Relocatable = Args.hasFlag(options::OPT_fopenmp_relocatable_target,
+                               options::OPT_fnoopenmp_relocatable_target,
+                               /*Default=*/true);
+  else 
   if (JA.isOffloading(Action::OFK_Cuda))
     Relocatable = Args.hasFlag(options::OPT_fgpu_rdc,
                                options::OPT_fno_gpu_rdc, /*Default=*/false);
@@ -567,86 +567,86 @@ void NVPTX::Linker::ConstructJob(Compilation &C, const JobAction &JA,
       Exec, CmdArgs, Inputs));
 }
 
-// void NVPTX::OpenMPLinker::ConstructJob(Compilation &C, const JobAction &JA,
-//                                        const InputInfo &Output,
-//                                        const InputInfoList &Inputs,
-//                                        const ArgList &Args,
-//                                        const char *LinkingOutput) const {
-//   const auto &TC =
-//       static_cast<const toolchains::CudaToolChain &>(getToolChain());
-//   assert(TC.getTriple().isNVPTX() && "Wrong platform");
+void NVPTX::OpenMPLinker::ConstructJob(Compilation &C, const JobAction &JA,
+                                       const InputInfo &Output,
+                                       const InputInfoList &Inputs,
+                                       const ArgList &Args,
+                                       const char *LinkingOutput) const {
+  const auto &TC =
+      static_cast<const toolchains::CudaToolChain &>(getToolChain());
+  assert(TC.getTriple().isNVPTX() && "Wrong platform");
 
-//   ArgStringList CmdArgs;
+  ArgStringList CmdArgs;
 
-//   // OpenMP uses nvlink to link cubin files. The result will be embedded in the
-//   // host binary by the host linker.
-//   assert(!JA.isHostOffloading(Action::OFK_OpenMP) &&
-//          "CUDA toolchain not expected for an OpenMP host device.");
+  // OpenMP uses nvlink to link cubin files. The result will be embedded in the
+  // host binary by the host linker.
+  assert(!JA.isHostOffloading(Action::OFK_OpenMP) &&
+         "CUDA toolchain not expected for an OpenMP host device.");
 
-//   if (Output.isFilename()) {
-//     CmdArgs.push_back("-o");
-//     CmdArgs.push_back(Output.getFilename());
-//   } else
-//     assert(Output.isNothing() && "Invalid output.");
-//   if (mustEmitDebugInfo(Args) == EmitSameDebugInfoAsHost)
-//     CmdArgs.push_back("-g");
+  if (Output.isFilename()) {
+    CmdArgs.push_back("-o");
+    CmdArgs.push_back(Output.getFilename());
+  } else
+    assert(Output.isNothing() && "Invalid output.");
+  if (mustEmitDebugInfo(Args) == EmitSameDebugInfoAsHost)
+    CmdArgs.push_back("-g");
 
-//   if (Args.hasArg(options::OPT_v))
-//     CmdArgs.push_back("-v");
+  if (Args.hasArg(options::OPT_v))
+    CmdArgs.push_back("-v");
 
-//   StringRef GPUArch =
-//       Args.getLastArgValue(options::OPT_march_EQ);
-//   assert(!GPUArch.empty() && "At least one GPU Arch required for ptxas.");
+  StringRef GPUArch =
+      Args.getLastArgValue(options::OPT_march_EQ);
+  assert(!GPUArch.empty() && "At least one GPU Arch required for ptxas.");
 
-//   CmdArgs.push_back("-arch");
-//   CmdArgs.push_back(Args.MakeArgString(GPUArch));
+  CmdArgs.push_back("-arch");
+  CmdArgs.push_back(Args.MakeArgString(GPUArch));
 
-//   // Assume that the directory specified with --libomptarget_nvptx_path
-//   // contains the static library libomptarget-nvptx.a.
-//   if (const Arg *A = Args.getLastArg(options::OPT_libomptarget_nvptx_path_EQ))
-//     CmdArgs.push_back(Args.MakeArgString(Twine("-L") + A->getValue()));
+  // Assume that the directory specified with --libomptarget_nvptx_path
+  // contains the static library libomptarget-nvptx.a.
+  if (const Arg *A = Args.getLastArg(options::OPT_libomptarget_nvptx_path_EQ))
+    CmdArgs.push_back(Args.MakeArgString(Twine("-L") + A->getValue()));
 
-//   // Add paths specified in LIBRARY_PATH environment variable as -L options.
-//   addDirectoryList(Args, CmdArgs, "-L", "LIBRARY_PATH");
+  // Add paths specified in LIBRARY_PATH environment variable as -L options.
+  addDirectoryList(Args, CmdArgs, "-L", "LIBRARY_PATH");
 
-//   // Add paths for the default clang library path.
-//   SmallString<256> DefaultLibPath =
-//       llvm::sys::path::parent_path(TC.getDriver().Dir);
-//   llvm::sys::path::append(DefaultLibPath, "lib" CLANG_LIBDIR_SUFFIX);
-//   CmdArgs.push_back(Args.MakeArgString(Twine("-L") + DefaultLibPath));
+  // Add paths for the default clang library path.
+  SmallString<256> DefaultLibPath =
+      llvm::sys::path::parent_path(TC.getDriver().Dir);
+  llvm::sys::path::append(DefaultLibPath, "lib" CLANG_LIBDIR_SUFFIX);
+  CmdArgs.push_back(Args.MakeArgString(Twine("-L") + DefaultLibPath));
 
-//   // Add linking against library implementing OpenMP calls on NVPTX target.
-//   CmdArgs.push_back("-lomptarget-nvptx");
+  // Add linking against library implementing OpenMP calls on NVPTX target.
+  CmdArgs.push_back("-lomptarget-nvptx");
 
-//   for (const auto &II : Inputs) {
-//     if (II.getType() == types::TY_LLVM_IR ||
-//         II.getType() == types::TY_LTO_IR ||
-//         II.getType() == types::TY_LTO_BC ||
-//         II.getType() == types::TY_LLVM_BC) {
-//       C.getDriver().Diag(diag::err_drv_no_linker_llvm_support)
-//           << getToolChain().getTripleString();
-//       continue;
-//     }
+  for (const auto &II : Inputs) {
+    if (II.getType() == types::TY_LLVM_IR ||
+        II.getType() == types::TY_LTO_IR ||
+        II.getType() == types::TY_LTO_BC ||
+        II.getType() == types::TY_LLVM_BC) {
+      C.getDriver().Diag(diag::err_drv_no_linker_llvm_support)
+          << getToolChain().getTripleString();
+      continue;
+    }
 
-//     // Currently, we only pass the input files to the linker, we do not pass
-//     // any libraries that may be valid only for the host.
-//     if (!II.isFilename())
-//       continue;
+    // Currently, we only pass the input files to the linker, we do not pass
+    // any libraries that may be valid only for the host.
+    if (!II.isFilename())
+      continue;
 
-//     const char *CubinF = C.addTempFile(
-//         C.getArgs().MakeArgString(getToolChain().getInputFilename(II)));
+    const char *CubinF = C.addTempFile(
+        C.getArgs().MakeArgString(getToolChain().getInputFilename(II)));
 
-//     CmdArgs.push_back(CubinF);
-//   }
+    CmdArgs.push_back(CubinF);
+  }
 
-//   const char *Exec =
-//       Args.MakeArgString(getToolChain().GetProgramPath("nvlink"));
-//   C.addCommand(std::make_unique<Command>(
-//       JA, *this,
-//       ResponseFileSupport{ResponseFileSupport::RF_Full, llvm::sys::WEM_UTF8,
-//                           "--options-file"},
-//       Exec, CmdArgs, Inputs));
-// }
+  const char *Exec =
+      Args.MakeArgString(getToolChain().GetProgramPath("nvlink"));
+  C.addCommand(std::make_unique<Command>(
+      JA, *this,
+      ResponseFileSupport{ResponseFileSupport::RF_Full, llvm::sys::WEM_UTF8,
+                          "--options-file"},
+      Exec, CmdArgs, Inputs));
+}
 
 /// CUDA toolchain.  Our assembler is ptxas, and our "linker" is fatbinary,
 /// which isn't properly a linker but nonetheless performs the step of stitching
@@ -710,9 +710,9 @@ void CudaToolChain::addClangTargetOptions(
   std::string LibDeviceFile = CudaInstallation.getLibDeviceFile(GpuArch);
 
   if (LibDeviceFile.empty()) {
-    // if (DeviceOffloadingKind == Action::OFK_OpenMP &&
-    //     DriverArgs.hasArg(options::OPT_S))
-    //   return;
+    if (DeviceOffloadingKind == Action::OFK_OpenMP &&
+        DriverArgs.hasArg(options::OPT_S))
+      return;
 
     getDriver().Diag(diag::err_drv_no_cuda_libdevice) << GpuArch;
     return;
@@ -869,26 +869,26 @@ CudaToolChain::TranslateArgs(const llvm::opt::DerivedArgList &Args,
   // For OpenMP device offloading, append derived arguments. Make sure
   // flags are not duplicated.
   // Also append the compute capability.
-  // if (DeviceOffloadKind == Action::OFK_OpenMP) {
-  //   for (Arg *A : Args) {
-  //     bool IsDuplicate = false;
-  //     for (Arg *DALArg : *DAL) {
-  //       if (A == DALArg) {
-  //         IsDuplicate = true;
-  //         break;
-  //       }
-  //     }
-  //     if (!IsDuplicate)
-  //       DAL->append(A);
-  //   }
+  if (DeviceOffloadKind == Action::OFK_OpenMP) {
+    for (Arg *A : Args) {
+      bool IsDuplicate = false;
+      for (Arg *DALArg : *DAL) {
+        if (A == DALArg) {
+          IsDuplicate = true;
+          break;
+        }
+      }
+      if (!IsDuplicate)
+        DAL->append(A);
+    }
 
-  //   StringRef Arch = DAL->getLastArgValue(options::OPT_march_EQ);
-  //   if (Arch.empty())
-  //     DAL->AddJoinedArg(nullptr, Opts.getOption(options::OPT_march_EQ),
-  //                       CLANG_OPENMP_NVPTX_DEFAULT_ARCH);
+    StringRef Arch = DAL->getLastArgValue(options::OPT_march_EQ);
+    if (Arch.empty())
+      DAL->AddJoinedArg(nullptr, Opts.getOption(options::OPT_march_EQ),
+                        CLANG_OPENMP_NVPTX_DEFAULT_ARCH);
 
-  //   return DAL;
-  // }
+    return DAL;
+  }
 
   for (Arg *A : Args) {
     DAL->append(A);
@@ -906,8 +906,8 @@ Tool *CudaToolChain::buildAssembler() const {
 }
 
 Tool *CudaToolChain::buildLinker() const {
-  // if (OK == Action::OFK_OpenMP)
-  //   return new tools::NVPTX::OpenMPLinker(*this);
+  if (OK == Action::OFK_OpenMP)
+    return new tools::NVPTX::OpenMPLinker(*this);
   return new tools::NVPTX::Linker(*this);
 }
 

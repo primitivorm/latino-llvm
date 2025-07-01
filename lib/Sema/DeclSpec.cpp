@@ -369,8 +369,8 @@ bool Declarator::isDeclarationOfFunction() const {
     case TST_void:
     case TST_wchar:
     case TST_BFloat16:
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) case TST_##ImgType##_t:
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id) case TST_##ImgType##_t:
+#include "latino/Basic/OpenCLImageTypes.def"
       return false;
 
     case TST_decltype_auto:
@@ -568,10 +568,10 @@ const char *DeclSpec::getSpecifierName(DeclSpec::TST T,
   case DeclSpec::TST_unknown_anytype: return "__unknown_anytype";
   case DeclSpec::TST_atomic: return "_Atomic";
   case DeclSpec::TST_BFloat16: return "__bf16";
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) \
-//   case DeclSpec::TST_##ImgType##_t: \
-//     return #ImgType "_t";
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id) \
+  case DeclSpec::TST_##ImgType##_t: \
+    return #ImgType "_t";
+#include "latino/Basic/OpenCLImageTypes.def"
   case DeclSpec::TST_error:       return "(error)";
   }
   llvm_unreachable("Unknown typespec!");
@@ -610,28 +610,28 @@ bool DeclSpec::SetStorageClassSpec(Sema &S, SCS SC, SourceLocation Loc,
   // these storage-class specifiers.
   // OpenCL v1.2 s6.8 changes this to "The auto and register storage-class
   // specifiers are not supported."
-  // if (S.getLangOpts().OpenCL &&
-  //     !S.getOpenCLOptions().isEnabled("cl_clang_storage_class_specifiers")) {
-  //   switch (SC) {
-  //   case SCS_extern:
-  //   case SCS_private_extern:
-  //   case SCS_static:
-  //     if (S.getLangOpts().OpenCLVersion < 120 &&
-  //         !S.getLangOpts().OpenCLCPlusPlus) {
-  //       DiagID = diag::err_opencl_unknown_type_specifier;
-  //       PrevSpec = getSpecifierName(SC);
-  //       return true;
-  //     }
-  //     break;
-  //   case SCS_auto:
-  //   case SCS_register:
-  //     DiagID   = diag::err_opencl_unknown_type_specifier;
-  //     PrevSpec = getSpecifierName(SC);
-  //     return true;
-  //   default:
-  //     break;
-  //   }
-  // }
+  if (S.getLangOpts().OpenCL &&
+      !S.getOpenCLOptions().isEnabled("cl_clang_storage_class_specifiers")) {
+    switch (SC) {
+    case SCS_extern:
+    case SCS_private_extern:
+    case SCS_static:
+      if (S.getLangOpts().OpenCLVersion < 120 &&
+          !S.getLangOpts().OpenCLCPlusPlus) {
+        DiagID = diag::err_opencl_unknown_type_specifier;
+        PrevSpec = getSpecifierName(SC);
+        return true;
+      }
+      break;
+    case SCS_auto:
+    case SCS_register:
+      DiagID   = diag::err_opencl_unknown_type_specifier;
+      PrevSpec = getSpecifierName(SC);
+      return true;
+    default:
+      break;
+    }
+  }
 
   if (StorageClassSpec != SCS_unspecified) {
     // Maybe this is an attempt to use C++11 'auto' outside of C++11 mode.
@@ -843,20 +843,20 @@ bool DeclSpec::SetTypeSpecSat(SourceLocation Loc, const char *&PrevSpec,
   return false;
 }
 
-// bool DeclSpec::SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
-//                           const char *&PrevSpec, unsigned &DiagID,
-//                           const PrintingPolicy &Policy) {
-//   if (TypeSpecType == TST_error)
-//     return false;
-//   if (TypeSpecType != TST_unspecified) {
-//     PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
-//     DiagID = diag::err_invalid_vector_decl_spec_combination;
-//     return true;
-//   }
-//   TypeAltiVecVector = isAltiVecVector;
-//   AltiVecLoc = Loc;
-//   return false;
-// }
+bool DeclSpec::SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
+                          const char *&PrevSpec, unsigned &DiagID,
+                          const PrintingPolicy &Policy) {
+  if (TypeSpecType == TST_error)
+    return false;
+  if (TypeSpecType != TST_unspecified) {
+    PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
+    DiagID = diag::err_invalid_vector_decl_spec_combination;
+    return true;
+  }
+  TypeAltiVecVector = isAltiVecVector;
+  AltiVecLoc = Loc;
+  return false;
+}
 
 bool DeclSpec::SetTypePipe(bool isPipe, SourceLocation Loc,
                            const char *&PrevSpec, unsigned &DiagID,
@@ -875,39 +875,39 @@ bool DeclSpec::SetTypePipe(bool isPipe, SourceLocation Loc,
   return false;
 }
 
-// bool DeclSpec::SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
-//                           const char *&PrevSpec, unsigned &DiagID,
-//                           const PrintingPolicy &Policy) {
-//   if (TypeSpecType == TST_error)
-//     return false;
-//   if (!TypeAltiVecVector || TypeAltiVecPixel ||
-//       (TypeSpecType != TST_unspecified)) {
-//     PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
-//     DiagID = diag::err_invalid_pixel_decl_spec_combination;
-//     return true;
-//   }
-//   TypeAltiVecPixel = isAltiVecPixel;
-//   TSTLoc = Loc;
-//   TSTNameLoc = Loc;
-//   return false;
-// }
+bool DeclSpec::SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
+                          const char *&PrevSpec, unsigned &DiagID,
+                          const PrintingPolicy &Policy) {
+  if (TypeSpecType == TST_error)
+    return false;
+  if (!TypeAltiVecVector || TypeAltiVecPixel ||
+      (TypeSpecType != TST_unspecified)) {
+    PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
+    DiagID = diag::err_invalid_pixel_decl_spec_combination;
+    return true;
+  }
+  TypeAltiVecPixel = isAltiVecPixel;
+  TSTLoc = Loc;
+  TSTNameLoc = Loc;
+  return false;
+}
 
-// bool DeclSpec::SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
-//                                   const char *&PrevSpec, unsigned &DiagID,
-//                                   const PrintingPolicy &Policy) {
-//   if (TypeSpecType == TST_error)
-//     return false;
-//   if (!TypeAltiVecVector || TypeAltiVecBool ||
-//       (TypeSpecType != TST_unspecified)) {
-//     PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
-//     DiagID = diag::err_invalid_vector_bool_decl_spec;
-//     return true;
-//   }
-//   TypeAltiVecBool = isAltiVecBool;
-//   TSTLoc = Loc;
-//   TSTNameLoc = Loc;
-//   return false;
-// }
+bool DeclSpec::SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
+                                  const char *&PrevSpec, unsigned &DiagID,
+                                  const PrintingPolicy &Policy) {
+  if (TypeSpecType == TST_error)
+    return false;
+  if (!TypeAltiVecVector || TypeAltiVecBool ||
+      (TypeSpecType != TST_unspecified)) {
+    PrevSpec = DeclSpec::getSpecifierName((TST) TypeSpecType, Policy);
+    DiagID = diag::err_invalid_vector_bool_decl_spec;
+    return true;
+  }
+  TypeAltiVecBool = isAltiVecBool;
+  TSTLoc = Loc;
+  TSTNameLoc = Loc;
+  return false;
+}
 
 bool DeclSpec::SetTypeSpecError() {
   TypeSpecType = TST_error;
@@ -1154,8 +1154,8 @@ void DeclSpec::Finish(Sema &S, const PrintingPolicy &Policy) {
       // Power10 adds instructions that produce vector bool data
       // for quadwords as well so allow vector bool __int128.
       if (((TypeSpecType != TST_unspecified) && (TypeSpecType != TST_char) &&
-           (TypeSpecType != TST_int) && (TypeSpecType != TST_int128)) /*||
-          TypeAltiVecPixel*/) {
+           (TypeSpecType != TST_int) && (TypeSpecType != TST_int128)) ||
+          TypeAltiVecPixel) {
         S.Diag(TSTLoc, diag::err_invalid_vector_bool_decl_spec)
           << (TypeAltiVecPixel ? "__pixel" :
                                  getSpecifierName((TST)TypeSpecType, Policy));

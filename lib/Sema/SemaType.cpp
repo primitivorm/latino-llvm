@@ -1246,13 +1246,13 @@ static bool checkOmittedBlockReturnType(Sema &S, Declarator &declarator,
 //   return CreateParsedType(Result, ResultTInfo);
 // }
 
-// static OpenCLAccessAttr::Spelling
-// getImageAccess(const ParsedAttributesView &Attrs) {
-//   for (const ParsedAttr &AL : Attrs)
-//     if (AL.getKind() == ParsedAttr::AT_OpenCLAccess)
-//       return static_cast<OpenCLAccessAttr::Spelling>(AL.getSemanticSpelling());
-//   return OpenCLAccessAttr::Keyword_read_only;
-// }
+static OpenCLAccessAttr::Spelling
+getImageAccess(const ParsedAttributesView &Attrs) {
+  for (const ParsedAttr &AL : Attrs)
+    if (AL.getKind() == ParsedAttr::AT_OpenCLAccess)
+      return static_cast<OpenCLAccessAttr::Spelling>(AL.getSemanticSpelling());
+  return OpenCLAccessAttr::Keyword_read_only;
+}
 
 static QualType ConvertConstrainedAutoDeclSpecToType(Sema &S, DeclSpec &DS,
                                                      AutoTypeKeyword AutoKW) {
@@ -1674,23 +1674,23 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
     }
     break;
 
-// #define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
-//   case DeclSpec::TST_##ImgType##_t:                                            \
-//     switch (getImageAccess(DS.getAttributes())) {                              \
-//     case OpenCLAccessAttr::Keyword_write_only:                                 \
-//       Result = Context.Id##WOTy;                                               \
-//       break;                                                                   \
-//     case OpenCLAccessAttr::Keyword_read_write:                                 \
-//       Result = Context.Id##RWTy;                                               \
-//       break;                                                                   \
-//     case OpenCLAccessAttr::Keyword_read_only:                                  \
-//       Result = Context.Id##ROTy;                                               \
-//       break;                                                                   \
-//     case OpenCLAccessAttr::SpellingNotCalculated:                              \
-//       llvm_unreachable("Spelling not yet calculated");                         \
-//     }                                                                          \
-//     break;
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
+  case DeclSpec::TST_##ImgType##_t:                                            \
+    switch (getImageAccess(DS.getAttributes())) {                              \
+    case OpenCLAccessAttr::Keyword_write_only:                                 \
+      Result = Context.Id##WOTy;                                               \
+      break;                                                                   \
+    case OpenCLAccessAttr::Keyword_read_write:                                 \
+      Result = Context.Id##RWTy;                                               \
+      break;                                                                   \
+    case OpenCLAccessAttr::Keyword_read_only:                                  \
+      Result = Context.Id##ROTy;                                               \
+      break;                                                                   \
+    case OpenCLAccessAttr::SpellingNotCalculated:                              \
+      llvm_unreachable("Spelling not yet calculated");                         \
+    }                                                                          \
+    break;
+#include "latino/Basic/OpenCLImageTypes.def"
 
   case DeclSpec::TST_error:
     Result = Context.IntTy;
@@ -1704,9 +1704,9 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
   if (Result->containsErrors())
     declarator.setInvalidType();
 
-  // if (S.getLangOpts().OpenCL &&
-  //     S.checkOpenCLDisabledTypeDeclSpec(DS, Result))
-  //   declarator.setInvalidType(true);
+  if (S.getLangOpts().OpenCL &&
+      S.checkOpenCLDisabledTypeDeclSpec(DS, Result))
+    declarator.setInvalidType(true);
 
   bool IsFixedPointType = DS.getTypeSpecType() == DeclSpec::TST_accum ||
                           DS.getTypeSpecType() == DeclSpec::TST_fract;
@@ -2038,7 +2038,7 @@ bool Sema::CheckQualifiedFunctionForTypeId(QualType T, SourceLocation Loc) {
 // Helper to deduce addr space of a pointee type in OpenCL mode.
 static QualType deduceOpenCLPointeeAddrSpace(Sema &S, QualType PointeeType) {
   if (!PointeeType->isUndeducedAutoType() && !PointeeType->isDependentType() &&
-      // !PointeeType->isSamplerT() &&
+      !PointeeType->isSamplerT() &&
       !PointeeType.hasAddressSpace())
     PointeeType = S.getASTContext().getAddrSpaceQualType(
         PointeeType,
@@ -2084,8 +2084,8 @@ QualType Sema::BuildPointerType(QualType T,
   // if (getLangOpts().ObjCAutoRefCount)
   //   T = inferARCLifetimeForPointee(*this, T, Loc, /*reference*/ false);
 
-  // if (getLangOpts().OpenCL)
-  //   T = deduceOpenCLPointeeAddrSpace(*this, T);
+  if (getLangOpts().OpenCL)
+    T = deduceOpenCLPointeeAddrSpace(*this, T);
 
   // Build the pointer type.
   return Context.getPointerType(T);
@@ -2147,8 +2147,8 @@ QualType Sema::BuildReferenceType(QualType T, bool SpelledAsLValue,
   // if (getLangOpts().ObjCAutoRefCount)
   //   T = inferARCLifetimeForPointee(*this, T, Loc, /*reference*/ true);
 
-  // if (getLangOpts().OpenCL)
-  //   T = deduceOpenCLPointeeAddrSpace(*this, T);
+  if (getLangOpts().OpenCL)
+    T = deduceOpenCLPointeeAddrSpace(*this, T);
 
   // Handle restrict on references.
   if (LValueRef)
@@ -2449,14 +2449,14 @@ QualType Sema::BuildArrayType(QualType T, ArrayType::ArraySizeModifier ASM,
   // OpenCL v2.0 s6.12.5 - Arrays of blocks are not supported.
   // OpenCL v2.0 s6.16.13.1 - Arrays of pipe type are not supported.
   // OpenCL v2.0 s6.9.b - Arrays of image/sampler type are not supported.
-  // if (getLangOpts().OpenCL) {
-  //   const QualType ArrType = Context.getBaseElementType(T);
-  //   if (ArrType->isBlockPointerType() || ArrType->isPipeType() ||
-  //       ArrType->isSamplerT() || ArrType->isImageType()) {
-  //     Diag(Loc, diag::err_opencl_invalid_type_array) << ArrType;
-  //     return QualType();
-  //   }
-  // }
+  if (getLangOpts().OpenCL) {
+    const QualType ArrType = Context.getBaseElementType(T);
+    if (ArrType->isBlockPointerType() || ArrType->isPipeType() ||
+        ArrType->isSamplerT() || ArrType->isImageType()) {
+      Diag(Loc, diag::err_opencl_invalid_type_array) << ArrType;
+      return QualType();
+    }
+  }
 
   return T;
 }
@@ -2854,8 +2854,8 @@ QualType Sema::BuildBlockPointerType(QualType T,
   if (checkQualifiedFunction(*this, T, Loc, QFK_BlockPointer))
     return QualType();
 
-  // if (getLangOpts().OpenCL)
-  //   T = deduceOpenCLPointeeAddrSpace(*this, T);
+  if (getLangOpts().OpenCL)
+    T = deduceOpenCLPointeeAddrSpace(*this, T);
 
   return Context.getBlockPointerType(T);
 }
@@ -3797,14 +3797,14 @@ static CallingConv getCCForDeclaratorChunk(
   // and AMDGPU targets, hence it cannot be treated as a calling
   // convention attribute. This is the simplest place to infer
   // calling convention for OpenCL kernels.
-  // if (S.getLangOpts().OpenCL) {
-  //   for (const ParsedAttr &AL : D.getDeclSpec().getAttributes()) {
-  //     if (AL.getKind() == ParsedAttr::AT_OpenCLKernel) {
-  //       CC = CC_OpenCLKernel;
-  //       break;
-  //     }
-  //   }
-  // }
+  if (S.getLangOpts().OpenCL) {
+    for (const ParsedAttr &AL : D.getDeclSpec().getAttributes()) {
+      if (AL.getKind() == ParsedAttr::AT_OpenCLKernel) {
+        CC = CC_OpenCLKernel;
+        break;
+      }
+    }
+  }
 
   return CC;
 }
@@ -4689,11 +4689,11 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
                               state.getDeclarator().getAttributePool());
 
       T = S.BuildBlockPointerType(T, D.getIdentifierLoc(), Name);
-      if (DeclType.Cls.TypeQuals /*|| LangOpts.OpenCL*/) {
+      if (DeclType.Cls.TypeQuals || LangOpts.OpenCL) {
         // OpenCL v2.0, s6.12.5 - Block variable declarations are implicitly
         // qualified with const.
-        // if (LangOpts.OpenCL)
-        //   DeclType.Cls.TypeQuals |= DeclSpec::TQ_const;
+        if (LangOpts.OpenCL)
+          DeclType.Cls.TypeQuals |= DeclSpec::TQ_const;
         T = S.BuildQualifiedType(T, DeclType.Loc, DeclType.Cls.TypeQuals);
       }
       break;
@@ -4721,13 +4721,13 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
       // OpenCL v2.0 s6.9b - Pointer to image/sampler cannot be used.
       // OpenCL v2.0 s6.13.16.1 - Pointer to pipe cannot be used.
       // OpenCL v2.0 s6.12.5 - Pointers to Blocks are not allowed.
-      // if (LangOpts.OpenCL) {
-      //   if (T->isImageType() || T->isSamplerT() || T->isPipeType() ||
-      //       T->isBlockPointerType()) {
-      //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_pointer_to_type) << T;
-      //     D.setInvalidType(true);
-      //   }
-      // }
+      if (LangOpts.OpenCL) {
+        if (T->isImageType() || T->isSamplerT() || T->isPipeType() ||
+            T->isBlockPointerType()) {
+          S.Diag(D.getIdentifierLoc(), diag::err_opencl_pointer_to_type) << T;
+          D.setInvalidType(true);
+        }
+      }
 
       T = S.BuildPointerType(T, DeclType.Loc, Name);
       if (DeclType.Ptr.TypeQuals)
@@ -4912,13 +4912,13 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
       // Do not allow returning half FP value.
       // FIXME: This really should be in BuildFunctionType.
       if (T->isHalfType()) {
-        // if (S.getLangOpts().OpenCL) {
-        //   if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
-        //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
-        //         << T << 0 /*pointer hint*/;
-        //     D.setInvalidType(true);
-        //   }
-        // } else 
+        if (S.getLangOpts().OpenCL) {
+          if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
+            S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
+                << T << 0 /*pointer hint*/;
+            D.setInvalidType(true);
+          }
+        } else 
         if (!S.getLangOpts().HalfArgsAndReturns) {
           S.Diag(D.getIdentifierLoc(),
             diag::err_parameters_retval_cannot_have_fp16_type) << 1;
@@ -4926,27 +4926,27 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
         }
       }
 
-      // if (LangOpts.OpenCL) {
-      //   // OpenCL v2.0 s6.12.5 - A block cannot be the return value of a
-      //   // function.
-      //   if (T->isBlockPointerType() || T->isImageType() || T->isSamplerT() ||
-      //       T->isPipeType()) {
-      //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
-      //         << T << 1 /*hint off*/;
-      //     D.setInvalidType(true);
-      //   }
-      //   // OpenCL doesn't support variadic functions and blocks
-      //   // (s6.9.e and s6.12.5 OpenCL v2.0) except for printf.
-      //   // We also allow here any toolchain reserved identifiers.
-      //   if (FTI.isVariadic &&
-      //       !(D.getIdentifier() &&
-      //         ((D.getIdentifier()->getName() == "printf" &&
-      //           (LangOpts.OpenCLCPlusPlus || LangOpts.OpenCLVersion >= 120)) ||
-      //          D.getIdentifier()->getName().startswith("__")))) {
-      //     S.Diag(D.getIdentifierLoc(), diag::err_opencl_variadic_function);
-      //     D.setInvalidType(true);
-      //   }
-      // }
+      if (LangOpts.OpenCL) {
+        // OpenCL v2.0 s6.12.5 - A block cannot be the return value of a
+        // function.
+        if (T->isBlockPointerType() || T->isImageType() || T->isSamplerT() ||
+            T->isPipeType()) {
+          S.Diag(D.getIdentifierLoc(), diag::err_opencl_invalid_return)
+              << T << 1 /*hint off*/;
+          D.setInvalidType(true);
+        }
+        // OpenCL doesn't support variadic functions and blocks
+        // (s6.9.e and s6.12.5 OpenCL v2.0) except for printf.
+        // We also allow here any toolchain reserved identifiers.
+        if (FTI.isVariadic &&
+            !(D.getIdentifier() &&
+              ((D.getIdentifier()->getName() == "printf" &&
+                (LangOpts.OpenCLCPlusPlus || LangOpts.OpenCLVersion >= 120)) ||
+               D.getIdentifier()->getName().startswith("__")))) {
+          S.Diag(D.getIdentifierLoc(), diag::err_opencl_variadic_function);
+          D.setInvalidType(true);
+        }
+      }
 
       // Methods cannot return interface types. All ObjC objects are
       // passed by reference.
@@ -5131,14 +5131,14 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
           } else if (ParamTy->isHalfType()) {
             // Disallow half FP parameters.
             // FIXME: This really should be in BuildFunctionType.
-            // if (S.getLangOpts().OpenCL) {
-            //   if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
-            //     S.Diag(Param->getLocation(), diag::err_opencl_invalid_param)
-            //         << ParamTy << 0;
-            //     D.setInvalidType();
-            //     Param->setInvalidDecl();
-            //   }
-            // } else 
+            if (S.getLangOpts().OpenCL) {
+              if (!S.getOpenCLOptions().isEnabled("cl_khr_fp16")) {
+                S.Diag(Param->getLocation(), diag::err_opencl_invalid_param)
+                    << ParamTy << 0;
+                D.setInvalidType();
+                Param->setInvalidDecl();
+              }
+            } else 
             if (!S.getLangOpts().HalfArgsAndReturns) {
               S.Diag(Param->getLocation(),
                 diag::err_parameters_retval_cannot_have_fp16_type) << 0;
@@ -5236,15 +5236,15 @@ static TypeSourceInfo *GetFullTypeForDeclarator(TypeProcessingState &state,
           LangAS ASIdx = LangAS::Default;
           // Take address space attr if any and mark as invalid to avoid adding
           // them later while creating QualType.
-          // if (FTI.MethodQualifiers)
-          //   for (ParsedAttr &attr : FTI.MethodQualifiers->getAttributes()) {
-          //     LangAS ASIdxNew = attr.asOpenCLLangAS();
-          //     if (DiagnoseMultipleAddrSpaceAttributes(S, ASIdx, ASIdxNew,
-          //                                             attr.getLoc()))
-          //       D.setInvalidType(true);
-          //     else
-          //       ASIdx = ASIdxNew;
-          //   }
+          if (FTI.MethodQualifiers)
+            for (ParsedAttr &attr : FTI.MethodQualifiers->getAttributes()) {
+              LangAS ASIdxNew = attr.asOpenCLLangAS();
+              if (DiagnoseMultipleAddrSpaceAttributes(S, ASIdx, ASIdxNew,
+                                                      attr.getLoc()))
+                D.setInvalidType(true);
+              else
+                ASIdx = ASIdxNew;
+            }
           // If a class member function's address space is not set, set it to
           // __generic.
           LangAS AS =
@@ -6410,9 +6410,9 @@ static void HandleAddressSpaceTypeAttribute(QualType &Type,
       Attr.setInvalid();
   } else {
     // The keyword-based type attributes imply which address space to use.
-    // ASIdx = Attr.asOpenCLLangAS();
-    // if (ASIdx == LangAS::Default)
-    //   llvm_unreachable("Invalid address space");
+    ASIdx = Attr.asOpenCLLangAS();
+    if (ASIdx == LangAS::Default)
+      llvm_unreachable("Invalid address space");
 
     if (DiagnoseMultipleAddrSpaceAttributes(S, Type.getAddressSpace(), ASIdx,
                                             Attr.getLoc())) {
@@ -7684,7 +7684,7 @@ static bool isPermittedNeonBaseType(QualType &Ty,
          BTy->getKind() == BuiltinType::LongLong ||
          BTy->getKind() == BuiltinType::ULongLong ||
          BTy->getKind() == BuiltinType::Float ||
-        //  BTy->getKind() == BuiltinType::Half ||
+         BTy->getKind() == BuiltinType::Half ||
          BTy->getKind() == BuiltinType::BFloat16;
 }
 
@@ -7761,60 +7761,60 @@ static void HandleArmMveStrictPolymorphismAttr(TypeProcessingState &State,
 }
 
 /// Handle OpenCL Access Qualifier Attribute.
-// static void HandleOpenCLAccessAttr(QualType &CurType, const ParsedAttr &Attr,
-//                                    Sema &S) {
-//   // OpenCL v2.0 s6.6 - Access qualifier can be used only for image and pipe type.
-//   if (!(CurType->isImageType() || CurType->isPipeType())) {
-//     S.Diag(Attr.getLoc(), diag::err_opencl_invalid_access_qualifier);
-//     Attr.setInvalid();
-//     return;
-//   }
+static void HandleOpenCLAccessAttr(QualType &CurType, const ParsedAttr &Attr,
+                                   Sema &S) {
+  // OpenCL v2.0 s6.6 - Access qualifier can be used only for image and pipe type.
+  if (!(CurType->isImageType() || CurType->isPipeType())) {
+    S.Diag(Attr.getLoc(), diag::err_opencl_invalid_access_qualifier);
+    Attr.setInvalid();
+    return;
+  }
 
-//   if (const TypedefType* TypedefTy = CurType->getAs<TypedefType>()) {
-//     QualType BaseTy = TypedefTy->desugar();
+  if (const TypedefType* TypedefTy = CurType->getAs<TypedefType>()) {
+    QualType BaseTy = TypedefTy->desugar();
 
-//     std::string PrevAccessQual;
-//     if (BaseTy->isPipeType()) {
-//       if (TypedefTy->getDecl()->hasAttr<OpenCLAccessAttr>()) {
-//         OpenCLAccessAttr *Attr =
-//             TypedefTy->getDecl()->getAttr<OpenCLAccessAttr>();
-//         PrevAccessQual = Attr->getSpelling();
-//       } else {
-//         PrevAccessQual = "read_only";
-//       }
-//     } /*else if (const BuiltinType* ImgType = BaseTy->getAs<BuiltinType>()) {
+    std::string PrevAccessQual;
+    if (BaseTy->isPipeType()) {
+      if (TypedefTy->getDecl()->hasAttr<OpenCLAccessAttr>()) {
+        OpenCLAccessAttr *Attr =
+            TypedefTy->getDecl()->getAttr<OpenCLAccessAttr>();
+        PrevAccessQual = Attr->getSpelling();
+      } else {
+        PrevAccessQual = "read_only";
+      }
+    } else if (const BuiltinType* ImgType = BaseTy->getAs<BuiltinType>()) {
 
-//       switch (ImgType->getKind()) {
-//         #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//       case BuiltinType::Id:                                          \
-//         PrevAccessQual = #Access;                                    \
-//         break;
-//         #include "latino/Basic/OpenCLImageTypes.def"
-//       default:
-//         llvm_unreachable("Unable to find corresponding image type.");
-//       }
-//     }*/ else {
-//       llvm_unreachable("unexpected type");
-//     }
-//     StringRef AttrName = Attr.getAttrName()->getName();
-//     if (PrevAccessQual == AttrName.ltrim("_")) {
-//       // Duplicated qualifiers
-//       S.Diag(Attr.getLoc(), diag::warn_duplicate_declspec)
-//          << AttrName << Attr.getRange();
-//     } else {
-//       // Contradicting qualifiers
-//       S.Diag(Attr.getLoc(), diag::err_opencl_multiple_access_qualifiers);
-//     }
+      switch (ImgType->getKind()) {
+        #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+      case BuiltinType::Id:                                          \
+        PrevAccessQual = #Access;                                    \
+        break;
+        #include "latino/Basic/OpenCLImageTypes.def"
+      default:
+        llvm_unreachable("Unable to find corresponding image type.");
+      }
+    } else {
+      llvm_unreachable("unexpected type");
+    }
+    StringRef AttrName = Attr.getAttrName()->getName();
+    if (PrevAccessQual == AttrName.ltrim("_")) {
+      // Duplicated qualifiers
+      S.Diag(Attr.getLoc(), diag::warn_duplicate_declspec)
+         << AttrName << Attr.getRange();
+    } else {
+      // Contradicting qualifiers
+      S.Diag(Attr.getLoc(), diag::err_opencl_multiple_access_qualifiers);
+    }
 
-//     S.Diag(TypedefTy->getDecl()->getBeginLoc(),
-//            diag::note_opencl_typedef_access_qualifier) << PrevAccessQual;
-//   } else if (CurType->isPipeType()) {
-//     if (Attr.getSemanticSpelling() == OpenCLAccessAttr::Keyword_write_only) {
-//       QualType ElemType = CurType->getAs<PipeType>()->getElementType();
-//       CurType = S.Context.getWritePipeType(ElemType);
-//     }
-//   }
-// }
+    S.Diag(TypedefTy->getDecl()->getBeginLoc(),
+           diag::note_opencl_typedef_access_qualifier) << PrevAccessQual;
+  } else if (CurType->isPipeType()) {
+    if (Attr.getSemanticSpelling() == OpenCLAccessAttr::Keyword_write_only) {
+      QualType ElemType = CurType->getAs<PipeType>()->getElementType();
+      CurType = S.Context.getWritePipeType(ElemType);
+    }
+  }
+}
 
 /// HandleMatrixTypeAttr - "matrix_type" attribute, like ext_vector_type
 static void HandleMatrixTypeAttr(QualType &CurType, const ParsedAttr &Attr,
@@ -7974,11 +7974,11 @@ static void processTypeAttrs(TypeProcessingState &state, QualType &type,
       // it it breaks large amounts of Linux software.
       attr.setUsedAsTypeAttr();
       break;
-    // case ParsedAttr::AT_OpenCLPrivateAddressSpace:
-    // case ParsedAttr::AT_OpenCLGlobalAddressSpace:
-    // case ParsedAttr::AT_OpenCLLocalAddressSpace:
-    // case ParsedAttr::AT_OpenCLConstantAddressSpace:
-    // case ParsedAttr::AT_OpenCLGenericAddressSpace:
+    case ParsedAttr::AT_OpenCLPrivateAddressSpace:
+    case ParsedAttr::AT_OpenCLGlobalAddressSpace:
+    case ParsedAttr::AT_OpenCLLocalAddressSpace:
+    case ParsedAttr::AT_OpenCLConstantAddressSpace:
+    case ParsedAttr::AT_OpenCLGenericAddressSpace:
     case ParsedAttr::AT_AddressSpace:
       HandleAddressSpaceTypeAttribute(type, attr, state);
       attr.setUsedAsTypeAttr();
@@ -8011,10 +8011,10 @@ static void processTypeAttrs(TypeProcessingState &state, QualType &type,
       attr.setUsedAsTypeAttr();
       break;
     }
-    // case ParsedAttr::AT_OpenCLAccess:
-    //   HandleOpenCLAccessAttr(type, attr, state.getSema());
-    //   attr.setUsedAsTypeAttr();
-    //   break;
+    case ParsedAttr::AT_OpenCLAccess:
+      HandleOpenCLAccessAttr(type, attr, state.getSema());
+      attr.setUsedAsTypeAttr();
+      break;
     case ParsedAttr::AT_LifetimeBound:
       if (TAL == TAL_DeclChunk)
         HandleLifetimeBoundAttr(state, type, attr);

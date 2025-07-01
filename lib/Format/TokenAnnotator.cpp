@@ -1418,7 +1418,8 @@ private:
         !Line.First->isOneOf(tok::kw_plantilla, tok::kw_usar, tok::kw_ret) &&
         // Type aliases use `type X = ...;` in TypeScript and can be exported
         // using `export type ...`.
-        /*!(Style.Language == FormatStyle::LK_JavaScript &&
+        /*
+        !(Style.Language == FormatStyle::LK_JavaScript &&
           (Line.startsWith(Keywords.kw_type, tok::identifier) ||
            Line.startsWith(tok::kw_exportar, Keywords.kw_type,
                            tok::identifier))) &&*/
@@ -1449,9 +1450,10 @@ private:
       Contexts.back().IsExpression = true;
     } else if (Current.is(TT_TrailingReturnArrow)) {
       Contexts.back().IsExpression = false;
-    } /*else if (Current.is(TT_LambdaArrow) || Current.is(Keywords.kw_assert)) {
+    } else if (Current.is(TT_LambdaArrow) /* ||
+               Current.is(Keywords.kw_assert)*/) {
       Contexts.back().IsExpression = Style.Language == FormatStyle::LK_Java;
-    }*/ else if (Current.Previous &&
+    } else if (Current.Previous &&
                Current.Previous->is(TT_CtorInitializerColon)) {
       Contexts.back().IsExpression = true;
       Contexts.back().InCtorInitializer = true;
@@ -1836,7 +1838,7 @@ private:
     // If a (non-string) literal follows, this is likely a cast.
     if (Tok.Next->isNot(tok::string_literal) &&
         (Tok.Next->Tok.isLiteral() ||
-         Tok.Next->is(tok::kw_sizeof/*, tok::kw_alignof*/)))
+         Tok.Next->is/*OneOf*/(tok::kw_sizeof/*, tok::kw_alignof*/)))
       return true;
 
     // Heuristically try to determine whether the parentheses contain a type.
@@ -3719,7 +3721,7 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
     // Only break after commas for generic type constraints.
     if (Line.First->is(TT_CSharpGenericTypeConstraint))
       return Left.is(TT_CSharpGenericTypeConstraintComma);
-  } /*else if (Style.Language == FormatStyle::LK_Java) {
+  } /* else if (Style.Language == FormatStyle::LK_Java) {
     if (Left.isOneOf(Keywords.kw_throws, Keywords.kw_extends,
                      Keywords.kw_implements))
       return false;
@@ -3799,7 +3801,8 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
     }
     if (Left.is(TT_TemplateString) && Left.opensScope())
       return true;
-  }*/
+  }
+  */
 
   if (Left.is(tok::at))
     return false;

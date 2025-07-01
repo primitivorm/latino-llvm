@@ -2916,13 +2916,13 @@ static void handleSubGroupSize(Sema &S, Decl *D, const ParsedAttr &AL) {
     return;
   }
 
-  // OpenCLIntelReqdSubGroupSizeAttr *Existing =
-  //     D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>();
-  // if (Existing && Existing->getSubGroupSize() != SGSize)
-  //   S.Diag(AL.getLoc(), diag::warn_duplicate_attribute) << AL;
+  OpenCLIntelReqdSubGroupSizeAttr *Existing =
+      D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>();
+  if (Existing && Existing->getSubGroupSize() != SGSize)
+    S.Diag(AL.getLoc(), diag::warn_duplicate_attribute) << AL;
 
-  // D->addAttr(::new (S.Context)
-  //                OpenCLIntelReqdSubGroupSizeAttr(S.Context, AL, SGSize));
+  D->addAttr(::new (S.Context)
+                 OpenCLIntelReqdSubGroupSizeAttr(S.Context, AL, SGSize));
 }
 
 static void handleVecTypeHint(Sema &S, Decl *D, const ParsedAttr &AL) {
@@ -6488,14 +6488,14 @@ static void handleInternalLinkageAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
     D->addAttr(Internal);
 }
 
-// static void handleOpenCLNoSVMAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-//   if (S.LangOpts.OpenCLVersion != 200)
-//     S.Diag(AL.getLoc(), diag::err_attribute_requires_opencl_version)
-//         << AL << "2.0" << 0;
-//   else
-//     S.Diag(AL.getLoc(), diag::warn_opencl_attr_deprecated_ignored) << AL
-//                                                                    << "2.0";
-// }
+static void handleOpenCLNoSVMAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+  if (S.LangOpts.OpenCLVersion != 200)
+    S.Diag(AL.getLoc(), diag::err_attribute_requires_opencl_version)
+        << AL << "2.0" << 0;
+  else
+    S.Diag(AL.getLoc(), diag::warn_opencl_attr_deprecated_ignored) << AL
+                                                                   << "2.0";
+}
 
 /// Handles semantic checking for features that are common to all attributes,
 /// such as checking whether a parameter was properly specified, or the correct
@@ -6540,45 +6540,45 @@ static bool handleCommonAttributeFeatures(Sema &S, Decl *D,
   return false;
 }
 
-// static void handleOpenCLAccessAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
-//   if (D->isInvalidDecl())
-//     return;
+static void handleOpenCLAccessAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+  if (D->isInvalidDecl())
+    return;
 
-//   // Check if there is only one access qualifier.
-//   if (D->hasAttr<OpenCLAccessAttr>()) {
-//     if (D->getAttr<OpenCLAccessAttr>()->getSemanticSpelling() ==
-//         AL.getSemanticSpelling()) {
-//       S.Diag(AL.getLoc(), diag::warn_duplicate_declspec)
-//           << AL.getAttrName()->getName() << AL.getRange();
-//     } else {
-//       S.Diag(AL.getLoc(), diag::err_opencl_multiple_access_qualifiers)
-//           << D->getSourceRange();
-//       D->setInvalidDecl(true);
-//       return;
-//     }
-//   }
+  // Check if there is only one access qualifier.
+  if (D->hasAttr<OpenCLAccessAttr>()) {
+    if (D->getAttr<OpenCLAccessAttr>()->getSemanticSpelling() ==
+        AL.getSemanticSpelling()) {
+      S.Diag(AL.getLoc(), diag::warn_duplicate_declspec)
+          << AL.getAttrName()->getName() << AL.getRange();
+    } else {
+      S.Diag(AL.getLoc(), diag::err_opencl_multiple_access_qualifiers)
+          << D->getSourceRange();
+      D->setInvalidDecl(true);
+      return;
+    }
+  }
 
-//   // OpenCL v2.0 s6.6 - read_write can be used for image types to specify that an
-//   // image object can be read and written.
-//   // OpenCL v2.0 s6.13.6 - A kernel cannot read from and write to the same pipe
-//   // object. Using the read_write (or __read_write) qualifier with the pipe
-//   // qualifier is a compilation error.
-//   // if (const auto *PDecl = dyn_cast<ParmVarDecl>(D)) {
-//   //   const Type *DeclTy = PDecl->getType().getCanonicalType().getTypePtr();
-//   //   if (AL.getAttrName()->getName().find("read_write") != StringRef::npos) {
-//   //     if ((!S.getLangOpts().OpenCLCPlusPlus &&
-//   //          S.getLangOpts().OpenCLVersion < 200) ||
-//   //         DeclTy->isPipeType()) {
-//   //       S.Diag(AL.getLoc(), diag::err_opencl_invalid_read_write)
-//   //           << AL << PDecl->getType() /*<< DeclTy->isImageType()*/;
-//   //       D->setInvalidDecl(true);
-//   //       return;
-//   //     }
-//   //   }
-//   // }
+//   OpenCL v2.0 s6.6 - read_write can be used for image types to specify that an
+//   image object can be read and written.
+//   OpenCL v2.0 s6.13.6 - A kernel cannot read from and write to the same pipe
+//   object. Using the read_write (or __read_write) qualifier with the pipe
+//   qualifier is a compilation error.
+  if (const auto *PDecl = dyn_cast<ParmVarDecl>(D)) {
+    const Type *DeclTy = PDecl->getType().getCanonicalType().getTypePtr();
+    if (AL.getAttrName()->getName().find("read_write") != StringRef::npos) {
+      if ((!S.getLangOpts().OpenCLCPlusPlus &&
+           S.getLangOpts().OpenCLVersion < 200) ||
+          DeclTy->isPipeType()) {
+        S.Diag(AL.getLoc(), diag::err_opencl_invalid_read_write)
+            << AL << PDecl->getType() /*<< DeclTy->isImageType()*/;
+        D->setInvalidDecl(true);
+        return;
+      }
+    }
+  }
 
-//   D->addAttr(::new (S.Context) OpenCLAccessAttr(S.Context, AL));
-// }
+  D->addAttr(::new (S.Context) OpenCLAccessAttr(S.Context, AL));
+}
 
 static void handleSYCLKernelAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   // The 'sycl_kernel' attribute applies only to function templates.
@@ -7144,9 +7144,9 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_ReqdWorkGroupSize:
     handleWorkGroupSize<ReqdWorkGroupSizeAttr>(S, D, AL);
     break;
-  // case ParsedAttr::AT_OpenCLIntelReqdSubGroupSize:
-  //   handleSubGroupSize(S, D, AL);
-  //   break;
+  case ParsedAttr::AT_OpenCLIntelReqdSubGroupSize:
+    handleSubGroupSize(S, D, AL);
+    break;
   case ParsedAttr::AT_VecTypeHint:
     handleVecTypeHint(S, D, AL);
     break;
@@ -7271,12 +7271,12 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
   case ParsedAttr::AT_Pointer:
     handleLifetimeCategoryAttr(S, D, AL);
     break;
-  // case ParsedAttr::AT_OpenCLAccess:
-  //   handleOpenCLAccessAttr(S, D, AL);
-  //   break;
-  // case ParsedAttr::AT_OpenCLNoSVM:
-  //   handleOpenCLNoSVMAttr(S, D, AL);
-  //   break;
+  case ParsedAttr::AT_OpenCLAccess:
+    handleOpenCLAccessAttr(S, D, AL);
+    break;
+  case ParsedAttr::AT_OpenCLNoSVM:
+    handleOpenCLNoSVMAttr(S, D, AL);
+    break;
   case ParsedAttr::AT_SwiftContext:
     S.AddParameterABIAttr(D, AL, ParameterABI::SwiftContext);
     break;
@@ -7480,7 +7480,7 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
   // good to have a way to specify "these attributes must appear as a group",
   // for these. Additionally, it would be good to have a way to specify "these
   // attribute must never appear as a group" for attributes like cold and hot.
-  // if (!D->hasAttr<OpenCLKernelAttr>()) {
+  if (!D->hasAttr<OpenCLKernelAttr>()) {
     // These attributes cannot be applied to a non-kernel function.
     if (const auto *A = D->getAttr<ReqdWorkGroupSizeAttr>()) {
       // FIXME: This emits a different error message than
@@ -7493,10 +7493,10 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
     } else if (const auto *A = D->getAttr<VecTypeHintAttr>()) {
       Diag(D->getLocation(), diag::err_opencl_kernel_attr) << A;
       D->setInvalidDecl();
-    }/* else if (const auto *A = D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>()) {
+    }else if (const auto *A = D->getAttr<OpenCLIntelReqdSubGroupSizeAttr>()) {
       Diag(D->getLocation(), diag::err_opencl_kernel_attr) << A;
       D->setInvalidDecl();
-    }*/ else if (!D->hasAttr<CUDAGlobalAttr>()) {
+    } else if (!D->hasAttr<CUDAGlobalAttr>()) {
       if (const auto *A = D->getAttr<AMDGPUFlatWorkGroupSizeAttr>()) {
         Diag(D->getLocation(), diag::err_attribute_wrong_decl_type)
             << A << ExpectedKernelFunction;
@@ -7515,7 +7515,7 @@ void Sema::ProcessDeclAttributeList(Scope *S, Decl *D,
         D->setInvalidDecl();
       }
     }
-  // }
+  }
 
   // Do this check after processing D's attributes because the attribute
   // objc_method_family can change whether the given method is in the init

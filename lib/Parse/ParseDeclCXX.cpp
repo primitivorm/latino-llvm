@@ -75,14 +75,14 @@ Parser::DeclGroupPtrTy Parser::ParseNamespace(DeclaratorContext Context,
 
   ParsedAttributesWithRange attrs(AttrFactory);
   SourceLocation attrLoc;
-  if (getLangOpts().CPlusPlus11 && isCXX11AttributeSpecifier()) {
-    Diag(Tok.getLocation(), getLangOpts().CPlusPlus17
-                                ? diag::warn_cxx14_compat_ns_enum_attribute
-                                : diag::ext_ns_enum_attribute)
-      << 0 /*namespace*/;
-    attrLoc = Tok.getLocation();
-    ParseCXX11Attributes(attrs);
-  }
+  // if (getLangOpts().CPlusPlus11 && isCXX11AttributeSpecifier()) {
+  //   Diag(Tok.getLocation(), getLangOpts().CPlusPlus17
+  //                               ? diag::warn_cxx14_compat_ns_enum_attribute
+  //                               : diag::ext_ns_enum_attribute)
+  //     << 0 /*namespace*/;
+  //   attrLoc = Tok.getLocation();
+  //   ParseCXX11Attributes(attrs);
+  // }
 
   if (Tok.is(tok::identifier)) {
     Ident = Tok.getIdentifierInfo();
@@ -242,7 +242,7 @@ void Parser::ParseInnerNamespace(const InnerNamespaceInfoList &InnerNSs,
     while (!tryParseMisplacedModuleImport() && Tok.isNot(tok::r_brace) &&
            Tok.isNot(tok::eof)) {
       ParsedAttributesWithRange attrs(AttrFactory);
-      MaybeParseCXX11Attributes(attrs);
+      //MaybeParseCXX11Attributes(attrs);
       ParseExternalDeclaration(attrs);
     }
 
@@ -345,7 +345,7 @@ Decl *Parser::ParseLinkage(ParsingDeclSpec &DS, DeclaratorContext Context) {
                 Tok.is(tok::l_brace) ? Tok.getLocation() : SourceLocation());
 
   ParsedAttributesWithRange attrs(AttrFactory);
-  MaybeParseCXX11Attributes(attrs);
+  //MaybeParseCXX11Attributes(attrs);
 
   if (Tok.isNot(tok::l_brace)) {
     // Reset the source range in DS, as the leading "extern"
@@ -395,7 +395,7 @@ Decl *Parser::ParseLinkage(ParsingDeclSpec &DS, DeclaratorContext Context) {
       LLVM_FALLTHROUGH;
     default:
       ParsedAttributesWithRange attrs(AttrFactory);
-      MaybeParseCXX11Attributes(attrs);
+      //MaybeParseCXX11Attributes(attrs);
       ParseExternalDeclaration(attrs);
       continue;
     }
@@ -427,7 +427,7 @@ Decl *Parser::ParseExportDeclaration() {
   if (Tok.isNot(tok::l_brace)) {
     // FIXME: Factor out a ParseExternalDeclarationWithAttrs.
     ParsedAttributesWithRange Attrs(AttrFactory);
-    MaybeParseCXX11Attributes(Attrs);
+    //MaybeParseCXX11Attributes(Attrs);
     MaybeParseMicrosoftAttributes(Attrs);
     ParseExternalDeclaration(Attrs);
     return Actions.ActOnFinishExportDecl(getCurScope(), ExportDecl,
@@ -447,7 +447,7 @@ Decl *Parser::ParseExportDeclaration() {
   while (!tryParseMisplacedModuleImport() && Tok.isNot(tok::r_brace) &&
          Tok.isNot(tok::eof)) {
     ParsedAttributesWithRange Attrs(AttrFactory);
-    MaybeParseCXX11Attributes(Attrs);
+    //MaybeParseCXX11Attributes(Attrs);
     MaybeParseMicrosoftAttributes(Attrs);
     ParseExternalDeclaration(Attrs);
   }
@@ -679,14 +679,14 @@ Parser::ParseUsingDeclaration(DeclaratorContext Context,
   // Check for misplaced attributes before the identifier in an
   // alias-declaration.
   ParsedAttributesWithRange MisplacedAttrs(AttrFactory);
-  MaybeParseCXX11Attributes(MisplacedAttrs);
+  //MaybeParseCXX11Attributes(MisplacedAttrs);
 
   UsingDeclarator D;
   bool InvalidDeclarator = ParseUsingDeclarator(Context, D);
 
   ParsedAttributesWithRange Attrs(AttrFactory);
   MaybeParseGNUAttributes(Attrs);
-  MaybeParseCXX11Attributes(Attrs);
+  //MaybeParseCXX11Attributes(Attrs);
 
   // Maybe this is an alias-declaration.
   if (Tok.is(tok::equal)) {
@@ -1440,7 +1440,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   // If C++0x attributes exist here, parse them.
   // FIXME: Are we consistent with the ordering of parsing of different
   // styles of attributes?
-  MaybeParseCXX11Attributes(attrs);
+  //MaybeParseCXX11Attributes(attrs);
 
   // Source location used by FIXIT to insert misplaced
   // C++11 attributes
@@ -1677,7 +1677,7 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
   // DeclSpecContext::DSC_alias_declaration.
 
   // If there are attributes after class name, parse them.
-  MaybeParseCXX11Attributes(Attributes);
+  //MaybeParseCXX11Attributes(Attributes);
 
   const PrintingPolicy &Policy = Actions.getASTContext().getPrintingPolicy();
   Sema::TagUseKind TUK;
@@ -2079,20 +2079,20 @@ BaseResult Parser::ParseBaseSpecifier(Decl *ClassDecl) {
   SourceLocation StartLoc = Tok.getLocation();
 
   ParsedAttributesWithRange Attributes(AttrFactory);
-  MaybeParseCXX11Attributes(Attributes);
+  //MaybeParseCXX11Attributes(Attributes);
 
   // Parse the 'virtual' keyword.
   if (TryConsumeToken(tok::kw_virtual))
     IsVirtual = true;
 
-  CheckMisplacedCXX11Attribute(Attributes, StartLoc);
+  // CheckMisplacedCXX11Attribute(Attributes, StartLoc);
 
   // Parse an (optional) access specifier.
   AccessSpecifier Access = getAccessSpecifierIfPresent();
   if (Access != AS_none)
     ConsumeToken();
 
-  CheckMisplacedCXX11Attribute(Attributes, StartLoc);
+  // CheckMisplacedCXX11Attribute(Attributes, StartLoc);
 
   // Parse the 'virtual' keyword (again!), in case it came after the
   // access specifier.
@@ -2107,7 +2107,7 @@ BaseResult Parser::ParseBaseSpecifier(Decl *ClassDecl) {
     IsVirtual = true;
   }
 
-  CheckMisplacedCXX11Attribute(Attributes, StartLoc);
+  // CheckMisplacedCXX11Attribute(Attributes, StartLoc);
 
   // Parse the class-name.
 
@@ -2569,7 +2569,7 @@ Parser::ParseCXXClassMemberDeclaration(AccessSpecifier AS,
   ParsedAttributesWithRange attrs(AttrFactory);
   ParsedAttributesViewWithRange FnAttrs;
   // Optional C++11 attribute-specifier
-  MaybeParseCXX11Attributes(attrs);
+  //MaybeParseCXX11Attributes(attrs);
   // We need to keep these attributes for future diagnostic
   // before they are taken over by declaration specifier.
   FnAttrs.addAll(attrs.begin(), attrs.end());
@@ -3020,7 +3020,7 @@ void Parser::SkipCXXMemberSpecification(SourceLocation RecordLoc,
     // Diagnose any C++11 attributes after 'final' keyword.
     // We deliberately discard these attributes.
     ParsedAttributesWithRange Attrs(AttrFactory);
-    CheckMisplacedCXX11Attribute(Attrs, AttrFixitLoc);
+    // CheckMisplacedCXX11Attribute(Attrs, AttrFixitLoc);
 
     // This can only happen if we had malformed misplaced attributes;
     // we only get called if there is a colon or left-brace after the
@@ -3151,9 +3151,9 @@ Parser::DeclGroupPtrTy Parser::ParseCXXClassMemberDeclarationWithPragmas(
     return nullptr;
   }
 
-  // case tok::annot_pragma_openmp:
-  //   return ParseOpenMPDeclarativeDirectiveWithExtDecl(
-  //       AS, AccessAttrs, /*Delayed=*/true, TagType, TagDecl);
+  case tok::annot_pragma_openmp:
+    return ParseOpenMPDeclarativeDirectiveWithExtDecl(
+        AS, AccessAttrs, /*Delayed=*/true, TagType, TagDecl);
 
   default:
     if (tok::isPragmaAnnotation(Tok.getKind())) {
@@ -3258,7 +3258,7 @@ void Parser::ParseCXXMemberSpecification(SourceLocation RecordLoc,
     // These attributes are not allowed to appear here,
     // and the only possible place for them to appertain
     // to the class would be between class-key and class-name.
-    CheckMisplacedCXX11Attribute(Attrs, AttrFixitLoc);
+    // CheckMisplacedCXX11Attribute(Attrs, AttrFixitLoc);
 
     // ParseClassSpecifier() does only a superficial check for attributes before
     // deciding to call this method.  For example, for
@@ -3382,7 +3382,7 @@ void Parser::ParseCXXMemberSpecification(SourceLocation RecordLoc,
                               0 /*unused*/);
 
     SourceLocation SavedPrevTokLocation = PrevTokLocation;
-    // ParseLexedPragmas(getCurrentClass());
+    ParseLexedPragmas(getCurrentClass());
     ParseLexedAttributes(getCurrentClass());
     ParseLexedMethodDeclarations(getCurrentClass());
 
@@ -3950,64 +3950,64 @@ void Parser::PopParsingClass(Sema::ParsingClassState state) {
 ///   If a keyword or an alternative token that satisfies the syntactic
 ///   requirements of an identifier is contained in an attribute-token,
 ///   it is considered an identifier.
-IdentifierInfo *Parser::TryParseCXX11AttributeIdentifier(SourceLocation &Loc) {
-  switch (Tok.getKind()) {
-  default:
-    // Identifiers and keywords have identifier info attached.
-    if (!Tok.isAnnotation()) {
-      if (IdentifierInfo *II = Tok.getIdentifierInfo()) {
-        Loc = ConsumeToken();
-        return II;
-      }
-    }
-    return nullptr;
+// IdentifierInfo *Parser::TryParseCXX11AttributeIdentifier(SourceLocation &Loc) {
+//   switch (Tok.getKind()) {
+//   default:
+//     // Identifiers and keywords have identifier info attached.
+//     if (!Tok.isAnnotation()) {
+//       if (IdentifierInfo *II = Tok.getIdentifierInfo()) {
+//         Loc = ConsumeToken();
+//         return II;
+//       }
+//     }
+//     return nullptr;
 
-  case tok::numeric_constant: {
-    // If we got a numeric constant, check to see if it comes from a macro that
-    // corresponds to the predefined __clang__ macro. If it does, warn the user
-    // and recover by pretending they said _Clang instead.
-    if (Tok.getLocation().isMacroID()) {
-      SmallString<8> ExpansionBuf;
-      SourceLocation ExpansionLoc =
-          PP.getSourceManager().getExpansionLoc(Tok.getLocation());
-      StringRef Spelling = PP.getSpelling(ExpansionLoc, ExpansionBuf);
-      if (Spelling == "__clang__") {
-        SourceRange TokRange(
-            ExpansionLoc,
-            PP.getSourceManager().getExpansionLoc(Tok.getEndLoc()));
-        Diag(Tok, diag::warn_wrong_clang_attr_namespace)
-            << FixItHint::CreateReplacement(TokRange, "_Clang");
-        Loc = ConsumeToken();
-        return &PP.getIdentifierTable().get("_Clang");
-      }
-    }
-    return nullptr;
-  }
+//   case tok::numeric_constant: {
+//     // If we got a numeric constant, check to see if it comes from a macro that
+//     // corresponds to the predefined __clang__ macro. If it does, warn the user
+//     // and recover by pretending they said _Clang instead.
+//     if (Tok.getLocation().isMacroID()) {
+//       SmallString<8> ExpansionBuf;
+//       SourceLocation ExpansionLoc =
+//           PP.getSourceManager().getExpansionLoc(Tok.getLocation());
+//       StringRef Spelling = PP.getSpelling(ExpansionLoc, ExpansionBuf);
+//       if (Spelling == "__clang__") {
+//         SourceRange TokRange(
+//             ExpansionLoc,
+//             PP.getSourceManager().getExpansionLoc(Tok.getEndLoc()));
+//         Diag(Tok, diag::warn_wrong_clang_attr_namespace)
+//             << FixItHint::CreateReplacement(TokRange, "_Clang");
+//         Loc = ConsumeToken();
+//         return &PP.getIdentifierTable().get("_Clang");
+//       }
+//     }
+//     return nullptr;
+//   }
 
-  case tok::ampamp:       // 'and'
-  case tok::pipe:         // 'bitor'
-  case tok::pipepipe:     // 'or'
-  case tok::caret:        // 'xor'
-  case tok::tilde:        // 'compl'
-  case tok::amp:          // 'bitand'
-  case tok::ampequal:     // 'and_eq'
-  case tok::pipeequal:    // 'or_eq'
-  case tok::caretequal:   // 'xor_eq'
-  case tok::exclaim:      // 'not'
-  case tok::exclaimequal: // 'not_eq'
-    // Alternative tokens do not have identifier info, but their spelling
-    // starts with an alphabetical character.
-    SmallString<8> SpellingBuf;
-    SourceLocation SpellingLoc =
-        PP.getSourceManager().getSpellingLoc(Tok.getLocation());
-    StringRef Spelling = PP.getSpelling(SpellingLoc, SpellingBuf);
-    if (isLetter(Spelling[0])) {
-      Loc = ConsumeToken();
-      return &PP.getIdentifierTable().get(Spelling);
-    }
-    return nullptr;
-  }
-}
+//   case tok::ampamp:       // 'and'
+//   case tok::pipe:         // 'bitor'
+//   case tok::pipepipe:     // 'or'
+//   case tok::caret:        // 'xor'
+//   case tok::tilde:        // 'compl'
+//   case tok::amp:          // 'bitand'
+//   case tok::ampequal:     // 'and_eq'
+//   case tok::pipeequal:    // 'or_eq'
+//   case tok::caretequal:   // 'xor_eq'
+//   case tok::exclaim:      // 'not'
+//   case tok::exclaimequal: // 'not_eq'
+//     // Alternative tokens do not have identifier info, but their spelling
+//     // starts with an alphabetical character.
+//     SmallString<8> SpellingBuf;
+//     SourceLocation SpellingLoc =
+//         PP.getSourceManager().getSpellingLoc(Tok.getLocation());
+//     StringRef Spelling = PP.getSpelling(SpellingLoc, SpellingBuf);
+//     if (isLetter(Spelling[0])) {
+//       Loc = ConsumeToken();
+//       return &PP.getIdentifierTable().get(Spelling);
+//     }
+//     return nullptr;
+//   }
+// }
 
 static bool IsBuiltInOrStandardCXX11Attribute(IdentifierInfo *AttrName,
                                               IdentifierInfo *ScopeName) {
@@ -4042,70 +4042,70 @@ static bool IsBuiltInOrStandardCXX11Attribute(IdentifierInfo *AttrName,
 ///         '[' balanced-token-seq ']'
 ///         '{' balanced-token-seq '}'
 ///         any token but '(', ')', '[', ']', '{', or '}'
-bool Parser::ParseCXX11AttributeArgs(IdentifierInfo *AttrName,
-                                     SourceLocation AttrNameLoc,
-                                     ParsedAttributes &Attrs,
-                                     SourceLocation *EndLoc,
-                                     IdentifierInfo *ScopeName,
-                                     SourceLocation ScopeLoc) {
-  assert(Tok.is(tok::l_paren) && "Not a C++11 attribute argument list");
-  SourceLocation LParenLoc = Tok.getLocation();
-  const LangOptions &LO = getLangOpts();
-  ParsedAttr::Syntax Syntax =
-      LO.CPlusPlus ? ParsedAttr::AS_CXX11 : ParsedAttr::AS_C2x;
+// bool Parser::ParseCXX11AttributeArgs(IdentifierInfo *AttrName,
+//                                      SourceLocation AttrNameLoc,
+//                                      ParsedAttributes &Attrs,
+//                                      SourceLocation *EndLoc,
+//                                      IdentifierInfo *ScopeName,
+//                                      SourceLocation ScopeLoc) {
+//   assert(Tok.is(tok::l_paren) && "Not a C++11 attribute argument list");
+//   SourceLocation LParenLoc = Tok.getLocation();
+//   const LangOptions &LO = getLangOpts();
+//   ParsedAttr::Syntax Syntax =
+//       LO.CPlusPlus ? ParsedAttr::AS_CXX11 : ParsedAttr::AS_C2x;
 
-  // If the attribute isn't known, we will not attempt to parse any
-  // arguments.
-  if (!hasAttribute(LO.CPlusPlus ? AttrSyntax::CXX : AttrSyntax::C, ScopeName,
-                    AttrName, getTargetInfo(), getLangOpts())) {
-    // Eat the left paren, then skip to the ending right paren.
-    ConsumeParen();
-    SkipUntil(tok::r_paren);
-    return false;
-  }
+//   // If the attribute isn't known, we will not attempt to parse any
+//   // arguments.
+//   if (!hasAttribute(LO.CPlusPlus ? AttrSyntax::CXX : AttrSyntax::C, ScopeName,
+//                     AttrName, getTargetInfo(), getLangOpts())) {
+//     // Eat the left paren, then skip to the ending right paren.
+//     ConsumeParen();
+//     SkipUntil(tok::r_paren);
+//     return false;
+//   }
 
-  if (ScopeName && (ScopeName->isStr("gnu") || ScopeName->isStr("__gnu__"))) {
-    // GNU-scoped attributes have some special cases to handle GNU-specific
-    // behaviors.
-    ParseGNUAttributeArgs(AttrName, AttrNameLoc, Attrs, EndLoc, ScopeName,
-                          ScopeLoc, Syntax, nullptr);
-    return true;
-  }
+//   if (ScopeName && (ScopeName->isStr("gnu") || ScopeName->isStr("__gnu__"))) {
+//     // GNU-scoped attributes have some special cases to handle GNU-specific
+//     // behaviors.
+//     ParseGNUAttributeArgs(AttrName, AttrNameLoc, Attrs, EndLoc, ScopeName,
+//                           ScopeLoc, Syntax, nullptr);
+//     return true;
+//   }
 
-  unsigned NumArgs;
-  // Some Clang-scoped attributes have some special parsing behavior.
-  if (ScopeName && (ScopeName->isStr("clang") || ScopeName->isStr("_Clang")))
-    NumArgs = ParseClangAttributeArgs(AttrName, AttrNameLoc, Attrs, EndLoc,
-                                      ScopeName, ScopeLoc, Syntax);
-  else
-    NumArgs =
-        ParseAttributeArgsCommon(AttrName, AttrNameLoc, Attrs, EndLoc,
-                                 ScopeName, ScopeLoc, Syntax);
+//   unsigned NumArgs;
+//   // Some Clang-scoped attributes have some special parsing behavior.
+//   if (ScopeName && (ScopeName->isStr("clang") || ScopeName->isStr("_Clang")))
+//     NumArgs = ParseClangAttributeArgs(AttrName, AttrNameLoc, Attrs, EndLoc,
+//                                       ScopeName, ScopeLoc, Syntax);
+//   else
+//     NumArgs =
+//         ParseAttributeArgsCommon(AttrName, AttrNameLoc, Attrs, EndLoc,
+//                                  ScopeName, ScopeLoc, Syntax);
 
-  if (!Attrs.empty() &&
-      IsBuiltInOrStandardCXX11Attribute(AttrName, ScopeName)) {
-    ParsedAttr &Attr = Attrs.back();
-    // If the attribute is a standard or built-in attribute and we are
-    // parsing an argument list, we need to determine whether this attribute
-    // was allowed to have an argument list (such as [[deprecated]]), and how
-    // many arguments were parsed (so we can diagnose on [[deprecated()]]).
-    if (Attr.getMaxArgs() && !NumArgs) {
-      // The attribute was allowed to have arguments, but none were provided
-      // even though the attribute parsed successfully. This is an error.
-      Diag(LParenLoc, diag::err_attribute_requires_arguments) << AttrName;
-      Attr.setInvalid(true);
-    } else if (!Attr.getMaxArgs()) {
-      // The attribute parsed successfully, but was not allowed to have any
-      // arguments. It doesn't matter whether any were provided -- the
-      // presence of the argument list (even if empty) is diagnosed.
-      Diag(LParenLoc, diag::err_cxx11_attribute_forbids_arguments)
-          << AttrName
-          << FixItHint::CreateRemoval(SourceRange(LParenLoc, *EndLoc));
-      Attr.setInvalid(true);
-    }
-  }
-  return true;
-}
+//   if (!Attrs.empty() &&
+//       IsBuiltInOrStandardCXX11Attribute(AttrName, ScopeName)) {
+//     ParsedAttr &Attr = Attrs.back();
+//     // If the attribute is a standard or built-in attribute and we are
+//     // parsing an argument list, we need to determine whether this attribute
+//     // was allowed to have an argument list (such as [[deprecated]]), and how
+//     // many arguments were parsed (so we can diagnose on [[deprecated()]]).
+//     if (Attr.getMaxArgs() && !NumArgs) {
+//       // The attribute was allowed to have arguments, but none were provided
+//       // even though the attribute parsed successfully. This is an error.
+//       Diag(LParenLoc, diag::err_attribute_requires_arguments) << AttrName;
+//       Attr.setInvalid(true);
+//     } else if (!Attr.getMaxArgs()) {
+//       // The attribute parsed successfully, but was not allowed to have any
+//       // arguments. It doesn't matter whether any were provided -- the
+//       // presence of the argument list (even if empty) is diagnosed.
+//       Diag(LParenLoc, diag::err_cxx11_attribute_forbids_arguments)
+//           << AttrName
+//           << FixItHint::CreateRemoval(SourceRange(LParenLoc, *EndLoc));
+//       Attr.setInvalid(true);
+//     }
+//   }
+//   return true;
+// }
 
 /// ParseCXX11AttributeSpecifier - Parse a C++11 or C2x attribute-specifier.
 ///
@@ -4131,128 +4131,128 @@ bool Parser::ParseCXX11AttributeArgs(IdentifierInfo *AttrName,
 ///
 /// [C++11] attribute-namespace:
 ///         identifier
-void Parser::ParseCXX11AttributeSpecifier(ParsedAttributes &attrs,
-                                          SourceLocation *endLoc) {
-  // if (Tok.is(tok::kw_alignas)) {
-  //   Diag(Tok.getLocation(), diag::warn_cxx98_compat_alignas);
-  //   ParseAlignmentSpecifier(attrs, endLoc);
-  //   return;
-  // }
-
-  assert(Tok.is(tok::l_square) && NextToken().is(tok::l_square) &&
-         "Not a double square bracket attribute list");
-
-  Diag(Tok.getLocation(), diag::warn_cxx98_compat_attribute);
-
-  ConsumeBracket();
-  ConsumeBracket();
-
-  SourceLocation CommonScopeLoc;
-  IdentifierInfo *CommonScopeName = nullptr;
-  if (Tok.is(tok::kw_usar)) {
-    Diag(Tok.getLocation(), getLangOpts().CPlusPlus17
-                                ? diag::warn_cxx14_compat_using_attribute_ns
-                                : diag::ext_using_attribute_ns);
-    ConsumeToken();
-
-    CommonScopeName = TryParseCXX11AttributeIdentifier(CommonScopeLoc);
-    if (!CommonScopeName) {
-      Diag(Tok.getLocation(), diag::err_expected) << tok::identifier;
-      SkipUntil(tok::r_square, tok::colon, StopBeforeMatch);
-    }
-    if (!TryConsumeToken(tok::colon) && CommonScopeName)
-      Diag(Tok.getLocation(), diag::err_expected) << tok::colon;
-  }
-
-  llvm::SmallDenseMap<IdentifierInfo*, SourceLocation, 4> SeenAttrs;
-
-  while (Tok.isNot(tok::r_square)) {
-    // attribute not present
-    if (TryConsumeToken(tok::comma))
-      continue;
-
-    SourceLocation ScopeLoc, AttrLoc;
-    IdentifierInfo *ScopeName = nullptr, *AttrName = nullptr;
-
-    AttrName = TryParseCXX11AttributeIdentifier(AttrLoc);
-    if (!AttrName)
-      // Break out to the "expected ']'" diagnostic.
-      break;
-
-    // scoped attribute
-    if (TryConsumeToken(tok::coloncolon)) {
-      ScopeName = AttrName;
-      ScopeLoc = AttrLoc;
-
-      AttrName = TryParseCXX11AttributeIdentifier(AttrLoc);
-      if (!AttrName) {
-        Diag(Tok.getLocation(), diag::err_expected) << tok::identifier;
-        SkipUntil(tok::r_square, tok::comma, StopAtSemi | StopBeforeMatch);
-        continue;
-      }
-    }
-
-    if (CommonScopeName) {
-      if (ScopeName) {
-        Diag(ScopeLoc, diag::err_using_attribute_ns_conflict)
-            << SourceRange(CommonScopeLoc);
-      } else {
-        ScopeName = CommonScopeName;
-        ScopeLoc = CommonScopeLoc;
-      }
-    }
-
-    bool StandardAttr = IsBuiltInOrStandardCXX11Attribute(AttrName, ScopeName);
-    bool AttrParsed = false;
-
-    if (StandardAttr &&
-        !SeenAttrs.insert(std::make_pair(AttrName, AttrLoc)).second)
-      Diag(AttrLoc, diag::err_cxx11_attribute_repeated)
-          << AttrName << SourceRange(SeenAttrs[AttrName]);
-
-    // Parse attribute arguments
-    if (Tok.is(tok::l_paren))
-      AttrParsed = ParseCXX11AttributeArgs(AttrName, AttrLoc, attrs, endLoc,
-                                           ScopeName, ScopeLoc);
-
-    if (!AttrParsed)
-      attrs.addNew(
-          AttrName,
-          SourceRange(ScopeLoc.isValid() ? ScopeLoc : AttrLoc, AttrLoc),
-          ScopeName, ScopeLoc, nullptr, 0,
-          getLangOpts().CPlusPlus ? ParsedAttr::AS_CXX11 : ParsedAttr::AS_C2x);
-
-    if (TryConsumeToken(tok::ellipsis))
-      Diag(Tok, diag::err_cxx11_attribute_forbids_ellipsis)
-        << AttrName;
-  }
-
-  if (ExpectAndConsume(tok::r_square))
-    SkipUntil(tok::r_square);
-  if (endLoc)
-    *endLoc = Tok.getLocation();
-  if (ExpectAndConsume(tok::r_square))
-    SkipUntil(tok::r_square);
-}
+//void Parser::ParseCXX11AttributeSpecifier(ParsedAttributes &attrs,
+//                                          SourceLocation *endLoc) {
+//  // if (Tok.is(tok::kw_alignas)) {
+//  //   Diag(Tok.getLocation(), diag::warn_cxx98_compat_alignas);
+//  //   ParseAlignmentSpecifier(attrs, endLoc);
+//  //   return;
+//  // }
+//
+//  assert(Tok.is(tok::l_square) && NextToken().is(tok::l_square) &&
+//         "Not a double square bracket attribute list");
+//
+//  Diag(Tok.getLocation(), diag::warn_cxx98_compat_attribute);
+//
+//  ConsumeBracket();
+//  ConsumeBracket();
+//
+//  SourceLocation CommonScopeLoc;
+//  IdentifierInfo *CommonScopeName = nullptr;
+//  if (Tok.is(tok::kw_usar)) {
+//    Diag(Tok.getLocation(), getLangOpts().CPlusPlus17
+//                                ? diag::warn_cxx14_compat_using_attribute_ns
+//                                : diag::ext_using_attribute_ns);
+//    ConsumeToken();
+//
+//    CommonScopeName = TryParseCXX11AttributeIdentifier(CommonScopeLoc);
+//    if (!CommonScopeName) {
+//      Diag(Tok.getLocation(), diag::err_expected) << tok::identifier;
+//      SkipUntil(tok::r_square, tok::colon, StopBeforeMatch);
+//    }
+//    if (!TryConsumeToken(tok::colon) && CommonScopeName)
+//      Diag(Tok.getLocation(), diag::err_expected) << tok::colon;
+//  }
+//
+//  llvm::SmallDenseMap<IdentifierInfo*, SourceLocation, 4> SeenAttrs;
+//
+//  while (Tok.isNot(tok::r_square)) {
+//    // attribute not present
+//    if (TryConsumeToken(tok::comma))
+//      continue;
+//
+//    SourceLocation ScopeLoc, AttrLoc;
+//    IdentifierInfo *ScopeName = nullptr, *AttrName = nullptr;
+//
+//    AttrName = TryParseCXX11AttributeIdentifier(AttrLoc);
+//    if (!AttrName)
+//      // Break out to the "expected ']'" diagnostic.
+//      break;
+//
+//    // scoped attribute
+//    if (TryConsumeToken(tok::coloncolon)) {
+//      ScopeName = AttrName;
+//      ScopeLoc = AttrLoc;
+//
+//      AttrName = TryParseCXX11AttributeIdentifier(AttrLoc);
+//      if (!AttrName) {
+//        Diag(Tok.getLocation(), diag::err_expected) << tok::identifier;
+//        SkipUntil(tok::r_square, tok::comma, StopAtSemi | StopBeforeMatch);
+//        continue;
+//      }
+//    }
+//
+//    if (CommonScopeName) {
+//      if (ScopeName) {
+//        Diag(ScopeLoc, diag::err_using_attribute_ns_conflict)
+//            << SourceRange(CommonScopeLoc);
+//      } else {
+//        ScopeName = CommonScopeName;
+//        ScopeLoc = CommonScopeLoc;
+//      }
+//    }
+//
+//    bool StandardAttr = IsBuiltInOrStandardCXX11Attribute(AttrName, ScopeName);
+//    bool AttrParsed = false;
+//
+//    if (StandardAttr &&
+//        !SeenAttrs.insert(std::make_pair(AttrName, AttrLoc)).second)
+//      Diag(AttrLoc, diag::err_cxx11_attribute_repeated)
+//          << AttrName << SourceRange(SeenAttrs[AttrName]);
+//
+//    // Parse attribute arguments
+//    if (Tok.is(tok::l_paren))
+//      AttrParsed = ParseCXX11AttributeArgs(AttrName, AttrLoc, attrs, endLoc,
+//                                           ScopeName, ScopeLoc);
+//
+//    if (!AttrParsed)
+//      attrs.addNew(
+//          AttrName,
+//          SourceRange(ScopeLoc.isValid() ? ScopeLoc : AttrLoc, AttrLoc),
+//          ScopeName, ScopeLoc, nullptr, 0,
+//          getLangOpts().CPlusPlus ? ParsedAttr::AS_CXX11 : ParsedAttr::AS_C2x);
+//
+//    if (TryConsumeToken(tok::ellipsis))
+//      Diag(Tok, diag::err_cxx11_attribute_forbids_ellipsis)
+//        << AttrName;
+//  }
+//
+//  if (ExpectAndConsume(tok::r_square))
+//    SkipUntil(tok::r_square);
+//  if (endLoc)
+//    *endLoc = Tok.getLocation();
+//  if (ExpectAndConsume(tok::r_square))
+//    SkipUntil(tok::r_square);
+//}
 
 /// ParseCXX11Attributes - Parse a C++11 or C2x attribute-specifier-seq.
 ///
 /// attribute-specifier-seq:
 ///       attribute-specifier-seq[opt] attribute-specifier
-void Parser::ParseCXX11Attributes(ParsedAttributesWithRange &attrs,
-                                  SourceLocation *endLoc) {
-  assert(standardAttributesAllowed());
-
-  SourceLocation StartLoc = Tok.getLocation(), Loc;
-  if (!endLoc)
-    endLoc = &Loc;
-
-  do {
-    ParseCXX11AttributeSpecifier(attrs, endLoc);
-  } while (isCXX11AttributeSpecifier());
-
-  attrs.Range = SourceRange(StartLoc, *endLoc);
-}
+//void Parser::ParseCXX11Attributes(ParsedAttributesWithRange &attrs,
+//                                  SourceLocation *endLoc) {
+//  assert(standardAttributesAllowed());
+//
+//  SourceLocation StartLoc = Tok.getLocation(), Loc;
+//  if (!endLoc)
+//    endLoc = &Loc;
+//
+//  do {
+//    ParseCXX11AttributeSpecifier(attrs, endLoc);
+//  } while (isCXX11AttributeSpecifier());
+//
+//  attrs.Range = SourceRange(StartLoc, *endLoc);
+//}
 
 void Parser::DiagnoseAndSkipCXX11Attributes() {
   // Start and end location of an attribute or an attribute list.
@@ -4269,25 +4269,25 @@ void Parser::DiagnoseAndSkipCXX11Attributes() {
 SourceLocation Parser::SkipCXX11Attributes() {
   SourceLocation EndLoc;
 
-  if (!isCXX11AttributeSpecifier())
-    return EndLoc;
+  // if (!isCXX11AttributeSpecifier())
+  //   return EndLoc;
 
-  do {
-    if (Tok.is(tok::l_square)) {
-      BalancedDelimiterTracker T(*this, tok::l_square);
-      T.consumeOpen();
-      T.skipToEnd();
-      EndLoc = T.getCloseLocation();
-    } /*else {
-      // TODO: proman. Revisar
-      assert(Tok.is(tok::kw_alignas) && "not an attribute specifier");
-      ConsumeToken();
-      BalancedDelimiterTracker T(*this, tok::l_paren);
-      if (!T.consumeOpen())
-        T.skipToEnd();
-      EndLoc = T.getCloseLocation();
-    }*/
-  } while (isCXX11AttributeSpecifier());
+  // do {
+  //   if (Tok.is(tok::l_square)) {
+  //     BalancedDelimiterTracker T(*this, tok::l_square);
+  //     T.consumeOpen();
+  //     T.skipToEnd();
+  //     EndLoc = T.getCloseLocation();
+  //   } else {
+  //     // TODO: proman. Revisar
+  //     assert(Tok.is(tok::kw_alignas) && "not an attribute specifier");
+  //     ConsumeToken();
+  //     BalancedDelimiterTracker T(*this, tok::l_paren);
+  //     if (!T.consumeOpen())
+  //       T.skipToEnd();
+  //     EndLoc = T.getCloseLocation();
+  //   }
+  // } while (isCXX11AttributeSpecifier());
 
   return EndLoc;
 }

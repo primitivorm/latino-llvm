@@ -105,15 +105,15 @@ static types::ID foldType(types::ID Lang) {
   case types::TY_C:
   case types::TY_CHeader:
     return types::TY_C;
-  case types::TY_ObjC:
-  case types::TY_ObjCHeader:
-    return types::TY_ObjC;
+  // case types::TY_ObjC:
+  // case types::TY_ObjCHeader:
+  //   return types::TY_ObjC;
   case types::TY_CXX:
   case types::TY_CXXHeader:
     return types::TY_CXX;
-  case types::TY_ObjCXX:
-  case types::TY_ObjCXXHeader:
-    return types::TY_ObjCXX;
+  // case types::TY_ObjCXX:
+  // case types::TY_ObjCXXHeader:
+  //   return types::TY_ObjCXX;
   case types::TY_CUDA:
   case types::TY_CUDA_DEVICE:
     return types::TY_CUDA;

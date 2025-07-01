@@ -12,7 +12,7 @@
 
 #include "CGCXXABI.h"
 // #include "CGObjCRuntime.h"
-// #include "CGOpenMPRuntime.h"
+#include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "TargetInfo.h"
 #include "latino/AST/Attr.h"
@@ -119,22 +119,22 @@ static void EmitDeclDestroy(CodeGenFunction &CGF, const VarDecl &D,
     CXXDestructorDecl *Dtor = Record->getDestructor();
 
     Func = CGM.getAddrAndTypeOfCXXStructor(GlobalDecl(Dtor, Dtor_Complete));
-    // if (CGF.getContext().getLangOpts().OpenCL) {
-    //   auto DestAS =
-    //       CGM.getTargetCodeGenInfo().getAddrSpaceOfCxaAtexitPtrParam();
-    //   auto DestTy = CGF.getTypes().ConvertType(Type)->getPointerTo(
-    //       CGM.getContext().getTargetAddressSpace(DestAS));
-    //   auto SrcAS = D.getType().getQualifiers().getAddressSpace();
-    //   if (DestAS == SrcAS)
-    //     Argument = llvm::ConstantExpr::getBitCast(Addr.getPointer(), DestTy);
-    //   else
-    //     // FIXME: On addr space mismatch we are passing NULL. The generation
-    //     // of the global destructor function should be adjusted accordingly.
-    //     Argument = llvm::ConstantPointerNull::get(DestTy);
-    // } else {
+    if (CGF.getContext().getLangOpts().OpenCL) {
+      auto DestAS =
+          CGM.getTargetCodeGenInfo().getAddrSpaceOfCxaAtexitPtrParam();
+      auto DestTy = CGF.getTypes().ConvertType(Type)->getPointerTo(
+          CGM.getContext().getTargetAddressSpace(DestAS));
+      auto SrcAS = D.getType().getQualifiers().getAddressSpace();
+      if (DestAS == SrcAS)
+        Argument = llvm::ConstantExpr::getBitCast(Addr.getPointer(), DestTy);
+      else
+        // FIXME: On addr space mismatch we are passing NULL. The generation
+        // of the global destructor function should be adjusted accordingly.
+        Argument = llvm::ConstantPointerNull::get(DestTy);
+    } else {
       Argument = llvm::ConstantExpr::getBitCast(
           Addr.getPointer(), CGF.getTypes().ConvertType(Type)->getPointerTo());
-    // }
+    }
   // Otherwise, the standard logic requires a helper function.
   } else {
     Func = CodeGenFunction(CGM)
@@ -205,12 +205,12 @@ void CodeGenFunction::EmitCXXGlobalVarDeclInit(const VarDecl &D,
   ConstantAddress DeclAddr(DeclPtr, getContext().getDeclAlign(&D));
 
   if (!T->isReferenceType()) {
-    // if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd &&
-    //     D.hasAttr<OMPThreadPrivateDeclAttr>()) {
-    //   (void)CGM.getOpenMPRuntime().emitThreadPrivateVarDefinition(
-    //       &D, DeclAddr, D.getAttr<OMPThreadPrivateDeclAttr>()->getLocation(),
-    //       PerformInit, this);
-    // }
+    if (getLangOpts().OpenMP && !getLangOpts().OpenMPSimd &&
+        D.hasAttr<OMPThreadPrivateDeclAttr>()) {
+      (void)CGM.getOpenMPRuntime().emitThreadPrivateVarDefinition(
+          &D, DeclAddr, D.getAttr<OMPThreadPrivateDeclAttr>()->getLocation(),
+          PerformInit, this);
+    }
     if (PerformInit)
       EmitDeclInit(*this, D, DeclAddr);
     if (CGM.isTypeConstant(D.getType(), true))
@@ -477,9 +477,9 @@ CodeGenModule::EmitCXXGlobalVarDeclInitFunc(const VarDecl *D,
        D->hasAttr<CUDASharedAttr>()))
     return;
 
-  // if (getLangOpts().OpenMP &&
-  //     getOpenMPRuntime().emitDeclareTargetVarDefinition(D, Addr, PerformInit))
-  //   return;
+  if (getLangOpts().OpenMP &&
+      getOpenMPRuntime().emitDeclareTargetVarDefinition(D, Addr, PerformInit))
+    return;
 
   // Check if we've already initialized this decl.
   auto I = DelayedCXXInitPosition.find(D);
@@ -673,10 +673,10 @@ CodeGenModule::EmitCXXGlobalInitFunc() {
   // However it seems global destruction has little meaning without any
   // dynamic resource allocation on the device and program scope variables are
   // destroyed by the runtime when program is released.
-  // if (getLangOpts().OpenCL) {
-  //   GenOpenCLArgMetadata(Fn);
-  //   Fn->setCallingConv(llvm::CallingConv::SPIR_KERNEL);
-  // }
+  if (getLangOpts().OpenCL) {
+    GenOpenCLArgMetadata(Fn);
+    Fn->setCallingConv(llvm::CallingConv::SPIR_KERNEL);
+  }
 
   if (getLangOpts().HIP) {
     Fn->setCallingConv(llvm::CallingConv::AMDGPU_KERNEL);

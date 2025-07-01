@@ -19,7 +19,7 @@ InputKind FrontendOptions::getInputKindForExtension(StringRef Extension) {
       .Cases("S", "s", Language::Asm)
       .Case("i", InputKind(Language::C).getPreprocessed())
       .Case("ii", InputKind(Language::CXX).getPreprocessed())
-      .Case("cui", InputKind(Language::CUDA).getPreprocessed())
+      // .Case("cui", InputKind(Language::CUDA).getPreprocessed())
       // .Case("m", Language::ObjC)
       // .Case("mi", InputKind(Language::ObjC).getPreprocessed())
       // .Cases("mm", "M", Language::ObjCXX)

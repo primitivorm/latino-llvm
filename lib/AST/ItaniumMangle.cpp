@@ -20,7 +20,7 @@
 #include "latino/AST/Decl.h"
 #include "latino/AST/DeclCXX.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprConcepts.h"
@@ -63,8 +63,8 @@ static const DeclContext *getEffectiveDeclContext(const Decl *D) {
   }
 
   const DeclContext *DC = D->getDeclContext();
-  if (isa<CapturedDecl>(DC) /*|| isa<OMPDeclareReductionDecl>(DC) ||
-      isa<OMPDeclareMapperDecl>(DC)*/) {
+  if (isa<CapturedDecl>(DC) || isa<OMPDeclareReductionDecl>(DC) ||
+      isa<OMPDeclareMapperDecl>(DC)) {
     return getEffectiveDeclContext(cast<Decl>(DC));
   }
 
@@ -2497,9 +2497,9 @@ static bool isTypeSubstitutable(Qualifiers Quals, const Type *Ty,
   if (Quals)
     return true;
   // if (Ty->isSpecificBuiltinType(BuiltinType::ObjCSel))
-  //   return true;
-  // if (Ty->isOpenCLSpecificType())
-  //   return true;
+  //  return true;
+  if (Ty->isOpenCLSpecificType())
+    return true;
   if (Ty->isBuiltinType())
     return false;
   // Through to Clang 6.0, we accidentally treated undeduced auto types as
@@ -2712,9 +2712,9 @@ void CXXNameMangler::mangleType(const BuiltinType *T) {
   case BuiltinType::Int128:
     Out << 'n';
     break;
-  // case BuiltinType::Float16:
-  //   Out << "DF16_";
-  //   break;
+  case BuiltinType::Float16:
+    Out << "DF16_";
+    break;
   case BuiltinType::ShortAccum:
   case BuiltinType::Accum:
   case BuiltinType::LongAccum:
@@ -2740,31 +2740,31 @@ void CXXNameMangler::mangleType(const BuiltinType *T) {
   case BuiltinType::SatUFract:
   case BuiltinType::SatULongFract:
     llvm_unreachable("Fixed point types are disabled for c++");
-  // case BuiltinType::Half:
-  //   Out << "Dh";
-  //   break;
+  case BuiltinType::Half:
+    Out << "Dh";
+    break;
   case BuiltinType::Float:
     Out << 'f';
     break;
   case BuiltinType::Double:
     Out << 'd';
     break;
-  // case BuiltinType::LongDouble: {
-  //   const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
-  //                                  getASTContext().getLangOpts().OpenMPIsDevice
-  //                              ? getASTContext().getAuxTargetInfo()
-  //                              : &getASTContext().getTargetInfo();
-  //   Out << TI->getLongDoubleMangling();
-  //   break;
-  // }
-  // case BuiltinType::Float128: {
-  //   const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
-  //                                  getASTContext().getLangOpts().OpenMPIsDevice
-  //                              ? getASTContext().getAuxTargetInfo()
-  //                              : &getASTContext().getTargetInfo();
-  //   Out << TI->getFloat128Mangling();
-  //   break;
-  // }
+  case BuiltinType::LongDouble: {
+    const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
+                                   getASTContext().getLangOpts().OpenMPIsDevice
+                               ? getASTContext().getAuxTargetInfo()
+                               : &getASTContext().getTargetInfo();
+    Out << TI->getLongDoubleMangling();
+    break;
+  }
+  case BuiltinType::Float128: {
+    const TargetInfo *TI = getASTContext().getLangOpts().OpenMP &&
+                                   getASTContext().getLangOpts().OpenMPIsDevice
+                               ? getASTContext().getAuxTargetInfo()
+                               : &getASTContext().getTargetInfo();
+    Out << TI->getFloat128Mangling();
+    break;
+  }
   case BuiltinType::BFloat16: {
     const TargetInfo *TI = &getASTContext().getTargetInfo();
     Out << TI->getBFloat16Mangling();
@@ -2791,33 +2791,33 @@ void CXXNameMangler::mangleType(const BuiltinType *T) {
   // case BuiltinType::ObjCSel:
   //   Out << "13objc_selector";
   //   break;
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   case BuiltinType::Id: \
-//     type_name = "ocl_" #ImgType "_" #Suffix; \
-//     Out << type_name.size() << type_name; \
-//     break;
-// #include "latino/Basic/OpenCLImageTypes.def"
-  // case BuiltinType::OCLSampler:
-  //   Out << "11ocl_sampler";
-  //   break;
-  // case BuiltinType::OCLEvent:
-  //   Out << "9ocl_event";
-  //   break;
-  // case BuiltinType::OCLClkEvent:
-  //   Out << "12ocl_clkevent";
-  //   break;
-  // case BuiltinType::OCLQueue:
-  //   Out << "9ocl_queue";
-  //   break;
-  // case BuiltinType::OCLReserveID:
-  //   Out << "13ocl_reserveid";
-  //   break;
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case BuiltinType::Id: \
-//     type_name = "ocl_" #ExtType; \
-//     Out << type_name.size() << type_name; \
-//     break;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  case BuiltinType::Id: \
+    type_name = "ocl_" #ImgType "_" #Suffix; \
+    Out << type_name.size() << type_name; \
+    break;
+#include "latino/Basic/OpenCLImageTypes.def"
+  case BuiltinType::OCLSampler:
+    Out << "11ocl_sampler";
+    break;
+  case BuiltinType::OCLEvent:
+    Out << "9ocl_event";
+    break;
+  case BuiltinType::OCLClkEvent:
+    Out << "12ocl_clkevent";
+    break;
+  case BuiltinType::OCLQueue:
+    Out << "9ocl_queue";
+    break;
+  case BuiltinType::OCLReserveID:
+    Out << "13ocl_reserveid";
+    break;
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case BuiltinType::Id: \
+    type_name = "ocl_" #ExtType; \
+    Out << type_name.size() << type_name; \
+    break;
+#include "latino/Basic/OpenCLExtensionTypes.def"
   // The SVE types are effectively target-specific.  The mangling scheme
   // is defined in the appendices to the Procedure Call Standard for the
   // Arm Architecture.
@@ -3194,7 +3194,7 @@ void CXXNameMangler::mangleNeonVectorType(const VectorType *T) {
     case BuiltinType::ULongLong: EltName = "uint64_t"; break;
     case BuiltinType::Double:    EltName = "float64_t"; break;
     case BuiltinType::Float:     EltName = "float32_t"; break;
-    // case BuiltinType::Half:      EltName = "float16_t"; break;
+    case BuiltinType::Half:      EltName = "float16_t"; break;
     case BuiltinType::BFloat16:  EltName = "bfloat16_t"; break;
     default:
       llvm_unreachable("unexpected Neon vector element type");
@@ -3241,8 +3241,8 @@ static StringRef mangleAArch64VectorBase(const BuiltinType *EltType) {
   case BuiltinType::ULong:
   case BuiltinType::ULongLong:
     return "Uint64";
-  // case BuiltinType::Half:
-  //   return "Float16";
+  case BuiltinType::Half:
+    return "Float16";
   case BuiltinType::Float:
     return "Float32";
   case BuiltinType::Double:
@@ -3796,9 +3796,9 @@ recurse:
   case Expr::MSPropertySubscriptExprClass:
   case Expr::TypoExprClass: // This should no longer exist in the AST by now.
   case Expr::RecoveryExprClass:
-  // case Expr::OMPArraySectionExprClass:
-  // case Expr::OMPArrayShapingExprClass:
-  // case Expr::OMPIteratorExprClass:
+  case Expr::OMPArraySectionExprClass:
+  case Expr::OMPArrayShapingExprClass:
+  case Expr::OMPIteratorExprClass:
   case Expr::CXXInheritedCtorInitExprClass:
     llvm_unreachable("unexpected statement kind");
 
@@ -4170,21 +4170,21 @@ recurse:
     case UETT_AlignOf:
       Out << 'a';
       break;
-    // case UETT_VecStep: {
-    //   DiagnosticsEngine &Diags = Context.getDiags();
-    //   unsigned DiagID = Diags.getCustomDiagID(DiagnosticsEngine::Error,
-    //                                  "cannot yet mangle vec_step expression");
-    //   Diags.Report(DiagID);
-    //   return;
-    // }
-    // case UETT_OpenMPRequiredSimdAlign: {
-    //   DiagnosticsEngine &Diags = Context.getDiags();
-    //   unsigned DiagID = Diags.getCustomDiagID(
-    //       DiagnosticsEngine::Error,
-    //       "cannot yet mangle __builtin_omp_required_simd_align expression");
-    //   Diags.Report(DiagID);
-    //   return;
-    // }
+    case UETT_VecStep: {
+      DiagnosticsEngine &Diags = Context.getDiags();
+      unsigned DiagID = Diags.getCustomDiagID(DiagnosticsEngine::Error,
+                                     "cannot yet mangle vec_step expression");
+      Diags.Report(DiagID);
+      return;
+    }
+    case UETT_OpenMPRequiredSimdAlign: {
+      DiagnosticsEngine &Diags = Context.getDiags();
+      unsigned DiagID = Diags.getCustomDiagID(
+          DiagnosticsEngine::Error,
+          "cannot yet mangle __builtin_omp_required_simd_align expression");
+      Diags.Report(DiagID);
+      return;
+    }
     }
     if (SAE->isArgumentType()) {
       Out << 't';

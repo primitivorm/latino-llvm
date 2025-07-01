@@ -2097,9 +2097,9 @@ bool Type::hasUnsignedIntegerRepresentation() const {
 }
 
 bool Type::isFloatingType() const {
-  // if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
-  //   return BT->getKind() >= BuiltinType::Half &&
-  //          BT->getKind() <= BuiltinType::Float128;
+  if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
+    return BT->getKind() >= BuiltinType::Half &&
+           BT->getKind() <= BuiltinType::Float128;
   if (const auto *CT = dyn_cast<ComplexType>(CanonicalType))
     return CT->getElementType()->isFloatingType();
   return false;
@@ -2119,9 +2119,9 @@ bool Type::isRealFloatingType() const {
 }
 
 bool Type::isRealType() const {
-  // if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
-  //   return BT->getKind() >= BuiltinType::Bool &&
-  //          BT->getKind() <= BuiltinType::Float128;
+  if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
+    return BT->getKind() >= BuiltinType::Bool &&
+           BT->getKind() <= BuiltinType::Float128;
   if (const auto *ET = dyn_cast<EnumType>(CanonicalType))
       return ET->getDecl()->isComplete() && !ET->getDecl()->isScoped();
   return isExtIntType();
@@ -2130,7 +2130,7 @@ bool Type::isRealType() const {
 bool Type::isArithmeticType() const {
   if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))
     return BT->getKind() >= BuiltinType::Bool &&
-          //  BT->getKind() <= BuiltinType::Float128 &&
+           BT->getKind() <= BuiltinType::Float128 &&
            BT->getKind() != BuiltinType::BFloat16;
   if (const auto *ET = dyn_cast<EnumType>(CanonicalType))
     // GCC allows forward declaration of enum types (forbid by C99 6.7.2.3p2).
@@ -3007,32 +3007,32 @@ StringRef BuiltinType::getName(const PrintingPolicy &Policy) const {
   //   return "Class";
   // case ObjCSel:
   //   return "SEL";
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   case Id: \
-//     return "__" #Access " " #ImgType "_t";
-// #include "latino/Basic/OpenCLImageTypes.def"
-  // case OCLSampler:
-  //   return "sampler_t";
-  // case OCLEvent:
-  //   return "event_t";
-  // case OCLClkEvent:
-  //   return "clk_event_t";
-  // case OCLQueue:
-  //   return "queue_t";
-  // case OCLReserveID:
-  //   return "reserve_id_t";
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  case Id: \
+    return "__" #Access " " #ImgType "_t";
+#include "latino/Basic/OpenCLImageTypes.def"
+  case OCLSampler:
+    return "sampler_t";
+  case OCLEvent:
+    return "event_t";
+  case OCLClkEvent:
+    return "clk_event_t";
+  case OCLQueue:
+    return "queue_t";
+  case OCLReserveID:
+    return "reserve_id_t";
   case IncompleteMatrixIdx:
     return "<incomplete matrix index type>";
-  // case OMPArraySection:
-  //   return "<OpenMP array section type>";
-  // case OMPArrayShaping:
-  //   return "<OpenMP array shaping type>";
-  // case OMPIterator:
-  //   return "<OpenMP iterator type>";
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case Id: \
-//     return #ExtType;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+  case OMPArraySection:
+    return "<OpenMP array section type>";
+  case OMPArrayShaping:
+    return "<OpenMP array shaping type>";
+  case OMPIterator:
+    return "<OpenMP iterator type>";
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case Id: \
+    return #ExtType;
+#include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   case Id: \
     return Name;
@@ -4034,17 +4034,17 @@ bool Type::canHaveNullability(bool ResultIfUnknown) const {
     // case BuiltinType::ObjCId:
     // case BuiltinType::ObjCClass:
     // case BuiltinType::ObjCSel:
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-    // case BuiltinType::OCLSampler:
-    // case BuiltinType::OCLEvent:
-    // case BuiltinType::OCLClkEvent:
-    // case BuiltinType::OCLQueue:
-    // case BuiltinType::OCLReserveID:
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLExtensionTypes.def"
+    case BuiltinType::OCLSampler:
+    case BuiltinType::OCLEvent:
+    case BuiltinType::OCLClkEvent:
+    case BuiltinType::OCLQueue:
+    case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
     case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"

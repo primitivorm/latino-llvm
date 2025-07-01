@@ -212,20 +212,20 @@ void Parser::ConsumeExtraSemi(ExtraSemiKind Kind, DeclSpec::TST TST) {
       << FixItHint::CreateRemoval(SourceRange(StartLoc, EndLoc));
 }
 
-bool Parser::expectIdentifier() {
-  if (Tok.is(tok::identifier))
-    return false;
-  if (const auto *II = Tok.getIdentifierInfo()) {
-    if (II->isCPlusPlusKeyword(getLangOpts())) {
-      Diag(Tok, diag::err_expected_token_instead_of_objcxx_keyword)
-          << tok::identifier << Tok.getIdentifierInfo();
-      // Objective-C++: Recover by treating this keyword as a valid identifier.
-      return false;
-    }
-  }
-  Diag(Tok, diag::err_expected) << tok::identifier;
-  return true;
-}
+// bool Parser::expectIdentifier() {
+//   if (Tok.is(tok::identifier))
+//     return false;
+//   if (const auto *II = Tok.getIdentifierInfo()) {
+//     if (II->isCPlusPlusKeyword(getLangOpts())) {
+//       Diag(Tok, diag::err_expected_token_instead_of_objcxx_keyword)
+//           << tok::identifier << Tok.getIdentifierInfo();
+//       // Objective-C++: Recover by treating this keyword as a valid identifier.
+//       return false;
+//     }
+//   }
+//   Diag(Tok, diag::err_expected) << tok::identifier;
+//   return true;
+// }
 
 //===----------------------------------------------------------------------===//
 // Error recovery.
@@ -276,13 +276,13 @@ bool Parser::SkipUntil(ArrayRef<tok::TokenKind> Toks, SkipUntilFlags Flags) {
       // Ran out of tokens.
       return false;
 
-    // case tok::annot_pragma_openmp:
-    // case tok::annot_pragma_openmp_end:
-    //   // Stop before an OpenMP pragma boundary.
-    //   if (OpenMPDirectiveParsing)
-    //     return false;
-    //   ConsumeAnnotationToken();
-    //   break;
+    case tok::annot_pragma_openmp:
+    case tok::annot_pragma_openmp_end:
+      // Stop before an OpenMP pragma boundary.
+      if (OpenMPDirectiveParsing)
+        return false;
+      ConsumeAnnotationToken();
+      break;
     case tok::annot_module_begin:
     case tok::annot_module_end:
     case tok::annot_module_include:
@@ -496,27 +496,27 @@ void Parser::Initialize() {
   Ident_GetExceptionCode = Ident_GetExceptionInfo = nullptr;
   Ident_AbnormalTermination = nullptr;
 
-  if(getLangOpts().Borland) {
-    Ident__exception_info        = PP.getIdentifierInfo("_exception_info");
-    Ident___exception_info       = PP.getIdentifierInfo("__exception_info");
-    Ident_GetExceptionInfo       = PP.getIdentifierInfo("GetExceptionInformation");
-    Ident__exception_code        = PP.getIdentifierInfo("_exception_code");
-    Ident___exception_code       = PP.getIdentifierInfo("__exception_code");
-    Ident_GetExceptionCode       = PP.getIdentifierInfo("GetExceptionCode");
-    Ident__abnormal_termination  = PP.getIdentifierInfo("_abnormal_termination");
-    Ident___abnormal_termination = PP.getIdentifierInfo("__abnormal_termination");
-    Ident_AbnormalTermination    = PP.getIdentifierInfo("AbnormalTermination");
+  // if(getLangOpts().Borland) {
+  //   Ident__exception_info        = PP.getIdentifierInfo("_exception_info");
+  //   Ident___exception_info       = PP.getIdentifierInfo("__exception_info");
+  //   Ident_GetExceptionInfo       = PP.getIdentifierInfo("GetExceptionInformation");
+  //   Ident__exception_code        = PP.getIdentifierInfo("_exception_code");
+  //   Ident___exception_code       = PP.getIdentifierInfo("__exception_code");
+  //   Ident_GetExceptionCode       = PP.getIdentifierInfo("GetExceptionCode");
+  //   Ident__abnormal_termination  = PP.getIdentifierInfo("_abnormal_termination");
+  //   Ident___abnormal_termination = PP.getIdentifierInfo("__abnormal_termination");
+  //   Ident_AbnormalTermination    = PP.getIdentifierInfo("AbnormalTermination");
 
-    PP.SetPoisonReason(Ident__exception_code,diag::err_seh___except_block);
-    PP.SetPoisonReason(Ident___exception_code,diag::err_seh___except_block);
-    PP.SetPoisonReason(Ident_GetExceptionCode,diag::err_seh___except_block);
-    PP.SetPoisonReason(Ident__exception_info,diag::err_seh___except_filter);
-    PP.SetPoisonReason(Ident___exception_info,diag::err_seh___except_filter);
-    PP.SetPoisonReason(Ident_GetExceptionInfo,diag::err_seh___except_filter);
-    PP.SetPoisonReason(Ident__abnormal_termination,diag::err_seh___finally_block);
-    PP.SetPoisonReason(Ident___abnormal_termination,diag::err_seh___finally_block);
-    PP.SetPoisonReason(Ident_AbnormalTermination,diag::err_seh___finally_block);
-  }
+  //   PP.SetPoisonReason(Ident__exception_code,diag::err_seh___except_block);
+  //   PP.SetPoisonReason(Ident___exception_code,diag::err_seh___except_block);
+  //   PP.SetPoisonReason(Ident_GetExceptionCode,diag::err_seh___except_block);
+  //   PP.SetPoisonReason(Ident__exception_info,diag::err_seh___except_filter);
+  //   PP.SetPoisonReason(Ident___exception_info,diag::err_seh___except_filter);
+  //   PP.SetPoisonReason(Ident_GetExceptionInfo,diag::err_seh___except_filter);
+  //   PP.SetPoisonReason(Ident__abnormal_termination,diag::err_seh___finally_block);
+  //   PP.SetPoisonReason(Ident___abnormal_termination,diag::err_seh___finally_block);
+  //   PP.SetPoisonReason(Ident_AbnormalTermination,diag::err_seh___finally_block);
+  // }
 
   if (getLangOpts().CPlusPlusModules) {
     Ident_import = PP.getIdentifierInfo("import");
@@ -678,7 +678,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result, bool IsFirstDecl) {
   }
 
   ParsedAttributesWithRange attrs(AttrFactory);
-  MaybeParseCXX11Attributes(attrs);
+  //MaybeParseCXX11Attributes(attrs);
 
   Result = ParseExternalDeclaration(attrs);
   return false;
@@ -756,8 +756,8 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   case tok::annot_pragma_fp:
     HandlePragmaFP();
     break;
-  // case tok::annot_pragma_opencl_extension:
-  //   HandlePragmaOpenCLExtension();
+  case tok::annot_pragma_opencl_extension:
+    HandlePragmaOpenCLExtension();
     return nullptr;
   // case tok::annot_pragma_openmp: {
   //   AccessSpecifier AS = AS_none;
@@ -967,9 +967,9 @@ bool Parser::isStartOfFunctionDefinition(const ParsingDeclarator &Declarator) {
     return true;
 
   // Handle K&R C argument lists: int X(f) int f; {}
-  if (!getLangOpts().CPlusPlus &&
-      Declarator.getFunctionTypeInfo().isKNRPrototype())
-    return isDeclarationSpecifier();
+  // if (!getLangOpts().CPlusPlus &&
+  //     Declarator.getFunctionTypeInfo().isKNRPrototype())
+  //   return isDeclarationSpecifier();
 
   if (getLangOpts().CPlusPlus && Tok.is(tok::equal)) {
     const Token &KW = NextToken();
@@ -1044,8 +1044,8 @@ Parser::ParseDeclOrFunctionDefInternal(ParsedAttributesWithRange &attrs,
     Decl *TheDecl = Actions.ParsedFreeStandingDeclSpec(getCurScope(), AS_none,
                                                        DS, AnonRecord);
     DS.complete(TheDecl);
-    // if (getLangOpts().OpenCL)
-    //   Actions.setCurrentOpenCLExtensionForDecl(TheDecl);
+    if (getLangOpts().OpenCL)
+      Actions.setCurrentOpenCLExtensionForDecl(TheDecl);
     if (AnonRecord) {
       Decl* decls[] = {AnonRecord, TheDecl};
       return Actions.BuildDeclaratorGroup(decls);
@@ -1155,8 +1155,8 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
   // If this declaration was formed with a K&R-style identifier list for the
   // arguments, parse declarations for all of the args next.
   // int foo(a,b) int a; float b; {}
-  if (FTI.isKNRPrototype())
-    ParseKNRParamDeclarations(D);
+  // if (FTI.isKNRPrototype())
+  //   ParseKNRParamDeclarations(D);
 
   // We should have either an opening brace or, in a C++ constructor,
   // we may have a colon.
@@ -1363,116 +1363,116 @@ void Parser::SkipFunctionBody() {
 
 /// ParseKNRParamDeclarations - Parse 'declaration-list[opt]' which provides
 /// types for a function with a K&R-style identifier list for arguments.
-void Parser::ParseKNRParamDeclarations(Declarator &D) {
-  // We know that the top-level of this declarator is a function.
-  DeclaratorChunk::FunctionTypeInfo &FTI = D.getFunctionTypeInfo();
+// void Parser::ParseKNRParamDeclarations(Declarator &D) {
+//   // We know that the top-level of this declarator is a function.
+//   DeclaratorChunk::FunctionTypeInfo &FTI = D.getFunctionTypeInfo();
 
-  // Enter function-declaration scope, limiting any declarators to the
-  // function prototype scope, including parameter declarators.
-  ParseScope PrototypeScope(this, Scope::FunctionPrototypeScope |
-                            Scope::FunctionDeclarationScope | Scope::DeclScope);
+//   // Enter function-declaration scope, limiting any declarators to the
+//   // function prototype scope, including parameter declarators.
+//   ParseScope PrototypeScope(this, Scope::FunctionPrototypeScope |
+//                             Scope::FunctionDeclarationScope | Scope::DeclScope);
 
-  // Read all the argument declarations.
-  while (isDeclarationSpecifier()) {
-    SourceLocation DSStart = Tok.getLocation();
+//   // Read all the argument declarations.
+//   while (isDeclarationSpecifier()) {
+//     SourceLocation DSStart = Tok.getLocation();
 
-    // Parse the common declaration-specifiers piece.
-    DeclSpec DS(AttrFactory);
-    ParseDeclarationSpecifiers(DS);
+//     // Parse the common declaration-specifiers piece.
+//     DeclSpec DS(AttrFactory);
+//     ParseDeclarationSpecifiers(DS);
 
-    // C99 6.9.1p6: 'each declaration in the declaration list shall have at
-    // least one declarator'.
-    // NOTE: GCC just makes this an ext-warn.  It's not clear what it does with
-    // the declarations though.  It's trivial to ignore them, really hard to do
-    // anything else with them.
-    if (TryConsumeToken(tok::semi)) {
-      Diag(DSStart, diag::err_declaration_does_not_declare_param);
-      continue;
-    }
+//     // C99 6.9.1p6: 'each declaration in the declaration list shall have at
+//     // least one declarator'.
+//     // NOTE: GCC just makes this an ext-warn.  It's not clear what it does with
+//     // the declarations though.  It's trivial to ignore them, really hard to do
+//     // anything else with them.
+//     if (TryConsumeToken(tok::semi)) {
+//       Diag(DSStart, diag::err_declaration_does_not_declare_param);
+//       continue;
+//     }
 
-    // C99 6.9.1p6: Declarations shall contain no storage-class specifiers other
-    // than register.
-    if (DS.getStorageClassSpec() != DeclSpec::SCS_unspecified &&
-        DS.getStorageClassSpec() != DeclSpec::SCS_register) {
-      Diag(DS.getStorageClassSpecLoc(),
-           diag::err_invalid_storage_class_in_func_decl);
-      DS.ClearStorageClassSpecs();
-    }
-    if (DS.getThreadStorageClassSpec() != DeclSpec::TSCS_unspecified) {
-      Diag(DS.getThreadStorageClassSpecLoc(),
-           diag::err_invalid_storage_class_in_func_decl);
-      DS.ClearStorageClassSpecs();
-    }
+//     // C99 6.9.1p6: Declarations shall contain no storage-class specifiers other
+//     // than register.
+//     if (DS.getStorageClassSpec() != DeclSpec::SCS_unspecified &&
+//         DS.getStorageClassSpec() != DeclSpec::SCS_register) {
+//       Diag(DS.getStorageClassSpecLoc(),
+//            diag::err_invalid_storage_class_in_func_decl);
+//       DS.ClearStorageClassSpecs();
+//     }
+//     if (DS.getThreadStorageClassSpec() != DeclSpec::TSCS_unspecified) {
+//       Diag(DS.getThreadStorageClassSpecLoc(),
+//            diag::err_invalid_storage_class_in_func_decl);
+//       DS.ClearStorageClassSpecs();
+//     }
 
-    // Parse the first declarator attached to this declspec.
-    Declarator ParmDeclarator(DS, DeclaratorContext::KNRTypeListContext);
-    ParseDeclarator(ParmDeclarator);
+//     // Parse the first declarator attached to this declspec.
+//     Declarator ParmDeclarator(DS, DeclaratorContext::KNRTypeListContext);
+//     ParseDeclarator(ParmDeclarator);
 
-    // Handle the full declarator list.
-    while (1) {
-      // If attributes are present, parse them.
-      MaybeParseGNUAttributes(ParmDeclarator);
+//     // Handle the full declarator list.
+//     while (1) {
+//       // If attributes are present, parse them.
+//       MaybeParseGNUAttributes(ParmDeclarator);
 
-      // Ask the actions module to compute the type for this declarator.
-      Decl *Param =
-        Actions.ActOnParamDeclarator(getCurScope(), ParmDeclarator);
+//       // Ask the actions module to compute the type for this declarator.
+//       Decl *Param =
+//         Actions.ActOnParamDeclarator(getCurScope(), ParmDeclarator);
 
-      if (Param &&
-          // A missing identifier has already been diagnosed.
-          ParmDeclarator.getIdentifier()) {
+//       if (Param &&
+//           // A missing identifier has already been diagnosed.
+//           ParmDeclarator.getIdentifier()) {
 
-        // Scan the argument list looking for the correct param to apply this
-        // type.
-        for (unsigned i = 0; ; ++i) {
-          // C99 6.9.1p6: those declarators shall declare only identifiers from
-          // the identifier list.
-          if (i == FTI.NumParams) {
-            Diag(ParmDeclarator.getIdentifierLoc(), diag::err_no_matching_param)
-              << ParmDeclarator.getIdentifier();
-            break;
-          }
+//         // Scan the argument list looking for the correct param to apply this
+//         // type.
+//         for (unsigned i = 0; ; ++i) {
+//           // C99 6.9.1p6: those declarators shall declare only identifiers from
+//           // the identifier list.
+//           if (i == FTI.NumParams) {
+//             Diag(ParmDeclarator.getIdentifierLoc(), diag::err_no_matching_param)
+//               << ParmDeclarator.getIdentifier();
+//             break;
+//           }
 
-          if (FTI.Params[i].Ident == ParmDeclarator.getIdentifier()) {
-            // Reject redefinitions of parameters.
-            if (FTI.Params[i].Param) {
-              Diag(ParmDeclarator.getIdentifierLoc(),
-                   diag::err_param_redefinition)
-                 << ParmDeclarator.getIdentifier();
-            } else {
-              FTI.Params[i].Param = Param;
-            }
-            break;
-          }
-        }
-      }
+//           if (FTI.Params[i].Ident == ParmDeclarator.getIdentifier()) {
+//             // Reject redefinitions of parameters.
+//             if (FTI.Params[i].Param) {
+//               Diag(ParmDeclarator.getIdentifierLoc(),
+//                    diag::err_param_redefinition)
+//                  << ParmDeclarator.getIdentifier();
+//             } else {
+//               FTI.Params[i].Param = Param;
+//             }
+//             break;
+//           }
+//         }
+//       }
 
-      // If we don't have a comma, it is either the end of the list (a ';') or
-      // an error, bail out.
-      if (Tok.isNot(tok::comma))
-        break;
+//       // If we don't have a comma, it is either the end of the list (a ';') or
+//       // an error, bail out.
+//       if (Tok.isNot(tok::comma))
+//         break;
 
-      ParmDeclarator.clear();
+//       ParmDeclarator.clear();
 
-      // Consume the comma.
-      ParmDeclarator.setCommaLoc(ConsumeToken());
+//       // Consume the comma.
+//       ParmDeclarator.setCommaLoc(ConsumeToken());
 
-      // Parse the next declarator.
-      ParseDeclarator(ParmDeclarator);
-    }
+//       // Parse the next declarator.
+//       ParseDeclarator(ParmDeclarator);
+//     }
 
-    // Consume ';' and continue parsing.
-    if (!ExpectAndConsumeSemi(diag::err_expected_semi_declaration))
-      continue;
+//     // Consume ';' and continue parsing.
+//     if (!ExpectAndConsumeSemi(diag::err_expected_semi_declaration))
+//       continue;
 
-    // Otherwise recover by skipping to next semi or mandatory function body.
-    if (SkipUntil(tok::l_brace, StopAtSemi | StopBeforeMatch))
-      break;
-    TryConsumeToken(tok::semi);
-  }
+//     // Otherwise recover by skipping to next semi or mandatory function body.
+//     if (SkipUntil(tok::l_brace, StopAtSemi | StopBeforeMatch))
+//       break;
+//     TryConsumeToken(tok::semi);
+//   }
 
-  // The actions module must verify that all arguments were declared.
-  Actions.ActOnFinishKNRParamDeclarations(getCurScope(), D, Tok.getLocation());
-}
+//   // The actions module must verify that all arguments were declared.
+//   Actions.ActOnFinishKNRParamDeclarations(getCurScope(), D, Tok.getLocation());
+// }
 
 
 /// ParseAsmStringLiteral - This is just a normal string-literal, but is not
@@ -2308,7 +2308,7 @@ Parser::DeclGroupPtrTy Parser::ParseModuleDecl(bool IsFirstDecl) {
 
   // We don't support any module attributes yet; just parse them and diagnose.
   ParsedAttributesWithRange Attrs(AttrFactory);
-  MaybeParseCXX11Attributes(Attrs);
+  //MaybeParseCXX11Attributes(Attrs);
   ProhibitCXX11Attributes(Attrs, diag::err_attribute_not_module_attr);
 
   ExpectAndConsumeSemi(diag::err_module_expected_semi);
@@ -2370,7 +2370,7 @@ Decl *Parser::ParseModuleImport(SourceLocation AtLoc) {
   }
 
   ParsedAttributesWithRange Attrs(AttrFactory);
-  MaybeParseCXX11Attributes(Attrs);
+  //MaybeParseCXX11Attributes(Attrs);
   // We don't support any module import attributes yet.
   ProhibitCXX11Attributes(Attrs, diag::err_attribute_not_import_attr);
 

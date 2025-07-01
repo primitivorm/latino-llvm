@@ -97,12 +97,12 @@ std::string Action::getOffloadingKindPrefix() const {
   case OFK_Host:
     llvm_unreachable("Host kind is not an offloading device kind.");
     break;
-  // case OFK_Cuda:
-  //   return "device-cuda";
-  // case OFK_OpenMP:
-  //   return "device-openmp";
-  // case OFK_HIP:
-  //   return "device-hip";
+  case OFK_Cuda:
+    return "device-cuda";
+  case OFK_OpenMP:
+    return "device-openmp";
+  case OFK_HIP:
+    return "device-hip";
 
     // TODO: Add other programming models here.
   }
@@ -114,12 +114,12 @@ std::string Action::getOffloadingKindPrefix() const {
   assert(!((ActiveOffloadKindMask & OFK_Cuda) &&
            (ActiveOffloadKindMask & OFK_HIP)) &&
          "Cannot offload CUDA and HIP at the same time");
-  // if (ActiveOffloadKindMask & OFK_Cuda)
-  //   Res += "-cuda";
-  // if (ActiveOffloadKindMask & OFK_HIP)
-  //   Res += "-hip";
-  // if (ActiveOffloadKindMask & OFK_OpenMP)
-  //   Res += "-openmp";
+  if (ActiveOffloadKindMask & OFK_Cuda)
+    Res += "-cuda";
+  if (ActiveOffloadKindMask & OFK_HIP)
+    Res += "-hip";
+  if (ActiveOffloadKindMask & OFK_OpenMP)
+    Res += "-openmp";
 
   // TODO: Add other programming models here.
 
@@ -150,12 +150,12 @@ StringRef Action::GetOffloadKindName(OffloadKind Kind) {
   case OFK_None:
   case OFK_Host:
     return "host";
-  // case OFK_Cuda:
-  //   return "cuda";
-  // case OFK_OpenMP:
-  //   return "openmp";
-  // case OFK_HIP:
-  //   return "hip";
+  case OFK_Cuda:
+    return "cuda";
+  case OFK_OpenMP:
+    return "openmp";
+  case OFK_HIP:
+    return "hip";
 
     // TODO: Add other programming models here.
   }

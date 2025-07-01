@@ -336,13 +336,13 @@ void Sema::DiagnoseUnusedExprResult(const Stmt *S) {
   if (const PseudoObjectExpr *POE = dyn_cast<PseudoObjectExpr>(E)) {
     const Expr *Source = POE->getSyntacticForm();
     // Handle the actually selected call of an OpenMP specialized call.
-    // if (LangOpts.OpenMP && isa<CallExpr>(Source) &&
-    //     POE->getNumSemanticExprs() == 1 &&
-    //     isa<CallExpr>(POE->getSemanticExpr(0)))
-    //   return DiagnoseUnusedExprResult(POE->getSemanticExpr(0));
-    // if (isa<ObjCSubscriptRefExpr>(Source))
-    //   DiagID = diag::warn_unused_container_subscript_expr;
-    // else
+    if (LangOpts.OpenMP && isa<CallExpr>(Source) &&
+        POE->getNumSemanticExprs() == 1 &&
+        isa<CallExpr>(POE->getSemanticExpr(0)))
+      return DiagnoseUnusedExprResult(POE->getSemanticExpr(0));
+    /*if (isa<ObjCSubscriptRefExpr>(Source))
+      DiagID = diag::warn_unused_container_subscript_expr;
+    else*/
       DiagID = diag::warn_unused_property_expr;
   } else if (const CXXFunctionalCastExpr *FC
                                        = dyn_cast<CXXFunctionalCastExpr>(E)) {
@@ -2682,8 +2682,8 @@ StmtResult Sema::BuildCXXForRangeStmt(SourceLocation ForLoc,
 
   // In OpenMP loop region loop control variable must be private. Perform
   // analysis of first part (if any).
-  // if (getLangOpts().OpenMP >= 50 && BeginDeclStmt.isUsable())
-  //   ActOnOpenMPLoopInitialization(ForLoc, BeginDeclStmt.get());
+  if (getLangOpts().OpenMP >= 50 && BeginDeclStmt.isUsable())
+    ActOnOpenMPLoopInitialization(ForLoc, BeginDeclStmt.get());
 
   return new (Context) CXXForRangeStmt(
       InitStmt, RangeDS, cast_or_null<DeclStmt>(BeginDeclStmt.get()),
@@ -2967,9 +2967,9 @@ Sema::ActOnBreakStmt(SourceLocation BreakLoc, Scope *CurScope) {
     // C99 6.8.6.3p1: A break shall appear only in or as a switch/loop body.
     return StmtError(Diag(BreakLoc, diag::err_break_not_in_loop_or_switch));
   }
-  // if (S->isOpenMPLoopScope())
-  //   return StmtError(Diag(BreakLoc, diag::err_omp_loop_cannot_use_stmt)
-  //                    << "break");
+  if (S->isOpenMPLoopScope())
+    return StmtError(Diag(BreakLoc, diag::err_omp_loop_cannot_use_stmt)
+                     << "break");
   CheckJumpOutOfSEHFinally(*this, BreakLoc, *S);
 
   return new (Context) BreakStmt(BreakLoc);
@@ -4106,8 +4106,8 @@ StmtResult Sema::ActOnCXXTryBlock(SourceLocation TryLoc, Stmt *TryBlock,
     CUDADiagIfDeviceCode(TryLoc, diag::err_cuda_device_exceptions)
         << "try" << CurrentCUDATarget();
 
-  // if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
-  //   Diag(TryLoc, diag::err_omp_simd_region_cannot_use_stmt) << "try";
+  if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
+    Diag(TryLoc, diag::err_omp_simd_region_cannot_use_stmt) << "try";
 
   sema::FunctionScopeInfo *FSI = getCurFunction();
 
@@ -4261,28 +4261,28 @@ Sema::ActOnSEHLeaveStmt(SourceLocation Loc, Scope *CurScope) {
   return new (Context) SEHLeaveStmt(Loc);
 }
 
-StmtResult Sema::BuildMSDependentExistsStmt(SourceLocation KeywordLoc,
-                                            bool IsIfExists,
-                                            NestedNameSpecifierLoc QualifierLoc,
-                                            DeclarationNameInfo NameInfo,
-                                            Stmt *Nested)
-{
-  return new (Context) MSDependentExistsStmt(KeywordLoc, IsIfExists,
-                                             QualifierLoc, NameInfo,
-                                             cast<CompoundStmt>(Nested));
-}
+// StmtResult Sema::BuildMSDependentExistsStmt(SourceLocation KeywordLoc,
+//                                             bool IsIfExists,
+//                                             NestedNameSpecifierLoc QualifierLoc,
+//                                             DeclarationNameInfo NameInfo,
+//                                             Stmt *Nested)
+// {
+//   return new (Context) MSDependentExistsStmt(KeywordLoc, IsIfExists,
+//                                              QualifierLoc, NameInfo,
+//                                              cast<CompoundStmt>(Nested));
+// }
 
 
-StmtResult Sema::ActOnMSDependentExistsStmt(SourceLocation KeywordLoc,
-                                            bool IsIfExists,
-                                            CXXScopeSpec &SS,
-                                            UnqualifiedId &Name,
-                                            Stmt *Nested) {
-  return BuildMSDependentExistsStmt(KeywordLoc, IsIfExists,
-                                    SS.getWithLocInContext(Context),
-                                    GetNameFromUnqualifiedId(Name),
-                                    Nested);
-}
+// StmtResult Sema::ActOnMSDependentExistsStmt(SourceLocation KeywordLoc,
+//                                             bool IsIfExists,
+//                                             CXXScopeSpec &SS,
+//                                             UnqualifiedId &Name,
+//                                             Stmt *Nested) {
+//   return BuildMSDependentExistsStmt(KeywordLoc, IsIfExists,
+//                                     SS.getWithLocInContext(Context),
+//                                     GetNameFromUnqualifiedId(Name),
+//                                     Nested);
+// }
 
 RecordDecl*
 Sema::CreateCapturedStmtRecordDecl(CapturedDecl *&CD, SourceLocation Loc,
@@ -4337,8 +4337,8 @@ buildCapturedStmtCaptureList(Sema &S, CapturedRegionScopeInfo *RSI,
     } else {
       assert(Cap.isVariableCapture() && "unknown kind of capture");
 
-      // if (S.getLangOpts().OpenMP && RSI->CapRegionKind == CR_OpenMP)
-      //   S.setOpenMPCaptureKind(Field, Cap.getVariable(), RSI->OpenMPLevel);
+      if (S.getLangOpts().OpenMP && RSI->CapRegionKind == CR_OpenMP)
+        S.setOpenMPCaptureKind(Field, Cap.getVariable(), RSI->OpenMPLevel);
 
       Captures.push_back(CapturedStmt::Capture(Cap.getLocation(),
                                                Cap.isReferenceCapture()

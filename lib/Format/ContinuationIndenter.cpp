@@ -341,12 +341,12 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
     return true;
   if (Previous.is(tok::semi) && State.LineContainsContinuedForLoopSection)
     return true;
-  // if (Style.Language == FormatStyle::LK_ObjC &&
-  //     Style.ObjCBreakBeforeNestedBlockParam &&
-  //     Current.ObjCSelectorNameParts > 1 &&
-  //     Current.startsSequence(TT_SelectorName, tok::colon, tok::caret)) {
-  //   return true;
-  // }
+  if (Style.Language == FormatStyle::LK_ObjC &&
+      Style.ObjCBreakBeforeNestedBlockParam &&
+      Current.ObjCSelectorNameParts > 1 &&
+      Current.startsSequence(TT_SelectorName, tok::colon, tok::caret)) {
+    return true;
+  }
   // Avoid producing inconsistent states by requiring breaks where they are not
   // permitted for C# generic type constraints.
   if (State.Stack.back().IsCSharpGenericTypeConstraint &&

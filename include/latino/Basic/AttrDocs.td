@@ -3374,10 +3374,10 @@ where clause is one of the following:
   }];
 }
 
-// def OMPDeclareTargetDocs : Documentation {
-//   let Category = DocCatFunction;
-//   let Heading = "#pragma omp declare target";
-//   let Content = [{
+def OMPDeclareTargetDocs : Documentation {
+  let Category = DocCatFunction;
+  let Heading = "#pragma omp declare target";
+  let Content = [{
 // The ``declare target`` directive specifies that variables and functions are mapped
 // to a device for OpenMP offload mechanism.
 
@@ -3409,13 +3409,13 @@ where clause is one of the following:
 //      to(extended-list)
 //      link(list)
 //      device_type(host | nohost | any)
-//   }];
-// }
+  }];
+}
 
-// def OMPDeclareVariantDocs : Documentation {
-//   let Category = DocCatFunction;
-//   let Heading = "#pragma omp declare variant";
-//   let Content = [{
+def OMPDeclareVariantDocs : Documentation {
+  let Category = DocCatFunction;
+  let Heading = "#pragma omp declare variant";
+  let Content = [{
 // The ``declare variant`` directive declares a specialized variant of a base
 // function and specifies the context in which that specialized variant is used.
 // The declare variant directive is a declarative directive.
@@ -3452,8 +3452,8 @@ where clause is one of the following:
 // both the selector and OpenMP context is sufficient. Only a single match
 // extension trait is allowed per context selector.
 
-//   }];
-// }
+  }];
+}
 
 def NoStackProtectorDocs : Documentation {
   let Category = DocCatFunction;
@@ -4021,20 +4021,20 @@ See :doc:`LTOVisibility`.
   }];
 }
 
-def RenderScriptKernelAttributeDocs : Documentation {
-  let Category = DocCatFunction;
-  let Content = [{
-``__attribute__((kernel))`` is used to mark a ``kernel`` function in
-RenderScript.
-
-In RenderScript, ``kernel`` functions are used to express data-parallel
-computations.  The RenderScript runtime efficiently parallelizes ``kernel``
-functions to run on computational resources such as multi-core CPUs and GPUs.
-See the RenderScript_ documentation for more information.
-
-.. _RenderScript: https://developer.android.com/guide/topics/renderscript/compute.html
-  }];
-}
+// def RenderScriptKernelAttributeDocs : Documentation {
+//   let Category = DocCatFunction;
+//   let Content = [{
+// ``__attribute__((kernel))`` is used to mark a ``kernel`` function in
+// RenderScript.
+// 
+// In RenderScript, ``kernel`` functions are used to express data-parallel
+// computations.  The RenderScript runtime efficiently parallelizes ``kernel``
+// functions to run on computational resources such as multi-core CPUs and GPUs.
+// See the RenderScript_ documentation for more information.
+// 
+// .. _RenderScript: https://developer.android.com/guide/topics/renderscript/compute.html
+// }];
+// }
 
 def XRayDocs : Documentation {
   let Category = DocCatFunction;

@@ -14,8 +14,8 @@
 #include "CGCXXABI.h"
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
-// #include "CGOpenCLRuntime.h"
-// #include "CGOpenMPRuntime.h"
+#include "CGOpenCLRuntime.h"
+#include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
@@ -26,7 +26,7 @@
 #include "latino/AST/CharUnits.h"
 #include "latino/AST/Decl.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/Basic/CodeGenOptions.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/Basic/TargetInfo.h"
@@ -109,10 +109,10 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
   case Decl::Label:        // __label__ x;
   case Decl::Import:
   case Decl::MSGuid:    // __declspec(uuid("..."))
-  // case Decl::OMPThreadPrivate:
-  // case Decl::OMPAllocate:
-  // case Decl::OMPCapturedExpr:
-  // case Decl::OMPRequires:
+  case Decl::OMPThreadPrivate:
+  case Decl::OMPAllocate:
+  case Decl::OMPCapturedExpr:
+  case Decl::OMPRequires:
   case Decl::Empty:
   case Decl::Concept:
   case Decl::LifetimeExtendedTemporary:
@@ -149,11 +149,11 @@ void CodeGenFunction::EmitDecl(const Decl &D) {
     return;
   }
 
-  // case Decl::OMPDeclareReduction:
-  //   return CGM.EmitOMPDeclareReduction(cast<OMPDeclareReductionDecl>(&D), this);
+  case Decl::OMPDeclareReduction:
+    return CGM.EmitOMPDeclareReduction(cast<OMPDeclareReductionDecl>(&D), this);
 
-  // case Decl::OMPDeclareMapper:
-  //   return CGM.EmitOMPDeclareMapper(cast<OMPDeclareMapperDecl>(&D), this);
+  case Decl::OMPDeclareMapper:
+    return CGM.EmitOMPDeclareMapper(cast<OMPDeclareMapperDecl>(&D), this);
 
   case Decl::Typedef:      // typedef int X;
   case Decl::TypeAlias: {  // using X = int; [C++0x]
@@ -180,8 +180,8 @@ void CodeGenFunction::EmitVarDecl(const VarDecl &D) {
   // variable in constant address space in OpenCL.
   if (D.getStorageDuration() != SD_Automatic) {
     // Static sampler variables translated to function calls.
-    // if (D.getType()->isSamplerT())
-    //   return;
+    if (D.getType()->isSamplerT())
+      return;
 
     llvm::GlobalValue::LinkageTypes Linkage =
         CGM.getLLVMLinkageVarDefinition(&D, /*IsConstant=*/false);
@@ -306,7 +306,7 @@ llvm::Constant *CodeGenModule::getOrCreateStaticVarDecl(
   // }
   if (GD.getDecl()) {
     // Disable emission of the parent function for the OpenMP device codegen.
-    // CGOpenMPRuntime::DisableAutoDeclareTargetRAII NoDeclTarget(*this);
+    CGOpenMPRuntime::DisableAutoDeclareTargetRAII NoDeclTarget(*this);
     (void)GetAddrOfGlobal(GD);
   }
 
@@ -414,7 +414,7 @@ void CodeGenFunction::EmitStaticVarDecl(const VarDecl &D,
   bool isCudaSharedVar = getLangOpts().CUDA && getLangOpts().CUDAIsDevice &&
                          D.hasAttr<CUDASharedAttr>();
   // If this value has an initializer, emit it.
-  if (D.getInit() && !isCudaSharedVar)
+  if (D.getInit() /*&& !isCudaSharedVar*/)
     var = AddInitializerToStaticVarDecl(D, var);
 
   var->setAlignment(alignment.getAsAlign());
@@ -1381,8 +1381,8 @@ CodeGenFunction::AutoVarEmission
 CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
   QualType Ty = D.getType();
   assert(
-      Ty.getAddressSpace() == LangAS::Default /*||
-      (Ty.getAddressSpace() == LangAS::opencl_private && getLangOpts().OpenCL)*/);
+      Ty.getAddressSpace() == LangAS::Default ||
+      (Ty.getAddressSpace() == LangAS::opencl_private && getLangOpts().OpenCL));
 
   AutoVarEmission emission(D);
 
@@ -1401,19 +1401,19 @@ CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
   Address address = Address::invalid();
   Address AllocaAddr = Address::invalid();
   Address OpenMPLocalAddr = Address::invalid();
-  // if (CGM.getLangOpts().OpenMPIRBuilder)
-  //   OpenMPLocalAddr = OMPBuilderCBHelpers::getAddressOfLocalVariable(*this, &D);
-  // else
+  if (CGM.getLangOpts().OpenMPIRBuilder)
+    OpenMPLocalAddr = OMPBuilderCBHelpers::getAddressOfLocalVariable(*this, &D);
+  else
     OpenMPLocalAddr =
-        /*getLangOpts().OpenMP
+        getLangOpts().OpenMP
             ? CGM.getOpenMPRuntime().getAddressOfLocalVariable(*this, &D)
-            :*/ Address::invalid();
+            : Address::invalid();
 
   bool NRVO = getLangOpts().ElideConstructors && D.isNRVOVariable();
 
-  /*if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
+  if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
     address = OpenMPLocalAddr;
-  } else*/ if (Ty->isConstantSizeType()) {
+  } else if (Ty->isConstantSizeType()) {
     // If this value is an array or struct with a statically determinable
     // constant initializer, there are optimizations we can do.
     //
@@ -1433,7 +1433,7 @@ CodeGenFunction::EmitAutoVarAlloca(const VarDecl &D) {
       // emit it as a global instead.
       // Exception is if a variable is located in non-constant address space
       // in OpenCL.
-      if ((/*!getLangOpts().OpenCL ||*/
+      if ((!getLangOpts().OpenCL ||
            Ty.getAddressSpace() == LangAS::opencl_constant) &&
           (CGM.getCodeGenOpts().MergeAllConstants && !NRVO &&
            !isEscapingByRef && CGM.isTypeConstant(Ty, true))) {
@@ -2398,9 +2398,9 @@ void CodeGenFunction::EmitParmDecl(const VarDecl &D, ParamValue Arg,
     // from the default address space.
     auto AllocaAS = CGM.getASTAllocaAddressSpace();
     auto *V = DeclPtr.getPointer();
-    auto SrcLangAS = /*getLangOpts().OpenCL ? LangAS::opencl_private :*/ AllocaAS;
+    auto SrcLangAS = getLangOpts().OpenCL ? LangAS::opencl_private : AllocaAS;
     auto DestLangAS =
-        /*getLangOpts().OpenCL ? LangAS::opencl_private :*/ LangAS::Default;
+        getLangOpts().OpenCL ? LangAS::opencl_private : LangAS::Default;
     if (SrcLangAS != DestLangAS) {
       assert(getContext().getTargetAddressSpace(SrcLangAS) ==
              CGM.getDataLayout().getAllocaAddrSpace());
@@ -2427,21 +2427,21 @@ void CodeGenFunction::EmitParmDecl(const VarDecl &D, ParamValue Arg,
       }
     }
   } 
-  // else {
-  //   // Check if the parameter address is controlled by OpenMP runtime.
-  //   Address OpenMPLocalAddr =
-  //       getLangOpts().OpenMP
-  //           ? CGM.getOpenMPRuntime().getAddressOfLocalVariable(*this, &D)
-  //           : Address::invalid();
-  //   if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
-  //     DeclPtr = OpenMPLocalAddr;
-  //   } else {
-  //     // Otherwise, create a temporary to hold the value.
-  //     DeclPtr = CreateMemTemp(Ty, getContext().getDeclAlign(&D),
-  //                             D.getName() + ".addr");
-  //   }
-  //   DoStore = true;
-  // }
+  else {
+    // Check if the parameter address is controlled by OpenMP runtime.
+    Address OpenMPLocalAddr =
+        getLangOpts().OpenMP
+            ? CGM.getOpenMPRuntime().getAddressOfLocalVariable(*this, &D)
+            : Address::invalid();
+    if (getLangOpts().OpenMP && OpenMPLocalAddr.isValid()) {
+      DeclPtr = OpenMPLocalAddr;
+    } else {
+      // Otherwise, create a temporary to hold the value.
+      DeclPtr = CreateMemTemp(Ty, getContext().getDeclAlign(&D),
+                              D.getName() + ".addr");
+    }
+    DoStore = true;
+  }
 
   llvm::Value *ArgVal = (DoStore ? Arg.getDirectValue() : nullptr);
 
@@ -2534,21 +2534,21 @@ void CodeGenFunction::EmitParmDecl(const VarDecl &D, ParamValue Arg,
   }
 }
 
-// void CodeGenModule::EmitOMPDeclareReduction(const OMPDeclareReductionDecl *D,
-//                                             CodeGenFunction *CGF) {
-//   if (!LangOpts.OpenMP || (!LangOpts.EmitAllDecls && !D->isUsed()))
-//     return;
-//   getOpenMPRuntime().emitUserDefinedReduction(CGF, D);
-// }
+void CodeGenModule::EmitOMPDeclareReduction(const OMPDeclareReductionDecl *D,
+                                            CodeGenFunction *CGF) {
+  if (!LangOpts.OpenMP || (!LangOpts.EmitAllDecls && !D->isUsed()))
+    return;
+  getOpenMPRuntime().emitUserDefinedReduction(CGF, D);
+}
 
-// void CodeGenModule::EmitOMPDeclareMapper(const OMPDeclareMapperDecl *D,
-//                                          CodeGenFunction *CGF) {
-//   if (!LangOpts.OpenMP || LangOpts.OpenMPSimd ||
-//       (!LangOpts.EmitAllDecls && !D->isUsed()))
-//     return;
-//   getOpenMPRuntime().emitUserDefinedMapper(D, CGF);
-// }
+void CodeGenModule::EmitOMPDeclareMapper(const OMPDeclareMapperDecl *D,
+                                         CodeGenFunction *CGF) {
+  if (!LangOpts.OpenMP || LangOpts.OpenMPSimd ||
+      (!LangOpts.EmitAllDecls && !D->isUsed()))
+    return;
+  getOpenMPRuntime().emitUserDefinedMapper(D, CGF);
+}
 
-// void CodeGenModule::EmitOMPRequiresDecl(const OMPRequiresDecl *D) {
-//   getOpenMPRuntime().processRequiresDirective(D);
-// }
+void CodeGenModule::EmitOMPRequiresDecl(const OMPRequiresDecl *D) {
+  getOpenMPRuntime().processRequiresDirective(D);
+}

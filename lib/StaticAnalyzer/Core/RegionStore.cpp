@@ -2387,7 +2387,7 @@ RegionBindingsRef RegionStoreManager::bindStruct(RegionBindingsConstRef B,
     // to a nil receiver; in this case the semantics is to return a
     // zero-initialized object even if it's a C++ object that doesn't have
     // this sort of constructor; the CompoundVal is empty in this case.
-    assert((CRD->isAggregate() || (Ctx.getLangOpts().ObjC && VI == VE)) &&
+    assert((CRD->isAggregate() || (/*Ctx.getLangOpts().ObjC &&*/ VI == VE)) &&
            "Non-aggregates are constructed with a constructor!");
 
     for (const auto &B : CRD->bases()) {

@@ -989,8 +989,8 @@ def note_receiver_is_id : Note<
   "receiver is treated with 'id' type for purpose of method lookup">;
 def note_suppressed_class_declare : Note<
   "class with specified objc_requires_property_definitions attribute is declared here">;
-def err_objc_root_class_subclass : Error<
-  "objc_root_class attribute may only be specified on a root class declaration">;
+// def err_objc_root_class_subclass : Error<
+//   "objc_root_class attribute may only be specified on a root class declaration">;
 def err_restricted_superclass_mismatch : Error<
   "cannot subclass a class that was declared with the "
   "'objc_subclassing_restricted' attribute">;
@@ -1003,14 +1003,14 @@ def err_implementation_of_class_stub : Error<
 // def warn_objc_root_class_missing : Warning<
 //   "class %0 defined without specifying a base class">,
 //   InGroup<ObjCRootClass>;
-def err_objc_runtime_visible_category : Error<
-  "cannot implement a category for class %0 that is only visible via the "
-  "Objective-C runtime">;
-def err_objc_runtime_visible_subclass : Error<
-  "cannot implement subclass %0 of a superclass %1 that is only visible via the "
-  "Objective-C runtime">;
-def note_objc_needs_superclass : Note<
-  "add a super class to fix this problem">;
+// def err_objc_runtime_visible_category : Error<
+//   "cannot implement a category for class %0 that is only visible via the "
+//   "Objective-C runtime">;
+// def err_objc_runtime_visible_subclass : Error<
+//   "cannot implement subclass %0 of a superclass %1 that is only visible via the "
+//   "Objective-C runtime">;
+// def note_objc_needs_superclass : Note<
+//   "add a super class to fix this problem">;
 def err_conflicting_super_class : Error<"conflicting super class name %0">;
 def err_dup_implementation_class : Error<"reimplementation of class %0">;
 def err_dup_implementation_category : Error<
@@ -1033,29 +1033,29 @@ def warn_undef_method_impl : Warning<"method definition for %0 not found">,
 //   "string is ill-formed as UTF-8 and will become a null %0 when boxed">,
 //   InGroup<ObjCBoxing>;
 
-def err_objc_direct_on_protocol : Error<
-  "'objc_direct' attribute cannot be applied to %select{methods|properties}0 "
-  "declared in an Objective-C protocol">;
-def err_objc_direct_duplicate_decl : Error<
-  "%select{|direct }0%select{method|property}1 declaration conflicts "
-  "with previous %select{|direct }2declaration of %select{method|property}1 %3">;
-def err_objc_direct_impl_decl_mismatch : Error<
-  "direct method was declared in %select{the primary interface|an extension|a category}0 "
-  "but is implemented in %select{the primary interface|a category|a different category}1">;
-def err_objc_direct_missing_on_decl : Error<
-  "direct method implementation was previously declared not direct">;
-def err_objc_direct_on_override : Error<
-  "methods that %select{override superclass methods|implement protocol requirements}0 cannot be direct">;
-def err_objc_override_direct_method : Error<
-  "cannot override a method that is declared direct by a superclass">;
-def warn_objc_direct_ignored : Warning<
-  "%0 attribute isn't implemented by this Objective-C runtime">,
-  InGroup<IgnoredAttributes>;
-def warn_objc_direct_property_ignored : Warning<
-  "direct attribute on property %0 ignored (not implemented by this Objective-C runtime)">,
-  InGroup<IgnoredAttributes>;
-def err_objc_direct_dynamic_property : Error<
-  "direct property cannot be @dynamic">;
+// def err_objc_direct_on_protocol : Error<
+//   "'objc_direct' attribute cannot be applied to %select{methods|properties}0 "
+//   "declared in an Objective-C protocol">;
+// def err_objc_direct_duplicate_decl : Error<
+//   "%select{|direct }0%select{method|property}1 declaration conflicts "
+//   "with previous %select{|direct }2declaration of %select{method|property}1 %3">;
+// def err_objc_direct_impl_decl_mismatch : Error<
+//   "direct method was declared in %select{the primary interface|an extension|a category}0 "
+//   "but is implemented in %select{the primary interface|a category|a different category}1">;
+// def err_objc_direct_missing_on_decl : Error<
+//   "direct method implementation was previously declared not direct">;
+// def err_objc_direct_on_override : Error<
+//   "methods that %select{override superclass methods|implement protocol requirements}0 cannot be direct">;
+// def err_objc_override_direct_method : Error<
+//   "cannot override a method that is declared direct by a superclass">;
+// def warn_objc_direct_ignored : Warning<
+//   "%0 attribute isn't implemented by this Objective-C runtime">,
+//   InGroup<IgnoredAttributes>;
+// def warn_objc_direct_property_ignored : Warning<
+//   "direct attribute on property %0 ignored (not implemented by this Objective-C runtime)">,
+//   InGroup<IgnoredAttributes>;
+// def err_objc_direct_dynamic_property : Error<
+//   "direct property cannot be @dynamic">;
 
 def warn_conflicting_overriding_ret_types : Warning<
   "conflicting return type in "
@@ -1155,14 +1155,14 @@ def warn_duplicate_method_decl :
 //           "which is being passed as a formatting argument to the formatting "
 //           "%select{method|CFfunction}2">,
 //   InGroup<ObjCCStringFormat>, DefaultIgnore;
-def err_objc_var_decl_inclass :
-    Error<"cannot declare variable inside @interface or @protocol">;
+// def err_objc_var_decl_inclass :
+//     Error<"cannot declare variable inside @interface or @protocol">;
 def err_missing_method_context : Error<
   "missing context for method declaration">;
-def err_objc_property_attr_mutually_exclusive : Error<
-  "property attributes '%0' and '%1' are mutually exclusive">;
-def err_objc_property_requires_object : Error<
-  "property with '%0' attribute must be of object type">;
+// def err_objc_property_attr_mutually_exclusive : Error<
+//   "property attributes '%0' and '%1' are mutually exclusive">;
+// def err_objc_property_requires_object : Error<
+//   "property with '%0' attribute must be of object type">;
 // def warn_objc_property_assign_on_object : Warning<
 //   "'assign' property of object type may become a dangling reference; consider using 'unsafe_unretained'">,
 //   InGroup<ObjCPropertyAssignOnObjectType>, DefaultIgnore;
@@ -1192,9 +1192,9 @@ def warn_property_implicitly_mismatched : Warning <
   "primary property declaration is implicitly strong while redeclaration "
   "in class extension is weak">,
   InGroup<DiagGroup<"objc-property-implicit-mismatch">>;
-def warn_objc_property_copy_missing_on_block : Warning<
-    "'copy' attribute must be specified for the block property "
-    "when -fobjc-gc-only is specified">;
+// def warn_objc_property_copy_missing_on_block : Warning<
+//     "'copy' attribute must be specified for the block property "
+//     "when -fobjc-gc-only is specified">;
 // def warn_objc_property_retain_of_block : Warning<
 //     "retain'ed block property does not copy the block "
 //     "- use copy attribute instead">, InGroup<ObjCRetainBlockProperty>;
@@ -1387,14 +1387,14 @@ def err_direct_selector_expression : Error<
 //   warn_potentially_direct_selector_expression.Text>,
 //   InGroup<ObjCStrictPotentiallyDirectSelector>, DefaultIgnore;
 
-def err_objc_kindof_nonobject : Error<
-  "'__kindof' specifier cannot be applied to non-object type %0">;
-def err_objc_kindof_wrong_position : Error<
-  "'__kindof' type specifier must precede the declarator">;
+// def err_objc_kindof_nonobject : Error<
+//   "'__kindof' specifier cannot be applied to non-object type %0">;
+// def err_objc_kindof_wrong_position : Error<
+//   "'__kindof' type specifier must precede the declarator">;
 
-def err_objc_method_unsupported_param_ret_type : Error<
-  "%0 %select{parameter|return}1 type is unsupported; "
-  "support for vector types for this target is introduced in %2">;
+// def err_objc_method_unsupported_param_ret_type : Error<
+//   "%0 %select{parameter|return}1 type is unsupported; "
+//   "support for vector types for this target is introduced in %2">;
 
 def warn_messaging_unqualified_id : Warning<
   "messaging unqualified id">, DefaultIgnore,
@@ -1850,9 +1850,9 @@ def note_nontrivial_variadic : Note<"because it is a variadic function">;
 def note_nontrivial_subobject : Note<
   "because the function selected to %select{construct|copy|move|copy|move|"
   "destroy}2 %select{base class|field}0 of type %1 is not trivial">;
-def note_nontrivial_objc_ownership : Note<
-  "because type %0 has a member with %select{no|no|__strong|__weak|"
-  "__autoreleasing}1 ownership">;
+// def note_nontrivial_objc_ownership : Note<
+//   "because type %0 has a member with %select{no|no|__strong|__weak|"
+//   "__autoreleasing}1 ownership">;
 
 /// Selector for a TagTypeKind value.
 def select_tag_type_kind : TextSubstitution<
@@ -2488,9 +2488,9 @@ def warn_for_range_copy : Warning<
   "loop variable %0 creates a copy from type %1">,
   InGroup<RangeLoopConstruct>, DefaultIgnore;
 def note_use_reference_type : Note<"use reference type %0 to prevent copying">;
-def err_objc_for_range_init_stmt : Error<
-  "initialization statement is not supported when iterating over Objective-C "
-  "collection">;
+// def err_objc_for_range_init_stmt : Error<
+//   "initialization statement is not supported when iterating over Objective-C "
+//   "collection">;
 
 // C++11 constexpr
 def warn_cxx98_compat_constexpr : Warning<
@@ -2781,8 +2781,8 @@ def err_type_pack_element_out_of_bounds : Error<
   "a parameter pack may not be accessed at an out of bounds index">;
 
 // Objective-C++
-def err_objc_decls_may_only_appear_in_global_scope : Error<
-  "Objective-C declarations may only appear in global scope">;
+// def err_objc_decls_may_only_appear_in_global_scope : Error<
+//   "Objective-C declarations may only appear in global scope">;
 def warn_auto_var_is_id : Warning<
   "'auto' deduced as 'id' in declaration of %0">,
   InGroup<DiagGroup<"auto-var-id">>;
@@ -2954,29 +2954,29 @@ def err_compound_literal_with_address_space : Error<
   "compound literal in function scope may not be qualified with an address space">;
 def err_address_space_mismatch_templ_inst : Error<
   "conflicting address space qualifiers are provided between types %0 and %1">;
-def err_attr_objc_ownership_redundant : Error<
-  "the type %0 is already explicitly ownership-qualified">;
+// def err_attr_objc_ownership_redundant : Error<
+//   "the type %0 is already explicitly ownership-qualified">;
 def err_invalid_nsnumber_type : Error<
   "%0 is not a valid literal type for NSNumber">;
-def err_objc_illegal_boxed_expression_type : Error<
-  "illegal type %0 used in a boxed expression">;
-def err_objc_non_trivially_copyable_boxed_expression_type : Error<
-  "non-trivially copyable type %0 cannot be used in a boxed expression">;
-def err_objc_incomplete_boxed_expression_type : Error<
-  "incomplete type %0 used in a boxed expression">;
-def err_undeclared_objc_literal_class : Error<
-  "definition of class %0 must be available to use Objective-C "
-  "%select{array literals|dictionary literals|numeric literals|boxed expressions|"
-  "string literals}1">;
+// def err_objc_illegal_boxed_expression_type : Error<
+//   "illegal type %0 used in a boxed expression">;
+// def err_objc_non_trivially_copyable_boxed_expression_type : Error<
+//   "non-trivially copyable type %0 cannot be used in a boxed expression">;
+// def err_objc_incomplete_boxed_expression_type : Error<
+//   "incomplete type %0 used in a boxed expression">;
+// def err_undeclared_objc_literal_class : Error<
+//   "definition of class %0 must be available to use Objective-C "
+//   "%select{array literals|dictionary literals|numeric literals|boxed expressions|"
+//   "string literals}1">;
 def err_undeclared_boxing_method : Error<
   "declaration of %0 is missing in %1 class">;
-def err_objc_literal_method_sig : Error<
-  "literal construction method %0 has incompatible signature">;
-def note_objc_literal_method_param : Note<
-  "%select{first|second|third}0 parameter has unexpected type %1 "
-  "(should be %2)">;
-def note_objc_literal_method_return : Note<
-  "method returns unexpected type %0 (should be an object type)">;
+// def err_objc_literal_method_sig : Error<
+//   "literal construction method %0 has incompatible signature">;
+// def note_objc_literal_method_param : Note<
+//   "%select{first|second|third}0 parameter has unexpected type %1 "
+//   "(should be %2)">;
+// def note_objc_literal_method_return : Note<
+//   "method returns unexpected type %0 (should be an object type)">;
 def err_invalid_collection_element : Error<
   "collection element of type %0 is not an Objective-C object">;
 def err_box_literal_collection : Error<
@@ -2995,8 +2995,8 @@ def err_box_literal_collection : Error<
 //   "concatenated NSString literal for an NSArray expression - "
 //   "possibly missing a comma">,
 //   InGroup<ObjCStringConcatenation>;
-def note_objc_literal_comparison_isequal : Note<
-  "use 'isEqual:' instead">;
+// def note_objc_literal_comparison_isequal : Note<
+//   "use 'isEqual:' instead">;
 // def warn_objc_collection_literal_element : Warning<
 //   "object of type %0 is not compatible with "
 //   "%select{array element type|dictionary key type|dictionary value type}1 %2">,
@@ -3024,9 +3024,9 @@ def err_attribute_argument_is_zero : Error<
 def warn_attribute_argument_n_negative : Warning<
   "%0 attribute parameter %1 is negative and will be ignored">,
   InGroup<CudaCompat>;
-def err_property_function_in_objc_container : Error<
-  "use of Objective-C property in function nested in Objective-C "
-  "container not supported, move function outside its container">;
+// def err_property_function_in_objc_container : Error<
+//   "use of Objective-C property in function nested in Objective-C "
+//   "container not supported, move function outside its container">;
 
 let CategoryName = "Cocoa API Issue" in {
 // def warn_objc_redundant_literal_use : Warning<
@@ -3298,11 +3298,11 @@ def err_regparm_mismatch : Error<"function declared with regparm(%0) "
 def err_function_attribute_mismatch : Error<
   "function declared with %0 attribute "
   "was previously declared without the %0 attribute">;
-def err_objc_precise_lifetime_bad_type : Error<
-  "objc_precise_lifetime only applies to retainable types; type here is %0">;
-def warn_objc_precise_lifetime_meaningless : Error<
-  "objc_precise_lifetime is not meaningful for "
-  "%select{__unsafe_unretained|__autoreleasing}0 objects">;
+// def err_objc_precise_lifetime_bad_type : Error<
+//   "objc_precise_lifetime only applies to retainable types; type here is %0">;
+// def warn_objc_precise_lifetime_meaningless : Error<
+//   "objc_precise_lifetime is not meaningful for "
+//   "%select{__unsafe_unretained|__autoreleasing}0 objects">;
 def err_invalid_pcs : Error<"invalid PCS type">;
 def warn_attribute_not_on_decl : Warning<
   "%0 attribute ignored when parsing type">, InGroup<IgnoredAttributes>;
@@ -3889,9 +3889,9 @@ def warn_ns_attribute_wrong_parameter_type : Warning<
   "%0 attribute only applies to "
   "%select{Objective-C object|pointer|pointer-to-CF-pointer|pointer/reference-to-OSObject-pointer}1 parameters">,
   InGroup<IgnoredAttributes>;
-def warn_objc_requires_super_protocol : Warning<
-  "%0 attribute cannot be applied to %select{methods in protocols|dealloc}1">,
-  InGroup<DiagGroup<"requires-super-attribute">>;
+// def warn_objc_requires_super_protocol : Warning<
+//   "%0 attribute cannot be applied to %select{methods in protocols|dealloc}1">,
+//   InGroup<DiagGroup<"requires-super-attribute">>;
 def note_protocol_decl : Note<
   "protocol is declared here">;
 def note_protocol_decl_undefined : Note<
@@ -3923,37 +3923,37 @@ def note_protocol_decl_undefined : Note<
 //   "of interface or class extension declarations">;
 
 // objc_bridge attribute diagnostics.
-def err_objc_attr_not_id : Error<
-  "parameter of %0 attribute must be a single name of an Objective-C %select{class|protocol}1">;
-def err_objc_attr_typedef_not_id : Error<
-  "parameter of %0 attribute must be 'id' when used on a typedef">;
-def err_objc_attr_typedef_not_void_pointer : Error<
-  "'objc_bridge(id)' is only allowed on structs and typedefs of void pointers">;
-def err_objc_cf_bridged_not_interface : Error<
-  "CF object of type %0 is bridged to %1, which is not an Objective-C class">;
-def err_objc_ns_bridged_invalid_cfobject : Error<
-  "ObjectiveC object of type %0 is bridged to %1, which is not valid CF object">;
+// def err_objc_attr_not_id : Error<
+//   "parameter of %0 attribute must be a single name of an Objective-C %select{class|protocol}1">;
+// def err_objc_attr_typedef_not_id : Error<
+//   "parameter of %0 attribute must be 'id' when used on a typedef">;
+// def err_objc_attr_typedef_not_void_pointer : Error<
+//   "'objc_bridge(id)' is only allowed on structs and typedefs of void pointers">;
+// def err_objc_cf_bridged_not_interface : Error<
+//   "CF object of type %0 is bridged to %1, which is not an Objective-C class">;
+// def err_objc_ns_bridged_invalid_cfobject : Error<
+//   "ObjectiveC object of type %0 is bridged to %1, which is not valid CF object">;
 // def warn_objc_invalid_bridge : Warning<
 //   "%0 bridges to %1, not %2">, InGroup<ObjCBridge>;
 // def warn_objc_invalid_bridge_to_cf : Warning<
 //   "%0 cannot bridge to %1">, InGroup<ObjCBridge>;
 
 // objc_bridge_related attribute diagnostics.
-def err_objc_bridged_related_invalid_class : Error<
-  "could not find Objective-C class %0 to convert %1 to %2">;
-def err_objc_bridged_related_invalid_class_name : Error<
-  "%0 must be name of an Objective-C class to be able to convert %1 to %2">;
-def err_objc_bridged_related_known_method : Error<
- "%0 must be explicitly converted to %1; use %select{%objcclass2|%objcinstance2}3 "
- "method for this conversion">;
+// def err_objc_bridged_related_invalid_class : Error<
+//   "could not find Objective-C class %0 to convert %1 to %2">;
+// def err_objc_bridged_related_invalid_class_name : Error<
+//   "%0 must be name of an Objective-C class to be able to convert %1 to %2">;
+// def err_objc_bridged_related_known_method : Error<
+//  "%0 must be explicitly converted to %1; use %select{%objcclass2|%objcinstance2}3 "
+//  "method for this conversion">;
 
-def err_objc_attr_protocol_requires_definition : Error<
-  "attribute %0 can only be applied to @protocol definitions, not forward declarations">;
+// def err_objc_attr_protocol_requires_definition : Error<
+//   "attribute %0 can only be applied to @protocol definitions, not forward declarations">;
 
-def warn_ignored_objc_externally_retained : Warning<
-  "'objc_externally_retained' can only be applied to local variables "
-  "%select{of retainable type|with strong ownership}0">,
-  InGroup<IgnoredAttributes>;
+// def warn_ignored_objc_externally_retained : Warning<
+//   "'objc_externally_retained' can only be applied to local variables "
+//   "%select{of retainable type|with strong ownership}0">,
+//   InGroup<IgnoredAttributes>;
 
 // Function Parameter Semantic Analysis.
 def err_param_with_void_type : Error<"argument may not have 'void' type">;
@@ -5504,8 +5504,8 @@ def warn_init_list_constant_narrowing : Warning<
   InGroup<CXX11Narrowing>, DefaultIgnore;
 def note_init_list_narrowing_silence : Note<
   "insert an explicit cast to silence this issue">;
-def err_init_objc_class : Error<
-  "cannot initialize Objective-C class type %0">;
+// def err_init_objc_class : Error<
+//   "cannot initialize Objective-C class type %0">;
 def err_implicit_empty_initializer : Error<
   "initializer for aggregate with no elements requires explicit braces">;
 def err_bitfield_has_negative_width : Error<
@@ -5600,18 +5600,18 @@ def note_protected_by_if_available : Note<
   "jump enters controlled statement of if available">;
 def note_protected_by_vla : Note<
   "jump bypasses initialization of variable length array">;
-def note_protected_by_objc_fast_enumeration : Note<
-  "jump enters Objective-C fast enumeration loop">;
-def note_protected_by_objc_try : Note<
-  "jump bypasses initialization of @try block">;
-def note_protected_by_objc_catch : Note<
-  "jump bypasses initialization of @catch block">;
-def note_protected_by_objc_finally : Note<
-  "jump bypasses initialization of @finally block">;
-def note_protected_by_objc_synchronized : Note<
-  "jump bypasses initialization of @synchronized block">;
-def note_protected_by_objc_autoreleasepool : Note<
-  "jump bypasses auto release push of @autoreleasepool block">;
+// def note_protected_by_objc_fast_enumeration : Note<
+//   "jump enters Objective-C fast enumeration loop">;
+// def note_protected_by_objc_try : Note<
+//   "jump bypasses initialization of @try block">;
+// def note_protected_by_objc_catch : Note<
+//   "jump bypasses initialization of @catch block">;
+// def note_protected_by_objc_finally : Note<
+//   "jump bypasses initialization of @finally block">;
+// def note_protected_by_objc_synchronized : Note<
+//   "jump bypasses initialization of @synchronized block">;
+// def note_protected_by_objc_autoreleasepool : Note<
+//   "jump bypasses auto release push of @autoreleasepool block">;
 def note_protected_by_cxx_try : Note<
   "jump bypasses initialization of try block">;
 def note_protected_by_cxx_catch : Note<
@@ -5624,10 +5624,10 @@ def note_protected_by_seh_finally : Note<
   "jump bypasses initialization of __finally block">;
 def note_protected_by___block : Note<
   "jump bypasses setup of __block variable">;
-def note_protected_by_objc_strong_init : Note<
-  "jump bypasses initialization of __strong variable">;
-def note_protected_by_objc_weak_init : Note<
-  "jump bypasses initialization of __weak variable">;
+// def note_protected_by_objc_strong_init : Note<
+//   "jump bypasses initialization of __strong variable">;
+// def note_protected_by_objc_weak_init : Note<
+//   "jump bypasses initialization of __weak variable">;
 def note_protected_by_non_trivial_c_struct_init : Note<
   "jump bypasses initialization of variable of non-trivial C struct type">;
 def note_enters_block_captures_cxx_obj : Note<
@@ -5651,14 +5651,14 @@ def note_exits_temporary_dtor : Note<
   "destructor">;
 def note_exits___block : Note<
   "jump exits scope of __block variable">;
-def note_exits_objc_try : Note<
-  "jump exits @try block">;
-def note_exits_objc_catch : Note<
-  "jump exits @catch block">;
-def note_exits_objc_finally : Note<
-  "jump exits @finally block">;
-def note_exits_objc_synchronized : Note<
-  "jump exits @synchronized block">;
+// def note_exits_objc_try : Note<
+//   "jump exits @try block">;
+// def note_exits_objc_catch : Note<
+//   "jump exits @catch block">;
+// def note_exits_objc_finally : Note<
+//   "jump exits @finally block">;
+// def note_exits_objc_synchronized : Note<
+//   "jump exits @synchronized block">;
 def note_exits_cxx_try : Note<
   "jump exits try block">;
 def note_exits_cxx_catch : Note<
@@ -5669,12 +5669,12 @@ def note_exits_seh_except : Note<
   "jump exits __except block">;
 def note_exits_seh_finally : Note<
   "jump exits __finally block">;
-def note_exits_objc_autoreleasepool : Note<
-  "jump exits autoreleasepool block">;
-def note_exits_objc_strong : Note<
-  "jump exits scope of __strong variable">;
-def note_exits_objc_weak : Note<
-  "jump exits scope of __weak variable">;
+// def note_exits_objc_autoreleasepool : Note<
+//   "jump exits autoreleasepool block">;
+// def note_exits_objc_strong : Note<
+//   "jump exits scope of __strong variable">;
+// def note_exits_objc_weak : Note<
+//   "jump exits scope of __weak variable">;
 def note_exits_block_captures_cxx_obj : Note<
   "jump exits lifetime of block which captures a destructible C++ object">;
 def note_exits_block_captures_strong : Note<
@@ -5736,8 +5736,8 @@ def ext_flexible_array_union_gnu : Extension<
 def err_flexible_array_not_at_end : Error<
   "flexible array member %0 with type %1 is not at the end of"
   " %select{struct|interface|union|class|enum}2">;
-def err_objc_variable_sized_type_not_at_end : Error<
-  "field %0 with variable sized type %1 is not at the end of class">;
+// def err_objc_variable_sized_type_not_at_end : Error<
+//   "field %0 with variable sized type %1 is not at the end of class">;
 def note_next_field_declaration : Note<
   "next field declaration is here">;
 def note_next_ivar_declaration : Note<
@@ -5815,16 +5815,16 @@ def err_arc_mismatched_cast : Error<
   " to %3 is disallowed with ARC">;
 def err_arc_nolifetime_behavior : Error<
   "explicit ownership qualifier on cast result has no effect">;
-def err_arc_objc_property_default_assign_on_object : Error<
-  "ARC forbids synthesizing a property of an Objective-C object "
-  "with unspecified ownership or storage attribute">;
+// def err_arc_objc_property_default_assign_on_object : Error<
+//   "ARC forbids synthesizing a property of an Objective-C object "
+//   "with unspecified ownership or storage attribute">;
 def err_arc_illegal_selector : Error<
   "ARC forbids use of %0 in a @selector">;
 def err_arc_illegal_method_def : Error<
   "ARC forbids %select{implementation|synthesis}0 of %1">;
-def warn_arc_strong_pointer_objc_pointer : Warning<
-  "method parameter of type %0 with no explicit ownership">,
-  InGroup<DiagGroup<"explicit-ownership-type">>, DefaultIgnore;
+// def warn_arc_strong_pointer_objc_pointer : Warning<
+//   "method parameter of type %0 with no explicit ownership">,
+//   InGroup<DiagGroup<"explicit-ownership-type">>, DefaultIgnore;
 
 } // end "ARC Restrictions" category
 
@@ -6029,8 +6029,8 @@ def ext_sizeof_alignof_function_type : Extension<
   "invalid application of '%0' to a function type">, InGroup<PointerArith>;
 def ext_sizeof_alignof_void_type : Extension<
   "invalid application of '%0' to a void type">, InGroup<PointerArith>;
-// def err_opencl_sizeof_alignof_type : Error<
-//   "invalid application of '%0' to a void type">;
+def err_opencl_sizeof_alignof_type : Error<
+  "invalid application of '%0' to a void type">;
 def err_sizeof_alignof_incomplete_or_sizeless_type : Error<
   "invalid application of '%0' to %select{an incomplete|sizeless}1 type %2">;
 def err_sizeof_alignof_function_type : Error<
@@ -6442,8 +6442,8 @@ def warn_taking_address_of_packed_member : Warning<
   "taking address of packed member %0 of class or structure %q1 may result in an unaligned pointer value">,
   InGroup<DiagGroup<"address-of-packed-member">>;
 
-def err_objc_object_assignment : Error<
-  "cannot assign to class object (%0 invalid)">;
+// def err_objc_object_assignment : Error<
+//   "cannot assign to class object (%0 invalid)">;
 def err_typecheck_invalid_operands : Error<
   "invalid operands to binary expression (%0 and %1)">;
 def note_typecheck_invalid_operands_converted : Note<
@@ -6677,34 +6677,34 @@ def err_invalid_property_name : Error<
   "%0 is not a valid property name (accessing an object of type %1)">;
 def err_getter_not_found : Error<
   "no getter method for read from property">;
-def err_objc_subscript_method_not_found : Error<
-  "expected method to %select{read|write}1 %select{dictionary|array}2 element not "
-  "found on object of type %0">;
-def err_objc_subscript_index_type : Error<
-  "method index parameter type %0 is not integral type">;
-def err_objc_subscript_key_type : Error<
-  "method key parameter type %0 is not object type">;
-def err_objc_subscript_dic_object_type : Error<
-  "method object parameter type %0 is not object type">;
-def err_objc_subscript_object_type : Error<
-  "cannot assign to this %select{dictionary|array}1 because assigning method's "
-  "2nd parameter of type %0 is not an Objective-C pointer type">;
-def err_objc_subscript_base_type : Error<
-  "%select{dictionary|array}1 subscript base type %0 is not an Objective-C object">;
-def err_objc_multiple_subscript_type_conversion : Error<
-  "indexing expression is invalid because subscript type %0 has "
-  "multiple type conversion functions">;
-def err_objc_subscript_type_conversion : Error<
-  "indexing expression is invalid because subscript type %0 is not an integral"
-  " or Objective-C pointer type">;
-def err_objc_subscript_pointer : Error<
-  "indexing expression is invalid because subscript type %0 is not an"
-  " Objective-C pointer">;
-def err_objc_indexing_method_result_type : Error<
-  "method for accessing %select{dictionary|array}1 element must have Objective-C"
-  " object return type instead of %0">;
-def err_objc_index_incomplete_class_type : Error<
-  "Objective-C index expression has incomplete class type %0">;
+// def err_objc_subscript_method_not_found : Error<
+//   "expected method to %select{read|write}1 %select{dictionary|array}2 element not "
+//   "found on object of type %0">;
+// def err_objc_subscript_index_type : Error<
+//   "method index parameter type %0 is not integral type">;
+// def err_objc_subscript_key_type : Error<
+//   "method key parameter type %0 is not object type">;
+// def err_objc_subscript_dic_object_type : Error<
+//   "method object parameter type %0 is not object type">;
+// def err_objc_subscript_object_type : Error<
+//   "cannot assign to this %select{dictionary|array}1 because assigning method's "
+//   "2nd parameter of type %0 is not an Objective-C pointer type">;
+// def err_objc_subscript_base_type : Error<
+//   "%select{dictionary|array}1 subscript base type %0 is not an Objective-C object">;
+// def err_objc_multiple_subscript_type_conversion : Error<
+//   "indexing expression is invalid because subscript type %0 has "
+//   "multiple type conversion functions">;
+// def err_objc_subscript_type_conversion : Error<
+//   "indexing expression is invalid because subscript type %0 is not an integral"
+//   " or Objective-C pointer type">;
+// def err_objc_subscript_pointer : Error<
+//   "indexing expression is invalid because subscript type %0 is not an"
+//   " Objective-C pointer">;
+// def err_objc_indexing_method_result_type : Error<
+//   "method for accessing %select{dictionary|array}1 element must have Objective-C"
+//   " object return type instead of %0">;
+// def err_objc_index_incomplete_class_type : Error<
+//   "Objective-C index expression has incomplete class type %0">;
 def err_illegal_container_subscripting_op : Error<
   "illegal operation on Objective-C container subscripting">;
 def err_property_not_found_forward_class : Error<
@@ -6741,8 +6741,8 @@ def err_nogetter_property_incdec : Error<
   "no getter method %1 for %select{increment|decrement}0 of property">;
 def err_no_subobject_property_setting : Error<
   "expression is not assignable">;
-def err_qualified_objc_access : Error<
-  "%select{property|instance variable}0 access cannot be qualified with '%1'">;
+// def err_qualified_objc_access : Error<
+//   "%select{property|instance variable}0 access cannot be qualified with '%1'">;
 
 def ext_freestanding_complex : Extension<
   "complex numbers are an extension in a freestanding C99 implementation">;
@@ -6789,41 +6789,41 @@ def err_bad_receiver_type : Error<"bad receiver type %0">;
 def err_incomplete_receiver_type : Error<"incomplete receiver type %0">;
 def err_unknown_receiver_suggest : Error<
   "unknown receiver %0; did you mean %1?">;
-def err_objc_throw_expects_object : Error<
-  "@throw requires an Objective-C object type (%0 invalid)">;
-def err_objc_synchronized_expects_object : Error<
-  "@synchronized requires an Objective-C object type (%0 invalid)">;
+// def err_objc_throw_expects_object : Error<
+//   "@throw requires an Objective-C object type (%0 invalid)">;
+// def err_objc_synchronized_expects_object : Error<
+//   "@synchronized requires an Objective-C object type (%0 invalid)">;
 def err_rethrow_used_outside_catch : Error<
   "@throw (rethrow) used outside of a @catch block">;
-def err_attribute_multiple_objc_gc : Error<
-  "multiple garbage collection attributes specified for type">;
-def err_catch_param_not_objc_type : Error<
-  "@catch parameter is not a pointer to an interface type">;
+// def err_attribute_multiple_objc_gc : Error<
+//   "multiple garbage collection attributes specified for type">;
+// def err_catch_param_not_objc_type : Error<
+//   "@catch parameter is not a pointer to an interface type">;
 def err_illegal_qualifiers_on_catch_parm : Error<
   "illegal qualifiers on @catch parameter">;
 def err_storage_spec_on_catch_parm : Error<
   "@catch parameter cannot have storage specifier '%0'">;
-def warn_register_objc_catch_parm : Warning<
-  "'register' storage specifier on @catch parameter will be ignored">;
-def err_qualified_objc_catch_parm : Error<
-  "@catch parameter declarator cannot be qualified">;
+// def warn_register_objc_catch_parm : Warning<
+//   "'register' storage specifier on @catch parameter will be ignored">;
+// def err_qualified_objc_catch_parm : Error<
+//   "@catch parameter declarator cannot be qualified">;
 // def warn_objc_pointer_cxx_catch_fragile : Warning<
 //   "cannot catch an exception thrown with @throw in C++ in the non-unified "
 //   "exception model">, InGroup<ObjCNonUnifiedException>;
-def err_objc_object_catch : Error<
-  "cannot catch an Objective-C object by value">;
-def err_incomplete_type_objc_at_encode : Error<
-  "'@encode' of incomplete type %0">;
-def warn_objc_circular_container : Warning<
-  "adding %0 to %1 might cause circular dependency in container">,
-  InGroup<DiagGroup<"objc-circular-container">>;
-def note_objc_circular_container_declared_here : Note<"%0 declared here">;
-def warn_objc_unsafe_perform_selector : Warning<
-  "%0 is incompatible with selectors that return a "
-  "%select{struct|union|vector}1 type">,
-  InGroup<DiagGroup<"objc-unsafe-perform-selector">>;
-def note_objc_unsafe_perform_selector_method_declared_here :  Note<
-  "method %0 that returns %1 declared here">;
+// def err_objc_object_catch : Error<
+//   "cannot catch an Objective-C object by value">;
+// def err_incomplete_type_objc_at_encode : Error<
+//   "'@encode' of incomplete type %0">;
+// def warn_objc_circular_container : Warning<
+//   "adding %0 to %1 might cause circular dependency in container">,
+//   InGroup<DiagGroup<"objc-circular-container">>;
+// def note_objc_circular_container_declared_here : Note<"%0 declared here">;
+// def warn_objc_unsafe_perform_selector : Warning<
+//   "%0 is incompatible with selectors that return a "
+//   "%select{struct|union|vector}1 type">,
+//   InGroup<DiagGroup<"objc-unsafe-perform-selector">>;
+// def note_objc_unsafe_perform_selector_method_declared_here :  Note<
+//   "method %0 that returns %1 declared here">;
 def err_attribute_arm_builtin_alias : Error<
   "'__clang_arm_builtin_alias' attribute can only be applied to an ARM builtin">;
 def err_attribute_arm_mve_polymorphism : Error<
@@ -7123,8 +7123,8 @@ def warn_exception_caught_by_earlier_handler : Warning<
 def note_previous_exception_handler : Note<"for type %0">;
 def err_exceptions_disabled : Error<
   "cannot use '%0' with exceptions disabled">;
-def err_objc_exceptions_disabled : Error<
-  "cannot use '%0' with Objective-C exceptions disabled">;
+// def err_objc_exceptions_disabled : Error<
+//   "cannot use '%0' with Objective-C exceptions disabled">;
 def warn_throw_in_noexcept_func : Warning<
   "%0 has a non-throwing exception specification but can still throw">,
   InGroup<Exceptions>;
@@ -8077,18 +8077,18 @@ def warn_non_pod_vararg_with_format_string : Warning<
   "%select{function|block|method|constructor}2; expected type from format "
   "string was %3">, InGroup<NonPODVarargs>, DefaultError;
 // The arguments to this diagnostic should match the warning above.
-def err_cannot_pass_objc_interface_to_vararg_format : Error<
-  "cannot pass object with interface type %1 by value to variadic "
-  "%select{function|block|method|constructor}2; expected type from format "
-  "string was %3">;
+// def err_cannot_pass_objc_interface_to_vararg_format : Error<
+//   "cannot pass object with interface type %1 by value to variadic "
+//   "%select{function|block|method|constructor}2; expected type from format "
+//   "string was %3">;
 def err_cannot_pass_non_trivial_c_struct_to_vararg : Error<
   "cannot pass non-trivial C object of type %0 by value to variadic "
   "%select{function|block|method|constructor}1">;
 
 
-def err_cannot_pass_objc_interface_to_vararg : Error<
-  "cannot pass object with interface type %0 by value through variadic "
-  "%select{function|block|method|constructor}1">;
+// def err_cannot_pass_objc_interface_to_vararg : Error<
+//   "cannot pass object with interface type %0 by value through variadic "
+//   "%select{function|block|method|constructor}1">;
 def warn_cannot_pass_non_pod_arg_to_vararg : Warning<
   "cannot pass object of %select{non-POD|non-trivial}0 type %1 through variadic"
   " %select{function|block|method|constructor}2; call will abort at runtime">,
@@ -8891,15 +8891,15 @@ def warn_format_P_no_precision : Warning<
 def warn_printf_ignored_flag: Warning<
   "flag '%0' is ignored when flag '%1' is present">,
   InGroup<Format>;
-def warn_printf_empty_objc_flag: Warning<
-  "missing object format flag">,
-  InGroup<Format>;
+// def warn_printf_empty_objc_flag: Warning<
+//   "missing object format flag">,
+//   InGroup<Format>;
 // def warn_printf_ObjCflags_without_ObjCConversion: Warning<
 //   "object format flags cannot be used with '%0' conversion specifier">,
 //   InGroup<Format>;
-def warn_printf_invalid_objc_flag: Warning<
-    "'%0' is not a valid object format flag">,
-    InGroup<Format>;
+// def warn_printf_invalid_objc_flag: Warning<
+//     "'%0' is not a valid object format flag">,
+//     InGroup<Format>;
 def warn_scanf_scanlist_incomplete : Warning<
   "no closing ']' for '%%[' in scanf format string">,
   InGroup<Format>;
@@ -9431,8 +9431,8 @@ def err_decimal_unsupported : Error<
   "GNU decimal type extension not supported">;
 def err_missing_type_specifier : Error<
   "C++ requires a type specifier for all declarations">;
-def err_objc_array_of_interfaces : Error<
-  "array of interface %0 is invalid (probably should be an array of pointers)">;
+// def err_objc_array_of_interfaces : Error<
+//   "array of interface %0 is invalid (probably should be an array of pointers)">;
 def ext_c99_array_usage : Extension<
   "%select{qualifier in |static |}0array size %select{||'[*] '}0is a C99 "
   "feature">, InGroup<C99>;
@@ -9712,34 +9712,34 @@ def err_opencl_extern_block_declaration : Error<
 def err_opencl_block_ref_block : Error<
   "cannot refer to a block inside block">;
 
-// // OpenCL v2.0 s6.13.9 - Address space qualifier functions.
-// def err_opencl_builtin_to_addr_arg_num : Error<
-//   "invalid number of arguments to function: %0">;
-// def err_opencl_builtin_to_addr_invalid_arg : Error<
-//   "invalid argument %0 to function: %1, expecting a generic pointer argument">;
+// OpenCL v2.0 s6.13.9 - Address space qualifier functions.
+def err_opencl_builtin_to_addr_arg_num : Error<
+  "invalid number of arguments to function: %0">;
+def err_opencl_builtin_to_addr_invalid_arg : Error<
+   "invalid argument %0 to function: %1, expecting a generic pointer argument">;
 
-// // OpenCL v2.0 s6.13.17 Enqueue kernel restrictions.
-// def err_opencl_enqueue_kernel_incorrect_args : Error<
-//   "illegal call to enqueue_kernel, incorrect argument types">;
-// def err_opencl_enqueue_kernel_local_size_args : Error<
-//   "mismatch in number of block parameters and local size arguments passed">;
-// def err_opencl_enqueue_kernel_invalid_local_size_type : Error<
-//   "illegal call to enqueue_kernel, parameter needs to be specified as integer type">;
-// def err_opencl_enqueue_kernel_blocks_non_local_void_args : Error<
-//   "blocks used in enqueue_kernel call are expected to have parameters of type 'local void*'">;
-// def err_opencl_enqueue_kernel_blocks_no_args : Error<
-//   "blocks with parameters are not accepted in this prototype of enqueue_kernel call">;
+// OpenCL v2.0 s6.13.17 Enqueue kernel restrictions.
+def err_opencl_enqueue_kernel_incorrect_args : Error<
+  "illegal call to enqueue_kernel, incorrect argument types">;
+def err_opencl_enqueue_kernel_local_size_args : Error<
+  "mismatch in number of block parameters and local size arguments passed">;
+def err_opencl_enqueue_kernel_invalid_local_size_type : Error<
+  "illegal call to enqueue_kernel, parameter needs to be specified as integer type">;
+def err_opencl_enqueue_kernel_blocks_non_local_void_args : Error<
+  "blocks used in enqueue_kernel call are expected to have parameters of type 'local void*'">;
+def err_opencl_enqueue_kernel_blocks_no_args : Error<
+  "blocks with parameters are not accepted in this prototype of enqueue_kernel call">;
 
-// def err_opencl_builtin_expected_type : Error<
-//   "illegal call to %0, expected %1 argument type">;
+def err_opencl_builtin_expected_type : Error<
+  "illegal call to %0, expected %1 argument type">;
 
-// // OpenCL v2.2 s2.1.2.3 - Vector Component Access
-// def ext_opencl_ext_vector_type_rgba_selector: ExtWarn<
-//   "vector component name '%0' is an OpenCL version 2.2 feature">,
-//   InGroup<OpenCLUnsupportedRGBA>;
+// OpenCL v2.2 s2.1.2.3 - Vector Component Access
+def ext_opencl_ext_vector_type_rgba_selector: ExtWarn<
+  "vector component name '%0' is an OpenCL version 2.2 feature">,
+  InGroup<OpenCLUnsupportedRGBA>;
 
-// def err_openclcxx_placement_new : Error<
-//   "use of placement new requires explicit declaration">;
+def err_openclcxx_placement_new : Error<
+  "use of placement new requires explicit declaration">;
 
 // MIG routine annotations.
 def warn_mig_server_routine_does_not_return_kern_return_t : Warning<
@@ -9747,590 +9747,590 @@ def warn_mig_server_routine_does_not_return_kern_return_t : Warning<
   InGroup<IgnoredAttributes>;
 } // end of sema category
 
-// let CategoryName = "OpenMP Issue" in {
-// // OpenMP support.
-// def err_omp_expected_var_arg : Error<
-//   "%0 is not a global variable, static local variable or static data member">;
-// def err_omp_expected_var_arg_suggest : Error<
-//   "%0 is not a global variable, static local variable or static data member; "
-//   "did you mean %1">;
-// def err_omp_global_var_arg : Error<
-//   "arguments of '#pragma omp %0' must have %select{global storage|static storage duration}1">;
-// def err_omp_ref_type_arg : Error<
-//   "arguments of '#pragma omp %0' cannot be of reference type %1">;
-// def err_omp_region_not_file_context : Error<
-//   "directive must be at file or namespace scope">;
-// def err_omp_var_scope : Error<
-//   "'#pragma omp %0' must appear in the scope of the %q1 variable declaration">;
-// def err_omp_var_used : Error<
-//   "'#pragma omp %0' must precede all references to variable %q1">;
-// def err_omp_var_thread_local : Error<
-//   "variable %0 cannot be threadprivate because it is %select{thread-local|a global named register variable}1">;
-// def err_omp_private_incomplete_type : Error<
-//   "a private variable with incomplete type %0">;
-// def err_omp_firstprivate_incomplete_type : Error<
-//   "a firstprivate variable with incomplete type %0">;
-// def err_omp_lastprivate_incomplete_type : Error<
-//   "a lastprivate variable with incomplete type %0">;
-// def err_omp_reduction_incomplete_type : Error<
-//   "a reduction list item with incomplete type %0">;
-// def err_omp_unexpected_clause_value : Error<
-//   "expected %0 in OpenMP clause '%1'">;
-// def err_omp_expected_var_name_member_expr : Error<
-//   "expected variable name%select{| or data member of current class}0">;
-// def err_omp_expected_var_name_member_expr_or_array_item : Error<
-//   "expected variable name%select{|, data member of current class}0, array element or array section">;
-// def err_omp_expected_addressable_lvalue_or_array_item : Error<
-//   "expected addressable lvalue expression, array element%select{ or array section|, array section or array shaping expression}0%select{| of non 'omp_depend_t' type}1">;
-// def err_omp_expected_named_var_member_or_array_expression: Error<
-//   "expected expression containing only member accesses and/or array sections based on named variables">;
-// def err_omp_bit_fields_forbidden_in_clause : Error<
-//   "bit fields cannot be used to specify storage in a '%0' clause">;
-// def err_array_section_does_not_specify_contiguous_storage : Error<
-//   "array section does not specify contiguous storage">;
-// def err_omp_union_type_not_allowed : Error<
-//   "mapping of union members is not allowed">;
-// def err_omp_expected_access_to_data_field : Error<
-//   "expected access to data field">;
-// def err_omp_multiple_array_items_in_map_clause : Error<
-//   "multiple array elements associated with the same variable are not allowed in map clauses of the same construct">;
-// def err_omp_duplicate_map_type_modifier : Error<
-//   "same map type modifier has been specified more than once">;
-// def err_omp_pointer_mapped_along_with_derived_section : Error<
-//   "pointer cannot be mapped along with a section derived from itself">;
-// def err_omp_original_storage_is_shared_and_does_not_contain : Error<
-//   "original storage of expression in data environment is shared but data environment do not fully contain mapped expression storage">;
-// def err_omp_same_pointer_dereferenced : Error<
-//   "same pointer dereferenced in multiple different ways in map clause expressions">;
-// def note_omp_task_predetermined_firstprivate_here : Note<
-//   "predetermined as a firstprivate in a task construct here">;
-// def err_omp_threadprivate_incomplete_type : Error<
-//   "threadprivate variable with incomplete type %0">;
-// def err_omp_no_dsa_for_variable : Error<
-//   "variable %0 must have explicitly specified data sharing attributes">;
-// def err_omp_defaultmap_no_attr_for_variable : Error<
-//   "variable %0 must have explicitly specified data sharing attributes, data mapping attributes, or in an is_device_ptr clause">;
-// def note_omp_default_dsa_none : Note<
-//   "explicit data sharing attribute requested here">;
-// def note_omp_defaultmap_attr_none : Note<
-//   "explicit data sharing attribute, data mapping attribute, or is_device_ptr clause requested here">;
-// def err_omp_wrong_dsa : Error<
-//   "%0 variable cannot be %1">;
-// def err_omp_variably_modified_type_not_supported : Error<
-//   "arguments of OpenMP clause '%0' in '#pragma omp %2' directive cannot be of variably-modified type %1">;
-// def note_omp_explicit_dsa : Note<
-//   "defined as %0">;
-// def note_omp_predetermined_dsa : Note<
-//   "%select{static data member is predetermined as shared|"
-//   "variable with static storage duration is predetermined as shared|"
-//   "loop iteration variable is predetermined as private|"
-//   "loop iteration variable is predetermined as linear|"
-//   "loop iteration variable is predetermined as lastprivate|"
-//   "constant variable is predetermined as shared|"
-//   "global variable is predetermined as shared|"
-//   "non-shared variable in a task construct is predetermined as firstprivate|"
-//   "variable with automatic storage duration is predetermined as private}0"
-//   "%select{|; perhaps you forget to enclose 'omp %2' directive into a parallel or another task region?}1">;
-// def note_omp_implicit_dsa : Note<
-//   "implicitly determined as %0">;
-// def err_omp_loop_var_dsa : Error<
-//   "loop iteration variable in the associated loop of 'omp %1' directive may not be %0, predetermined as %2">;
-// def err_omp_not_for : Error<
-//   "%select{statement after '#pragma omp %1' must be a for loop|"
-//   "expected %2 for loops after '#pragma omp %1'%select{|, but found only %4}3}0">;
-// def note_omp_collapse_ordered_expr : Note<
-//   "as specified in %select{'collapse'|'ordered'|'collapse' and 'ordered'}0 clause%select{||s}0">;
-// def err_omp_negative_expression_in_clause : Error<
-//   "argument to '%0' clause must be a %select{non-negative|strictly positive}1 integer value">;
-// def err_omp_not_integral : Error<
-//   "expression must have integral or unscoped enumeration "
-//   "type, not %0">;
-// def err_omp_threadprivate_in_target : Error<
-//   "threadprivate variables cannot be used in target constructs">;
-// def err_omp_incomplete_type : Error<
-//   "expression has incomplete class type %0">;
-// def err_omp_explicit_conversion : Error<
-//   "expression requires explicit conversion from %0 to %1">;
-// def note_omp_conversion_here : Note<
-//   "conversion to %select{integral|enumeration}0 type %1 declared here">;
-// def err_omp_ambiguous_conversion : Error<
-//   "ambiguous conversion from type %0 to an integral or unscoped "
-//   "enumeration type">;
-// def err_omp_iterator_not_integral_or_pointer : Error<
-//   "expected integral or pointer type as the iterator-type, not %0">;
-// def err_omp_iterator_step_not_integral : Error<
-//   "iterator step expression %0 is not the integral expression">;
-// def err_omp_iterator_step_constant_zero : Error<
-//   "iterator step expression %0 evaluates to 0">;
-// def err_omp_required_access : Error<
-//   "%0 variable must be %1">;
-// def err_omp_const_variable : Error<
-//   "const-qualified variable cannot be %0">;
-// def err_omp_const_not_mutable_variable : Error<
-//   "const-qualified variable without mutable fields cannot be %0">;
-// def err_omp_const_list_item : Error<
-//   "const-qualified list item cannot be %0">;
-// def err_omp_linear_incomplete_type : Error<
-//   "a linear variable with incomplete type %0">;
-// def err_omp_linear_expected_int_or_ptr : Error<
-//   "argument of a linear clause should be of integral or pointer "
-//   "type, not %0">;
-// def warn_omp_linear_step_zero : Warning<
-//   "zero linear step (%0 %select{|and other variables in clause }1should probably be const)">,
-//   InGroup<OpenMPClauses>;
-// def warn_omp_alignment_not_power_of_two : Warning<
-//   "aligned clause will be ignored because the requested alignment is not a power of 2">,
-//   InGroup<OpenMPClauses>;
-// def err_omp_invalid_target_decl : Error<
-//   "%0 used in declare target directive is not a variable or a function name">;
-// def err_omp_declare_target_multiple : Error<
-//   "%0 appears multiple times in clauses on the same declare target directive">;
-// def err_omp_declare_target_to_and_link : Error<
-//   "%0 must not appear in both clauses 'to' and 'link'">;
-// def warn_omp_not_in_target_context : Warning<
-//   "declaration is not declared in any declare target region">,
-//   InGroup<OpenMPTarget>;
-// def err_omp_function_in_link_clause : Error<
-//   "function name is not allowed in 'link' clause">;
-// def err_omp_aligned_expected_array_or_ptr : Error<
-//   "argument of aligned clause should be array"
-//   "%select{ or pointer|, pointer, reference to array or reference to pointer}1"
-//   ", not %0">;
-// def err_omp_used_in_clause_twice : Error<
-//   "%select{a variable|a parameter|'this'}0 cannot appear in more than one %1 clause">;
-// def err_omp_local_var_in_threadprivate_init : Error<
-//   "variable with local storage in initial value of threadprivate variable">;
-// def err_omp_loop_not_canonical_init : Error<
-//   "initialization clause of OpenMP for loop is not in canonical form "
-//   "('var = init' or 'T var = init')">;
-// def ext_omp_loop_not_canonical_init : ExtWarn<
-//   "initialization clause of OpenMP for loop is not in canonical form "
-//   "('var = init' or 'T var = init')">, InGroup<OpenMPLoopForm>;
-// def err_omp_loop_not_canonical_cond : Error<
-//   "condition of OpenMP for loop must be a relational comparison "
-//   "('<', '<=', '>', %select{or '>='|'>=', or '!='}0) of loop variable %1">;
-// def err_omp_loop_not_canonical_incr : Error<
-//   "increment clause of OpenMP for loop must perform simple addition "
-//   "or subtraction on loop variable %0">;
-// def err_omp_loop_variable_type : Error<
-//   "variable must be of integer or %select{pointer|random access iterator}0 type">;
-// def err_omp_loop_incr_not_compatible : Error<
-//   "increment expression must cause %0 to %select{decrease|increase}1 "
-//   "on each iteration of OpenMP for loop">;
-// def note_omp_loop_cond_requres_compatible_incr : Note<
-//   "loop step is expected to be %select{negative|positive}0 due to this condition">;
-// def err_omp_loop_diff_cxx : Error<
-//   "could not calculate number of iterations calling 'operator-' with "
-//   "upper and lower loop bounds">;
-// def err_omp_loop_cannot_use_stmt : Error<
-//   "'%0' statement cannot be used in OpenMP for loop">;
-// def err_omp_simd_region_cannot_use_stmt : Error<
-//   "'%0' statement cannot be used in OpenMP simd region">;
-// def warn_omp_loop_64_bit_var : Warning<
-//   "OpenMP loop iteration variable cannot have more than 64 bits size and will be narrowed">,
-//   InGroup<OpenMPLoopForm>;
-// def err_omp_unknown_reduction_identifier : Error<
-//   "incorrect reduction identifier, expected one of '+', '-', '*', '&', '|', '^', "
-//   "'&&', '||', 'min' or 'max' or declare reduction for type %0">;
-// def err_omp_not_resolved_reduction_identifier : Error<
-//   "unable to resolve declare reduction construct for type %0">;
-// def err_omp_reduction_ref_type_arg : Error<
-//   "argument of OpenMP clause '%0' must reference the same object in all threads">;
-// def err_omp_clause_not_arithmetic_type_arg : Error<
-//   "arguments of OpenMP clause '%0' for 'min' or 'max' must be of %select{scalar|arithmetic}1 type">;
-// def err_omp_clause_floating_type_arg : Error<
-//   "arguments of OpenMP clause '%0' with bitwise operators cannot be of floating type">;
-// def err_omp_once_referenced : Error<
-//   "variable can appear only once in OpenMP '%0' clause">;
-// def err_omp_once_referenced_in_target_update : Error<
-//   "variable can appear only once in OpenMP 'target update' construct">;
-// def note_omp_referenced : Note<
-//   "previously referenced here">;
-// def err_omp_reduction_in_task : Error<
-//   "reduction variables may not be accessed in an explicit task">;
-// def err_omp_reduction_id_not_compatible : Error<
-//   "list item of type %0 is not valid for specified reduction operation: unable to provide default initialization value">;
-// def err_omp_reduction_identifier_mismatch : Error<
-//   "in_reduction variable must have the same reduction operation as in a task_reduction clause">;
-// def note_omp_previous_reduction_identifier : Note<
-//   "previously marked as task_reduction with different reduction operation">;
-// def err_omp_prohibited_region : Error<
-//   "region cannot be%select{| closely}0 nested inside '%1' region"
-//   "%select{|; perhaps you forget to enclose 'omp %3' directive into a parallel region?|"
-//   "; perhaps you forget to enclose 'omp %3' directive into a for or a parallel for region with 'ordered' clause?|"
-//   "; perhaps you forget to enclose 'omp %3' directive into a target region?|"
-//   "; perhaps you forget to enclose 'omp %3' directive into a teams region?|"
-//   "; perhaps you forget to enclose 'omp %3' directive into a for, simd, for simd, parallel for, or parallel for simd region?}2">;
-// def err_omp_prohibited_region_simd : Error<
-//   "OpenMP constructs may not be nested inside a simd region%select{| except for ordered simd, simd, scan, or atomic directive}0">;
-// def err_omp_prohibited_region_atomic : Error<
-//   "OpenMP constructs may not be nested inside an atomic region">;
-// def err_omp_prohibited_region_critical_same_name : Error<
-//   "cannot nest 'critical' regions having the same name %0">;
-// def note_omp_previous_critical_region : Note<
-//   "previous 'critical' region starts here">;
-// def err_omp_several_directives_in_region : Error<
-//   "exactly one '%0' directive must appear in the loop body of an enclosing directive">;
-// def note_omp_previous_directive : Note<
-//   "previous '%0' directive used here">;
-// def err_omp_sections_not_compound_stmt : Error<
-//   "the statement for '#pragma omp sections' must be a compound statement">;
-// def err_omp_parallel_sections_not_compound_stmt : Error<
-//   "the statement for '#pragma omp parallel sections' must be a compound statement">;
-// def err_omp_orphaned_section_directive : Error<
-//   "%select{orphaned 'omp section' directives are prohibited, it|'omp section' directive}0"
-//   " must be closely nested to a sections region%select{|, not a %1 region}0">;
-// def err_omp_sections_substmt_not_section : Error<
-//   "statement in 'omp sections' directive must be enclosed into a section region">;
-// def err_omp_parallel_sections_substmt_not_section : Error<
-//   "statement in 'omp parallel sections' directive must be enclosed into a section region">;
-// def err_omp_parallel_reduction_in_task_firstprivate : Error<
-//   "argument of a reduction clause of a %0 construct must not appear in a firstprivate clause on a task construct">;
-// def err_omp_atomic_read_not_expression_statement : Error<
-//   "the statement for 'atomic read' must be an expression statement of form 'v = x;',"
-//   " where v and x are both lvalue expressions with scalar type">;
-// def note_omp_atomic_read_write: Note<
-//   "%select{expected an expression statement|expected built-in assignment operator|expected expression of scalar type|expected lvalue expression}0">;
-// def err_omp_atomic_write_not_expression_statement : Error<
-//   "the statement for 'atomic write' must be an expression statement of form 'x = expr;',"
-//   " where x is a lvalue expression with scalar type">;
-// def err_omp_atomic_update_not_expression_statement : Error<
-//   "the statement for 'atomic update' must be an expression statement of form '++x;', '--x;', 'x++;', 'x--;', 'x binop= expr;', 'x = x binop expr' or 'x = expr binop x',"
-//   " where x is an l-value expression with scalar type">;
-// def err_omp_atomic_not_expression_statement : Error<
-//   "the statement for 'atomic' must be an expression statement of form '++x;', '--x;', 'x++;', 'x--;', 'x binop= expr;', 'x = x binop expr' or 'x = expr binop x',"
-//   " where x is an l-value expression with scalar type">;
-// def note_omp_atomic_update: Note<
-//   "%select{expected an expression statement|expected built-in binary or unary operator|expected unary decrement/increment operation|"
-//   "expected expression of scalar type|expected assignment expression|expected built-in binary operator|"
-//   "expected one of '+', '*', '-', '/', '&', '^', '%|', '<<', or '>>' built-in operations|expected in right hand side of expression}0">;
-// def err_omp_atomic_capture_not_expression_statement : Error<
-//   "the statement for 'atomic capture' must be an expression statement of form 'v = ++x;', 'v = --x;', 'v = x++;', 'v = x--;', 'v = x binop= expr;', 'v = x = x binop expr' or 'v = x = expr binop x',"
-//   " where x and v are both l-value expressions with scalar type">;
-// def err_omp_atomic_capture_not_compound_statement : Error<
-//   "the statement for 'atomic capture' must be a compound statement of form '{v = x; x binop= expr;}', '{x binop= expr; v = x;}',"
-//   " '{v = x; x = x binop expr;}', '{v = x; x = expr binop x;}', '{x = x binop expr; v = x;}', '{x = expr binop x; v = x;}' or '{v = x; x = expr;}',"
-//   " '{v = x; x++;}', '{v = x; ++x;}', '{++x; v = x;}', '{x++; v = x;}', '{v = x; x--;}', '{v = x; --x;}', '{--x; v = x;}', '{x--; v = x;}'"
-//   " where x is an l-value expression with scalar type">;
-// def note_omp_atomic_capture: Note<
-//   "%select{expected assignment expression|expected compound statement|expected exactly two expression statements|expected in right hand side of the first expression}0">;
-// def err_omp_atomic_several_clauses : Error<
-//   "directive '#pragma omp atomic' cannot contain more than one 'read', 'write', 'update' or 'capture' clause">;
-// def err_omp_several_mem_order_clauses : Error<
-//   "directive '#pragma omp %0' cannot contain more than one %select{'seq_cst', 'relaxed', |}1'acq_rel', 'acquire' or 'release' clause">;
-// def err_omp_atomic_incompatible_mem_order_clause : Error<
-//   "directive '#pragma omp atomic%select{ %0|}1' cannot be used with '%2' clause">;
-// def note_omp_previous_mem_order_clause : Note<
-//   "'%0' clause used here">;
-// def err_omp_target_contains_not_only_teams : Error<
-//   "target construct with nested teams region contains statements outside of the teams construct">;
-// def note_omp_nested_teams_construct_here : Note<
-//   "nested teams construct here">;
-// def note_omp_nested_statement_here : Note<
-//   "%select{statement|directive}0 outside teams construct here">;
-// def err_omp_single_copyprivate_with_nowait : Error<
-//   "the 'copyprivate' clause must not be used with the 'nowait' clause">;
-// def note_omp_nowait_clause_here : Note<
-//   "'nowait' clause is here">;
-// def err_omp_single_decl_in_declare_simd_variant : Error<
-//   "single declaration is expected after 'declare %select{simd|variant}0' directive">;
-// def err_omp_function_expected : Error<
-//   "'#pragma omp declare %select{simd|variant}0' can only be applied to functions">;
-// def err_omp_wrong_cancel_region : Error<
-//   "one of 'for', 'parallel', 'sections' or 'taskgroup' is expected">;
-// def err_omp_parent_cancel_region_nowait : Error<
-//   "parent region for 'omp %select{cancellation point|cancel}0' construct cannot be nowait">;
-// def err_omp_parent_cancel_region_ordered : Error<
-//   "parent region for 'omp %select{cancellation point|cancel}0' construct cannot be ordered">;
-// def err_omp_reduction_wrong_type : Error<"reduction type cannot be %select{qualified with 'const', 'volatile' or 'restrict'|a function|a reference|an array}0 type">;
-// def err_omp_wrong_var_in_declare_reduction : Error<"only %select{'omp_priv' or 'omp_orig'|'omp_in' or 'omp_out'}0 variables are allowed in %select{initializer|combiner}0 expression">;
-// def err_omp_declare_reduction_redefinition : Error<"redefinition of user-defined reduction for type %0">;
-// def err_omp_mapper_wrong_type : Error<
-//   "mapper type must be of struct, union or class type">;
-// def err_omp_declare_mapper_wrong_var : Error<
-//   "only variable %0 is allowed in map clauses of this 'omp declare mapper' directive">;
-// def err_omp_declare_mapper_redefinition : Error<
-//   "redefinition of user-defined mapper for type %0 with name %1">;
-// def err_omp_invalid_mapper: Error<
-//   "cannot find a valid user-defined mapper for type %0 with name %1">;
-// def err_omp_array_section_use : Error<"OpenMP array section is not allowed here">;
-// def err_omp_array_shaping_use : Error<"OpenMP array shaping operation is not allowed here">;
-// def err_omp_iterator_use : Error<"OpenMP iterator is not allowed here">;
-// def err_omp_typecheck_section_value : Error<
-//   "subscripted value is not an array or pointer">;
-// def err_omp_typecheck_section_not_integer : Error<
-//   "array section %select{lower bound|length}0 is not an integer">;
-// def err_omp_typecheck_shaping_not_integer : Error<
-//   "array shaping operation dimension is not an integer">;
-// def err_omp_shaping_dimension_not_positive : Error<
-//   "array shaping dimension is evaluated to a non-positive value %0">;
-// def err_omp_section_function_type : Error<
-//   "section of pointer to function type %0">;
-// def warn_omp_section_is_char : Warning<"array section %select{lower bound|length}0 is of type 'char'">,
-//   InGroup<CharSubscript>, DefaultIgnore;
-// def err_omp_section_incomplete_type : Error<
-//   "section of pointer to incomplete type %0">;
-// def err_omp_section_not_subset_of_array : Error<
-//   "array section must be a subset of the original array">;
-// def err_omp_section_length_negative : Error<
-//   "section length is evaluated to a negative value %0">;
-// def err_omp_section_stride_non_positive : Error<
-//   "section stride is evaluated to a non-positive value %0">;
-// def err_omp_section_length_undefined : Error<
-//   "section length is unspecified and cannot be inferred because subscripted value is %select{not an array|an array of unknown bound}0">;
-// def err_omp_wrong_linear_modifier : Error<
-//   "expected %select{'val' modifier|one of 'ref', val' or 'uval' modifiers}0">;
-// def err_omp_wrong_linear_modifier_non_reference : Error<
-//   "variable of non-reference type %0 can be used only with 'val' modifier, but used with '%1'">;
-// def err_omp_wrong_simdlen_safelen_values : Error<
-//   "the value of 'simdlen' parameter must be less than or equal to the value of the 'safelen' parameter">;
-// def err_omp_wrong_if_directive_name_modifier : Error<
-//   "directive name modifier '%0' is not allowed for '#pragma omp %1'">;
-// def err_omp_no_more_if_clause : Error<
-//   "no more 'if' clause is allowed">;
-// def err_omp_unnamed_if_clause : Error<
-//   "expected%select{| one of}0 %1 directive name modifier%select{|s}0">;
-// def note_omp_previous_named_if_clause : Note<
-//   "previous clause with directive name modifier specified here">;
-// def err_omp_ordered_directive_with_param : Error<
-//   "'ordered' directive %select{without any clauses|with 'threads' clause}0 cannot be closely nested inside ordered region with specified parameter">;
-// def err_omp_ordered_directive_without_param : Error<
-//   "'ordered' directive with 'depend' clause cannot be closely nested inside ordered region without specified parameter">;
-// def note_omp_ordered_param : Note<
-//   "'ordered' clause%select{| with specified parameter}0">;
-// def err_omp_expected_base_var_name : Error<
-//   "expected variable name as a base of the array %select{subscript|section}0">;
-// def err_omp_map_shared_storage : Error<
-//   "variable already marked as mapped in current construct">;
-// def err_omp_invalid_map_type_for_directive : Error<
-//   "%select{map type '%1' is not allowed|map type must be specified}0 for '#pragma omp %2'">;
-// def err_omp_no_clause_for_directive : Error<
-//   "expected at least one %0 clause for '#pragma omp %1'">;
-// def err_omp_threadprivate_in_clause : Error<
-//   "threadprivate variables are not allowed in '%0' clause">;
-// def err_omp_wrong_ordered_loop_count : Error<
-//   "the parameter of the 'ordered' clause must be greater than or equal to the parameter of the 'collapse' clause">;
-// def note_collapse_loop_count : Note<
-//   "parameter of the 'collapse' clause">;
-// def err_omp_clauses_mutually_exclusive : Error<
-//   "'%0' and '%1' clause are mutually exclusive and may not appear on the same directive">;
-// def note_omp_previous_clause : Note<
-//   "'%0' clause is specified here">;
-// def err_omp_hint_clause_no_name : Error<
-//   "the name of the construct must be specified in presence of 'hint' clause">;
-// def err_omp_critical_with_hint : Error<
-//   "constructs with the same name must have a 'hint' clause with the same value">;
-// def note_omp_critical_hint_here : Note<
-//   "%select{|previous }0'hint' clause with value '%1'">;
-// def note_omp_critical_no_hint : Note<
-//   "%select{|previous }0directive with no 'hint' clause specified">;
-// def err_omp_depend_clause_thread_simd : Error<
-//   "'depend' clauses cannot be mixed with '%0' clause">;
-// def err_omp_depend_sink_expected_loop_iteration : Error<
-//   "expected%select{| %1}0 loop iteration variable">;
-// def err_omp_depend_sink_unexpected_expr : Error<
-//   "unexpected expression: number of expressions is larger than the number of associated loops">;
-// def err_omp_depend_sink_expected_plus_minus : Error<
-//   "expected '+' or '-' operation">;
-// def err_omp_depend_sink_source_not_allowed : Error<
-//   "'depend(%select{source|sink:vec}0)' clause%select{|s}0 cannot be mixed with 'depend(%select{sink:vec|source}0)' clause%select{s|}0">;
-// def err_omp_depend_zero_length_array_section_not_allowed : Error<
-//   "zero-length array section is not allowed in 'depend' clause">;
-// def err_omp_depend_sink_source_with_modifier : Error<
-//   "depend modifier cannot be used with 'sink' or 'source' depend type">;
-// def err_omp_depend_modifier_not_iterator : Error<
-//   "expected iterator specification as depend modifier">;
-// def err_omp_linear_ordered : Error<
-//   "'linear' clause cannot be specified along with 'ordered' clause with a parameter">;
-// def err_omp_unexpected_schedule_modifier : Error<
-//   "modifier '%0' cannot be used along with modifier '%1'">;
-// def err_omp_schedule_nonmonotonic_static : Error<
-//   "'nonmonotonic' modifier can only be specified with 'dynamic' or 'guided' schedule kind">;
-// def err_omp_simple_clause_incompatible_with_ordered : Error<
-//   "'%0' clause with '%1' modifier cannot be specified if an 'ordered' clause is specified">;
-// def err_omp_ordered_simd : Error<
-//   "'ordered' clause with a parameter can not be specified in '#pragma omp %0' directive">;
-// def err_omp_variable_in_given_clause_and_dsa : Error<
-//   "%0 variable cannot be in a %1 clause in '#pragma omp %2' directive">;
-// def err_omp_param_or_this_in_clause : Error<
-//   "expected reference to one of the parameters of function %0%select{| or 'this'}1">;
-// def err_omp_expected_uniform_param : Error<
-//   "expected a reference to a parameter specified in a 'uniform' clause">;
-// def err_omp_expected_int_param : Error<
-//   "expected a reference to an integer-typed parameter">;
-// def err_omp_at_least_one_motion_clause_required : Error<
-//   "expected at least one 'to' clause or 'from' clause specified to '#pragma omp target update'">;
-// def err_omp_usedeviceptr_not_a_pointer : Error<
-//   "expected pointer or reference to pointer in 'use_device_ptr' clause">;
-// def err_omp_argument_type_isdeviceptr : Error <
-//   "expected pointer, array, reference to pointer, or reference to array in 'is_device_ptr clause'">;
-// def warn_omp_nesting_simd : Warning<
-//   "OpenMP only allows an ordered construct with the simd clause nested in a simd construct">,
-//   InGroup<SourceUsesOpenMP>;
-// def err_omp_orphaned_device_directive : Error<
-//   "orphaned 'omp %0' directives are prohibited"
-//   "; perhaps you forget to enclose the directive into a "
-//   "%select{|||target |teams|for, simd, for simd, parallel for, or parallel for simd }1region?">;
-// def err_omp_reduction_non_addressable_expression : Error<
-//   "expected addressable reduction item for the task-based directives">;
-// def err_omp_reduction_with_nogroup : Error<
-//   "'reduction' clause cannot be used with 'nogroup' clause">;
-// def err_omp_reduction_vla_unsupported : Error<
-//   "cannot generate code for reduction on %select{|array section, which requires a }0variable length array">;
-// def err_omp_linear_distribute_var_non_loop_iteration : Error<
-//   "only loop iteration variables are allowed in 'linear' clause in distribute directives">;
-// def warn_omp_non_trivial_type_mapped : Warning<
-//   "Type %0 is not trivially copyable and not guaranteed to be mapped correctly">,
-//   InGroup<OpenMPMapping>;
-// def err_omp_requires_clause_redeclaration : Error <
-//   "Only one %0 clause can appear on a requires directive in a single translation unit">;
-// def note_omp_requires_previous_clause : Note <
-//   "%0 clause previously used here">;
-// def err_omp_directive_before_requires : Error <
-//   "'%0' region encountered before requires directive with '%1' clause">;
-// def note_omp_requires_encountered_directive : Note <
-//   "'%0' previously encountered here">;
-// def err_omp_invalid_scope : Error <
-//   "'#pragma omp %0' directive must appear only in file scope">;
-// def note_omp_invalid_length_on_this_ptr_mapping : Note <
-//   "expected length on mapping of 'this' array section expression to be '1'">;
-// def note_omp_invalid_lower_bound_on_this_ptr_mapping : Note <
-//   "expected lower bound on mapping of 'this' array section expression to be '0' or not specified">;
-// def note_omp_invalid_subscript_on_this_ptr_map : Note <
-//   "expected 'this' subscript expression on map clause to be 'this[0]'">;
-// def err_omp_invalid_map_this_expr : Error <
-//   "invalid 'this' expression on 'map' clause">;
-// def err_omp_implied_type_not_found : Error<
-//   "'%0' type not found; include <omp.h>">;
-// def err_omp_expected_omp_depend_t_lvalue : Error<
-//   "expected lvalue expression%select{ of 'omp_depend_t' type, not %1|}0">;
-// def err_omp_depobj_expected : Error<
-//   "expected depobj expression">;
-// def err_omp_depobj_single_clause_expected : Error<
-//   "exactly one of 'depend', 'destroy', or 'update' clauses is expected">;
-// def err_omp_scan_single_clause_expected : Error<
-//   "exactly one of 'inclusive' or 'exclusive' clauses is expected">;
-// def err_omp_inclusive_exclusive_not_reduction : Error<
-//   "the list item must appear in 'reduction' clause with the 'inscan' modifier "
-//   "of the parent directive">;
-// def err_omp_reduction_not_inclusive_exclusive : Error<
-//   "the inscan reduction list item must appear as a list item in an 'inclusive' or"
-//   " 'exclusive' clause on an inner 'omp scan' directive">;
-// def err_omp_wrong_inscan_reduction : Error<
-//   "'inscan' modifier can be used only in 'omp for', 'omp simd', 'omp for simd',"
-//   " 'omp parallel for', or 'omp parallel for simd' directive">;
-// def err_omp_inscan_reduction_expected : Error<
-//   "expected 'reduction' clause with the 'inscan' modifier">;
-// def note_omp_previous_inscan_reduction : Note<
-//   "'reduction' clause with 'inscan' modifier is used here">;
-// def err_omp_expected_predefined_allocator : Error<
-//   "expected one of the predefined allocators for the variables with the static "
-//   "storage: 'omp_default_mem_alloc', 'omp_large_cap_mem_alloc', "
-//   "'omp_const_mem_alloc', 'omp_high_bw_mem_alloc', 'omp_low_lat_mem_alloc', "
-//   "'omp_cgroup_mem_alloc', 'omp_pteam_mem_alloc' or 'omp_thread_mem_alloc'">;
-// def warn_omp_used_different_allocator : Warning<
-//   "allocate directive specifies %select{default|'%1'}0 allocator while "
-//   "previously used %select{default|'%3'}2">,
-//   InGroup<OpenMPClauses>;
-// def note_omp_previous_allocator : Note<
-//   "previous allocator is specified here">;
-// def err_expected_allocator_clause : Error<"expected an 'allocator' clause "
-//   "inside of the target region; provide an 'allocator' clause or use 'requires'"
-//   " directive with the 'dynamic_allocators' clause">;
-// def err_expected_allocator_expression : Error<"expected an allocator expression "
-//   "inside of the target region; provide an allocator expression or use 'requires'"
-//   " directive with the 'dynamic_allocators' clause">;
-// def warn_omp_allocate_thread_on_task_target_directive : Warning<
-//   "allocator with the 'thread' trait access has unspecified behavior on '%0' directive">,
-//   InGroup<OpenMPClauses>;
-// def err_omp_expected_private_copy_for_allocate : Error<
-//   "the referenced item is not found in any private clause on the same directive">;
-// def err_omp_stmt_depends_on_loop_counter : Error<
-//   "the loop %select{initializer|condition}0 expression depends on the current loop control variable">;
-// def err_omp_invariant_or_linear_dependency : Error<
-//   "expected loop invariant expression or '<invariant1> * %0 + <invariant2>' kind of expression">;
-// def err_omp_wrong_dependency_iterator_type : Error<
-//   "expected an integer or a pointer type of the outer loop counter '%0' for non-rectangular nests">;
+let CategoryName = "OpenMP Issue" in {
+// OpenMP support.
+def err_omp_expected_var_arg : Error<
+  "%0 is not a global variable, static local variable or static data member">;
+def err_omp_expected_var_arg_suggest : Error<
+  "%0 is not a global variable, static local variable or static data member; "
+  "did you mean %1">;
+def err_omp_global_var_arg : Error<
+  "arguments of '#pragma omp %0' must have %select{global storage|static storage duration}1">;
+def err_omp_ref_type_arg : Error<
+  "arguments of '#pragma omp %0' cannot be of reference type %1">;
+def err_omp_region_not_file_context : Error<
+  "directive must be at file or namespace scope">;
+def err_omp_var_scope : Error<
+  "'#pragma omp %0' must appear in the scope of the %q1 variable declaration">;
+def err_omp_var_used : Error<
+  "'#pragma omp %0' must precede all references to variable %q1">;
+def err_omp_var_thread_local : Error<
+  "variable %0 cannot be threadprivate because it is %select{thread-local|a global named register variable}1">;
+def err_omp_private_incomplete_type : Error<
+  "a private variable with incomplete type %0">;
+def err_omp_firstprivate_incomplete_type : Error<
+  "a firstprivate variable with incomplete type %0">;
+def err_omp_lastprivate_incomplete_type : Error<
+  "a lastprivate variable with incomplete type %0">;
+def err_omp_reduction_incomplete_type : Error<
+  "a reduction list item with incomplete type %0">;
+def err_omp_unexpected_clause_value : Error<
+  "expected %0 in OpenMP clause '%1'">;
+def err_omp_expected_var_name_member_expr : Error<
+  "expected variable name%select{| or data member of current class}0">;
+def err_omp_expected_var_name_member_expr_or_array_item : Error<
+  "expected variable name%select{|, data member of current class}0, array element or array section">;
+def err_omp_expected_addressable_lvalue_or_array_item : Error<
+  "expected addressable lvalue expression, array element%select{ or array section|, array section or array shaping expression}0%select{| of non 'omp_depend_t' type}1">;
+def err_omp_expected_named_var_member_or_array_expression: Error<
+  "expected expression containing only member accesses and/or array sections based on named variables">;
+def err_omp_bit_fields_forbidden_in_clause : Error<
+  "bit fields cannot be used to specify storage in a '%0' clause">;
+def err_array_section_does_not_specify_contiguous_storage : Error<
+  "array section does not specify contiguous storage">;
+def err_omp_union_type_not_allowed : Error<
+  "mapping of union members is not allowed">;
+def err_omp_expected_access_to_data_field : Error<
+  "expected access to data field">;
+def err_omp_multiple_array_items_in_map_clause : Error<
+  "multiple array elements associated with the same variable are not allowed in map clauses of the same construct">;
+def err_omp_duplicate_map_type_modifier : Error<
+  "same map type modifier has been specified more than once">;
+def err_omp_pointer_mapped_along_with_derived_section : Error<
+  "pointer cannot be mapped along with a section derived from itself">;
+def err_omp_original_storage_is_shared_and_does_not_contain : Error<
+  "original storage of expression in data environment is shared but data environment do not fully contain mapped expression storage">;
+def err_omp_same_pointer_dereferenced : Error<
+  "same pointer dereferenced in multiple different ways in map clause expressions">;
+def note_omp_task_predetermined_firstprivate_here : Note<
+  "predetermined as a firstprivate in a task construct here">;
+def err_omp_threadprivate_incomplete_type : Error<
+  "threadprivate variable with incomplete type %0">;
+def err_omp_no_dsa_for_variable : Error<
+  "variable %0 must have explicitly specified data sharing attributes">;
+def err_omp_defaultmap_no_attr_for_variable : Error<
+  "variable %0 must have explicitly specified data sharing attributes, data mapping attributes, or in an is_device_ptr clause">;
+def note_omp_default_dsa_none : Note<
+  "explicit data sharing attribute requested here">;
+def note_omp_defaultmap_attr_none : Note<
+  "explicit data sharing attribute, data mapping attribute, or is_device_ptr clause requested here">;
+def err_omp_wrong_dsa : Error<
+  "%0 variable cannot be %1">;
+def err_omp_variably_modified_type_not_supported : Error<
+  "arguments of OpenMP clause '%0' in '#pragma omp %2' directive cannot be of variably-modified type %1">;
+def note_omp_explicit_dsa : Note<
+  "defined as %0">;
+def note_omp_predetermined_dsa : Note<
+  "%select{static data member is predetermined as shared|"
+  "variable with static storage duration is predetermined as shared|"
+  "loop iteration variable is predetermined as private|"
+  "loop iteration variable is predetermined as linear|"
+  "loop iteration variable is predetermined as lastprivate|"
+  "constant variable is predetermined as shared|"
+  "global variable is predetermined as shared|"
+  "non-shared variable in a task construct is predetermined as firstprivate|"
+  "variable with automatic storage duration is predetermined as private}0"
+  "%select{|; perhaps you forget to enclose 'omp %2' directive into a parallel or another task region?}1">;
+def note_omp_implicit_dsa : Note<
+  "implicitly determined as %0">;
+def err_omp_loop_var_dsa : Error<
+  "loop iteration variable in the associated loop of 'omp %1' directive may not be %0, predetermined as %2">;
+def err_omp_not_for : Error<
+  "%select{statement after '#pragma omp %1' must be a for loop|"
+  "expected %2 for loops after '#pragma omp %1'%select{|, but found only %4}3}0">;
+def note_omp_collapse_ordered_expr : Note<
+  "as specified in %select{'collapse'|'ordered'|'collapse' and 'ordered'}0 clause%select{||s}0">;
+def err_omp_negative_expression_in_clause : Error<
+  "argument to '%0' clause must be a %select{non-negative|strictly positive}1 integer value">;
+def err_omp_not_integral : Error<
+  "expression must have integral or unscoped enumeration "
+  "type, not %0">;
+def err_omp_threadprivate_in_target : Error<
+  "threadprivate variables cannot be used in target constructs">;
+def err_omp_incomplete_type : Error<
+  "expression has incomplete class type %0">;
+def err_omp_explicit_conversion : Error<
+  "expression requires explicit conversion from %0 to %1">;
+def note_omp_conversion_here : Note<
+  "conversion to %select{integral|enumeration}0 type %1 declared here">;
+def err_omp_ambiguous_conversion : Error<
+  "ambiguous conversion from type %0 to an integral or unscoped "
+  "enumeration type">;
+def err_omp_iterator_not_integral_or_pointer : Error<
+  "expected integral or pointer type as the iterator-type, not %0">;
+def err_omp_iterator_step_not_integral : Error<
+  "iterator step expression %0 is not the integral expression">;
+def err_omp_iterator_step_constant_zero : Error<
+  "iterator step expression %0 evaluates to 0">;
+def err_omp_required_access : Error<
+  "%0 variable must be %1">;
+def err_omp_const_variable : Error<
+  "const-qualified variable cannot be %0">;
+def err_omp_const_not_mutable_variable : Error<
+  "const-qualified variable without mutable fields cannot be %0">;
+def err_omp_const_list_item : Error<
+  "const-qualified list item cannot be %0">;
+def err_omp_linear_incomplete_type : Error<
+  "a linear variable with incomplete type %0">;
+def err_omp_linear_expected_int_or_ptr : Error<
+  "argument of a linear clause should be of integral or pointer "
+  "type, not %0">;
+def warn_omp_linear_step_zero : Warning<
+  "zero linear step (%0 %select{|and other variables in clause }1should probably be const)">,
+  InGroup<OpenMPClauses>;
+def warn_omp_alignment_not_power_of_two : Warning<
+  "aligned clause will be ignored because the requested alignment is not a power of 2">,
+  InGroup<OpenMPClauses>;
+def err_omp_invalid_target_decl : Error<
+  "%0 used in declare target directive is not a variable or a function name">;
+def err_omp_declare_target_multiple : Error<
+  "%0 appears multiple times in clauses on the same declare target directive">;
+def err_omp_declare_target_to_and_link : Error<
+  "%0 must not appear in both clauses 'to' and 'link'">;
+def warn_omp_not_in_target_context : Warning<
+  "declaration is not declared in any declare target region">,
+  InGroup<OpenMPTarget>;
+def err_omp_function_in_link_clause : Error<
+  "function name is not allowed in 'link' clause">;
+def err_omp_aligned_expected_array_or_ptr : Error<
+  "argument of aligned clause should be array"
+  "%select{ or pointer|, pointer, reference to array or reference to pointer}1"
+  ", not %0">;
+def err_omp_used_in_clause_twice : Error<
+  "%select{a variable|a parameter|'this'}0 cannot appear in more than one %1 clause">;
+def err_omp_local_var_in_threadprivate_init : Error<
+  "variable with local storage in initial value of threadprivate variable">;
+def err_omp_loop_not_canonical_init : Error<
+  "initialization clause of OpenMP for loop is not in canonical form "
+  "('var = init' or 'T var = init')">;
+def ext_omp_loop_not_canonical_init : ExtWarn<
+  "initialization clause of OpenMP for loop is not in canonical form "
+  "('var = init' or 'T var = init')">, InGroup<OpenMPLoopForm>;
+def err_omp_loop_not_canonical_cond : Error<
+  "condition of OpenMP for loop must be a relational comparison "
+  "('<', '<=', '>', %select{or '>='|'>=', or '!='}0) of loop variable %1">;
+def err_omp_loop_not_canonical_incr : Error<
+  "increment clause of OpenMP for loop must perform simple addition "
+  "or subtraction on loop variable %0">;
+def err_omp_loop_variable_type : Error<
+  "variable must be of integer or %select{pointer|random access iterator}0 type">;
+def err_omp_loop_incr_not_compatible : Error<
+  "increment expression must cause %0 to %select{decrease|increase}1 "
+  "on each iteration of OpenMP for loop">;
+def note_omp_loop_cond_requres_compatible_incr : Note<
+  "loop step is expected to be %select{negative|positive}0 due to this condition">;
+def err_omp_loop_diff_cxx : Error<
+  "could not calculate number of iterations calling 'operator-' with "
+  "upper and lower loop bounds">;
+def err_omp_loop_cannot_use_stmt : Error<
+  "'%0' statement cannot be used in OpenMP for loop">;
+def err_omp_simd_region_cannot_use_stmt : Error<
+  "'%0' statement cannot be used in OpenMP simd region">;
+def warn_omp_loop_64_bit_var : Warning<
+  "OpenMP loop iteration variable cannot have more than 64 bits size and will be narrowed">,
+  InGroup<OpenMPLoopForm>;
+def err_omp_unknown_reduction_identifier : Error<
+  "incorrect reduction identifier, expected one of '+', '-', '*', '&', '|', '^', "
+  "'&&', '||', 'min' or 'max' or declare reduction for type %0">;
+def err_omp_not_resolved_reduction_identifier : Error<
+  "unable to resolve declare reduction construct for type %0">;
+def err_omp_reduction_ref_type_arg : Error<
+  "argument of OpenMP clause '%0' must reference the same object in all threads">;
+def err_omp_clause_not_arithmetic_type_arg : Error<
+  "arguments of OpenMP clause '%0' for 'min' or 'max' must be of %select{scalar|arithmetic}1 type">;
+def err_omp_clause_floating_type_arg : Error<
+  "arguments of OpenMP clause '%0' with bitwise operators cannot be of floating type">;
+def err_omp_once_referenced : Error<
+  "variable can appear only once in OpenMP '%0' clause">;
+def err_omp_once_referenced_in_target_update : Error<
+  "variable can appear only once in OpenMP 'target update' construct">;
+def note_omp_referenced : Note<
+  "previously referenced here">;
+def err_omp_reduction_in_task : Error<
+  "reduction variables may not be accessed in an explicit task">;
+def err_omp_reduction_id_not_compatible : Error<
+  "list item of type %0 is not valid for specified reduction operation: unable to provide default initialization value">;
+def err_omp_reduction_identifier_mismatch : Error<
+  "in_reduction variable must have the same reduction operation as in a task_reduction clause">;
+def note_omp_previous_reduction_identifier : Note<
+  "previously marked as task_reduction with different reduction operation">;
+def err_omp_prohibited_region : Error<
+  "region cannot be%select{| closely}0 nested inside '%1' region"
+  "%select{|; perhaps you forget to enclose 'omp %3' directive into a parallel region?|"
+  "; perhaps you forget to enclose 'omp %3' directive into a for or a parallel for region with 'ordered' clause?|"
+  "; perhaps you forget to enclose 'omp %3' directive into a target region?|"
+  "; perhaps you forget to enclose 'omp %3' directive into a teams region?|"
+  "; perhaps you forget to enclose 'omp %3' directive into a for, simd, for simd, parallel for, or parallel for simd region?}2">;
+def err_omp_prohibited_region_simd : Error<
+  "OpenMP constructs may not be nested inside a simd region%select{| except for ordered simd, simd, scan, or atomic directive}0">;
+def err_omp_prohibited_region_atomic : Error<
+  "OpenMP constructs may not be nested inside an atomic region">;
+def err_omp_prohibited_region_critical_same_name : Error<
+  "cannot nest 'critical' regions having the same name %0">;
+def note_omp_previous_critical_region : Note<
+  "previous 'critical' region starts here">;
+def err_omp_several_directives_in_region : Error<
+  "exactly one '%0' directive must appear in the loop body of an enclosing directive">;
+def note_omp_previous_directive : Note<
+  "previous '%0' directive used here">;
+def err_omp_sections_not_compound_stmt : Error<
+  "the statement for '#pragma omp sections' must be a compound statement">;
+def err_omp_parallel_sections_not_compound_stmt : Error<
+  "the statement for '#pragma omp parallel sections' must be a compound statement">;
+def err_omp_orphaned_section_directive : Error<
+  "%select{orphaned 'omp section' directives are prohibited, it|'omp section' directive}0"
+  " must be closely nested to a sections region%select{|, not a %1 region}0">;
+def err_omp_sections_substmt_not_section : Error<
+  "statement in 'omp sections' directive must be enclosed into a section region">;
+def err_omp_parallel_sections_substmt_not_section : Error<
+  "statement in 'omp parallel sections' directive must be enclosed into a section region">;
+def err_omp_parallel_reduction_in_task_firstprivate : Error<
+  "argument of a reduction clause of a %0 construct must not appear in a firstprivate clause on a task construct">;
+def err_omp_atomic_read_not_expression_statement : Error<
+  "the statement for 'atomic read' must be an expression statement of form 'v = x;',"
+  " where v and x are both lvalue expressions with scalar type">;
+def note_omp_atomic_read_write: Note<
+  "%select{expected an expression statement|expected built-in assignment operator|expected expression of scalar type|expected lvalue expression}0">;
+def err_omp_atomic_write_not_expression_statement : Error<
+  "the statement for 'atomic write' must be an expression statement of form 'x = expr;',"
+  " where x is a lvalue expression with scalar type">;
+def err_omp_atomic_update_not_expression_statement : Error<
+  "the statement for 'atomic update' must be an expression statement of form '++x;', '--x;', 'x++;', 'x--;', 'x binop= expr;', 'x = x binop expr' or 'x = expr binop x',"
+  " where x is an l-value expression with scalar type">;
+def err_omp_atomic_not_expression_statement : Error<
+  "the statement for 'atomic' must be an expression statement of form '++x;', '--x;', 'x++;', 'x--;', 'x binop= expr;', 'x = x binop expr' or 'x = expr binop x',"
+  " where x is an l-value expression with scalar type">;
+def note_omp_atomic_update: Note<
+  "%select{expected an expression statement|expected built-in binary or unary operator|expected unary decrement/increment operation|"
+  "expected expression of scalar type|expected assignment expression|expected built-in binary operator|"
+  "expected one of '+', '*', '-', '/', '&', '^', '%|', '<<', or '>>' built-in operations|expected in right hand side of expression}0">;
+def err_omp_atomic_capture_not_expression_statement : Error<
+  "the statement for 'atomic capture' must be an expression statement of form 'v = ++x;', 'v = --x;', 'v = x++;', 'v = x--;', 'v = x binop= expr;', 'v = x = x binop expr' or 'v = x = expr binop x',"
+  " where x and v are both l-value expressions with scalar type">;
+def err_omp_atomic_capture_not_compound_statement : Error<
+  "the statement for 'atomic capture' must be a compound statement of form '{v = x; x binop= expr;}', '{x binop= expr; v = x;}',"
+  " '{v = x; x = x binop expr;}', '{v = x; x = expr binop x;}', '{x = x binop expr; v = x;}', '{x = expr binop x; v = x;}' or '{v = x; x = expr;}',"
+  " '{v = x; x++;}', '{v = x; ++x;}', '{++x; v = x;}', '{x++; v = x;}', '{v = x; x--;}', '{v = x; --x;}', '{--x; v = x;}', '{x--; v = x;}'"
+  " where x is an l-value expression with scalar type">;
+def note_omp_atomic_capture: Note<
+  "%select{expected assignment expression|expected compound statement|expected exactly two expression statements|expected in right hand side of the first expression}0">;
+def err_omp_atomic_several_clauses : Error<
+  "directive '#pragma omp atomic' cannot contain more than one 'read', 'write', 'update' or 'capture' clause">;
+def err_omp_several_mem_order_clauses : Error<
+  "directive '#pragma omp %0' cannot contain more than one %select{'seq_cst', 'relaxed', |}1'acq_rel', 'acquire' or 'release' clause">;
+def err_omp_atomic_incompatible_mem_order_clause : Error<
+  "directive '#pragma omp atomic%select{ %0|}1' cannot be used with '%2' clause">;
+def note_omp_previous_mem_order_clause : Note<
+  "'%0' clause used here">;
+def err_omp_target_contains_not_only_teams : Error<
+  "target construct with nested teams region contains statements outside of the teams construct">;
+def note_omp_nested_teams_construct_here : Note<
+  "nested teams construct here">;
+def note_omp_nested_statement_here : Note<
+  "%select{statement|directive}0 outside teams construct here">;
+def err_omp_single_copyprivate_with_nowait : Error<
+  "the 'copyprivate' clause must not be used with the 'nowait' clause">;
+def note_omp_nowait_clause_here : Note<
+  "'nowait' clause is here">;
+def err_omp_single_decl_in_declare_simd_variant : Error<
+  "single declaration is expected after 'declare %select{simd|variant}0' directive">;
+def err_omp_function_expected : Error<
+  "'#pragma omp declare %select{simd|variant}0' can only be applied to functions">;
+def err_omp_wrong_cancel_region : Error<
+  "one of 'for', 'parallel', 'sections' or 'taskgroup' is expected">;
+def err_omp_parent_cancel_region_nowait : Error<
+  "parent region for 'omp %select{cancellation point|cancel}0' construct cannot be nowait">;
+def err_omp_parent_cancel_region_ordered : Error<
+  "parent region for 'omp %select{cancellation point|cancel}0' construct cannot be ordered">;
+def err_omp_reduction_wrong_type : Error<"reduction type cannot be %select{qualified with 'const', 'volatile' or 'restrict'|a function|a reference|an array}0 type">;
+def err_omp_wrong_var_in_declare_reduction : Error<"only %select{'omp_priv' or 'omp_orig'|'omp_in' or 'omp_out'}0 variables are allowed in %select{initializer|combiner}0 expression">;
+def err_omp_declare_reduction_redefinition : Error<"redefinition of user-defined reduction for type %0">;
+def err_omp_mapper_wrong_type : Error<
+  "mapper type must be of struct, union or class type">;
+def err_omp_declare_mapper_wrong_var : Error<
+  "only variable %0 is allowed in map clauses of this 'omp declare mapper' directive">;
+def err_omp_declare_mapper_redefinition : Error<
+  "redefinition of user-defined mapper for type %0 with name %1">;
+def err_omp_invalid_mapper: Error<
+  "cannot find a valid user-defined mapper for type %0 with name %1">;
+def err_omp_array_section_use : Error<"OpenMP array section is not allowed here">;
+def err_omp_array_shaping_use : Error<"OpenMP array shaping operation is not allowed here">;
+def err_omp_iterator_use : Error<"OpenMP iterator is not allowed here">;
+def err_omp_typecheck_section_value : Error<
+  "subscripted value is not an array or pointer">;
+def err_omp_typecheck_section_not_integer : Error<
+  "array section %select{lower bound|length}0 is not an integer">;
+def err_omp_typecheck_shaping_not_integer : Error<
+  "array shaping operation dimension is not an integer">;
+def err_omp_shaping_dimension_not_positive : Error<
+  "array shaping dimension is evaluated to a non-positive value %0">;
+def err_omp_section_function_type : Error<
+  "section of pointer to function type %0">;
+def warn_omp_section_is_char : Warning<"array section %select{lower bound|length}0 is of type 'char'">,
+  InGroup<CharSubscript>, DefaultIgnore;
+def err_omp_section_incomplete_type : Error<
+  "section of pointer to incomplete type %0">;
+def err_omp_section_not_subset_of_array : Error<
+  "array section must be a subset of the original array">;
+def err_omp_section_length_negative : Error<
+  "section length is evaluated to a negative value %0">;
+def err_omp_section_stride_non_positive : Error<
+  "section stride is evaluated to a non-positive value %0">;
+def err_omp_section_length_undefined : Error<
+  "section length is unspecified and cannot be inferred because subscripted value is %select{not an array|an array of unknown bound}0">;
+def err_omp_wrong_linear_modifier : Error<
+  "expected %select{'val' modifier|one of 'ref', val' or 'uval' modifiers}0">;
+def err_omp_wrong_linear_modifier_non_reference : Error<
+  "variable of non-reference type %0 can be used only with 'val' modifier, but used with '%1'">;
+def err_omp_wrong_simdlen_safelen_values : Error<
+  "the value of 'simdlen' parameter must be less than or equal to the value of the 'safelen' parameter">;
+def err_omp_wrong_if_directive_name_modifier : Error<
+  "directive name modifier '%0' is not allowed for '#pragma omp %1'">;
+def err_omp_no_more_if_clause : Error<
+  "no more 'if' clause is allowed">;
+def err_omp_unnamed_if_clause : Error<
+  "expected%select{| one of}0 %1 directive name modifier%select{|s}0">;
+def note_omp_previous_named_if_clause : Note<
+  "previous clause with directive name modifier specified here">;
+def err_omp_ordered_directive_with_param : Error<
+  "'ordered' directive %select{without any clauses|with 'threads' clause}0 cannot be closely nested inside ordered region with specified parameter">;
+def err_omp_ordered_directive_without_param : Error<
+  "'ordered' directive with 'depend' clause cannot be closely nested inside ordered region without specified parameter">;
+def note_omp_ordered_param : Note<
+  "'ordered' clause%select{| with specified parameter}0">;
+def err_omp_expected_base_var_name : Error<
+  "expected variable name as a base of the array %select{subscript|section}0">;
+def err_omp_map_shared_storage : Error<
+  "variable already marked as mapped in current construct">;
+def err_omp_invalid_map_type_for_directive : Error<
+  "%select{map type '%1' is not allowed|map type must be specified}0 for '#pragma omp %2'">;
+def err_omp_no_clause_for_directive : Error<
+  "expected at least one %0 clause for '#pragma omp %1'">;
+def err_omp_threadprivate_in_clause : Error<
+  "threadprivate variables are not allowed in '%0' clause">;
+def err_omp_wrong_ordered_loop_count : Error<
+  "the parameter of the 'ordered' clause must be greater than or equal to the parameter of the 'collapse' clause">;
+def note_collapse_loop_count : Note<
+  "parameter of the 'collapse' clause">;
+def err_omp_clauses_mutually_exclusive : Error<
+  "'%0' and '%1' clause are mutually exclusive and may not appear on the same directive">;
+def note_omp_previous_clause : Note<
+  "'%0' clause is specified here">;
+def err_omp_hint_clause_no_name : Error<
+  "the name of the construct must be specified in presence of 'hint' clause">;
+def err_omp_critical_with_hint : Error<
+  "constructs with the same name must have a 'hint' clause with the same value">;
+def note_omp_critical_hint_here : Note<
+  "%select{|previous }0'hint' clause with value '%1'">;
+def note_omp_critical_no_hint : Note<
+  "%select{|previous }0directive with no 'hint' clause specified">;
+def err_omp_depend_clause_thread_simd : Error<
+  "'depend' clauses cannot be mixed with '%0' clause">;
+def err_omp_depend_sink_expected_loop_iteration : Error<
+  "expected%select{| %1}0 loop iteration variable">;
+def err_omp_depend_sink_unexpected_expr : Error<
+  "unexpected expression: number of expressions is larger than the number of associated loops">;
+def err_omp_depend_sink_expected_plus_minus : Error<
+  "expected '+' or '-' operation">;
+def err_omp_depend_sink_source_not_allowed : Error<
+  "'depend(%select{source|sink:vec}0)' clause%select{|s}0 cannot be mixed with 'depend(%select{sink:vec|source}0)' clause%select{s|}0">;
+def err_omp_depend_zero_length_array_section_not_allowed : Error<
+  "zero-length array section is not allowed in 'depend' clause">;
+def err_omp_depend_sink_source_with_modifier : Error<
+  "depend modifier cannot be used with 'sink' or 'source' depend type">;
+def err_omp_depend_modifier_not_iterator : Error<
+  "expected iterator specification as depend modifier">;
+def err_omp_linear_ordered : Error<
+  "'linear' clause cannot be specified along with 'ordered' clause with a parameter">;
+def err_omp_unexpected_schedule_modifier : Error<
+  "modifier '%0' cannot be used along with modifier '%1'">;
+def err_omp_schedule_nonmonotonic_static : Error<
+  "'nonmonotonic' modifier can only be specified with 'dynamic' or 'guided' schedule kind">;
+def err_omp_simple_clause_incompatible_with_ordered : Error<
+  "'%0' clause with '%1' modifier cannot be specified if an 'ordered' clause is specified">;
+def err_omp_ordered_simd : Error<
+  "'ordered' clause with a parameter can not be specified in '#pragma omp %0' directive">;
+def err_omp_variable_in_given_clause_and_dsa : Error<
+  "%0 variable cannot be in a %1 clause in '#pragma omp %2' directive">;
+def err_omp_param_or_this_in_clause : Error<
+  "expected reference to one of the parameters of function %0%select{| or 'this'}1">;
+def err_omp_expected_uniform_param : Error<
+  "expected a reference to a parameter specified in a 'uniform' clause">;
+def err_omp_expected_int_param : Error<
+  "expected a reference to an integer-typed parameter">;
+def err_omp_at_least_one_motion_clause_required : Error<
+  "expected at least one 'to' clause or 'from' clause specified to '#pragma omp target update'">;
+def err_omp_usedeviceptr_not_a_pointer : Error<
+  "expected pointer or reference to pointer in 'use_device_ptr' clause">;
+def err_omp_argument_type_isdeviceptr : Error <
+  "expected pointer, array, reference to pointer, or reference to array in 'is_device_ptr clause'">;
+def warn_omp_nesting_simd : Warning<
+  "OpenMP only allows an ordered construct with the simd clause nested in a simd construct">,
+  InGroup<SourceUsesOpenMP>;
+def err_omp_orphaned_device_directive : Error<
+  "orphaned 'omp %0' directives are prohibited"
+  "; perhaps you forget to enclose the directive into a "
+  "%select{|||target |teams|for, simd, for simd, parallel for, or parallel for simd }1region?">;
+def err_omp_reduction_non_addressable_expression : Error<
+  "expected addressable reduction item for the task-based directives">;
+def err_omp_reduction_with_nogroup : Error<
+  "'reduction' clause cannot be used with 'nogroup' clause">;
+def err_omp_reduction_vla_unsupported : Error<
+  "cannot generate code for reduction on %select{|array section, which requires a }0variable length array">;
+def err_omp_linear_distribute_var_non_loop_iteration : Error<
+  "only loop iteration variables are allowed in 'linear' clause in distribute directives">;
+def warn_omp_non_trivial_type_mapped : Warning<
+  "Type %0 is not trivially copyable and not guaranteed to be mapped correctly">,
+  InGroup<OpenMPMapping>;
+def err_omp_requires_clause_redeclaration : Error <
+  "Only one %0 clause can appear on a requires directive in a single translation unit">;
+def note_omp_requires_previous_clause : Note <
+  "%0 clause previously used here">;
+def err_omp_directive_before_requires : Error <
+  "'%0' region encountered before requires directive with '%1' clause">;
+def note_omp_requires_encountered_directive : Note <
+  "'%0' previously encountered here">;
+def err_omp_invalid_scope : Error <
+  "'#pragma omp %0' directive must appear only in file scope">;
+def note_omp_invalid_length_on_this_ptr_mapping : Note <
+  "expected length on mapping of 'this' array section expression to be '1'">;
+def note_omp_invalid_lower_bound_on_this_ptr_mapping : Note <
+  "expected lower bound on mapping of 'this' array section expression to be '0' or not specified">;
+def note_omp_invalid_subscript_on_this_ptr_map : Note <
+  "expected 'this' subscript expression on map clause to be 'this[0]'">;
+def err_omp_invalid_map_this_expr : Error <
+  "invalid 'this' expression on 'map' clause">;
+def err_omp_implied_type_not_found : Error<
+  "'%0' type not found; include <omp.h>">;
+def err_omp_expected_omp_depend_t_lvalue : Error<
+  "expected lvalue expression%select{ of 'omp_depend_t' type, not %1|}0">;
+def err_omp_depobj_expected : Error<
+  "expected depobj expression">;
+def err_omp_depobj_single_clause_expected : Error<
+  "exactly one of 'depend', 'destroy', or 'update' clauses is expected">;
+def err_omp_scan_single_clause_expected : Error<
+  "exactly one of 'inclusive' or 'exclusive' clauses is expected">;
+def err_omp_inclusive_exclusive_not_reduction : Error<
+  "the list item must appear in 'reduction' clause with the 'inscan' modifier "
+  "of the parent directive">;
+def err_omp_reduction_not_inclusive_exclusive : Error<
+  "the inscan reduction list item must appear as a list item in an 'inclusive' or"
+  " 'exclusive' clause on an inner 'omp scan' directive">;
+def err_omp_wrong_inscan_reduction : Error<
+  "'inscan' modifier can be used only in 'omp for', 'omp simd', 'omp for simd',"
+  " 'omp parallel for', or 'omp parallel for simd' directive">;
+def err_omp_inscan_reduction_expected : Error<
+  "expected 'reduction' clause with the 'inscan' modifier">;
+def note_omp_previous_inscan_reduction : Note<
+  "'reduction' clause with 'inscan' modifier is used here">;
+def err_omp_expected_predefined_allocator : Error<
+  "expected one of the predefined allocators for the variables with the static "
+  "storage: 'omp_default_mem_alloc', 'omp_large_cap_mem_alloc', "
+  "'omp_const_mem_alloc', 'omp_high_bw_mem_alloc', 'omp_low_lat_mem_alloc', "
+  "'omp_cgroup_mem_alloc', 'omp_pteam_mem_alloc' or 'omp_thread_mem_alloc'">;
+def warn_omp_used_different_allocator : Warning<
+  "allocate directive specifies %select{default|'%1'}0 allocator while "
+  "previously used %select{default|'%3'}2">,
+  InGroup<OpenMPClauses>;
+def note_omp_previous_allocator : Note<
+  "previous allocator is specified here">;
+def err_expected_allocator_clause : Error<"expected an 'allocator' clause "
+  "inside of the target region; provide an 'allocator' clause or use 'requires'"
+  " directive with the 'dynamic_allocators' clause">;
+def err_expected_allocator_expression : Error<"expected an allocator expression "
+  "inside of the target region; provide an allocator expression or use 'requires'"
+  " directive with the 'dynamic_allocators' clause">;
+def warn_omp_allocate_thread_on_task_target_directive : Warning<
+  "allocator with the 'thread' trait access has unspecified behavior on '%0' directive">,
+  InGroup<OpenMPClauses>;
+def err_omp_expected_private_copy_for_allocate : Error<
+  "the referenced item is not found in any private clause on the same directive">;
+def err_omp_stmt_depends_on_loop_counter : Error<
+  "the loop %select{initializer|condition}0 expression depends on the current loop control variable">;
+def err_omp_invariant_or_linear_dependency : Error<
+  "expected loop invariant expression or '<invariant1> * %0 + <invariant2>' kind of expression">;
+def err_omp_wrong_dependency_iterator_type : Error<
+  "expected an integer or a pointer type of the outer loop counter '%0' for non-rectangular nests">;
 def err_device_unsupported_type : Error <
   "%0 requires %1 bit size %2 type support, but device '%3' does not support it">;
-// def err_omp_lambda_capture_in_declare_target_not_to : Error<
-//   "variable captured in declare target region must appear in a to clause">;
-// def err_omp_device_type_mismatch : Error<
-//   "'device_type(%0)' does not match previously specified 'device_type(%1)' for the same declaration">;
-// def err_omp_wrong_device_function_call : Error<
-//   "function with 'device_type(%0)' is not available on %select{device|host}1">;
-// def note_omp_marked_device_type_here : Note<"marked as 'device_type(%0)' here">;
-// def warn_omp_declare_target_after_first_use : Warning<
-//   "declaration marked as declare target after first use, it may lead to incorrect results">,
-//   InGroup<OpenMPTarget>;
-// def err_omp_declare_variant_incompat_attributes : Error<
-//   "'#pragma omp declare variant' is not compatible with any target-specific attributes">;
-// def warn_omp_declare_variant_score_not_constant
-//     : Warning<"score expressions in the OpenMP context selector need to be "
-//               "constant; %0 is not and will be ignored">,
-//       InGroup<SourceUsesOpenMP>;
-// def err_omp_declare_variant_user_condition_not_constant
-//     : Error<"the user condition in the OpenMP context selector needs to be "
-//             "constant; %0 is not">;
-// def warn_omp_declare_variant_after_used : Warning<
-//   "'#pragma omp declare variant' cannot be applied for function after first "
-//   "usage; the original function might be used">, InGroup<SourceUsesOpenMP>;
-// def warn_omp_declare_variant_after_emitted : Warning<
-//   "'#pragma omp declare variant' cannot be applied to the function that was defined already;"
-//   " the original function might be used">, InGroup<SourceUsesOpenMP>;
-// def err_omp_declare_variant_doesnt_support : Error<
-//   "'#pragma omp declare variant' does not "
-//   "support %select{function templates|virtual functions|"
-//   "deduced return types|constructors|destructors|deleted functions|"
-//   "defaulted functions|constexpr functions|consteval function}0">;
-// def err_omp_declare_variant_diff : Error<
-//   "function with '#pragma omp declare variant' has a different %select{calling convention"
-//   "|return type|constexpr specification|inline specification|storage class|"
-//   "linkage}0">;
-// def err_omp_declare_variant_incompat_types : Error<
-//   "variant in '#pragma omp declare variant' with type %0 is incompatible with type %1"
-//   >;
-// def warn_omp_declare_variant_marked_as_declare_variant : Warning<
-//   "variant function in '#pragma omp declare variant' is itself marked as '#pragma omp declare variant'"
-//   >, InGroup<SourceUsesOpenMP>;
-// def note_omp_marked_declare_variant_here : Note<"marked as 'declare variant' here">;
-// def err_omp_one_defaultmap_each_category: Error<
-//   "at most one defaultmap clause for each variable-category can appear on the directive">;
-// def err_omp_lastprivate_conditional_non_scalar : Error<
-//   "expected list item of scalar type in 'lastprivate' clause with 'conditional' modifier"
-//   >;
-// def err_omp_flush_order_clause_and_list : Error<
-//   "'flush' directive with memory order clause '%0' cannot have the list">;
-// def note_omp_flush_order_clause_here : Note<
-//   "memory order clause '%0' is specified here">;
-// def err_omp_non_lvalue_in_map_or_motion_clauses: Error<
-//   "expected addressable lvalue in '%0' clause">;
-// def err_omp_var_expected : Error<
-//   "expected variable of the '%0' type%select{|, not %2}1">;
-// def warn_nested_declare_variant
-//     : Warning<"nesting `omp begin/end declare variant` is not supported yet; "
-//               "nested context ignored">,
-//       InGroup<SourceUsesOpenMP>;
-// def err_omp_non_pointer_type_array_shaping_base : Error<
-//   "expected expression with a pointer to a complete type as a base of an array "
-//   "shaping operation">;
-// def err_omp_reduction_task_not_parallel_or_worksharing : Error<
-//   "'reduction' clause with 'task' modifier allowed only on non-simd parallel or"
-//   " worksharing constructs">;
-// def err_omp_expected_array_alloctraits : Error<
-//   "expected constant sized array of 'omp_alloctrait_t' elements, not %0">;
-// def err_omp_predefined_allocator_with_traits : Error<
-//   "predefined allocator cannot have traits specified">;
-// def note_omp_predefined_allocator : Note<
-//   "predefined trait '%0' used here">;
-// def err_omp_nonpredefined_allocator_without_traits : Error<
-//   "non-predefined allocator must have traits specified">;
-// def err_omp_allocator_used_in_clauses : Error<
-//   "allocators used in 'uses_allocators' clause cannot appear in other "
-//   "data-sharing or data-mapping attribute clauses">;
-// def err_omp_allocator_not_in_uses_allocators : Error<
-//   "allocator must be specified in the 'uses_allocators' clause">;
-// } // end of OpenMP category
+def err_omp_lambda_capture_in_declare_target_not_to : Error<
+  "variable captured in declare target region must appear in a to clause">;
+def err_omp_device_type_mismatch : Error<
+  "'device_type(%0)' does not match previously specified 'device_type(%1)' for the same declaration">;
+def err_omp_wrong_device_function_call : Error<
+  "function with 'device_type(%0)' is not available on %select{device|host}1">;
+def note_omp_marked_device_type_here : Note<"marked as 'device_type(%0)' here">;
+def warn_omp_declare_target_after_first_use : Warning<
+  "declaration marked as declare target after first use, it may lead to incorrect results">,
+  InGroup<OpenMPTarget>;
+def err_omp_declare_variant_incompat_attributes : Error<
+  "'#pragma omp declare variant' is not compatible with any target-specific attributes">;
+def warn_omp_declare_variant_score_not_constant
+    : Warning<"score expressions in the OpenMP context selector need to be "
+              "constant; %0 is not and will be ignored">,
+      InGroup<SourceUsesOpenMP>;
+def err_omp_declare_variant_user_condition_not_constant
+    : Error<"the user condition in the OpenMP context selector needs to be "
+            "constant; %0 is not">;
+def warn_omp_declare_variant_after_used : Warning<
+  "'#pragma omp declare variant' cannot be applied for function after first "
+  "usage; the original function might be used">, InGroup<SourceUsesOpenMP>;
+def warn_omp_declare_variant_after_emitted : Warning<
+  "'#pragma omp declare variant' cannot be applied to the function that was defined already;"
+  " the original function might be used">, InGroup<SourceUsesOpenMP>;
+def err_omp_declare_variant_doesnt_support : Error<
+  "'#pragma omp declare variant' does not "
+  "support %select{function templates|virtual functions|"
+  "deduced return types|constructors|destructors|deleted functions|"
+  "defaulted functions|constexpr functions|consteval function}0">;
+def err_omp_declare_variant_diff : Error<
+  "function with '#pragma omp declare variant' has a different %select{calling convention"
+  "|return type|constexpr specification|inline specification|storage class|"
+  "linkage}0">;
+def err_omp_declare_variant_incompat_types : Error<
+  "variant in '#pragma omp declare variant' with type %0 is incompatible with type %1"
+  >;
+def warn_omp_declare_variant_marked_as_declare_variant : Warning<
+  "variant function in '#pragma omp declare variant' is itself marked as '#pragma omp declare variant'"
+  >, InGroup<SourceUsesOpenMP>;
+def note_omp_marked_declare_variant_here : Note<"marked as 'declare variant' here">;
+def err_omp_one_defaultmap_each_category: Error<
+  "at most one defaultmap clause for each variable-category can appear on the directive">;
+def err_omp_lastprivate_conditional_non_scalar : Error<
+  "expected list item of scalar type in 'lastprivate' clause with 'conditional' modifier"
+  >;
+def err_omp_flush_order_clause_and_list : Error<
+  "'flush' directive with memory order clause '%0' cannot have the list">;
+def note_omp_flush_order_clause_here : Note<
+  "memory order clause '%0' is specified here">;
+def err_omp_non_lvalue_in_map_or_motion_clauses: Error<
+  "expected addressable lvalue in '%0' clause">;
+def err_omp_var_expected : Error<
+  "expected variable of the '%0' type%select{|, not %2}1">;
+def warn_nested_declare_variant
+    : Warning<"nesting `omp begin/end declare variant` is not supported yet; "
+              "nested context ignored">,
+      InGroup<SourceUsesOpenMP>;
+def err_omp_non_pointer_type_array_shaping_base : Error<
+  "expected expression with a pointer to a complete type as a base of an array "
+  "shaping operation">;
+def err_omp_reduction_task_not_parallel_or_worksharing : Error<
+  "'reduction' clause with 'task' modifier allowed only on non-simd parallel or"
+  " worksharing constructs">;
+def err_omp_expected_array_alloctraits : Error<
+  "expected constant sized array of 'omp_alloctrait_t' elements, not %0">;
+def err_omp_predefined_allocator_with_traits : Error<
+  "predefined allocator cannot have traits specified">;
+def note_omp_predefined_allocator : Note<
+  "predefined trait '%0' used here">;
+def err_omp_nonpredefined_allocator_without_traits : Error<
+  "non-predefined allocator must have traits specified">;
+def err_omp_allocator_used_in_clauses : Error<
+  "allocators used in 'uses_allocators' clause cannot appear in other "
+  "data-sharing or data-mapping attribute clauses">;
+def err_omp_allocator_not_in_uses_allocators : Error<
+  "allocator must be specified in the 'uses_allocators' clause">;
+} // end of OpenMP category
 
 let CategoryName = "Related Result Type Issue" in {
 // Objective-C related result type compatibility
@@ -10622,85 +10622,85 @@ def warn_nullability_inferred_on_nested_type : Warning<
   "deprecated">,
   InGroup<NullabilityInferredOnNestedType>;
 
-def err_objc_type_arg_explicit_nullability : Error<
-  "type argument %0 cannot explicitly specify nullability">;
+// def err_objc_type_arg_explicit_nullability : Error<
+//   "type argument %0 cannot explicitly specify nullability">;
 
-def err_objc_type_param_bound_explicit_nullability : Error<
-  "type parameter %0 bound %1 cannot explicitly specify nullability">;
+// def err_objc_type_param_bound_explicit_nullability : Error<
+//   "type parameter %0 bound %1 cannot explicitly specify nullability">;
 
 }
 
 let CategoryName = "Generics Issue" in {
 
-def err_objc_type_param_bound_nonobject : Error<
-  "type bound %0 for type parameter %1 is not an Objective-C pointer type">;
+// def err_objc_type_param_bound_nonobject : Error<
+//   "type bound %0 for type parameter %1 is not an Objective-C pointer type">;
 
-def err_objc_type_param_bound_missing_pointer : Error<
-  "missing '*' in type bound %0 for type parameter %1">;
-def err_objc_type_param_bound_qualified : Error<
-  "type bound %1 for type parameter %0 cannot be qualified with '%2'">;
+// def err_objc_type_param_bound_missing_pointer : Error<
+//   "missing '*' in type bound %0 for type parameter %1">;
+// def err_objc_type_param_bound_qualified : Error<
+//   "type bound %1 for type parameter %0 cannot be qualified with '%2'">;
 
-def err_objc_type_param_redecl : Error<
-  "redeclaration of type parameter %0">;
+// def err_objc_type_param_redecl : Error<
+//   "redeclaration of type parameter %0">;
 
-def err_objc_type_param_arity_mismatch : Error<
-  "%select{forward class declaration|class definition|category|extension}0 has "
-  "too %select{few|many}1 type parameters (expected %2, have %3)">;
+// def err_objc_type_param_arity_mismatch : Error<
+//   "%select{forward class declaration|class definition|category|extension}0 has "
+//   "too %select{few|many}1 type parameters (expected %2, have %3)">;
 
-def err_objc_type_param_bound_conflict : Error<
-  "type bound %0 for type parameter %1 conflicts with "
-  "%select{implicit|previous}2 bound %3%select{for type parameter %5|}4">;
+// def err_objc_type_param_bound_conflict : Error<
+//   "type bound %0 for type parameter %1 conflicts with "
+//   "%select{implicit|previous}2 bound %3%select{for type parameter %5|}4">;
 
-def err_objc_type_param_variance_conflict : Error<
-  "%select{in|co|contra}0variant type parameter %1 conflicts with previous "
-  "%select{in|co|contra}2variant type parameter %3">;
+// def err_objc_type_param_variance_conflict : Error<
+//   "%select{in|co|contra}0variant type parameter %1 conflicts with previous "
+//   "%select{in|co|contra}2variant type parameter %3">;
 
-def note_objc_type_param_here : Note<"type parameter %0 declared here">;
+// def note_objc_type_param_here : Note<"type parameter %0 declared here">;
 
-def err_objc_type_param_bound_missing : Error<
-  "missing type bound %0 for type parameter %1 in %select{@interface|@class}2">;
+// def err_objc_type_param_bound_missing : Error<
+//   "missing type bound %0 for type parameter %1 in %select{@interface|@class}2">;
 
-def err_objc_parameterized_category_nonclass : Error<
-  "%select{extension|category}0 of non-parameterized class %1 cannot have type "
-  "parameters">;
+// def err_objc_parameterized_category_nonclass : Error<
+//   "%select{extension|category}0 of non-parameterized class %1 cannot have type "
+//   "parameters">;
 
-def err_objc_parameterized_forward_class : Error<
-  "forward declaration of non-parameterized class %0 cannot have type "
-  "parameters">;
+// def err_objc_parameterized_forward_class : Error<
+//   "forward declaration of non-parameterized class %0 cannot have type "
+//   "parameters">;
 
-def err_objc_parameterized_forward_class_first : Error<
-  "class %0 previously declared with type parameters">;
+// def err_objc_parameterized_forward_class_first : Error<
+//   "class %0 previously declared with type parameters">;
 
-def err_objc_type_arg_missing_star : Error<
-  "type argument %0 must be a pointer (requires a '*')">;
-def err_objc_type_arg_qualified : Error<
-  "type argument %0 cannot be qualified with '%1'">;
+// def err_objc_type_arg_missing_star : Error<
+//   "type argument %0 must be a pointer (requires a '*')">;
+// def err_objc_type_arg_qualified : Error<
+//   "type argument %0 cannot be qualified with '%1'">;
 
-def err_objc_type_arg_missing : Error<
-  "no type or protocol named %0">;
+// def err_objc_type_arg_missing : Error<
+//   "no type or protocol named %0">;
 
-def err_objc_type_args_and_protocols : Error<
-  "angle brackets contain both a %select{type|protocol}0 (%1) and a "
-  "%select{protocol|type}0 (%2)">;
+// def err_objc_type_args_and_protocols : Error<
+//   "angle brackets contain both a %select{type|protocol}0 (%1) and a "
+//   "%select{protocol|type}0 (%2)">;
 
-def err_objc_type_args_non_class : Error<
-  "type arguments cannot be applied to non-class type %0">;
+// def err_objc_type_args_non_class : Error<
+//   "type arguments cannot be applied to non-class type %0">;
 
-def err_objc_type_args_non_parameterized_class : Error<
-  "type arguments cannot be applied to non-parameterized class %0">;
+// def err_objc_type_args_non_parameterized_class : Error<
+//   "type arguments cannot be applied to non-parameterized class %0">;
 
-def err_objc_type_args_specialized_class : Error<
-  "type arguments cannot be applied to already-specialized class type %0">;
+// def err_objc_type_args_specialized_class : Error<
+//   "type arguments cannot be applied to already-specialized class type %0">;
 
-def err_objc_type_args_wrong_arity : Error<
-  "too %select{many|few}0 type arguments for class %1 (have %2, expected %3)">;
+// def err_objc_type_args_wrong_arity : Error<
+//   "too %select{many|few}0 type arguments for class %1 (have %2, expected %3)">;
 }
 
-def err_objc_type_arg_not_id_compatible : Error<
-  "type argument %0 is neither an Objective-C object nor a block type">;
+// def err_objc_type_arg_not_id_compatible : Error<
+//   "type argument %0 is neither an Objective-C object nor a block type">;
 
-def err_objc_type_arg_does_not_match_bound : Error<
-  "type argument %0 does not satisfy the bound (%1) of type parameter %2">;
+// def err_objc_type_arg_does_not_match_bound : Error<
+//   "type argument %0 does not satisfy the bound (%1) of type parameter %2">;
 
 // def warn_objc_redundant_qualified_class_type : Warning<
 //   "parameterized class %0 already conforms to the protocols listed; did you "

@@ -1,7 +1,7 @@
 # https://clang.llvm.org/get_started.html
 
 # establecer path donde se instalo visual studio
-$vs_path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community'
+$vs_path = 'C:\Program Files\Microsoft Visual Studio\2022\Professional'
 
 $directorio_actual = Get-Location
 if (!(Test-Path -Path $directorio_actual\llvm-project)) {
@@ -19,7 +19,7 @@ if (!(Test-Path -Path $directorio_actual\llvm-project\build)) {
 
 Set-Location llvm-project\build
 
-cmake -G "Visual Studio 16 2019" -DLLVM_TARGETS_TO_BUILD=host -DLLVM_BUILD_EXAMPLES=OFF `
+cmake -G "Visual Studio 17 2022" -DLLVM_TARGETS_TO_BUILD=host -DLLVM_BUILD_EXAMPLES=OFF `
     -DCLANG_BUILD_EXAMPLES=OFF -DLLVM_ENABLE_OCAMLDOC=OFF -DLLVM_BUILD_DOCS=OFF `
     -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_TESTS=OFF -DLLVM_ENABLE_PROJECTS='clang' ..\llvm\
 

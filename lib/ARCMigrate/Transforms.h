@@ -74,7 +74,7 @@ public:
   virtual ~ASTTraverser();
   virtual void traverseTU(MigrationContext &MigrateCtx) { }
   virtual void traverseBody(BodyContext &BodyCtx) { }
-  virtual void traverseObjCImplementation(ObjCImplementationContext &ImplCtx) {}
+  // virtual void traverseObjCImplementation(ObjCImplementationContext &ImplCtx) {}
 };
 
 class MigrationContext {
@@ -124,10 +124,10 @@ public:
   void dumpGCAttrs();
 };
 
-class PropertyRewriteTraverser : public ASTTraverser {
-public:
-  void traverseObjCImplementation(ObjCImplementationContext &ImplCtx) override;
-};
+// class PropertyRewriteTraverser : public ASTTraverser {
+// public:
+//   void traverseObjCImplementation(ObjCImplementationContext &ImplCtx) override;
+// };
 
 class BlockObjCVariableTraverser : public ASTTraverser {
 public:
@@ -141,10 +141,10 @@ public:
 
 // GC transformations
 
-class GCAttrsTraverser : public ASTTraverser {
-public:
-  void traverseTU(MigrationContext &MigrateCtx) override;
-};
+// class GCAttrsTraverser : public ASTTraverser {
+// public:
+//   void traverseTU(MigrationContext &MigrateCtx) override;
+// };
 
 class GCCollectableCallsTraverser : public ASTTraverser {
 public:

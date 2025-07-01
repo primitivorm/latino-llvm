@@ -419,8 +419,8 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
 
     // If we're potentially in a template-id, we may now be able to determine
     // whether we're actually in one or not.
-    if (OpToken.isOneOf(tok::comma, tok::greater, tok::greatergreater,
-                        tok::greatergreatergreater) &&
+    if (OpToken.isOneOf(tok::comma, tok::greater, tok::greatergreater/*,
+                        tok::greatergreatergreater*/) &&
         checkPotentialAngleBracketDelimiter(OpToken))
       return ExprError();
 
@@ -450,13 +450,13 @@ Parser::ParseRHSOfBinaryExpression(ExprResult LHS, prec::Level MinPrec) {
     // as an identifier in ParseObjCMessageExpressionBody. i.e., we support:
     //   [foo meth:0 and:0];
     //   [foo not_eq];
-    if (getLangOpts().ObjC && getLangOpts().CPlusPlus &&
-        Tok.isOneOf(tok::colon, tok::r_square) &&
-        OpToken.getIdentifierInfo() != nullptr) {
-      PP.EnterToken(Tok, /*IsReinject*/true);
-      Tok = OpToken;
-      return LHS;
-    }
+    // if (getLangOpts().ObjC && getLangOpts().CPlusPlus &&
+    //     Tok.isOneOf(tok::colon, tok::r_square) &&
+    //     OpToken.getIdentifierInfo() != nullptr) {
+    //   PP.EnterToken(Tok, /*IsReinject*/true);
+    //   Tok = OpToken;
+    //   return LHS;
+    // }
 
     // Special case handling for the ternary operator.
     ExprResult TernaryMiddle(true);
@@ -1425,7 +1425,7 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   //     Diag(Tok, diag::ext_c11_feature) << Tok.getName();
   //   LLVM_FALLTHROUGH;
   // case tok::kw_alignof:    // unary-expression: 'alignof' '(' type-id ')'
-  case tok::kw___alignof:  // unary-expression: '__alignof' unary-expression
+  // case tok::kw___alignof:  // unary-expression: '__alignof' unary-expression
                            // unary-expression: '__alignof' '(' type-name ')'
   case tok::kw_sizeof:     // unary-expression: 'sizeof' unary-expression
                            // unary-expression: 'sizeof' '(' type-name ')'
@@ -1536,9 +1536,9 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   case tok::kw_void:
   case tok::kw_typename:
   case tok::kw_typeof:
-  // case tok::kw___vector:
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-// #include "latino/Basic/OpenCLImageTypes.def"
+  case tok::kw___vector:
+#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+#include "latino/Basic/OpenCLImageTypes.def"
   {
     if (!getLangOpts().CPlusPlus) {
       Diag(Tok, diag::err_expected_expression);
@@ -1822,15 +1822,15 @@ ExprResult Parser::ParseCastExpression(CastParseKind ParseKind,
   // These can be followed by postfix-expr pieces.
   PreferredType = SavedType;
   Res = ParsePostfixExpressionSuffix(Res);
-  // if (getLangOpts().OpenCL)
-  //   if (Expr *PostfixExpr = Res.get()) {
-  //     QualType Ty = PostfixExpr->getType();
-  //     if (!Ty.isNull() && Ty->isFunctionType()) {
-  //       Diag(PostfixExpr->getExprLoc(),
-  //            diag::err_opencl_taking_function_address_parser);
-  //       return ExprError();
-  //     }
-  //   }
+  if (getLangOpts().OpenCL)
+    if (Expr *PostfixExpr = Res.get()) {
+      QualType Ty = PostfixExpr->getType();
+      if (!Ty.isNull() && Ty->isFunctionType()) {
+        Diag(PostfixExpr->getExprLoc(),
+             diag::err_opencl_taking_function_address_parser);
+        return ExprError();
+      }
+    }
 
   return Res;
 }
@@ -1902,10 +1902,10 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
 
       // Reject array indices starting with a lambda-expression. '[[' is
       // reserved for attributes.
-      if (CheckProhibitedCXX11Attribute()) {
-        (void)Actions.CorrectDelayedTyposInExpr(LHS);
-        return ExprError();
-      }
+      // if (CheckProhibitedCXX11Attribute()) {
+      //   (void)Actions.CorrectDelayedTyposInExpr(LHS);
+      //   return ExprError();
+      // }
 
       BalancedDelimiterTracker T(*this, tok::l_square);
       T.consumeOpen();
@@ -1916,7 +1916,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       if (getLangOpts().CPlusPlus11 && Tok.is(tok::l_brace)) {
         Diag(Tok, diag::warn_cxx98_compat_generalized_initializer_lists);
         Idx = ParseBraceInitializer();
-      } /*else if (getLangOpts().OpenMP) {
+      } else if (getLangOpts().OpenMP) {
         ColonProtectionRAIIObject RAII(*this);
         // Parse [: or [ expr or [ expr :
         if (!Tok.is(tok::colon)) {
@@ -1941,7 +1941,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
             Stride = ParseExpression();
           }
         }
-      }*/ else
+      } else
         Idx = ParseExpression();
 
       SourceLocation RLoc = Tok.getLocation();
@@ -1951,14 +1951,14 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       Length = Actions.CorrectDelayedTyposInExpr(Length);
       if (!LHS.isInvalid() && !Idx.isInvalid() && !Length.isInvalid() &&
           !Stride.isInvalid() && Tok.is(tok::r_square)) {
-        // if (ColonLocFirst.isValid() || ColonLocSecond.isValid()) {
-        //   LHS = Actions.ActOnOMPArraySectionExpr(
-        //       LHS.get(), Loc, Idx.get(), ColonLocFirst, ColonLocSecond,
-        //       Length.get(), Stride.get(), RLoc);
-        // } else {
+        if (ColonLocFirst.isValid() || ColonLocSecond.isValid()) {
+          LHS = Actions.ActOnOMPArraySectionExpr(
+              LHS.get(), Loc, Idx.get(), ColonLocFirst, ColonLocSecond,
+              Length.get(), Stride.get(), RLoc);
+        } else {
           LHS = Actions.ActOnArraySubscriptExpr(getCurScope(), LHS.get(), Loc,
                                                 Idx.get(), RLoc);
-        // }
+        }
       } else {
         LHS = ExprError();
         Idx = ExprError();
@@ -1970,7 +1970,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
     }
 
     case tok::l_paren:         // p-e: p-e '(' argument-expression-list[opt] ')'
-    case tok::lesslessless: 
+    // case tok::lesslessless: 
     {  // p-e: p-e '<<<' argument-expression-list '>>>'
                                //   '(' argument-expression-list[opt] ')'
       tok::TokenKind OpKind = Tok.getKind();
@@ -1980,49 +1980,49 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
 
       BalancedDelimiterTracker PT(*this, tok::l_paren);
 
-      if (OpKind == tok::lesslessless) {
-        ExprVector ExecConfigExprs;
-        CommaLocsTy ExecConfigCommaLocs;
-        SourceLocation OpenLoc = ConsumeToken();
+      // if (OpKind == tok::lesslessless) {
+      //   ExprVector ExecConfigExprs;
+      //   CommaLocsTy ExecConfigCommaLocs;
+      //   SourceLocation OpenLoc = ConsumeToken();
 
-        if (ParseSimpleExpressionList(ExecConfigExprs, ExecConfigCommaLocs)) {
-          (void)Actions.CorrectDelayedTyposInExpr(LHS);
-          LHS = ExprError();
-        }
+      //   if (ParseSimpleExpressionList(ExecConfigExprs, ExecConfigCommaLocs)) {
+      //     (void)Actions.CorrectDelayedTyposInExpr(LHS);
+      //     LHS = ExprError();
+      //   }
 
-        SourceLocation CloseLoc;
-        if (TryConsumeToken(tok::greatergreatergreater, CloseLoc)) {
-        } else if (LHS.isInvalid()) {
-          SkipUntil(tok::greatergreatergreater, StopAtSemi);
-        } else {
-          // There was an error closing the brackets
-          Diag(Tok, diag::err_expected) << tok::greatergreatergreater;
-          Diag(OpenLoc, diag::note_matching) << tok::lesslessless;
-          SkipUntil(tok::greatergreatergreater, StopAtSemi);
-          LHS = ExprError();
-        }
+      //   SourceLocation CloseLoc;
+      //   if (TryConsumeToken(tok::greatergreatergreater, CloseLoc)) {
+      //   } else if (LHS.isInvalid()) {
+      //     SkipUntil(tok::greatergreatergreater, StopAtSemi);
+      //   } else {
+      //     // There was an error closing the brackets
+      //     Diag(Tok, diag::err_expected) << tok::greatergreatergreater;
+      //     Diag(OpenLoc, diag::note_matching) << tok::lesslessless;
+      //     SkipUntil(tok::greatergreatergreater, StopAtSemi);
+      //     LHS = ExprError();
+      //   }
 
-        if (!LHS.isInvalid()) {
-          if (ExpectAndConsume(tok::l_paren))
-            LHS = ExprError();
-          else
-            Loc = PrevTokLocation;
-        }
+      //   if (!LHS.isInvalid()) {
+      //     if (ExpectAndConsume(tok::l_paren))
+      //       LHS = ExprError();
+      //     else
+      //       Loc = PrevTokLocation;
+      //   }
 
-        if (!LHS.isInvalid()) {
-          ExprResult ECResult = Actions.ActOnCUDAExecConfigExpr(getCurScope(),
-                                    OpenLoc,
-                                    ExecConfigExprs,
-                                    CloseLoc);
-          if (ECResult.isInvalid())
-            LHS = ExprError();
-          else
-            ExecConfig = ECResult.get();
-        }
-      } else {
+      //   if (!LHS.isInvalid()) {
+      //     ExprResult ECResult = Actions.ActOnCUDAExecConfigExpr(getCurScope(),
+      //                               OpenLoc,
+      //                               ExecConfigExprs,
+      //                               CloseLoc);
+      //     if (ECResult.isInvalid())
+      //       LHS = ExprError();
+      //     else
+      //       ExecConfig = ECResult.get();
+      //   }
+      // } else {
         PT.consumeOpen();
         Loc = PT.getOpenLocation();
-      }
+      // }
 
       ExprVector ArgExprs;
       CommaLocsTy CommaLocs;
@@ -2178,7 +2178,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
       // FIXME: Add support for explicit call of template constructor.
       SourceLocation TemplateKWLoc;
       UnqualifiedId Name;
-      if (getLangOpts().ObjC && OpKind == tok::period &&
+      /*if (getLangOpts().ObjC && OpKind == tok::period &&
           Tok.is(tok::kw_clase)) {
         // Objective-C++:
         //   After a '.' in a member access expression, treat the keyword
@@ -2190,7 +2190,7 @@ Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
         IdentifierInfo *Id = Tok.getIdentifierInfo();
         SourceLocation Loc = ConsumeToken();
         Name.setIdentifier(Id, Loc);
-      } else if (ParseUnqualifiedId(
+      } else*/ if (ParseUnqualifiedId(
                      SS, ObjectType, LHS.get() && LHS.get()->containsErrors(),
                      /*EnteringContext=*/false,
                      /*AllowDestructorName=*/true,
@@ -2261,7 +2261,7 @@ Parser::ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
                                            ParsedType &CastTy,
                                            SourceRange &CastRange) {
 
-  assert(OpTok.isOneOf(tok::kw_typeof, tok::kw_sizeof, tok::kw___alignof/*,
+  assert(OpTok.isOneOf(tok::kw_typeof, tok::kw_sizeof/*, tok::kw___alignof,
                        tok::kw_alignof, tok::kw__Alignof, tok::kw_vec_step,
                        tok::kw___builtin_omp_required_simd_align*/) &&
          "Not a typeof/sizeof/alignof/vec_step expression!");
@@ -2272,7 +2272,7 @@ Parser::ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
   if (Tok.isNot(tok::l_paren)) {
     // If construct allows a form without parenthesis, user may forget to put
     // pathenthesis around type name.
-    if (OpTok.isOneOf(tok::kw_sizeof, tok::kw___alignof/*, tok::kw_alignof,
+    if (OpTok.is/*OneOf*/(tok::kw_sizeof/*, tok::kw___alignof, tok::kw_alignof,
                       tok::kw__Alignof*/)) {
       if (isTypeIdUnambiguously()) {
         DeclSpec DS(AttrFactory);
@@ -2384,7 +2384,7 @@ Parser::ParseExprAfterUnaryExprOrTypeTrait(const Token &OpTok,
 /// [C++11] 'alignof' '(' type-id ')'
 /// \endverbatim
 ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
-  assert(Tok.isOneOf(tok::kw_sizeof, tok::kw___alignof/*, tok::kw_alignof,
+  assert(Tok.is/*OneOf*/(tok::kw_sizeof/*, tok::kw___alignof, tok::kw_alignof,
                      tok::kw__Alignof, tok::kw_vec_step,
                      tok::kw___builtin_omp_required_simd_align*/) &&
          "Not a sizeof/alignof/vec_step expression!");
@@ -2456,12 +2456,12 @@ ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
   UnaryExprOrTypeTrait ExprKind = UETT_SizeOf;
   /*if (OpTok.isOneOf(tok::kw_alignof, tok::kw__Alignof))
     ExprKind = UETT_AlignOf;
-  else*/ if (OpTok.is(tok::kw___alignof))
+  else if (OpTok.is(tok::kw___alignof))
     ExprKind = UETT_PreferredAlignOf;
-  // else if (OpTok.is(tok::kw_vec_step))
-  //   ExprKind = UETT_VecStep;
-  // else if (OpTok.is(tok::kw___builtin_omp_required_simd_align))
-  //   ExprKind = UETT_OpenMPRequiredSimdAlign;
+  else*/ if (OpTok.is(tok::kw_vec_step))
+    ExprKind = UETT_VecStep;
+  else if (OpTok.is(tok::kw___builtin_omp_required_simd_align))
+    ExprKind = UETT_OpenMPRequiredSimdAlign;
 
   if (isCastExpr)
     return Actions.ActOnUnaryExprOrTypeTraitExpr(OpTok.getLocation(),
@@ -2752,32 +2752,32 @@ ExprResult Parser::ParseUnaryExprOrTypeTraitExpression() {
 //   return ParsePostfixExpressionSuffix(Res.get());
 // }
 
-// bool Parser::tryParseOpenMPArrayShapingCastPart() {
-//   assert(Tok.is(tok::l_square) && "Expected open bracket");
-//   bool ErrorFound = true;
-//   TentativeParsingAction TPA(*this);
-//   do {
-//     if (Tok.isNot(tok::l_square))
-//       break;
-//     // Consume '['
-//     ConsumeBracket();
-//     // Skip inner expression.
-//     while (!SkipUntil(tok::r_square, tok::annot_pragma_openmp_end,
-//                       StopAtSemi | StopBeforeMatch))
-//       ;
-//     if (Tok.isNot(tok::r_square))
-//       break;
-//     // Consume ']'
-//     ConsumeBracket();
-//     // Found ')' - done.
-//     if (Tok.is(tok::r_paren)) {
-//       ErrorFound = false;
-//       break;
-//     }
-//   } while (Tok.isNot(tok::annot_pragma_openmp_end));
-//   TPA.Revert();
-//   return !ErrorFound;
-// }
+bool Parser::tryParseOpenMPArrayShapingCastPart() {
+  assert(Tok.is(tok::l_square) && "Expected open bracket");
+  bool ErrorFound = true;
+  TentativeParsingAction TPA(*this);
+  do {
+    if (Tok.isNot(tok::l_square))
+      break;
+    // Consume '['
+    ConsumeBracket();
+    // Skip inner expression.
+    while (!SkipUntil(tok::r_square, tok::annot_pragma_openmp_end,
+                      StopAtSemi | StopBeforeMatch))
+      ;
+    if (Tok.isNot(tok::r_square))
+      break;
+    // Consume ']'
+    ConsumeBracket();
+    // Found ')' - done.
+    if (Tok.is(tok::r_paren)) {
+      ErrorFound = false;
+      break;
+    }
+  } while (Tok.isNot(tok::annot_pragma_openmp_end));
+  TPA.Revert();
+  return !ErrorFound;
+}
 
 /// ParseParenExpression - This parses the unit that starts with a '(' token,
 /// based on what is allowed by ExprType.  The actual thing parsed is returned
@@ -2970,47 +2970,47 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
         return ParseCompoundLiteralExpression(Ty.get(), OpenLoc, RParenLoc);
       }
 
-      // if (Tok.is(tok::l_paren)) {
-      //   // This could be OpenCL vector Literals
-      //   if (getLangOpts().OpenCL)
-      //   {
-      //     TypeResult Ty;
-      //     {
-      //       InMessageExpressionRAIIObject InMessage(*this, false);
-      //       Ty = Actions.ActOnTypeName(getCurScope(), DeclaratorInfo);
-      //     }
-      //     if(Ty.isInvalid())
-      //     {
-      //        return ExprError();
-      //     }
-      //     QualType QT = Ty.get().get().getCanonicalType();
-      //     if (QT->isVectorType())
-      //     {
-      //       // We parsed '(' vector-type-name ')' followed by '('
+      if (Tok.is(tok::l_paren)) {
+        // This could be OpenCL vector Literals
+        if (getLangOpts().OpenCL)
+        {
+          TypeResult Ty;
+          {
+            InMessageExpressionRAIIObject InMessage(*this, false);
+            Ty = Actions.ActOnTypeName(getCurScope(), DeclaratorInfo);
+          }
+          if(Ty.isInvalid())
+          {
+             return ExprError();
+          }
+          QualType QT = Ty.get().get().getCanonicalType();
+          if (QT->isVectorType())
+          {
+            // We parsed '(' vector-type-name ')' followed by '('
 
-      //       // Parse the cast-expression that follows it next.
-      //       // isVectorLiteral = true will make sure we don't parse any
-      //       // Postfix expression yet
-      //       Result = ParseCastExpression(/*isUnaryExpression=*/AnyCastExpr,
-      //                                    /*isAddressOfOperand=*/false,
-      //                                    /*isTypeCast=*/IsTypeCast,
-      //                                    /*isVectorLiteral=*/true);
+            // Parse the cast-expression that follows it next.
+            // isVectorLiteral = true will make sure we don't parse any
+            // Postfix expression yet
+            Result = ParseCastExpression(/*isUnaryExpression=*/AnyCastExpr,
+                                         /*isAddressOfOperand=*/false,
+                                         /*isTypeCast=*/IsTypeCast,
+                                         /*isVectorLiteral=*/true);
 
-      //       if (!Result.isInvalid()) {
-      //         Result = Actions.ActOnCastExpr(getCurScope(), OpenLoc,
-      //                                        DeclaratorInfo, CastTy,
-      //                                        RParenLoc, Result.get());
-      //       }
+            if (!Result.isInvalid()) {
+              Result = Actions.ActOnCastExpr(getCurScope(), OpenLoc,
+                                             DeclaratorInfo, CastTy,
+                                             RParenLoc, Result.get());
+            }
 
-      //       // After we performed the cast we can check for postfix-expr pieces.
-      //       if (!Result.isInvalid()) {
-      //         Result = ParsePostfixExpressionSuffix(Result);
-      //       }
+            // After we performed the cast we can check for postfix-expr pieces.
+            if (!Result.isInvalid()) {
+              Result = ParsePostfixExpressionSuffix(Result);
+            }
 
-      //       return Result;
-      //     }
-      //   }
-      // }
+            return Result;
+          }
+        }
+      }
 
       if (ExprType == CastExpr) {
         // We parsed '(' type-name ')' and the thing after it wasn't a '{'.
@@ -3031,14 +3031,14 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
         }
 
         // Reject the cast of super idiom in ObjC.
-        if (Tok.is(tok::identifier) && getLangOpts().ObjC &&
-            Tok.getIdentifierInfo() == Ident_super &&
-            getCurScope()->isInObjcMethodScope() &&
-            GetLookAheadToken(1).isNot(tok::period)) {
-          Diag(Tok.getLocation(), diag::err_illegal_super_cast)
-            << SourceRange(OpenLoc, RParenLoc);
-          return ExprError();
-        }
+        // if (Tok.is(tok::identifier) && getLangOpts().ObjC &&
+        //     Tok.getIdentifierInfo() == Ident_super &&
+        //     getCurScope()->isInObjcMethodScope() &&
+        //     GetLookAheadToken(1).isNot(tok::period)) {
+        //   Diag(Tok.getLocation(), diag::err_illegal_super_cast)
+        //     << SourceRange(OpenLoc, RParenLoc);
+        //   return ExprError();
+        // }
 
         PreferredType.enterTypeCast(Tok.getLocation(), CastTy.get());
         // Parse the cast-expression that follows it next.
@@ -3081,7 +3081,7 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
       Result = Actions.ActOnParenListExpr(OpenLoc, Tok.getLocation(),
                                           ArgExprs);
     }
-  } /*else if (getLangOpts().OpenMP >= 50 && OpenMPDirectiveParsing &&
+  } else if (getLangOpts().OpenMP >= 50 && OpenMPDirectiveParsing &&
              ExprType == CastExpr && Tok.is(tok::l_square) &&
              tryParseOpenMPArrayShapingCastPart()) {
     bool ErrorFound = false;
@@ -3113,7 +3113,7 @@ Parser::ParseParenExpression(ParenParseOption &ExprType, bool stopIfCastExpr,
           Result.get(), OpenLoc, RParenLoc, OMPDimensions, OMPBracketsRanges);
     }
     return Result;
-  }*/ else {
+  } else {
     InMessageExpressionRAIIObject InMessage(*this, false);
 
     Result = ParseExpression(MaybeTypeCast);
