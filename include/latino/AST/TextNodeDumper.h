@@ -183,7 +183,7 @@ public:
 
   void Visit(const CXXCtorInitializer *Init);
 
-  // void Visit(const OMPClause *C);
+  void Visit(const OMPClause *C);
 
   void Visit(const BlockDecl::Capture &C);
 
@@ -329,10 +329,10 @@ public:
   void VisitImportDecl(const ImportDecl *D);
   void VisitPragmaCommentDecl(const PragmaCommentDecl *D);
   void VisitPragmaDetectMismatchDecl(const PragmaDetectMismatchDecl *D);
-  // void VisitOMPExecutableDirective(const OMPExecutableDirective *D);
-  // void VisitOMPDeclareReductionDecl(const OMPDeclareReductionDecl *D);
-  // void VisitOMPRequiresDecl(const OMPRequiresDecl *D);
-  // void VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D);
+  void VisitOMPExecutableDirective(const OMPExecutableDirective *D);
+  void VisitOMPDeclareReductionDecl(const OMPDeclareReductionDecl *D);
+  void VisitOMPRequiresDecl(const OMPRequiresDecl *D);
+  void VisitOMPCapturedExprDecl(const OMPCapturedExprDecl *D);
   void VisitNamespaceDecl(const NamespaceDecl *D);
   void VisitUsingDirectiveDecl(const UsingDirectiveDecl *D);
   void VisitNamespaceAliasDecl(const NamespaceAliasDecl *D);

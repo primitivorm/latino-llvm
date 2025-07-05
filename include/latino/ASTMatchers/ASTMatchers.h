@@ -58,13 +58,13 @@
 // #include "latino/AST/ExprObjC.h"
 #include "latino/AST/LambdaCapture.h"
 #include "latino/AST/NestedNameSpecifier.h"
-// #include "latino/AST/OpenMPClause.h"
+#include "latino/AST/OpenMPClause.h"
 #include "latino/AST/OperationKinds.h"
 #include "latino/AST/ParentMapContext.h"
 #include "latino/AST/Stmt.h"
 #include "latino/AST/StmtCXX.h"
 // #include "latino/AST/StmtObjC.h"
-// #include "latino/AST/StmtOpenMP.h"
+#include "latino/AST/StmtOpenMP.h"
 #include "latino/AST/TemplateBase.h"
 #include "latino/AST/TemplateName.h"
 #include "latino/AST/Type.h"
@@ -7123,8 +7123,8 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 ///
 /// ``ompExecutableDirective()`` matches ``omp parallel``,
 /// ``omp parallel default(none)`` and ``omp taskyield``.
-// extern const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
-//     ompExecutableDirective;
+extern const internal::VariadicDynCastAllOfMatcher<Stmt, OMPExecutableDirective>
+    ompExecutableDirective;
 
 /// Matches standalone OpenMP directives,
 /// i.e., directives that can't have a structured block.
@@ -7139,9 +7139,9 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 ///
 /// ``ompExecutableDirective(isStandaloneDirective()))`` matches
 /// ``omp taskyield``.
-// AST_MATCHER(OMPExecutableDirective, isStandaloneDirective) {
-//   return Node.isStandaloneDirective();
-// }
+AST_MATCHER(OMPExecutableDirective, isStandaloneDirective) {
+  return Node.isStandaloneDirective();
+}
 
 /// Matches the structured-block of the OpenMP executable directive
 ///
@@ -7158,12 +7158,12 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 /// \endcode
 ///
 /// ``ompExecutableDirective(hasStructuredBlock(nullStmt()))`` will match ``;``
-// AST_MATCHER_P(OMPExecutableDirective, hasStructuredBlock,
-//               internal::Matcher<Stmt>, InnerMatcher) {
-//   if (Node.isStandaloneDirective())
-//     return false; // Standalone directives have no structured blocks.
-//   return InnerMatcher.matches(*Node.getStructuredBlock(), Finder, Builder);
-// }
+AST_MATCHER_P(OMPExecutableDirective, hasStructuredBlock,
+              internal::Matcher<Stmt>, InnerMatcher) {
+  if (Node.isStandaloneDirective())
+    return false; // Standalone directives have no structured blocks.
+  return InnerMatcher.matches(*Node.getStructuredBlock(), Finder, Builder);
+}
 
 /// Matches any clause in an OpenMP directive.
 ///
@@ -7176,12 +7176,12 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 ///
 /// ``ompExecutableDirective(hasAnyClause(anything()))`` matches
 /// ``omp parallel default(none)``.
-// AST_MATCHER_P(OMPExecutableDirective, hasAnyClause,
-//               internal::Matcher<OMPClause>, InnerMatcher) {
-//   ArrayRef<OMPClause *> Clauses = Node.clauses();
-//   return matchesFirstInPointerRange(InnerMatcher, Clauses.begin(),
-//                                     Clauses.end(), Finder, Builder);
-// }
+AST_MATCHER_P(OMPExecutableDirective, hasAnyClause,
+              internal::Matcher<OMPClause>, InnerMatcher) {
+  ArrayRef<OMPClause *> Clauses = Node.clauses();
+  return matchesFirstInPointerRange(InnerMatcher, Clauses.begin(),
+                                    Clauses.end(), Finder, Builder);
+}
 
 /// Matches OpenMP ``default`` clause.
 ///
@@ -7196,8 +7196,8 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 ///
 /// ``ompDefaultClause()`` matches ``default(none)``, ``default(shared)``, and
 /// ``default(firstprivate)``
-// extern const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
-//     ompDefaultClause;
+extern const internal::VariadicDynCastAllOfMatcher<OMPClause, OMPDefaultClause>
+    ompDefaultClause;
 
 /// Matches if the OpenMP ``default`` clause has ``none`` kind specified.
 ///
@@ -7211,9 +7211,9 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 /// \endcode
 ///
 /// ``ompDefaultClause(isNoneKind())`` matches only ``default(none)``.
-// AST_MATCHER(OMPDefaultClause, isNoneKind) {
-//   return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_none;
-// }
+AST_MATCHER(OMPDefaultClause, isNoneKind) {
+  return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_none;
+}
 
 /// Matches if the OpenMP ``default`` clause has ``shared`` kind specified.
 ///
@@ -7227,9 +7227,9 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 /// \endcode
 ///
 // /// ``ompDefaultClause(isSharedKind())`` matches only ``default(shared)``.
-// AST_MATCHER(OMPDefaultClause, isSharedKind) {
-//   return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_shared;
-// }
+AST_MATCHER(OMPDefaultClause, isSharedKind) {
+  return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_shared;
+}
 
 /// Matches if the OpenMP ``default`` clause has ``firstprivate`` kind
 /// specified.
@@ -7245,9 +7245,9 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 ///
 /// ``ompDefaultClause(isFirstPrivateKind())`` matches only
 /// ``default(firstprivate)``.
-// AST_MATCHER(OMPDefaultClause, isFirstPrivateKind) {
-//   return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_firstprivate;
-// }
+AST_MATCHER(OMPDefaultClause, isFirstPrivateKind) {
+  return Node.getDefaultKind() == llvm::omp::OMP_DEFAULT_firstprivate;
+}
 
 /// Matches if the OpenMP directive is allowed to contain the specified OpenMP
 /// clause kind.
@@ -7266,12 +7266,12 @@ AST_MATCHER_P(Expr, ignoringElidableConstructorCall,
 /// If the matcher is use from clang-query, ``OpenMPClauseKind`` parameter
 /// should be passed as a quoted string. e.g.,
 /// ``isAllowedToContainClauseKind("OMPC_default").``
-// AST_MATCHER_P(OMPExecutableDirective, isAllowedToContainClauseKind,
-//               OpenMPClauseKind, CKind) {
-//   return llvm::omp::isAllowedClauseForDirective(
-//       Node.getDirectiveKind(), CKind,
-//       Finder->getASTContext().getLangOpts().OpenMP);
-// }
+AST_MATCHER_P(OMPExecutableDirective, isAllowedToContainClauseKind,
+              OpenMPClauseKind, CKind) {
+  return llvm::omp::isAllowedClauseForDirective(
+      Node.getDirectiveKind(), CKind,
+      Finder->getASTContext().getLangOpts().OpenMP);
+}
 
 //----------------------------------------------------------------------------//
 // End OpenMP handling.

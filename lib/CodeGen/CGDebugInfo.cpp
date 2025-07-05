@@ -566,19 +566,19 @@ void CGDebugInfo::CreateCompileUnit() {
   llvm::dwarf::SourceLanguage LangTag;
   const LangOptions &LO = CGM.getLangOpts();
   if (LO.CPlusPlus) {
-    if (LO.ObjC)
+    /*if (LO.ObjC)
       LangTag = llvm::dwarf::DW_LANG_ObjC_plus_plus;
-    else if (LO.CPlusPlus14)
+    else */if (LO.CPlusPlus14)
       LangTag = llvm::dwarf::DW_LANG_C_plus_plus_14;
     else if (LO.CPlusPlus11)
       LangTag = llvm::dwarf::DW_LANG_C_plus_plus_11;
     else
       LangTag = llvm::dwarf::DW_LANG_C_plus_plus;
-  } else if (LO.ObjC) {
+  }/* else if (LO.ObjC) {
     LangTag = llvm::dwarf::DW_LANG_ObjC;
   } else if (LO.RenderScript) {
     LangTag = llvm::dwarf::DW_LANG_GOOGLE_RenderScript;
-  } else if (LO.C99) {
+  }*/ else if (LO.C99) {
     LangTag = llvm::dwarf::DW_LANG_C99;
   } else {
     LangTag = llvm::dwarf::DW_LANG_C89;
@@ -700,25 +700,25 @@ llvm::DIType *CGDebugInfo::CreateType(const BuiltinType *BT) {
   //   return SelTy;
   // }
 
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
-//   case BuiltinType::Id:                                                        \
-//     return getOrCreateStructPtrType("opencl_" #ImgType "_" #Suffix "_t",       \
-//                                     SingletonId);
-// #include "latino/Basic/OpenCLImageTypes.def"
-  // case BuiltinType::OCLSampler:
-  //   return getOrCreateStructPtrType("opencl_sampler_t", OCLSamplerDITy);
-  // case BuiltinType::OCLEvent:
-  //   return getOrCreateStructPtrType("opencl_event_t", OCLEventDITy);
-  // case BuiltinType::OCLClkEvent:
-  //   return getOrCreateStructPtrType("opencl_clk_event_t", OCLClkEventDITy);
-  // case BuiltinType::OCLQueue:
-  //   return getOrCreateStructPtrType("opencl_queue_t", OCLQueueDITy);
-  // case BuiltinType::OCLReserveID:
-  //   return getOrCreateStructPtrType("opencl_reserve_id_t", OCLReserveIDDITy);
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case BuiltinType::Id: \
-//     return getOrCreateStructPtrType("opencl_" #ExtType, Id##Ty);
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
+  case BuiltinType::Id:                                                        \
+    return getOrCreateStructPtrType("opencl_" #ImgType "_" #Suffix "_t",       \
+                                    SingletonId);
+#include "latino/Basic/OpenCLImageTypes.def"
+  case BuiltinType::OCLSampler:
+    return getOrCreateStructPtrType("opencl_sampler_t", OCLSamplerDITy);
+  case BuiltinType::OCLEvent:
+    return getOrCreateStructPtrType("opencl_event_t", OCLEventDITy);
+  case BuiltinType::OCLClkEvent:
+    return getOrCreateStructPtrType("opencl_clk_event_t", OCLClkEventDITy);
+  case BuiltinType::OCLQueue:
+    return getOrCreateStructPtrType("opencl_queue_t", OCLQueueDITy);
+  case BuiltinType::OCLReserveID:
+    return getOrCreateStructPtrType("opencl_reserve_id_t", OCLReserveIDDITy);
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case BuiltinType::Id: \
+    return getOrCreateStructPtrType("opencl_" #ExtType, Id##Ty);
+#include "latino/Basic/OpenCLExtensionTypes.def"
 
 #define SVE_TYPE(Name, Id, SingletonId) case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -784,12 +784,12 @@ llvm::DIType *CGDebugInfo::CreateType(const BuiltinType *BT) {
   case BuiltinType::Bool:
     Encoding = llvm::dwarf::DW_ATE_boolean;
     break;
-  // case BuiltinType::Half:
+  case BuiltinType::Half:
   case BuiltinType::Float:
   case BuiltinType::LongDouble:
-  // case BuiltinType::Float16:
+  case BuiltinType::Float16:
   case BuiltinType::BFloat16:
-  // case BuiltinType::Float128:
+  case BuiltinType::Float128:
   case BuiltinType::Double:
     // FIXME: For targets where long double and __float128 have the same size,
     // they are currently indistinguishable in the debugger without some
@@ -1100,11 +1100,11 @@ uint64_t CGDebugInfo::collectDefaultElementTypesForBlockPointer(
   // Blocks in OpenCL have unique constraints which make the standard fields
   // redundant while requiring size and align fields for enqueue_kernel. See
   // initializeForBlockHeader in CGBlocks.cpp
-  // if (CGM.getLangOpts().OpenCL) {
-  //   FType = CGM.getContext().IntTy;
-  //   EltTys.push_back(CreateMemberType(Unit, FType, "__size", &FieldOffset));
-  //   EltTys.push_back(CreateMemberType(Unit, FType, "__align", &FieldOffset));
-  // } else {
+  if (CGM.getLangOpts().OpenCL) {
+    FType = CGM.getContext().IntTy;
+    EltTys.push_back(CreateMemberType(Unit, FType, "__size", &FieldOffset));
+    EltTys.push_back(CreateMemberType(Unit, FType, "__align", &FieldOffset));
+  } else {
     FType = CGM.getContext().getPointerType(CGM.getContext().VoidTy);
     EltTys.push_back(CreateMemberType(Unit, FType, "__isa", &FieldOffset));
     FType = CGM.getContext().IntTy;
@@ -1119,7 +1119,7 @@ uint64_t CGDebugInfo::collectDefaultElementTypesForBlockPointer(
         Unit, "__descriptor", nullptr, LineNo, FieldSize, FieldAlign,
         FieldOffset, llvm::DINode::FlagZero, DescTy));
     FieldOffset += FieldSize;
-  // }
+  }
 
   return FieldOffset;
 }
@@ -4400,14 +4400,14 @@ void CGDebugInfo::collectDefaultFieldsForBlockLiteralDeclare(
   // Blocks in OpenCL have unique constraints which make the standard fields
   // redundant while requiring size and align fields for enqueue_kernel. See
   // initializeForBlockHeader in CGBlocks.cpp
-  // if (CGM.getLangOpts().OpenCL) {
-  //   Fields.push_back(createFieldType("__size", Context.IntTy, Loc, AS_public,
-  //                                    BlockLayout.getElementOffsetInBits(0),
-  //                                    Unit, Unit));
-  //   Fields.push_back(createFieldType("__align", Context.IntTy, Loc, AS_public,
-  //                                    BlockLayout.getElementOffsetInBits(1),
-  //                                    Unit, Unit));
-  // } else {
+  if (CGM.getLangOpts().OpenCL) {
+    Fields.push_back(createFieldType("__size", Context.IntTy, Loc, AS_public,
+                                     BlockLayout.getElementOffsetInBits(0),
+                                     Unit, Unit));
+    Fields.push_back(createFieldType("__align", Context.IntTy, Loc, AS_public,
+                                     BlockLayout.getElementOffsetInBits(1),
+                                     Unit, Unit));
+  } else {
     Fields.push_back(createFieldType("__isa", Context.VoidPtrTy, Loc, AS_public,
                                      BlockLayout.getElementOffsetInBits(0),
                                      Unit, Unit));
@@ -4428,7 +4428,7 @@ void CGDebugInfo::collectDefaultFieldsForBlockLiteralDeclare(
                                    ? Context.getBlockDescriptorExtendedType()
                                    : Context.getBlockDescriptorType()),
         Loc, AS_public, BlockLayout.getElementOffsetInBits(4), Unit, Unit));
-  // }
+  }
 }
 
 void CGDebugInfo::EmitDeclareOfBlockLiteralArgVariable(const CGBlockInfo &block,

@@ -66,7 +66,7 @@ bool Builtin::Context::builtinIsSupported(const Builtin::Info &BuiltinInfo,
   bool GnuModeUnsupported = !LangOpts.GNUMode && (BuiltinInfo.Langs & GNU_LANG);
   bool MSModeUnsupported =
       !LangOpts.MicrosoftExt && (BuiltinInfo.Langs & MS_LANG);
-  bool ObjCUnsupported = !LangOpts.ObjC && BuiltinInfo.Langs == OBJC_LANG;
+  // bool ObjCUnsupported = !LangOpts.ObjC && BuiltinInfo.Langs == OBJC_LANG;
   bool OclC1Unsupported = (LangOpts.OpenCLVersion / 100) != 1 &&
                           (BuiltinInfo.Langs & ALL_OCLC_LANGUAGES ) ==  OCLC1X_LANG;
   bool OclC2Unsupported =
@@ -79,7 +79,7 @@ bool Builtin::Context::builtinIsSupported(const Builtin::Info &BuiltinInfo,
       !LangOpts.CPlusPlus && BuiltinInfo.Langs == CXX_LANG;
   return !BuiltinsUnsupported && !MathBuiltinsUnsupported && !OclCUnsupported &&
          !OclC1Unsupported && !OclC2Unsupported && !OpenMPUnsupported &&
-         !GnuModeUnsupported && !MSModeUnsupported && !ObjCUnsupported &&
+         !GnuModeUnsupported && !MSModeUnsupported && /*!ObjCUnsupported &&*/
          !CPlusPlusUnsupported;
 }
 

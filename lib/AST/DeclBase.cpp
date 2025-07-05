@@ -21,7 +21,7 @@
 #include "latino/AST/DeclContextInternals.h"
 #include "latino/AST/DeclFriend.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DependentDiagnostic.h"
 #include "latino/AST/ExternalASTSource.h"
@@ -518,8 +518,8 @@ static StringRef getRealizedPlatform(const AvailabilityAttr *A,
   // Check if this is an App Extension "platform", and if so chop off
   // the suffix for matching with the actual platform.
   StringRef RealizedPlatform = A->getPlatform()->getName();
-  if (!Context.getLangOpts().AppExt)
-    return RealizedPlatform;
+  // if (!Context.getLangOpts().AppExt)
+  //   return RealizedPlatform;
   size_t suffix = RealizedPlatform.rfind("_app_extension");
   if (suffix != StringRef::npos)
     return RealizedPlatform.slice(0, suffix);
@@ -812,11 +812,11 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
     case TypeAliasTemplate:
       return IDNS_Ordinary | IDNS_Tag | IDNS_Type;
 
-    // case OMPDeclareReduction:
-    //   return IDNS_OMPReduction;
+    case OMPDeclareReduction:
+      return IDNS_OMPReduction;
 
-    // case OMPDeclareMapper:
-    //   return IDNS_OMPMapper;
+    case OMPDeclareMapper:
+      return IDNS_OMPMapper;
 
     // Never have names.
     case Friend:
@@ -847,10 +847,10 @@ unsigned Decl::getIdentifierNamespaceForKind(Kind DeclKind) {
     // case ObjCCategory:
     // case ObjCCategoryImpl:
     case Import:
-    // case OMPThreadPrivate:
-    // case OMPAllocate:
-    // case OMPRequires:
-    // case OMPCapturedExpr:
+    case OMPThreadPrivate:
+    case OMPAllocate:
+    case OMPRequires:
+    case OMPCapturedExpr:
     case Empty:
     case LifetimeExtendedTemporary:
     case RequiresExprBody:
@@ -1225,8 +1225,8 @@ DeclContext *DeclContext::getPrimaryContext() {
   case Decl::Export:
   case Decl::Block:
   case Decl::Captured:
-  // case Decl::OMPDeclareReduction:
-  // case Decl::OMPDeclareMapper:
+  case Decl::OMPDeclareReduction:
+  case Decl::OMPDeclareMapper:
   case Decl::RequiresExprBody:
     // There is only one DeclContext for these entities.
     return this;

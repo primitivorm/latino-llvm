@@ -141,14 +141,14 @@ static KeywordStatus getKeywordStatus(const LangOptions &LangOpts,
   if (LangOpts.Char8 && (Flags & CHAR8SUPPORT)) return KS_Enabled;
   if (LangOpts.AltiVec && (Flags & KEYALTIVEC)) return KS_Enabled;
   if (LangOpts.ZVector && (Flags & KEYZVECTOR)) return KS_Enabled;
-  // if (LangOpts.OpenCL && !LangOpts.OpenCLCPlusPlus && (Flags & KEYOPENCLC))
-  //   return KS_Enabled;
+  if (LangOpts.OpenCL && !LangOpts.OpenCLCPlusPlus && (Flags & KEYOPENCLC))
+    return KS_Enabled;
   if (LangOpts.OpenCLCPlusPlus && (Flags & KEYOPENCLCXX)) return KS_Enabled;
   if (!LangOpts.CPlusPlus && (Flags & KEYNOCXX)) return KS_Enabled;
   if (LangOpts.C11 && (Flags & KEYC11)) return KS_Enabled;
   // We treat bridge casts as objective-C keywords so we can warn on them
   // in non-arc mode.
-  if (LangOpts.ObjC && (Flags & KEYOBJC)) return KS_Enabled;
+  // if (LangOpts.ObjC && (Flags & KEYOBJC)) return KS_Enabled;
   if (LangOpts.CPlusPlus20 && (Flags & KEYCONCEPTS)) return KS_Enabled;
   if (LangOpts.Coroutines && (Flags & KEYCOROUTINES)) return KS_Enabled;
   if (LangOpts.ModulesTS && (Flags & KEYMODULES)) return KS_Enabled;
@@ -172,8 +172,8 @@ static void AddKeyword(StringRef Keyword,
     return;
 
   // Don't add this keyword under OpenCL.
-  // if (LangOpts.OpenCL && (Flags & KEYNOOPENCL))
-  //   return;
+  if (LangOpts.OpenCL && (Flags & KEYNOOPENCL))
+    return;
 
   // Don't add this keyword if disabled in this language.
   if (AddResult == KS_Disabled) return;

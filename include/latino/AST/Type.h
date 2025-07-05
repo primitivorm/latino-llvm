@@ -2119,28 +2119,28 @@ public:
   bool isUndeducedAutoType() const;             // C++11 auto or
                                                 // C++14 decltype(auto)
 
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   bool is##Id##Type() const;
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  bool is##Id##Type() const;
+#include "latino/Basic/OpenCLImageTypes.def"
 
-  // bool isImageType() const;                     // Any OpenCL image type
+  bool isImageType() const;                     // Any OpenCL image type
 
-  // bool isSamplerT() const;                      // OpenCL sampler_t
-  // bool isEventT() const;                        // OpenCL event_t
-  // bool isClkEventT() const;                     // OpenCL clk_event_t
-  // bool isQueueT() const;                        // OpenCL queue_t
-  // bool isReserveIDT() const;                    // OpenCL reserve_id_t
+  bool isSamplerT() const;                      // OpenCL sampler_t
+  bool isEventT() const;                        // OpenCL event_t
+  bool isClkEventT() const;                     // OpenCL clk_event_t
+  bool isQueueT() const;                        // OpenCL queue_t
+  bool isReserveIDT() const;                    // OpenCL reserve_id_t
 
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   bool is##Id##Type() const;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  bool is##Id##Type() const;
+#include "latino/Basic/OpenCLExtensionTypes.def"
   // Type defined in cl_intel_device_side_avc_motion_estimation OpenCL extension
-  // bool isOCLIntelSubgroupAVCType() const;
-  // bool isOCLExtOpaqueType() const;              // Any OpenCL extension type
+  bool isOCLIntelSubgroupAVCType() const;
+  bool isOCLExtOpaqueType() const;              // Any OpenCL extension type
 
-  // bool isPipeType() const;                      // OpenCL pipe type
+  bool isPipeType() const;                      // OpenCL pipe type
   bool isExtIntType() const;                    // Extended Int Type
-  // bool isOpenCLSpecificType() const;            // Any OpenCL specific type
+  bool isOpenCLSpecificType() const;            // Any OpenCL specific type
 
   /// Determines if this type, which must satisfy
   /// isObjCLifetimeType(), is implicitly __unsafe_unretained rather
@@ -2505,11 +2505,11 @@ class BuiltinType : public Type {
 public:
   enum Kind {
 // OpenCL image types
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) Id,
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) Id,
+#include "latino/Basic/OpenCLImageTypes.def"
 // OpenCL extension types
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) Id,
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) Id,
+#include "latino/Basic/OpenCLExtensionTypes.def"
 // SVE Types
 #define SVE_TYPE(Name, Id, SingletonId) Id,
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -6828,72 +6828,72 @@ inline bool Type::isDecltypeType() const {
   return isa<DecltypeType>(this);
 }
 
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   inline bool Type::is##Id##Type() const { \
-//     return isSpecificBuiltinType(BuiltinType::Id); \
-//   }
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  inline bool Type::is##Id##Type() const { \
+    return isSpecificBuiltinType(BuiltinType::Id); \
+  }
+#include "latino/Basic/OpenCLImageTypes.def"
 
-// inline bool Type::isSamplerT() const {
-//   return isSpecificBuiltinType(BuiltinType::OCLSampler);
-// }
+inline bool Type::isSamplerT() const {
+  return isSpecificBuiltinType(BuiltinType::OCLSampler);
+}
 
-// inline bool Type::isEventT() const {
-//   return isSpecificBuiltinType(BuiltinType::OCLEvent);
-// }
+inline bool Type::isEventT() const {
+  return isSpecificBuiltinType(BuiltinType::OCLEvent);
+}
 
-// inline bool Type::isClkEventT() const {
-//   return isSpecificBuiltinType(BuiltinType::OCLClkEvent);
-// }
+inline bool Type::isClkEventT() const {
+  return isSpecificBuiltinType(BuiltinType::OCLClkEvent);
+}
 
-// inline bool Type::isQueueT() const {
-//   return isSpecificBuiltinType(BuiltinType::OCLQueue);
-// }
+inline bool Type::isQueueT() const {
+  return isSpecificBuiltinType(BuiltinType::OCLQueue);
+}
 
-// inline bool Type::isReserveIDT() const {
-//   return isSpecificBuiltinType(BuiltinType::OCLReserveID);
-// }
+inline bool Type::isReserveIDT() const {
+  return isSpecificBuiltinType(BuiltinType::OCLReserveID);
+}
 
-// inline bool Type::isImageType() const {
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) is##Id##Type() ||
-//   return
-// #include "latino/Basic/OpenCLImageTypes.def"
-//       false; // end boolean or operation
-// }
+inline bool Type::isImageType() const {
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) is##Id##Type() ||
+  return
+#include "latino/Basic/OpenCLImageTypes.def"
+      false; // end boolean or operation
+}
 
-// inline bool Type::isPipeType() const {
-//   return isa<PipeType>(CanonicalType);
-// }
+inline bool Type::isPipeType() const {
+  return isa<PipeType>(CanonicalType);
+}
 
 inline bool Type::isExtIntType() const {
   return isa<ExtIntType>(CanonicalType);
 }
 
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   inline bool Type::is##Id##Type() const { \
-//     return isSpecificBuiltinType(BuiltinType::Id); \
-//   }
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  inline bool Type::is##Id##Type() const { \
+    return isSpecificBuiltinType(BuiltinType::Id); \
+  }
+#include "latino/Basic/OpenCLExtensionTypes.def"
 
-// inline bool Type::isOCLIntelSubgroupAVCType() const {
-// #define INTEL_SUBGROUP_AVC_TYPE(ExtType, Id) \
-//   isOCLIntelSubgroupAVC##Id##Type() ||
-//   return
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-//     false; // end of boolean or operation
-// }
+inline bool Type::isOCLIntelSubgroupAVCType() const {
+#define INTEL_SUBGROUP_AVC_TYPE(ExtType, Id) \
+  isOCLIntelSubgroupAVC##Id##Type() ||
+  return
+#include "latino/Basic/OpenCLExtensionTypes.def"
+    false; // end of boolean or operation
+}
 
-// inline bool Type::isOCLExtOpaqueType() const {
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) is##Id##Type() ||
-//   return
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-//     false; // end of boolean or operation
-// }
+inline bool Type::isOCLExtOpaqueType() const {
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) is##Id##Type() ||
+  return
+#include "latino/Basic/OpenCLExtensionTypes.def"
+    false; // end of boolean or operation
+}
 
-// inline bool Type::isOpenCLSpecificType() const {
-//   return isSamplerT() || isEventT() || isImageType() || isClkEventT() ||
-//          isQueueT() || isReserveIDT() || isPipeType() || isOCLExtOpaqueType();
-// }
+inline bool Type::isOpenCLSpecificType() const {
+  return isSamplerT() || isEventT() || isImageType() || isClkEventT() ||
+         isQueueT() || isReserveIDT() || isPipeType() || isOCLExtOpaqueType();
+}
 
 inline bool Type::isTemplateTypeParmType() const {
   return isa<TemplateTypeParmType>(CanonicalType);

@@ -17,7 +17,7 @@
 #include "latino/AST/Attr.h"
 #include "latino/AST/DeclCXX.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/Basic/ABI.h"
 #include "latino/Basic/LLVM.h"
 #include "llvm/ADT/DenseMapInfo.h"
@@ -82,8 +82,8 @@ public:
   GlobalDecl(const BlockDecl *D) { Init(D); }
   GlobalDecl(const CapturedDecl *D) { Init(D); }
   // GlobalDecl(const ObjCMethodDecl *D) { Init(D); }
-  // GlobalDecl(const OMPDeclareReductionDecl *D) { Init(D); }
-  // GlobalDecl(const OMPDeclareMapperDecl *D) { Init(D); }
+  GlobalDecl(const OMPDeclareReductionDecl *D) { Init(D); }
+  GlobalDecl(const OMPDeclareMapperDecl *D) { Init(D); }
   GlobalDecl(const CXXConstructorDecl *D, CXXCtorType Type) : Value(D, Type) {}
   GlobalDecl(const CXXDestructorDecl *D, CXXDtorType Type) : Value(D, Type) {}
   GlobalDecl(const VarDecl *D, DynamicInitKind StubKind)

@@ -586,18 +586,18 @@ class RetainSummaryManager {
   //   addMethodSummary(&Ctx.Idents.get(Cls), ObjCMethodSummaries, Summ, Kws...);
   // }
 
-  template <typename... Keywords>
-  void addClsMethSummary(const char *Cls, const RetainSummary *Summ,
-                         Keywords *... Kws) {
-    addMethodSummary(&Ctx.Idents.get(Cls), ObjCClassMethodSummaries, Summ,
-                     Kws...);
-  }
+  // template <typename... Keywords>
+  // void addClsMethSummary(const char *Cls, const RetainSummary *Summ,
+  //                        Keywords *... Kws) {
+  //   addMethodSummary(&Ctx.Idents.get(Cls), ObjCClassMethodSummaries, Summ,
+  //                    Kws...);
+  // }
 
-  template <typename... Keywords>
-  void addClsMethSummary(IdentifierInfo *II, const RetainSummary *Summ,
-                         Keywords *... Kws) {
-    addMethodSummary(II, ObjCClassMethodSummaries, Summ, Kws...);
-  }
+  // template <typename... Keywords>
+  // void addClsMethSummary(IdentifierInfo *II, const RetainSummary *Summ,
+  //                        Keywords *... Kws) {
+  //   addMethodSummary(II, ObjCClassMethodSummaries, Summ, Kws...);
+  // }
 
   const RetainSummary * generateSummary(const FunctionDecl *FD,
                                         bool &AllowAnnotations);

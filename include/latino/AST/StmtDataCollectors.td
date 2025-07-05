@@ -153,11 +153,11 @@ class LabelStmt {
     addData(S->getDecl()->getName());
   }];
 }
-class MSDependentExistsStmt {
-  code Code = [{
-    addData(S->isIfExists());
-  }];
-}
+//class MSDependentExistsStmt {
+//  code Code = [{
+//    addData(S->isIfExists());
+//  }];
+//}
 class AddrLabelExpr {
   code Code = [{
     addData(S->getLabel()->getName());

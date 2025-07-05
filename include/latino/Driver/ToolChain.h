@@ -294,9 +294,9 @@ public:
   /// TranslateOpenMPTargetArgs - Create a new derived argument list for
   /// that contains the OpenMP target specific flags passed via
   /// -Xopenmp-target -opt=val OR -Xopenmp-target=<triple> -opt=val
-  // virtual llvm::opt::DerivedArgList *TranslateOpenMPTargetArgs(
-  //     const llvm::opt::DerivedArgList &Args, bool SameTripleAsHost,
-  //     SmallVectorImpl<llvm::opt::Arg *> &AllocatedArgs) const;
+  virtual llvm::opt::DerivedArgList *TranslateOpenMPTargetArgs(
+      const llvm::opt::DerivedArgList &Args, bool SameTripleAsHost,
+      SmallVectorImpl<llvm::opt::Arg *> &AllocatedArgs) const;
 
   /// Append the argument following \p A to \p DAL assuming \p A is an Xarch
   /// argument. If \p AllocatedArgs is null pointer, synthesized arguments are

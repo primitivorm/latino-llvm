@@ -1299,9 +1299,9 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
     // Some might be dependent for other reasons.
   case Expr::ArraySubscriptExprClass:
   case Expr::MatrixSubscriptExprClass:
-  // case Expr::OMPArraySectionExprClass:
-  // case Expr::OMPArrayShapingExprClass:
-  // case Expr::OMPIteratorExprClass:
+  case Expr::OMPArraySectionExprClass:
+  case Expr::OMPArrayShapingExprClass:
+  case Expr::OMPIteratorExprClass:
   case Expr::BinaryOperatorClass:
   case Expr::DependentCoawaitExprClass:
   case Expr::CompoundAssignOperatorClass:
@@ -1425,7 +1425,7 @@ CanThrowResult Sema::canThrow(const Stmt *S) {
   case Stmt::IndirectGotoStmtClass:
   case Stmt::LabelStmtClass:
   case Stmt::MSAsmStmtClass:
-  case Stmt::MSDependentExistsStmtClass:
+  //case Stmt::MSDependentExistsStmtClass:
   case Stmt::NullStmtClass:
   // case Stmt::ObjCAtCatchStmtClass:
   // case Stmt::ObjCAtFinallyStmtClass:

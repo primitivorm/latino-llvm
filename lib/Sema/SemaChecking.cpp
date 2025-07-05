@@ -25,7 +25,7 @@
 #include "latino/AST/Expr.h"
 #include "latino/AST/ExprCXX.h"
 // #include "latino/AST/ExprObjC.h"
-// #include "latino/AST/ExprOpenMP.h"
+#include "latino/AST/ExprOpenMP.h"
 #include "latino/AST/FormatString.h"
 // #include "latino/AST/NSAPI.h"
 #include "latino/AST/NonTrivialTypeVisitor.h"
@@ -42,7 +42,7 @@
 #include "latino/Basic/IdentifierTable.h"
 #include "latino/Basic/LLVM.h"
 #include "latino/Basic/LangOptions.h"
-// #include "latino/Basic/OpenCLOptions.h"
+#include "latino/Basic/OpenCLOptions.h"
 #include "latino/Basic/OperatorKinds.h"
 #include "latino/Basic/PartialDiagnostic.h"
 #include "latino/Basic/SourceLocation.h"
@@ -802,124 +802,124 @@ static inline bool isBlockPointer(Expr *Arg) {
 
 /// OpenCL C v2.0, s6.13.17.2 - Checks that the block parameters are all local
 /// void*, which is a requirement of device side enqueue.
-// static bool checkOpenCLBlockArgs(Sema &S, Expr *BlockArg) {
-//   const BlockPointerType *BPT =
-//       cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
-//   ArrayRef<QualType> Params =
-//       BPT->getPointeeType()->castAs<FunctionProtoType>()->getParamTypes();
-//   unsigned ArgCounter = 0;
-//   bool IllegalParams = false;
-//   // Iterate through the block parameters until either one is found that is not
-//   // a local void*, or the block is valid.
-//   for (ArrayRef<QualType>::iterator I = Params.begin(), E = Params.end();
-//        I != E; ++I, ++ArgCounter) {
-//     if (!(*I)->isPointerType() || !(*I)->getPointeeType()->isVoidType() ||
-//         (*I)->getPointeeType().getQualifiers().getAddressSpace() !=
-//             LangAS::opencl_local) {
-//       // Get the location of the error. If a block literal has been passed
-//       // (BlockExpr) then we can point straight to the offending argument,
-//       // else we just point to the variable reference.
-//       SourceLocation ErrorLoc;
-//       if (isa<BlockExpr>(BlockArg)) {
-//         BlockDecl *BD = cast<BlockExpr>(BlockArg)->getBlockDecl();
-//         ErrorLoc = BD->getParamDecl(ArgCounter)->getBeginLoc();
-//       } else if (isa<DeclRefExpr>(BlockArg)) {
-//         ErrorLoc = cast<DeclRefExpr>(BlockArg)->getBeginLoc();
-//       }
-//       S.Diag(ErrorLoc,
-//              diag::err_opencl_enqueue_kernel_blocks_non_local_void_args);
-//       IllegalParams = true;
-//     }
-//   }
+static bool checkOpenCLBlockArgs(Sema &S, Expr *BlockArg) {
+  const BlockPointerType *BPT =
+      cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
+  ArrayRef<QualType> Params =
+      BPT->getPointeeType()->castAs<FunctionProtoType>()->getParamTypes();
+  unsigned ArgCounter = 0;
+  bool IllegalParams = false;
+  // Iterate through the block parameters until either one is found that is not
+  // a local void*, or the block is valid.
+  for (ArrayRef<QualType>::iterator I = Params.begin(), E = Params.end();
+       I != E; ++I, ++ArgCounter) {
+    if (!(*I)->isPointerType() || !(*I)->getPointeeType()->isVoidType() ||
+        (*I)->getPointeeType().getQualifiers().getAddressSpace() !=
+            LangAS::opencl_local) {
+      // Get the location of the error. If a block literal has been passed
+      // (BlockExpr) then we can point straight to the offending argument,
+      // else we just point to the variable reference.
+      SourceLocation ErrorLoc;
+      if (isa<BlockExpr>(BlockArg)) {
+        BlockDecl *BD = cast<BlockExpr>(BlockArg)->getBlockDecl();
+        ErrorLoc = BD->getParamDecl(ArgCounter)->getBeginLoc();
+      } else if (isa<DeclRefExpr>(BlockArg)) {
+        ErrorLoc = cast<DeclRefExpr>(BlockArg)->getBeginLoc();
+      }
+      S.Diag(ErrorLoc,
+             diag::err_opencl_enqueue_kernel_blocks_non_local_void_args);
+      IllegalParams = true;
+    }
+  }
 
-//   return IllegalParams;
-// }
+  return IllegalParams;
+}
 
-// static bool checkOpenCLSubgroupExt(Sema &S, CallExpr *Call) {
-//   if (!S.getOpenCLOptions().isEnabled("cl_khr_subgroups")) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_requires_extension)
-//         << 1 << Call->getDirectCallee() << "cl_khr_subgroups";
-//     return true;
-//   }
-//   return false;
-// }
+static bool checkOpenCLSubgroupExt(Sema &S, CallExpr *Call) {
+  if (!S.getOpenCLOptions().isEnabled("cl_khr_subgroups")) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_requires_extension)
+        << 1 << Call->getDirectCallee() << "cl_khr_subgroups";
+    return true;
+  }
+  return false;
+}
 
-// static bool SemaOpenCLBuiltinNDRangeAndBlock(Sema &S, CallExpr *TheCall) {
-//   if (checkArgCount(S, TheCall, 2))
-//     return true;
+static bool SemaOpenCLBuiltinNDRangeAndBlock(Sema &S, CallExpr *TheCall) {
+  if (checkArgCount(S, TheCall, 2))
+    return true;
 
-//   if (checkOpenCLSubgroupExt(S, TheCall))
-//     return true;
+  if (checkOpenCLSubgroupExt(S, TheCall))
+    return true;
 
-//   // First argument is an ndrange_t type.
-//   Expr *NDRangeArg = TheCall->getArg(0);
-//   if (NDRangeArg->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
-//     S.Diag(NDRangeArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-//         << TheCall->getDirectCallee() << "'ndrange_t'";
-//     return true;
-//   }
+  // First argument is an ndrange_t type.
+  Expr *NDRangeArg = TheCall->getArg(0);
+  if (NDRangeArg->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
+    S.Diag(NDRangeArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+        << TheCall->getDirectCallee() << "'ndrange_t'";
+    return true;
+  }
 
-//   Expr *BlockArg = TheCall->getArg(1);
-//   if (!isBlockPointer(BlockArg)) {
-//     S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-//         << TheCall->getDirectCallee() << "block";
-//     return true;
-//   }
-//   return checkOpenCLBlockArgs(S, BlockArg);
-// }
+  Expr *BlockArg = TheCall->getArg(1);
+  if (!isBlockPointer(BlockArg)) {
+    S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+        << TheCall->getDirectCallee() << "block";
+    return true;
+  }
+  return checkOpenCLBlockArgs(S, BlockArg);
+}
 
 /// OpenCL C v2.0, s6.13.17.6 - Check the argument to the
 /// get_kernel_work_group_size
 /// and get_kernel_preferred_work_group_size_multiple builtin functions.
-// static bool SemaOpenCLBuiltinKernelWorkGroupSize(Sema &S, CallExpr *TheCall) {
-//   if (checkArgCount(S, TheCall, 1))
-//     return true;
+static bool SemaOpenCLBuiltinKernelWorkGroupSize(Sema &S, CallExpr *TheCall) {
+  if (checkArgCount(S, TheCall, 1))
+    return true;
 
-//   Expr *BlockArg = TheCall->getArg(0);
-//   if (!isBlockPointer(BlockArg)) {
-//     S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-//         << TheCall->getDirectCallee() << "block";
-//     return true;
-//   }
-//   return checkOpenCLBlockArgs(S, BlockArg);
-// }
+  Expr *BlockArg = TheCall->getArg(0);
+  if (!isBlockPointer(BlockArg)) {
+    S.Diag(BlockArg->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+        << TheCall->getDirectCallee() << "block";
+    return true;
+  }
+  return checkOpenCLBlockArgs(S, BlockArg);
+}
 
 /// Diagnose integer type and any valid implicit conversion to it.
-// static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E,
-//                                       const QualType &IntType);
+static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E,
+                                      const QualType &IntType);
 
-// static bool checkOpenCLEnqueueLocalSizeArgs(Sema &S, CallExpr *TheCall,
-//                                             unsigned Start, unsigned End) {
-//   bool IllegalParams = false;
-//   for (unsigned I = Start; I <= End; ++I)
-//     IllegalParams |= checkOpenCLEnqueueIntType(S, TheCall->getArg(I),
-//                                               S.Context.getSizeType());
-//   return IllegalParams;
-// }
+static bool checkOpenCLEnqueueLocalSizeArgs(Sema &S, CallExpr *TheCall,
+                                            unsigned Start, unsigned End) {
+  bool IllegalParams = false;
+  for (unsigned I = Start; I <= End; ++I)
+    IllegalParams |= checkOpenCLEnqueueIntType(S, TheCall->getArg(I),
+                                              S.Context.getSizeType());
+  return IllegalParams;
+}
 
 /// OpenCL v2.0, s6.13.17.1 - Check that sizes are provided for all
 /// 'local void*' parameter of passed block.
-// static bool checkOpenCLEnqueueVariadicArgs(Sema &S, CallExpr *TheCall,
-//                                            Expr *BlockArg,
-//                                            unsigned NumNonVarArgs) {
-//   const BlockPointerType *BPT =
-//       cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
-//   unsigned NumBlockParams =
-//       BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams();
-//   unsigned TotalNumArgs = TheCall->getNumArgs();
+static bool checkOpenCLEnqueueVariadicArgs(Sema &S, CallExpr *TheCall,
+                                           Expr *BlockArg,
+                                           unsigned NumNonVarArgs) {
+  const BlockPointerType *BPT =
+      cast<BlockPointerType>(BlockArg->getType().getCanonicalType());
+  unsigned NumBlockParams =
+      BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams();
+  unsigned TotalNumArgs = TheCall->getNumArgs();
 
-//   // For each argument passed to the block, a corresponding uint needs to
-//   // be passed to describe the size of the local memory.
-//   if (TotalNumArgs != NumBlockParams + NumNonVarArgs) {
-//     S.Diag(TheCall->getBeginLoc(),
-//            diag::err_opencl_enqueue_kernel_local_size_args);
-//     return true;
-//   }
+  // For each argument passed to the block, a corresponding uint needs to
+  // be passed to describe the size of the local memory.
+  if (TotalNumArgs != NumBlockParams + NumNonVarArgs) {
+    S.Diag(TheCall->getBeginLoc(),
+           diag::err_opencl_enqueue_kernel_local_size_args);
+    return true;
+  }
 
-//   // Check that the sizes of the local memory are specified by integers.
-//   return checkOpenCLEnqueueLocalSizeArgs(S, TheCall, NumNonVarArgs,
-//                                          TotalNumArgs - 1);
-// }
+  // Check that the sizes of the local memory are specified by integers.
+  return checkOpenCLEnqueueLocalSizeArgs(S, TheCall, NumNonVarArgs,
+                                         TotalNumArgs - 1);
+}
 
 /// OpenCL C v2.0, s6.13.17 - Enqueue kernel function contains four different
 /// overload formats specified in Table 6.13.17.1.
@@ -947,306 +947,306 @@ static inline bool isBlockPointer(Expr *Arg) {
 ///                    clk_event_t *event_ret,
 ///                    void (^block)(local void*, ...),
 ///                    uint size0, ...)
-// static bool SemaOpenCLBuiltinEnqueueKernel(Sema &S, CallExpr *TheCall) {
-//   unsigned NumArgs = TheCall->getNumArgs();
+static bool SemaOpenCLBuiltinEnqueueKernel(Sema &S, CallExpr *TheCall) {
+  unsigned NumArgs = TheCall->getNumArgs();
 
-//   if (NumArgs < 4) {
-//     S.Diag(TheCall->getBeginLoc(),
-//            diag::err_typecheck_call_too_few_args_at_least)
-//         << 0 << 4 << NumArgs;
-//     return true;
-//   }
+  if (NumArgs < 4) {
+    S.Diag(TheCall->getBeginLoc(),
+           diag::err_typecheck_call_too_few_args_at_least)
+        << 0 << 4 << NumArgs;
+    return true;
+  }
 
-//   Expr *Arg0 = TheCall->getArg(0);
-//   Expr *Arg1 = TheCall->getArg(1);
-//   Expr *Arg2 = TheCall->getArg(2);
-//   Expr *Arg3 = TheCall->getArg(3);
+  Expr *Arg0 = TheCall->getArg(0);
+  Expr *Arg1 = TheCall->getArg(1);
+  Expr *Arg2 = TheCall->getArg(2);
+  Expr *Arg3 = TheCall->getArg(3);
 
-//   // First argument always needs to be a queue_t type.
-//   if (!Arg0->getType()->isQueueT()) {
-//     S.Diag(TheCall->getArg(0)->getBeginLoc(),
-//            diag::err_opencl_builtin_expected_type)
-//         << TheCall->getDirectCallee() << S.Context.OCLQueueTy;
-//     return true;
-//   }
+  // First argument always needs to be a queue_t type.
+  if (!Arg0->getType()->isQueueT()) {
+    S.Diag(TheCall->getArg(0)->getBeginLoc(),
+           diag::err_opencl_builtin_expected_type)
+        << TheCall->getDirectCallee() << S.Context.OCLQueueTy;
+    return true;
+  }
 
-//   // Second argument always needs to be a kernel_enqueue_flags_t enum value.
-//   if (!Arg1->getType()->isIntegerType()) {
-//     S.Diag(TheCall->getArg(1)->getBeginLoc(),
-//            diag::err_opencl_builtin_expected_type)
-//         << TheCall->getDirectCallee() << "'kernel_enqueue_flags_t' (i.e. uint)";
-//     return true;
-//   }
+  // Second argument always needs to be a kernel_enqueue_flags_t enum value.
+  if (!Arg1->getType()->isIntegerType()) {
+    S.Diag(TheCall->getArg(1)->getBeginLoc(),
+           diag::err_opencl_builtin_expected_type)
+        << TheCall->getDirectCallee() << "'kernel_enqueue_flags_t' (i.e. uint)";
+    return true;
+  }
 
-//   // Third argument is always an ndrange_t type.
-//   if (Arg2->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
-//     S.Diag(TheCall->getArg(2)->getBeginLoc(),
-//            diag::err_opencl_builtin_expected_type)
-//         << TheCall->getDirectCallee() << "'ndrange_t'";
-//     return true;
-//   }
+  // Third argument is always an ndrange_t type.
+  if (Arg2->getType().getUnqualifiedType().getAsString() != "ndrange_t") {
+    S.Diag(TheCall->getArg(2)->getBeginLoc(),
+           diag::err_opencl_builtin_expected_type)
+        << TheCall->getDirectCallee() << "'ndrange_t'";
+    return true;
+  }
 
-//   // With four arguments, there is only one form that the function could be
-//   // called in: no events and no variable arguments.
-//   if (NumArgs == 4) {
-//     // check that the last argument is the right block type.
-//     if (!isBlockPointer(Arg3)) {
-//       S.Diag(Arg3->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-//           << TheCall->getDirectCallee() << "block";
-//       return true;
-//     }
-//     // we have a block type, check the prototype
-//     const BlockPointerType *BPT =
-//         cast<BlockPointerType>(Arg3->getType().getCanonicalType());
-//     if (BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams() > 0) {
-//       S.Diag(Arg3->getBeginLoc(),
-//              diag::err_opencl_enqueue_kernel_blocks_no_args);
-//       return true;
-//     }
-//     return false;
-//   }
-//   // we can have block + varargs.
-//   if (isBlockPointer(Arg3))
-//     return (checkOpenCLBlockArgs(S, Arg3) ||
-//             checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg3, 4));
-//   // last two cases with either exactly 7 args or 7 args and varargs.
-//   if (NumArgs >= 7) {
-//     // check common block argument.
-//     Expr *Arg6 = TheCall->getArg(6);
-//     if (!isBlockPointer(Arg6)) {
-//       S.Diag(Arg6->getBeginLoc(), diag::err_opencl_builtin_expected_type)
-//           << TheCall->getDirectCallee() << "block";
-//       return true;
-//     }
-//     if (checkOpenCLBlockArgs(S, Arg6))
-//       return true;
+  // With four arguments, there is only one form that the function could be
+  // called in: no events and no variable arguments.
+  if (NumArgs == 4) {
+    // check that the last argument is the right block type.
+    if (!isBlockPointer(Arg3)) {
+      S.Diag(Arg3->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+          << TheCall->getDirectCallee() << "block";
+      return true;
+    }
+    // we have a block type, check the prototype
+    const BlockPointerType *BPT =
+        cast<BlockPointerType>(Arg3->getType().getCanonicalType());
+    if (BPT->getPointeeType()->castAs<FunctionProtoType>()->getNumParams() > 0) {
+      S.Diag(Arg3->getBeginLoc(),
+             diag::err_opencl_enqueue_kernel_blocks_no_args);
+      return true;
+    }
+    return false;
+  }
+  // we can have block + varargs.
+  if (isBlockPointer(Arg3))
+    return (checkOpenCLBlockArgs(S, Arg3) ||
+            checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg3, 4));
+  // last two cases with either exactly 7 args or 7 args and varargs.
+  if (NumArgs >= 7) {
+    // check common block argument.
+    Expr *Arg6 = TheCall->getArg(6);
+    if (!isBlockPointer(Arg6)) {
+      S.Diag(Arg6->getBeginLoc(), diag::err_opencl_builtin_expected_type)
+          << TheCall->getDirectCallee() << "block";
+      return true;
+    }
+    if (checkOpenCLBlockArgs(S, Arg6))
+      return true;
 
-//     // Forth argument has to be any integer type.
-//     if (!Arg3->getType()->isIntegerType()) {
-//       S.Diag(TheCall->getArg(3)->getBeginLoc(),
-//              diag::err_opencl_builtin_expected_type)
-//           << TheCall->getDirectCallee() << "integer";
-//       return true;
-//     }
-//     // check remaining common arguments.
-//     Expr *Arg4 = TheCall->getArg(4);
-//     Expr *Arg5 = TheCall->getArg(5);
+    // Forth argument has to be any integer type.
+    if (!Arg3->getType()->isIntegerType()) {
+      S.Diag(TheCall->getArg(3)->getBeginLoc(),
+             diag::err_opencl_builtin_expected_type)
+          << TheCall->getDirectCallee() << "integer";
+      return true;
+    }
+    // check remaining common arguments.
+    Expr *Arg4 = TheCall->getArg(4);
+    Expr *Arg5 = TheCall->getArg(5);
 
-//     // Fifth argument is always passed as a pointer to clk_event_t.
-//     if (!Arg4->isNullPointerConstant(S.Context,
-//                                      Expr::NPC_ValueDependentIsNotNull) &&
-//         !Arg4->getType()->getPointeeOrArrayElementType()->isClkEventT()) {
-//       S.Diag(TheCall->getArg(4)->getBeginLoc(),
-//              diag::err_opencl_builtin_expected_type)
-//           << TheCall->getDirectCallee()
-//           << S.Context.getPointerType(S.Context.OCLClkEventTy);
-//       return true;
-//     }
+    // Fifth argument is always passed as a pointer to clk_event_t.
+    if (!Arg4->isNullPointerConstant(S.Context,
+                                     Expr::NPC_ValueDependentIsNotNull) &&
+        !Arg4->getType()->getPointeeOrArrayElementType()->isClkEventT()) {
+      S.Diag(TheCall->getArg(4)->getBeginLoc(),
+             diag::err_opencl_builtin_expected_type)
+          << TheCall->getDirectCallee()
+          << S.Context.getPointerType(S.Context.OCLClkEventTy);
+      return true;
+    }
 
-//     // Sixth argument is always passed as a pointer to clk_event_t.
-//     if (!Arg5->isNullPointerConstant(S.Context,
-//                                      Expr::NPC_ValueDependentIsNotNull) &&
-//         !(Arg5->getType()->isPointerType() &&
-//           Arg5->getType()->getPointeeType()->isClkEventT())) {
-//       S.Diag(TheCall->getArg(5)->getBeginLoc(),
-//              diag::err_opencl_builtin_expected_type)
-//           << TheCall->getDirectCallee()
-//           << S.Context.getPointerType(S.Context.OCLClkEventTy);
-//       return true;
-//     }
+    // Sixth argument is always passed as a pointer to clk_event_t.
+    if (!Arg5->isNullPointerConstant(S.Context,
+                                     Expr::NPC_ValueDependentIsNotNull) &&
+        !(Arg5->getType()->isPointerType() &&
+          Arg5->getType()->getPointeeType()->isClkEventT())) {
+      S.Diag(TheCall->getArg(5)->getBeginLoc(),
+             diag::err_opencl_builtin_expected_type)
+          << TheCall->getDirectCallee()
+          << S.Context.getPointerType(S.Context.OCLClkEventTy);
+      return true;
+    }
 
-//     if (NumArgs == 7)
-//       return false;
+    if (NumArgs == 7)
+      return false;
 
-//     return checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg6, 7);
-//   }
+    return checkOpenCLEnqueueVariadicArgs(S, TheCall, Arg6, 7);
+  }
 
-//   // None of the specific case has been detected, give generic error
-//   S.Diag(TheCall->getBeginLoc(),
-//          diag::err_opencl_enqueue_kernel_incorrect_args);
-//   return true;
-// }
+  // None of the specific case has been detected, give generic error
+  S.Diag(TheCall->getBeginLoc(),
+         diag::err_opencl_enqueue_kernel_incorrect_args);
+  return true;
+}
 
 /// Returns OpenCL access qual.
-// static OpenCLAccessAttr *getOpenCLArgAccess(const Decl *D) {
-//     return D->getAttr<OpenCLAccessAttr>();
-// }
+static OpenCLAccessAttr *getOpenCLArgAccess(const Decl *D) {
+    return D->getAttr<OpenCLAccessAttr>();
+}
 
 /// Returns true if pipe element type is different from the pointer.
-// static bool checkOpenCLPipeArg(Sema &S, CallExpr *Call) {
-//   const Expr *Arg0 = Call->getArg(0);
-//   // First argument type should always be pipe.
-//   if (!Arg0->getType()->isPipeType()) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
-//         << Call->getDirectCallee() << Arg0->getSourceRange();
-//     return true;
-//   }
-//   OpenCLAccessAttr *AccessQual =
-//       getOpenCLArgAccess(cast<DeclRefExpr>(Arg0)->getDecl());
-//   // Validates the access qualifier is compatible with the call.
-//   // OpenCL v2.0 s6.13.16 - The access qualifiers for pipe should only be
-//   // read_only and write_only, and assumed to be read_only if no qualifier is
-//   // specified.
-//   switch (Call->getDirectCallee()->getBuiltinID()) {
-//   case Builtin::BIread_pipe:
-//   case Builtin::BIreserve_read_pipe:
-//   case Builtin::BIcommit_read_pipe:
-//   case Builtin::BIwork_group_reserve_read_pipe:
-//   case Builtin::BIsub_group_reserve_read_pipe:
-//   case Builtin::BIwork_group_commit_read_pipe:
-//   case Builtin::BIsub_group_commit_read_pipe:
-//     if (!(!AccessQual || AccessQual->isReadOnly())) {
-//       S.Diag(Arg0->getBeginLoc(),
-//              diag::err_opencl_builtin_pipe_invalid_access_modifier)
-//           << "read_only" << Arg0->getSourceRange();
-//       return true;
-//     }
-//     break;
-//   case Builtin::BIwrite_pipe:
-//   case Builtin::BIreserve_write_pipe:
-//   case Builtin::BIcommit_write_pipe:
-//   case Builtin::BIwork_group_reserve_write_pipe:
-//   case Builtin::BIsub_group_reserve_write_pipe:
-//   case Builtin::BIwork_group_commit_write_pipe:
-//   case Builtin::BIsub_group_commit_write_pipe:
-//     if (!(AccessQual && AccessQual->isWriteOnly())) {
-//       S.Diag(Arg0->getBeginLoc(),
-//              diag::err_opencl_builtin_pipe_invalid_access_modifier)
-//           << "write_only" << Arg0->getSourceRange();
-//       return true;
-//     }
-//     break;
-//   default:
-//     break;
-//   }
-//   return false;
-// }
+static bool checkOpenCLPipeArg(Sema &S, CallExpr *Call) {
+  const Expr *Arg0 = Call->getArg(0);
+  // First argument type should always be pipe.
+  if (!Arg0->getType()->isPipeType()) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
+        << Call->getDirectCallee() << Arg0->getSourceRange();
+    return true;
+  }
+  OpenCLAccessAttr *AccessQual =
+      getOpenCLArgAccess(cast<DeclRefExpr>(Arg0)->getDecl());
+  // Validates the access qualifier is compatible with the call.
+  // OpenCL v2.0 s6.13.16 - The access qualifiers for pipe should only be
+  // read_only and write_only, and assumed to be read_only if no qualifier is
+  // specified.
+  switch (Call->getDirectCallee()->getBuiltinID()) {
+  case Builtin::BIread_pipe:
+  case Builtin::BIreserve_read_pipe:
+  case Builtin::BIcommit_read_pipe:
+  case Builtin::BIwork_group_reserve_read_pipe:
+  case Builtin::BIsub_group_reserve_read_pipe:
+  case Builtin::BIwork_group_commit_read_pipe:
+  case Builtin::BIsub_group_commit_read_pipe:
+    if (!(!AccessQual || AccessQual->isReadOnly())) {
+      S.Diag(Arg0->getBeginLoc(),
+             diag::err_opencl_builtin_pipe_invalid_access_modifier)
+          << "read_only" << Arg0->getSourceRange();
+      return true;
+    }
+    break;
+  case Builtin::BIwrite_pipe:
+  case Builtin::BIreserve_write_pipe:
+  case Builtin::BIcommit_write_pipe:
+  case Builtin::BIwork_group_reserve_write_pipe:
+  case Builtin::BIsub_group_reserve_write_pipe:
+  case Builtin::BIwork_group_commit_write_pipe:
+  case Builtin::BIsub_group_commit_write_pipe:
+    if (!(AccessQual && AccessQual->isWriteOnly())) {
+      S.Diag(Arg0->getBeginLoc(),
+             diag::err_opencl_builtin_pipe_invalid_access_modifier)
+          << "write_only" << Arg0->getSourceRange();
+      return true;
+    }
+    break;
+  default:
+    break;
+  }
+  return false;
+}
 
 /// Returns true if pipe element type is different from the pointer.
-// static bool checkOpenCLPipePacketType(Sema &S, CallExpr *Call, unsigned Idx) {
-//   const Expr *Arg0 = Call->getArg(0);
-//   const Expr *ArgIdx = Call->getArg(Idx);
-//   const PipeType *PipeTy = cast<PipeType>(Arg0->getType());
-//   const QualType EltTy = PipeTy->getElementType();
-//   const PointerType *ArgTy = ArgIdx->getType()->getAs<PointerType>();
-//   // The Idx argument should be a pointer and the type of the pointer and
-//   // the type of pipe element should also be the same.
-//   if (!ArgTy ||
-//       !S.Context.hasSameType(
-//           EltTy, ArgTy->getPointeeType()->getCanonicalTypeInternal())) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-//         << Call->getDirectCallee() << S.Context.getPointerType(EltTy)
-//         << ArgIdx->getType() << ArgIdx->getSourceRange();
-//     return true;
-//   }
-//   return false;
-// }
+static bool checkOpenCLPipePacketType(Sema &S, CallExpr *Call, unsigned Idx) {
+  const Expr *Arg0 = Call->getArg(0);
+  const Expr *ArgIdx = Call->getArg(Idx);
+  const PipeType *PipeTy = cast<PipeType>(Arg0->getType());
+  const QualType EltTy = PipeTy->getElementType();
+  const PointerType *ArgTy = ArgIdx->getType()->getAs<PointerType>();
+  // The Idx argument should be a pointer and the type of the pointer and
+  // the type of pipe element should also be the same.
+  if (!ArgTy ||
+      !S.Context.hasSameType(
+          EltTy, ArgTy->getPointeeType()->getCanonicalTypeInternal())) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+        << Call->getDirectCallee() << S.Context.getPointerType(EltTy)
+        << ArgIdx->getType() << ArgIdx->getSourceRange();
+    return true;
+  }
+  return false;
+}
 
 // Performs semantic analysis for the read/write_pipe call.
 // \param S Reference to the semantic analyzer.
 // \param Call A pointer to the builtin call.
 // \return True if a semantic error has been found, false otherwise.
-// static bool SemaBuiltinRWPipe(Sema &S, CallExpr *Call) {
-//   // OpenCL v2.0 s6.13.16.2 - The built-in read/write
-//   // functions have two forms.
-//   switch (Call->getNumArgs()) {
-//   case 2:
-//     if (checkOpenCLPipeArg(S, Call))
-//       return true;
-//     // The call with 2 arguments should be
-//     // read/write_pipe(pipe T, T*).
-//     // Check packet type T.
-//     if (checkOpenCLPipePacketType(S, Call, 1))
-//       return true;
-//     break;
+static bool SemaBuiltinRWPipe(Sema &S, CallExpr *Call) {
+  // OpenCL v2.0 s6.13.16.2 - The built-in read/write
+  // functions have two forms.
+  switch (Call->getNumArgs()) {
+  case 2:
+    if (checkOpenCLPipeArg(S, Call))
+      return true;
+    // The call with 2 arguments should be
+    // read/write_pipe(pipe T, T*).
+    // Check packet type T.
+    if (checkOpenCLPipePacketType(S, Call, 1))
+      return true;
+    break;
 
-//   case 4: {
-//     if (checkOpenCLPipeArg(S, Call))
-//       return true;
-//     // The call with 4 arguments should be
-//     // read/write_pipe(pipe T, reserve_id_t, uint, T*).
-//     // Check reserve_id_t.
-//     if (!Call->getArg(1)->getType()->isReserveIDT()) {
-//       S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-//           << Call->getDirectCallee() << S.Context.OCLReserveIDTy
-//           << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
-//       return true;
-//     }
+  case 4: {
+    if (checkOpenCLPipeArg(S, Call))
+      return true;
+    // The call with 4 arguments should be
+    // read/write_pipe(pipe T, reserve_id_t, uint, T*).
+    // Check reserve_id_t.
+    if (!Call->getArg(1)->getType()->isReserveIDT()) {
+      S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+          << Call->getDirectCallee() << S.Context.OCLReserveIDTy
+          << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
+      return true;
+    }
 
-//     // Check the index.
-//     const Expr *Arg2 = Call->getArg(2);
-//     if (!Arg2->getType()->isIntegerType() &&
-//         !Arg2->getType()->isUnsignedIntegerType()) {
-//       S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-//           << Call->getDirectCallee() << S.Context.UnsignedIntTy
-//           << Arg2->getType() << Arg2->getSourceRange();
-//       return true;
-//     }
+    // Check the index.
+    const Expr *Arg2 = Call->getArg(2);
+    if (!Arg2->getType()->isIntegerType() &&
+        !Arg2->getType()->isUnsignedIntegerType()) {
+      S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+          << Call->getDirectCallee() << S.Context.UnsignedIntTy
+          << Arg2->getType() << Arg2->getSourceRange();
+      return true;
+    }
 
-//     // Check packet type T.
-//     if (checkOpenCLPipePacketType(S, Call, 3))
-//       return true;
-//   } break;
-//   default:
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_arg_num)
-//         << Call->getDirectCallee() << Call->getSourceRange();
-//     return true;
-//   }
+    // Check packet type T.
+    if (checkOpenCLPipePacketType(S, Call, 3))
+      return true;
+  } break;
+  default:
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_arg_num)
+        << Call->getDirectCallee() << Call->getSourceRange();
+    return true;
+  }
 
-//   return false;
-// }
+  return false;
+}
 
 // Performs a semantic analysis on the {work_group_/sub_group_
 //        /_}reserve_{read/write}_pipe
 // \param S Reference to the semantic analyzer.
 // \param Call The call to the builtin function to be analyzed.
 // \return True if a semantic error was found, false otherwise.
-// static bool SemaBuiltinReserveRWPipe(Sema &S, CallExpr *Call) {
-//   if (checkArgCount(S, Call, 2))
-//     return true;
+static bool SemaBuiltinReserveRWPipe(Sema &S, CallExpr *Call) {
+  if (checkArgCount(S, Call, 2))
+    return true;
 
-//   if (checkOpenCLPipeArg(S, Call))
-//     return true;
+  if (checkOpenCLPipeArg(S, Call))
+    return true;
 
-//   // Check the reserve size.
-//   if (!Call->getArg(1)->getType()->isIntegerType() &&
-//       !Call->getArg(1)->getType()->isUnsignedIntegerType()) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-//         << Call->getDirectCallee() << S.Context.UnsignedIntTy
-//         << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
-//     return true;
-//   }
+  // Check the reserve size.
+  if (!Call->getArg(1)->getType()->isIntegerType() &&
+      !Call->getArg(1)->getType()->isUnsignedIntegerType()) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+        << Call->getDirectCallee() << S.Context.UnsignedIntTy
+        << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
+    return true;
+  }
 
-//   // Since return type of reserve_read/write_pipe built-in function is
-//   // reserve_id_t, which is not defined in the builtin def file , we used int
-//   // as return type and need to override the return type of these functions.
-//   Call->setType(S.Context.OCLReserveIDTy);
+  // Since return type of reserve_read/write_pipe built-in function is
+  // reserve_id_t, which is not defined in the builtin def file , we used int
+  // as return type and need to override the return type of these functions.
+  Call->setType(S.Context.OCLReserveIDTy);
 
-//   return false;
-// }
+  return false;
+}
 
 // Performs a semantic analysis on {work_group_/sub_group_
 //        /_}commit_{read/write}_pipe
 // \param S Reference to the semantic analyzer.
 // \param Call The call to the builtin function to be analyzed.
 // \return True if a semantic error was found, false otherwise.
-// static bool SemaBuiltinCommitRWPipe(Sema &S, CallExpr *Call) {
-//   if (checkArgCount(S, Call, 2))
-//     return true;
+static bool SemaBuiltinCommitRWPipe(Sema &S, CallExpr *Call) {
+  if (checkArgCount(S, Call, 2))
+    return true;
 
-//   if (checkOpenCLPipeArg(S, Call))
-//     return true;
+  if (checkOpenCLPipeArg(S, Call))
+    return true;
 
-//   // Check reserve_id_t.
-//   if (!Call->getArg(1)->getType()->isReserveIDT()) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
-//         << Call->getDirectCallee() << S.Context.OCLReserveIDTy
-//         << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
-//     return true;
-//   }
+  // Check reserve_id_t.
+  if (!Call->getArg(1)->getType()->isReserveIDT()) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_invalid_arg)
+        << Call->getDirectCallee() << S.Context.OCLReserveIDTy
+        << Call->getArg(1)->getType() << Call->getArg(1)->getSourceRange();
+    return true;
+  }
 
-//   return false;
-// }
+  return false;
+}
 
 // Performs a semantic analysis on the call to built-in Pipe
 //        Query Functions.
@@ -1257,11 +1257,11 @@ static bool SemaBuiltinPipePackets(Sema &S, CallExpr *Call) {
   if (checkArgCount(S, Call, 1))
     return true;
 
-  // if (!Call->getArg(0)->getType()->isPipeType()) {
-  //   S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
-  //       << Call->getDirectCallee() << Call->getArg(0)->getSourceRange();
-  //   return true;
-  // }
+  if (!Call->getArg(0)->getType()->isPipeType()) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_pipe_first_arg)
+        << Call->getDirectCallee() << Call->getArg(0)->getSourceRange();
+    return true;
+  }
 
   return false;
 }
@@ -1272,49 +1272,49 @@ static bool SemaBuiltinPipePackets(Sema &S, CallExpr *Call) {
 // \param BuiltinID ID of the builtin function.
 // \param Call A pointer to the builtin call.
 // \return True if a semantic error has been found, false otherwise.
-// static bool SemaOpenCLBuiltinToAddr(Sema &S, unsigned BuiltinID,
-//                                     CallExpr *Call) {
-//   if (Call->getNumArgs() != 1) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_arg_num)
-//         << Call->getDirectCallee() << Call->getSourceRange();
-//     return true;
-//   }
+static bool SemaOpenCLBuiltinToAddr(Sema &S, unsigned BuiltinID,
+                                    CallExpr *Call) {
+  if (Call->getNumArgs() != 1) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_arg_num)
+        << Call->getDirectCallee() << Call->getSourceRange();
+    return true;
+  }
 
-//   auto RT = Call->getArg(0)->getType();
-//   if (!RT->isPointerType() || RT->getPointeeType()
-//       .getAddressSpace() == LangAS::opencl_constant) {
-//     S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_invalid_arg)
-//         << Call->getArg(0) << Call->getDirectCallee() << Call->getSourceRange();
-//     return true;
-//   }
+  auto RT = Call->getArg(0)->getType();
+  if (!RT->isPointerType() || RT->getPointeeType()
+      .getAddressSpace() == LangAS::opencl_constant) {
+    S.Diag(Call->getBeginLoc(), diag::err_opencl_builtin_to_addr_invalid_arg)
+        << Call->getArg(0) << Call->getDirectCallee() << Call->getSourceRange();
+    return true;
+  }
 
-//   if (RT->getPointeeType().getAddressSpace() != LangAS::opencl_generic) {
-//     S.Diag(Call->getArg(0)->getBeginLoc(),
-//            diag::warn_opencl_generic_address_space_arg)
-//         << Call->getDirectCallee()->getNameInfo().getAsString()
-//         << Call->getArg(0)->getSourceRange();
-//   }
+  if (RT->getPointeeType().getAddressSpace() != LangAS::opencl_generic) {
+    S.Diag(Call->getArg(0)->getBeginLoc(),
+           diag::warn_opencl_generic_address_space_arg)
+        << Call->getDirectCallee()->getNameInfo().getAsString()
+        << Call->getArg(0)->getSourceRange();
+  }
 
-//   RT = RT->getPointeeType();
-//   auto Qual = RT.getQualifiers();
-//   switch (BuiltinID) {
-//   case Builtin::BIto_global:
-//     Qual.setAddressSpace(LangAS::opencl_global);
-//     break;
-//   case Builtin::BIto_local:
-//     Qual.setAddressSpace(LangAS::opencl_local);
-//     break;
-//   case Builtin::BIto_private:
-//     Qual.setAddressSpace(LangAS::opencl_private);
-//     break;
-//   default:
-//     llvm_unreachable("Invalid builtin function");
-//   }
-//   Call->setType(S.Context.getPointerType(S.Context.getQualifiedType(
-//       RT.getUnqualifiedType(), Qual)));
+  RT = RT->getPointeeType();
+  auto Qual = RT.getQualifiers();
+  switch (BuiltinID) {
+  case Builtin::BIto_global:
+    Qual.setAddressSpace(LangAS::opencl_global);
+    break;
+  case Builtin::BIto_local:
+    Qual.setAddressSpace(LangAS::opencl_local);
+    break;
+  case Builtin::BIto_private:
+    Qual.setAddressSpace(LangAS::opencl_private);
+    break;
+  default:
+    llvm_unreachable("Invalid builtin function");
+  }
+  Call->setType(S.Context.getPointerType(S.Context.getQualifiedType(
+      RT.getUnqualifiedType(), Qual)));
 
-//   return false;
-// }
+  return false;
+}
 
 static ExprResult SemaBuiltinLaunder(Sema &S, CallExpr *TheCall) {
   if (checkArgCount(S, TheCall, 1))
@@ -1867,65 +1867,65 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
     TheCall->setType(Context.VoidPtrTy);
     break;
   // OpenCL v2.0, s6.13.16 - Pipe functions
-  // case Builtin::BIread_pipe:
-  // case Builtin::BIwrite_pipe:
-  //   // Since those two functions are declared with var args, we need a semantic
-  //   // check for the argument.
-  //   if (SemaBuiltinRWPipe(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIreserve_read_pipe:
-  // case Builtin::BIreserve_write_pipe:
-  // case Builtin::BIwork_group_reserve_read_pipe:
-  // case Builtin::BIwork_group_reserve_write_pipe:
-  //   if (SemaBuiltinReserveRWPipe(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIsub_group_reserve_read_pipe:
-  // case Builtin::BIsub_group_reserve_write_pipe:
-  //   if (checkOpenCLSubgroupExt(*this, TheCall) ||
-  //       SemaBuiltinReserveRWPipe(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIcommit_read_pipe:
-  // case Builtin::BIcommit_write_pipe:
-  // case Builtin::BIwork_group_commit_read_pipe:
-  // case Builtin::BIwork_group_commit_write_pipe:
-  //   if (SemaBuiltinCommitRWPipe(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIsub_group_commit_read_pipe:
-  // case Builtin::BIsub_group_commit_write_pipe:
-  //   if (checkOpenCLSubgroupExt(*this, TheCall) ||
-  //       SemaBuiltinCommitRWPipe(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIget_pipe_num_packets:
-  // case Builtin::BIget_pipe_max_packets:
-  //   if (SemaBuiltinPipePackets(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIto_global:
-  // case Builtin::BIto_local:
-  // case Builtin::BIto_private:
-  //   if (SemaOpenCLBuiltinToAddr(*this, BuiltinID, TheCall))
-  //     return ExprError();
-  //   break;
+  case Builtin::BIread_pipe:
+  case Builtin::BIwrite_pipe:
+    // Since those two functions are declared with var args, we need a semantic
+    // check for the argument.
+    if (SemaBuiltinRWPipe(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIreserve_read_pipe:
+  case Builtin::BIreserve_write_pipe:
+  case Builtin::BIwork_group_reserve_read_pipe:
+  case Builtin::BIwork_group_reserve_write_pipe:
+    if (SemaBuiltinReserveRWPipe(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIsub_group_reserve_read_pipe:
+  case Builtin::BIsub_group_reserve_write_pipe:
+    if (checkOpenCLSubgroupExt(*this, TheCall) ||
+        SemaBuiltinReserveRWPipe(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIcommit_read_pipe:
+  case Builtin::BIcommit_write_pipe:
+  case Builtin::BIwork_group_commit_read_pipe:
+  case Builtin::BIwork_group_commit_write_pipe:
+    if (SemaBuiltinCommitRWPipe(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIsub_group_commit_read_pipe:
+  case Builtin::BIsub_group_commit_write_pipe:
+    if (checkOpenCLSubgroupExt(*this, TheCall) ||
+        SemaBuiltinCommitRWPipe(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIget_pipe_num_packets:
+  case Builtin::BIget_pipe_max_packets:
+    if (SemaBuiltinPipePackets(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIto_global:
+  case Builtin::BIto_local:
+  case Builtin::BIto_private:
+    if (SemaOpenCLBuiltinToAddr(*this, BuiltinID, TheCall))
+      return ExprError();
+    break;
   // OpenCL v2.0, s6.13.17 - Enqueue kernel functions.
-  // case Builtin::BIenqueue_kernel:
-  //   if (SemaOpenCLBuiltinEnqueueKernel(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIget_kernel_work_group_size:
-  // case Builtin::BIget_kernel_preferred_work_group_size_multiple:
-  //   if (SemaOpenCLBuiltinKernelWorkGroupSize(*this, TheCall))
-  //     return ExprError();
-  //   break;
-  // case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
-  // case Builtin::BIget_kernel_sub_group_count_for_ndrange:
-  //   if (SemaOpenCLBuiltinNDRangeAndBlock(*this, TheCall))
-  //     return ExprError();
-  //   break;
+  case Builtin::BIenqueue_kernel:
+    if (SemaOpenCLBuiltinEnqueueKernel(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIget_kernel_work_group_size:
+  case Builtin::BIget_kernel_preferred_work_group_size_multiple:
+    if (SemaOpenCLBuiltinKernelWorkGroupSize(*this, TheCall))
+      return ExprError();
+    break;
+  case Builtin::BIget_kernel_max_sub_group_size_for_ndrange:
+  case Builtin::BIget_kernel_sub_group_count_for_ndrange:
+    if (SemaOpenCLBuiltinNDRangeAndBlock(*this, TheCall))
+      return ExprError();
+    break;
   case Builtin::BI__builtin_os_log_format:
     Cleanup.setExprNeedsCleanups(true);
     LLVM_FALLTHROUGH;
@@ -4380,8 +4380,8 @@ bool Sema::CheckFunctionCall(FunctionDecl *FDecl, CallExpr *TheCall,
   CheckAbsoluteValueFunction(TheCall, FDecl);
   CheckMaxUnsignedZero(TheCall, FDecl);
 
-  if (getLangOpts().ObjC)
-    DiagnoseCStringFormatDirectiveInCFAPI(*this, FDecl, Args, NumArgs);
+  // if (getLangOpts().ObjC)
+  //   DiagnoseCStringFormatDirectiveInCFAPI(*this, FDecl, Args, NumArgs);
 
   unsigned CMId = FDecl->getMemoryFunctionKind();
   if (CMId == 0)
@@ -12159,19 +12159,19 @@ static void AnalyzeImplicitConversions(Sema &S, Expr *OrigE, SourceLocation CC,
 }
 
 /// Diagnose integer type and any valid implicit conversion to it.
-// static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E, const QualType &IntT) {
-//   // Taking into account implicit conversions,
-//   // allow any integer.
-//   if (!E->getType()->isIntegerType()) {
-//     S.Diag(E->getBeginLoc(),
-//            diag::err_opencl_enqueue_kernel_invalid_local_size_type);
-//     return true;
-//   }
-//   // Potentially emit standard warnings for implicit conversions if enabled
-//   // using -Wconversion.
-//   CheckImplicitConversion(S, E, IntT, E->getBeginLoc());
-//   return false;
-// }
+static bool checkOpenCLEnqueueIntType(Sema &S, Expr *E, const QualType &IntT) {
+  // Taking into account implicit conversions,
+  // allow any integer.
+  if (!E->getType()->isIntegerType()) {
+    S.Diag(E->getBeginLoc(),
+           diag::err_opencl_enqueue_kernel_invalid_local_size_type);
+    return true;
+  }
+  // Potentially emit standard warnings for implicit conversions if enabled
+  // using -Wconversion.
+  CheckImplicitConversion(S, E, IntT, E->getBeginLoc());
+  return false;
+}
 
 // Helper function for Sema::DiagnoseAlwaysNonNullPointer.
 // Returns true when emitting a warning about taking the address of a reference.
@@ -13932,13 +13932,13 @@ void Sema::CheckArrayAccess(const Expr *expr) {
         expr = cast<MemberExpr>(expr)->getBase();
         break;
       }
-      // case Stmt::OMPArraySectionExprClass: {
-      //   const OMPArraySectionExpr *ASE = cast<OMPArraySectionExpr>(expr);
-      //   if (ASE->getLowerBound())
-      //     CheckArrayAccess(ASE->getBase(), ASE->getLowerBound(),
-      //                      /*ASE=*/nullptr, AllowOnePastEnd > 0);
-      //   return;
-      // }
+      case Stmt::OMPArraySectionExprClass: {
+        const OMPArraySectionExpr *ASE = cast<OMPArraySectionExpr>(expr);
+        if (ASE->getLowerBound())
+          CheckArrayAccess(ASE->getBase(), ASE->getLowerBound(),
+                           /*ASE=*/nullptr, AllowOnePastEnd > 0);
+        return;
+      }
       case Stmt::UnaryOperatorClass: {
         // Only unwrap the * and & unary operators
         const UnaryOperator *UO = cast<UnaryOperator>(expr);

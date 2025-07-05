@@ -139,9 +139,9 @@ static Cl::Kinds ClassifyInternal(ASTContext &Ctx, const Expr *E) {
   case Expr::FunctionParmPackExprClass:
   case Expr::MSPropertyRefExprClass:
   case Expr::MSPropertySubscriptExprClass:
-  // case Expr::OMPArraySectionExprClass:
-  // case Expr::OMPArrayShapingExprClass:
-  // case Expr::OMPIteratorExprClass:
+  case Expr::OMPArraySectionExprClass:
+  case Expr::OMPArrayShapingExprClass:
+  case Expr::OMPIteratorExprClass:
     return Cl::CL_LValue;
 
     // C99 6.5.2.5p5 says that compound literals are lvalues.
@@ -644,9 +644,9 @@ static Cl::ModifiableType IsModifiable(ASTContext &Ctx, const Expr *E,
   // Const stuff is obviously not modifiable.
   if (CT.isConstQualified())
     return Cl::CM_ConstQualified;
-  // if (Ctx.getLangOpts().OpenCL &&
-  //     CT.getQualifiers().getAddressSpace() == LangAS::opencl_constant)
-  //   return Cl::CM_ConstAddrSpace;
+  if (Ctx.getLangOpts().OpenCL &&
+      CT.getQualifiers().getAddressSpace() == LangAS::opencl_constant)
+    return Cl::CM_ConstAddrSpace;
 
   // Arrays are not modifiable, only their elements are.
   if (CT->isArrayType())

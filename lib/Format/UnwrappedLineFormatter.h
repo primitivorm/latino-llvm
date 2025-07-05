@@ -30,11 +30,11 @@ public:
   UnwrappedLineFormatter(ContinuationIndenter *Indenter,
                          WhitespaceManager *Whitespaces,
                          const FormatStyle &Style,
-                         const AdditionalKeywords &Keywords,
+                        //  const AdditionalKeywords &Keywords,
                          const SourceManager &SourceMgr,
                          FormattingAttemptStatus *Status)
       : Indenter(Indenter), Whitespaces(Whitespaces), Style(Style),
-        Keywords(Keywords), SourceMgr(SourceMgr), Status(Status) {}
+        /*Keywords(Keywords),*/ SourceMgr(SourceMgr), Status(Status) {}
 
   /// Format the current block and return the penalty.
   unsigned format(const SmallVectorImpl<AnnotatedLine *> &Lines,
@@ -65,7 +65,7 @@ private:
   ContinuationIndenter *Indenter;
   WhitespaceManager *Whitespaces;
   const FormatStyle &Style;
-  const AdditionalKeywords &Keywords;
+  // const AdditionalKeywords &Keywords;
   const SourceManager &SourceMgr;
   FormattingAttemptStatus *Status;
 };

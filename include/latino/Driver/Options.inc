@@ -434,8 +434,8 @@ OPTION(prefix_1, &"-disable-llvm-verifier"[1], disable_llvm_verifier, Flag, INVA
        "Don't run the LLVM IR verifier pass", nullptr, nullptr)
 OPTION(prefix_1, &"-disable-O0-optnone"[1], disable_O0_optnone, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
        "Disable adding the optnone attribute to functions at O0", nullptr, nullptr)
-OPTION(prefix_1, &"-disable-objc-default-synthesize-properties"[1], disable_objc_default_synthesize_properties, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "disable the default synthesis of Objective-C properties", nullptr, nullptr)
+// OPTION(prefix_1, &"-disable-objc-default-synthesize-properties"[1], disable_objc_default_synthesize_properties, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "disable the default synthesis of Objective-C properties", nullptr, nullptr)
 OPTION(prefix_1, &"-disable-pragma-debug-crash"[1], disable_pragma_debug_crash, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
        "Disable any #pragma clang __debug that can lead to crashing behavior. This is meant for testing.", nullptr, nullptr)
 OPTION(prefix_1, &"-disable-red-zone"[1], disable_red_zone, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
@@ -753,8 +753,8 @@ OPTION(prefix_1, &"-fdebug-types-section"[1], fdebug_types_section, Flag, f_Grou
        "Place debug types in their own section (ELF Only)", nullptr, nullptr)
 OPTION(prefix_1, &"-fdebugger-cast-result-to-id"[1], fdebugger_cast_result_to_id, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
        "Enable casting unknown expression results to id", nullptr, nullptr)
-OPTION(prefix_1, &"-fdebugger-objc-literal"[1], fdebugger_objc_literal, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Enable special debugger support for Objective-C subscripting and literals", nullptr, nullptr)
+// OPTION(prefix_1, &"-fdebugger-objc-literal"[1], fdebugger_objc_literal, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Enable special debugger support for Objective-C subscripting and literals", nullptr, nullptr)
 OPTION(prefix_1, &"-fdebugger-support"[1], fdebugger_support, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
        "Enable special debugger support behavior", nullptr, nullptr)
 OPTION(prefix_1, &"-fdeclare-opencl-builtins"[1], fdeclare_opencl_builtins, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
@@ -1456,15 +1456,15 @@ OPTION(prefix_1, &"-fno-ms-extensions"[1], fno_ms_extensions, Flag, f_Group, INV
 OPTION(prefix_1, &"-fno-no-access-control"[1], fno_access_control, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
        "Disable C++ access control", nullptr, nullptr)
 OPTION(prefix_1, &"-fno-non-call-exceptions"[1], fno_non_call_exceptions, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-arc-exceptions"[1], fno_objc_arc_exceptions, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-arc"[1], fno_objc_arc, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-convert-messages-to-runtime-calls"[1], fno_objc_convert_messages_to_runtime_calls, Flag, f_Group, INVALID, nullptr, CC1Option, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-exceptions"[1], fno_objc_exceptions, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-infer-related-result-type"[1], fno_objc_infer_related_result_type, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
-       "do not infer Objective-C related result type based on method family", nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-legacy-dispatch"[1], fno_objc_legacy_dispatch, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-nonfragile-abi"[1], fno_objc_nonfragile_abi, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fno-objc-weak"[1], fno_objc_weak, Flag, f_Group, INVALID, nullptr, CC1Option, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-arc-exceptions"[1], fno_objc_arc_exceptions, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-arc"[1], fno_objc_arc, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-convert-messages-to-runtime-calls"[1], fno_objc_convert_messages_to_runtime_calls, Flag, f_Group, INVALID, nullptr, CC1Option, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-exceptions"[1], fno_objc_exceptions, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-infer-related-result-type"[1], fno_objc_infer_related_result_type, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
+//        "do not infer Objective-C related result type based on method family", nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-legacy-dispatch"[1], fno_objc_legacy_dispatch, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-nonfragile-abi"[1], fno_objc_nonfragile_abi, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fno-objc-weak"[1], fno_objc_weak, Flag, f_Group, INVALID, nullptr, CC1Option, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fno-omit-frame-pointer"[1], fno_omit_frame_pointer, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fno-openmp-cuda-force-full-runtime"[1], fno_openmp_cuda_force_full_runtime, Flag, f_Group, INVALID, nullptr, NoArgumentUnused | HelpHidden, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fno-openmp-cuda-mode"[1], fno_openmp_cuda_mode, Flag, f_Group, INVALID, nullptr, NoArgumentUnused | HelpHidden, 0, nullptr, nullptr, nullptr)
@@ -1725,39 +1725,39 @@ OPTION(prefix_1, &"-fnon-call-exceptions"[1], fnon_call_exceptions, Flag, clang_
 OPTION(prefix_1, &"-fnoopenmp-relocatable-target"[1], fnoopenmp_relocatable_target, Flag, f_Group, INVALID, nullptr, CC1Option | NoArgumentUnused | HelpHidden, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fnoopenmp-use-tls"[1], fnoopenmp_use_tls, Flag, f_Group, INVALID, nullptr, CC1Option | NoArgumentUnused | HelpHidden, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fnoxray-link-deps"[1], fnoxray_link_deps, Flag, f_Group, INVALID, nullptr, CC1Option, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-abi-version="[1], fobjc_abi_version_EQ, Joined, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-arc-cxxlib="[1], fobjc_arc_cxxlib_EQ, Joined, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Objective-C++ Automatic Reference Counting standard library kind", nullptr, "libc++,libstdc++,none")
-OPTION(prefix_1, &"-fobjc-arc-exceptions"[1], fobjc_arc_exceptions, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
-       "Use EH-safe code when synthesizing retains and releases in -fobjc-arc", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-arc"[1], fobjc_arc, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
-       "Synthesize retain and release calls for Objective-C pointers", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-atdefs"[1], fobjc_atdefs, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-call-cxx-cdtors"[1], fobjc_call_cxx_cdtors, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-convert-messages-to-runtime-calls"[1], fobjc_convert_messages_to_runtime_calls, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-dispatch-method="[1], fobjc_dispatch_method_EQ, Joined, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Objective-C dispatch method to use", nullptr, "legacy,non-legacy,mixed")
-OPTION(prefix_1, &"-fobjc-exceptions"[1], fobjc_exceptions, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
-       "Enable Objective-C exceptions", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-gc-only"[1], fobjc_gc_only, Flag, f_Group, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Use GC exclusively for Objective-C related memory management", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-gc"[1], fobjc_gc, Flag, f_Group, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Enable Objective-C garbage collection", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-infer-related-result-type"[1], fobjc_infer_related_result_type, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-legacy-dispatch"[1], fobjc_legacy_dispatch, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-link-runtime"[1], fobjc_link_runtime, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-new-property"[1], fobjc_new_property, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-nonfragile-abi-version="[1], fobjc_nonfragile_abi_version_EQ, Joined, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-nonfragile-abi"[1], fobjc_nonfragile_abi, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-runtime-has-weak"[1], fobjc_runtime_has_weak, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "The target Objective-C runtime supports ARC weak operations", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-runtime="[1], fobjc_runtime_EQ, Joined, f_Group, INVALID, nullptr, CC1Option | CoreOption, 0,
-       "Specify the target Objective-C runtime kind and version", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-sender-dependent-dispatch"[1], fobjc_sender_dependent_dispatch, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-subscripting-legacy-runtime"[1], fobjc_subscripting_legacy_runtime, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Allow Objective-C array and dictionary subscripting in legacy runtime", nullptr, nullptr)
-OPTION(prefix_1, &"-fobjc-weak"[1], fobjc_weak, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
-       "Enable ARC-style weak references in Objective-C", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-abi-version="[1], fobjc_abi_version_EQ, Joined, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-arc-cxxlib="[1], fobjc_arc_cxxlib_EQ, Joined, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Objective-C++ Automatic Reference Counting standard library kind", nullptr, "libc++,libstdc++,none")
+// OPTION(prefix_1, &"-fobjc-arc-exceptions"[1], fobjc_arc_exceptions, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
+//        "Use EH-safe code when synthesizing retains and releases in -fobjc-arc", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-arc"[1], fobjc_arc, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
+//        "Synthesize retain and release calls for Objective-C pointers", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-atdefs"[1], fobjc_atdefs, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-call-cxx-cdtors"[1], fobjc_call_cxx_cdtors, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-convert-messages-to-runtime-calls"[1], fobjc_convert_messages_to_runtime_calls, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-dispatch-method="[1], fobjc_dispatch_method_EQ, Joined, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Objective-C dispatch method to use", nullptr, "legacy,non-legacy,mixed")
+// OPTION(prefix_1, &"-fobjc-exceptions"[1], fobjc_exceptions, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
+//        "Enable Objective-C exceptions", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-gc-only"[1], fobjc_gc_only, Flag, f_Group, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Use GC exclusively for Objective-C related memory management", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-gc"[1], fobjc_gc, Flag, f_Group, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Enable Objective-C garbage collection", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-infer-related-result-type"[1], fobjc_infer_related_result_type, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-legacy-dispatch"[1], fobjc_legacy_dispatch, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-link-runtime"[1], fobjc_link_runtime, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-new-property"[1], fobjc_new_property, Flag, clang_ignored_f_Group, INVALID, nullptr, Ignored, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-nonfragile-abi-version="[1], fobjc_nonfragile_abi_version_EQ, Joined, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-nonfragile-abi"[1], fobjc_nonfragile_abi, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-runtime-has-weak"[1], fobjc_runtime_has_weak, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "The target Objective-C runtime supports ARC weak operations", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-runtime="[1], fobjc_runtime_EQ, Joined, f_Group, INVALID, nullptr, CC1Option | CoreOption, 0,
+//        "Specify the target Objective-C runtime kind and version", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-sender-dependent-dispatch"[1], fobjc_sender_dependent_dispatch, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-subscripting-legacy-runtime"[1], fobjc_subscripting_legacy_runtime, Flag, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Allow Objective-C array and dictionary subscripting in legacy runtime", nullptr, nullptr)
+// OPTION(prefix_1, &"-fobjc-weak"[1], fobjc_weak, Flag, f_Group, INVALID, nullptr, CC1Option, 0,
+//        "Enable ARC-style weak references in Objective-C", nullptr, nullptr)
 OPTION(prefix_1, &"-fomit-frame-pointer"[1], fomit_frame_pointer, Flag, f_Group, INVALID, nullptr, 0, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fopenmp-cuda-blocks-per-sm="[1], fopenmp_cuda_blocks_per_sm_EQ, Joined, f_Group, INVALID, nullptr, CC1Option | NoArgumentUnused | HelpHidden, 0, nullptr, nullptr, nullptr)
 OPTION(prefix_1, &"-fopenmp-cuda-force-full-runtime"[1], fopenmp_cuda_force_full_runtime, Flag, f_Group, INVALID, nullptr, CC1Option | NoArgumentUnused | HelpHidden, 0, nullptr, nullptr, nullptr)
@@ -3367,8 +3367,8 @@ OPTION(prefix_2, &"/Ob2"[1], anonymous_45, Flag, cl_Group, _SLASH_O, "b2\0", CLO
        "Inline functions as deemed beneficial by the compiler", nullptr, nullptr)
 OPTION(prefix_1, &"-ObjC++"[1], ObjCXX, Flag, INVALID, INVALID, nullptr, DriverOption, 0,
        "Treat source input files as Objective-C++ inputs", nullptr, nullptr)
-OPTION(prefix_1, &"-objc-isystem"[1], objc_isystem, JoinedOrSeparate, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
-       "Add directory to the ObjC SYSTEM include search path", "<directory>", nullptr)
+// OPTION(prefix_1, &"-objc-isystem"[1], objc_isystem, JoinedOrSeparate, INVALID, INVALID, nullptr, CC1Option | NoDriverOption, 0,
+//        "Add directory to the ObjC SYSTEM include search path", "<directory>", nullptr)
 OPTION(prefix_1, &"-objcmt-atomic-property"[1], objcmt_atomic_property, Flag, INVALID, INVALID, nullptr, CC1Option, 0,
        "Make migration to 'atomic' properties", nullptr, nullptr)
 OPTION(prefix_1, &"-objcmt-migrate-all"[1], objcmt_migrate_all, Flag, INVALID, INVALID, nullptr, CC1Option, 0,

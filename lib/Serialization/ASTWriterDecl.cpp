@@ -17,7 +17,7 @@
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclVisitor.h"
 #include "latino/AST/Expr.h"
-// #include "latino/AST/OpenMPClause.h"
+#include "latino/AST/OpenMPClause.h"
 #include "latino/AST/PrettyDeclStackTrace.h"
 #include "latino/Basic/SourceManager.h"
 #include "latino/Serialization/ASTReader.h"
@@ -148,12 +148,12 @@ namespace latino {
     // void VisitObjCCompatibleAliasDecl(ObjCCompatibleAliasDecl *D);
     // void VisitObjCPropertyDecl(ObjCPropertyDecl *D);
     // void VisitObjCPropertyImplDecl(ObjCPropertyImplDecl *D);
-    // void VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D);
-    // void VisitOMPAllocateDecl(OMPAllocateDecl *D);
-    // void VisitOMPRequiresDecl(OMPRequiresDecl *D);
-    // void VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D);
-    // void VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D);
-    // void VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D);
+    void VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D);
+    void VisitOMPAllocateDecl(OMPAllocateDecl *D);
+    void VisitOMPRequiresDecl(OMPRequiresDecl *D);
+    void VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D);
+    void VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D);
+    void VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D);
 
     /// Add an Objective-C type parameter list to the given record.
     // void AddObjCTypeParamList(ObjCTypeParamList *typeParams) {
@@ -1840,63 +1840,63 @@ void ASTDeclWriter::VisitRedeclarable(Redeclarable<T> *D) {
   }
 }
 
-// void ASTDeclWriter::VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D) {
-//   Record.push_back(D->varlist_size());
-//   VisitDecl(D);
-//   for (auto *I : D->varlists())
-//     Record.AddStmt(I);
-//   Code = serialization::DECL_OMP_THREADPRIVATE;
-// }
+void ASTDeclWriter::VisitOMPThreadPrivateDecl(OMPThreadPrivateDecl *D) {
+  Record.push_back(D->varlist_size());
+  VisitDecl(D);
+  for (auto *I : D->varlists())
+    Record.AddStmt(I);
+  Code = serialization::DECL_OMP_THREADPRIVATE;
+}
 
-// void ASTDeclWriter::VisitOMPAllocateDecl(OMPAllocateDecl *D) {
-//   Record.push_back(D->varlist_size());
-//   Record.push_back(D->clauselist_size());
-//   VisitDecl(D);
-//   for (auto *I : D->varlists())
-//     Record.AddStmt(I);
-//   for (OMPClause *C : D->clauselists())
-//     Record.writeOMPClause(C);
-//   Code = serialization::DECL_OMP_ALLOCATE;
-// }
+void ASTDeclWriter::VisitOMPAllocateDecl(OMPAllocateDecl *D) {
+  Record.push_back(D->varlist_size());
+  Record.push_back(D->clauselist_size());
+  VisitDecl(D);
+  for (auto *I : D->varlists())
+    Record.AddStmt(I);
+  for (OMPClause *C : D->clauselists())
+    Record.writeOMPClause(C);
+  Code = serialization::DECL_OMP_ALLOCATE;
+}
 
-// void ASTDeclWriter::VisitOMPRequiresDecl(OMPRequiresDecl *D) {
-//   Record.push_back(D->clauselist_size());
-//   VisitDecl(D);
-//   for (OMPClause *C : D->clauselists())
-//     Record.writeOMPClause(C);
-//   Code = serialization::DECL_OMP_REQUIRES;
-// }
+void ASTDeclWriter::VisitOMPRequiresDecl(OMPRequiresDecl *D) {
+  Record.push_back(D->clauselist_size());
+  VisitDecl(D);
+  for (OMPClause *C : D->clauselists())
+    Record.writeOMPClause(C);
+  Code = serialization::DECL_OMP_REQUIRES;
+}
 
-// void ASTDeclWriter::VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D) {
-//   VisitValueDecl(D);
-//   Record.AddSourceLocation(D->getBeginLoc());
-//   Record.AddStmt(D->getCombinerIn());
-//   Record.AddStmt(D->getCombinerOut());
-//   Record.AddStmt(D->getCombiner());
-//   Record.AddStmt(D->getInitOrig());
-//   Record.AddStmt(D->getInitPriv());
-//   Record.AddStmt(D->getInitializer());
-//   Record.push_back(D->getInitializerKind());
-//   Record.AddDeclRef(D->getPrevDeclInScope());
-//   Code = serialization::DECL_OMP_DECLARE_REDUCTION;
-// }
+void ASTDeclWriter::VisitOMPDeclareReductionDecl(OMPDeclareReductionDecl *D) {
+  VisitValueDecl(D);
+  Record.AddSourceLocation(D->getBeginLoc());
+  Record.AddStmt(D->getCombinerIn());
+  Record.AddStmt(D->getCombinerOut());
+  Record.AddStmt(D->getCombiner());
+  Record.AddStmt(D->getInitOrig());
+  Record.AddStmt(D->getInitPriv());
+  Record.AddStmt(D->getInitializer());
+  Record.push_back(D->getInitializerKind());
+  Record.AddDeclRef(D->getPrevDeclInScope());
+  Code = serialization::DECL_OMP_DECLARE_REDUCTION;
+}
 
-// void ASTDeclWriter::VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D) {
-//   Record.push_back(D->clauselist_size());
-//   VisitValueDecl(D);
-//   Record.AddSourceLocation(D->getBeginLoc());
-//   Record.AddStmt(D->getMapperVarRef());
-//   Record.AddDeclarationName(D->getVarName());
-//   Record.AddDeclRef(D->getPrevDeclInScope());
-//   for (OMPClause *C : D->clauselists())
-//     Record.writeOMPClause(C);
-//   Code = serialization::DECL_OMP_DECLARE_MAPPER;
-// }
+void ASTDeclWriter::VisitOMPDeclareMapperDecl(OMPDeclareMapperDecl *D) {
+  Record.push_back(D->clauselist_size());
+  VisitValueDecl(D);
+  Record.AddSourceLocation(D->getBeginLoc());
+  Record.AddStmt(D->getMapperVarRef());
+  Record.AddDeclarationName(D->getVarName());
+  Record.AddDeclRef(D->getPrevDeclInScope());
+  for (OMPClause *C : D->clauselists())
+    Record.writeOMPClause(C);
+  Code = serialization::DECL_OMP_DECLARE_MAPPER;
+}
 
-// void ASTDeclWriter::VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D) {
-//   VisitVarDecl(D);
-//   Code = serialization::DECL_OMP_CAPTUREDEXPR;
-// }
+void ASTDeclWriter::VisitOMPCapturedExprDecl(OMPCapturedExprDecl *D) {
+  VisitVarDecl(D);
+  Code = serialization::DECL_OMP_CAPTUREDEXPR;
+}
 
 //===----------------------------------------------------------------------===//
 // ASTWriter Implementation

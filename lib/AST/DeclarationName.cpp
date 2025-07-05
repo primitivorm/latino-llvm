@@ -17,7 +17,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclTemplate.h"
-// #include "latino/AST/OpenMPClause.h"
+#include "latino/AST/OpenMPClause.h"
 #include "latino/AST/PrettyPrinter.h"
 #include "latino/AST/Type.h"
 #include "latino/AST/TypeLoc.h"
@@ -143,14 +143,14 @@ void DeclarationName::print(raw_ostream &OS,
       StringRef Name = II->getName();
       // If this is a mangled OpenMP variant name we strip off the mangling for
       // printing. It should not be visible to the user at all.
-      // if (II->isMangledOpenMPVariantName()) {
-      //   std::pair<StringRef, StringRef> NameContextPair =
-      //       Name.split(getOpenMPVariantManglingSeparatorStr());
-      //   OS << NameContextPair.first << "["
-      //      << OMPTraitInfo(NameContextPair.second) << "]";
-      // } else {
+      if (II->isMangledOpenMPVariantName()) {
+        std::pair<StringRef, StringRef> NameContextPair =
+            Name.split(getOpenMPVariantManglingSeparatorStr());
+        OS << NameContextPair.first << "["
+           << OMPTraitInfo(NameContextPair.second) << "]";
+      } else {
         OS << Name;
-      // }
+      }
     }
     return;
 

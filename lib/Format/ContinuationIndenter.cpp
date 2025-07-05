@@ -222,12 +222,12 @@ RawStringFormatStyleManager::getEnclosingFunctionStyle(
 }
 
 ContinuationIndenter::ContinuationIndenter(const FormatStyle &Style,
-                                           const AdditionalKeywords &Keywords,
+                                          //  const AdditionalKeywords &Keywords,
                                            const SourceManager &SourceMgr,
                                            WhitespaceManager &Whitespaces,
                                            encoding::Encoding Encoding,
                                            bool BinPackInconclusiveFunctions)
-    : Style(Style), Keywords(Keywords), SourceMgr(SourceMgr),
+    : Style(Style), /*Keywords(Keywords),*/ SourceMgr(SourceMgr),
       Whitespaces(Whitespaces), Encoding(Encoding),
       BinPackInconclusiveFunctions(BinPackInconclusiveFunctions),
       CommentPragmasRegex(Style.CommentPragmas), RawStringFormats(Style) {}
@@ -341,12 +341,12 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
     return true;
   if (Previous.is(tok::semi) && State.LineContainsContinuedForLoopSection)
     return true;
-  // if (Style.Language == FormatStyle::LK_ObjC &&
-  //     Style.ObjCBreakBeforeNestedBlockParam &&
-  //     Current.ObjCSelectorNameParts > 1 &&
-  //     Current.startsSequence(TT_SelectorName, tok::colon, tok::caret)) {
-  //   return true;
-  // }
+  if (Style.Language == FormatStyle::LK_ObjC &&
+      Style.ObjCBreakBeforeNestedBlockParam &&
+      Current.ObjCSelectorNameParts > 1 &&
+      Current.startsSequence(TT_SelectorName, tok::colon, tok::caret)) {
+    return true;
+  }
   // Avoid producing inconsistent states by requiring breaks where they are not
   // permitted for C# generic type constraints.
   if (State.Stack.back().IsCSharpGenericTypeConstraint &&
@@ -435,8 +435,8 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
   if (Style.AlwaysBreakBeforeMultilineStrings &&
       (NewLineColumn == State.FirstIndent + Style.ContinuationIndentWidth ||
        Previous.is(tok::comma) || Current.NestingLevel < 2) &&
-      !Previous.isOneOf(tok::kw_ret, tok::lessless, tok::at,
-                        Keywords.kw_hacerllar) &&
+      !Previous.isOneOf(tok::kw_ret, tok::lessless, tok::at/*,
+                        Keywords.kw_dollar*/) &&
       !Previous.isOneOf(TT_InlineASMColon, TT_ConditionalExpr) &&
       nextIsMultilineString(State))
     return true;
@@ -658,8 +658,8 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
       State.Column > getNewLineColumn(State))
     State.Stack.back().ContainsUnwrappedBuilder = true;
 
-  if (Current.is(TT_LambdaArrow) && Style.Language == FormatStyle::LK_Java)
-    State.Stack.back().NoLineBreak = true;
+  // if (Current.is(TT_LambdaArrow) && Style.Language == FormatStyle::LK_Java)
+  //   State.Stack.back().NoLineBreak = true;
   if (Current.isMemberAccess() && Previous.is(tok::r_paren) &&
       (Previous.MatchingParen &&
        (Previous.TotalLength - Previous.MatchingParen->TotalLength > 10)))
@@ -796,8 +796,8 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
   if (!Current.is(TT_LambdaArrow) &&
       (Style.Language != FormatStyle::LK_JavaScript ||
        Current.NestingLevel != 0 || !PreviousNonComment ||
-       !PreviousNonComment->is(tok::equal) ||
-       !Current.isOneOf(Keywords.kw_async, Keywords.kw_function)))
+       !PreviousNonComment->is(tok::equal) /*||
+       !Current.isOneOf(Keywords.kw_async, Keywords.kw_function)*/))
     State.Stack.back().NestedBlockIndent = State.Column;
 
   if (NextNonComment->isMemberAccess()) {
@@ -962,10 +962,10 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
     NextNonComment = &Current;
 
   // Java specific bits.
-  if (Style.Language == FormatStyle::LK_Java &&
-      Current.isOneOf(Keywords.kw_implements, Keywords.kw_extends))
-    return std::max(State.Stack.back().LastSpace,
-                    State.Stack.back().Indent + Style.ContinuationIndentWidth);
+  // if (Style.Language == FormatStyle::LK_Java &&
+  //     Current.isOneOf(Keywords.kw_implements, Keywords.kw_extends))
+  //   return std::max(State.Stack.back().LastSpace,
+  //                   State.Stack.back().Indent + Style.ContinuationIndentWidth);
 
   if (Style.BreakBeforeBraces == FormatStyle::BS_Whitesmiths &&
       State.Line->First->is(tok::kw_enum))
@@ -1889,8 +1889,8 @@ ContinuationIndenter::createBreakableToken(const FormatToken &Current,
     // FIXME: String literal breaking is currently disabled for C#, Java and
     // JavaScript, as it requires strings to be merged using "+" which we
     // don't support.
-    if (Style.Language == FormatStyle::LK_Java ||
-        Style.Language == FormatStyle::LK_JavaScript || Style.isCSharp() ||
+    if (/*Style.Language == FormatStyle::LK_Java ||
+        Style.Language == FormatStyle::LK_JavaScript || Style.isCSharp() ||*/
         !Style.BreakStringLiterals || !AllowBreak)
       return nullptr;
 

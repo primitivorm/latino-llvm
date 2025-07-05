@@ -14,7 +14,7 @@
 #include "CGCXXABI.h"
 #include "CGDebugInfo.h"
 // #include "CGObjCRuntime.h"
-// #include "CGOpenCLRuntime.h"
+#include "CGOpenCLRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "ConstantEmitter.h"
@@ -189,23 +189,23 @@ static llvm::Constant *buildBlockDescriptor(CodeGenModule &CGM,
   llvm::IntegerType *ulong =
     cast<llvm::IntegerType>(CGM.getTypes().ConvertType(C.UnsignedLongTy));
   llvm::PointerType *i8p = nullptr;
-  // if (CGM.getLangOpts().OpenCL)
-  //   i8p =
-  //     llvm::Type::getInt8PtrTy(
-  //          CGM.getLLVMContext(), C.getTargetAddressSpace(LangAS::opencl_constant));
-  // else
+  if (CGM.getLangOpts().OpenCL)
+    i8p =
+      llvm::Type::getInt8PtrTy(
+           CGM.getLLVMContext(), C.getTargetAddressSpace(LangAS::opencl_constant));
+  else
     i8p = CGM.VoidPtrTy;
 
   std::string descName;
 
   // If an equivalent block descriptor global variable exists, return it.
-  if (C.getLangOpts().ObjC &&
-      CGM.getLangOpts().getGC() == LangOptions::NonGC) {
-    descName = getBlockDescriptorName(blockInfo, CGM);
-    if (llvm::GlobalValue *desc = CGM.getModule().getNamedValue(descName))
-      return llvm::ConstantExpr::getBitCast(desc,
-                                            CGM.getBlockDescriptorType());
-  }
+  // if (C.getLangOpts().ObjC &&
+  //     CGM.getLangOpts().getGC() == LangOptions::NonGC) {
+  //   descName = getBlockDescriptorName(blockInfo, CGM);
+  //   if (llvm::GlobalValue *desc = CGM.getModule().getNamedValue(descName))
+  //     return llvm::ConstantExpr::getBitCast(desc,
+  //                                           CGM.getBlockDescriptorType());
+  // }
 
   // If there isn't an equivalent block descriptor global variable, create a new
   // one.
@@ -255,8 +255,8 @@ static llvm::Constant *buildBlockDescriptor(CodeGenModule &CGM,
     elements.addNullPointer(i8p);
 
   unsigned AddrSpace = 0;
-  // if (C.getLangOpts().OpenCL)
-  //   AddrSpace = C.getTargetAddressSpace(LangAS::opencl_constant);
+  if (C.getLangOpts().OpenCL)
+    AddrSpace = C.getTargetAddressSpace(LangAS::opencl_constant);
 
   llvm::GlobalValue::LinkageTypes linkage;
   if (descName.empty()) {
@@ -449,42 +449,42 @@ static void initializeForBlockHeader(CodeGenModule &CGM, CGBlockInfo &info,
                              SmallVectorImpl<llvm::Type*> &elementTypes) {
 
   assert(elementTypes.empty());
-  // if (CGM.getLangOpts().OpenCL) {
-  //   // The header is basically 'struct { int; int; generic void *;
-  //   // custom_fields; }'. Assert that struct is packed.
-  //   auto GenericAS =
-  //       CGM.getContext().getTargetAddressSpace(LangAS::opencl_generic);
-  //   auto GenPtrAlign =
-  //       CharUnits::fromQuantity(CGM.getTarget().getPointerAlign(GenericAS) / 8);
-  //   auto GenPtrSize =
-  //       CharUnits::fromQuantity(CGM.getTarget().getPointerWidth(GenericAS) / 8);
-  //   assert(CGM.getIntSize() <= GenPtrSize);
-  //   assert(CGM.getIntAlign() <= GenPtrAlign);
-  //   assert((2 * CGM.getIntSize()).isMultipleOf(GenPtrAlign));
-  //   elementTypes.push_back(CGM.IntTy); /* total size */
-  //   elementTypes.push_back(CGM.IntTy); /* align */
-  //   elementTypes.push_back(
-  //       CGM.getOpenCLRuntime()
-  //           .getGenericVoidPointerType()); /* invoke function */
-  //   unsigned Offset =
-  //       2 * CGM.getIntSize().getQuantity() + GenPtrSize.getQuantity();
-  //   unsigned BlockAlign = GenPtrAlign.getQuantity();
-  //   if (auto *Helper =
-  //           CGM.getTargetCodeGenInfo().getTargetOpenCLBlockHelper()) {
-  //     for (auto I : Helper->getCustomFieldTypes()) /* custom fields */ {
-  //       // TargetOpenCLBlockHelp needs to make sure the struct is packed.
-  //       // If necessary, add padding fields to the custom fields.
-  //       unsigned Align = CGM.getDataLayout().getABITypeAlignment(I);
-  //       if (BlockAlign < Align)
-  //         BlockAlign = Align;
-  //       assert(Offset % Align == 0);
-  //       Offset += CGM.getDataLayout().getTypeAllocSize(I);
-  //       elementTypes.push_back(I);
-  //     }
-  //   }
-  //   info.BlockAlign = CharUnits::fromQuantity(BlockAlign);
-  //   info.BlockSize = CharUnits::fromQuantity(Offset);
-  // } else {
+  if (CGM.getLangOpts().OpenCL) {
+    // The header is basically 'struct { int; int; generic void *;
+    // custom_fields; }'. Assert that struct is packed.
+    auto GenericAS =
+        CGM.getContext().getTargetAddressSpace(LangAS::opencl_generic);
+    auto GenPtrAlign =
+        CharUnits::fromQuantity(CGM.getTarget().getPointerAlign(GenericAS) / 8);
+    auto GenPtrSize =
+        CharUnits::fromQuantity(CGM.getTarget().getPointerWidth(GenericAS) / 8);
+    assert(CGM.getIntSize() <= GenPtrSize);
+    assert(CGM.getIntAlign() <= GenPtrAlign);
+    assert((2 * CGM.getIntSize()).isMultipleOf(GenPtrAlign));
+    elementTypes.push_back(CGM.IntTy); /* total size */
+    elementTypes.push_back(CGM.IntTy); /* align */
+    elementTypes.push_back(
+        CGM.getOpenCLRuntime()
+            .getGenericVoidPointerType()); /* invoke function */
+    unsigned Offset =
+        2 * CGM.getIntSize().getQuantity() + GenPtrSize.getQuantity();
+    unsigned BlockAlign = GenPtrAlign.getQuantity();
+    if (auto *Helper =
+            CGM.getTargetCodeGenInfo().getTargetOpenCLBlockHelper()) {
+      for (auto I : Helper->getCustomFieldTypes()) /* custom fields */ {
+        // TargetOpenCLBlockHelp needs to make sure the struct is packed.
+        // If necessary, add padding fields to the custom fields.
+        unsigned Align = CGM.getDataLayout().getABITypeAlignment(I);
+        if (BlockAlign < Align)
+          BlockAlign = Align;
+        assert(Offset % Align == 0);
+        Offset += CGM.getDataLayout().getTypeAllocSize(I);
+        elementTypes.push_back(I);
+      }
+    }
+    info.BlockAlign = CharUnits::fromQuantity(BlockAlign);
+    info.BlockSize = CharUnits::fromQuantity(Offset);
+  } else {
     // The header is basically 'struct { void *; int; int; void *; void *; }'.
     // Assert that the struct is packed.
     assert(CGM.getIntSize() <= CGM.getPointerSize());
@@ -497,7 +497,7 @@ static void initializeForBlockHeader(CodeGenModule &CGM, CGBlockInfo &info,
     elementTypes.push_back(CGM.IntTy);
     elementTypes.push_back(CGM.VoidPtrTy);
     elementTypes.push_back(CGM.getBlockDescriptorType());
-  // }
+  }
 }
 
 static QualType getCaptureFieldType(const CodeGenFunction &CGF,
@@ -537,9 +537,9 @@ static void computeBlockInfo(CodeGenModule &CGM, CodeGenFunction *CGF,
     info.CanBeGlobal = true;
     return;
   }
-  else if (C.getLangOpts().ObjC &&
-           CGM.getLangOpts().getGC() == LangOptions::NonGC)
-    info.HasCapturedVariableLayout = true;
+  // else if (C.getLangOpts().ObjC &&
+  //          CGM.getLangOpts().getGC() == LangOptions::NonGC)
+  //   info.HasCapturedVariableLayout = true;
 
   // Collect the layout chunks.
   SmallVector<BlockLayoutChunk, 16> layout;
@@ -795,10 +795,10 @@ llvm::Value *CodeGenFunction::EmitBlockLiteral(const BlockExpr *blockExpr) {
 }
 
 llvm::Value *CodeGenFunction::EmitBlockLiteral(const CGBlockInfo &blockInfo) {
-  bool IsOpenCL = /*CGM.getContext().getLangOpts().OpenCL*/ false;
+  bool IsOpenCL = CGM.getContext().getLangOpts().OpenCL;
   auto GenVoidPtrTy =
-      /*IsOpenCL ? CGM.getOpenCLRuntime().getGenericVoidPointerType() :*/ VoidPtrTy;
-  LangAS GenVoidPtrAddr = /*IsOpenCL ? LangAS::opencl_generic :*/ LangAS::Default;
+      IsOpenCL ? CGM.getOpenCLRuntime().getGenericVoidPointerType() : VoidPtrTy;
+  LangAS GenVoidPtrAddr = IsOpenCL ? LangAS::opencl_generic : LangAS::Default;
   auto GenVoidPtrSize = CharUnits::fromQuantity(
       CGM.getTarget().getPointerWidth(
           CGM.getContext().getTargetAddressSpace(GenVoidPtrAddr)) /
@@ -1098,10 +1098,10 @@ llvm::Value *CodeGenFunction::EmitBlockLiteral(const CGBlockInfo &blockInfo) {
   llvm::Value *result = Builder.CreatePointerCast(
       blockAddr.getPointer(), ConvertType(blockInfo.getBlockExpr()->getType()));
 
-  // if (IsOpenCL) {
-  //   CGM.getOpenCLRuntime().recordBlockInfo(blockInfo.BlockExpression, InvokeFn,
-  //                                          result);
-  // }
+  if (IsOpenCL) {
+    CGM.getOpenCLRuntime().recordBlockInfo(blockInfo.BlockExpression, InvokeFn,
+                                           result);
+  }
 
   return result;
 }
@@ -1133,8 +1133,8 @@ llvm::Type *CodeGenModule::getBlockDescriptorType() {
 
   // Now form a pointer to that.
   unsigned AddrSpace = 0;
-  // if (getLangOpts().OpenCL)
-  //   AddrSpace = getContext().getTargetAddressSpace(LangAS::opencl_constant);
+  if (getLangOpts().OpenCL)
+    AddrSpace = getContext().getTargetAddressSpace(LangAS::opencl_constant);
   BlockDescriptorType = llvm::PointerType::get(BlockDescriptorType, AddrSpace);
   return BlockDescriptorType;
 }
@@ -1145,22 +1145,22 @@ llvm::Type *CodeGenModule::getGenericBlockLiteralType() {
 
   llvm::Type *BlockDescPtrTy = getBlockDescriptorType();
 
-  // if (getLangOpts().OpenCL) {
-  //   // struct __opencl_block_literal_generic {
-  //   //   int __size;
-  //   //   int __align;
-  //   //   __generic void *__invoke;
-  //   //   /* custom fields */
-  //   // };
-  //   SmallVector<llvm::Type *, 8> StructFields(
-  //       {IntTy, IntTy, getOpenCLRuntime().getGenericVoidPointerType()});
-  //   if (auto *Helper = getTargetCodeGenInfo().getTargetOpenCLBlockHelper()) {
-  //     for (auto I : Helper->getCustomFieldTypes())
-  //       StructFields.push_back(I);
-  //   }
-  //   GenericBlockLiteralType = llvm::StructType::create(
-  //       StructFields, "struct.__opencl_block_literal_generic");
-  // } else {
+  if (getLangOpts().OpenCL) {
+    // struct __opencl_block_literal_generic {
+    //   int __size;
+    //   int __align;
+    //   __generic void *__invoke;
+    //   /* custom fields */
+    // };
+    SmallVector<llvm::Type *, 8> StructFields(
+        {IntTy, IntTy, getOpenCLRuntime().getGenericVoidPointerType()});
+    if (auto *Helper = getTargetCodeGenInfo().getTargetOpenCLBlockHelper()) {
+      for (auto I : Helper->getCustomFieldTypes())
+        StructFields.push_back(I);
+    }
+    GenericBlockLiteralType = llvm::StructType::create(
+        StructFields, "struct.__opencl_block_literal_generic");
+  } else {
     // struct __block_literal_generic {
     //   void *__isa;
     //   int __flags;
@@ -1171,7 +1171,7 @@ llvm::Type *CodeGenModule::getGenericBlockLiteralType() {
     GenericBlockLiteralType =
         llvm::StructType::create("struct.__block_literal_generic", VoidPtrTy,
                                  IntTy, IntTy, VoidPtrTy, BlockDescPtrTy);
-  // }
+  }
 
   return GenericBlockLiteralType;
 }
@@ -1186,27 +1186,27 @@ RValue CodeGenFunction::EmitBlockCallExpr(const CallExpr *E,
   ASTContext &Ctx = getContext();
   CallArgList Args;
 
-  // if (getLangOpts().OpenCL) {
-  //   // For OpenCL, BlockPtr is already casted to generic block literal.
+  if (getLangOpts().OpenCL) {
+    // For OpenCL, BlockPtr is already casted to generic block literal.
 
-  //   // First argument of a block call is a generic block literal casted to
-  //   // generic void pointer, i.e. i8 addrspace(4)*
-  //   llvm::Value *BlockDescriptor = Builder.CreatePointerCast(
-  //       BlockPtr, CGM.getOpenCLRuntime().getGenericVoidPointerType());
-  //   QualType VoidPtrQualTy = Ctx.getPointerType(
-  //       Ctx.getAddrSpaceQualType(Ctx.VoidTy, LangAS::opencl_generic));
-  //   Args.add(RValue::get(BlockDescriptor), VoidPtrQualTy);
-  //   // And the rest of the arguments.
-  //   EmitCallArgs(Args, FnType->getAs<FunctionProtoType>(), E->arguments());
+    // First argument of a block call is a generic block literal casted to
+    // generic void pointer, i.e. i8 addrspace(4)*
+    llvm::Value *BlockDescriptor = Builder.CreatePointerCast(
+        BlockPtr, CGM.getOpenCLRuntime().getGenericVoidPointerType());
+    QualType VoidPtrQualTy = Ctx.getPointerType(
+        Ctx.getAddrSpaceQualType(Ctx.VoidTy, LangAS::opencl_generic));
+    Args.add(RValue::get(BlockDescriptor), VoidPtrQualTy);
+    // And the rest of the arguments.
+    EmitCallArgs(Args, FnType->getAs<FunctionProtoType>(), E->arguments());
 
-  //   // We *can* call the block directly unless it is a function argument.
-  //   if (!isa<ParmVarDecl>(E->getCalleeDecl()))
-  //     Func = CGM.getOpenCLRuntime().getInvokeFunction(E->getCallee());
-  //   else {
-  //     llvm::Value *FuncPtr = Builder.CreateStructGEP(GenBlockTy, BlockPtr, 2);
-  //     Func = Builder.CreateAlignedLoad(FuncPtr, getPointerAlign());
-  //   }
-  // } else {
+    // We *can* call the block directly unless it is a function argument.
+    if (!isa<ParmVarDecl>(E->getCalleeDecl()))
+      Func = CGM.getOpenCLRuntime().getInvokeFunction(E->getCallee());
+    else {
+      llvm::Value *FuncPtr = Builder.CreateStructGEP(GenBlockTy, BlockPtr, 2);
+      Func = Builder.CreateAlignedLoad(FuncPtr, getPointerAlign());
+    }
+  } else {
     // Bitcast the block literal to a generic block literal.
     BlockPtr = Builder.CreatePointerCast(
         BlockPtr, llvm::PointerType::get(GenBlockTy, 0), "block.literal");
@@ -1221,7 +1221,7 @@ RValue CodeGenFunction::EmitBlockCallExpr(const CallExpr *E,
 
     // Load the function.
     Func = Builder.CreateAlignedLoad(FuncPtr, getPointerAlign());
-  // }
+  }
 
   const FunctionType *FuncTy = FnType->castAs<FunctionType>();
   const CGFunctionInfo &FnInfo =
@@ -1356,8 +1356,8 @@ static llvm::Constant *buildGlobalBlock(CodeGenModule &CGM,
   // }
 
   unsigned AddrSpace = 0;
-  // if (CGM.getContext().getLangOpts().OpenCL)
-  //   AddrSpace = CGM.getContext().getTargetAddressSpace(LangAS::opencl_global);
+  if (CGM.getContext().getLangOpts().OpenCL)
+    AddrSpace = CGM.getContext().getTargetAddressSpace(LangAS::opencl_global);
 
   llvm::GlobalVariable *literal = fields.finishAndCreateGlobal(
       "__block_literal_global", blockInfo.BlockAlign,
@@ -1392,10 +1392,10 @@ static llvm::Constant *buildGlobalBlock(CodeGenModule &CGM,
   llvm::Constant *Result =
       llvm::ConstantExpr::getPointerCast(literal, RequiredType);
   CGM.setAddrOfGlobalBlock(blockInfo.BlockExpression, Result);
-  // if (CGM.getContext().getLangOpts().OpenCL)
-  //   CGM.getOpenCLRuntime().recordBlockInfo(
-  //       blockInfo.BlockExpression,
-  //       cast<llvm::Function>(blockFn->stripPointerCasts()), Result);
+  if (CGM.getContext().getLangOpts().OpenCL)
+    CGM.getOpenCLRuntime().recordBlockInfo(
+        blockInfo.BlockExpression,
+        cast<llvm::Function>(blockFn->stripPointerCasts()), Result);
   return Result;
 }
 
@@ -1425,9 +1425,9 @@ void CodeGenFunction::setBlockContextParameter(const ImplicitParamDecl *D,
   BlockPointer = Builder.CreatePointerCast(
       arg,
       BlockInfo->StructureType->getPointerTo(
-          /*getContext().getLangOpts().OpenCL
+          getContext().getLangOpts().OpenCL
               ? getContext().getTargetAddressSpace(LangAS::opencl_generic)
-              :*/ 0),
+              : 0),
       "block");
 }
 
@@ -1473,9 +1473,9 @@ CodeGenFunction::GenerateBlockFunction(GlobalDecl GD,
   // global AS program scope variable (for the case with and without captures).
   // Generic AS is used therefore to be able to accommodate both private and
   // generic AS in one implementation.
-  // if (getLangOpts().OpenCL)
-  //   selfTy = getContext().getPointerType(getContext().getAddrSpaceQualType(
-  //       getContext().VoidTy, LangAS::opencl_generic));
+  if (getLangOpts().OpenCL)
+    selfTy = getContext().getPointerType(getContext().getAddrSpaceQualType(
+        getContext().VoidTy, LangAS::opencl_generic));
 
   IdentifierInfo *II = &CGM.getContext().Idents.get(".block_descriptor");
 
@@ -1502,9 +1502,9 @@ CodeGenFunction::GenerateBlockFunction(GlobalDecl GD,
   CGM.SetInternalFunctionAttributes(blockDecl, fn, fnInfo);
 
   if (BuildGlobalBlock) {
-    auto GenVoidPtrTy = /*getContext().getLangOpts().OpenCL
+    auto GenVoidPtrTy = getContext().getLangOpts().OpenCL
                             ? CGM.getOpenCLRuntime().getGenericVoidPointerType()
-                            :*/ VoidPtrTy;
+                            : VoidPtrTy;
     buildGlobalBlock(CGM, blockInfo,
                      llvm::ConstantExpr::getPointerCast(fn, GenVoidPtrTy));
   }

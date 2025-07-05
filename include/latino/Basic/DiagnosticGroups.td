@@ -622,7 +622,7 @@ def ImplicitFallthroughPerFunction :
 def ImplicitFallthrough  : DiagGroup<"implicit-fallthrough",
                                      [ImplicitFallthroughPerFunction]>;
 def InvalidPPToken : DiagGroup<"invalid-pp-token">;
-def Trigraphs      : DiagGroup<"trigraphs">;
+// def Trigraphs      : DiagGroup<"trigraphs">;
 
 def : DiagGroup<"type-limits">;
 def UndefinedReinterpretCast : DiagGroup<"undefined-reinterpret-cast">;
@@ -902,7 +902,7 @@ def Most : DiagGroup<"most", [
     SizeofArrayDecay,
     StringPlusInt,
     TautologicalCompare,
-    Trigraphs,
+    // Trigraphs,
     Uninitialized,
     UnknownPragmas,
     Unused,
@@ -1115,14 +1115,14 @@ def ASM : DiagGroup<"asm", [
   ]>;
 
 // OpenMP warnings.
-// def SourceUsesOpenMP : DiagGroup<"source-uses-openmp">;
-// def OpenMPClauses : DiagGroup<"openmp-clauses">;
-// def OpenMPLoopForm : DiagGroup<"openmp-loop-form">;
-// def OpenMPMapping : DiagGroup<"openmp-mapping">;
-// def OpenMPTarget : DiagGroup<"openmp-target", [OpenMPMapping]>;
-// def OpenMP : DiagGroup<"openmp", [
-//     SourceUsesOpenMP, OpenMPClauses, OpenMPLoopForm, OpenMPTarget, OpenMPMapping
-//   ]>;
+def SourceUsesOpenMP : DiagGroup<"source-uses-openmp">;
+def OpenMPClauses : DiagGroup<"openmp-clauses">;
+def OpenMPLoopForm : DiagGroup<"openmp-loop-form">;
+def OpenMPMapping : DiagGroup<"openmp-mapping">;
+def OpenMPTarget : DiagGroup<"openmp-target", [OpenMPMapping]>;
+def OpenMP : DiagGroup<"openmp", [
+    SourceUsesOpenMP, OpenMPClauses, OpenMPLoopForm, OpenMPTarget, OpenMPMapping
+  ]>;
 
 // Backend warnings.
 def BackendInlineAsm : DiagGroup<"inline-asm">;

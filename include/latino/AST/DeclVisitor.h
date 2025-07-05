@@ -18,7 +18,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclFriend.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/Support/ErrorHandling.h"

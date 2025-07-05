@@ -240,7 +240,7 @@ static bool isBodyEmpty(CompoundStmt *body, ASTContext &Ctx,
 void trans::removeEmptyStatementsAndDeallocFinalize(MigrationPass &pass) {
   EmptyStatementsRemover(pass).TraverseDecl(pass.Ctx.getTranslationUnitDecl());
 
-  cleanupDeallocOrFinalize(pass);
+  // cleanupDeallocOrFinalize(pass);
 
   for (unsigned i = 0, e = pass.ARCMTMacroLocs.size(); i != e; ++i) {
     Transaction Trans(pass.TA);

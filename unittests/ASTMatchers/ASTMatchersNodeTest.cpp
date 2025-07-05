@@ -2137,74 +2137,74 @@ TEST_P(ASTMatchersTest, TypeAliasTemplateDecl) {
 //   EXPECT_FALSE(matchesObjC(ObjCStringNoPool, autoreleasePoolStmt()));
 // }
 
-// TEST(ASTMatchersTestOpenMP, OMPExecutableDirective) {
-//   auto Matcher = stmt(ompExecutableDirective());
+TEST(ASTMatchersTestOpenMP, OMPExecutableDirective) {
+  auto Matcher = stmt(ompExecutableDirective());
 
-//   StringRef Source0 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp taskyield
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp taskyield
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
 
-//   StringRef Source2 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source2, Matcher));
-// }
+  StringRef Source2 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source2, Matcher));
+}
 
-// TEST(ASTMatchersTestOpenMP, OMPDefaultClause) {
-//   auto Matcher = ompExecutableDirective(hasAnyClause(ompDefaultClause()));
+TEST(ASTMatchersTestOpenMP, OMPDefaultClause) {
+  auto Matcher = ompExecutableDirective(hasAnyClause(ompDefaultClause()));
 
-//   StringRef Source0 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
 
-//   StringRef Source2 = R"(
-// void x() {
-// #pragma omp parallel default(none)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
+  StringRef Source2 = R"(
+void x() {
+#pragma omp parallel default(none)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
 
-//   StringRef Source3 = R"(
-// void x() {
-// #pragma omp parallel default(shared)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
+  StringRef Source3 = R"(
+void x() {
+#pragma omp parallel default(shared)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
 
-//   StringRef Source4 = R"(
-// void x() {
-// #pragma omp parallel default(firstprivate)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
+  StringRef Source4 = R"(
+void x() {
+#pragma omp parallel default(firstprivate)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
 
-//   StringRef Source5 = R"(
-// void x(int x) {
-// #pragma omp parallel num_threads(x)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
-// }
+  StringRef Source5 = R"(
+void x(int x) {
+#pragma omp parallel num_threads(x)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
+}
 
 TEST(ASTMatchersTest, Finder_DynamicOnlyAcceptsSomeMatchers) {
   MatchFinder Finder;

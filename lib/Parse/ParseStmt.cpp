@@ -99,9 +99,9 @@ Parser::ParseStatementOrDeclaration(StmtVector &Stmts,
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
 
   ParsedAttributesWithRange Attrs(AttrFactory);
-  MaybeParseCXX11Attributes(Attrs, nullptr, /*MightBeObjCMessageSend*/ true);
-  // if (!MaybeParseOpenCLUnrollHintAttribute(Attrs))
-  //   return StmtError();
+  // MaybeParseCXX11Attributes(Attrs, nullptr, /*MightBeObjCMessageSend*/ true);
+  if (!MaybeParseOpenCLUnrollHintAttribute(Attrs))
+    return StmtError();
 
   StmtResult Res = ParseStatementOrDeclarationAfterAttributes(
       Stmts, StmtCtx, TrailingElseLoc, Attrs);
@@ -375,18 +375,18 @@ Retry:
     ConsumeAnnotationToken();
     return StmtError();
 
-  // case tok::annot_pragma_opencl_extension:
-  //   ProhibitAttributes(Attrs);
-  //   HandlePragmaOpenCLExtension();
-  //   return StmtEmpty();
+  case tok::annot_pragma_opencl_extension:
+    ProhibitAttributes(Attrs);
+    HandlePragmaOpenCLExtension();
+    return StmtEmpty();
 
   case tok::annot_pragma_captured:
     ProhibitAttributes(Attrs);
     return HandlePragmaCaptured();
 
-  // case tok::annot_pragma_openmp:
-  //   ProhibitAttributes(Attrs);
-  //   return ParseOpenMPDeclarativeOrExecutableDirective(StmtCtx);
+  case tok::annot_pragma_openmp:
+    ProhibitAttributes(Attrs);
+    return ParseOpenMPDeclarativeOrExecutableDirective(StmtCtx);
 
   case tok::annot_pragma_ms_pointers_to_members:
     ProhibitAttributes(Attrs);
@@ -931,9 +931,9 @@ void Parser::ParseCompoundStatementLeadingPragmas() {
     case tok::annot_pragma_redefine_extname:
       HandlePragmaRedefineExtname();
       break;
-    // case tok::annot_pragma_opencl_extension:
-    //   HandlePragmaOpenCLExtension();
-    //   break;
+    case tok::annot_pragma_opencl_extension:
+      HandlePragmaOpenCLExtension();
+      break;
     case tok::annot_pragma_fp_contract:
       HandlePragmaFPContract();
       break;
@@ -1098,8 +1098,8 @@ StmtResult Parser::ParseCompoundStatementBody(bool isStmtExpr) {
         ConsumeToken();
 
       ParsedAttributesWithRange attrs(AttrFactory);
-      MaybeParseCXX11Attributes(attrs, nullptr,
-                                /*MightBeObjCMessageSend*/ true);
+      //MaybeParseCXX11Attributes(attrs, nullptr,
+      // /*MightBeObjCMessageSend*/ true);
 
       // If this is the start of a declaration, parse it as such.
       if (isDeclarationStatement()) {
@@ -1757,8 +1757,8 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
     return StmtError();
   }
 
-  bool C99orCXXorObjC = getLangOpts().C99 || getLangOpts().CPlusPlus ||
-    getLangOpts().ObjC;
+  bool C99orCXXorObjC = getLangOpts().C99 || getLangOpts().CPlusPlus /*||
+    getLangOpts().ObjC*/;
 
   // C99 6.8.5p5 - In C99, the for statement is a block.  This is not
   // the case for C90.  Start the loop scope.
@@ -1802,7 +1802,7 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
   }
 
   ParsedAttributesWithRange attrs(AttrFactory);
-  MaybeParseCXX11Attributes(attrs);
+  //MaybeParseCXX11Attributes(attrs);
 
   SourceLocation EmptyInitStmtSemiLoc;
 
@@ -1819,7 +1819,7 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
     ProhibitAttributes(attrs);
     IdentifierInfo *Name = Tok.getIdentifierInfo();
     SourceLocation Loc = ConsumeToken();
-    MaybeParseCXX11Attributes(attrs);
+    //MaybeParseCXX11Attributes(attrs);
 
     ForRangeInfo.ColonLoc = ConsumeToken();
     if (Tok.is(tok::l_brace))
@@ -2022,13 +2022,13 @@ StmtResult Parser::ParseForStatement(SourceLocation *TrailingElseLoc) {
                                                      FirstPart.get(),
                                                      Collection.get(),
                                                      T.getCloseLocation());
-  } else {
+  }*/ else {
     // In OpenMP loop region loop control variable must be captured and be
     // private. Perform analysis of first part (if any).
     if (getLangOpts().OpenMP && FirstPart.isUsable()) {
       Actions.ActOnOpenMPLoopInitialization(ForLoc, FirstPart.get());
     }
-  }*/
+  }
 
   // C99 6.8.5p5 - In C99, the body of the for statement is a scope, even if
   // there is no compound stmt.  C90 does not have this clause.  We only do this
@@ -2204,7 +2204,7 @@ StmtResult Parser::ParsePragmaLoopHint(StmtVector &Stmts,
   }
 
   // Get the next statement.
-  MaybeParseCXX11Attributes(Attrs);
+  //MaybeParseCXX11Attributes(Attrs);
 
   StmtResult S = ParseStatementOrDeclarationAfterAttributes(
       Stmts, StmtCtx, TrailingElseLoc, Attrs);
@@ -2365,28 +2365,28 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
 
   // Borland allows SEH-handlers with 'try'
 
-  if ((Tok.is(tok::identifier) &&
-       Tok.getIdentifierInfo() == getSEHExceptKeyword()) /*||
-      Tok.is(tok::kw___finally)*/) {
-    // TODO: Factor into common return ParseSEHHandlerCommon(...)
-    StmtResult Handler;
-    if(Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
-      SourceLocation Loc = ConsumeToken();
-      Handler = ParseSEHExceptBlock(Loc);
-    }
-    else {
-      SourceLocation Loc = ConsumeToken();
-      Handler = ParseSEHFinallyBlock(Loc);
-    }
-    if(Handler.isInvalid())
-      return Handler;
+  // if ((Tok.is(tok::identifier) &&
+  //      Tok.getIdentifierInfo() == getSEHExceptKeyword()) /*||
+  //     Tok.is(tok::kw___finally)*/) {
+  //   // TODO: Factor into common return ParseSEHHandlerCommon(...)
+  //   StmtResult Handler;
+  //   if(Tok.getIdentifierInfo() == getSEHExceptKeyword()) {
+  //     SourceLocation Loc = ConsumeToken();
+  //     Handler = ParseSEHExceptBlock(Loc);
+  //   }
+  //   else {
+  //     SourceLocation Loc = ConsumeToken();
+  //     Handler = ParseSEHFinallyBlock(Loc);
+  //   }
+  //   if(Handler.isInvalid())
+  //     return Handler;
 
-    return Actions.ActOnSEHTryBlock(true /* IsCXXTry */,
-                                    TryLoc,
-                                    TryBlock.get(),
-                                    Handler.get());
-  }
-  else {
+  //   return Actions.ActOnSEHTryBlock(true /* IsCXXTry */,
+  //                                   TryLoc,
+  //                                   TryBlock.get(),
+  //                                   Handler.get());
+  // }
+  // else {
     StmtVector Handlers;
 
     // C++11 attributes can't appear here, despite this context seeming
@@ -2406,7 +2406,7 @@ StmtResult Parser::ParseCXXTryBlockCommon(SourceLocation TryLoc, bool FnTry) {
       return StmtError();
 
     return Actions.ActOnCXXTryBlock(TryLoc, TryBlock.get(), Handlers);
-  }
+  // }
 }
 
 /// ParseCXXCatchBlock - Parse a C++ catch block, called handler in the standard
@@ -2440,7 +2440,7 @@ StmtResult Parser::ParseCXXCatchBlock(bool FnCatch) {
   Decl *ExceptionDecl = nullptr;
   if (Tok.isNot(tok::ellipsis)) {
     ParsedAttributesWithRange Attributes(AttrFactory);
-    MaybeParseCXX11Attributes(Attributes);
+    //MaybeParseCXX11Attributes(Attributes);
 
     DeclSpec DS(AttrFactory);
     DS.takeAttributesFrom(Attributes);
@@ -2527,18 +2527,18 @@ StmtResult Parser::ParseCXXCatchBlock(bool FnCatch) {
 //   Braces.consumeClose();
 // }
 
-// bool Parser::ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs) {
-//   MaybeParseGNUAttributes(Attrs);
+bool Parser::ParseOpenCLUnrollHintAttribute(ParsedAttributes &Attrs) {
+  MaybeParseGNUAttributes(Attrs);
 
-//   if (Attrs.empty())
-//     return true;
+  if (Attrs.empty())
+    return true;
 
-//   if (Attrs.begin()->getKind() != ParsedAttr::AT_OpenCLUnrollHint)
-//     return true;
+  if (Attrs.begin()->getKind() != ParsedAttr::AT_OpenCLUnrollHint)
+    return true;
 
-//   if (!(Tok.is(tok::kw_desde) || Tok.is(tok::kw_mientras) || Tok.is(tok::kw_hacer))) {
-//     Diag(Tok, diag::err_opencl_unroll_hint_on_non_loop);
-//     return false;
-//   }
-//   return true;
-// }
+  if (!(Tok.is(tok::kw_desde) || Tok.is(tok::kw_mientras) || Tok.is(tok::kw_hacer))) {
+    Diag(Tok, diag::err_opencl_unroll_hint_on_non_loop);
+    return false;
+  }
+  return true;
+}

@@ -508,9 +508,9 @@ private:
   void WriteDeclUpdatesBlocks(RecordDataImpl &OffsetsRecord);
   void WriteDeclContextVisibleUpdate(const DeclContext *DC);
   void WriteFPPragmaOptions(const FPOptionsOverride &Opts);
-  // void WriteOpenCLExtensions(Sema &SemaRef);
-  // void WriteOpenCLExtensionTypes(Sema &SemaRef);
-  // void WriteOpenCLExtensionDecls(Sema &SemaRef);
+  void WriteOpenCLExtensions(Sema &SemaRef);
+  void WriteOpenCLExtensionTypes(Sema &SemaRef);
+  void WriteOpenCLExtensionDecls(Sema &SemaRef);
   void WriteCUDAPragmas(Sema &SemaRef);
   // void WriteObjCCategories();
   void WriteLateParsedTemplates(Sema &SemaRef);
@@ -743,10 +743,10 @@ private:
   // void AddedObjCCategoryToInterface(const ObjCCategoryDecl *CatD,
   //                                   const ObjCInterfaceDecl *IFD) override;
   void DeclarationMarkedUsed(const Decl *D) override;
-  // void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
-  // void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
-  //                                           const Attr *Attr) override;
-  // void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
+  void DeclarationMarkedOpenMPThreadPrivate(const Decl *D) override;
+  void DeclarationMarkedOpenMPDeclareTarget(const Decl *D,
+                                            const Attr *Attr) override;
+  void DeclarationMarkedOpenMPAllocate(const Decl *D, const Attr *A) override;
   void RedefinedHiddenDefinition(const NamedDecl *D, Module *M) override;
   void AddedAttributeToRecord(const Attr *Attr,
                               const RecordDecl *Record) override;

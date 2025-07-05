@@ -42,7 +42,7 @@ add_latino_library(latinoAST
   DeclFriend.cpp
   DeclGroup.cpp
   # DeclObjC.cpp
-  # DeclOpenMP.cpp
+  DeclOpenMP.cpp
   DeclPrinter.cpp
   DeclTemplate.cpp
   ParentMapContext.cpp
@@ -86,7 +86,7 @@ add_latino_library(latinoAST
   NestedNameSpecifier.cpp
   # NSAPI.cpp
   ODRHash.cpp
-  # OpenMPClause.cpp
+  OpenMPClause.cpp
   OSLog.cpp
   ParentMap.cpp
   PrintfFormatString.cpp
@@ -100,7 +100,7 @@ add_latino_library(latinoAST
   StmtCXX.cpp
   StmtIterator.cpp
   # StmtObjC.cpp
-  # StmtOpenMP.cpp
+  StmtOpenMP.cpp
   StmtPrinter.cpp
   StmtProfile.cpp
   StmtViz.cpp

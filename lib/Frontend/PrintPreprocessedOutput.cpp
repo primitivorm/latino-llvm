@@ -897,10 +897,10 @@ void latino::DoPrintPreprocessedInput(Preprocessor &PP, raw_ostream *OS,
   //  OpenMP [2.1, Directive format]
   //  Preprocessing tokens following the #pragma omp are subject to macro
   //  replacement.
-  // std::unique_ptr<UnknownPragmaHandler> OpenMPHandler(
-  //     new UnknownPragmaHandler("#pragma omp", Callbacks,
-  //                              /*RequireTokenExpansion=*/true));
-  // PP.AddPragmaHandler("omp", OpenMPHandler.get());
+  std::unique_ptr<UnknownPragmaHandler> OpenMPHandler(
+      new UnknownPragmaHandler("#pragma omp", Callbacks,
+                               /*RequireTokenExpansion=*/true));
+  PP.AddPragmaHandler("omp", OpenMPHandler.get());
 
   PP.addPPCallbacks(std::unique_ptr<PPCallbacks>(Callbacks));
 
@@ -934,5 +934,5 @@ void latino::DoPrintPreprocessedInput(Preprocessor &PP, raw_ostream *OS,
   PP.RemovePragmaHandler(MicrosoftExtHandler.get());
   PP.RemovePragmaHandler("GCC", GCCHandler.get());
   PP.RemovePragmaHandler("clang", ClangHandler.get());
-  // PP.RemovePragmaHandler("omp", OpenMPHandler.get());
+  PP.RemovePragmaHandler("omp", OpenMPHandler.get());
 }

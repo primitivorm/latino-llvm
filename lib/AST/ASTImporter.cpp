@@ -1024,14 +1024,14 @@ ExpectedType ASTNodeImporter::VisitAtomicType(const AtomicType *T){
 
 ExpectedType ASTNodeImporter::VisitBuiltinType(const BuiltinType *T) {
   switch (T->getKind()) {
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//   case BuiltinType::Id: \
-//     return Importer.getToContext().SingletonId;
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case BuiltinType::Id: \
-//     return Importer.getToContext().Id##Ty;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+  case BuiltinType::Id: \
+    return Importer.getToContext().SingletonId;
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case BuiltinType::Id: \
+    return Importer.getToContext().Id##Ty;
+#include "latino/Basic/OpenCLExtensionTypes.def"
 #define SVE_TYPE(Name, Id, SingletonId) \
   case BuiltinType::Id: \
     return Importer.getToContext().SingletonId;

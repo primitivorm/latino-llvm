@@ -23,6 +23,8 @@ endif()
 
 # If we are not building as a part of LLVM, build Clang as an
 # standalone project, using LLVM as an external library:
+message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
 if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
 
   project(latino C CXX)
@@ -46,8 +48,8 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
   endif()
 
   if(NOT CMAKE_BUILD_TYPE)
-    # set(CMAKE_BUILD_TYPE Debug)
-    set(CMAKE_BUILD_TYPE Release)
+    set(CMAKE_BUILD_TYPE Debug)
+    #set(CMAKE_BUILD_TYPE Release)
   endif()
   message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
@@ -129,7 +131,8 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
       if (CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
         set(HOST_EXECUTABLE_SUFFIX ".exe")
       endif()
-      set(LATINO_TABLEGEN_EXE "${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/bin/latino-tblgen${HOST_EXECUTABLE_SUFFIX}")
+      #set(LATINO_TABLEGEN_EXE "${CMAKE_CURRENT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/bin/latino-tblgen${HOST_EXECUTABLE_SUFFIX}")
+      set(LATINO_TABLEGEN_EXE "${CMAKE_CURRENT_SOURCE_DIR}/deps/llvm-project/build/${CMAKE_BUILD_TYPE}/bin/clang-tblgen${HOST_EXECUTABLE_SUFFIX}")
       message(STATUS "LATINO_TABLEGEN_EXE: ${LATINO_TABLEGEN_EXE}")
       set(LATINO_TABLEGEN_TARGET ${LATINO_TABLEGEN_EXE})
       message(STATUS "LATINO_TABLEGEN_TARGET: ${LATINO_TABLEGEN_TARGET}")
@@ -187,7 +190,8 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
     set(LLVM_INCLUDE_TESTS OFF)
   endif()
 
-  include_directories("${LLVM_BINARY_DIR}/include" "${LLVM_MAIN_INCLUDE_DIR}")
+  #Descomentar esta linea despues de compilar clang
+  #include_directories("${LLVM_BINARY_DIR}/include" "${LLVM_MAIN_INCLUDE_DIR}")
   link_directories("${LLVM_LIBRARY_DIR}")
 
   # include_directories("${LLVM_MAIN_SRC_DIR}/include")

@@ -2665,9 +2665,9 @@ static void MaybeAddSentinel(Preprocessor &PP,
                              CodeCompletionBuilder &Result) {
   if (SentinelAttr *Sentinel = FunctionOrMethod->getAttr<SentinelAttr>())
     if (Sentinel->getSentinel() == 0) {
-      if (PP.getLangOpts().ObjC && PP.isMacroDefined("nil"))
-        Result.AddTextChunk(", nil");
-      else if (PP.isMacroDefined("NULL"))
+      /*if (PP.getLangOpts().ObjC && PP.isMacroDefined("nil"))
+         Result.AddTextChunk(", nil");
+      else*/ if (PP.isMacroDefined("NULL"))
         Result.AddTextChunk(", NULL");
       else
         Result.AddTextChunk(", (void*)0");
@@ -3973,8 +3973,8 @@ mapCodeCompletionContext(Sema &S, Sema::ParserCompletionContext PCC) {
     return CodeCompletionContext::CCC_Recovery;
 
   case Sema::PCC_ForInit:
-    if (S.getLangOpts().CPlusPlus || S.getLangOpts().C99 ||
-        S.getLangOpts().ObjC)
+    if (S.getLangOpts().CPlusPlus || S.getLangOpts().C99 /*||
+        S.getLangOpts().ObjC*/)
       return CodeCompletionContext::CCC_ParenthesizedExpression;
     else
       return CodeCompletionContext::CCC_Expression;
@@ -9094,23 +9094,23 @@ void Sema::CodeCompletePreprocessorDirective(bool InConditional) {
   Builder.AddPlaceholderChunk("arguments");
   Results.AddResult(Builder.TakeString());
 
-  if (getLangOpts().ObjC) {
-    // #import "header"
-    Builder.AddTypedTextChunk("import");
-    Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-    Builder.AddTextChunk("\"");
-    Builder.AddPlaceholderChunk("header");
-    Builder.AddTextChunk("\"");
-    Results.AddResult(Builder.TakeString());
+  // if (getLangOpts().ObjC) {
+  //   // #import "header"
+  //   Builder.AddTypedTextChunk("import");
+  //   Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+  //   Builder.AddTextChunk("\"");
+  //   Builder.AddPlaceholderChunk("header");
+  //   Builder.AddTextChunk("\"");
+  //   Results.AddResult(Builder.TakeString());
 
-    // #import <header>
-    Builder.AddTypedTextChunk("import");
-    Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
-    Builder.AddTextChunk("<");
-    Builder.AddPlaceholderChunk("header");
-    Builder.AddTextChunk(">");
-    Results.AddResult(Builder.TakeString());
-  }
+  //   // #import <header>
+  //   Builder.AddTypedTextChunk("import");
+  //   Builder.AddChunk(CodeCompletionString::CK_HorizontalSpace);
+  //   Builder.AddTextChunk("<");
+  //   Builder.AddPlaceholderChunk("header");
+  //   Builder.AddTextChunk(">");
+  //   Results.AddResult(Builder.TakeString());
+  // }
 
   // #include_next "header"
   Builder.AddTypedTextChunk("include_next");

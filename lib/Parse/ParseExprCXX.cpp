@@ -876,7 +876,7 @@ bool Parser::ParseLambdaIntroducer(LambdaIntroducer &Intro,
         // send. In that case, fail here and let the ObjC message
         // expression parser perform the completion.
         if (Tok.is(tok::code_completion) &&
-            !(getLangOpts().ObjC && Tentative)) {
+            !(/*getLangOpts().ObjC &&*/ Tentative)) {
           Actions.CodeCompleteLambdaIntroducer(getCurScope(), Intro,
                                                /*AfterAmpersand=*/false);
           cutOffParsing();
@@ -1353,14 +1353,14 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
       DeclEndLoc = ESpecRange.getEnd();
 
     // Parse attribute-specifier[opt].
-    MaybeParseCXX11Attributes(Attr, &DeclEndLoc);
+    //MaybeParseCXX11Attributes(Attr, &DeclEndLoc);
 
     // Parse OpenCL addr space attribute.
-    // if (Tok.isOneOf(/*tok::kw___private, tok::kw___global, tok::kw___local,
-    //                 tok::kw___constant,*/ tok::kw___generic)) {
-    //   ParseOpenCLQualifiers(DS.getAttributes());
-    //   ConsumeToken();
-    // }
+    if (Tok.isOneOf(tok::kw___private, tok::kw___global, tok::kw___local,
+                    tok::kw___constant, tok::kw___generic)) {
+      ParseOpenCLQualifiers(DS.getAttributes());
+      ConsumeToken();
+    }
 
     SourceLocation FunLocalRangeEnd = DeclEndLoc;
 
@@ -1395,11 +1395,11 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
 
     PrototypeScope.Exit();
 
-    WarnIfHasCUDATargetAttr();
+    // WarnIfHasCUDATargetAttr();
   } else if (Tok.isOneOf(tok::kw_mutable, tok::arrow, tok::kw___attribute,
                          tok::kw_constexpr, tok::kw_consteval,
-                         /*tok::kw___private, tok::kw___global, tok::kw___local,
-                         tok::kw___constant, tok::kw___generic,*/
+                         tok::kw___private, tok::kw___global, tok::kw___local,
+                         tok::kw___constant, tok::kw___generic,
                          tok::kw_requires) ||
              (Tok.is(tok::l_square) && NextToken().is(tok::l_square))) {
     // It's common to forget that one needs '()' before 'mutable', an attribute
@@ -1409,11 +1409,11 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
     case tok::kw_mutable: TokKind = 0; break;
     case tok::arrow: TokKind = 1; break;
     case tok::kw___attribute:
-    // case tok::kw___private:
-    // case tok::kw___global:
-    // case tok::kw___local:
-    // case tok::kw___constant:
-    // case tok::kw___generic:
+    case tok::kw___private:
+    case tok::kw___global:
+    case tok::kw___local:
+    case tok::kw___constant:
+    case tok::kw___generic:
     case tok::l_square: TokKind = 2; break;
     case tok::kw_constexpr: TokKind = 3; break;
     case tok::kw_consteval: TokKind = 4; break;
@@ -1438,7 +1438,7 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
     }
 
     // Parse attribute-specifier[opt].
-    MaybeParseCXX11Attributes(Attr, &DeclEndLoc);
+    //MaybeParseCXX11Attributes(Attr, &DeclEndLoc);
 
     // Parse the return type, if there is one.
     if (Tok.is(tok::arrow)) {
@@ -1474,7 +1474,7 @@ ExprResult Parser::ParseLambdaExpressionAfterIntroducer(
     if (Tok.is(tok::kw_requires))
       ParseTrailingRequiresClause(D);
 
-    WarnIfHasCUDATargetAttr();
+    // WarnIfHasCUDATargetAttr();
   }
 
   // FIXME: Rename BlockScope -> ClosureScope if we decide to continue using
@@ -1973,7 +1973,7 @@ Sema::ConditionResult Parser::ParseCXXCondition(StmtResult *InitStmt,
   }
 
   ParsedAttributesWithRange attrs(AttrFactory);
-  MaybeParseCXX11Attributes(attrs);
+  //MaybeParseCXX11Attributes(attrs);
 
   const auto WarnOnInit = [this, &CK] {
     Diag(Tok.getLocation(), getLangOpts().CPlusPlus17
@@ -2233,12 +2233,12 @@ void Parser::ParseCXXSimpleTypeSpecifier(DeclSpec &DS) {
   case tok::kw_bool:
     DS.SetTypeSpecType(DeclSpec::TST_bool, Loc, PrevSpec, DiagID, Policy);
     break;
-// #define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
-//   case tok::kw_##ImgType##_t:                                                  \
-//     DS.SetTypeSpecType(DeclSpec::TST_##ImgType##_t, Loc, PrevSpec, DiagID,     \
-//                        Policy);                                                \
-//     break;
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id)                                        \
+  case tok::kw_##ImgType##_t:                                                  \
+    DS.SetTypeSpecType(DeclSpec::TST_##ImgType##_t, Loc, PrevSpec, DiagID,     \
+                       Policy);                                                \
+    break;
+#include "latino/Basic/OpenCLImageTypes.def"
 
   case tok::annot_decltype:
   case tok::kw_decltype:
@@ -3175,8 +3175,8 @@ void Parser::ParseDirectNewDeclarator(Declarator &D) {
   bool First = true;
   while (Tok.is(tok::l_square)) {
     // An array-size expression can't start with a lambda.
-    if (CheckProhibitedCXX11Attribute())
-      continue;
+    // if (CheckProhibitedCXX11Attribute())
+    //   continue;
 
     BalancedDelimiterTracker T(*this, tok::l_square);
     T.consumeOpen();
@@ -3195,7 +3195,7 @@ void Parser::ParseDirectNewDeclarator(Declarator &D) {
 
     // Attributes here appertain to the array type. C++11 [expr.new]p5.
     ParsedAttributes Attrs(AttrFactory);
-    MaybeParseCXX11Attributes(Attrs);
+    //MaybeParseCXX11Attributes(Attrs);
 
     D.AddTypeInfo(DeclaratorChunk::getArray(0,
                                             /*isStatic=*/false, /*isStar=*/false,

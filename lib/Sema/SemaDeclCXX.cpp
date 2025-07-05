@@ -878,8 +878,8 @@ Sema::ActOnDecompositionDeclarator(Scope *S, Declarator &D,
     CurContext->addHiddenDecl(New);
   }
 
-  // if (isInOpenMPDeclareTargetContext())
-  //   checkDeclIsAllowedInOpenMPTarget(nullptr, New);
+  if (isInOpenMPDeclareTargetContext())
+    checkDeclIsAllowedInOpenMPTarget(nullptr, New);
 
   return New;
 }
@@ -15825,7 +15825,7 @@ VarDecl *Sema::BuildExceptionDeclaration(Scope *S,
 
   // Only the non-fragile NeXT runtime currently supports C++ catches
   // of ObjC types, and no runtime supports catching ObjC types by value.
-  if (!Invalid && getLangOpts().ObjC) {
+  if (!Invalid /*&& getLangOpts().ObjC*/) {
     QualType T = ExDeclType;
     if (const ReferenceType *RT = T->getAs<ReferenceType>())
       T = RT->getPointeeType();
@@ -17105,13 +17105,13 @@ void Sema::MarkVTableUsed(SourceLocation Loc, CXXRecordDecl *Class,
     return;
   // Do not mark as used if compiling for the device outside of the target
   // region.
-  // if (TUKind != TU_Prefix && LangOpts.OpenMP && LangOpts.OpenMPIsDevice &&
-  //     !isInOpenMPDeclareTargetContext() &&
-  //     !isInOpenMPTargetExecutionDirective()) {
-  //   if (!DefinitionRequired)
-  //     MarkVirtualMembersReferenced(Loc, Class);
-  //   return;
-  // }
+  if (TUKind != TU_Prefix && LangOpts.OpenMP && LangOpts.OpenMPIsDevice &&
+      !isInOpenMPDeclareTargetContext() &&
+      !isInOpenMPTargetExecutionDirective()) {
+    if (!DefinitionRequired)
+      MarkVirtualMembersReferenced(Loc, Class);
+    return;
+  }
 
   // Try to insert this class into the map.
   LoadExternalVTableUses();

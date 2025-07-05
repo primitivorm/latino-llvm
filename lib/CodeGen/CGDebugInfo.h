@@ -69,18 +69,18 @@ class CGDebugInfo {
   llvm::DIType *ClassTy = nullptr;
   llvm::DICompositeType *ObjTy = nullptr;
   llvm::DIType *SelTy = nullptr;
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
-//   llvm::DIType *SingletonId = nullptr;
-// #include "latino/Basic/OpenCLImageTypes.def"
-  // llvm::DIType *OCLSamplerDITy = nullptr;
-  // llvm::DIType *OCLEventDITy = nullptr;
-  // llvm::DIType *OCLClkEventDITy = nullptr;
-  // llvm::DIType *OCLQueueDITy = nullptr;
-  // llvm::DIType *OCLNDRangeDITy = nullptr;
-  // llvm::DIType *OCLReserveIDDITy = nullptr;
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   llvm::DIType *Id##Ty = nullptr;
-// #include "latino/Basic/OpenCLExtensionTypes.def"
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
+  llvm::DIType *SingletonId = nullptr;
+#include "latino/Basic/OpenCLImageTypes.def"
+  llvm::DIType *OCLSamplerDITy = nullptr;
+  llvm::DIType *OCLEventDITy = nullptr;
+  llvm::DIType *OCLClkEventDITy = nullptr;
+  llvm::DIType *OCLQueueDITy = nullptr;
+  llvm::DIType *OCLNDRangeDITy = nullptr;
+  llvm::DIType *OCLReserveIDDITy = nullptr;
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  llvm::DIType *Id##Ty = nullptr;
+#include "latino/Basic/OpenCLExtensionTypes.def"
 
   /// Cache of previously constructed Types.
   llvm::DenseMap<const void *, llvm::TrackingMDRef> TypeCache;

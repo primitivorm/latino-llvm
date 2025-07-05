@@ -239,8 +239,8 @@ PUNCTUATOR(coloncolon,          "::")
 PUNCTUATOR(at,                  "@")
 
 // CUDA support.
-PUNCTUATOR(lesslessless,          "<<<")
-PUNCTUATOR(greatergreatergreater, ">>>")
+// PUNCTUATOR(lesslessless,          "<<<")
+// PUNCTUATOR(greatergreatergreater, ">>>")
 
 // CL support
 // PUNCTUATOR(caretcaret,            "^^")
@@ -316,7 +316,7 @@ KEYWORD(volatile                    , KEYALL)
 KEYWORD(mientras                       , KEYALL) // while
 // KEYWORD(_Alignas                    , KEYALL)
 // KEYWORD(_Alignof                    , KEYALL)
-// KEYWORD(_Atomic                     , KEYALL|KEYNOOPENCL)
+KEYWORD(_Atomic                     , KEYALL|KEYNOOPENCL)
 // KEYWORD(_Bool                       , KEYNOCXX)
 // KEYWORD(_Complex                    , KEYALL)
 // KEYWORD(_Generic                    , KEYALL)
@@ -338,7 +338,7 @@ KEYWORD(const_cast                  , KEYCXX)
 KEYWORD(borrar                      , KEYCXX) // delete
 KEYWORD(dynamic_cast                , KEYCXX)
 KEYWORD(explicit                    , KEYCXX)
-KEYWORD(exportar                      , KEYCXX)
+KEYWORD(exportar                      , KEYCXX) // export
 KEYWORD(false                       , BOOLSUPPORT)
 KEYWORD(friend                      , KEYCXX)
 KEYWORD(mutable                     , KEYCXX)
@@ -564,52 +564,52 @@ KEYWORD(__unaligned                 , KEYMS)
 KEYWORD(base                     , KEYMS) // __super
 
 // OpenCL address space qualifiers
-// KEYWORD(__global                    , KEYOPENCLC | KEYOPENCLCXX)
-// KEYWORD(__local                     , KEYOPENCLC | KEYOPENCLCXX)
-// KEYWORD(__constant                  , KEYOPENCLC | KEYOPENCLCXX)
-// KEYWORD(__private                   , KEYOPENCLC | KEYOPENCLCXX)
-// KEYWORD(__generic                   , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("global", __global            , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("local", __local              , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("constant", __constant        , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("private", __private          , KEYOPENCLC)
-// ALIAS("generic", __generic          , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__global                    , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__local                     , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__constant                  , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__private                   , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__generic                   , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("global", __global            , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("local", __local              , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("constant", __constant        , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("private", __private          , KEYOPENCLC)
+ALIAS("generic", __generic          , KEYOPENCLC | KEYOPENCLCXX)
 // OpenCL function qualifiers
-// KEYWORD(__kernel                    , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("kernel", __kernel            , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__kernel                    , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("kernel", __kernel            , KEYOPENCLC | KEYOPENCLCXX)
 // OpenCL access qualifiers
-// KEYWORD(__read_only                 , KEYOPENCLC | KEYOPENCLCXX)
-// KEYWORD(__write_only                , KEYOPENCLC | KEYOPENCLCXX)
-// KEYWORD(__read_write                , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("read_only", __read_only      , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("write_only", __write_only    , KEYOPENCLC | KEYOPENCLCXX)
-// ALIAS("read_write", __read_write    , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__read_only                 , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__write_only                , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__read_write                , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("read_only", __read_only      , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("write_only", __write_only    , KEYOPENCLC | KEYOPENCLCXX)
+ALIAS("read_write", __read_write    , KEYOPENCLC | KEYOPENCLCXX)
 // OpenCL builtins
-// KEYWORD(__builtin_astype            , KEYOPENCLC | KEYOPENCLCXX)
-// UNARY_EXPR_OR_TYPE_TRAIT(vec_step, VecStep, KEYOPENCLC | KEYALTIVEC | KEYZVECTOR)
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) KEYWORD(ImgType##_t, KEYOPENCLC | KEYOPENCLCXX)
-// #include "latino/Basic/OpenCLImageTypes.def"
-// KEYWORD(pipe                        , KEYOPENCLC | KEYOPENCLCXX)
+KEYWORD(__builtin_astype            , KEYOPENCLC | KEYOPENCLCXX)
+UNARY_EXPR_OR_TYPE_TRAIT(vec_step, VecStep, KEYOPENCLC | KEYALTIVEC | KEYZVECTOR)
+#define GENERIC_IMAGE_TYPE(ImgType, Id) KEYWORD(ImgType##_t, KEYOPENCLC | KEYOPENCLCXX)
+#include "latino/Basic/OpenCLImageTypes.def"
+KEYWORD(pipe                        , KEYOPENCLC | KEYOPENCLCXX)
 // C++ for OpenCL s2.3.1: addrspace_cast operator
-// KEYWORD(addrspace_cast              , KEYOPENCLCXX)
+KEYWORD(addrspace_cast              , KEYOPENCLCXX)
 
 // OpenMP Type Traits
-// UNARY_EXPR_OR_TYPE_TRAIT(__builtin_omp_required_simd_align, OpenMPRequiredSimdAlign, KEYALL)
+UNARY_EXPR_OR_TYPE_TRAIT(__builtin_omp_required_simd_align, OpenMPRequiredSimdAlign, KEYALL)
 
 // Borland Extensions.
 // KEYWORD(__pascal                    , KEYALL)
 
 // Altivec Extension.
-// KEYWORD(__vector                    , KEYALTIVEC|KEYZVECTOR)
-// KEYWORD(__pixel                     , KEYALTIVEC)
-// KEYWORD(__bool                      , KEYALTIVEC|KEYZVECTOR)
+KEYWORD(__vector                    , KEYALTIVEC|KEYZVECTOR)
+KEYWORD(__pixel                     , KEYALTIVEC)
+KEYWORD(__bool                      , KEYALTIVEC|KEYZVECTOR)
 
 // ARM NEON extensions.
-// ALIAS("__fp16", half                , KEYALL)
-// KEYWORD(__bf16                      , KEYALL)
+ALIAS("__fp16", half                , KEYALL)
+KEYWORD(__bf16                      , KEYALL)
 
 // OpenCL Extension.
-// KEYWORD(half                        , HALFSUPPORT)
+KEYWORD(half                        , HALFSUPPORT)
 
 // Objective-C ARC keywords.
 // KEYWORD(__bridge                     , KEYOBJC)
@@ -648,9 +648,9 @@ ALIAS("__volatile"   , volatile   , KEYALL)
 ALIAS("__volatile__" , volatile   , KEYALL)
 
 // Type nullability.
-KEYWORD(_Nonnull                 , KEYALL)
-KEYWORD(_Nullable                , KEYALL)
-KEYWORD(_Null_unspecified        , KEYALL)
+// KEYWORD(_Nonnull                 , KEYALL)
+// KEYWORD(_Nullable                , KEYALL)
+// KEYWORD(_Null_unspecified        , KEYALL)
 
 // Microsoft extensions which should be disabled in strict conformance mode
 KEYWORD(__ptr64                       , KEYMS)
@@ -663,8 +663,8 @@ KEYWORD(__try                         , KEYMS | KEYBORLAND)
 KEYWORD(__finally                     , KEYMS | KEYBORLAND)
 KEYWORD(__leave                       , KEYMS | KEYBORLAND)
 KEYWORD(__int64                       , KEYMS)
-KEYWORD(__if_exists                   , KEYMS)
-KEYWORD(__if_not_exists               , KEYMS)
+// KEYWORD(__if_exists                   , KEYMS)
+// KEYWORD(__if_not_exists               , KEYMS)
 KEYWORD(__single_inheritance          , KEYMS)
 KEYWORD(__multiple_inheritance        , KEYMS)
 KEYWORD(__virtual_inheritance         , KEYMS)
@@ -857,8 +857,8 @@ PRAGMA_ANNOTATION(pragma_opencl_extension)
 // Annotations for OpenMP pragma directives - #pragma omp ...
 // The lexer produces these so that they only take effect when the parser
 // handles #pragma omp ... directives.
-// PRAGMA_ANNOTATION(pragma_openmp)
-// PRAGMA_ANNOTATION(pragma_openmp_end)
+PRAGMA_ANNOTATION(pragma_openmp)
+PRAGMA_ANNOTATION(pragma_openmp_end)
 
 // Annotations for loop pragma directives #pragma clang loop ...
 // The lexer produces these so that they only take effect when the parser

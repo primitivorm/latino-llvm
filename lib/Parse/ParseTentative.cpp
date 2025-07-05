@@ -207,8 +207,8 @@ Parser::TPResult Parser::TryConsumeDeclarationSpecifier() {
   default:
     ConsumeAnyToken();
 
-    if (getLangOpts().ObjC && Tok.is(tok::less))
-      return TryParseProtocolQualifiers();
+    // if (getLangOpts().ObjC && Tok.is(tok::less))
+    //   return TryParseProtocolQualifiers();
     break;
   }
 
@@ -607,11 +607,11 @@ bool Parser::isCXXTypeId(TentativeCXXTypeIdContext Context, bool &isAmbiguous) {
     } else if (Context == TypeIdAsTemplateArgument &&
                (Tok.isOneOf(tok::greater, tok::comma) ||
                 (getLangOpts().CPlusPlus11 &&
-                 (Tok.isOneOf(tok::greatergreater,
-                              tok::greatergreatergreater) ||
+                 (Tok.is/*OneOf*/(tok::greatergreater/*,
+                              tok::greatergreatergreater*/) ||
                   (Tok.is(tok::ellipsis) &&
                    NextToken().isOneOf(tok::greater, tok::greatergreater,
-                                       tok::greatergreatergreater,
+                                       /*tok::greatergreatergreater,*/
                                        tok::comma)))))) {
       TPR = TPResult::True;
       isAmbiguous = true;
@@ -657,148 +657,148 @@ bool Parser::isCXXTypeId(TentativeCXXTypeIdContext Context, bool &isAmbiguous) {
 ///
 ///     attribute-argument-clause:
 ///         '(' balanced-token-seq ')'
-Parser::CXX11AttributeKind
-Parser::isCXX11AttributeSpecifier(bool Disambiguate,
-                                  bool OuterMightBeMessageSend) {
-  // if (Tok.is(tok::kw_alignas))
-  //   return CAK_AttributeSpecifier;
+// Parser::CXX11AttributeKind
+// Parser::isCXX11AttributeSpecifier(bool Disambiguate,
+//                                   bool OuterMightBeMessageSend) {
+//   // if (Tok.is(tok::kw_alignas))
+//   //   return CAK_AttributeSpecifier;
 
-  if (Tok.isNot(tok::l_square) || NextToken().isNot(tok::l_square))
-    return CAK_NotAttributeSpecifier;
+//   if (Tok.isNot(tok::l_square) || NextToken().isNot(tok::l_square))
+//     return CAK_NotAttributeSpecifier;
 
-  // No tentative parsing if we don't need to look for ']]' or a lambda.
-  if (!Disambiguate && !getLangOpts().ObjC)
-    return CAK_AttributeSpecifier;
+//   // No tentative parsing if we don't need to look for ']]' or a lambda.
+//   if (!Disambiguate && !getLangOpts().ObjC)
+//     return CAK_AttributeSpecifier;
 
-  // '[[using ns: ...]]' is an attribute.
-  if (GetLookAheadToken(2).is(tok::kw_usar))
-    return CAK_AttributeSpecifier;
+//   // '[[using ns: ...]]' is an attribute.
+//   if (GetLookAheadToken(2).is(tok::kw_usar))
+//     return CAK_AttributeSpecifier;
 
-  RevertingTentativeParsingAction PA(*this);
+//   RevertingTentativeParsingAction PA(*this);
 
-  // Opening brackets were checked for above.
-  ConsumeBracket();
+//   // Opening brackets were checked for above.
+//   ConsumeBracket();
 
-  if (!getLangOpts().ObjC) {
-    ConsumeBracket();
+//   if (!getLangOpts().ObjC) {
+//     ConsumeBracket();
 
-    bool IsAttribute = SkipUntil(tok::r_square);
-    IsAttribute &= Tok.is(tok::r_square);
+//     bool IsAttribute = SkipUntil(tok::r_square);
+//     IsAttribute &= Tok.is(tok::r_square);
 
-    return IsAttribute ? CAK_AttributeSpecifier : CAK_InvalidAttributeSpecifier;
-  }
+//     return IsAttribute ? CAK_AttributeSpecifier : CAK_InvalidAttributeSpecifier;
+//   }
 
-  // In Obj-C++11, we need to distinguish four situations:
-  //  1a) int x[[attr]];                     C++11 attribute.
-  //  1b) [[attr]];                          C++11 statement attribute.
-  //   2) int x[[obj](){ return 1; }()];     Lambda in array size/index.
-  //  3a) int x[[obj get]];                  Message send in array size/index.
-  //  3b) [[Class alloc] init];              Message send in message send.
-  //   4) [[obj]{ return self; }() doStuff]; Lambda in message send.
-  // (1) is an attribute, (2) is ill-formed, and (3) and (4) are accepted.
+//   // In Obj-C++11, we need to distinguish four situations:
+//   //  1a) int x[[attr]];                     C++11 attribute.
+//   //  1b) [[attr]];                          C++11 statement attribute.
+//   //   2) int x[[obj](){ return 1; }()];     Lambda in array size/index.
+//   //  3a) int x[[obj get]];                  Message send in array size/index.
+//   //  3b) [[Class alloc] init];              Message send in message send.
+//   //   4) [[obj]{ return self; }() doStuff]; Lambda in message send.
+//   // (1) is an attribute, (2) is ill-formed, and (3) and (4) are accepted.
 
-  // Check to see if this is a lambda-expression.
-  // FIXME: If this disambiguation is too slow, fold the tentative lambda parse
-  // into the tentative attribute parse below.
-  {
-    RevertingTentativeParsingAction LambdaTPA(*this);
-    LambdaIntroducer Intro;
-    LambdaIntroducerTentativeParse Tentative;
-    if (ParseLambdaIntroducer(Intro, &Tentative)) {
-      // We hit a hard error after deciding this was not an attribute.
-      // FIXME: Don't parse and annotate expressions when disambiguating
-      // against an attribute.
-      return CAK_NotAttributeSpecifier;
-    }
+//   // Check to see if this is a lambda-expression.
+//   // FIXME: If this disambiguation is too slow, fold the tentative lambda parse
+//   // into the tentative attribute parse below.
+//   {
+//     RevertingTentativeParsingAction LambdaTPA(*this);
+//     LambdaIntroducer Intro;
+//     LambdaIntroducerTentativeParse Tentative;
+//     if (ParseLambdaIntroducer(Intro, &Tentative)) {
+//       // We hit a hard error after deciding this was not an attribute.
+//       // FIXME: Don't parse and annotate expressions when disambiguating
+//       // against an attribute.
+//       return CAK_NotAttributeSpecifier;
+//     }
 
-    switch (Tentative) {
-    case LambdaIntroducerTentativeParse::MessageSend:
-      // Case 3: The inner construct is definitely a message send, so the
-      // outer construct is definitely not an attribute.
-      return CAK_NotAttributeSpecifier;
+//     switch (Tentative) {
+//     case LambdaIntroducerTentativeParse::MessageSend:
+//       // Case 3: The inner construct is definitely a message send, so the
+//       // outer construct is definitely not an attribute.
+//       return CAK_NotAttributeSpecifier;
 
-    case LambdaIntroducerTentativeParse::Success:
-    case LambdaIntroducerTentativeParse::Incomplete:
-      // This is a lambda-introducer or attribute-specifier.
-      if (Tok.is(tok::r_square))
-        // Case 1: C++11 attribute.
-        return CAK_AttributeSpecifier;
+//     case LambdaIntroducerTentativeParse::Success:
+//     case LambdaIntroducerTentativeParse::Incomplete:
+//       // This is a lambda-introducer or attribute-specifier.
+//       if (Tok.is(tok::r_square))
+//         // Case 1: C++11 attribute.
+//         return CAK_AttributeSpecifier;
 
-      if (OuterMightBeMessageSend)
-        // Case 4: Lambda in message send.
-        return CAK_NotAttributeSpecifier;
+//       if (OuterMightBeMessageSend)
+//         // Case 4: Lambda in message send.
+//         return CAK_NotAttributeSpecifier;
 
-      // Case 2: Lambda in array size / index.
-      return CAK_InvalidAttributeSpecifier;
+//       // Case 2: Lambda in array size / index.
+//       return CAK_InvalidAttributeSpecifier;
 
-    case LambdaIntroducerTentativeParse::Invalid:
-      // No idea what this is; we couldn't parse it as a lambda-introducer.
-      // Might still be an attribute-specifier or a message send.
-      break;
-    }
-  }
+//     case LambdaIntroducerTentativeParse::Invalid:
+//       // No idea what this is; we couldn't parse it as a lambda-introducer.
+//       // Might still be an attribute-specifier or a message send.
+//       break;
+//     }
+//   }
 
-  ConsumeBracket();
+//   ConsumeBracket();
 
-  // If we don't have a lambda-introducer, then we have an attribute or a
-  // message-send.
-  bool IsAttribute = true;
-  while (Tok.isNot(tok::r_square)) {
-    if (Tok.is(tok::comma)) {
-      // Case 1: Stray commas can only occur in attributes.
-      return CAK_AttributeSpecifier;
-    }
+//   // If we don't have a lambda-introducer, then we have an attribute or a
+//   // message-send.
+//   bool IsAttribute = true;
+//   while (Tok.isNot(tok::r_square)) {
+//     if (Tok.is(tok::comma)) {
+//       // Case 1: Stray commas can only occur in attributes.
+//       return CAK_AttributeSpecifier;
+//     }
 
-    // Parse the attribute-token, if present.
-    // C++11 [dcl.attr.grammar]:
-    //   If a keyword or an alternative token that satisfies the syntactic
-    //   requirements of an identifier is contained in an attribute-token,
-    //   it is considered an identifier.
-    SourceLocation Loc;
-    if (!TryParseCXX11AttributeIdentifier(Loc)) {
-      IsAttribute = false;
-      break;
-    }
-    if (Tok.is(tok::coloncolon)) {
-      ConsumeToken();
-      if (!TryParseCXX11AttributeIdentifier(Loc)) {
-        IsAttribute = false;
-        break;
-      }
-    }
+//     // Parse the attribute-token, if present.
+//     // C++11 [dcl.attr.grammar]:
+//     //   If a keyword or an alternative token that satisfies the syntactic
+//     //   requirements of an identifier is contained in an attribute-token,
+//     //   it is considered an identifier.
+//     SourceLocation Loc;
+//     if (!TryParseCXX11AttributeIdentifier(Loc)) {
+//       IsAttribute = false;
+//       break;
+//     }
+//     if (Tok.is(tok::coloncolon)) {
+//       ConsumeToken();
+//       if (!TryParseCXX11AttributeIdentifier(Loc)) {
+//         IsAttribute = false;
+//         break;
+//       }
+//     }
 
-    // Parse the attribute-argument-clause, if present.
-    if (Tok.is(tok::l_paren)) {
-      ConsumeParen();
-      if (!SkipUntil(tok::r_paren)) {
-        IsAttribute = false;
-        break;
-      }
-    }
+//     // Parse the attribute-argument-clause, if present.
+//     if (Tok.is(tok::l_paren)) {
+//       ConsumeParen();
+//       if (!SkipUntil(tok::r_paren)) {
+//         IsAttribute = false;
+//         break;
+//       }
+//     }
 
-    TryConsumeToken(tok::ellipsis);
+//     TryConsumeToken(tok::ellipsis);
 
-    if (!TryConsumeToken(tok::comma))
-      break;
-  }
+//     if (!TryConsumeToken(tok::comma))
+//       break;
+//   }
 
-  // An attribute must end ']]'.
-  if (IsAttribute) {
-    if (Tok.is(tok::r_square)) {
-      ConsumeBracket();
-      IsAttribute = Tok.is(tok::r_square);
-    } else {
-      IsAttribute = false;
-    }
-  }
+//   // An attribute must end ']]'.
+//   if (IsAttribute) {
+//     if (Tok.is(tok::r_square)) {
+//       ConsumeBracket();
+//       IsAttribute = Tok.is(tok::r_square);
+//     } else {
+//       IsAttribute = false;
+//     }
+//   }
 
-  if (IsAttribute)
-    // Case 1: C++11 statement attribute.
-    return CAK_AttributeSpecifier;
+//   if (IsAttribute)
+//     // Case 1: C++11 statement attribute.
+//     return CAK_AttributeSpecifier;
 
-  // Case 3: Message send.
-  return CAK_NotAttributeSpecifier;
-}
+//   // Case 3: Message send.
+//   return CAK_NotAttributeSpecifier;
+// }
 
 bool Parser::TrySkipAttributes() {
   while (Tok.isOneOf(tok::l_square, tok::kw___attribute, tok::kw___declspec/*,
@@ -1262,12 +1262,12 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::identifier: {
     // Check for need to substitute AltiVec __vector keyword
     // for "vector" identifier.
-    // if (TryAltiVecVectorToken())
-    //   return TPResult::True;
+    if (TryAltiVecVectorToken())
+      return TPResult::True;
 
     const Token &Next = NextToken();
     // In 'foo bar', 'foo' is always a type name outside of Objective-C.
-    if (!getLangOpts().ObjC && Next.is(tok::identifier))
+    if (/*!getLangOpts().ObjC &&*/ Next.is(tok::identifier))
       return TPResult::True;
 
     if (Next.isNot(tok::coloncolon) && Next.isNot(tok::less)) {
@@ -1410,18 +1410,17 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     if (!getLangOpts().OpenCL)
       return TPResult::False;
     LLVM_FALLTHROUGH;
-  // case tok::kw___private:
-  // case tok::kw___local:
-  // case tok::kw___global:
-  // case tok::kw___constant:
-  // case tok::kw___generic:
+  case tok::kw___private:
+  case tok::kw___local:
+  case tok::kw___global:
+  case tok::kw___constant:
+  case tok::kw___generic:
     // OpenCL access qualifiers
-  // case tok::kw___read_only:
-  // case tok::kw___write_only:
-  // case tok::kw___read_write:
+  case tok::kw___read_only:
+  case tok::kw___write_only:
+  case tok::kw___read_write:
     // OpenCL pipe
-  // case tok::kw_pipe:
-
+  case tok::kw_pipe:
     // GNU
   // case tok::kw_restrict:
   // case tok::kw__Complex:
@@ -1444,9 +1443,9 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   case tok::kw___ptr32:
   case tok::kw___forceinline:
   case tok::kw___unaligned:
-  case tok::kw__Nonnull:
-  case tok::kw__Nullable:
-  case tok::kw__Null_unspecified:
+  // case tok::kw__Nonnull:
+  // case tok::kw__Nullable:
+  // case tok::kw__Null_unspecified:
   // case tok::kw___kindof:
     return TPResult::True;
 
@@ -1455,8 +1454,8 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   //   return TPResult::True;
 
     // AltiVec
-  // case tok::kw___vector:
-  //   return TPResult::True;
+  case tok::kw___vector:
+    return TPResult::True;
 
   case tok::annot_template_id: {
     TemplateIdAnnotation *TemplateId = takeTemplateIdAnnotation(Tok);
@@ -1481,7 +1480,7 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
     CXXScopeSpec SS;
     AnnotateTemplateIdTokenAsType(SS);
     assert(Tok.is(tok::annot_typename));
-    goto case_typename;
+    // goto case_typename;
   }
 
   case tok::annot_cxxscope: // foo::bar or ::foo::bar, but already parsed
@@ -1600,30 +1599,30 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
 
     // simple-type-specifier:
 
-  case tok::annot_typename:
-  case_typename:
-    // In Objective-C, we might have a protocol-qualified type.
-    if (getLangOpts().ObjC && NextToken().is(tok::less)) {
-      // Tentatively parse the protocol qualifiers.
-      RevertingTentativeParsingAction PA(*this);
-      ConsumeAnyToken(); // The type token
+  // case tok::annot_typename:
+  // case_typename:
+  //   // In Objective-C, we might have a protocol-qualified type.
+  //   if (getLangOpts().ObjC && NextToken().is(tok::less)) {
+  //     // Tentatively parse the protocol qualifiers.
+  //     RevertingTentativeParsingAction PA(*this);
+  //     ConsumeAnyToken(); // The type token
 
-      TPResult TPR = TryParseProtocolQualifiers();
-      bool isFollowedByParen = Tok.is(tok::l_paren);
-      bool isFollowedByBrace = Tok.is(tok::l_brace);
+  //     TPResult TPR = TryParseProtocolQualifiers();
+  //     bool isFollowedByParen = Tok.is(tok::l_paren);
+  //     bool isFollowedByBrace = Tok.is(tok::l_brace);
 
-      if (TPR == TPResult::Error)
-        return TPResult::Error;
+  //     if (TPR == TPResult::Error)
+  //       return TPResult::Error;
 
-      if (isFollowedByParen)
-        return TPResult::Ambiguous;
+  //     if (isFollowedByParen)
+  //       return TPResult::Ambiguous;
 
-      if (getLangOpts().CPlusPlus11 && isFollowedByBrace)
-        return BracedCastResult;
+  //     if (getLangOpts().CPlusPlus11 && isFollowedByBrace)
+  //       return BracedCastResult;
 
-      return TPResult::True;
-    }
-    LLVM_FALLTHROUGH;
+  //     return TPResult::True;
+  //   }
+  //   LLVM_FALLTHROUGH;
 
   case tok::kw_char:
   case tok::kw_wchar_t:
@@ -1646,8 +1645,8 @@ Parser::isCXXDeclarationSpecifier(Parser::TPResult BracedCastResult,
   // case tok::kw___float128:
   case tok::kw_void:
   case tok::annot_decltype:
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+#include "latino/Basic/OpenCLImageTypes.def"
     if (NextToken().is(tok::l_paren))
       return TPResult::Ambiguous;
 
@@ -1761,8 +1760,8 @@ bool Parser::isCXXDeclarationSpecifierAType() {
   case tok::kw_void:
   case tok::kw___unknown_anytype:
   // case tok::kw___auto_type:
-// #define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
-// #include "latino/Basic/OpenCLImageTypes.def"
+#define GENERIC_IMAGE_TYPE(ImgType, Id) case tok::kw_##ImgType##_t:
+#include "latino/Basic/OpenCLImageTypes.def"
     return true;
 
   case tok::kw_auto:
@@ -1912,9 +1911,9 @@ Parser::TryParseParameterDeclarationClause(bool *InvalidAsDeclaration,
     }
 
     // An attribute-specifier-seq here is a sign of a function declarator.
-    if (isCXX11AttributeSpecifier(/*Disambiguate*/false,
-                                  /*OuterMightBeMessageSend*/true))
-      return TPResult::True;
+    // if (isCXX11AttributeSpecifier(/*Disambiguate*/false,
+    //                               /*OuterMightBeMessageSend*/true))
+    //   return TPResult::True;
 
     ParsedAttributes attrs(AttrFactory);
     MaybeParseMicrosoftAttributes(attrs);
@@ -2121,7 +2120,7 @@ Parser::TPResult Parser::isTemplateArgumentList(unsigned TokensToSkip) {
   // We might be able to disambiguate a few more cases if we're careful.
 
   // A template-argument-list must be terminated by a '>'.
-  if (SkipUntil({tok::greater, tok::greatergreater, tok::greatergreatergreater},
+  if (SkipUntil({tok::greater, tok::greatergreater/*, tok::greatergreatergreater*/},
                 StopAtSemi | StopBeforeMatch))
     return TPResult::Ambiguous;
   return TPResult::False;

@@ -52,7 +52,7 @@ public:
   /// Constructs a \c ContinuationIndenter to format \p Line starting in
   /// column \p FirstIndent.
   ContinuationIndenter(const FormatStyle &Style,
-                       const AdditionalKeywords &Keywords,
+                      //  const AdditionalKeywords &Keywords,
                        const SourceManager &SourceMgr,
                        WhitespaceManager &Whitespaces,
                        encoding::Encoding Encoding,
@@ -189,7 +189,7 @@ private:
   bool nextIsMultilineString(const LineState &State);
 
   FormatStyle Style;
-  const AdditionalKeywords &Keywords;
+  // const AdditionalKeywords &Keywords;
   const SourceManager &SourceMgr;
   WhitespaceManager &Whitespaces;
   encoding::Encoding Encoding;

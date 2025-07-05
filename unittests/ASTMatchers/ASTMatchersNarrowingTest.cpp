@@ -2689,292 +2689,292 @@ TEST(Matcher, isMain) {
   EXPECT_TRUE(notMatches("int main2() {}", functionDecl(isMain())));
 }
 
-// TEST(OMPExecutableDirective, isStandaloneDirective) {
-//   auto Matcher = ompExecutableDirective(isStandaloneDirective());
+TEST(OMPExecutableDirective, isStandaloneDirective) {
+  auto Matcher = ompExecutableDirective(isStandaloneDirective());
 
-//   StringRef Source0 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp taskyield
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
-// }
+  StringRef Source1 = R"(
+void x() {
+#pragma omp taskyield
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
+}
 
-// TEST(OMPExecutableDirective, hasStructuredBlock) {
-//   StringRef Source0 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(
-//       Source0, ompExecutableDirective(hasStructuredBlock(nullStmt()))));
+TEST(OMPExecutableDirective, hasStructuredBlock) {
+  StringRef Source0 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(
+      Source0, ompExecutableDirective(hasStructuredBlock(nullStmt()))));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// {;}
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(
-//       Source1, ompExecutableDirective(hasStructuredBlock(nullStmt()))));
-//   EXPECT_TRUE(matchesWithOpenMP(
-//       Source1, ompExecutableDirective(hasStructuredBlock(compoundStmt()))));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp parallel
+{;}
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(
+      Source1, ompExecutableDirective(hasStructuredBlock(nullStmt()))));
+  EXPECT_TRUE(matchesWithOpenMP(
+      Source1, ompExecutableDirective(hasStructuredBlock(compoundStmt()))));
 
-//   StringRef Source2 = R"(
-// void x() {
-// #pragma omp taskyield
-// {;}
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(
-//       Source2, ompExecutableDirective(hasStructuredBlock(anything()))));
-// }
+  StringRef Source2 = R"(
+void x() {
+#pragma omp taskyield
+{;}
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(
+      Source2, ompExecutableDirective(hasStructuredBlock(anything()))));
+}
 
-// TEST(OMPExecutableDirective, hasClause) {
-//   auto Matcher = ompExecutableDirective(hasAnyClause(anything()));
+TEST(OMPExecutableDirective, hasClause) {
+  auto Matcher = ompExecutableDirective(hasAnyClause(anything()));
 
-//   StringRef Source0 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
 
-//   StringRef Source2 = R"(
-// void x() {
-// #pragma omp parallel default(none)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
+  StringRef Source2 = R"(
+void x() {
+#pragma omp parallel default(none)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
 
-//   StringRef Source3 = R"(
-// void x() {
-// #pragma omp parallel default(shared)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
+  StringRef Source3 = R"(
+void x() {
+#pragma omp parallel default(shared)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
 
-//   StringRef Source4 = R"(
-// void x() {
-// #pragma omp parallel default(firstprivate)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
+  StringRef Source4 = R"(
+void x() {
+#pragma omp parallel default(firstprivate)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
 
-//   StringRef Source5 = R"(
-// void x(int x) {
-// #pragma omp parallel num_threads(x)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source5, Matcher));
-// }
+  StringRef Source5 = R"(
+void x(int x) {
+#pragma omp parallel num_threads(x)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source5, Matcher));
+}
 
-// TEST(OMPDefaultClause, isNoneKind) {
-//   auto Matcher =
-//       ompExecutableDirective(hasAnyClause(ompDefaultClause(isNoneKind())));
+TEST(OMPDefaultClause, isNoneKind) {
+  auto Matcher =
+      ompExecutableDirective(hasAnyClause(ompDefaultClause(isNoneKind())));
 
-//   StringRef Source0 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
 
-//   StringRef Source2 = R"(
-// void x() {
-// #pragma omp parallel default(none)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
+  StringRef Source2 = R"(
+void x() {
+#pragma omp parallel default(none)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
 
-//   StringRef Source3 = R"(
-// void x() {
-// #pragma omp parallel default(shared)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source3, Matcher));
+  StringRef Source3 = R"(
+void x() {
+#pragma omp parallel default(shared)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source3, Matcher));
 
-//   StringRef Source4 = R"(
-// void x(int x) {
-// #pragma omp parallel default(firstprivate)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP51(Source4, Matcher));
+  StringRef Source4 = R"(
+void x(int x) {
+#pragma omp parallel default(firstprivate)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP51(Source4, Matcher));
 
-//   const std::string Source5 = R"(
-// void x(int x) {
-// #pragma omp parallel num_threads(x)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
-// }
+  const std::string Source5 = R"(
+void x(int x) {
+#pragma omp parallel num_threads(x)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
+}
 
-// TEST(OMPDefaultClause, isSharedKind) {
-//   auto Matcher =
-//       ompExecutableDirective(hasAnyClause(ompDefaultClause(isSharedKind())));
+TEST(OMPDefaultClause, isSharedKind) {
+  auto Matcher =
+      ompExecutableDirective(hasAnyClause(ompDefaultClause(isSharedKind())));
 
-//   StringRef Source0 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
 
-//   StringRef Source2 = R"(
-// void x() {
-// #pragma omp parallel default(shared)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
+  StringRef Source2 = R"(
+void x() {
+#pragma omp parallel default(shared)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
 
-//   StringRef Source3 = R"(
-// void x() {
-// #pragma omp parallel default(none)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source3, Matcher));
+  StringRef Source3 = R"(
+void x() {
+#pragma omp parallel default(none)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source3, Matcher));
 
-//   StringRef Source4 = R"(
-// void x(int x) {
-// #pragma omp parallel default(firstprivate)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP51(Source4, Matcher));
+  StringRef Source4 = R"(
+void x(int x) {
+#pragma omp parallel default(firstprivate)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP51(Source4, Matcher));
 
-//   const std::string Source5 = R"(
-// void x(int x) {
-// #pragma omp parallel num_threads(x)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
-// }
+  const std::string Source5 = R"(
+void x(int x) {
+#pragma omp parallel num_threads(x)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
+}
 
-// TEST(OMPDefaultClause, isFirstPrivateKind) {
-//   auto Matcher = ompExecutableDirective(
-//       hasAnyClause(ompDefaultClause(isFirstPrivateKind())));
+TEST(OMPDefaultClause, isFirstPrivateKind) {
+  auto Matcher = ompExecutableDirective(
+      hasAnyClause(ompDefaultClause(isFirstPrivateKind())));
 
-//   const std::string Source0 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  const std::string Source0 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   const std::string Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
+  const std::string Source1 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source1, Matcher));
 
-//   const std::string Source2 = R"(
-// void x() {
-// #pragma omp parallel default(shared)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source2, Matcher));
+  const std::string Source2 = R"(
+void x() {
+#pragma omp parallel default(shared)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source2, Matcher));
 
-//   const std::string Source3 = R"(
-// void x() {
-// #pragma omp parallel default(none)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source3, Matcher));
+  const std::string Source3 = R"(
+void x() {
+#pragma omp parallel default(none)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source3, Matcher));
 
-//   const std::string Source4 = R"(
-// void x(int x) {
-// #pragma omp parallel default(firstprivate)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
+  const std::string Source4 = R"(
+void x(int x) {
+#pragma omp parallel default(firstprivate)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
 
-//   const std::string Source5 = R"(
-// void x(int x) {
-// #pragma omp parallel num_threads(x)
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
-// }
+  const std::string Source5 = R"(
+void x(int x) {
+#pragma omp parallel num_threads(x)
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source5, Matcher));
+}
 
-// TEST(OMPExecutableDirective, isAllowedToContainClauseKind) {
-//   auto Matcher = ompExecutableDirective(
-//       isAllowedToContainClauseKind(llvm::omp::OMPC_default));
+TEST(OMPExecutableDirective, isAllowedToContainClauseKind) {
+  auto Matcher = ompExecutableDirective(
+      isAllowedToContainClauseKind(llvm::omp::OMPC_default));
 
-//   StringRef Source0 = R"(
-// void x() {
-// ;
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
+  StringRef Source0 = R"(
+void x() {
+;
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source0, Matcher));
 
-//   StringRef Source1 = R"(
-// void x() {
-// #pragma omp parallel
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
+  StringRef Source1 = R"(
+void x() {
+#pragma omp parallel
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source1, Matcher));
 
-//   StringRef Source2 = R"(
-// void x() {
-// #pragma omp parallel default(none)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
+  StringRef Source2 = R"(
+void x() {
+#pragma omp parallel default(none)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source2, Matcher));
 
-//   StringRef Source3 = R"(
-// void x() {
-// #pragma omp parallel default(shared)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
+  StringRef Source3 = R"(
+void x() {
+#pragma omp parallel default(shared)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source3, Matcher));
 
-//   StringRef Source4 = R"(
-// void x() {
-// #pragma omp parallel default(firstprivate)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
+  StringRef Source4 = R"(
+void x() {
+#pragma omp parallel default(firstprivate)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP51(Source4, Matcher));
 
-//   StringRef Source5 = R"(
-// void x(int x) {
-// #pragma omp parallel num_threads(x)
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source5, Matcher));
+  StringRef Source5 = R"(
+void x(int x) {
+#pragma omp parallel num_threads(x)
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source5, Matcher));
 
-//   StringRef Source6 = R"(
-// void x() {
-// #pragma omp taskyield
-// })";
-//   EXPECT_TRUE(notMatchesWithOpenMP(Source6, Matcher));
+  StringRef Source6 = R"(
+void x() {
+#pragma omp taskyield
+})";
+  EXPECT_TRUE(notMatchesWithOpenMP(Source6, Matcher));
 
-//   StringRef Source7 = R"(
-// void x() {
-// #pragma omp task
-// ;
-// })";
-//   EXPECT_TRUE(matchesWithOpenMP(Source7, Matcher));
-// }
+  StringRef Source7 = R"(
+void x() {
+#pragma omp task
+;
+})";
+  EXPECT_TRUE(matchesWithOpenMP(Source7, Matcher));
+}
 
 TEST(HasAnyBase, DirectBase) {
   EXPECT_TRUE(matches(

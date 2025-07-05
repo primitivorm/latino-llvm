@@ -72,7 +72,7 @@ std::pair<tooling::Replacements, unsigned> TokenAnalyzer::process() {
                        IdentTable);
   ArrayRef<FormatToken *> Toks(Lex.lex());
   SmallVector<FormatToken *, 10> Tokens(Toks.begin(), Toks.end());
-  UnwrappedLineParser Parser(Style, Lex.getKeywords(),
+  UnwrappedLineParser Parser(Style, /*Lex.getKeywords(),*/
                              Env.getFirstStartColumn(), Tokens, *this);
   Parser.parse();
   assert(UnwrappedLines.rbegin()->empty());
@@ -81,7 +81,7 @@ std::pair<tooling::Replacements, unsigned> TokenAnalyzer::process() {
     LLVM_DEBUG(llvm::dbgs() << "Run " << Run << "...\n");
     SmallVector<AnnotatedLine *, 16> AnnotatedLines;
 
-    TokenAnnotator Annotator(Style, Lex.getKeywords());
+    TokenAnnotator Annotator(Style/*, Lex.getKeywords()*/);
     for (unsigned i = 0, e = UnwrappedLines[Run].size(); i != e; ++i) {
       AnnotatedLines.push_back(new AnnotatedLine(UnwrappedLines[Run][i]));
       Annotator.annotate(*AnnotatedLines.back());

@@ -1562,14 +1562,14 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
 #include "latino/Basic/AttrList.inc"
     llvm_unreachable("non-type attribute attached to type");
 
-  // case attr::OpenCLPrivateAddressSpace:
-  // case attr::OpenCLGlobalAddressSpace:
-  // case attr::OpenCLLocalAddressSpace:
-  // case attr::OpenCLConstantAddressSpace:
-  // case attr::OpenCLGenericAddressSpace:
-  //   // FIXME: Update printAttributedBefore to print these once we generate
-  //   // AttributedType nodes for them.
-  //   break;
+  case attr::OpenCLPrivateAddressSpace:
+  case attr::OpenCLGlobalAddressSpace:
+  case attr::OpenCLLocalAddressSpace:
+  case attr::OpenCLConstantAddressSpace:
+  case attr::OpenCLGenericAddressSpace:
+    // FIXME: Update printAttributedBefore to print these once we generate
+    // AttributedType nodes for them.
+    break;
 
   case attr::LifetimeBound:
   case attr::TypeNonNull:

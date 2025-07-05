@@ -1562,9 +1562,9 @@ def fno_ms_compatibility : Flag<["-"], "fno-ms-compatibility">, Group<f_Group>,
 def fno_delayed_template_parsing : Flag<["-"], "fno-delayed-template-parsing">, Group<f_Group>,
   HelpText<"Disable delayed template parsing">,
   Flags<[DriverOption, CoreOption]>;
-def fno_objc_exceptions: Flag<["-"], "fno-objc-exceptions">, Group<f_Group>;
-def fno_objc_legacy_dispatch : Flag<["-"], "fno-objc-legacy-dispatch">, Group<f_Group>;
-def fno_objc_weak : Flag<["-"], "fno-objc-weak">, Group<f_Group>, Flags<[CC1Option]>;
+// def fno_objc_exceptions: Flag<["-"], "fno-objc-exceptions">, Group<f_Group>;
+// def fno_objc_legacy_dispatch : Flag<["-"], "fno-objc-legacy-dispatch">, Group<f_Group>;
+// def fno_objc_weak : Flag<["-"], "fno-objc-weak">, Group<f_Group>, Flags<[CC1Option]>;
 def fno_omit_frame_pointer : Flag<["-"], "fno-omit-frame-pointer">, Group<f_Group>;
 def fno_operator_names : Flag<["-"], "fno-operator-names">, Group<f_Group>,
   HelpText<"Do not treat C++ operator name keywords as synonyms for operators">,
@@ -1601,20 +1601,20 @@ def fno_unwind_tables : Flag<["-"], "fno-unwind-tables">, Group<f_Group>;
 def fno_verbose_asm : Flag<["-"], "fno-verbose-asm">, Group<f_Group>, Flags<[CC1Option]>;
 def fno_working_directory : Flag<["-"], "fno-working-directory">, Group<f_Group>;
 def fno_wrapv : Flag<["-"], "fno-wrapv">, Group<f_Group>;
-def fobjc_arc : Flag<["-"], "fobjc-arc">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Synthesize retain and release calls for Objective-C pointers">;
-def fno_objc_arc : Flag<["-"], "fno-objc-arc">, Group<f_Group>;
-def fobjc_convert_messages_to_runtime_calls :
-  Flag<["-"], "fobjc-convert-messages-to-runtime-calls">, Group<f_Group>;
-def fno_objc_convert_messages_to_runtime_calls :
-  Flag<["-"], "fno-objc-convert-messages-to-runtime-calls">, Group<f_Group>, Flags<[CC1Option]>;
-def fobjc_arc_exceptions : Flag<["-"], "fobjc-arc-exceptions">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Use EH-safe code when synthesizing retains and releases in -fobjc-arc">;
-def fno_objc_arc_exceptions : Flag<["-"], "fno-objc-arc-exceptions">, Group<f_Group>;
-def fobjc_atdefs : Flag<["-"], "fobjc-atdefs">, Group<clang_ignored_f_Group>;
-def fobjc_call_cxx_cdtors : Flag<["-"], "fobjc-call-cxx-cdtors">, Group<clang_ignored_f_Group>;
-def fobjc_exceptions: Flag<["-"], "fobjc-exceptions">, Group<f_Group>,
-  HelpText<"Enable Objective-C exceptions">, Flags<[CC1Option]>;
+// def fobjc_arc : Flag<["-"], "fobjc-arc">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Synthesize retain and release calls for Objective-C pointers">;
+// def fno_objc_arc : Flag<["-"], "fno-objc-arc">, Group<f_Group>;
+// def fobjc_convert_messages_to_runtime_calls :
+//   Flag<["-"], "fobjc-convert-messages-to-runtime-calls">, Group<f_Group>;
+// def fno_objc_convert_messages_to_runtime_calls :
+//   Flag<["-"], "fno-objc-convert-messages-to-runtime-calls">, Group<f_Group>, Flags<[CC1Option]>;
+// def fobjc_arc_exceptions : Flag<["-"], "fobjc-arc-exceptions">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Use EH-safe code when synthesizing retains and releases in -fobjc-arc">;
+// def fno_objc_arc_exceptions : Flag<["-"], "fno-objc-arc-exceptions">, Group<f_Group>;
+// def fobjc_atdefs : Flag<["-"], "fobjc-atdefs">, Group<clang_ignored_f_Group>;
+// def fobjc_call_cxx_cdtors : Flag<["-"], "fobjc-call-cxx-cdtors">, Group<clang_ignored_f_Group>;
+// def fobjc_exceptions: Flag<["-"], "fobjc-exceptions">, Group<f_Group>,
+//   HelpText<"Enable Objective-C exceptions">, Flags<[CC1Option]>;
 def fapplication_extension : Flag<["-"], "fapplication-extension">,
   Group<f_Group>, Flags<[CC1Option]>,
   HelpText<"Restrict code to those available for App Extensions">;
@@ -1640,229 +1640,229 @@ def : Flag<["-"], "faligned-new">, Alias<faligned_allocation>;
 def : Flag<["-"], "fno-aligned-new">, Alias<fno_aligned_allocation>;
 def faligned_new_EQ : Joined<["-"], "faligned-new=">;
 
-def fobjc_legacy_dispatch : Flag<["-"], "fobjc-legacy-dispatch">, Group<f_Group>;
-def fobjc_new_property : Flag<["-"], "fobjc-new-property">, Group<clang_ignored_f_Group>;
-def fobjc_infer_related_result_type : Flag<["-"], "fobjc-infer-related-result-type">,
-                                      Group<f_Group>;
-def fno_objc_infer_related_result_type : Flag<["-"],
-  "fno-objc-infer-related-result-type">, Group<f_Group>,
-  HelpText<
-    "do not infer Objective-C related result type based on method family">,
-  Flags<[CC1Option]>;
-def fobjc_link_runtime: Flag<["-"], "fobjc-link-runtime">, Group<f_Group>;
-def fobjc_weak : Flag<["-"], "fobjc-weak">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Enable ARC-style weak references in Objective-C">;
+// def fobjc_legacy_dispatch : Flag<["-"], "fobjc-legacy-dispatch">, Group<f_Group>;
+// def fobjc_new_property : Flag<["-"], "fobjc-new-property">, Group<clang_ignored_f_Group>;
+// def fobjc_infer_related_result_type : Flag<["-"], "fobjc-infer-related-result-type">,
+//                                       Group<f_Group>;
+// def fno_objc_infer_related_result_type : Flag<["-"],
+//   "fno-objc-infer-related-result-type">, Group<f_Group>,
+//   HelpText<
+//     "do not infer Objective-C related result type based on method family">,
+//   Flags<[CC1Option]>;
+// def fobjc_link_runtime: Flag<["-"], "fobjc-link-runtime">, Group<f_Group>;
+// def fobjc_weak : Flag<["-"], "fobjc-weak">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Enable ARC-style weak references in Objective-C">;
 
 // Objective-C ABI options.
-def fobjc_runtime_EQ : Joined<["-"], "fobjc-runtime=">, Group<f_Group>, Flags<[CC1Option, CoreOption]>,
-  HelpText<"Specify the target Objective-C runtime kind and version">;
-def fobjc_abi_version_EQ : Joined<["-"], "fobjc-abi-version=">, Group<f_Group>;
-def fobjc_nonfragile_abi_version_EQ : Joined<["-"], "fobjc-nonfragile-abi-version=">, Group<f_Group>;
-def fobjc_nonfragile_abi : Flag<["-"], "fobjc-nonfragile-abi">, Group<f_Group>;
-def fno_objc_nonfragile_abi : Flag<["-"], "fno-objc-nonfragile-abi">, Group<f_Group>;
+// def fobjc_runtime_EQ : Joined<["-"], "fobjc-runtime=">, Group<f_Group>, Flags<[CC1Option, CoreOption]>,
+//   HelpText<"Specify the target Objective-C runtime kind and version">;
+// def fobjc_abi_version_EQ : Joined<["-"], "fobjc-abi-version=">, Group<f_Group>;
+// def fobjc_nonfragile_abi_version_EQ : Joined<["-"], "fobjc-nonfragile-abi-version=">, Group<f_Group>;
+// def fobjc_nonfragile_abi : Flag<["-"], "fobjc-nonfragile-abi">, Group<f_Group>;
+// def fno_objc_nonfragile_abi : Flag<["-"], "fno-objc-nonfragile-abi">, Group<f_Group>;
 
-def fobjc_sender_dependent_dispatch : Flag<["-"], "fobjc-sender-dependent-dispatch">, Group<f_Group>;
-def fomit_frame_pointer : Flag<["-"], "fomit-frame-pointer">, Group<f_Group>;
-def fopenmp : Flag<["-"], "fopenmp">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>,
-  HelpText<"Parse OpenMP pragmas and generate parallel code.">;
-def fno_openmp : Flag<["-"], "fno-openmp">, Group<f_Group>, Flags<[NoArgumentUnused]>;
-def fopenmp_version_EQ : Joined<["-"], "fopenmp-version=">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>;
-def fopenmp_EQ : Joined<["-"], "fopenmp=">, Group<f_Group>;
-def fopenmp_use_tls : Flag<["-"], "fopenmp-use-tls">, Group<f_Group>,
-  Flags<[NoArgumentUnused, HelpHidden]>;
-def fnoopenmp_use_tls : Flag<["-"], "fnoopenmp-use-tls">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fopenmp_targets_EQ : CommaJoined<["-"], "fopenmp-targets=">, Flags<[DriverOption, CC1Option]>,
-  HelpText<"Specify comma-separated list of triples OpenMP offloading targets to be supported">;
-def fopenmp_relocatable_target : Flag<["-"], "fopenmp-relocatable-target">,
-  Group<f_Group>, Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fnoopenmp_relocatable_target : Flag<["-"], "fnoopenmp-relocatable-target">,
-  Group<f_Group>, Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fopenmp_simd : Flag<["-"], "fopenmp-simd">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>,
-  HelpText<"Emit OpenMP code only for SIMD-based constructs.">;
-def fopenmp_enable_irbuilder : Flag<["-"], "fopenmp-enable-irbuilder">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused, HelpHidden]>,
-  HelpText<"Use the experimental OpenMP-IR-Builder codegen path.">;
-def fno_openmp_simd : Flag<["-"], "fno-openmp-simd">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>;
-def fopenmp_cuda_mode : Flag<["-"], "fopenmp-cuda-mode">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fno_openmp_cuda_mode : Flag<["-"], "fno-openmp-cuda-mode">, Group<f_Group>,
-  Flags<[NoArgumentUnused, HelpHidden]>;
-def fopenmp_cuda_force_full_runtime : Flag<["-"], "fopenmp-cuda-force-full-runtime">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fno_openmp_cuda_force_full_runtime : Flag<["-"], "fno-openmp-cuda-force-full-runtime">, Group<f_Group>,
-  Flags<[NoArgumentUnused, HelpHidden]>;
-def fopenmp_cuda_number_of_sm_EQ : Joined<["-"], "fopenmp-cuda-number-of-sm=">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fopenmp_cuda_blocks_per_sm_EQ : Joined<["-"], "fopenmp-cuda-blocks-per-sm=">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fopenmp_cuda_teams_reduction_recs_num_EQ : Joined<["-"], "fopenmp-cuda-teams-reduction-recs-num=">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fopenmp_optimistic_collapse : Flag<["-"], "fopenmp-optimistic-collapse">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
-def fno_openmp_optimistic_collapse : Flag<["-"], "fno-openmp-optimistic-collapse">, Group<f_Group>,
-  Flags<[NoArgumentUnused, HelpHidden]>;
-def fopenmp_cuda_parallel_target_regions : Flag<["-"], "fopenmp-cuda-parallel-target-regions">, Group<f_Group>,
-  Flags<[CC1Option, NoArgumentUnused, HelpHidden]>,
-  HelpText<"Support parallel execution of target regions on Cuda-based devices.">;
-def fno_openmp_cuda_parallel_target_regions : Flag<["-"], "fno-openmp-cuda-parallel-target-regions">, Group<f_Group>,
-  Flags<[NoArgumentUnused, HelpHidden]>,
-  HelpText<"Support only serial execution of target regions on Cuda-based devices.">;
-def static_openmp: Flag<["-"], "static-openmp">,
-  HelpText<"Use the static host OpenMP runtime while linking.">;
-def fno_optimize_sibling_calls : Flag<["-"], "fno-optimize-sibling-calls">, Group<f_Group>;
-def foptimize_sibling_calls : Flag<["-"], "foptimize-sibling-calls">, Group<f_Group>;
-def fno_escaping_block_tail_calls : Flag<["-"], "fno-escaping-block-tail-calls">, Group<f_Group>, Flags<[CC1Option]>;
-def fescaping_block_tail_calls : Flag<["-"], "fescaping-block-tail-calls">, Group<f_Group>;
-def force__cpusubtype__ALL : Flag<["-"], "force_cpusubtype_ALL">;
-def force__flat__namespace : Flag<["-"], "force_flat_namespace">;
-def force__load : Separate<["-"], "force_load">;
-def force_addr : Joined<["-"], "fforce-addr">, Group<clang_ignored_f_Group>;
-def foutput_class_dir_EQ : Joined<["-"], "foutput-class-dir=">, Group<f_Group>;
-def fpack_struct : Flag<["-"], "fpack-struct">, Group<f_Group>;
-def fno_pack_struct : Flag<["-"], "fno-pack-struct">, Group<f_Group>;
-def fpack_struct_EQ : Joined<["-"], "fpack-struct=">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Specify the default maximum struct packing alignment">;
-def fmax_type_align_EQ : Joined<["-"], "fmax-type-align=">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Specify the maximum alignment to enforce on pointers lacking an explicit alignment">;
-def fno_max_type_align : Flag<["-"], "fno-max-type-align">, Group<f_Group>;
-def fpascal_strings : Flag<["-"], "fpascal-strings">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Recognize and construct Pascal-style string literals">;
-def fpatchable_function_entry_EQ : Joined<["-"], "fpatchable-function-entry=">, Group<f_Group>, Flags<[CC1Option]>,
-  MetaVarName<"<N,M>">, HelpText<"Generate M NOPs before function entry and N-M NOPs after function entry">;
-def fpcc_struct_return : Flag<["-"], "fpcc-struct-return">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Override the default ABI to return all structs on the stack">;
-def fpch_preprocess : Flag<["-"], "fpch-preprocess">, Group<f_Group>;
-def fpic : Flag<["-"], "fpic">, Group<f_Group>;
-def fno_pic : Flag<["-"], "fno-pic">, Group<f_Group>;
-def fpie : Flag<["-"], "fpie">, Group<f_Group>;
-def fno_pie : Flag<["-"], "fno-pie">, Group<f_Group>;
-defm plt : OptOutFFlag<"plt", "",
-  "Use GOT indirection instead of PLT to make external function calls (x86 only)">;
-defm ropi : OptInFFlag<"ropi", "Generate read-only position independent code (ARM only)">;
-defm rwpi : OptInFFlag<"rwpi", "Generate read-write position independent code (ARM only)">;
-def fplugin_EQ : Joined<["-"], "fplugin=">, Group<f_Group>, Flags<[DriverOption]>, MetaVarName<"<dsopath>">,
-  HelpText<"Load the named plugin (dynamic shared object)">;
-def fpass_plugin_EQ : Joined<["-"], "fpass-plugin=">,
-  Group<f_Group>, Flags<[CC1Option]>, MetaVarName<"<dsopath>">,
-  HelpText<"Load pass plugin from a dynamic shared object file (only with new pass manager).">;
-defm preserve_as_comments : OptOutFFlag<"preserve-as-comments", "",
-  "Do not preserve comments in inline assembly">;
-def fprofile_arcs : Flag<["-"], "fprofile-arcs">, Group<f_Group>;
-def fno_profile_arcs : Flag<["-"], "fno-profile-arcs">, Group<f_Group>;
-def framework : Separate<["-"], "framework">, Flags<[LinkerInput]>;
-def frandom_seed_EQ : Joined<["-"], "frandom-seed=">, Group<clang_ignored_f_Group>;
-def freg_struct_return : Flag<["-"], "freg-struct-return">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Override the default ABI to return small structs in registers">;
-defm rtti : OptOutFFlag<"rtti", "", "Disable generation of rtti information">;
-defm rtti_data : OptOutFFlag<"rtti-data", "", "Disable generation of RTTI data">;
-def : Flag<["-"], "fsched-interblock">, Group<clang_ignored_f_Group>;
-def fshort_enums : Flag<["-"], "fshort-enums">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Allocate to an enum type only as many bytes as it needs for the declared range of possible values">;
-def fchar8__t : Flag<["-"], "fchar8_t">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Enable C++ builtin type char8_t">;
-def fno_char8__t : Flag<["-"], "fno-char8_t">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Disable C++ builtin type char8_t">;
-def fshort_wchar : Flag<["-"], "fshort-wchar">, Group<f_Group>,
-  HelpText<"Force wchar_t to be a short unsigned int">;
-def fno_short_wchar : Flag<["-"], "fno-short-wchar">, Group<f_Group>,
-  HelpText<"Force wchar_t to be an unsigned int">;
-def fshow_overloads_EQ : Joined<["-"], "fshow-overloads=">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Which overload candidates to show when overload resolution fails: "
-           "best|all; defaults to all">, Values<"best,all">;
-defm show_column : OptOutFFlag<"show-column", "", "Do not include column number on diagnostics">;
-def fshow_source_location : Flag<["-"], "fshow-source-location">, Group<f_Group>;
-def fspell_checking : Flag<["-"], "fspell-checking">, Group<f_Group>;
-def fspell_checking_limit_EQ : Joined<["-"], "fspell-checking-limit=">, Group<f_Group>;
-def fsigned_bitfields : Flag<["-"], "fsigned-bitfields">, Group<f_Group>;
-defm signed_char : OptOutFFlag<"signed-char", "char is signed", "char is unsigned">;
-def fsplit_stack : Flag<["-"], "fsplit-stack">, Group<f_Group>;
-def fstack_protector_all : Flag<["-"], "fstack-protector-all">, Group<f_Group>,
-  HelpText<"Enable stack protectors for all functions">;
-def fstack_clash_protection : Flag<["-"], "fstack-clash-protection">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Enable stack clash protection">;
-def fno_stack_clash_protection : Flag<["-"], "fno-stack-clash-protection">, Group<f_Group>,
-  HelpText<"Disable stack clash protection">;
-def fstack_protector_strong : Flag<["-"], "fstack-protector-strong">, Group<f_Group>,
-  HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
-           "Compared to -fstack-protector, this uses a stronger heuristic "
-           "that includes functions containing arrays of any size (and any type), "
-           "as well as any calls to alloca or the taking of an address from a local variable">;
-def fstack_protector : Flag<["-"], "fstack-protector">, Group<f_Group>,
-  HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
-           "This uses a loose heuristic which considers functions vulnerable "
-           "if they contain a char (or 8bit integer) array or constant sized calls to "
-           "alloca, which are of greater size than ssp-buffer-size (default: 8 bytes). "
-           "All variable sized calls to alloca are considered vulnerable">;
-def ftrivial_auto_var_init : Joined<["-"], "ftrivial-auto-var-init=">, Group<f_Group>,
-  Flags<[CC1Option, CoreOption]>, HelpText<"Initialize trivial automatic stack variables: uninitialized (default)"
-  " | pattern">, Values<"uninitialized,pattern">;
-def enable_trivial_var_init_zero : Flag<["-"], "enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang">,
-  Flags<[CC1Option, CoreOption]>,
-  HelpText<"Trivial automatic variable initialization to zero is only here for benchmarks, it'll eventually be removed, and I'm OK with that because I'm only using it to benchmark">;
-def ftrivial_auto_var_init_stop_after : Joined<["-"], "ftrivial-auto-var-init-stop-after=">, Group<f_Group>,
-  Flags<[CC1Option, CoreOption]>, HelpText<"Stop initializing trivial automatic stack variables after the specified number of instances">;
-def fstandalone_debug : Flag<["-"], "fstandalone-debug">, Group<f_Group>, Flags<[CoreOption]>,
-  HelpText<"Emit full debug info for all types used by the program">;
-def fno_standalone_debug : Flag<["-"], "fno-standalone-debug">, Group<f_Group>, Flags<[CoreOption]>,
-  HelpText<"Limit debug information produced to reduce size of debug binary">;
-def flimit_debug_info : Flag<["-"], "flimit-debug-info">, Flags<[CoreOption]>, Alias<fno_standalone_debug>;
-def fno_limit_debug_info : Flag<["-"], "fno-limit-debug-info">, Flags<[CoreOption]>, Alias<fstandalone_debug>;
-def fdebug_macro : Flag<["-"], "fdebug-macro">, Group<f_Group>, Flags<[CoreOption]>,
-  HelpText<"Emit macro debug information">;
-def fno_debug_macro : Flag<["-"], "fno-debug-macro">, Group<f_Group>, Flags<[CoreOption]>,
-  HelpText<"Do not emit macro debug information">;
-def fstrict_aliasing : Flag<["-"], "fstrict-aliasing">, Group<f_Group>,
-  Flags<[DriverOption, CoreOption]>;
-def fstrict_enums : Flag<["-"], "fstrict-enums">, Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Enable optimizations based on the strict definition of an enum's "
-           "value range">;
-def fstrict_vtable_pointers: Flag<["-"], "fstrict-vtable-pointers">,
-  Group<f_Group>, Flags<[CC1Option]>,
-  HelpText<"Enable optimizations based on the strict rules for overwriting "
-             "polymorphic C++ objects">;
-def fstrict_overflow : Flag<["-"], "fstrict-overflow">, Group<f_Group>;
-def fsyntax_only : Flag<["-"], "fsyntax-only">,
-  Flags<[DriverOption,CoreOption,CC1Option]>, Group<Action_Group>;
-def ftabstop_EQ : Joined<["-"], "ftabstop=">, Group<f_Group>;
-def ftemplate_depth_EQ : Joined<["-"], "ftemplate-depth=">, Group<f_Group>;
-def ftemplate_depth_ : Joined<["-"], "ftemplate-depth-">, Group<f_Group>;
-def ftemplate_backtrace_limit_EQ : Joined<["-"], "ftemplate-backtrace-limit=">,
-                                   Group<f_Group>;
-def foperator_arrow_depth_EQ : Joined<["-"], "foperator-arrow-depth=">,
-                               Group<f_Group>;
+// def fobjc_sender_dependent_dispatch : Flag<["-"], "fobjc-sender-dependent-dispatch">, Group<f_Group>;
+// def fomit_frame_pointer : Flag<["-"], "fomit-frame-pointer">, Group<f_Group>;
+// def fopenmp : Flag<["-"], "fopenmp">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>,
+//   HelpText<"Parse OpenMP pragmas and generate parallel code.">;
+// def fno_openmp : Flag<["-"], "fno-openmp">, Group<f_Group>, Flags<[NoArgumentUnused]>;
+// def fopenmp_version_EQ : Joined<["-"], "fopenmp-version=">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>;
+// def fopenmp_EQ : Joined<["-"], "fopenmp=">, Group<f_Group>;
+// def fopenmp_use_tls : Flag<["-"], "fopenmp-use-tls">, Group<f_Group>,
+//   Flags<[NoArgumentUnused, HelpHidden]>;
+// def fnoopenmp_use_tls : Flag<["-"], "fnoopenmp-use-tls">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fopenmp_targets_EQ : CommaJoined<["-"], "fopenmp-targets=">, Flags<[DriverOption, CC1Option]>,
+//   HelpText<"Specify comma-separated list of triples OpenMP offloading targets to be supported">;
+// def fopenmp_relocatable_target : Flag<["-"], "fopenmp-relocatable-target">,
+//   Group<f_Group>, Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fnoopenmp_relocatable_target : Flag<["-"], "fnoopenmp-relocatable-target">,
+//   Group<f_Group>, Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fopenmp_simd : Flag<["-"], "fopenmp-simd">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>,
+//   HelpText<"Emit OpenMP code only for SIMD-based constructs.">;
+// def fopenmp_enable_irbuilder : Flag<["-"], "fopenmp-enable-irbuilder">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused, HelpHidden]>,
+//   HelpText<"Use the experimental OpenMP-IR-Builder codegen path.">;
+// def fno_openmp_simd : Flag<["-"], "fno-openmp-simd">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>;
+// def fopenmp_cuda_mode : Flag<["-"], "fopenmp-cuda-mode">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fno_openmp_cuda_mode : Flag<["-"], "fno-openmp-cuda-mode">, Group<f_Group>,
+//   Flags<[NoArgumentUnused, HelpHidden]>;
+// def fopenmp_cuda_force_full_runtime : Flag<["-"], "fopenmp-cuda-force-full-runtime">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fno_openmp_cuda_force_full_runtime : Flag<["-"], "fno-openmp-cuda-force-full-runtime">, Group<f_Group>,
+//   Flags<[NoArgumentUnused, HelpHidden]>;
+// def fopenmp_cuda_number_of_sm_EQ : Joined<["-"], "fopenmp-cuda-number-of-sm=">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fopenmp_cuda_blocks_per_sm_EQ : Joined<["-"], "fopenmp-cuda-blocks-per-sm=">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fopenmp_cuda_teams_reduction_recs_num_EQ : Joined<["-"], "fopenmp-cuda-teams-reduction-recs-num=">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fopenmp_optimistic_collapse : Flag<["-"], "fopenmp-optimistic-collapse">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>;
+// def fno_openmp_optimistic_collapse : Flag<["-"], "fno-openmp-optimistic-collapse">, Group<f_Group>,
+//   Flags<[NoArgumentUnused, HelpHidden]>;
+// def fopenmp_cuda_parallel_target_regions : Flag<["-"], "fopenmp-cuda-parallel-target-regions">, Group<f_Group>,
+//   Flags<[CC1Option, NoArgumentUnused, HelpHidden]>,
+//   HelpText<"Support parallel execution of target regions on Cuda-based devices.">;
+// def fno_openmp_cuda_parallel_target_regions : Flag<["-"], "fno-openmp-cuda-parallel-target-regions">, Group<f_Group>,
+//   Flags<[NoArgumentUnused, HelpHidden]>,
+//   HelpText<"Support only serial execution of target regions on Cuda-based devices.">;
+// def static_openmp: Flag<["-"], "static-openmp">,
+//   HelpText<"Use the static host OpenMP runtime while linking.">;
+// def fno_optimize_sibling_calls : Flag<["-"], "fno-optimize-sibling-calls">, Group<f_Group>;
+// def foptimize_sibling_calls : Flag<["-"], "foptimize-sibling-calls">, Group<f_Group>;
+// def fno_escaping_block_tail_calls : Flag<["-"], "fno-escaping-block-tail-calls">, Group<f_Group>, Flags<[CC1Option]>;
+// def fescaping_block_tail_calls : Flag<["-"], "fescaping-block-tail-calls">, Group<f_Group>;
+// def force__cpusubtype__ALL : Flag<["-"], "force_cpusubtype_ALL">;
+// def force__flat__namespace : Flag<["-"], "force_flat_namespace">;
+// def force__load : Separate<["-"], "force_load">;
+// def force_addr : Joined<["-"], "fforce-addr">, Group<clang_ignored_f_Group>;
+// def foutput_class_dir_EQ : Joined<["-"], "foutput-class-dir=">, Group<f_Group>;
+// def fpack_struct : Flag<["-"], "fpack-struct">, Group<f_Group>;
+// def fno_pack_struct : Flag<["-"], "fno-pack-struct">, Group<f_Group>;
+// def fpack_struct_EQ : Joined<["-"], "fpack-struct=">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Specify the default maximum struct packing alignment">;
+// def fmax_type_align_EQ : Joined<["-"], "fmax-type-align=">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Specify the maximum alignment to enforce on pointers lacking an explicit alignment">;
+// def fno_max_type_align : Flag<["-"], "fno-max-type-align">, Group<f_Group>;
+// def fpascal_strings : Flag<["-"], "fpascal-strings">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Recognize and construct Pascal-style string literals">;
+// def fpatchable_function_entry_EQ : Joined<["-"], "fpatchable-function-entry=">, Group<f_Group>, Flags<[CC1Option]>,
+//   MetaVarName<"<N,M>">, HelpText<"Generate M NOPs before function entry and N-M NOPs after function entry">;
+// def fpcc_struct_return : Flag<["-"], "fpcc-struct-return">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Override the default ABI to return all structs on the stack">;
+// def fpch_preprocess : Flag<["-"], "fpch-preprocess">, Group<f_Group>;
+// def fpic : Flag<["-"], "fpic">, Group<f_Group>;
+// def fno_pic : Flag<["-"], "fno-pic">, Group<f_Group>;
+// def fpie : Flag<["-"], "fpie">, Group<f_Group>;
+// def fno_pie : Flag<["-"], "fno-pie">, Group<f_Group>;
+// defm plt : OptOutFFlag<"plt", "",
+//   "Use GOT indirection instead of PLT to make external function calls (x86 only)">;
+// defm ropi : OptInFFlag<"ropi", "Generate read-only position independent code (ARM only)">;
+// defm rwpi : OptInFFlag<"rwpi", "Generate read-write position independent code (ARM only)">;
+// def fplugin_EQ : Joined<["-"], "fplugin=">, Group<f_Group>, Flags<[DriverOption]>, MetaVarName<"<dsopath>">,
+//   HelpText<"Load the named plugin (dynamic shared object)">;
+// def fpass_plugin_EQ : Joined<["-"], "fpass-plugin=">,
+//   Group<f_Group>, Flags<[CC1Option]>, MetaVarName<"<dsopath>">,
+//   HelpText<"Load pass plugin from a dynamic shared object file (only with new pass manager).">;
+// defm preserve_as_comments : OptOutFFlag<"preserve-as-comments", "",
+//   "Do not preserve comments in inline assembly">;
+// def fprofile_arcs : Flag<["-"], "fprofile-arcs">, Group<f_Group>;
+// def fno_profile_arcs : Flag<["-"], "fno-profile-arcs">, Group<f_Group>;
+// def framework : Separate<["-"], "framework">, Flags<[LinkerInput]>;
+// def frandom_seed_EQ : Joined<["-"], "frandom-seed=">, Group<clang_ignored_f_Group>;
+// def freg_struct_return : Flag<["-"], "freg-struct-return">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Override the default ABI to return small structs in registers">;
+// defm rtti : OptOutFFlag<"rtti", "", "Disable generation of rtti information">;
+// defm rtti_data : OptOutFFlag<"rtti-data", "", "Disable generation of RTTI data">;
+// def : Flag<["-"], "fsched-interblock">, Group<clang_ignored_f_Group>;
+// def fshort_enums : Flag<["-"], "fshort-enums">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Allocate to an enum type only as many bytes as it needs for the declared range of possible values">;
+// def fchar8__t : Flag<["-"], "fchar8_t">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Enable C++ builtin type char8_t">;
+// def fno_char8__t : Flag<["-"], "fno-char8_t">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Disable C++ builtin type char8_t">;
+// def fshort_wchar : Flag<["-"], "fshort-wchar">, Group<f_Group>,
+//   HelpText<"Force wchar_t to be a short unsigned int">;
+// def fno_short_wchar : Flag<["-"], "fno-short-wchar">, Group<f_Group>,
+//   HelpText<"Force wchar_t to be an unsigned int">;
+// def fshow_overloads_EQ : Joined<["-"], "fshow-overloads=">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Which overload candidates to show when overload resolution fails: "
+//            "best|all; defaults to all">, Values<"best,all">;
+// defm show_column : OptOutFFlag<"show-column", "", "Do not include column number on diagnostics">;
+// def fshow_source_location : Flag<["-"], "fshow-source-location">, Group<f_Group>;
+// def fspell_checking : Flag<["-"], "fspell-checking">, Group<f_Group>;
+// def fspell_checking_limit_EQ : Joined<["-"], "fspell-checking-limit=">, Group<f_Group>;
+// def fsigned_bitfields : Flag<["-"], "fsigned-bitfields">, Group<f_Group>;
+// defm signed_char : OptOutFFlag<"signed-char", "char is signed", "char is unsigned">;
+// def fsplit_stack : Flag<["-"], "fsplit-stack">, Group<f_Group>;
+// def fstack_protector_all : Flag<["-"], "fstack-protector-all">, Group<f_Group>,
+//   HelpText<"Enable stack protectors for all functions">;
+// def fstack_clash_protection : Flag<["-"], "fstack-clash-protection">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Enable stack clash protection">;
+// def fno_stack_clash_protection : Flag<["-"], "fno-stack-clash-protection">, Group<f_Group>,
+//   HelpText<"Disable stack clash protection">;
+// def fstack_protector_strong : Flag<["-"], "fstack-protector-strong">, Group<f_Group>,
+//   HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
+//            "Compared to -fstack-protector, this uses a stronger heuristic "
+//            "that includes functions containing arrays of any size (and any type), "
+//            "as well as any calls to alloca or the taking of an address from a local variable">;
+// def fstack_protector : Flag<["-"], "fstack-protector">, Group<f_Group>,
+//   HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
+//            "This uses a loose heuristic which considers functions vulnerable "
+//            "if they contain a char (or 8bit integer) array or constant sized calls to "
+//            "alloca, which are of greater size than ssp-buffer-size (default: 8 bytes). "
+//            "All variable sized calls to alloca are considered vulnerable">;
+// def ftrivial_auto_var_init : Joined<["-"], "ftrivial-auto-var-init=">, Group<f_Group>,
+//   Flags<[CC1Option, CoreOption]>, HelpText<"Initialize trivial automatic stack variables: uninitialized (default)"
+//   " | pattern">, Values<"uninitialized,pattern">;
+// def enable_trivial_var_init_zero : Flag<["-"], "enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang">,
+//   Flags<[CC1Option, CoreOption]>,
+//   HelpText<"Trivial automatic variable initialization to zero is only here for benchmarks, it'll eventually be removed, and I'm OK with that because I'm only using it to benchmark">;
+// def ftrivial_auto_var_init_stop_after : Joined<["-"], "ftrivial-auto-var-init-stop-after=">, Group<f_Group>,
+//   Flags<[CC1Option, CoreOption]>, HelpText<"Stop initializing trivial automatic stack variables after the specified number of instances">;
+// def fstandalone_debug : Flag<["-"], "fstandalone-debug">, Group<f_Group>, Flags<[CoreOption]>,
+//   HelpText<"Emit full debug info for all types used by the program">;
+// def fno_standalone_debug : Flag<["-"], "fno-standalone-debug">, Group<f_Group>, Flags<[CoreOption]>,
+//   HelpText<"Limit debug information produced to reduce size of debug binary">;
+// def flimit_debug_info : Flag<["-"], "flimit-debug-info">, Flags<[CoreOption]>, Alias<fno_standalone_debug>;
+// def fno_limit_debug_info : Flag<["-"], "fno-limit-debug-info">, Flags<[CoreOption]>, Alias<fstandalone_debug>;
+// def fdebug_macro : Flag<["-"], "fdebug-macro">, Group<f_Group>, Flags<[CoreOption]>,
+//   HelpText<"Emit macro debug information">;
+// def fno_debug_macro : Flag<["-"], "fno-debug-macro">, Group<f_Group>, Flags<[CoreOption]>,
+//   HelpText<"Do not emit macro debug information">;
+// def fstrict_aliasing : Flag<["-"], "fstrict-aliasing">, Group<f_Group>,
+//   Flags<[DriverOption, CoreOption]>;
+// def fstrict_enums : Flag<["-"], "fstrict-enums">, Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Enable optimizations based on the strict definition of an enum's "
+//            "value range">;
+// def fstrict_vtable_pointers: Flag<["-"], "fstrict-vtable-pointers">,
+//   Group<f_Group>, Flags<[CC1Option]>,
+//   HelpText<"Enable optimizations based on the strict rules for overwriting "
+//              "polymorphic C++ objects">;
+// def fstrict_overflow : Flag<["-"], "fstrict-overflow">, Group<f_Group>;
+// def fsyntax_only : Flag<["-"], "fsyntax-only">,
+//   Flags<[DriverOption,CoreOption,CC1Option]>, Group<Action_Group>;
+// def ftabstop_EQ : Joined<["-"], "ftabstop=">, Group<f_Group>;
+// def ftemplate_depth_EQ : Joined<["-"], "ftemplate-depth=">, Group<f_Group>;
+// def ftemplate_depth_ : Joined<["-"], "ftemplate-depth-">, Group<f_Group>;
+// def ftemplate_backtrace_limit_EQ : Joined<["-"], "ftemplate-backtrace-limit=">,
+//                                    Group<f_Group>;
+// def foperator_arrow_depth_EQ : Joined<["-"], "foperator-arrow-depth=">,
+//                                Group<f_Group>;
 
-def fsave_optimization_record : Flag<["-"], "fsave-optimization-record">,
-  Group<f_Group>, HelpText<"Generate a YAML optimization record file">;
-def fsave_optimization_record_EQ : Joined<["-"], "fsave-optimization-record=">,
-  Group<f_Group>, HelpText<"Generate an optimization record file in a specific format">,
-  MetaVarName<"<format>">;
-def fno_save_optimization_record : Flag<["-"], "fno-save-optimization-record">,
-  Group<f_Group>, Flags<[NoArgumentUnused]>;
-def foptimization_record_file_EQ : Joined<["-"], "foptimization-record-file=">,
-  Group<f_Group>,
-  HelpText<"Specify the output name of the file containing the optimization remarks. Implies -fsave-optimization-record. On Darwin platforms, this cannot be used with multiple -arch <arch> options.">,
-  MetaVarName<"<file>">;
-def foptimization_record_passes_EQ : Joined<["-"], "foptimization-record-passes=">,
-  Group<f_Group>,
-  HelpText<"Only include passes which match a specified regular expression in the generated optimization record (by default, include all passes)">,
-  MetaVarName<"<regex>">;
+// def fsave_optimization_record : Flag<["-"], "fsave-optimization-record">,
+//   Group<f_Group>, HelpText<"Generate a YAML optimization record file">;
+// def fsave_optimization_record_EQ : Joined<["-"], "fsave-optimization-record=">,
+//   Group<f_Group>, HelpText<"Generate an optimization record file in a specific format">,
+//   MetaVarName<"<format>">;
+// def fno_save_optimization_record : Flag<["-"], "fno-save-optimization-record">,
+//   Group<f_Group>, Flags<[NoArgumentUnused]>;
+// def foptimization_record_file_EQ : Joined<["-"], "foptimization-record-file=">,
+//   Group<f_Group>,
+//   HelpText<"Specify the output name of the file containing the optimization remarks. Implies -fsave-optimization-record. On Darwin platforms, this cannot be used with multiple -arch <arch> options.">,
+//   MetaVarName<"<file>">;
+// def foptimization_record_passes_EQ : Joined<["-"], "foptimization-record-passes=">,
+//   Group<f_Group>,
+//   HelpText<"Only include passes which match a specified regular expression in the generated optimization record (by default, include all passes)">,
+//   MetaVarName<"<regex>">;
 
-def ftest_coverage : Flag<["-"], "ftest-coverage">, Group<f_Group>;
-def fno_test_coverage : Flag<["-"], "fno-test-coverage">, Group<f_Group>;
-def fvectorize : Flag<["-"], "fvectorize">, Group<f_Group>,
-  HelpText<"Enable the loop vectorization passes">;
-def fno_vectorize : Flag<["-"], "fno-vectorize">, Group<f_Group>;
-def : Flag<["-"], "ftree-vectorize">, Alias<fvectorize>;
-def : Flag<["-"], "fno-tree-vectorize">, Alias<fno_vectorize>;
-def fslp_vectorize : Flag<["-"], "fslp-vectorize">, Group<f_Group>,
-  HelpText<"Enable the superword-level parallelism vectorization passes">;
-def fno_slp_vectorize : Flag<["-"], "fno-slp-vectorize">, Group<f_Group>;
-def : Flag<["-"], "ftree-slp-vectorize">, Alias<fslp_vectorize>;
-def : Flag<["-"], "fno-tree-slp-vectorize">, Alias<fno_slp_vectorize>;
-def Wlarge_by_value_copy_def : Flag<["-"], "Wlarge-by-value-copy">,
-  HelpText<"Warn if a function definition returns or accepts an object larger "
-           "in bytes than a given value">, Flags<[HelpHidden]>;
-def Wlarge_by_value_copy_EQ : Joined<["-"], "Wlarge-by-value-copy=">, Flags<[CC1Option]>;
+// def ftest_coverage : Flag<["-"], "ftest-coverage">, Group<f_Group>;
+// def fno_test_coverage : Flag<["-"], "fno-test-coverage">, Group<f_Group>;
+// def fvectorize : Flag<["-"], "fvectorize">, Group<f_Group>,
+//   HelpText<"Enable the loop vectorization passes">;
+// def fno_vectorize : Flag<["-"], "fno-vectorize">, Group<f_Group>;
+// def : Flag<["-"], "ftree-vectorize">, Alias<fvectorize>;
+// def : Flag<["-"], "fno-tree-vectorize">, Alias<fno_vectorize>;
+// def fslp_vectorize : Flag<["-"], "fslp-vectorize">, Group<f_Group>,
+//   HelpText<"Enable the superword-level parallelism vectorization passes">;
+// def fno_slp_vectorize : Flag<["-"], "fno-slp-vectorize">, Group<f_Group>;
+// def : Flag<["-"], "ftree-slp-vectorize">, Alias<fslp_vectorize>;
+// def : Flag<["-"], "fno-tree-slp-vectorize">, Alias<fno_slp_vectorize>;
+// def Wlarge_by_value_copy_def : Flag<["-"], "Wlarge-by-value-copy">,
+//   HelpText<"Warn if a function definition returns or accepts an object larger "
+//            "in bytes than a given value">, Flags<[HelpHidden]>;
+// def Wlarge_by_value_copy_EQ : Joined<["-"], "Wlarge-by-value-copy=">, Flags<[CC1Option]>;
 
 // These "special" warning flags are effectively processed as f_Group flags by the driver:
 // Just silence warnings about -Wlarger-than for now.
@@ -4163,14 +4163,14 @@ def fno_wchar : Flag<["-"], "fno-wchar">,
 def fconstant_string_class : Separate<["-"], "fconstant-string-class">,
   MetaVarName<"<class name>">,
   HelpText<"Specify the class to use for constant Objective-C string objects.">;
-def fobjc_arc_cxxlib_EQ : Joined<["-"], "fobjc-arc-cxxlib=">,
-  HelpText<"Objective-C++ Automatic Reference Counting standard library kind">, Values<"libc++,libstdc++,none">;
-def fobjc_runtime_has_weak : Flag<["-"], "fobjc-runtime-has-weak">,
-  HelpText<"The target Objective-C runtime supports ARC weak operations">;
-def fobjc_dispatch_method_EQ : Joined<["-"], "fobjc-dispatch-method=">,
-  HelpText<"Objective-C dispatch method to use">, Values<"legacy,non-legacy,mixed">;
-def disable_objc_default_synthesize_properties : Flag<["-"], "disable-objc-default-synthesize-properties">,
-  HelpText<"disable the default synthesis of Objective-C properties">;
+// def fobjc_arc_cxxlib_EQ : Joined<["-"], "fobjc-arc-cxxlib=">,
+//   HelpText<"Objective-C++ Automatic Reference Counting standard library kind">, Values<"libc++,libstdc++,none">;
+// def fobjc_runtime_has_weak : Flag<["-"], "fobjc-runtime-has-weak">,
+//   HelpText<"The target Objective-C runtime supports ARC weak operations">;
+// def fobjc_dispatch_method_EQ : Joined<["-"], "fobjc-dispatch-method=">,
+//   HelpText<"Objective-C dispatch method to use">, Values<"legacy,non-legacy,mixed">;
+// def disable_objc_default_synthesize_properties : Flag<["-"], "disable-objc-default-synthesize-properties">,
+//   HelpText<"disable the default synthesis of Objective-C properties">;
 def fencode_extended_block_signature : Flag<["-"], "fencode-extended-block-signature">,
   HelpText<"enable extended encoding of block type signature">;
 def function_alignment : Separate<["-"], "function-alignment">,
@@ -4227,14 +4227,14 @@ def fdebugger_support : Flag<["-"], "fdebugger-support">,
   HelpText<"Enable special debugger support behavior">;
 def fdebugger_cast_result_to_id : Flag<["-"], "fdebugger-cast-result-to-id">,
   HelpText<"Enable casting unknown expression results to id">;
-def fdebugger_objc_literal : Flag<["-"], "fdebugger-objc-literal">,
-  HelpText<"Enable special debugger support for Objective-C subscripting and literals">;
+// def fdebugger_objc_literal : Flag<["-"], "fdebugger-objc-literal">,
+//   HelpText<"Enable special debugger support for Objective-C subscripting and literals">;
 def fdeprecated_macro : Flag<["-"], "fdeprecated-macro">,
   HelpText<"Defines the __DEPRECATED macro">;
 def fno_deprecated_macro : Flag<["-"], "fno-deprecated-macro">,
   HelpText<"Undefines the __DEPRECATED macro">;
-def fobjc_subscripting_legacy_runtime : Flag<["-"], "fobjc-subscripting-legacy-runtime">,
-  HelpText<"Allow Objective-C array and dictionary subscripting in legacy runtime">;
+// def fobjc_subscripting_legacy_runtime : Flag<["-"], "fobjc-subscripting-legacy-runtime">,
+//   HelpText<"Allow Objective-C array and dictionary subscripting in legacy runtime">;
 def vtordisp_mode_EQ : Joined<["-"], "vtordisp-mode=">,
   HelpText<"Control vtordisp placement on win32 targets">;
 def fnative_half_type: Flag<["-"], "fnative-half-type">,
@@ -4262,10 +4262,10 @@ def fcompatibility_qualified_id_block_param_type_checking : Flag<["-"], "fcompat
            "the type system guarantees when a parameter is qualified id">;
 
 // FIXME: Remove these entirely once functionality/tests have been excised.
-def fobjc_gc_only : Flag<["-"], "fobjc-gc-only">, Group<f_Group>,
-  HelpText<"Use GC exclusively for Objective-C related memory management">;
-def fobjc_gc : Flag<["-"], "fobjc-gc">, Group<f_Group>,
-  HelpText<"Enable Objective-C garbage collection">;
+// def fobjc_gc_only : Flag<["-"], "fobjc-gc-only">, Group<f_Group>,
+//   HelpText<"Use GC exclusively for Objective-C related memory management">;
+// def fobjc_gc : Flag<["-"], "fobjc-gc">, Group<f_Group>,
+//   HelpText<"Enable Objective-C garbage collection">;
 
 //===----------------------------------------------------------------------===//
 // Header Search Options
@@ -4283,9 +4283,9 @@ def fmodules_strict_context_hash : Flag<["-"], "fmodules-strict-context-hash">,
   MarshallingInfoFlag<"HeaderSearchOpts->ModulesStrictContextHash", "false">;
 def c_isystem : JoinedOrSeparate<["-"], "c-isystem">, MetaVarName<"<directory>">,
   HelpText<"Add directory to the C SYSTEM include search path">;
-def objc_isystem : JoinedOrSeparate<["-"], "objc-isystem">,
-  MetaVarName<"<directory>">,
-  HelpText<"Add directory to the ObjC SYSTEM include search path">;
+// def objc_isystem : JoinedOrSeparate<["-"], "objc-isystem">,
+//   MetaVarName<"<directory>">,
+//   HelpText<"Add directory to the ObjC SYSTEM include search path">;
 def objcxx_isystem : JoinedOrSeparate<["-"], "objcxx-isystem">,
   MetaVarName<"<directory>">,
   HelpText<"Add directory to the ObjC++ SYSTEM include search path">;

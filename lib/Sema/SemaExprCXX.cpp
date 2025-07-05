@@ -838,8 +838,8 @@ ExprResult Sema::BuildCXXThrow(SourceLocation OpLoc, Expr *Ex,
     CUDADiagIfDeviceCode(OpLoc, diag::err_cuda_device_exceptions)
         << "throw" << CurrentCUDATarget();
 
-  // if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
-  //   Diag(OpLoc, diag::err_omp_simd_region_cannot_use_stmt) << "throw";
+  if (getCurScope() && getCurScope()->isOpenMPSimdDirectiveScope())
+    Diag(OpLoc, diag::err_omp_simd_region_cannot_use_stmt) << "throw";
 
   if (Ex && !Ex->isTypeDependent()) {
     QualType ExceptionObjectTy = Context.getExceptionObjectType(Ex->getType());
@@ -2562,9 +2562,9 @@ bool Sema::FindAllocationFunctions(SourceLocation StartLoc, SourceRange Range,
     if (getLangOpts().OpenCLCPlusPlus && R.empty()) {
       if (PlaceArgs.empty()) {
         Diag(StartLoc, diag::err_openclcxx_not_supported) << "default new";
-      } /*else {
+      } else {
         Diag(StartLoc, diag::err_openclcxx_placement_new);
-      }*/
+      }
       return true;
     }
 
@@ -8389,55 +8389,55 @@ StmtResult Sema::ActOnFinishFullStmt(Stmt *FullStmt) {
   return MaybeCreateStmtWithCleanups(FullStmt);
 }
 
-Sema::IfExistsResult
-Sema::CheckMicrosoftIfExistsSymbol(Scope *S,
-                                   CXXScopeSpec &SS,
-                                   const DeclarationNameInfo &TargetNameInfo) {
-  DeclarationName TargetName = TargetNameInfo.getName();
-  if (!TargetName)
-    return IER_DoesNotExist;
+// Sema::IfExistsResult
+// Sema::CheckMicrosoftIfExistsSymbol(Scope *S,
+//                                    CXXScopeSpec &SS,
+//                                    const DeclarationNameInfo &TargetNameInfo) {
+//   DeclarationName TargetName = TargetNameInfo.getName();
+//   if (!TargetName)
+//     return IER_DoesNotExist;
 
-  // If the name itself is dependent, then the result is dependent.
-  if (TargetName.isDependentName())
-    return IER_Dependent;
+//   // If the name itself is dependent, then the result is dependent.
+//   if (TargetName.isDependentName())
+//     return IER_Dependent;
 
-  // Do the redeclaration lookup in the current scope.
-  LookupResult R(*this, TargetNameInfo, Sema::LookupAnyName,
-                 Sema::NotForRedeclaration);
-  LookupParsedName(R, S, &SS);
-  R.suppressDiagnostics();
+//   // Do the redeclaration lookup in the current scope.
+//   LookupResult R(*this, TargetNameInfo, Sema::LookupAnyName,
+//                  Sema::NotForRedeclaration);
+//   LookupParsedName(R, S, &SS);
+//   R.suppressDiagnostics();
 
-  switch (R.getResultKind()) {
-  case LookupResult::Found:
-  case LookupResult::FoundOverloaded:
-  case LookupResult::FoundUnresolvedValue:
-  case LookupResult::Ambiguous:
-    return IER_Exists;
+//   switch (R.getResultKind()) {
+//   case LookupResult::Found:
+//   case LookupResult::FoundOverloaded:
+//   case LookupResult::FoundUnresolvedValue:
+//   case LookupResult::Ambiguous:
+//     return IER_Exists;
 
-  case LookupResult::NotFound:
-    return IER_DoesNotExist;
+//   case LookupResult::NotFound:
+//     return IER_DoesNotExist;
 
-  case LookupResult::NotFoundInCurrentInstantiation:
-    return IER_Dependent;
-  }
+//   case LookupResult::NotFoundInCurrentInstantiation:
+//     return IER_Dependent;
+//   }
 
-  llvm_unreachable("Invalid LookupResult Kind!");
-}
+//   llvm_unreachable("Invalid LookupResult Kind!");
+// }
 
-Sema::IfExistsResult
-Sema::CheckMicrosoftIfExistsSymbol(Scope *S, SourceLocation KeywordLoc,
-                                   bool IsIfExists, CXXScopeSpec &SS,
-                                   UnqualifiedId &Name) {
-  DeclarationNameInfo TargetNameInfo = GetNameFromUnqualifiedId(Name);
+// Sema::IfExistsResult
+// Sema::CheckMicrosoftIfExistsSymbol(Scope *S, SourceLocation KeywordLoc,
+//                                    bool IsIfExists, CXXScopeSpec &SS,
+//                                    UnqualifiedId &Name) {
+//   DeclarationNameInfo TargetNameInfo = GetNameFromUnqualifiedId(Name);
 
-  // Check for an unexpanded parameter pack.
-  auto UPPC = IsIfExists ? UPPC_IfExists : UPPC_IfNotExists;
-  if (DiagnoseUnexpandedParameterPack(SS, UPPC) ||
-      DiagnoseUnexpandedParameterPack(TargetNameInfo, UPPC))
-    return IER_Error;
+//   // Check for an unexpanded parameter pack.
+//   auto UPPC = IsIfExists ? UPPC_IfExists : UPPC_IfNotExists;
+//   if (DiagnoseUnexpandedParameterPack(SS, UPPC) ||
+//       DiagnoseUnexpandedParameterPack(TargetNameInfo, UPPC))
+//     return IER_Error;
 
-  return CheckMicrosoftIfExistsSymbol(S, SS, TargetNameInfo);
-}
+//   return CheckMicrosoftIfExistsSymbol(S, SS, TargetNameInfo);
+// }
 
 concepts::Requirement *Sema::ActOnSimpleRequirement(Expr *E) {
   return BuildExprRequirement(E, /*IsSimple=*/true,

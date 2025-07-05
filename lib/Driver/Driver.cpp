@@ -606,30 +606,30 @@ void Driver::setLTOMode(const llvm::opt::ArgList &Args) {
 }
 
 /// Compute the desired OpenMP runtime from the flags provided.
-// Driver::OpenMPRuntimeKind Driver::getOpenMPRuntime(const ArgList &Args) const {
-//   StringRef RuntimeName(CLANG_DEFAULT_OPENMP_RUNTIME);
+Driver::OpenMPRuntimeKind Driver::getOpenMPRuntime(const ArgList &Args) const {
+  StringRef RuntimeName(CLANG_DEFAULT_OPENMP_RUNTIME);
 
-//   const Arg *A = Args.getLastArg(options::OPT_fopenmp_EQ);
-//   if (A)
-//     RuntimeName = A->getValue();
+  const Arg *A = Args.getLastArg(options::OPT_fopenmp_EQ);
+  if (A)
+    RuntimeName = A->getValue();
 
-//   auto RT = llvm::StringSwitch<OpenMPRuntimeKind>(RuntimeName)
-//                 .Case("libomp", OMPRT_OMP)
-//                 .Case("libgomp", OMPRT_GOMP)
-//                 .Case("libiomp5", OMPRT_IOMP5)
-//                 .Default(OMPRT_Unknown);
+  auto RT = llvm::StringSwitch<OpenMPRuntimeKind>(RuntimeName)
+                .Case("libomp", OMPRT_OMP)
+                .Case("libgomp", OMPRT_GOMP)
+                .Case("libiomp5", OMPRT_IOMP5)
+                .Default(OMPRT_Unknown);
 
-//   if (RT == OMPRT_Unknown) {
-//     if (A)
-//       Diag(diag::err_drv_unsupported_option_argument)
-//           << A->getOption().getName() << A->getValue();
-//     else
-//       // FIXME: We could use a nicer diagnostic here.
-//       Diag(diag::err_drv_unsupported_opt) << "-fopenmp";
-//   }
+  if (RT == OMPRT_Unknown) {
+    if (A)
+      Diag(diag::err_drv_unsupported_option_argument)
+          << A->getOption().getName() << A->getValue();
+    else
+      // FIXME: We could use a nicer diagnostic here.
+      Diag(diag::err_drv_unsupported_opt) << "-fopenmp";
+  }
 
-//   return RT;
-// }
+  return RT;
+}
 
 void Driver::CreateOffloadingDeviceToolChains(Compilation &C,
                                               InputList &Inputs) {
@@ -691,67 +691,67 @@ void Driver::CreateOffloadingDeviceToolChains(Compilation &C,
   //
   // We need to generate an OpenMP toolchain if the user specified targets with
   // the -fopenmp-targets option.
-  // if (Arg *OpenMPTargets =
-  //         C.getInputArgs().getLastArg(options::OPT_fopenmp_targets_EQ)) {
-  //   if (OpenMPTargets->getNumValues()) {
-  //     // We expect that -fopenmp-targets is always used in conjunction with the
-  //     // option -fopenmp specifying a valid runtime with offloading support,
-  //     // i.e. libomp or libiomp.
-  //     bool HasValidOpenMPRuntime = C.getInputArgs().hasFlag(
-  //         options::OPT_fopenmp, options::OPT_fopenmp_EQ,
-  //         options::OPT_fno_openmp, false);
-  //     if (HasValidOpenMPRuntime) {
-  //       OpenMPRuntimeKind OpenMPKind = getOpenMPRuntime(C.getInputArgs());
-  //       HasValidOpenMPRuntime =
-  //           OpenMPKind == OMPRT_OMP || OpenMPKind == OMPRT_IOMP5;
-  //     }
+  if (Arg *OpenMPTargets =
+          C.getInputArgs().getLastArg(options::OPT_fopenmp_targets_EQ)) {
+    if (OpenMPTargets->getNumValues()) {
+      // We expect that -fopenmp-targets is always used in conjunction with the
+      // option -fopenmp specifying a valid runtime with offloading support,
+      // i.e. libomp or libiomp.
+      bool HasValidOpenMPRuntime = C.getInputArgs().hasFlag(
+          options::OPT_fopenmp, options::OPT_fopenmp_EQ,
+          options::OPT_fno_openmp, false);
+      if (HasValidOpenMPRuntime) {
+        OpenMPRuntimeKind OpenMPKind = getOpenMPRuntime(C.getInputArgs());
+        HasValidOpenMPRuntime =
+            OpenMPKind == OMPRT_OMP || OpenMPKind == OMPRT_IOMP5;
+      }
 
-  //     if (HasValidOpenMPRuntime) {
-  //       llvm::StringMap<const char *> FoundNormalizedTriples;
-  //       for (const char *Val : OpenMPTargets->getValues()) {
-  //         llvm::Triple TT(Val);
-  //         std::string NormalizedName = TT.normalize();
+      if (HasValidOpenMPRuntime) {
+        llvm::StringMap<const char *> FoundNormalizedTriples;
+        for (const char *Val : OpenMPTargets->getValues()) {
+          llvm::Triple TT(Val);
+          std::string NormalizedName = TT.normalize();
 
-  //         // Make sure we don't have a duplicate triple.
-  //         auto Duplicate = FoundNormalizedTriples.find(NormalizedName);
-  //         if (Duplicate != FoundNormalizedTriples.end()) {
-  //           Diag(latino::diag::warn_drv_omp_offload_target_duplicate)
-  //               << Val << Duplicate->second;
-  //           continue;
-  //         }
+          // Make sure we don't have a duplicate triple.
+          auto Duplicate = FoundNormalizedTriples.find(NormalizedName);
+          if (Duplicate != FoundNormalizedTriples.end()) {
+            Diag(latino::diag::warn_drv_omp_offload_target_duplicate)
+                << Val << Duplicate->second;
+            continue;
+          }
 
-  //         // Store the current triple so that we can check for duplicates in the
-  //         // following iterations.
-  //         FoundNormalizedTriples[NormalizedName] = Val;
+          // Store the current triple so that we can check for duplicates in the
+          // following iterations.
+          FoundNormalizedTriples[NormalizedName] = Val;
 
-  //         // If the specified target is invalid, emit a diagnostic.
-  //         if (TT.getArch() == llvm::Triple::UnknownArch)
-  //           Diag(latino::diag::err_drv_invalid_omp_target) << Val;
-  //         else {
-  //           const ToolChain *TC;
-  //           // CUDA toolchains have to be selected differently. They pair host
-  //           // and device in their implementation.
-  //           if (TT.isNVPTX()) {
-  //             const ToolChain *HostTC =
-  //                 C.getSingleOffloadToolChain<Action::OFK_Host>();
-  //             assert(HostTC && "Host toolchain should be always defined.");
-  //             auto &CudaTC =
-  //                 ToolChains[TT.str() + "/" + HostTC->getTriple().normalize()];
-  //             if (!CudaTC)
-  //               CudaTC = std::make_unique<toolchains::CudaToolChain>(
-  //                   *this, TT, *HostTC, C.getInputArgs(), Action::OFK_OpenMP);
-  //             TC = CudaTC.get();
-  //           } else
-  //             TC = &getToolChain(C.getInputArgs(), TT);
-  //           C.addOffloadDeviceToolChain(TC, Action::OFK_OpenMP);
-  //         }
-  //       }
-  //     } else
-  //       Diag(latino::diag::err_drv_expecting_fopenmp_with_fopenmp_targets);
-  //   } else
-  //     Diag(latino::diag::warn_drv_empty_joined_argument)
-  //         << OpenMPTargets->getAsString(C.getInputArgs());
-  // }
+          // If the specified target is invalid, emit a diagnostic.
+          if (TT.getArch() == llvm::Triple::UnknownArch)
+            Diag(latino::diag::err_drv_invalid_omp_target) << Val;
+          else {
+            const ToolChain *TC;
+            // CUDA toolchains have to be selected differently. They pair host
+            // and device in their implementation.
+            if (TT.isNVPTX()) {
+              const ToolChain *HostTC =
+                  C.getSingleOffloadToolChain<Action::OFK_Host>();
+              assert(HostTC && "Host toolchain should be always defined.");
+              auto &CudaTC =
+                  ToolChains[TT.str() + "/" + HostTC->getTriple().normalize()];
+              if (!CudaTC)
+                CudaTC = std::make_unique<toolchains::CudaToolChain>(
+                    *this, TT, *HostTC, C.getInputArgs(), Action::OFK_OpenMP);
+              TC = CudaTC.get();
+            } else
+              TC = &getToolChain(C.getInputArgs(), TT);
+            C.addOffloadDeviceToolChain(TC, Action::OFK_OpenMP);
+          }
+        }
+      } else
+        Diag(latino::diag::err_drv_expecting_fopenmp_with_fopenmp_targets);
+    } else
+      Diag(latino::diag::warn_drv_empty_joined_argument)
+          << OpenMPTargets->getAsString(C.getInputArgs());
+  }
 
   //
   // TODO: Add support for other offloading programming models here.
@@ -2201,12 +2201,12 @@ void Driver::BuildInputs(const ToolChain &TC, DerivedArgList &Args,
         // source file.
         //
         // FIXME: Clean this up if we move the phase sequence into the type.
-        if (Ty != types::TY_Object) {
-          if (Args.hasArg(options::OPT_ObjC))
-            Ty = types::TY_ObjC;
-          else if (Args.hasArg(options::OPT_ObjCXX))
-            Ty = types::TY_ObjCXX;
-        }
+        // if (Ty != types::TY_Object) {
+        //   if (Args.hasArg(options::OPT_ObjC))
+        //     Ty = types::TY_ObjC;
+        //   else if (Args.hasArg(options::OPT_ObjCXX))
+        //     Ty = types::TY_ObjCXX;
+        // }
       } else {
         assert(InputTypeArg && "InputType set w/o InputTypeArg");
         if (!InputTypeArg->getOption().matches(options::OPT_x)) {
@@ -2865,175 +2865,175 @@ class OffloadingActionBuilder final {
 
   /// OpenMP action builder. The host bitcode is passed to the device frontend
   /// and all the device linked images are passed to the host link phase.
-  // class OpenMPActionBuilder final : public DeviceActionBuilder {
-  //   /// The OpenMP actions for the current input.
-  //   ActionList OpenMPDeviceActions;
+  class OpenMPActionBuilder final : public DeviceActionBuilder {
+    /// The OpenMP actions for the current input.
+    ActionList OpenMPDeviceActions;
 
-  //   /// The linker inputs obtained for each toolchain.
-  //   SmallVector<ActionList, 8> DeviceLinkerInputs;
+    /// The linker inputs obtained for each toolchain.
+    SmallVector<ActionList, 8> DeviceLinkerInputs;
 
-  // public:
-  //   OpenMPActionBuilder(Compilation &C, DerivedArgList &Args,
-  //                       const Driver::InputList &Inputs)
-  //       : DeviceActionBuilder(C, Args, Inputs, Action::OFK_OpenMP) {}
+  public:
+    OpenMPActionBuilder(Compilation &C, DerivedArgList &Args,
+                        const Driver::InputList &Inputs)
+        : DeviceActionBuilder(C, Args, Inputs, Action::OFK_OpenMP) {}
 
-  //   ActionBuilderReturnCode
-  //   getDeviceDependences(OffloadAction::DeviceDependences &DA,
-  //                        phases::ID CurPhase, phases::ID FinalPhase,
-  //                        PhasesTy &Phases) override {
-  //     if (OpenMPDeviceActions.empty())
-  //       return ABRT_Inactive;
+    ActionBuilderReturnCode
+    getDeviceDependences(OffloadAction::DeviceDependences &DA,
+                         phases::ID CurPhase, phases::ID FinalPhase,
+                         PhasesTy &Phases) override {
+      if (OpenMPDeviceActions.empty())
+        return ABRT_Inactive;
 
-  //     // We should always have an action for each input.
-  //     assert(OpenMPDeviceActions.size() == ToolChains.size() &&
-  //            "Number of OpenMP actions and toolchains do not match.");
+      // We should always have an action for each input.
+      assert(OpenMPDeviceActions.size() == ToolChains.size() &&
+             "Number of OpenMP actions and toolchains do not match.");
 
-  //     // The host only depends on device action in the linking phase, when all
-  //     // the device images have to be embedded in the host image.
-  //     if (CurPhase == phases::Link) {
-  //       assert(ToolChains.size() == DeviceLinkerInputs.size() &&
-  //              "Toolchains and linker inputs sizes do not match.");
-  //       auto LI = DeviceLinkerInputs.begin();
-  //       for (auto *A : OpenMPDeviceActions) {
-  //         LI->push_back(A);
-  //         ++LI;
-  //       }
+      // The host only depends on device action in the linking phase, when all
+      // the device images have to be embedded in the host image.
+      if (CurPhase == phases::Link) {
+        assert(ToolChains.size() == DeviceLinkerInputs.size() &&
+               "Toolchains and linker inputs sizes do not match.");
+        auto LI = DeviceLinkerInputs.begin();
+        for (auto *A : OpenMPDeviceActions) {
+          LI->push_back(A);
+          ++LI;
+        }
 
-  //       // We passed the device action as a host dependence, so we don't need to
-  //       // do anything else with them.
-  //       OpenMPDeviceActions.clear();
-  //       return ABRT_Success;
-  //     }
+        // We passed the device action as a host dependence, so we don't need to
+        // do anything else with them.
+        OpenMPDeviceActions.clear();
+        return ABRT_Success;
+      }
 
-  //     // By default, we produce an action for each device arch.
-  //     for (Action *&A : OpenMPDeviceActions)
-  //       A = C.getDriver().ConstructPhaseAction(C, Args, CurPhase, A);
+      // By default, we produce an action for each device arch.
+      for (Action *&A : OpenMPDeviceActions)
+        A = C.getDriver().ConstructPhaseAction(C, Args, CurPhase, A);
 
-  //     return ABRT_Success;
-  //   }
+      return ABRT_Success;
+    }
 
-  //   ActionBuilderReturnCode addDeviceDepences(Action *HostAction) override {
+    ActionBuilderReturnCode addDeviceDepences(Action *HostAction) override {
 
-  //     // If this is an input action replicate it for each OpenMP toolchain.
-  //     if (auto *IA = dyn_cast<InputAction>(HostAction)) {
-  //       OpenMPDeviceActions.clear();
-  //       for (unsigned I = 0; I < ToolChains.size(); ++I)
-  //         OpenMPDeviceActions.push_back(
-  //             C.MakeAction<InputAction>(IA->getInputArg(), IA->getType()));
-  //       return ABRT_Success;
-  //     }
+      // If this is an input action replicate it for each OpenMP toolchain.
+      if (auto *IA = dyn_cast<InputAction>(HostAction)) {
+        OpenMPDeviceActions.clear();
+        for (unsigned I = 0; I < ToolChains.size(); ++I)
+          OpenMPDeviceActions.push_back(
+              C.MakeAction<InputAction>(IA->getInputArg(), IA->getType()));
+        return ABRT_Success;
+      }
 
-  //     // If this is an unbundling action use it as is for each OpenMP toolchain.
-  //     if (auto *UA = dyn_cast<OffloadUnbundlingJobAction>(HostAction)) {
-  //       OpenMPDeviceActions.clear();
-  //       auto *IA = cast<InputAction>(UA->getInputs().back());
-  //       std::string FileName = IA->getInputArg().getAsString(Args);
-  //       // Check if the type of the file is the same as the action. Do not
-  //       // unbundle it if it is not. Do not unbundle .so files, for example,
-  //       // which are not object files.
-  //       if (IA->getType() == types::TY_Object &&
-  //           (!llvm::sys::path::has_extension(FileName) ||
-  //            types::lookupTypeForExtension(
-  //                llvm::sys::path::extension(FileName).drop_front()) !=
-  //                types::TY_Object))
-  //         return ABRT_Inactive;
-  //       for (unsigned I = 0; I < ToolChains.size(); ++I) {
-  //         OpenMPDeviceActions.push_back(UA);
-  //         UA->registerDependentActionInfo(
-  //             ToolChains[I], /*BoundArch=*/StringRef(), Action::OFK_OpenMP);
-  //       }
-  //       return ABRT_Success;
-  //     }
+      // If this is an unbundling action use it as is for each OpenMP toolchain.
+      if (auto *UA = dyn_cast<OffloadUnbundlingJobAction>(HostAction)) {
+        OpenMPDeviceActions.clear();
+        auto *IA = cast<InputAction>(UA->getInputs().back());
+        std::string FileName = IA->getInputArg().getAsString(Args);
+        // Check if the type of the file is the same as the action. Do not
+        // unbundle it if it is not. Do not unbundle .so files, for example,
+        // which are not object files.
+        if (IA->getType() == types::TY_Object &&
+            (!llvm::sys::path::has_extension(FileName) ||
+             types::lookupTypeForExtension(
+                 llvm::sys::path::extension(FileName).drop_front()) !=
+                 types::TY_Object))
+          return ABRT_Inactive;
+        for (unsigned I = 0; I < ToolChains.size(); ++I) {
+          OpenMPDeviceActions.push_back(UA);
+          UA->registerDependentActionInfo(
+              ToolChains[I], /*BoundArch=*/StringRef(), Action::OFK_OpenMP);
+        }
+        return ABRT_Success;
+      }
 
-  //     // When generating code for OpenMP we use the host compile phase result as
-  //     // a dependence to the device compile phase so that it can learn what
-  //     // declarations should be emitted. However, this is not the only use for
-  //     // the host action, so we prevent it from being collapsed.
-  //     if (isa<CompileJobAction>(HostAction)) {
-  //       HostAction->setCannotBeCollapsedWithNextDependentAction();
-  //       assert(ToolChains.size() == OpenMPDeviceActions.size() &&
-  //              "Toolchains and device action sizes do not match.");
-  //       OffloadAction::HostDependence HDep(
-  //           *HostAction, *C.getSingleOffloadToolChain<Action::OFK_Host>(),
-  //           /*BoundArch=*/nullptr, Action::OFK_OpenMP);
-  //       auto TC = ToolChains.begin();
-  //       for (Action *&A : OpenMPDeviceActions) {
-  //         assert(isa<CompileJobAction>(A));
-  //         OffloadAction::DeviceDependences DDep;
-  //         DDep.add(*A, **TC, /*BoundArch=*/nullptr, Action::OFK_OpenMP);
-  //         A = C.MakeAction<OffloadAction>(HDep, DDep);
-  //         ++TC;
-  //       }
-  //     }
-  //     return ABRT_Success;
-  //   }
+      // When generating code for OpenMP we use the host compile phase result as
+      // a dependence to the device compile phase so that it can learn what
+      // declarations should be emitted. However, this is not the only use for
+      // the host action, so we prevent it from being collapsed.
+      if (isa<CompileJobAction>(HostAction)) {
+        HostAction->setCannotBeCollapsedWithNextDependentAction();
+        assert(ToolChains.size() == OpenMPDeviceActions.size() &&
+               "Toolchains and device action sizes do not match.");
+        OffloadAction::HostDependence HDep(
+            *HostAction, *C.getSingleOffloadToolChain<Action::OFK_Host>(),
+            /*BoundArch=*/nullptr, Action::OFK_OpenMP);
+        auto TC = ToolChains.begin();
+        for (Action *&A : OpenMPDeviceActions) {
+          assert(isa<CompileJobAction>(A));
+          OffloadAction::DeviceDependences DDep;
+          DDep.add(*A, **TC, /*BoundArch=*/nullptr, Action::OFK_OpenMP);
+          A = C.MakeAction<OffloadAction>(HDep, DDep);
+          ++TC;
+        }
+      }
+      return ABRT_Success;
+    }
 
-  //   void appendTopLevelActions(ActionList &AL) override {
-  //     if (OpenMPDeviceActions.empty())
-  //       return;
+    void appendTopLevelActions(ActionList &AL) override {
+      if (OpenMPDeviceActions.empty())
+        return;
 
-  //     // We should always have an action for each input.
-  //     assert(OpenMPDeviceActions.size() == ToolChains.size() &&
-  //            "Number of OpenMP actions and toolchains do not match.");
+      // We should always have an action for each input.
+      assert(OpenMPDeviceActions.size() == ToolChains.size() &&
+             "Number of OpenMP actions and toolchains do not match.");
 
-  //     // Append all device actions followed by the proper offload action.
-  //     auto TI = ToolChains.begin();
-  //     for (auto *A : OpenMPDeviceActions) {
-  //       OffloadAction::DeviceDependences Dep;
-  //       Dep.add(*A, **TI, /*BoundArch=*/nullptr, Action::OFK_OpenMP);
-  //       AL.push_back(C.MakeAction<OffloadAction>(Dep, A->getType()));
-  //       ++TI;
-  //     }
-  //     // We no longer need the action stored in this builder.
-  //     OpenMPDeviceActions.clear();
-  //   }
+      // Append all device actions followed by the proper offload action.
+      auto TI = ToolChains.begin();
+      for (auto *A : OpenMPDeviceActions) {
+        OffloadAction::DeviceDependences Dep;
+        Dep.add(*A, **TI, /*BoundArch=*/nullptr, Action::OFK_OpenMP);
+        AL.push_back(C.MakeAction<OffloadAction>(Dep, A->getType()));
+        ++TI;
+      }
+      // We no longer need the action stored in this builder.
+      OpenMPDeviceActions.clear();
+    }
 
-  //   void appendLinkDeviceActions(ActionList &AL) override {
-  //     assert(ToolChains.size() == DeviceLinkerInputs.size() &&
-  //            "Toolchains and linker inputs sizes do not match.");
+    void appendLinkDeviceActions(ActionList &AL) override {
+      assert(ToolChains.size() == DeviceLinkerInputs.size() &&
+             "Toolchains and linker inputs sizes do not match.");
 
-  //     // Append a new link action for each device.
-  //     auto TC = ToolChains.begin();
-  //     for (auto &LI : DeviceLinkerInputs) {
-  //       auto *DeviceLinkAction =
-  //           C.MakeAction<LinkJobAction>(LI, types::TY_Image);
-  //       OffloadAction::DeviceDependences DeviceLinkDeps;
-  //       DeviceLinkDeps.add(*DeviceLinkAction, **TC, /*BoundArch=*/nullptr,
-	// 	        Action::OFK_OpenMP);
-  //       AL.push_back(C.MakeAction<OffloadAction>(DeviceLinkDeps,
-  //           DeviceLinkAction->getType()));
-  //       ++TC;
-  //     }
-  //     DeviceLinkerInputs.clear();
-  //   }
+      // Append a new link action for each device.
+      auto TC = ToolChains.begin();
+      for (auto &LI : DeviceLinkerInputs) {
+        auto *DeviceLinkAction =
+            C.MakeAction<LinkJobAction>(LI, types::TY_Image);
+        OffloadAction::DeviceDependences DeviceLinkDeps;
+        DeviceLinkDeps.add(*DeviceLinkAction, **TC, /*BoundArch=*/nullptr,
+		        Action::OFK_OpenMP);
+        AL.push_back(C.MakeAction<OffloadAction>(DeviceLinkDeps,
+            DeviceLinkAction->getType()));
+        ++TC;
+      }
+      DeviceLinkerInputs.clear();
+    }
 
-  //   Action* appendLinkHostActions(ActionList &AL) override {
-  //     // Create wrapper bitcode from the result of device link actions and compile
-  //     // it to an object which will be added to the host link command.
-  //     auto *BC = C.MakeAction<OffloadWrapperJobAction>(AL, types::TY_LLVM_BC);
-  //     auto *ASM = C.MakeAction<BackendJobAction>(BC, types::TY_PP_Asm);
-  //     return C.MakeAction<AssembleJobAction>(ASM, types::TY_Object);
-  //   }
+    Action* appendLinkHostActions(ActionList &AL) override {
+      // Create wrapper bitcode from the result of device link actions and compile
+      // it to an object which will be added to the host link command.
+      auto *BC = C.MakeAction<OffloadWrapperJobAction>(AL, types::TY_LLVM_BC);
+      auto *ASM = C.MakeAction<BackendJobAction>(BC, types::TY_PP_Asm);
+      return C.MakeAction<AssembleJobAction>(ASM, types::TY_Object);
+    }
 
-  //   void appendLinkDependences(OffloadAction::DeviceDependences &DA) override {}
+    void appendLinkDependences(OffloadAction::DeviceDependences &DA) override {}
 
-  //   bool initialize() override {
-  //     // Get the OpenMP toolchains. If we don't get any, the action builder will
-  //     // know there is nothing to do related to OpenMP offloading.
-  //     auto OpenMPTCRange = C.getOffloadToolChains<Action::OFK_OpenMP>();
-  //     for (auto TI = OpenMPTCRange.first, TE = OpenMPTCRange.second; TI != TE;
-  //          ++TI)
-  //       ToolChains.push_back(TI->second);
+    bool initialize() override {
+      // Get the OpenMP toolchains. If we don't get any, the action builder will
+      // know there is nothing to do related to OpenMP offloading.
+      auto OpenMPTCRange = C.getOffloadToolChains<Action::OFK_OpenMP>();
+      for (auto TI = OpenMPTCRange.first, TE = OpenMPTCRange.second; TI != TE;
+           ++TI)
+        ToolChains.push_back(TI->second);
 
-  //     DeviceLinkerInputs.resize(ToolChains.size());
-  //     return false;
-  //   }
+      DeviceLinkerInputs.resize(ToolChains.size());
+      return false;
+    }
 
-  //   bool canUseBundlerUnbundler() const override {
-  //     // OpenMP should use bundled files whenever possible.
-  //     return true;
-  //   }
-  // };
+    bool canUseBundlerUnbundler() const override {
+      // OpenMP should use bundled files whenever possible.
+      return true;
+    }
+  };
 
   ///
   /// TODO: Add the implementation for other specialized builders here.

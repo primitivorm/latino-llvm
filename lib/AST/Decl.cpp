@@ -21,7 +21,7 @@
 #include "latino/AST/DeclBase.h"
 #include "latino/AST/DeclCXX.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/Expr.h"
@@ -907,8 +907,8 @@ LinkageComputer::getLVForNamespaceScopeDecl(const NamedDecl *D,
     return LinkageInfo(LV.getLinkage(), DefaultVisibility, false);
 
   // Mark the symbols as hidden when compiling for the device.
-  // if (Context.getLangOpts().OpenMP && Context.getLangOpts().OpenMPIsDevice)
-  //   LV.mergeVisibility(HiddenVisibility, /*newExplicit=*/false);
+  if (Context.getLangOpts().OpenMP && Context.getLangOpts().OpenMPIsDevice)
+    LV.mergeVisibility(HiddenVisibility, /*newExplicit=*/false);
 
   return LV;
 }
@@ -1985,14 +1985,14 @@ void VarDecl::setStorageClass(StorageClass SC) {
 VarDecl::TLSKind VarDecl::getTLSKind() const {
   switch (VarDeclBits.TSCSpec) {
   case TSCS_unspecified:
-    // if (!hasAttr<ThreadAttr>() &&
-    //     !(getASTContext().getLangOpts().OpenMPUseTLS &&
-    //       getASTContext().getTargetInfo().isTLSSupported() &&
-    //       hasAttr<OMPThreadPrivateDeclAttr>()))
-    //   return TLS_None;
+    if (!hasAttr<ThreadAttr>() &&
+        !(getASTContext().getLangOpts().OpenMPUseTLS &&
+          getASTContext().getTargetInfo().isTLSSupported() &&
+          hasAttr<OMPThreadPrivateDeclAttr>()))
+      return TLS_None;
     return ((getASTContext().getLangOpts().isCompatibleWithMSVC(
-                LangOptions::MSVC2015)) /*||
-            hasAttr<OMPThreadPrivateDeclAttr>()*/)
+                LangOptions::MSVC2015)) ||
+            hasAttr<OMPThreadPrivateDeclAttr>())
                ? TLS_Dynamic
                : TLS_Static;
   case TSCS___thread: // Fall through.
@@ -3068,8 +3068,8 @@ bool FunctionDecl::isExternC() const {
 }
 
 bool FunctionDecl::isInExternCContext() const {
-  // if (hasAttr<OpenCLKernelAttr>())
-  //   return true;
+  if (hasAttr<OpenCLKernelAttr>())
+    return true;
   return getLexicalDeclContext()->isExternCContext();
 }
 
@@ -3193,9 +3193,9 @@ unsigned FunctionDecl::getBuiltinID(bool ConsiderWrapperFunctions) const {
 
   // OpenCL v1.2 s6.9.f - The library functions defined in
   // the C99 standard headers are not available.
-  // if (Context.getLangOpts().OpenCL &&
-  //     Context.BuiltinInfo.isPredefinedLibFunction(BuiltinID))
-  //   return 0;
+  if (Context.getLangOpts().OpenCL &&
+      Context.BuiltinInfo.isPredefinedLibFunction(BuiltinID))
+    return 0;
 
   // CUDA does not have device-side standard library. printf and malloc are the
   // only special cases that are supported by device-side runtime.
@@ -3207,11 +3207,11 @@ unsigned FunctionDecl::getBuiltinID(bool ConsiderWrapperFunctions) const {
   // As AMDGCN implementation of OpenMP does not have a device-side standard
   // library, none of the predefined library functions except printf and malloc
   // should be treated as a builtin i.e. 0 should be returned for them.
-  // if (Context.getTargetInfo().getTriple().isAMDGCN() &&
-  //     Context.getLangOpts().OpenMPIsDevice &&
-  //     Context.BuiltinInfo.isPredefinedLibFunction(BuiltinID) &&
-  //     !(BuiltinID == Builtin::BIprintf || BuiltinID == Builtin::BImalloc))
-  //   return 0;
+  if (Context.getTargetInfo().getTriple().isAMDGCN() &&
+      Context.getLangOpts().OpenMPIsDevice &&
+      Context.BuiltinInfo.isPredefinedLibFunction(BuiltinID) &&
+      !(BuiltinID == Builtin::BIprintf || BuiltinID == Builtin::BImalloc))
+    return 0;
 
   return BuiltinID;
 }

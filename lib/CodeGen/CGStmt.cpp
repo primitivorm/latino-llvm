@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "CGDebugInfo.h"
-// #include "CGOpenMPRuntime.h"
+#include "CGOpenMPRuntime.h"
 #include "CodeGenFunction.h"
 #include "CodeGenModule.h"
 #include "TargetInfo.h"
@@ -76,19 +76,19 @@ void CodeGenFunction::EmitStmt(const Stmt *S, ArrayRef<const Attr *> Attrs) {
 
   // Ignore all OpenMP directives except for simd if OpenMP with Simd is
   // enabled.
-  // if (getLangOpts().OpenMP && getLangOpts().OpenMPSimd) {
-  //   if (const auto *D = dyn_cast<OMPExecutableDirective>(S)) {
-  //     EmitSimpleOMPExecutableDirective(*D);
-  //     return;
-  //   }
-  // }
+  if (getLangOpts().OpenMP && getLangOpts().OpenMPSimd) {
+    if (const auto *D = dyn_cast<OMPExecutableDirective>(S)) {
+      EmitSimpleOMPExecutableDirective(*D);
+      return;
+    }
+  }
 
   switch (S->getStmtClass()) {
   case Stmt::NoStmtClass:
   case Stmt::CXXCatchStmtClass:
   case Stmt::SEHExceptStmtClass:
   case Stmt::SEHFinallyStmtClass:
-  case Stmt::MSDependentExistsStmtClass:
+  //case Stmt::MSDependentExistsStmtClass:
     llvm_unreachable("invalid statement class to emit generically");
   case Stmt::NullStmtClass:
   case Stmt::CompoundStmtClass:
@@ -1126,10 +1126,10 @@ void CodeGenFunction::EmitReturnStmt(const ReturnStmt &S) {
   // Check if the NRVO candidate was not globalized in OpenMP mode.
   if (getLangOpts().ElideConstructors && S.getNRVOCandidate() &&
       S.getNRVOCandidate()->isNRVOVariable() &&
-      (!getLangOpts().OpenMP /*||
+      (!getLangOpts().OpenMP ||
        !CGM.getOpenMPRuntime()
             .getAddressOfLocalVariable(*this, S.getNRVOCandidate())
-            .isValid()*/)) {
+            .isValid())) {
     // Apply the named return value optimization for this return statement,
     // which means doing nothing: the appropriate result has already been
     // constructed into the NRVO variable.

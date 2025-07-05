@@ -317,7 +317,7 @@ static bool PersonalityHasOnlyCXXUses(llvm::Constant *Fn) {
 /// when it really needs it.
 void CodeGenModule::SimplifyPersonality() {
   // If we're not in ObjC++ -fexceptions, there's nothing to do.
-  if (!LangOpts.CPlusPlus || !LangOpts.ObjC || !LangOpts.Exceptions)
+  if (!LangOpts.CPlusPlus /*|| !LangOpts.ObjC*/ || !LangOpts.Exceptions)
     return;
 
   // Both the problem this endeavors to fix and the way the logic

@@ -2560,12 +2560,12 @@ static bool handleIntIntBinOp(EvalInfo &Info, const Expr *E, const APSInt &LHS,
                             E->getType());
     return true;
   case BO_Shl: {
-    /*if (Info.getLangOpts().OpenCL)
+    if (Info.getLangOpts().OpenCL)
       // OpenCL 6.3j: shift values are effectively % word size of LHS.
       RHS &= APSInt(llvm::APInt(RHS.getBitWidth(),
                     static_cast<uint64_t>(LHS.getBitWidth() - 1)),
                     RHS.isUnsigned());
-    else*/ if (RHS.isSigned() && RHS.isNegative()) {
+    else if (RHS.isSigned() && RHS.isNegative()) {
       // During constant-folding, a negative shift is an opposite shift. Such
       // a shift is not a constant expression.
       Info.CCEDiag(E, diag::note_constexpr_negative_shift) << RHS;
@@ -2593,12 +2593,12 @@ static bool handleIntIntBinOp(EvalInfo &Info, const Expr *E, const APSInt &LHS,
     return true;
   }
   case BO_Shr: {
-    /*if (Info.getLangOpts().OpenCL)
+    if (Info.getLangOpts().OpenCL)
       // OpenCL 6.3j: shift values are effectively % word size of LHS.
       RHS &= APSInt(llvm::APInt(RHS.getBitWidth(),
                     static_cast<uint64_t>(LHS.getBitWidth() - 1)),
                     RHS.isUnsigned());
-    else*/ if (RHS.isSigned() && RHS.isNegative()) {
+    else if (RHS.isSigned() && RHS.isNegative()) {
       // During constant-folding, a negative shift is an opposite shift. Such a
       // shift is not a constant expression.
       Info.CCEDiag(E, diag::note_constexpr_negative_shift) << RHS;
@@ -3824,9 +3824,9 @@ static CompleteObject findCompleteObject(EvalInfo &Info, const Expr *E,
     }
 
     // In OpenCL if a variable is in constant address space it is a const value.
-    bool IsConstant = BaseType.isConstQualified() /*||
+    bool IsConstant = BaseType.isConstQualified() ||
                       (Info.getLangOpts().OpenCL &&
-                       BaseType.getAddressSpace() == LangAS::opencl_constant)*/;
+                       BaseType.getAddressSpace() == LangAS::opencl_constant);
 
     // Unless we're looking at a local variable or argument in a constexpr call,
     // the variable we're reading must be const.
@@ -10554,17 +10554,17 @@ EvaluateBuiltinClassifyType(QualType T, const LangOptions &LangOpts) {
     // case BuiltinType::ObjCId:
     // case BuiltinType::ObjCClass:
     // case BuiltinType::ObjCSel:
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-    // case BuiltinType::OCLSampler:
-    // case BuiltinType::OCLEvent:
-    // case BuiltinType::OCLClkEvent:
-    // case BuiltinType::OCLQueue:
-    // case BuiltinType::OCLReserveID:
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLExtensionTypes.def"
+    case BuiltinType::OCLSampler:
+    case BuiltinType::OCLEvent:
+    case BuiltinType::OCLClkEvent:
+    case BuiltinType::OCLQueue:
+    case BuiltinType::OCLReserveID:
 #define SVE_TYPE(Name, Id, SingletonId) \
     case BuiltinType::Id:
 #include "latino/Basic/AArch64SVEACLETypes.def"
@@ -11542,9 +11542,9 @@ bool IntExprEvaluator::VisitBuiltinCallExpr(const CallExpr *E,
     return BuiltinOp == Builtin::BI__atomic_always_lock_free ?
         Success(0, E) : Error(E);
   }
-  // case Builtin::BIomp_is_initial_device:
-  //   // We can decide statically which value the runtime would return if called.
-  //   return Success(Info.getLangOpts().OpenMPIsDevice ? 0 : 1, E);
+  case Builtin::BIomp_is_initial_device:
+    // We can decide statically which value the runtime would return if called.
+    return Success(Info.getLangOpts().OpenMPIsDevice ? 0 : 1, E);
   case Builtin::BI__builtin_add_overflow:
   case Builtin::BI__builtin_sub_overflow:
   case Builtin::BI__builtin_mul_overflow:
@@ -12528,21 +12528,21 @@ bool IntExprEvaluator::VisitUnaryExprOrTypeTraitExpr(
                      E);
   }
 
-  // case UETT_VecStep: {
-  //   QualType Ty = E->getTypeOfArgument();
+  case UETT_VecStep: {
+    QualType Ty = E->getTypeOfArgument();
 
-  //   if (Ty->isVectorType()) {
-  //     unsigned n = Ty->castAs<VectorType>()->getNumElements();
+    if (Ty->isVectorType()) {
+      unsigned n = Ty->castAs<VectorType>()->getNumElements();
 
-  //     // The vec_step built-in functions that take a 3-component
-  //     // vector return 4. (OpenCL 1.1 spec 6.11.12)
-  //     if (n == 3)
-  //       n = 4;
+      // The vec_step built-in functions that take a 3-component
+      // vector return 4. (OpenCL 1.1 spec 6.11.12)
+      if (n == 3)
+        n = 4;
 
-  //     return Success(n, E);
-  //   } else
-  //     return Success(1, E);
-  // }
+      return Success(n, E);
+    } else
+      return Success(1, E);
+  }
 
   case UETT_SizeOf: {
     QualType SrcTy = E->getTypeOfArgument();
@@ -12556,13 +12556,13 @@ bool IntExprEvaluator::VisitUnaryExprOrTypeTraitExpr(
       return false;
     return Success(Sizeof, E);
   }
-  // case UETT_OpenMPRequiredSimdAlign:
-  //   assert(E->isArgumentType());
-  //   return Success(
-  //       Info.Ctx.toCharUnitsFromBits(
-  //                   Info.Ctx.getOpenMPDefaultSimdAlign(E->getArgumentType()))
-  //           .getQuantity(),
-  //       E);
+  case UETT_OpenMPRequiredSimdAlign:
+    assert(E->isArgumentType());
+    return Success(
+        Info.Ctx.toCharUnitsFromBits(
+                    Info.Ctx.getOpenMPDefaultSimdAlign(E->getArgumentType()))
+            .getQuantity(),
+        E);
   }
 
   llvm_unreachable("unknown expr/type trait");
@@ -12717,7 +12717,7 @@ bool IntExprEvaluator::VisitCastExpr(const CastExpr *E) {
   case CK_ZeroToOCLOpaqueType:
   case CK_NonAtomicToAtomic:
   case CK_AddressSpaceConversion:
-  // case CK_IntToOCLSampler:
+  case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_IntegralToFixedPoint:
     llvm_unreachable("invalid cast kind for integral value");
@@ -13388,7 +13388,7 @@ bool ComplexExprEvaluator::VisitCastExpr(const CastExpr *E) {
   case CK_ZeroToOCLOpaqueType:
   case CK_NonAtomicToAtomic:
   case CK_AddressSpaceConversion:
-  // case CK_IntToOCLSampler:
+  case CK_IntToOCLSampler:
   case CK_FixedPointCast:
   case CK_FixedPointToBoolean:
   case CK_FixedPointToIntegral:
@@ -14476,9 +14476,9 @@ static ICEDiag CheckICE(const Expr* E, const ASTContext &Ctx) {
   case Expr::StringLiteralClass:
   case Expr::ArraySubscriptExprClass:
   case Expr::MatrixSubscriptExprClass:
-  // case Expr::OMPArraySectionExprClass:
-  // case Expr::OMPArrayShapingExprClass:
-  // case Expr::OMPIteratorExprClass:
+  case Expr::OMPArraySectionExprClass:
+  case Expr::OMPArrayShapingExprClass:
+  case Expr::OMPIteratorExprClass:
   case Expr::MemberExprClass:
   case Expr::CompoundAssignOperatorClass:
   case Expr::CompoundLiteralExprClass:

@@ -26,7 +26,7 @@
 #include "latino/AST/DeclCXX.h"
 #include "latino/AST/DeclContextInternals.h"
 // #include "latino/AST/DeclObjC.h"
-// #include "latino/AST/DeclOpenMP.h"
+#include "latino/AST/DeclOpenMP.h"
 #include "latino/AST/DeclTemplate.h"
 #include "latino/AST/DeclarationName.h"
 #include "latino/AST/DependenceFlags.h"
@@ -1383,11 +1383,11 @@ void ASTContext::InitBuiltinTypes(const TargetInfo &Target,
   InitBuiltinType(BuiltinFnTy,  BuiltinType::BuiltinFn);
 
   // Placeholder type for OMP array sections.
-  // if (LangOpts.OpenMP) {
-  //   InitBuiltinType(OMPArraySectionTy, BuiltinType::OMPArraySection);
-  //   InitBuiltinType(OMPArrayShapingTy, BuiltinType::OMPArrayShaping);
-  //   InitBuiltinType(OMPIteratorTy, BuiltinType::OMPIterator);
-  // }
+  if (LangOpts.OpenMP) {
+    InitBuiltinType(OMPArraySectionTy, BuiltinType::OMPArraySection);
+    InitBuiltinType(OMPArrayShapingTy, BuiltinType::OMPArrayShaping);
+    InitBuiltinType(OMPIteratorTy, BuiltinType::OMPIterator);
+  }
   if (LangOpts.MatrixTypes)
     InitBuiltinType(IncompleteMatrixIdxTy, BuiltinType::IncompleteMatrixIdx);
 
@@ -1402,21 +1402,21 @@ void ASTContext::InitBuiltinTypes(const TargetInfo &Target,
   // InitBuiltinType(ObjCBuiltinClassTy, BuiltinType::ObjCClass);
   // InitBuiltinType(ObjCBuiltinSelTy, BuiltinType::ObjCSel);
 
-//   if (LangOpts.OpenCL) {
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//     InitBuiltinType(SingletonId, BuiltinType::Id);
-// #include "latino/Basic/OpenCLImageTypes.def"
+  if (LangOpts.OpenCL) {
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+    InitBuiltinType(SingletonId, BuiltinType::Id);
+#include "latino/Basic/OpenCLImageTypes.def"
 
-//     InitBuiltinType(OCLSamplerTy, BuiltinType::OCLSampler);
-//     InitBuiltinType(OCLEventTy, BuiltinType::OCLEvent);
-//     InitBuiltinType(OCLClkEventTy, BuiltinType::OCLClkEvent);
-//     InitBuiltinType(OCLQueueTy, BuiltinType::OCLQueue);
-//     InitBuiltinType(OCLReserveIDTy, BuiltinType::OCLReserveID);
+    InitBuiltinType(OCLSamplerTy, BuiltinType::OCLSampler);
+    InitBuiltinType(OCLEventTy, BuiltinType::OCLEvent);
+    InitBuiltinType(OCLClkEventTy, BuiltinType::OCLClkEvent);
+    InitBuiltinType(OCLQueueTy, BuiltinType::OCLQueue);
+    InitBuiltinType(OCLReserveIDTy, BuiltinType::OCLReserveID);
 
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//     InitBuiltinType(Id##Ty, BuiltinType::Id);
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-//   }
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+    InitBuiltinType(Id##Ty, BuiltinType::Id);
+#include "latino/Basic/OpenCLExtensionTypes.def"
+  }
 
   if (Target.hasAArch64SVETypes()) {
 #define SVE_TYPE(Name, Id, SingletonId) \
@@ -1655,19 +1655,19 @@ const llvm::fltSemantics &ASTContext::getFloatTypeSemantics(QualType T) const {
     llvm_unreachable("Not a floating point type!");
   case BuiltinType::BFloat16:
     return Target->getBFloat16Format();
-  // case BuiltinType::Float16:
-  // case BuiltinType::Half:
-  //   return Target->getHalfFormat();
+  case BuiltinType::Float16:
+  case BuiltinType::Half:
+    return Target->getHalfFormat();
   case BuiltinType::Float:      return Target->getFloatFormat();
   case BuiltinType::Double:     return Target->getDoubleFormat();
   case BuiltinType::LongDouble:
-    // if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice)
-    //   return AuxTarget->getLongDoubleFormat();
+    if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice)
+      return AuxTarget->getLongDoubleFormat();
     return Target->getLongDoubleFormat();
-  // case BuiltinType::Float128:
-  //   // if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice)
-  //   //   return AuxTarget->getFloat128Format();
-  //   return Target->getFloat128Format();
+  case BuiltinType::Float128:
+    if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice)
+      return AuxTarget->getFloat128Format();
+    return Target->getFloat128Format();
   }
 }
 
@@ -2053,19 +2053,19 @@ TypeInfo ASTContext::getTypeInfoImpl(const Type *T) const {
       Width = Target->getBFloat16Width();
       Align = Target->getBFloat16Align();
       break;
-    // case BuiltinType::Float16:
-    // case BuiltinType::Half:
-    //   if (Target->hasFloat16Type() || !getLangOpts().OpenMP ||
-    //       !getLangOpts().OpenMPIsDevice) {
-    //     Width = Target->getHalfWidth();
-    //     Align = Target->getHalfAlign();
-    //   } else {
-    //     assert(getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
-    //            "Expected OpenMP device compilation.");
-    //     Width = AuxTarget->getHalfWidth();
-    //     Align = AuxTarget->getHalfAlign();
-    //   }
-    //   break;
+    case BuiltinType::Float16:
+    case BuiltinType::Half:
+      if (Target->hasFloat16Type() || !getLangOpts().OpenMP ||
+          !getLangOpts().OpenMPIsDevice) {
+        Width = Target->getHalfWidth();
+        Align = Target->getHalfAlign();
+      } else {
+        assert(getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
+               "Expected OpenMP device compilation.");
+        Width = AuxTarget->getHalfWidth();
+        Align = AuxTarget->getHalfAlign();
+      }
+      break;
     case BuiltinType::Float:
       Width = Target->getFloatWidth();
       Align = Target->getFloatAlign();
@@ -2075,28 +2075,28 @@ TypeInfo ASTContext::getTypeInfoImpl(const Type *T) const {
       Align = Target->getDoubleAlign();
       break;
     case BuiltinType::LongDouble:
-      // if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
-      //     (Target->getLongDoubleWidth() != AuxTarget->getLongDoubleWidth() ||
-      //      Target->getLongDoubleAlign() != AuxTarget->getLongDoubleAlign())) {
-      //   Width = AuxTarget->getLongDoubleWidth();
-      //   Align = AuxTarget->getLongDoubleAlign();
-      // } else {
+      if (getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
+          (Target->getLongDoubleWidth() != AuxTarget->getLongDoubleWidth() ||
+           Target->getLongDoubleAlign() != AuxTarget->getLongDoubleAlign())) {
+        Width = AuxTarget->getLongDoubleWidth();
+        Align = AuxTarget->getLongDoubleAlign();
+      } else {
         Width = Target->getLongDoubleWidth();
         Align = Target->getLongDoubleAlign();
-      // }
+      }
       break;
-    // case BuiltinType::Float128:
-    //   // if (Target->hasFloat128Type() || !getLangOpts().OpenMP ||
-    //   //     !getLangOpts().OpenMPIsDevice) {
-    //   //   Width = Target->getFloat128Width();
-    //   //   Align = Target->getFloat128Align();
-    //   // } else {
-    //     assert(getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
-    //            "Expected OpenMP device compilation.");
-    //     Width = AuxTarget->getFloat128Width();
-    //     Align = AuxTarget->getFloat128Align();
-    //   // }
-    //   break;
+    case BuiltinType::Float128:
+      if (Target->hasFloat128Type() || !getLangOpts().OpenMP ||
+          !getLangOpts().OpenMPIsDevice) {
+        Width = Target->getFloat128Width();
+        Align = Target->getFloat128Align();
+      } else {
+        assert(getLangOpts().OpenMP && getLangOpts().OpenMPIsDevice &&
+               "Expected OpenMP device compilation.");
+        Width = AuxTarget->getFloat128Width();
+        Align = AuxTarget->getFloat128Align();
+      }
+      break;
     case BuiltinType::NullPtr:
       Width = Target->getPointerWidth(0); // C++ 3.9.1p11: sizeof(nullptr_t)
       Align = Target->getPointerAlign(0); //   == sizeof(void*)
@@ -2107,22 +2107,22 @@ TypeInfo ASTContext::getTypeInfoImpl(const Type *T) const {
     //   Width = Target->getPointerWidth(0);
     //   Align = Target->getPointerAlign(0);
     //   break;
-    // case BuiltinType::OCLSampler:
-    // case BuiltinType::OCLEvent:
-    // case BuiltinType::OCLClkEvent:
-    // case BuiltinType::OCLQueue:
-    // case BuiltinType::OCLReserveID:
-// #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
-//     case BuiltinType::Id:
-// #include "latino/Basic/OpenCLImageTypes.def"
-// #define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
-//   case BuiltinType::Id:
-// #include "latino/Basic/OpenCLExtensionTypes.def"
-//       AS = getTargetAddressSpace(
-//           Target->getOpenCLTypeAddrSpace(getOpenCLTypeKind(T)));
-//       Width = Target->getPointerWidth(AS);
-//       Align = Target->getPointerAlign(AS);
-//       break;
+    case BuiltinType::OCLSampler:
+    case BuiltinType::OCLEvent:
+    case BuiltinType::OCLClkEvent:
+    case BuiltinType::OCLQueue:
+    case BuiltinType::OCLReserveID:
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix) \
+    case BuiltinType::Id:
+#include "latino/Basic/OpenCLImageTypes.def"
+#define EXT_OPAQUE_TYPE(ExtType, Id, Ext) \
+  case BuiltinType::Id:
+#include "latino/Basic/OpenCLExtensionTypes.def"
+      AS = getTargetAddressSpace(
+          Target->getOpenCLTypeAddrSpace(getOpenCLTypeKind(T)));
+      Width = Target->getPointerWidth(AS);
+      Align = Target->getPointerAlign(AS);
+      break;
     // The SVE types are effectively target-specific.  The length of an
     // SVE_VECTOR_TYPE is only known at runtime, but it is always a multiple
     // of 128 bits.  There is one predicate bit for each vector byte, so the
@@ -2341,16 +2341,16 @@ unsigned ASTContext::getTypeUnadjustedAlign(const Type *T) const {
   return UnadjustedAlign;
 }
 
-// unsigned ASTContext::getOpenMPDefaultSimdAlign(QualType T) const {
-//   unsigned SimdAlign = getTargetInfo().getSimdDefaultAlign();
-//   // Target ppc64 with QPX: simd default alignment for pointer to double is 32.
-//   if ((getTargetInfo().getTriple().getArch() == llvm::Triple::ppc64 ||
-//        getTargetInfo().getTriple().getArch() == llvm::Triple::ppc64le) &&
-//       getTargetInfo().getABI() == "elfv1-qpx" &&
-//       T->isSpecificBuiltinType(BuiltinType::Double))
-//     SimdAlign = 256;
-//   return SimdAlign;
-// }
+unsigned ASTContext::getOpenMPDefaultSimdAlign(QualType T) const {
+  unsigned SimdAlign = getTargetInfo().getSimdDefaultAlign();
+  // Target ppc64 with QPX: simd default alignment for pointer to double is 32.
+  if ((getTargetInfo().getTriple().getArch() == llvm::Triple::ppc64 ||
+       getTargetInfo().getTriple().getArch() == llvm::Triple::ppc64le) &&
+      getTargetInfo().getABI() == "elfv1-qpx" &&
+      T->isSpecificBuiltinType(BuiltinType::Double))
+    SimdAlign = 256;
+  return SimdAlign;
+}
 
 /// toCharUnitsFromBits - Convert a size in bits to a size in characters.
 CharUnits ASTContext::toCharUnitsFromBits(int64_t BitSize) const {
@@ -4280,8 +4280,8 @@ QualType ASTContext::getPipeType(QualType T, bool ReadOnly) const {
 
 QualType ASTContext::adjustStringLiteralBaseType(QualType Ty) const {
   // OpenCL v1.1 s6.5.3: a string literal is in the constant address space.
-  return /*LangOpts.OpenCL ? getAddrSpaceQualType(Ty, LangAS::opencl_constant)
-                         :*/ Ty;
+  return LangOpts.OpenCL ? getAddrSpaceQualType(Ty, LangAS::opencl_constant)
+                         : Ty;
 }
 
 QualType ASTContext::getReadPipeType(QualType T) const {
@@ -6105,12 +6105,12 @@ static FloatingRank getFloatingRank(QualType T) {
 
   switch (T->castAs<BuiltinType>()->getKind()) {
   default: llvm_unreachable("getFloatingRank(): not a floating type");
-  // case BuiltinType::Float16:    return Float16Rank;
-  // case BuiltinType::Half:       return HalfRank;
+  case BuiltinType::Float16:    return Float16Rank;
+  case BuiltinType::Half:       return HalfRank;
   case BuiltinType::Float:      return FloatRank;
   case BuiltinType::Double:     return DoubleRank;
   case BuiltinType::LongDouble: return LongDoubleRank;
-  // case BuiltinType::Float128:   return Float128Rank;
+  case BuiltinType::Float128:   return Float128Rank;
   case BuiltinType::BFloat16:   return BFloat16Rank;
   }
 }
@@ -6569,45 +6569,45 @@ QualType ASTContext::getBlockDescriptorExtendedType() const {
   return getTagDeclType(BlockDescriptorExtendedType);
 }
 
-// OpenCLTypeKind ASTContext::getOpenCLTypeKind(const Type *T) const {
-//   const auto *BT = dyn_cast<BuiltinType>(T);
+OpenCLTypeKind ASTContext::getOpenCLTypeKind(const Type *T) const {
+  const auto *BT = dyn_cast<BuiltinType>(T);
 
-//   if (!BT) {
-//     if (isa<PipeType>(T))
-//       return OCLTK_Pipe;
+  if (!BT) {
+    if (isa<PipeType>(T))
+      return OCLTK_Pipe;
 
-//     return OCLTK_Default;
-//   }
+    return OCLTK_Default;
+  }
 
-//   switch (BT->getKind()) {
-// // #define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
-// //   case BuiltinType::Id:                                                        \
-// //     return OCLTK_Image;
-// // #include "latino/Basic/OpenCLImageTypes.def"
+  switch (BT->getKind()) {
+#define IMAGE_TYPE(ImgType, Id, SingletonId, Access, Suffix)                   \
+  case BuiltinType::Id:                                                        \
+    return OCLTK_Image;
+#include "latino/Basic/OpenCLImageTypes.def"
 
-//   // case BuiltinType::OCLClkEvent:
-//   //   return OCLTK_ClkEvent;
+  case BuiltinType::OCLClkEvent:
+    return OCLTK_ClkEvent;
 
-//   // case BuiltinType::OCLEvent:
-//   //   return OCLTK_Event;
+  case BuiltinType::OCLEvent:
+    return OCLTK_Event;
 
-//   // case BuiltinType::OCLQueue:
-//   //   return OCLTK_Queue;
+  case BuiltinType::OCLQueue:
+    return OCLTK_Queue;
 
-//   // case BuiltinType::OCLReserveID:
-//   //   return OCLTK_ReserveID;
+  case BuiltinType::OCLReserveID:
+    return OCLTK_ReserveID;
 
-//   // case BuiltinType::OCLSampler:
-//   //   return OCLTK_Sampler;
+  case BuiltinType::OCLSampler:
+    return OCLTK_Sampler;
 
-//   default:
-//     return OCLTK_Default;
-//   }
-// }
+  default:
+    return OCLTK_Default;
+  }
+}
 
-// LangAS ASTContext::getOpenCLTypeAddrSpace(const Type *T) const {
-//   return Target->getOpenCLTypeAddrSpace(getOpenCLTypeKind(T));
-// }
+LangAS ASTContext::getOpenCLTypeAddrSpace(const Type *T) const {
+  return Target->getOpenCLTypeAddrSpace(getOpenCLTypeKind(T));
+}
 
 /// BlockRequiresCopying - Returns true if byref variable "D" of type "Ty"
 /// requires copy/dispose. Note that this must match the logic
@@ -8476,14 +8476,14 @@ bool ASTContext::areCompatibleVectorTypes(QualType FirstVec,
 bool ASTContext::hasDirectOwnershipQualifier(QualType Ty) const {
   while (true) {
     // __strong id
-    /*if (const AttributedType *Attr = dyn_cast<AttributedType>(Ty)) {
-      if (Attr->getAttrKind() == attr::ObjCOwnership)
-        return true;
+    if (const AttributedType *Attr = dyn_cast<AttributedType>(Ty)) {
+      // if (Attr->getAttrKind() == attr::ObjCOwnership)
+      //   return true;
 
       Ty = Attr->getModifiedType();
 
     // X *__strong (...)
-    } else*/ if (const ParenType *Paren = dyn_cast<ParenType>(Ty)) {
+    } else if (const ParenType *Paren = dyn_cast<ParenType>(Ty)) {
       Ty = Paren->getInnerType();
 
     // We do not want to look through typedefs, typeof(expr),
@@ -9513,20 +9513,20 @@ QualType ASTContext::mergeTypes(QualType LHS, QualType RHS,
       LHSPointee = LHSPointee.getUnqualifiedType();
       RHSPointee = RHSPointee.getUnqualifiedType();
     }
-    // if (getLangOpts().OpenCL) {
-    //   Qualifiers LHSPteeQual = LHSPointee.getQualifiers();
-    //   Qualifiers RHSPteeQual = RHSPointee.getQualifiers();
-    //   // Blocks can't be an expression in a ternary operator (OpenCL v2.0
-    //   // 6.12.5) thus the following check is asymmetric.
-    //   if (!LHSPteeQual.isAddressSpaceSupersetOf(RHSPteeQual))
-    //     return {};
-    //   LHSPteeQual.removeAddressSpace();
-    //   RHSPteeQual.removeAddressSpace();
-    //   LHSPointee =
-    //       QualType(LHSPointee.getTypePtr(), LHSPteeQual.getAsOpaqueValue());
-    //   RHSPointee =
-    //       QualType(RHSPointee.getTypePtr(), RHSPteeQual.getAsOpaqueValue());
-    // }
+    if (getLangOpts().OpenCL) {
+      Qualifiers LHSPteeQual = LHSPointee.getQualifiers();
+      Qualifiers RHSPteeQual = RHSPointee.getQualifiers();
+      // Blocks can't be an expression in a ternary operator (OpenCL v2.0
+      // 6.12.5) thus the following check is asymmetric.
+      if (!LHSPteeQual.isAddressSpaceSupersetOf(RHSPteeQual))
+        return {};
+      LHSPteeQual.removeAddressSpace();
+      RHSPteeQual.removeAddressSpace();
+      LHSPointee =
+          QualType(LHSPointee.getTypePtr(), LHSPteeQual.getAsOpaqueValue());
+      RHSPointee =
+          QualType(RHSPointee.getTypePtr(), RHSPteeQual.getAsOpaqueValue());
+    }
     QualType ResultType = mergeTypes(LHSPointee, RHSPointee, OfBlockPointer,
                                      Unqualified);
     if (ResultType.isNull())
@@ -10010,9 +10010,9 @@ static QualType DecodeTypeFromStr(const char *&Str, const ASTContext &Context,
       #ifndef NDEBUG
       IsSpecial = true;
       #endif
-      // if (Context.getLangOpts().OpenCL)
-      //   HowLong = 1;
-      // else
+      if (Context.getLangOpts().OpenCL)
+        HowLong = 1;
+      else
         HowLong = 2;
       break;
     }
@@ -10528,20 +10528,20 @@ bool ASTContext::DeclMustBeEmitted(const Decl *D) {
     return true;
   else if (isa<PragmaDetectMismatchDecl>(D))
     return true;
-  // else if (isa<OMPRequiresDecl>(D))
-  //   return true;
-  // else if (isa<OMPThreadPrivateDecl>(D))
-  //   return !D->getDeclContext()->isDependentContext();
-  // else if (isa<OMPAllocateDecl>(D))
-  //   return !D->getDeclContext()->isDependentContext();
-  // else if (isa<OMPDeclareReductionDecl>(D) || isa<OMPDeclareMapperDecl>(D))
-  //   return !D->getDeclContext()->isDependentContext();
+  else if (isa<OMPRequiresDecl>(D))
+    return true;
+  else if (isa<OMPThreadPrivateDecl>(D))
+    return !D->getDeclContext()->isDependentContext();
+  else if (isa<OMPAllocateDecl>(D))
+    return !D->getDeclContext()->isDependentContext();
+  else if (isa<OMPDeclareReductionDecl>(D) || isa<OMPDeclareMapperDecl>(D))
+    return !D->getDeclContext()->isDependentContext();
   else if (isa<ImportDecl>(D))
     return true;
   else
     return false;
 
-  if (D->isFromASTFile() && !LangOpts.BuildingPCHWithObjectFile) {
+  if (D->isFromASTFile() /*&& !LangOpts.BuildingPCHWithObjectFile*/) {
     assert(getExternalSource() && "It's from an AST file; must have a source.");
     // On Windows, PCH files are built together with an object file. If this
     // declaration comes from such a PCH and DeclMustBeEmitted would return
@@ -10619,9 +10619,9 @@ bool ASTContext::DeclMustBeEmitted(const Decl *D) {
 
   // If the decl is marked as `declare target to`, it should be emitted for the
   // host and for the device.
-  // if (LangOpts.OpenMP &&
-  //     OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(VD))
-  //   return true;
+  if (LangOpts.OpenMP &&
+      OMPDeclareTargetDeclAttr::isDeclareTargetDeclaration(VD))
+    return true;
 
   if (VD->isThisDeclarationADefinition() == VarDecl::DeclarationOnly &&
       !isMSStaticDataMemberInlineDefinition(VD))
@@ -11038,8 +11038,8 @@ QualType ASTContext::getCorrespondingSaturatedType(QualType Ty) const {
 }
 
 LangAS ASTContext::getLangASForBuiltinAddressSpace(unsigned AS) const {
-  // if (LangOpts.OpenCL)
-  //   return getTargetInfo().getOpenCLBuiltinAddressSpace(AS);
+  if (LangOpts.OpenCL)
+    return getTargetInfo().getOpenCLBuiltinAddressSpace(AS);
 
   if (LangOpts.CUDA)
     return getTargetInfo().getCUDABuiltinAddressSpace(AS);
@@ -11264,10 +11264,10 @@ void ASTContext::getFunctionFeatureMap(llvm::StringMap<bool> &FeatureMap,
   }
 }
 
-// OMPTraitInfo &ASTContext::getNewOMPTraitInfo() {
-//   OMPTraitInfoVector.emplace_back(new OMPTraitInfo());
-//   return *OMPTraitInfoVector.back();
-// }
+OMPTraitInfo &ASTContext::getNewOMPTraitInfo() {
+  OMPTraitInfoVector.emplace_back(new OMPTraitInfo());
+  return *OMPTraitInfoVector.back();
+}
 
 const DiagnosticBuilder &
 latino::operator<<(const DiagnosticBuilder &DB,

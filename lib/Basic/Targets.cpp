@@ -612,10 +612,10 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
         return nullptr;
     }
 
-  case llvm::Triple::renderscript32:
-    return new LinuxTargetInfo<RenderScript32TargetInfo>(Triple, Opts);
-  case llvm::Triple::renderscript64:
-    return new LinuxTargetInfo<RenderScript64TargetInfo>(Triple, Opts);
+  // case llvm::Triple::renderscript32:
+  //   return new LinuxTargetInfo<RenderScript32TargetInfo>(Triple, Opts);
+  // case llvm::Triple::renderscript64:
+  //   return new LinuxTargetInfo<RenderScript64TargetInfo>(Triple, Opts);
 
   case llvm::Triple::ve:
     return new LinuxTargetInfo<VETargetInfo>(Triple, Opts);
@@ -679,8 +679,8 @@ TargetInfo::CreateTargetInfo(DiagnosticsEngine &Diags,
   if (!Target->handleTargetFeatures(Opts->Features, Diags))
     return nullptr;
 
-  // Target->setSupportedOpenCLOpts();
-  // Target->setOpenCLExtensionOpts();
+  Target->setSupportedOpenCLOpts();
+  Target->setOpenCLExtensionOpts();
   Target->setMaxAtomicWidth();
 
   if (!Target->validateTarget(Diags))

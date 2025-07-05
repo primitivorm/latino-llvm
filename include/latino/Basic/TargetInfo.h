@@ -30,7 +30,7 @@
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Triple.h"
-// #include "llvm/Frontend/OpenMP/OMPGridValues.h"
+#include "llvm/Frontend/OpenMP/OMPGridValues.h"
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/VersionTuple.h"
 #include <cassert>
@@ -214,7 +214,7 @@ protected:
 
   unsigned HasBuiltinMSVaList : 1;
 
-  unsigned IsRenderScriptTarget : 1;
+  // unsigned IsRenderScriptTarget : 1;
 
   unsigned HasAArch64SVETypes : 1;
 
@@ -850,7 +850,7 @@ public:
   bool hasBuiltinMSVaList() const { return HasBuiltinMSVaList; }
 
   /// Returns true for RenderScript.
-  bool isRenderScriptTarget() const { return IsRenderScriptTarget; }
+  // bool isRenderScriptTarget() const { return IsRenderScriptTarget; }
 
   /// Returns whether or not the AArch64 SVE built-in types are
   /// available on this target.
@@ -1402,27 +1402,27 @@ public:
   virtual bool allowsLargerPreferedTypeAlignment() const { return true; }
 
   /// Set supported OpenCL extensions and optional core features.
-  // virtual void setSupportedOpenCLOpts() {}
+  virtual void setSupportedOpenCLOpts() {}
 
   /// Set supported OpenCL extensions as written on command line
-  // virtual void setOpenCLExtensionOpts() {
-  //   for (const auto &Ext : getTargetOpts().OpenCLExtensionsAsWritten) {
-  //     getTargetOpts().SupportedOpenCLOptions.support(Ext);
-  //   }
-  // }
+  virtual void setOpenCLExtensionOpts() {
+    for (const auto &Ext : getTargetOpts().OpenCLExtensionsAsWritten) {
+      getTargetOpts().SupportedOpenCLOptions.support(Ext);
+    }
+  }
 
   /// Get supported OpenCL extensions and optional core features.
-  // OpenCLOptions &getSupportedOpenCLOpts() {
-  //   return getTargetOpts().SupportedOpenCLOptions;
-  // }
+  OpenCLOptions &getSupportedOpenCLOpts() {
+    return getTargetOpts().SupportedOpenCLOptions;
+  }
 
   /// Get const supported OpenCL extensions and optional core features.
-  // const OpenCLOptions &getSupportedOpenCLOpts() const {
-  //     return getTargetOpts().SupportedOpenCLOptions;
-  // }
+  const OpenCLOptions &getSupportedOpenCLOpts() const {
+      return getTargetOpts().SupportedOpenCLOptions;
+  }
 
   /// Get address space for OpenCL type.
-  // virtual LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const;
+  virtual LangAS getOpenCLTypeAddrSpace(OpenCLTypeKind TK) const;
 
   /// \returns Target specific vtbl ptr address space.
   virtual unsigned getVtblPtrAddressSpace() const {

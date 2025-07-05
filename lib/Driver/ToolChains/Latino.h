@@ -121,7 +121,7 @@ public:
 class LLVM_LIBRARY_VISIBILITY ClangAs : public Tool {
 public:
   ClangAs(const ToolChain &TC)
-      : Tool("latino::as", "clang integrated assembler", TC) {}
+      : Tool("clang::as", "clang integrated assembler", TC) {}
   void AddMIPSTargetArgs(const llvm::opt::ArgList &Args,
                          llvm::opt::ArgStringList &CmdArgs) const;
   void AddX86TargetArgs(const llvm::opt::ArgList &Args,

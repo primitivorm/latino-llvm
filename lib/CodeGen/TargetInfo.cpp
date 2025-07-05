@@ -51,16 +51,16 @@ using namespace CodeGen;
 // Ty          - The argument / return value type
 // Context     - The associated ASTContext
 // LLVMContext - The associated LLVMContext
-static ABIArgInfo coerceToIntArray(QualType Ty,
-                                   ASTContext &Context,
-                                   llvm::LLVMContext &LLVMContext) {
-  // Alignment and Size are measured in bits.
-  const uint64_t Size = Context.getTypeSize(Ty);
-  const uint64_t Alignment = Context.getTypeAlign(Ty);
-  llvm::Type *IntType = llvm::Type::getIntNTy(LLVMContext, Alignment);
-  const uint64_t NumElements = (Size + Alignment - 1) / Alignment;
-  return ABIArgInfo::getDirect(llvm::ArrayType::get(IntType, NumElements));
-}
+// static ABIArgInfo coerceToIntArray(QualType Ty,
+//                                    ASTContext &Context,
+//                                    llvm::LLVMContext &LLVMContext) {
+//   // Alignment and Size are measured in bits.
+//   const uint64_t Size = Context.getTypeSize(Ty);
+//   const uint64_t Alignment = Context.getTypeAlign(Ty);
+//   llvm::Type *IntType = llvm::Type::getIntNTy(LLVMContext, Alignment);
+//   const uint64_t NumElements = (Size + Alignment - 1) / Alignment;
+//   return ABIArgInfo::getDirect(llvm::ArrayType::get(IntType, NumElements));
+// }
 
 static void AssignToArrayRange(CodeGen::CGBuilderTy &Builder,
                                llvm::Value *Array,
@@ -451,7 +451,7 @@ llvm::Constant *TargetCodeGenInfo::getNullPointer(const CodeGen::CodeGenModule &
 
 LangAS TargetCodeGenInfo::getGlobalVarAddressSpace(CodeGenModule &CGM,
                                                    const VarDecl *D) const {
-  assert(/*!CGM.getLangOpts().OpenCL &&*/
+  assert(!CGM.getLangOpts().OpenCL &&
          !(CGM.getLangOpts().CUDA && CGM.getLangOpts().CUDAIsDevice) &&
          "Address space agnostic languages only");
   return D ? D->getType().getAddressSpace() : LangAS::Default;
@@ -1232,10 +1232,10 @@ public:
     return llvm::ConstantInt::get(CGM.Int32Ty, Sig);
   }
 
-  StringRef getARCRetainAutoreleasedReturnValueMarker() const override {
-    return "movl\t%ebp, %ebp"
-           "\t\t// marker for objc_retainAutoreleaseReturnValue";
-  }
+  // StringRef getARCRetainAutoreleasedReturnValueMarker() const override {
+  //   return "movl\t%ebp, %ebp"
+  //          "\t\t// marker for objc_retainAutoreleaseReturnValue";
+  // }
 };
 
 }
@@ -2405,9 +2405,9 @@ public:
 
   /// Disable tail call on x86-64. The epilogue code before the tail jump blocks
   /// the autoreleaseRV/retainRV optimization.
-  bool shouldSuppressTailCallsOfRetainAutoreleasedReturnValue() const override {
-    return true;
-  }
+  // bool shouldSuppressTailCallsOfRetainAutoreleasedReturnValue() const override {
+  //   return true;
+  // }
 
   int getDwarfEHStackPointer(CodeGen::CodeGenModule &CGM) const override {
     return 7;
@@ -5193,9 +5193,9 @@ bool PPC64_SVR4_ABIInfo::isHomogeneousAggregateBaseType(QualType Ty) const {
   if (const BuiltinType *BT = Ty->getAs<BuiltinType>()) {
     if (BT->getKind() == BuiltinType::Float ||
         BT->getKind() == BuiltinType::Double ||
-        BT->getKind() == BuiltinType::LongDouble /*||
+        BT->getKind() == BuiltinType::LongDouble ||
         (getContext().getTargetInfo().hasFloat128Type() &&
-          (BT->getKind() == BuiltinType::Float128))*/) {
+          (BT->getKind() == BuiltinType::Float128))) {
       if (IsSoftFloatABI)
         return false;
       return true;
@@ -5505,9 +5505,9 @@ public:
   AArch64TargetCodeGenInfo(CodeGenTypes &CGT, AArch64ABIInfo::ABIKind Kind)
       : TargetCodeGenInfo(std::make_unique<AArch64ABIInfo>(CGT, Kind)) {}
 
-  StringRef getARCRetainAutoreleasedReturnValueMarker() const override {
-    return "mov\tfp, fp\t\t// marker for objc_retainAutoreleaseReturnValue";
-  }
+  // StringRef getARCRetainAutoreleasedReturnValueMarker() const override {
+  //   return "mov\tfp, fp\t\t// marker for objc_retainAutoreleaseReturnValue";
+  // }
 
   int getDwarfEHStackPointer(CodeGen::CodeGenModule &M) const override {
     return 31;
@@ -5662,9 +5662,9 @@ ABIArgInfo AArch64ABIInfo::classifyArgumentType(QualType Ty) const {
   if (Size <= 128) {
     // On RenderScript, coerce Aggregates <= 16 bytes to an integer array of
     // same size and alignment.
-    if (getTarget().isRenderScriptTarget()) {
-      return coerceToIntArray(Ty, getContext(), getVMContext());
-    }
+    // if (getTarget().isRenderScriptTarget()) {
+    //   return coerceToIntArray(Ty, getContext(), getVMContext());
+    // }
     unsigned Alignment;
     if (Kind == AArch64ABIInfo::AAPCS) {
       Alignment = getContext().getTypeUnadjustedAlign(Ty);
@@ -5725,9 +5725,9 @@ ABIArgInfo AArch64ABIInfo::classifyReturnType(QualType RetTy,
   if (Size <= 128) {
     // On RenderScript, coerce Aggregates <= 16 bytes to an integer array of
     // same size and alignment.
-    if (getTarget().isRenderScriptTarget()) {
-      return coerceToIntArray(RetTy, getContext(), getVMContext());
-    }
+    // if (getTarget().isRenderScriptTarget()) {
+    //   return coerceToIntArray(RetTy, getContext(), getVMContext());
+    // }
     unsigned Alignment = getContext().getTypeAlign(RetTy);
     Size = llvm::alignTo(Size, 64); // round up to multiple of 8 bytes
 
@@ -6195,9 +6195,9 @@ public:
     return 13;
   }
 
-  StringRef getARCRetainAutoreleasedReturnValueMarker() const override {
-    return "mov\tr7, r7\t\t// marker for objc_retainAutoreleaseReturnValue";
-  }
+  // StringRef getARCRetainAutoreleasedReturnValueMarker() const override {
+  //   return "mov\tr7, r7\t\t// marker for objc_retainAutoreleaseReturnValue";
+  // }
 
   bool initDwarfEHRegSizeTable(CodeGen::CodeGenFunction &CGF,
                                llvm::Value *Address) const override {
@@ -6458,9 +6458,9 @@ ABIArgInfo ARMABIInfo::classifyArgumentType(QualType Ty, bool isVariadic,
 
   // On RenderScript, coerce Aggregates <= 64 bytes to an integer array of
   // same size and alignment.
-  if (getTarget().isRenderScriptTarget()) {
-    return coerceToIntArray(Ty, getContext(), getVMContext());
-  }
+  // if (getTarget().isRenderScriptTarget()) {
+  //   return coerceToIntArray(Ty, getContext(), getVMContext());
+  // }
 
   // Otherwise, pass by coercing to a structure of the appropriate size.
   llvm::Type* ElemTy;
@@ -6647,9 +6647,9 @@ ABIArgInfo ARMABIInfo::classifyReturnType(QualType RetTy, bool isVariadic,
   if (Size <= 32) {
     // On RenderScript, coerce Aggregates <= 4 bytes to an integer array of
     // same size and alignment.
-    if (getTarget().isRenderScriptTarget()) {
-      return coerceToIntArray(RetTy, getContext(), getVMContext());
-    }
+    // if (getTarget().isRenderScriptTarget()) {
+    //   return coerceToIntArray(RetTy, getContext(), getVMContext());
+    // }
     if (getDataLayout().isBigEndian())
       // Return in 32 bit integer integer type (as if loaded by LDR, AAPCS 5.4)
       return ABIArgInfo::getDirect(llvm::Type::getInt32Ty(getVMContext()));
@@ -7056,17 +7056,17 @@ void NVPTXTargetCodeGenInfo::setTargetAttributes(
   llvm::Function *F = cast<llvm::Function>(GV);
 
   // Perform special handling in OpenCL mode
-  // if (M.getLangOpts().OpenCL) {
-  //   // Use OpenCL function attributes to check for kernel functions
-  //   // By default, all functions are device functions
-  //   if (FD->hasAttr<OpenCLKernelAttr>()) {
-  //     // OpenCL __kernel functions get kernel metadata
-  //     // Create !{<func-ref>, metadata !"kernel", i32 1} node
-  //     addNVVMMetadata(F, "kernel", 1);
-  //     // And kernel functions are not subject to inlining
-  //     F->addFnAttr(llvm::Attribute::NoInline);
-  //   }
-  // }
+  if (M.getLangOpts().OpenCL) {
+    // Use OpenCL function attributes to check for kernel functions
+    // By default, all functions are device functions
+    if (FD->hasAttr<OpenCLKernelAttr>()) {
+      // OpenCL __kernel functions get kernel metadata
+      // Create !{<func-ref>, metadata !"kernel", i32 1} node
+      addNVVMMetadata(F, "kernel", 1);
+      // And kernel functions are not subject to inlining
+      F->addFnAttr(llvm::Attribute::NoInline);
+    }
+  }
 
   // Perform special handling in CUDA mode.
   if (M.getLangOpts().CUDA) {
@@ -8041,40 +8041,40 @@ void TCETargetCodeGenInfo::setTargetAttributes(
 
   llvm::Function *F = cast<llvm::Function>(GV);
 
-  // if (M.getLangOpts().OpenCL) {
-  //   if (FD->hasAttr<OpenCLKernelAttr>()) {
-  //     // OpenCL C Kernel functions are not subject to inlining
-  //     F->addFnAttr(llvm::Attribute::NoInline);
-  //     const ReqdWorkGroupSizeAttr *Attr = FD->getAttr<ReqdWorkGroupSizeAttr>();
-  //     if (Attr) {
-  //       // Convert the reqd_work_group_size() attributes to metadata.
-  //       llvm::LLVMContext &Context = F->getContext();
-  //       llvm::NamedMDNode *OpenCLMetadata =
-  //           M.getModule().getOrInsertNamedMetadata(
-  //               "opencl.kernel_wg_size_info");
+  if (M.getLangOpts().OpenCL) {
+    if (FD->hasAttr<OpenCLKernelAttr>()) {
+      // OpenCL C Kernel functions are not subject to inlining
+      F->addFnAttr(llvm::Attribute::NoInline);
+      const ReqdWorkGroupSizeAttr *Attr = FD->getAttr<ReqdWorkGroupSizeAttr>();
+      if (Attr) {
+        // Convert the reqd_work_group_size() attributes to metadata.
+        llvm::LLVMContext &Context = F->getContext();
+        llvm::NamedMDNode *OpenCLMetadata =
+            M.getModule().getOrInsertNamedMetadata(
+                "opencl.kernel_wg_size_info");
 
-  //       SmallVector<llvm::Metadata *, 5> Operands;
-  //       Operands.push_back(llvm::ConstantAsMetadata::get(F));
+        SmallVector<llvm::Metadata *, 5> Operands;
+        Operands.push_back(llvm::ConstantAsMetadata::get(F));
 
-  //       Operands.push_back(
-  //           llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
-  //               M.Int32Ty, llvm::APInt(32, Attr->getXDim()))));
-  //       Operands.push_back(
-  //           llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
-  //               M.Int32Ty, llvm::APInt(32, Attr->getYDim()))));
-  //       Operands.push_back(
-  //           llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
-  //               M.Int32Ty, llvm::APInt(32, Attr->getZDim()))));
+        Operands.push_back(
+            llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
+                M.Int32Ty, llvm::APInt(32, Attr->getXDim()))));
+        Operands.push_back(
+            llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
+                M.Int32Ty, llvm::APInt(32, Attr->getYDim()))));
+        Operands.push_back(
+            llvm::ConstantAsMetadata::get(llvm::Constant::getIntegerValue(
+                M.Int32Ty, llvm::APInt(32, Attr->getZDim()))));
 
-  //       // Add a boolean constant operand for "required" (true) or "hint"
-  //       // (false) for implementing the work_group_size_hint attr later.
-  //       // Currently always true as the hint is not yet implemented.
-  //       Operands.push_back(
-  //           llvm::ConstantAsMetadata::get(llvm::ConstantInt::getTrue(Context)));
-  //       OpenCLMetadata->addOperand(llvm::MDNode::get(Context, Operands));
-  //     }
-  //   }
-  // }
+        // Add a boolean constant operand for "required" (true) or "hint"
+        // (false) for implementing the work_group_size_hint attr later.
+        // Currently always true as the hint is not yet implemented.
+        Operands.push_back(
+            llvm::ConstantAsMetadata::get(llvm::ConstantInt::getTrue(Context)));
+        OpenCLMetadata->addOperand(llvm::MDNode::get(Context, Operands));
+      }
+    }
+  }
 }
 
 }
@@ -8914,7 +8914,7 @@ static bool requiresAMDGPUProtectedVisibility(const Decl *D,
   if (GV->getVisibility() != llvm::GlobalValue::HiddenVisibility)
     return false;
 
-  return /*D->hasAttr<OpenCLKernelAttr>() ||*/
+  return D->hasAttr<OpenCLKernelAttr>() ||
          (isa<FunctionDecl>(D) && D->hasAttr<CUDAGlobalAttr>()) ||
          (isa<VarDecl>(D) &&
           (D->hasAttr<CUDADeviceAttr>() || D->hasAttr<CUDAConstantAttr>() ||
@@ -8937,15 +8937,15 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
 
   llvm::Function *F = cast<llvm::Function>(GV);
 
-  // const auto *ReqdWGS = M.getLangOpts().OpenCL ?
-  //   FD->getAttr<ReqdWorkGroupSizeAttr>() : nullptr;
+  const auto *ReqdWGS = M.getLangOpts().OpenCL ?
+    FD->getAttr<ReqdWorkGroupSizeAttr>() : nullptr;
 
 
-  // const bool IsOpenCLKernel = M.getLangOpts().OpenCL &&
-  //                             FD->hasAttr<OpenCLKernelAttr>();
+  const bool IsOpenCLKernel = M.getLangOpts().OpenCL &&
+                              FD->hasAttr<OpenCLKernelAttr>();
   const bool IsHIPKernel = M.getLangOpts().HIP &&
                            FD->hasAttr<CUDAGlobalAttr>();
-  if ((/*IsOpenCLKernel ||*/ IsHIPKernel) &&
+  if ((IsOpenCLKernel || IsHIPKernel) &&
       (M.getTriple().getOS() == llvm::Triple::AMDHSA))
     F->addFnAttr("amdgpu-implicitarg-num-bytes", "56");
 
@@ -8954,7 +8954,7 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
 
 
   const auto *FlatWGS = FD->getAttr<AMDGPUFlatWorkGroupSizeAttr>();
-  if (/*ReqdWGS ||*/ FlatWGS) {
+  if (ReqdWGS || FlatWGS) {
     unsigned Min = 0;
     unsigned Max = 0;
     if (FlatWGS) {
@@ -8965,8 +8965,8 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
                 ->EvaluateKnownConstInt(M.getContext())
                 .getExtValue();
     }
-    // if (ReqdWGS && Min == 0 && Max == 0)
-    //   Min = Max = ReqdWGS->getXDim() * ReqdWGS->getYDim() * ReqdWGS->getZDim();
+    if (ReqdWGS && Min == 0 && Max == 0)
+      Min = Max = ReqdWGS->getXDim() * ReqdWGS->getYDim() * ReqdWGS->getZDim();
 
     if (Min != 0) {
       assert(Min <= Max && "Min must be less than or equal Max");
@@ -8976,17 +8976,17 @@ void AMDGPUTargetCodeGenInfo::setTargetAttributes(
     } else
       assert(Max == 0 && "Max must be zero");
   } 
-  // else if (IsOpenCLKernel || IsHIPKernel) {
-  //   // By default, restrict the maximum size to a value specified by
-  //   // --gpu-max-threads-per-block=n or its default value for HIP.
-  //   const unsigned OpenCLDefaultMaxWorkGroupSize = 256;
-  //   const unsigned DefaultMaxWorkGroupSize =
-  //       IsOpenCLKernel ? OpenCLDefaultMaxWorkGroupSize
-  //                      : M.getLangOpts().GPUMaxThreadsPerBlock;
-  //   std::string AttrVal =
-  //       std::string("1,") + llvm::utostr(DefaultMaxWorkGroupSize);
-  //   F->addFnAttr("amdgpu-flat-work-group-size", AttrVal);
-  // }
+  else if (IsOpenCLKernel || IsHIPKernel) {
+    // By default, restrict the maximum size to a value specified by
+    // --gpu-max-threads-per-block=n or its default value for HIP.
+    const unsigned OpenCLDefaultMaxWorkGroupSize = 256;
+    const unsigned DefaultMaxWorkGroupSize =
+        IsOpenCLKernel ? OpenCLDefaultMaxWorkGroupSize
+                       : M.getLangOpts().GPUMaxThreadsPerBlock;
+    std::string AttrVal =
+        std::string("1,") + llvm::utostr(DefaultMaxWorkGroupSize);
+    F->addFnAttr("amdgpu-flat-work-group-size", AttrVal);
+  }
 
   if (const auto *Attr = FD->getAttr<AMDGPUWavesPerEUAttr>()) {
     unsigned Min =
@@ -9047,7 +9047,7 @@ llvm::Constant *AMDGPUTargetCodeGenInfo::getNullPointer(
 LangAS
 AMDGPUTargetCodeGenInfo::getGlobalVarAddressSpace(CodeGenModule &CGM,
                                                   const VarDecl *D) const {
-  assert(/*!CGM.getLangOpts().OpenCL &&*/
+  assert(!CGM.getLangOpts().OpenCL &&
          !(CGM.getLangOpts().CUDA && CGM.getLangOpts().CUDAIsDevice) &&
          "Address space agnostic languages only");
   LangAS DefaultGlobalAS = getLangASFromTargetAS(

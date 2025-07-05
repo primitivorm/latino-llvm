@@ -159,15 +159,15 @@ public:
   /// a particular instruction sequence.  This functions returns
   /// that instruction sequence in inline assembly, which will be
   /// empty if none is required.
-  virtual StringRef getARCRetainAutoreleasedReturnValueMarker() const {
-    return "";
-  }
+  // virtual StringRef getARCRetainAutoreleasedReturnValueMarker() const {
+  //   return "";
+  // }
 
   /// Determine whether a call to objc_retainAutoreleasedReturnValue should be
   /// marked as 'notail'.
-  virtual bool shouldSuppressTailCallsOfRetainAutoreleasedReturnValue() const {
-    return false;
-  }
+  // virtual bool shouldSuppressTailCallsOfRetainAutoreleasedReturnValue() const {
+  //   return false;
+  // }
 
   /// Return a constant used by UBSan as a signature to identify functions
   /// possessing type information, or 0 if the platform is unsupported.

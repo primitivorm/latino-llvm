@@ -16,7 +16,7 @@
 #include "CGCXXABI.h"
 #include "CGCleanup.h"
 #include "CGDebugInfo.h"
-// #include "CGOpenMPRuntime.h"
+#include "CGOpenMPRuntime.h"
 #include "CodeGenModule.h"
 #include "CodeGenPGO.h"
 #include "TargetInfo.h"
@@ -32,7 +32,7 @@
 #include "latino/Basic/TargetInfo.h"
 #include "latino/CodeGen/CGFunctionInfo.h"
 #include "latino/Frontend/FrontendDiagnostic.h"
-// #include "llvm/Frontend/OpenMP/OMPIRBuilder.h"
+#include "llvm/Frontend/OpenMP/OMPIRBuilder.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Dominators.h"
 #include "llvm/IR/FPEnv.h"
@@ -79,16 +79,16 @@ CodeGenFunction::CodeGenFunction(CodeGenModule &cgm, bool suppressNewContext)
 CodeGenFunction::~CodeGenFunction() {
   assert(LifetimeExtendedCleanupStack.empty() && "failed to emit a cleanup");
 
-  // if (getLangOpts().OpenMP && CurFn)
-  //   CGM.getOpenMPRuntime().functionFinished(*this);
+  if (getLangOpts().OpenMP && CurFn)
+    CGM.getOpenMPRuntime().functionFinished(*this);
 
   // If we have an OpenMPIRBuilder we want to finalize functions (incl.
   // outlining etc) at some point. Doing it once the function codegen is done
   // seems to be a reasonable spot. We do it here, as opposed to the deletion
   // time of the CodeGenModule, because we have to ensure the IR has not yet
   // been "emitted" to the outside, thus, modifications are still sensible.
-  // if (CGM.getLangOpts().OpenMPIRBuilder)
-  //   CGM.getOpenMPRuntime().getOMPBuilder().finalize();
+  if (CGM.getLangOpts().OpenMPIRBuilder)
+    CGM.getOpenMPRuntime().getOMPBuilder().finalize();
 }
 
 // Map the LangOption for exception behavior into
@@ -560,55 +560,55 @@ CodeGenFunction::DecodeAddrUsedInPrologue(llvm::Value *F,
                             "decoded_addr");
 }
 
-// void CodeGenFunction::EmitOpenCLKernelMetadata(const FunctionDecl *FD,
-//                                                llvm::Function *Fn)
-// {
-//   if (!FD->hasAttr<OpenCLKernelAttr>())
-//     return;
+void CodeGenFunction::EmitOpenCLKernelMetadata(const FunctionDecl *FD,
+                                               llvm::Function *Fn)
+{
+  if (!FD->hasAttr<OpenCLKernelAttr>())
+    return;
 
-//   llvm::LLVMContext &Context = getLLVMContext();
+  llvm::LLVMContext &Context = getLLVMContext();
 
-//   // CGM.GenOpenCLArgMetadata(Fn, FD, this);
+  CGM.GenOpenCLArgMetadata(Fn, FD, this);
 
-//   if (const VecTypeHintAttr *A = FD->getAttr<VecTypeHintAttr>()) {
-//     QualType HintQTy = A->getTypeHint();
-//     const ExtVectorType *HintEltQTy = HintQTy->getAs<ExtVectorType>();
-//     bool IsSignedInteger =
-//         HintQTy->isSignedIntegerType() ||
-//         (HintEltQTy && HintEltQTy->getElementType()->isSignedIntegerType());
-//     llvm::Metadata *AttrMDArgs[] = {
-//         llvm::ConstantAsMetadata::get(llvm::UndefValue::get(
-//             CGM.getTypes().ConvertType(A->getTypeHint()))),
-//         llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
-//             llvm::IntegerType::get(Context, 32),
-//             llvm::APInt(32, (uint64_t)(IsSignedInteger ? 1 : 0))))};
-//     Fn->setMetadata("vec_type_hint", llvm::MDNode::get(Context, AttrMDArgs));
-//   }
+  if (const VecTypeHintAttr *A = FD->getAttr<VecTypeHintAttr>()) {
+    QualType HintQTy = A->getTypeHint();
+    const ExtVectorType *HintEltQTy = HintQTy->getAs<ExtVectorType>();
+    bool IsSignedInteger =
+        HintQTy->isSignedIntegerType() ||
+        (HintEltQTy && HintEltQTy->getElementType()->isSignedIntegerType());
+    llvm::Metadata *AttrMDArgs[] = {
+        llvm::ConstantAsMetadata::get(llvm::UndefValue::get(
+            CGM.getTypes().ConvertType(A->getTypeHint()))),
+        llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
+            llvm::IntegerType::get(Context, 32),
+            llvm::APInt(32, (uint64_t)(IsSignedInteger ? 1 : 0))))};
+    Fn->setMetadata("vec_type_hint", llvm::MDNode::get(Context, AttrMDArgs));
+  }
 
-//   if (const WorkGroupSizeHintAttr *A = FD->getAttr<WorkGroupSizeHintAttr>()) {
-//     llvm::Metadata *AttrMDArgs[] = {
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getXDim())),
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getYDim())),
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getZDim()))};
-//     Fn->setMetadata("work_group_size_hint", llvm::MDNode::get(Context, AttrMDArgs));
-//   }
+  if (const WorkGroupSizeHintAttr *A = FD->getAttr<WorkGroupSizeHintAttr>()) {
+    llvm::Metadata *AttrMDArgs[] = {
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getXDim())),
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getYDim())),
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getZDim()))};
+    Fn->setMetadata("work_group_size_hint", llvm::MDNode::get(Context, AttrMDArgs));
+  }
 
-//   if (const ReqdWorkGroupSizeAttr *A = FD->getAttr<ReqdWorkGroupSizeAttr>()) {
-//     llvm::Metadata *AttrMDArgs[] = {
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getXDim())),
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getYDim())),
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getZDim()))};
-//     Fn->setMetadata("reqd_work_group_size", llvm::MDNode::get(Context, AttrMDArgs));
-//   }
+  if (const ReqdWorkGroupSizeAttr *A = FD->getAttr<ReqdWorkGroupSizeAttr>()) {
+    llvm::Metadata *AttrMDArgs[] = {
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getXDim())),
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getYDim())),
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getZDim()))};
+    Fn->setMetadata("reqd_work_group_size", llvm::MDNode::get(Context, AttrMDArgs));
+  }
 
-//   if (const OpenCLIntelReqdSubGroupSizeAttr *A =
-//           FD->getAttr<OpenCLIntelReqdSubGroupSizeAttr>()) {
-//     llvm::Metadata *AttrMDArgs[] = {
-//         llvm::ConstantAsMetadata::get(Builder.getInt32(A->getSubGroupSize()))};
-//     Fn->setMetadata("intel_reqd_sub_group_size",
-//                     llvm::MDNode::get(Context, AttrMDArgs));
-//   }
-// }
+  if (const OpenCLIntelReqdSubGroupSizeAttr *A =
+          FD->getAttr<OpenCLIntelReqdSubGroupSizeAttr>()) {
+    llvm::Metadata *AttrMDArgs[] = {
+        llvm::ConstantAsMetadata::get(Builder.getInt32(A->getSubGroupSize()))};
+    Fn->setMetadata("intel_reqd_sub_group_size",
+                    llvm::MDNode::get(Context, AttrMDArgs));
+  }
+}
 
 /// Determine whether the function F ends with a return stmt.
 static bool endsWithReturn(const Decl* F) {
@@ -839,11 +839,11 @@ void CodeGenFunction::StartFunction(GlobalDecl GD, QualType RetTy,
   if (D && D->hasAttr<CFICanonicalJumpTableAttr>())
     Fn->addFnAttr("cfi-canonical-jump-table");
 
-  // if (getLangOpts().OpenCL) {
-  //   // Add metadata for a kernel function.
-  //   if (const FunctionDecl *FD = dyn_cast_or_null<FunctionDecl>(D))
-  //     EmitOpenCLKernelMetadata(FD, Fn);
-  // }
+  if (getLangOpts().OpenCL) {
+    // Add metadata for a kernel function.
+    if (const FunctionDecl *FD = dyn_cast_or_null<FunctionDecl>(D))
+      EmitOpenCLKernelMetadata(FD, Fn);
+  }
 
   // If we are checking function types, emit a function type signature as
   // prologue data.
@@ -892,7 +892,7 @@ void CodeGenFunction::StartFunction(GlobalDecl GD, QualType RetTy,
   //     recursive code, virtual functions or make use of C++ libraries that
   //     are not compiled for the device.
   if (const FunctionDecl *FD = dyn_cast_or_null<FunctionDecl>(D)) {
-    if ((getLangOpts().CPlusPlus && FD->isMain()) || /*getLangOpts().OpenCL ||*/
+    if ((getLangOpts().CPlusPlus && FD->isMain()) || getLangOpts().OpenCL ||
         getLangOpts().SYCLIsDevice ||
         (getLangOpts().CUDA && FD->hasAttr<CUDAGlobalAttr>()))
       Fn->addFnAttr(llvm::Attribute::NoRecurse);
@@ -1045,8 +1045,8 @@ void CodeGenFunction::StartFunction(GlobalDecl GD, QualType RetTy,
   PrologueCleanupDepth = EHStack.stable_begin();
 
   // Emit OpenMP specific initialization of the device functions.
-  // if (getLangOpts().OpenMP && CurCodeDecl)
-  //   CGM.getOpenMPRuntime().emitFunctionProlog(*this, CurCodeDecl);
+  if (getLangOpts().OpenMP && CurCodeDecl)
+    CGM.getOpenMPRuntime().emitFunctionProlog(*this, CurCodeDecl);
 
   EmitFunctionProlog(*CurFnInfo, CurFn, Args);
 

@@ -15,7 +15,7 @@ add_latino_library(latinoARCMigrate
   TransEmptyStatementsAndDealloc.cpp
   TransGCAttrs.cpp
   TransGCCalls.cpp
-  TransProperties.cpp
+  # TransProperties.cpp
   TransProtectedScope.cpp
   TransRetainReleaseDealloc.cpp
   # TransUnbridgedCasts.cpp

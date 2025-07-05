@@ -29,11 +29,11 @@ enum class Language : uint8_t {
   ///@{ Languages that the frontend can parse and compile.
   C,
   CXX,
-  ObjC,
-  ObjCXX,
+  // ObjC,
+  // ObjCXX,
   OpenCL,
   CUDA,
-  RenderScript,
+  // RenderScript,
   HIP,
   ///@}
 };

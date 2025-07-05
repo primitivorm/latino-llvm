@@ -574,11 +574,11 @@ void InitHeaderSearch::Realize(const LangOptions &Lang) {
 
   for (auto &Include : IncludePath)
     if (Include.first == System || Include.first == ExternCSystem ||
-        (!Lang.ObjC && !Lang.CPlusPlus && Include.first == CSystem) ||
+        (/*!Lang.ObjC &&*/ !Lang.CPlusPlus && Include.first == CSystem) ||
         (/*FIXME !Lang.ObjC && */ Lang.CPlusPlus &&
-         Include.first == CXXSystem) ||
+         Include.first == CXXSystem) /*||
         (Lang.ObjC && !Lang.CPlusPlus && Include.first == ObjCSystem) ||
-        (Lang.ObjC && Lang.CPlusPlus && Include.first == ObjCXXSystem))
+        (Lang.ObjC && Lang.CPlusPlus && Include.first == ObjCXXSystem)*/)
       SearchList.push_back(Include.second);
 
   for (auto &Include : IncludePath)

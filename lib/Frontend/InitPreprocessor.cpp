@@ -372,8 +372,8 @@ static void InitializeStandardPredefinedMacros(const TargetInfo &TI,
       Builder.defineMacro("__STDC_VERSION__", "201112L");
     else if (LangOpts.C99)
       Builder.defineMacro("__STDC_VERSION__", "199901L");
-    else if (!LangOpts.GNUMode && LangOpts.Digraphs)
-      Builder.defineMacro("__STDC_VERSION__", "199409L");
+    // else if (!LangOpts.GNUMode && LangOpts.Digraphs)
+    //   Builder.defineMacro("__STDC_VERSION__", "199409L");
   } else {
     //   -- __cplusplus
     //      [C++20] The integer literal 202002L.
@@ -417,49 +417,49 @@ static void InitializeStandardPredefinedMacros(const TargetInfo &TI,
   //   Builder.defineMacro("__OBJC__");
 
   // OpenCL v1.0/1.1 s6.9, v1.2/2.0 s6.10: Preprocessor Directives and Macros.
-  // if (LangOpts.OpenCL) {
-  //   if (LangOpts.CPlusPlus) {
-  //     if (LangOpts.OpenCLCPlusPlusVersion == 100)
-  //       Builder.defineMacro("__OPENCL_CPP_VERSION__", "100");
-  //     else
-  //       llvm_unreachable("Unsupported C++ version for OpenCL");
-  //     Builder.defineMacro("__CL_CPP_VERSION_1_0__", "100");
-  //   } else {
-  //     // OpenCL v1.0 and v1.1 do not have a predefined macro to indicate the
-  //     // language standard with which the program is compiled. __OPENCL_VERSION__
-  //     // is for the OpenCL version supported by the OpenCL device, which is not
-  //     // necessarily the language standard with which the program is compiled.
-  //     // A shared OpenCL header file requires a macro to indicate the language
-  //     // standard. As a workaround, __OPENCL_C_VERSION__ is defined for
-  //     // OpenCL v1.0 and v1.1.
-  //     switch (LangOpts.OpenCLVersion) {
-  //     case 100:
-  //       Builder.defineMacro("__OPENCL_C_VERSION__", "100");
-  //       break;
-  //     case 110:
-  //       Builder.defineMacro("__OPENCL_C_VERSION__", "110");
-  //       break;
-  //     case 120:
-  //       Builder.defineMacro("__OPENCL_C_VERSION__", "120");
-  //       break;
-  //     case 200:
-  //       Builder.defineMacro("__OPENCL_C_VERSION__", "200");
-  //       break;
-  //     default:
-  //       llvm_unreachable("Unsupported OpenCL version");
-  //     }
-  //   }
-  //   Builder.defineMacro("CL_VERSION_1_0", "100");
-  //   Builder.defineMacro("CL_VERSION_1_1", "110");
-  //   Builder.defineMacro("CL_VERSION_1_2", "120");
-  //   Builder.defineMacro("CL_VERSION_2_0", "200");
+  if (LangOpts.OpenCL) {
+    if (LangOpts.CPlusPlus) {
+      if (LangOpts.OpenCLCPlusPlusVersion == 100)
+        Builder.defineMacro("__OPENCL_CPP_VERSION__", "100");
+      else
+        llvm_unreachable("Unsupported C++ version for OpenCL");
+      Builder.defineMacro("__CL_CPP_VERSION_1_0__", "100");
+    } else {
+      // OpenCL v1.0 and v1.1 do not have a predefined macro to indicate the
+      // language standard with which the program is compiled. __OPENCL_VERSION__
+      // is for the OpenCL version supported by the OpenCL device, which is not
+      // necessarily the language standard with which the program is compiled.
+      // A shared OpenCL header file requires a macro to indicate the language
+      // standard. As a workaround, __OPENCL_C_VERSION__ is defined for
+      // OpenCL v1.0 and v1.1.
+      switch (LangOpts.OpenCLVersion) {
+      case 100:
+        Builder.defineMacro("__OPENCL_C_VERSION__", "100");
+        break;
+      case 110:
+        Builder.defineMacro("__OPENCL_C_VERSION__", "110");
+        break;
+      case 120:
+        Builder.defineMacro("__OPENCL_C_VERSION__", "120");
+        break;
+      case 200:
+        Builder.defineMacro("__OPENCL_C_VERSION__", "200");
+        break;
+      default:
+        llvm_unreachable("Unsupported OpenCL version");
+      }
+    }
+    Builder.defineMacro("CL_VERSION_1_0", "100");
+    Builder.defineMacro("CL_VERSION_1_1", "110");
+    Builder.defineMacro("CL_VERSION_1_2", "120");
+    Builder.defineMacro("CL_VERSION_2_0", "200");
 
-  //   if (TI.isLittleEndian())
-  //     Builder.defineMacro("__ENDIAN_LITTLE__");
+    if (TI.isLittleEndian())
+      Builder.defineMacro("__ENDIAN_LITTLE__");
 
-  //   if (LangOpts.FastRelaxedMath)
-  //     Builder.defineMacro("__FAST_RELAXED_MATH__");
-  // }
+    if (LangOpts.FastRelaxedMath)
+      Builder.defineMacro("__FAST_RELAXED_MATH__");
+  }
 
   if (LangOpts.SYCL) {
     // SYCL Version is set to a value when building SYCL applications
@@ -1032,20 +1032,20 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   if (LangOpts.FastRelaxedMath)
     Builder.defineMacro("__FAST_RELAXED_MATH__");
 
-  if (/*FEOpts.ProgramAction == frontend::RewriteObjC ||*/
-      LangOpts.getGC() != LangOptions::NonGC) {
-    Builder.defineMacro("__weak", "__attribute__((objc_gc(weak)))");
-    Builder.defineMacro("__strong", "__attribute__((objc_gc(strong)))");
-    Builder.defineMacro("__autoreleasing", "");
-    Builder.defineMacro("__unsafe_unretained", "");
-  } /*else if (LangOpts.ObjC) {
-    Builder.defineMacro("__weak", "__attribute__((objc_ownership(weak)))");
-    Builder.defineMacro("__strong", "__attribute__((objc_ownership(strong)))");
-    Builder.defineMacro("__autoreleasing",
-                        "__attribute__((objc_ownership(autoreleasing)))");
-    Builder.defineMacro("__unsafe_unretained",
-                        "__attribute__((objc_ownership(none)))");
-  }*/
+  // if (FEOpts.ProgramAction == frontend::RewriteObjC ||
+  //     LangOpts.getGC() != LangOptions::NonGC) {
+  //   Builder.defineMacro("__weak", "__attribute__((objc_gc(weak)))");
+  //   Builder.defineMacro("__strong", "__attribute__((objc_gc(strong)))");
+  //   Builder.defineMacro("__autoreleasing", "");
+  //   Builder.defineMacro("__unsafe_unretained", "");
+  // } else if (LangOpts.ObjC) {
+  //   Builder.defineMacro("__weak", "__attribute__((objc_ownership(weak)))");
+  //   Builder.defineMacro("__strong", "__attribute__((objc_ownership(strong)))");
+  //   Builder.defineMacro("__autoreleasing",
+  //                       "__attribute__((objc_ownership(autoreleasing)))");
+  //   Builder.defineMacro("__unsafe_unretained",
+  //                       "__attribute__((objc_ownership(none)))");
+  // }
 
   // On Darwin, there are __double_underscored variants of the type
   // nullability qualifiers.
@@ -1066,25 +1066,25 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   //   macro name is defined to have the decimal value yyyymm where
   //   yyyy and mm are the year and the month designations of the
   //   version of the OpenMP API that the implementation support.
-  // if (!LangOpts.OpenMPSimd) {
-  //   switch (LangOpts.OpenMP) {
-  //   case 0:
-  //     break;
-  //   case 31:
-  //     Builder.defineMacro("_OPENMP", "201107");
-  //     break;
-  //   case 40:
-  //     Builder.defineMacro("_OPENMP", "201307");
-  //     break;
-  //   case 45:
-  //     Builder.defineMacro("_OPENMP", "201511");
-  //     break;
-  //   default:
-  //     // Default version is OpenMP 5.0
-  //     Builder.defineMacro("_OPENMP", "201811");
-  //     break;
-  //   }
-  // }
+  if (!LangOpts.OpenMPSimd) {
+    switch (LangOpts.OpenMP) {
+    case 0:
+      break;
+    case 31:
+      Builder.defineMacro("_OPENMP", "201107");
+      break;
+    case 40:
+      Builder.defineMacro("_OPENMP", "201307");
+      break;
+    case 45:
+      Builder.defineMacro("_OPENMP", "201511");
+      break;
+    default:
+      // Default version is OpenMP 5.0
+      Builder.defineMacro("_OPENMP", "201811");
+      break;
+    }
+  }
 
   // CUDA device path compilaton
   if (LangOpts.CUDAIsDevice && !LangOpts.HIP) {
@@ -1106,15 +1106,15 @@ static void InitializePredefinedMacros(const TargetInfo &TI,
   }
 
   // OpenCL definitions.
-//   if (LangOpts.OpenCL) {
-// #define OPENCLEXT(Ext)                                                         \
-//   if (TI.getSupportedOpenCLOpts().isSupported(#Ext, LangOpts))                 \
-//     Builder.defineMacro(#Ext);
-// #include "latino/Basic/OpenCLExtensions.def"
+  if (LangOpts.OpenCL) {
+#define OPENCLEXT(Ext)                                                         \
+  if (TI.getSupportedOpenCLOpts().isSupported(#Ext, LangOpts))                 \
+    Builder.defineMacro(#Ext);
+#include "latino/Basic/OpenCLExtensions.def"
 
-//     if (TI.getTriple().isSPIR())
-//       Builder.defineMacro("__IMAGE_SUPPORT__");
-//   }
+    if (TI.getTriple().isSPIR())
+      Builder.defineMacro("__IMAGE_SUPPORT__");
+  }
 
   if (TI.hasInt128Type() && LangOpts.CPlusPlus && LangOpts.GNUMode) {
     // For each extended integer type, g++ defines a macro mapping the

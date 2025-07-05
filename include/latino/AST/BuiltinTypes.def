@@ -240,19 +240,19 @@ BUILTIN_TYPE(NullPtr, NullPtrTy)
 // BUILTIN_TYPE(ObjCSel, ObjCBuiltinSelTy)
 
 // OpenCL sampler_t.
-// BUILTIN_TYPE(OCLSampler, OCLSamplerTy)
+BUILTIN_TYPE(OCLSampler, OCLSamplerTy)
 
 // OpenCL event_t.
-// BUILTIN_TYPE(OCLEvent, OCLEventTy)
+BUILTIN_TYPE(OCLEvent, OCLEventTy)
 
 // OpenCL clk_event_t.
-// BUILTIN_TYPE(OCLClkEvent, OCLClkEventTy)
+BUILTIN_TYPE(OCLClkEvent, OCLClkEventTy)
 
 // OpenCL queue_t.
-// BUILTIN_TYPE(OCLQueue, OCLQueueTy)
+BUILTIN_TYPE(OCLQueue, OCLQueueTy)
 
 // OpenCL reserve_id_t.
-// BUILTIN_TYPE(OCLReserveID, OCLReserveIDTy)
+BUILTIN_TYPE(OCLReserveID, OCLReserveIDTy)
 
 // This represents the type of an expression whose type is
 // totally unknown, e.g. 'T::foo'.  It is permitted for this to
@@ -317,10 +317,10 @@ PLACEHOLDER_TYPE(ARCUnbridgedCast, ARCUnbridgedCastTy)
 PLACEHOLDER_TYPE(IncompleteMatrixIdx, IncompleteMatrixIdxTy)
 
 // A placeholder type for OpenMP array sections.
-// PLACEHOLDER_TYPE(OMPArraySection, OMPArraySectionTy)
+PLACEHOLDER_TYPE(OMPArraySection, OMPArraySectionTy)
 
 // A placeholder type for OpenMP array shaping operation.
-// PLACEHOLDER_TYPE(OMPArrayShaping, OMPArrayShapingTy)
+PLACEHOLDER_TYPE(OMPArrayShaping, OMPArrayShapingTy)
 
 // A placeholder type for OpenMP iterators.
 PLACEHOLDER_TYPE(OMPIterator, OMPIteratorTy)

@@ -17,7 +17,7 @@
 #include "latino/Basic/MacroBuilder.h"
 #include "latino/Basic/TargetBuiltins.h"
 #include "llvm/ADT/StringSwitch.h"
-// #include "llvm/Frontend/OpenMP/OMPGridValues.h"
+#include "llvm/Frontend/OpenMP/OMPGridValues.h"
 #include "llvm/IR/DataLayout.h"
 
 using namespace latino;
@@ -329,7 +329,7 @@ void AMDGPUTargetInfo::adjust(LangOptions &Opts) {
   // ToDo: There are still a few places using default address space as private
   // address space in OpenCL, which needs to be cleaned up, then Opts.OpenCL
   // can be removed from the following line.
-  setAddressSpaceMap(/*DefaultIsPrivate=*/ /*Opts.OpenCL ||*/
+  setAddressSpaceMap(/*DefaultIsPrivate=*/ Opts.OpenCL ||
                      !isAMDGCN(getTriple()));
 }
 

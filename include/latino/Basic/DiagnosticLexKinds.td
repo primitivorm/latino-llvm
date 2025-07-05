@@ -39,13 +39,13 @@ def warn_cxx20_compat_spaceship : Warning<
   InGroup<CXX20Compat>;
 
 // Trigraphs.
-def trigraph_ignored : Warning<"trigraph ignored">, InGroup<Trigraphs>;
-def trigraph_ignored_block_comment : Warning<
-  "ignored trigraph would end block comment">, InGroup<Trigraphs>;
-def trigraph_ends_block_comment : Warning<"trigraph ends block comment">,
-    InGroup<Trigraphs>;
-def trigraph_converted : Warning<"trigraph converted to '%0' character">,
-    InGroup<Trigraphs>;
+// def trigraph_ignored : Warning<"trigraph ignored">, InGroup<Trigraphs>;
+// def trigraph_ignored_block_comment : Warning<
+//     "ignored trigraph would end block comment">, InGroup<Trigraphs>;
+// def trigraph_ends_block_comment : Warning<"trigraph ends block comment">,
+//     InGroup<Trigraphs>;
+// def trigraph_converted : Warning<"trigraph converted to '%0' character">,
+//     InGroup<Trigraphs>;
 
 def ext_multi_line_line_comment : Extension<"multi-line // comment">,
     InGroup<Comment>;
@@ -326,9 +326,9 @@ def warn_pp_macro_hides_keyword : Extension<
 def warn_pp_macro_is_reserved_id : Warning<
   "macro name is a reserved identifier">, DefaultIgnore,
   InGroup<ReservedIdAsMacro>;
-def warn_pp_objc_macro_redef_ignored : Warning<
-  "ignoring redefinition of Objective-C qualifier macro">,
-  InGroup<DiagGroup<"objc-macro-redefinition">>;
+// def warn_pp_objc_macro_redef_ignored : Warning<
+//   "ignoring redefinition of Objective-C qualifier macro">,
+//   InGroup<DiagGroup<"objc-macro-redefinition">>;
 
 def pp_invalid_string_literal : Warning<
   "invalid string literal, ignoring final '\\'">;

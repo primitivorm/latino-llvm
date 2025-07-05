@@ -1768,8 +1768,8 @@ TemplateInstantiator::TransformFunctionTypeParam(ParmVarDecl *OldParm,
   auto NewParm =
       SemaRef.SubstParmVarDecl(OldParm, TemplateArgs, indexAdjustment,
                                NumExpansions, ExpectParameterPack);
-  // if (NewParm && SemaRef.getLangOpts().OpenCL)
-  //   SemaRef.deduceOpenCLAddressSpace(NewParm);
+  if (NewParm && SemaRef.getLangOpts().OpenCL)
+    SemaRef.deduceOpenCLAddressSpace(NewParm);
   return NewParm;
 }
 

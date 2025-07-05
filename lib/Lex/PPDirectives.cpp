@@ -688,9 +688,9 @@ Preprocessor::getHeaderToIncludeForDiagnostics(SourceLocation IncLoc,
       // If we have a module import syntax, we shouldn't include a header to
       // make a particular module visible. Let the caller know they should
       // suggest an import instead.
-      if (getLangOpts().ObjC || getLangOpts().CPlusPlusModules ||
-          getLangOpts().ModulesTS)
-        return nullptr;
+      // if (getLangOpts().ObjC || getLangOpts().CPlusPlusModules ||
+      //     getLangOpts().ModulesTS)
+      //   return nullptr;
 
       // If this is an accessible, non-textual header of M's top-level module
       // that transitively includes the given location and makes the
@@ -882,12 +882,12 @@ void Preprocessor::HandleSkippedDirectiveWhileUsingPCH(Token &Result,
         II->getPPKeywordID() == tok::pp_include) {
       return HandleIncludeDirective(HashLoc, Result);
     }
-    if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
-      Lex(Result);
-      auto *II = Result.getIdentifierInfo();
-      if (II && II->getName() == "hdrstop")
-        return HandlePragmaHdrstop(Result);
-    }
+    // if (SkippingUntilPragmaHdrStop && II->getPPKeywordID() == tok::pp_pragma) {
+    //   Lex(Result);
+    //   auto *II = Result.getIdentifierInfo();
+    //   if (II && II->getName() == "hdrstop")
+    //     return HandlePragmaHdrstop(Result);
+    // }
   }
   DiscardUntilEndOfDirective();
 }
@@ -938,7 +938,7 @@ void Preprocessor::HandleDirective(Token &Result) {
       case tok::pp_import:
       case tok::pp_include_next:
       case tok::pp___include_macros:
-      case tok::pp_pragma:
+      // case tok::pp_pragma:
         Diag(Result, diag::err_embedded_directive) << II->getName();
         Diag(*ArgMacro, diag::note_macro_expansion_here)
             << ArgMacro->getIdentifierInfo();
@@ -1017,8 +1017,8 @@ void Preprocessor::HandleDirective(Token &Result) {
       return HandleUserDiagnosticDirective(Result, false);
 
     // C99 6.10.6 - Pragma Directive.
-    case tok::pp_pragma:
-      return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
+    // case tok::pp_pragma:
+    //   return HandlePragmaDirective({PIK_HashPragma, SavedHash.getLocation()});
 
     // GNU Extensions.
     case tok::pp_import:
@@ -1564,9 +1564,9 @@ static void diagnoseAutoModuleImport(
     ArrayRef<std::pair<IdentifierInfo *, SourceLocation>> Path,
     SourceLocation PathEnd) {
   StringRef ImportKeyword;
-  if (PP.getLangOpts().ObjC)
+  /*if (PP.getLangOpts().ObjC)
     ImportKeyword = "@import";
-  else if (PP.getLangOpts().ModulesTS || PP.getLangOpts().CPlusPlusModules)
+  else*/ if (PP.getLangOpts().ModulesTS || PP.getLangOpts().CPlusPlusModules)
     ImportKeyword = "import";
   else
     return; // no import syntax available
@@ -2048,7 +2048,7 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
     // FIXME: We don't do this when compiling a PCH because the AST
     // serialization layer can't cope with it. This means we get local
     // submodule visibility semantics wrong in that case.
-    Action = (SuggestedModule && !getLangOpts().CompilingPCH) ? Import : Skip;
+    Action = (SuggestedModule /*&& !getLangOpts().CompilingPCH*/) ? Import : Skip;
   }
 
   // Check for circular inclusion of the main file.
@@ -2254,7 +2254,7 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
     // that behaves the same as the header would behave in a compilation using
     // that PCH, which means we should enter the submodule. We need to teach
     // the AST serialization layer to deal with the resulting AST.
-    if (getLangOpts().CompilingPCH &&
+    if (/*getLangOpts().CompilingPCH &&*/
         isForModuleBuilding(M, getLangOpts().CurrentModule,
                             getLangOpts().ModuleName))
       return {ImportAction::None};
@@ -2334,11 +2334,11 @@ void Preprocessor::HandleMicrosoftImportDirective(Token &Tok) {
 ///
 void Preprocessor::HandleImportDirective(SourceLocation HashLoc,
                                          Token &ImportTok) {
-  if (!LangOpts.ObjC) {  // #import is standard for ObjC.
-    if (LangOpts.MSVCCompat)
-      return HandleMicrosoftImportDirective(ImportTok);
-    Diag(ImportTok, diag::ext_pp_import_directive);
-  }
+  // if (!LangOpts.ObjC) {  // #import is standard for ObjC.
+  //   if (LangOpts.MSVCCompat)
+  //     return HandleMicrosoftImportDirective(ImportTok);
+  //   Diag(ImportTok, diag::ext_pp_import_directive);
+  // }
   return HandleIncludeDirective(HashLoc, ImportTok);
 }
 
@@ -2397,9 +2397,9 @@ bool Preprocessor::ReadMacroParameterList(MacroInfo *MI, Token &Tok) {
              diag::ext_variadic_macro);
 
       // OpenCL v1.2 s6.9.e: variadic macros are not supported.
-      // if (LangOpts.OpenCL) {
-      //   Diag(Tok, diag::ext_pp_opencl_variadic_macros);
-      // }
+      if (LangOpts.OpenCL) {
+        Diag(Tok, diag::ext_pp_opencl_variadic_macros);
+      }
 
       // Lex the token after the identifier.
       LexUnexpandedToken(Tok);
@@ -2808,20 +2808,20 @@ void Preprocessor::HandleDefineDirective(
              II->isStr("__unsafe_unretained") ||
              II->isStr("__autoreleasing");
     };
-   if (getLangOpts().ObjC &&
-        SourceMgr.getFileID(OtherMI->getDefinitionLoc())
-          == getPredefinesFileID() &&
-        isObjCProtectedMacro(MacroNameTok.getIdentifierInfo())) {
-      // Warn if it changes the tokens.
-      if ((!getDiagnostics().getSuppressSystemWarnings() ||
-           !SourceMgr.isInSystemHeader(DefineTok.getLocation())) &&
-          !MI->isIdenticalTo(*OtherMI, *this,
-                             /*Syntactic=*/LangOpts.MicrosoftExt)) {
-        Diag(MI->getDefinitionLoc(), diag::warn_pp_objc_macro_redef_ignored);
-      }
-      assert(!OtherMI->isWarnIfUnused());
-      return;
-    }
+  //  if (getLangOpts().ObjC &&
+  //       SourceMgr.getFileID(OtherMI->getDefinitionLoc())
+  //         == getPredefinesFileID() &&
+  //       isObjCProtectedMacro(MacroNameTok.getIdentifierInfo())) {
+  //     // Warn if it changes the tokens.
+  //     if ((!getDiagnostics().getSuppressSystemWarnings() ||
+  //          !SourceMgr.isInSystemHeader(DefineTok.getLocation())) &&
+  //         !MI->isIdenticalTo(*OtherMI, *this,
+  //                            /*Syntactic=*/LangOpts.MicrosoftExt)) {
+  //       Diag(MI->getDefinitionLoc(), diag::warn_pp_objc_macro_redef_ignored);
+  //     }
+  //     assert(!OtherMI->isWarnIfUnused());
+  //     return;
+  //   }
 
     // It is very common for system headers to have tons of macro redefinitions
     // and for warnings to be disabled in system headers.  If this is the case,
