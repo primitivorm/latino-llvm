@@ -122,7 +122,8 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ${CLANG_LIBS}")
+  # This C++ standard is required to build LLVM.
+set(LLVM_REQUIRED_CXX_STANDARD 17)
 
 set(LATINO_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(LATINO_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
