@@ -14,9 +14,17 @@
 #define LLVM_LATINO_LEX_TOKENLEXER_H
 
 #include "clang/Basic/SourceLocation.h"
-
 #include "llvm/ADT/ArrayRef.h"
 
-namespace latino {} // namespace latino
+namespace latino {
+    class Preprocessor;
+    
+    /// TokenLexer - This implements a lexer that returns tokens from a macro body
+/// or token stream instead of lexing from a character buffer.  This is used for
+/// macro expansion and _Pragma handling, for example.
+class TokenLexer {
+    friend class Preprocessor;
+};
+} // namespace latino
 
 #endif // LLVM_LATINO_LEX_TOKENLEXER_H

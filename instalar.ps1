@@ -4,8 +4,8 @@ $vs_path = 'C:\Program Files\Microsoft Visual Studio\2022\Professional'
 $directorio_actual = Get-Location
 
 # Cambiar la siguiente linea para compilar para x64
-# Start-Process "$vs_path\VC\Auxiliary\Build\vcvars64.bat"
-Start-Process "$vs_path\VC\Auxiliary\Build\vcvars32.bat"
+Start-Process "$vs_path\VC\Auxiliary\Build\vcvars64.bat"
+# Start-Process "$vs_path\VC\Auxiliary\Build\vcvars32.bat"
 
 if (!(Test-Path -Path $directorio_actual\build)) {
     New-Item -ItemType directory -Path $directorio_actual\build
@@ -14,7 +14,7 @@ if (!(Test-Path -Path $directorio_actual\build)) {
 Set-Location build
 
 # Agregar -Thost=x64 para forzar a compilar para x64
-cmake -G "Visual Studio 17 2022" -DLLVM_TARGETS_TO_BUILD=host `
+cmake -G "Visual Studio 17 2022" -Thost=x64 -DLLVM_TARGETS_TO_BUILD="X64" `
     -DCMAKE_BUILD_TYPE=Debug ..\
 
 # ejecuta msbuild en modo Release

@@ -15,8 +15,8 @@ if (!(Test-Path -Path $directorio_actual\llvm-project)) {
 }
 
 # Cambiar la siguiente linea para compilar para x64
-# Start-Process "$vs_path\VC\Auxiliary\Build\vcvars64.bat"
-Start-Process "$vs_path\VC\Auxiliary\Build\vcvars32.bat"
+Start-Process "$vs_path\VC\Auxiliary\Build\vcvars64.bat"
+#Start-Process "$vs_path\VC\Auxiliary\Build\vcvars32.bat"
 
 if (!(Test-Path -Path $directorio_actual\llvm-project\build)) {
     New-Item -ItemType directory -Path $directorio_actual\llvm-project\build
@@ -25,10 +25,14 @@ if (!(Test-Path -Path $directorio_actual\llvm-project\build)) {
 Set-Location llvm-project\build
 
 # Agregar -Thost=x64 para forzar a compilar para x64
-cmake -G "Visual Studio 17 2022" -DLLVM_TARGETS_TO_BUILD=host -DLLVM_BUILD_EXAMPLES=ON `
-    -DCLANG_BUILD_EXAMPLES=ON -DLLVM_ENABLE_OCAMLDOC=OFF -DLLVM_BUILD_DOCS=OFF `
+cmake -G "Visual Studio 17 2022" -Thost=x64 -DLLVM_TARGETS_TO_BUILD="host" -DLLVM_BUILD_EXAMPLES=OFF `
+    -DCLANG_BUILD_EXAMPLES=OFF -DLLVM_ENABLE_OCAMLDOC=OFF -DLLVM_BUILD_DOCS=OFF `
     -DCMAKE_BUILD_TYPE=Debug -DLLVM_BUILD_TESTS=ON -DLLVM_INCLUDE_TESTS=ON `
-    -DLLVM_ENABLE_PROJECTS='clang;lld;lldb' ..\llvm\
+    -DLLVM_ENABLE_PROJECTS="clang;lld;lldb" ..\llvm\
+
+# -DBUILD_SHARED_LIBS=ON  No soportado en Windows
+# -DLLVM_TARGETS_TO_BUILD=host
+# ;mlir;clang-tools-extra;compiler-rt
 
 # ejecuta msbuild en modo Release
 # Start-Process -FilePath "$vs_path\MSBuild\Current\Bin\MSBuild.exe" -ArgumentList "LLVM.sln /t:Build /p:Configuration=Release" -NoNewWindow

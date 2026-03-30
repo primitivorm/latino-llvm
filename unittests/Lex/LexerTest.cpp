@@ -7,14 +7,7 @@
 #include "clang/Basic/SourceManager.h"
 #include "clang/Basic/TargetInfo.h"
 #include "clang/Basic/TargetOptions.h"
-// #include "clang/Basic/TokenKinds.h"
-// #include "clang/Lex/HeaderSearch.h"
-// #include "clang/Lex/HeaderSearchOptions.h"
-// #include "clang/Lex/MacroArgs.h"
-// #include "clang/Lex/MacroInfo.h"
 #include "clang/Lex/ModuleLoader.h"
-// #include "clang/Lex/Preprocessor.h"
-// #include "clang/Lex/PreprocessorOptions.h"
 
 #include "latino/Lex/Lexer.h"
 
@@ -233,7 +226,7 @@ TEST_F(LexerTest, LexIdentifier) {
 TEST_F(LexerTest, FindNextToken) {
   Lex("var abcd: Entero = 0\n");
   std::vector<std::string> GeneratedByNextToken;
-  SourceLocation Loc =
+  clang::SourceLocation Loc =
       SourceMgr.getLocForStartOfFile(SourceMgr.getMainFileID());
   while (true) {
     auto T = latino::Lexer::findNextToken(Loc, SourceMgr, LangOpts);

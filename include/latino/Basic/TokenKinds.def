@@ -7,6 +7,9 @@
 #ifndef KEYWORD
 #define KEYWORD(X) TOK(kw_##X)
 #endif
+#ifndef ANNOTATION
+#define ANNOTATION(X) TOK(annot_ ## X)
+#endif
 
 TOK(unknown) // Not a token.
 TOK(eof)     // End of file.
@@ -98,11 +101,13 @@ KEYWORD(finalmente) // finally
 KEYWORD(clase)       // class
 KEYWORD(interfaz)    // interface
 KEYWORD(enumerador)  // enum
+KEYWORD(enum)  // enum
 KEYWORD(constructor) // constructor
+KEYWORD(constr) // constructor
 KEYWORD(publica)     // public
 KEYWORD(pub)         // public
 KEYWORD(privada)     // private
-KEYWORD(pri)         // private
+KEYWORD(priv)         // private
 KEYWORD(protegida)   // protected
 KEYWORD(prot)        // protected
 KEYWORD(estructura)  // struct
@@ -114,7 +119,7 @@ KEYWORD(borrar)      // delete
 
 KEYWORD(abstracta) // abstract
 KEYWORD(importar)  // import
-KEYWORD(nueva)     // new
+KEYWORD(nuevo)     // new
 KEYWORD(esto)      // this
 
 KEYWORD(extiende)   // extends
@@ -130,6 +135,7 @@ KEYWORD(decimal) // float / double
 KEYWORD(letra)   // char
 KEYWORD(cadena)  // char*
 
+#undef ANNOTATION
 #undef KEYWORD
 #undef PUNCTUATOR
 #undef TOK

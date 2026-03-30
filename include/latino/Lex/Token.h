@@ -15,14 +15,13 @@
 
 #include "clang/Basic/SourceLocation.h"
 
-// #include "clang/Basic/TokenKinds.h"
 #include "latino/Basic/TokenKinds.h"
 #include "llvm/ADT/StringRef.h"
 #include <cassert>
 
 namespace latino {
 
-using clang::SourceLocation;
+class IdentifierInfo;
 
 class Token {
   /// The location of the token. This is actually a SourceLocation.
@@ -89,20 +88,23 @@ public:
   }
   template <typename... Ts>
   bool isOneOf(tok::TokenKind K1, tok::TokenKind K2, Ts... Ks) const {
-    return is(K1) || isOneOf(K1, Ks...);
+    return is(K1) || isOneOf(K2, Ks...);
   }
 
   /// Return true if this is a "literal", like a numeric
   /// constant, string, etc.
   bool isLiteral() const { return tok::isLiteral(getKind()); }
 
+  /// Return true if this is any of tok::annot_* kind tokens.
+  bool isAnnotation() const { return tok::isAnnotation(getKind()); }
+
   /// Return a source location identifier for the specified
   /// offset in the current file.
-  SourceLocation getLocation() const {
-    return SourceLocation::getFromRawEncoding(Loc);
+  clang::SourceLocation getLocation() const {
+    return clang::SourceLocation::getFromRawEncoding(Loc);
   }
 
-  void setLocation(SourceLocation L) { Loc = L.getRawEncoding(); }
+  void setLocation(clang::SourceLocation L) { Loc = L.getRawEncoding(); }
 
   unsigned getLength() const { return UintData; }
   void setLength(unsigned Len) { UintData = Len; }
@@ -140,7 +142,7 @@ public:
     Flags = 0;
     PtrData = nullptr;
     UintData = 0;
-    Loc = SourceLocation().getRawEncoding();
+    Loc = clang::SourceLocation().getRawEncoding();
   }
 
   /// getRawIdentifier - For a raw identifier token (i.e., an identifier

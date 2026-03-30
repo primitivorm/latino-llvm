@@ -28,6 +28,14 @@ enum TokenKind : unsigned short {
   NUM_TOKENS
 };
 
+/// Provides a namespace for preprocessor keywords which start with a
+/// '#' at the beginning of the line.
+// enum PPKeywordKind {
+// #define PPKEYWORD(X) pp_##X,
+// #include "latino/Basic/TokenKinds.def"
+//   NUM_PP_KEYWORDS
+// };
+
 /// Determines the name of a token as used within the front end.
 ///
 /// The name of a token will be an internal name (such as "l_square")
@@ -62,6 +70,9 @@ inline bool isLiteral(TokenKind K) {
   return K == tok::numeric_constant || K == tok::char_constant ||
          isStringLiteral(K);
 }
+
+/// Return true if this is any of tok::annot_* kinds.
+bool isAnnotation(TokenKind K);
 
 } // end namespace tok
 } // namespace latino

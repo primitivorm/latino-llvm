@@ -1,10 +1,12 @@
 #ifndef LATINO_LLVM_LEX_LEXER_H
 #define LATINO_LLVM_LEX_LEXER_H
 
-#include "clang/Basic/LangOptions.h"
-#include "clang/Basic/SourceLocation.h"
 
 #include "latino/Lex/Token.h"
+#include "latino/Lex/PreprocessorLexer.h"
+
+#include "clang/Basic/LangOptions.h"
+#include "clang/Basic/SourceLocation.h"
 
 #include "llvm/ADT/Optional.h"
 #include "llvm/ADT/SmallVector.h"
@@ -24,7 +26,10 @@ class LangOptions;
 
 namespace latino {
 
-class Lexer {
+class Lexer: public PreprocessorLexer {
+  friend class Preprocessor;
+
+  void anchor() override;
 
   //===--------------------------------------------------------------------===//
   // Constant configuration values for this lexer.
@@ -40,6 +45,19 @@ class Lexer {
 
   // LangOpts enabled by this language (cache).
   clang::LangOptions LangOpts;
+
+  //===--------------------------------------------------------------------===//
+  // Context-specific lexing flags set by the preprocessor.
+  //
+
+  /// ExtendedTokenMode - The lexer can optionally keep comments and whitespace
+  /// and return them as tokens.  This is used for -C and -CC modes, and
+  /// whitespace preservation can be useful for some clients that want to lex
+  /// the file in raw mode and get every character from the file.
+  ///
+  /// When this is set to 2 it returns comments and whitespace.  When set to 1
+  /// it returns comments, when it is set to 0 it returns normal tokens only.
+  unsigned char ExtendedTokenMode;
 
   //===--------------------------------------------------------------------===//
   // Context that changes as the file is lexed.
@@ -80,7 +98,7 @@ public:
   /// with the specified preprocessor managing the lexing process.  This lexer
   /// assumes that the associated file buffer and Preprocessor objects will
   /// outlive it, so it doesn't take ownership of either of them.
-  Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile);
+  Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile, Preprocessor &PP);
 
   /// Lexer constructor - Create a new raw lexer object.  This object is only
   /// suitable for calls to 'LexFromRawLexer'.  This lexer assumes that the
@@ -186,7 +204,7 @@ public:
   ///
   /// Returns the next token, or none if the location is inside a macro.
   static llvm::Optional<Token>
-  findNextToken(SourceLocation Loc, const clang::SourceManager &SM,
+  findNextToken(clang::SourceLocation Loc, const clang::SourceManager &SM,
                 const clang::LangOptions &LangOpts);
 
   /// MeasureTokenLength - Relex the token at the specified location and return
@@ -223,6 +241,42 @@ public:
   getLocForEndOfToken(clang::SourceLocation Loc, unsigned Offset,
                       const clang::SourceManager &SM,
                       const clang::LangOptions &LangOpts);
+
+  //===--------------------------------------------------------------------===//
+  // Other lexer functions.
+
+  void SetByteOffset(unsigned Offset, bool StartOfLine);
+
+  /// Sets the extended token mode back to its initial value, according to the
+  /// language options and preprocessor. This controls whether the lexer
+  /// produces comment and whitespace tokens.
+  ///
+  /// This requires the lexer to have an associated preprocessor. A standalone
+  /// lexer has nothing to reset to.
+  void resetExtendedTokenMode();
+
+  /// isKeepWhitespaceMode - Return true if the lexer should return tokens for
+  /// every character in the file, including whitespace and comments.  This
+  /// should only be used in raw mode, as the preprocessor is not prepared to
+  /// deal with the excess tokens.
+  bool isKeepWhitespaceMode() const { return ExtendedTokenMode > 1; }
+
+  /// SetKeepWhitespaceMode - This method lets clients enable or disable
+  /// whitespace retention mode.
+  void SetKeepWhitespaceMode(bool Val) {
+    assert((!Val || LexingRawMode || LangOpts.TraditionalCPP) &&
+           "Can only retain whitespace in raw mode or -traditional-cpp");
+    ExtendedTokenMode = Val ? 2 : 0;
+  }
+
+  /// SetCommentRetentionMode - Change the comment retention mode of the lexer
+  /// to the specified mode.  This is really only useful when lexing in raw
+  /// mode, because otherwise the lexer needs to manage this.
+  void SetCommentRetentionState(bool Mode) {
+    assert(!isKeepWhitespaceMode() &&
+           "Can't play with comment retention state when retaining whitespace");
+    ExtendedTokenMode = Mode ? 1 : 0;
+  }
 
 private:
   //===--------------------------------------------------------------------===//
@@ -330,6 +384,8 @@ private:
   /// diagnostic.
   static char getCharAndSizeSlowNoWarn(const char *Ptr, unsigned &Size,
                                        const clang::LangOptions &LangOpts);
+
+    
 };
 } // namespace latino
 

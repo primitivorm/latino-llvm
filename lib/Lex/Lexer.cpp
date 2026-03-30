@@ -4,6 +4,7 @@
 
 #include "latino/Lex/Lexer.h"
 #include "latino/Lex/Token.h"
+#include "latino/Lex/Preprocessor.h"
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/StringSwitch.h"
@@ -11,8 +12,12 @@
 
 #include <cassert>
 
-using namespace clang;
 using namespace latino;
+
+//===----------------------------------------------------------------------===//
+// Lexer Class Implementation
+//===----------------------------------------------------------------------===//
+void Lexer::anchor() {}
 
 void Lexer::InitLexer(const char *BufStart, const char *BufPtr,
                       const char *BufEnd) {
@@ -54,9 +59,13 @@ void Lexer::InitLexer(const char *BufStart, const char *BufPtr,
 /// with the specified preprocessor managing the lexing process.  This lexer
 /// assumes that the associated file buffer and Preprocessor objects will
 /// outlive it, so it doesn't take ownership of either of them.
-Lexer::Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile) {
+Lexer::Lexer(clang::FileID FID, const llvm::MemoryBuffer *InputFile, Preprocessor &PP)
+    : FileLoc(PP.getSourceManager().getLocForStartOfFile(FID)),
+      LangOpts(PP.getLangOpts()) {
   InitLexer(InputFile->getBufferStart(), InputFile->getBufferStart(),
             InputFile->getBufferEnd());
+
+            resetExtendedTokenMode();
 }
 
 /// Lexer constructor - Create a new raw lexer object.  This object is only
@@ -79,8 +88,16 @@ Lexer::Lexer(clang::FileID FID, const llvm::MemoryBuffer *FromFile,
     : Lexer(SM.getLocForStartOfFile(FID), langOpts, FromFile->getBufferStart(),
             FromFile->getBufferStart(), FromFile->getBufferEnd()) {}
 
+void Lexer::resetExtendedTokenMode() {
+  assert(PP && "Cannot reset token mode without a preprocessor");
+  if (LangOpts.TraditionalCPP)
+    SetKeepWhitespaceMode(true);
+  else
+    SetCommentRetentionState(PP->getCommentRetentionState());
+}
+
 bool Lexer::isNewLineEscaped(const char *BufferStart, const char *Str) {
-  assert(isVerticalWhitespace(Str[0]));
+  assert(clang::isVerticalWhitespace(Str[0]));
   if (Str - 1 < BufferStart)
     return false;
 
@@ -93,17 +110,17 @@ bool Lexer::isNewLineEscaped(const char *BufferStart, const char *Str) {
   --Str;
 
   // Rewind to first non-space character:
-  while (Str > BufferStart && isHorizontalWhitespace(*Str))
+  while (Str > BufferStart && clang::isHorizontalWhitespace(*Str))
     --Str;
 
   return *Str == '\\';
 }
 
 static clang::CharSourceRange
-makeRangeFromFileLocs(clang::CharSourceRange Range, const SourceManager &SM,
+makeRangeFromFileLocs(clang::CharSourceRange Range, const clang::SourceManager &SM,
                       const clang::LangOptions &LangOpts) {
-  SourceLocation Begin = Range.getBegin();
-  SourceLocation End = Range.getEnd();
+  clang::SourceLocation Begin = Range.getBegin();
+  clang::SourceLocation End = Range.getEnd();
   assert(Begin.isFileID() && End.isFileID());
   if (Range.isTokenRange()) {
     End = Lexer::getLocForEndOfToken(End, 0, SM, LangOpts);
@@ -112,7 +129,7 @@ makeRangeFromFileLocs(clang::CharSourceRange Range, const SourceManager &SM,
   }
 
   // Break down the source locations.
-  FileID FID;
+  clang::FileID FID;
   unsigned BeginOffs;
   std::tie(FID, BeginOffs) = SM.getDecomposedLoc(Begin);
   if (FID.isInvalid())
@@ -121,15 +138,15 @@ makeRangeFromFileLocs(clang::CharSourceRange Range, const SourceManager &SM,
   unsigned EndOffs;
   if (!SM.isInFileID(End, FID, &EndOffs) || BeginOffs > EndOffs)
     return {};
-  return CharSourceRange::getCharRange(Begin, End);
+  return clang::CharSourceRange::getCharRange(Begin, End);
 }
 
 clang::CharSourceRange
 Lexer::makeFileCharRange(clang::CharSourceRange Range,
                          const clang::SourceManager &SM,
                          const clang::LangOptions &LangOpts) {
-  SourceLocation Begin = Range.getBegin();
-  SourceLocation End = Range.getEnd();
+  clang::SourceLocation Begin = Range.getBegin();
+  clang::SourceLocation End = Range.getEnd();
   if (Begin.isInvalid() || End.isInvalid())
     return {};
 
@@ -203,7 +220,7 @@ bool Lexer::getRawToken(clang::SourceLocation Loc, Token &Result,
   // If this comes from a macro expansion, we really do want the macro name, not
   // the token this macro expanded to.
   Loc = SM.getExpansionLoc(Loc);
-  std::pair<FileID, unsigned> LocInfo = SM.getDecomposedLoc(Loc);
+  std::pair<clang::FileID, unsigned> LocInfo = SM.getDecomposedLoc(Loc);
   bool Invalid = false;
   StringRef Buffer = SM.getBufferData(LocInfo.first, &Invalid);
   if (Invalid)
@@ -211,7 +228,7 @@ bool Lexer::getRawToken(clang::SourceLocation Loc, Token &Result,
 
   const char *StrData = Buffer.data() + LocInfo.second;
 
-  if (!IgnoreWhiteSpace && isWhitespace(StrData[0]))
+  if (!IgnoreWhiteSpace && clang::isWhitespace(StrData[0]))
     return true;
 
   // Create a lexer starting at the beginning of this token.
@@ -238,7 +255,7 @@ Lexer::getLocForEndOfToken(clang::SourceLocation Loc, unsigned Offset,
   return Loc.getLocWithOffset(Len);
 }
 
-Optional<Token> Lexer::findNextToken(SourceLocation Loc,
+Optional<Token> Lexer::findNextToken(clang::SourceLocation Loc,
                                      const clang::SourceManager &SM,
                                      const clang::LangOptions &LangOpts) {
   // if (Loc.isMacroID()) {
@@ -274,7 +291,7 @@ static const char *findBeginningOfLine(StringRef Buffer, unsigned Offset) {
 
   const char *LexStart = BufStart + Offset;
   for (; LexStart != BufStart; --LexStart) {
-    if (isVerticalWhitespace(LexStart[0]) &&
+    if (clang::isVerticalWhitespace(LexStart[0]) &&
         !Lexer::isNewLineEscaped(BufStart, LexStart)) {
       // LexStart should point at first character of logical line.
       ++LexStart;
@@ -284,7 +301,7 @@ static const char *findBeginningOfLine(StringRef Buffer, unsigned Offset) {
   return LexStart;
 }
 
-static SourceLocation
+static clang::SourceLocation
 getBeginningOfFileToken(clang::SourceLocation Loc,
                         const clang::SourceManager &SM,
                         const clang::LangOptions &LangOpts) {
@@ -306,7 +323,7 @@ getBeginningOfFileToken(clang::SourceLocation Loc,
     return Loc;
 
   // Create a lexer starting at the beginning of this token.
-  SourceLocation LexerStartLoc = Loc.getLocWithOffset(-LocInfo.second);
+  clang::SourceLocation LexerStartLoc = Loc.getLocWithOffset(-LocInfo.second);
   Lexer TheLexer(LexerStartLoc, LangOpts, Buffer.data(), LexStart,
                  Buffer.end());
 
@@ -332,16 +349,18 @@ getBeginningOfFileToken(clang::SourceLocation Loc,
 }
 
 clang::SourceLocation
-Lexer::GetBeginningOfToken(clang::SourceLocation Loc, const SourceManager &SM,
+Lexer::GetBeginningOfToken(clang::SourceLocation Loc,
+                           const clang::SourceManager &SM,
                            const clang::LangOptions &LangOpts) {
   if (Loc.isFileID())
     return getBeginningOfFileToken(Loc, SM, LangOpts);
   if (!SM.isMacroArgExpansion(Loc))
     return Loc;
-  SourceLocation FileLoc = SM.getSpellingLoc(Loc);
-  SourceLocation BeginFileLoc = getBeginningOfFileToken(FileLoc, SM, LangOpts);
-  std::pair<FileID, unsigned> FileLocInfo = SM.getDecomposedLoc(FileLoc);
-  std::pair<FileID, unsigned> BeginFileLocInfo =
+  clang::SourceLocation FileLoc = SM.getSpellingLoc(Loc);
+  clang::SourceLocation BeginFileLoc =
+      getBeginningOfFileToken(FileLoc, SM, LangOpts);
+  std::pair<clang::FileID, unsigned> FileLocInfo = SM.getDecomposedLoc(FileLoc);
+  std::pair<clang::FileID, unsigned> BeginFileLocInfo =
       SM.getDecomposedLoc(BeginFileLoc);
   assert(FileLocInfo.first == BeginFileLocInfo.first &&
          FileLocInfo.second >= BeginFileLocInfo.second);
@@ -456,7 +475,7 @@ char Lexer::getCharAndSizeSlowNoWarn(const char *Ptr, unsigned &Size,
     ++Ptr;
   Slash:
     // Common case, backslash-char where the char is not whitespace.
-    if (!isWhitespace(Ptr[0]))
+    if (!clang::isWhitespace(Ptr[0]))
       return '\\';
 
     // See if we have optional whitespace characters followed by a newline.
@@ -765,6 +784,22 @@ bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
   Result.startToken();
   FormTokenWithChars(Result, BufferEnd, tok::eof);
   return true;
+}
+
+//===----------------------------------------------------------------------===//
+// Helper methods for lexing.
+//===----------------------------------------------------------------------===//
+
+/// Routine that indiscriminately sets the offset into the source file.
+void Lexer::SetByteOffset(unsigned Offset, bool StartOfLine) {
+  BufferPtr = BufferStart + Offset;
+  if (BufferPtr > BufferEnd)
+    BufferPtr = BufferEnd;
+  // FIXME: What exactly does the StartOfLine bit mean?  There are two
+  // possible meanings for the "start" of the line: the first token on the
+  // unexpanded line, or the first token on the expanded line.
+  IsAtStartOfLine = StartOfLine;
+  IsAtPhysicalStartOfLine = StartOfLine;
 }
 
 /// LexTokenInternal - This implements a simple C family lexer.  It is an

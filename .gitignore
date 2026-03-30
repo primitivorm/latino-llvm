@@ -40,3 +40,4 @@ test/debuginfo-tests
 
 # build directories
 /build
+/out
